@@ -76,9 +76,13 @@ configurations {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
+    //external dependencies
+    implementation ("com.sksamuel.scrimage:scrimage-core:4.0.31")
+
     //mixin
     implementation fg.deobf("curse.maven:mixin-booter-419286:3687785")
     implementation('org.spongepowered:mixin:0.8.4')
+    runtimeOnly fg.deobf("curse.maven:mixin-booter-419286:3687785")
 }
 
 shadowJar {
