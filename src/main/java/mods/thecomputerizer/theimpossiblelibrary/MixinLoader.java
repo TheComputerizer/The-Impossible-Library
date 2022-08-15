@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.core;
+package mods.thecomputerizer.theimpossiblelibrary;
 
 import zone.rong.mixinbooter.IEarlyMixinLoader;
 import zone.rong.mixinbooter.ILateMixinLoader;
