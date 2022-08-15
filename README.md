@@ -9,5 +9,5 @@ Some current WIP features
 
 Some planned features
 - MP4 rendering (with & without sound)
-- Audio/video streaming
+- Audio/video streaming (Music Triggers parallel)
 - RGB shenanigans
