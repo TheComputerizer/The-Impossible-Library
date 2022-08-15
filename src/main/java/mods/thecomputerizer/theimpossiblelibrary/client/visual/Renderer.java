@@ -69,7 +69,7 @@ public class Renderer {
             for(GIF gif : renderableGifs.keySet()) {
                 GlStateManager.enableBlend();
                 GlStateManager.pushMatrix();
-                gif.loadCurrentFrame(false,true);
+                gif.loadCurrentFrame(false,false);
                 GlStateManager.color(color.getX(), color.getY(), color.getZ(), 1f);
                 float scaleX  = (0.25f*((float)y/(float)x))*gif.getScaleX();
                 float scaleY = 0.25f*gif.getScaleY();

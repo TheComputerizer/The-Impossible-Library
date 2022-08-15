@@ -1,10 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
-import mods.thecomputerizer.theimpossiblelibrary.client.visual.GIF;
 import mods.thecomputerizer.theimpossiblelibrary.client.visual.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.test.ClientTest;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;

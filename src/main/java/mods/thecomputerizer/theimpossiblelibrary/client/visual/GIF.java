@@ -122,8 +122,4 @@ public class GIF {
     public void setMillis(long millis) {
         this.millis = millis;
     }
-
-    public long getMillis() {
-        return millis;
-    }
 }
