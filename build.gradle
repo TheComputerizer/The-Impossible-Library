@@ -1,0 +1,137 @@
+//file:noinspection GroovyUnusedAssignment
+
+buildscript {
+    repositories {
+        maven { url = "http://maven.minecraftforge.net/" }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.1.10'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'maven-publish'
+
+version = '1.12.2-1.0'
+group = 'mods.thecomputerizer.theimpossiblelibrary'
+archivesBaseName = 'theimpossiblelibrary'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+minecraft {
+    mappings channel: 'snapshot', version: '20171003-1.12'
+    accessTransformer = file('src/main/resources/META-INF/theimpossiblelibrary_at.cfg')
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven {
+        url = uri("https://www.cursemaven.com")
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        url = uri("https://m2.dv8tion.net/releases")
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+sourceSets {
+    main {
+        ext.refMap = "mixins.theimpossiblelibrary.refmap.json"
+    }
+}
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+    shade
+    implementation.extendsFrom(shade)
+    shadow.extendsFrom shade
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+
+    //mixin
+    implementation fg.deobf("curse.maven:mixin-booter-419286:3687785")
+    implementation('org.spongepowered:mixin:0.8.4')
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    classifier ''
+}
+
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
+    }
+}
+processResources {
+    filesMatching("mcmod.info") {
+        expand "version": project.version, "mcversion": "1.12.2"
+    }
+
+    inputs.property "version", project.version
+    inputs.property "mcversion", "1.12.2"
+}
+
+mixin {
+    disableAnnotationProcessorCheck()
+}
+
+jar {
+    manifest {
+        attributes([
+            "FMLAT": "theimpossiblelibrary_at.cfg",
+            "Specification-Title": "theimpossiblelibrary",
+            "Specification-Vendor": "the_computerizer",
+            "Specification-Version": "1.12.2-1.0",
+            "Implementation-Title": project.name,
+            "Implementation-Version": "1.12.2-1.0",
+            "Implementation-Vendor" :"the_computerizer",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+tasks.assemble.dependsOn shadowJar
