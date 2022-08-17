@@ -11,3 +11,5 @@ Some planned features
 - MP4 rendering (with & without sound)
 - Audio/video streaming (Music Triggers parallel)
 - RGB shenanigans
+
+CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
