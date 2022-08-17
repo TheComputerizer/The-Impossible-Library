@@ -26,7 +26,7 @@ public class TheImpossibleLibrary {
         EventBus bus = MinecraftForge.EVENT_BUS;
         if(e.getSide()==Side.CLIENT) {
             bus.register(Renderer.class);
-            bus.register(ClientTest.class);
+            //preInitClientTestClass(bus);
         }
     }
 
@@ -34,8 +34,24 @@ public class TheImpossibleLibrary {
     public void init(FMLInitializationEvent e) {
         //keybindings and other less important stuff can go here
         if(e.getSide()==Side.CLIENT) {
-            ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
+            //initClientTestClass();
         }
+    }
+
+    public static void preInitCommonTestClass(EventBus bus) {
+
+    }
+
+    public static void initCommonTestClass() {
+
+    }
+
+    public static void preInitClientTestClass(EventBus bus) {
+        bus.register(ClientTest.class);
+    }
+
+    public static void initClientTestClass() {
+        ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
     }
 
     public static void logInfo(String message) {

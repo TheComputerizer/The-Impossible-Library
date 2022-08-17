@@ -77,7 +77,9 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     //external dependencies
-    implementation ("com.sksamuel.scrimage:scrimage-core:4.0.31")
+    shade("com.sksamuel.scrimage:scrimage-core:4.0.31")
+    shade("org.jcodec:jcodec:0.2.5")
+    shade("org.jcodec:jcodec-javase:0.2.5")
 
     //mixin
     implementation fg.deobf("curse.maven:mixin-booter-419286:3687785")

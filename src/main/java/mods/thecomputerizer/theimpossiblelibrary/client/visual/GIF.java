@@ -71,6 +71,14 @@ public class GIF {
         return (int)(this.status.getDimensions().height*this.scaleY);
     }
 
+    public float getWidthRatio() {
+        return (float) getScaledWidth()/(float) getScaledHeight();
+    }
+
+    public float getHeightRatio() {
+        return (float) getScaledHeight()/(float) getScaledWidth();
+    }
+
     public void setHorizontal(String horizontal) {
         this.horizontal = horizontal;
     }
