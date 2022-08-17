@@ -13,3 +13,23 @@ Some planned features
 - RGB shenanigans
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
+
+## How to include this mod as a dependency
+
+You can just use curse maven like so
+
+```
+repositories {
+    maven {
+        url = uri("https://www.cursemaven.com")
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
+dependencies {
+  implementation fg.deobf("curse.maven:the-impossible-library-projectID:fileID")
+}
+```
+The project ID is `661115` and the file ID for the latest version of `0.2` is `3939939`
