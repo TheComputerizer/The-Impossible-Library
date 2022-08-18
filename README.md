@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-  implementation fg.deobf("curse.maven:the-impossible-library-projectID:fileID")
+  implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
 }
 ```
-The project ID is `661115` and the file ID for the latest version of `0.2` is `3939939`
+The file ID for the latest version of `0.2` is `3939939`
