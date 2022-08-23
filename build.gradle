@@ -19,7 +19,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 
-version = '1.12.2-0.3'
+version = '1.12.2-0.4'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
@@ -116,9 +116,9 @@ jar {
             "FMLAT": "theimpossiblelibrary_at.cfg",
             "Specification-Title": "theimpossiblelibrary",
             "Specification-Vendor": "the_computerizer",
-            "Specification-Version": "1.12.2-0.3",
+            "Specification-Version": "1.12.2-0.4",
             "Implementation-Title": project.name,
-            "Implementation-Version": "1.12.2-0.3",
+            "Implementation-Version": "1.12.2-0.4",
             "Implementation-Vendor" :"the_computerizer",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
