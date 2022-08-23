@@ -20,8 +20,9 @@ public class ClientTest {
     public static void onKeyInput(InputEvent.KeyInputEvent e) {
         if (TEST_KEYBIND.isKeyDown()) {
             //render testing
+            if(testMp4!=null && testMp4.isFinished) testMp4 = null;
             if(testMp4==null) testMp4 = Renderer.initializeMp4(new ResourceLocation(Constants.MODID,"test.mp4"));
-            else Renderer.renderMP4ToBackground(testMp4,"center","center",0,0,1f,1f,10000);
+            else Renderer.renderMP4ToBackground(testMp4,"center","center",0,0,4f,4f,10000);
         }
     }
 }

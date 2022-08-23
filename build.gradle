@@ -78,13 +78,12 @@ dependencies {
 
     //external dependencies
     shade("com.sksamuel.scrimage:scrimage-core:4.0.31")
-    shade("org.jcodec:jcodec:0.2.5")
-    shade("org.jcodec:jcodec-javase:0.2.5")
+    shade("com.github.zakgof:velvet-video:0.5.2")
+    shade("com.github.zakgof:velvet-video-natives:0.2.8.full")
 
     //mixin
-    implementation fg.deobf("curse.maven:mixin-booter-419286:3687785")
+    implementation fg.deobf("curse.maven:mixin-booter-419286:3886235")
     implementation('org.spongepowered:mixin:0.8.4')
-    runtimeOnly fg.deobf("curse.maven:mixin-booter-419286:3687785")
 }
 
 shadowJar {

@@ -1,29 +1,28 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.visual;
 
 import mods.thecomputerizer.theimpossiblelibrary.TheImpossibleLibrary;
-import mods.thecomputerizer.theimpossiblelibrary.util.CustomTick;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.jcodec.api.JCodecException;
 
 import javax.vecmath.Vector4f;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Renderer {
 
     private static final Map<GIF, Long> renderableGifs = new HashMap<>();
-    private static final Map<MP4, Long> renderableMp4s = new HashMap<>();
+    private static final ArrayList<MP4> renderableMp4s = new ArrayList<>();
 
     public static MP4 initializeMp4(ResourceLocation location) {
         try {
             return new MP4(location);
-        } catch (IOException | JCodecException ex) {
+        } catch (IOException ex) {
             TheImpossibleLibrary.logError("Failed to initialize mp4 at resource location "+location,ex);
         }
         return null;
@@ -46,7 +45,7 @@ public class Renderer {
         set millis to 0 or less to only render the mp4 for 1 cycle
      */
     public static void renderMP4ToBackground(MP4 mp4, String horizontal, String vertical, int x, int y, float scaleX, float scaleY, long millis) {
-        if(!renderableMp4s.containsKey(mp4)) {
+        if(!renderableMp4s.contains(mp4)) {
             mp4.setHorizontal(horizontal);
             mp4.setVertical(vertical);
             mp4.setX(x);
@@ -54,7 +53,7 @@ public class Renderer {
             mp4.setScaleX(scaleX);
             mp4.setScaleY(scaleY);
             mp4.setMillis(millis);
-            renderableMp4s.put(mp4, mp4.getDelay());
+            renderableMp4s.add(mp4);
         }
     }
 
@@ -92,18 +91,6 @@ public class Renderer {
     }
 
     @SubscribeEvent
-    public static void tickAnimated(CustomTick ev) {
-        for(GIF gif : renderableGifs.keySet()) {
-            if (ev.checkTickRate(renderableGifs.get(gif)))
-                if(!gif.incrementFrame()) renderableGifs.remove(gif);
-        }
-        for(MP4 mp4 : renderableMp4s.keySet()) {
-            if (ev.checkTickRate(renderableMp4s.get(mp4)))
-                if(!mp4.incrementFrame()) renderableMp4s.remove(mp4);
-        }
-    }
-
-    @SubscribeEvent
     public static void renderAllBackgroundStuff(RenderGameOverlayEvent.Post e) {
         if(e.getType()== RenderGameOverlayEvent.ElementType.ALL) {
             ScaledResolution res = e.getResolution();
@@ -111,7 +98,17 @@ public class Renderer {
             int y = res.getScaledHeight();
             Vector4f color = new Vector4f(1, 1, 1, 1);
             for(GIF gif : renderableGifs.keySet()) renderGif(gif,color,x,y);
-            for(MP4 mp4 : renderableMp4s.keySet()) renderMp4(mp4,color,x,y);
+            for(MP4 mp4 : renderableMp4s) renderMp4(mp4,color,x,y);
+            renderableGifs.entrySet().removeIf(entry -> {
+                if(!entry.getKey().checkMilli((long)(50f*e.getPartialTicks())))
+                    entry.getKey().isFinished = true;
+                return entry.getKey().isFinished;
+            });
+            renderableMp4s.removeIf(mp4 -> {
+                if(!mp4.checkMilli((long)(50f*e.getPartialTicks())))
+                    mp4.isFinished = true;
+                return mp4.isFinished;
+            });
         }
     }
 

@@ -4,13 +4,11 @@ import com.sksamuel.scrimage.nio.AnimatedGif;
 import com.sksamuel.scrimage.nio.AnimatedGifReader;
 import com.sksamuel.scrimage.nio.ImageSource;
 import mods.thecomputerizer.theimpossiblelibrary.TheImpossibleLibrary;
-import mods.thecomputerizer.theimpossiblelibrary.util.CustomTick;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class GIF {
@@ -19,6 +17,7 @@ public class GIF {
     private final long delay;
     private final ResourceLocation source;
     private final int glTextureId;
+    private long milliCounter;
     private int frame;
     private long milliStatus;
     private String horizontal;
@@ -28,6 +27,7 @@ public class GIF {
     private float scaleX;
     private float scaleY;
     private long millis;
+    public boolean isFinished;
 
     public GIF(ResourceLocation location) throws IOException {
         this.status = AnimatedGifReader.read(ImageSource.of(Minecraft.getMinecraft().mcDefaultResourcePack.getInputStream(location)));
@@ -36,14 +36,26 @@ public class GIF {
         this.milliStatus = 0;
         this.scaleX = 1f;
         this.scaleY = 1f;
-        if(!CustomTick.isRegistered(this.delay)) CustomTick.addCustomTickEvent(this.delay);
+        this.isFinished = false;
         this.source = location;
         this.glTextureId = TextureUtil.glGenTextures();
     }
 
+    public boolean checkMilli(long millis) {
+        boolean status = true;
+        for(int i=0;i<millis;i++) {
+            if (this.milliCounter <= 0 && status) status = incrementFrame();
+            if (this.milliCounter>0) {
+                this.milliCounter--;
+                this.milliStatus++;
+            }
+        }
+        return status;
+    }
+
     public boolean incrementFrame() {
         this.frame++;
-        this.milliStatus+=this.delay;
+        this.milliCounter = this.delay;
         if(millis<=0) return this.frame<this.status.getFrameCount();
         else if (this.frame>=this.status.getFrameCount()) this.frame = 0;
         return this.milliStatus<=this.millis;

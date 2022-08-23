@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
 import mods.thecomputerizer.theimpossiblelibrary.client.visual.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.common.Files;
 import mods.thecomputerizer.theimpossiblelibrary.test.ClientTest;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nullable;
+import java.io.File;
 
 @Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class TheImpossibleLibrary {

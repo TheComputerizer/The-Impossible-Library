@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.util.Random;
 
 public class Constants {
@@ -12,4 +13,5 @@ public class Constants {
     public static final String DEPENDENCIES = "required-after:mixinbooter";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static final Random RANDOM = new Random();
+    public static final File DATA_DIRECTORY = new File("./impossible_data");
 }
