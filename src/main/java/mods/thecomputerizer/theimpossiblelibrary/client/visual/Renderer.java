@@ -19,6 +19,15 @@ public class Renderer {
     private static final ArrayList<MP4> renderableMp4s = new ArrayList<>();
     private static final ArrayList<PNG> renderablePngs = new ArrayList<>();
 
+    public static PNG initializePng(ResourceLocation location) {
+        try {
+            return new PNG(location);
+        } catch (IOException ex) {
+            TheImpossibleLibrary.logError("Failed to initialize png at resource location "+location,ex);
+        }
+        return null;
+    }
+
     public static MP4 initializeMp4(ResourceLocation location) {
         try {
             return new MP4(location);
