@@ -2,29 +2,27 @@
 
 buildscript {
     repositories {
-        maven { url = "http://maven.minecraftforge.net/" }
+        maven { url = 'https://maven.minecraftforge.net/' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:4.1.10'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'gradle.plugin.com.github.johnrengelman', name: 'shadow', version: '7.1.2'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 
-version = '1.12.2-0.4'
+version = '1.12.2-0.0.1'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
     mappings channel: 'snapshot', version: '20171003-1.12'
@@ -77,9 +75,6 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     //external dependencies
-    shade("com.sksamuel.scrimage:scrimage-core:4.0.31")
-    shade("com.github.zakgof:velvet-video:0.5.2")
-    shade("com.github.zakgof:velvet-video-natives:0.2.8.full")
 
     //mixin
     implementation fg.deobf("curse.maven:mixin-booter-419286:3886235")
@@ -116,9 +111,9 @@ jar {
             "FMLAT": "theimpossiblelibrary_at.cfg",
             "Specification-Title": "theimpossiblelibrary",
             "Specification-Vendor": "the_computerizer",
-            "Specification-Version": "1.12.2-0.4",
+            "Specification-Version": "1.12.2-0.0.1",
             "Implementation-Title": project.name,
-            "Implementation-Version": "1.12.2-0.4",
+            "Implementation-Version": "1.12.2-0.0.1",
             "Implementation-Vendor" :"the_computerizer",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])

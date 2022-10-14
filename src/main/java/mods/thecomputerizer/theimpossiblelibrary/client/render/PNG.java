@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.client.visual;
+package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
