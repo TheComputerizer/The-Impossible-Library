@@ -21,6 +21,10 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public class LogUtil {
 
+    public static ModLogger create(String modid) {
+        return new ModLogger(modid);
+    }
+
     public static void logInternal(Level level, String message, Object ... parameters) {
         Constants.LOGGER.log(level, message, parameters);
     }
