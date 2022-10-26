@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 import mods.thecomputerizer.theimpossiblelibrary.util.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Level;
 import javax.annotation.Nullable;
 import javax.vecmath.Vector2f;
 import java.util.List;
+import java.util.function.Function;
 
 public class RadialButton {
     private final List<String> tooltipLines;
@@ -20,10 +22,12 @@ public class RadialButton {
     private final int b;
     private final int g;
     private final int a;
+    private final Function<GuiScreen, Object> handlerFunction;
     private boolean hover;
     private final Vector2f centerPos;
 
-    public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon, @Nullable String centerText) {
+    public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon, @Nullable String centerText,
+                        Function<GuiScreen, Object> applyClick) {
         this.tooltipLines = tooltipLines;
         this.centerIcon = centerIcon;
         this.centerText = centerText;
@@ -34,6 +38,7 @@ public class RadialButton {
         this.hover = false;
         this.centerPos = new Vector2f(0,0);
         this.centerRadius = 0f;
+        this.handlerFunction = applyClick;
     }
 
     public boolean draw(BufferBuilder builder, Vector2f center, float zLevel, Vector2f radius, float startAngle,
@@ -49,7 +54,6 @@ public class RadialButton {
                                    float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
         float angle2 = startAngle+((index+1)/(float)resolution)*angleDif;
-        LogUtil.logInternal(Level.INFO, "center {} {} angles {} {}",center.x,center.y,angle1,angle2);
         Vector2f pos1In = MathUtil.getVertex(center,radius.x,angle1);
         Vector2f pos2In = MathUtil.getVertex(center,radius.x,angle2);
         Vector2f pos1Out = MathUtil.getVertex(center,radius.y,angle1);
@@ -80,11 +84,16 @@ public class RadialButton {
         return this.tooltipLines;
     }
 
+    @Nullable
+    public Object handleClick(GuiScreen screen) {
+        return this.handlerFunction.apply(screen);
+    }
+
     /*
         This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface
-    public interface CreatorFunction<L, R, S, B> {
-        B apply(L list, @Nullable R icon, @Nullable S text);
+    public interface CreatorFunction<L, R, S, F, B> {
+        B apply(L list, @Nullable R icon, @Nullable S text, F handler);
     }
 }

@@ -14,7 +14,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -60,6 +59,17 @@ public class LogUtil {
         return messageBuilder.toString();
     }
 
+    public static String injectParameters(String message, Object ... parameters) {
+        int index = 0;
+        while(message.contains("{}")) {
+            String replacement = "";
+            if(index<parameters.length) replacement = parameters[index].toString();
+            message = message.replaceFirst("\\{}",replacement);
+            index++;
+        }
+        return message;
+    }
+
     public static void logLevel(Logger LOG, Level level, String message, Object ... parameters) {
         LOG.log(level, message, parameters);
     }
@@ -86,19 +96,8 @@ public class LogUtil {
             return modid;
         }
 
-        private String injectParameters(String message, Object ... parameters) {
-            int index = 0;
-            while(message.contains("{}")) {
-                String replacement = "";
-                if(index<parameters.length) replacement = parameters[index].toString();
-                message = message.replaceFirst("\\{}",replacement);
-                index++;
-            }
-            return message;
-        }
-
         private String formattedTimeStamp(LocalDateTime time) {
-            return injectParameters("[{}:{}:{}:{}]",time.getHour(),time.getMinute(),time.getSecond(), ChronoField.MICRO_OF_SECOND);
+            return injectParameters("[{}:{}:{}:{}]",time.getHour(),time.getMinute(),time.getSecond(), time.getNano()/1000000);
         }
 
         private String formattedLogLevel(Level level) {

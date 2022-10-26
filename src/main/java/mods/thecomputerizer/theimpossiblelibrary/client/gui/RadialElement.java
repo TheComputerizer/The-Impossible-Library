@@ -50,6 +50,14 @@ public class RadialElement extends Gui {
         this.hover = false;
     }
 
+    @Nullable
+    public Object mousePressed(int mouseX, int mouseY, int mouseButton) {
+        if(mouseButton==0 && this.hover)
+            for(RadialButton button : this.buttons)
+                if(button.getHover()) return button.handleClick(this.parentScreen);
+        return null;
+    }
+
     public void render(float zLevel, int mouseX, int mouseY) {
         GlStateManager.pushMatrix();
         GlStateManager.disableAlpha();
@@ -62,14 +70,12 @@ public class RadialElement extends Gui {
         Vector2f mouse = new Vector2f(mouseX,mouseY);
         float numButtons = this.buttons.size();
         if(!this.buttons.isEmpty()) {
-            LogUtil.logInternal(Level.INFO, "not empty");
             int buttonRes = (int)(this.resolution/numButtons);
             int index = 0;
             boolean checkHover = false;
             for (RadialButton button : this.buttons) {
                 float startAngle = (((index - 0.5f) / numButtons) + 0.25f) * 360;
                 float endAngle = (((index + 0.5f) / numButtons) + 0.25f) * 360;
-                LogUtil.logInternal(Level.INFO, "index {} angle dif {} button res {}",index,endAngle-startAngle,buttonRes);
                 if(button.draw(buffer, this.center, zLevel, this.radius, (float)Math.toRadians(startAngle),
                         (float)Math.toRadians(endAngle), mouse, buttonRes))
                     checkHover = true;
