@@ -18,45 +18,8 @@ public class MathUtil {
         Checks whether a given screen position is within the bounds of a circle
         The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius
      */
-    public static boolean isInCircle(Vector2f center, Vector2f pos, Vector2f radius) {
-        double distance = distance(center, pos);
+    public static boolean isInCircle(Vector2f center, double distance, Vector2f radius) {
         return distance>=radius.x && distance<=radius.y;
-    }
-
-    /*
-        Translates the input angles so they are within the bounds of 0 to 2*PI radians
-        The input angles must be in radians
-     */
-    public static Vector2f transformAngleBoundsIfNeeded(float angleStart, float angleEnd) {
-        if(angleStart-angleEnd>=CIRCLE_RADIANS) new Vector2f(0f,(float)CIRCLE_RADIANS);
-        if(angleStart<0) {
-            while (angleStart < 0) {
-                angleStart += CIRCLE_RADIANS;
-                angleEnd += CIRCLE_RADIANS;
-            }
-        }
-        else {
-            while (angleStart > CIRCLE_RADIANS) {
-                angleStart -= CIRCLE_RADIANS;
-                angleEnd -= CIRCLE_RADIANS;
-            }
-        }
-        return new Vector2f(angleStart,angleEnd);
-    }
-
-    /*
-        Helper math for radial gui buttons
-        Checks whether a given screen position is within the bounds of a slice of a circle
-        The input angles must be in radians
-        The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius
-     */
-    public static boolean isInCircleSlice(Vector2f center, Vector2f pos, Vector2f radius, float angleStart, float angleEnd) {
-        if(!isInCircle(center, pos, radius)) return false;
-        float x = center.x-pos.x;
-        float y = center.y-pos.y;
-        double angle = Math.atan(y/x);
-        Vector2f angleVec = transformAngleBoundsIfNeeded(angleStart, angleEnd);
-        return angle>=(angleVec.x+HALF_CIRCLE_RADIANS) && angle<(angleVec.y+HALF_CIRCLE_RADIANS);
     }
 
     /*
@@ -65,6 +28,22 @@ public class MathUtil {
      */
     public static Vector2f getVertex(Vector2f center, float radius, float angle) {
         return new Vector2f(center.x+(radius*(float)Math.cos(angle)),center.y+(radius*(float)Math.sin(angle)));
+    }
+
+    /*
+        returns a vector of the angle bounds of a circle slice given the index of the slice and total number of slices
+     */
+    public static Vector2f makeAngleVector(int index, int numSlices) {
+        float startAngle = (((index - 0.5f) / numSlices) + 0.25f) * 360;
+        float endAngle = (((index + 0.5f) / numSlices) + 0.25f) * 360;
+        return new Vector2f(startAngle,endAngle);
+    }
+
+    /*
+        converts angle bounds stored in a vector as degrees to radians
+     */
+    public static Vector2f toRadians(Vector2f degreeVec) {
+        return new Vector2f((float)Math.toRadians(degreeVec.x),(float)Math.toRadians(degreeVec.y));
     }
 
     /*
@@ -79,5 +58,19 @@ public class MathUtil {
      */
     public static float getHalfway(float start, float end) {
         return start+((end-start)/2f);
+    }
+
+    /*
+        Calculates the center position of a circle give the start and end angles,
+        inner and outer radius, relative center position, and total number of slices
+        Angles must be in degrees
+     */
+    public static Vector2f getCenterPosOfSlice(Vector2f angles, Vector2f radius, Vector2f center, int numSlices) {
+        float centerAngle;
+        if(numSlices>1) centerAngle = (float) Math.toRadians(getHalfway(angles.x,angles.y));
+        else centerAngle = (float)Math.toRadians(90d);
+        float relativeRadius = radius.y-((radius.y-radius.x)*0.4f);
+        return new Vector2f((float) (center.x+relativeRadius*Math.cos(centerAngle)),
+                (float) (center.y+relativeRadius*Math.sin(centerAngle)));
     }
 }

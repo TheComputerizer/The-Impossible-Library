@@ -1,8 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.test.ClientTest;
 import mods.thecomputerizer.theimpossiblelibrary.util.DataUtil;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -10,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
+@SuppressWarnings({"DefaultAnnotationParam", "StatementWithEmptyBody"})
 @Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
 public class TheImpossibleLibrary {
 
@@ -45,10 +48,10 @@ public class TheImpossibleLibrary {
     }
 
     public static void preInitClientTestClass(EventBus bus) {
-        //bus.register(ClientTest.class);
+        bus.register(ClientTest.class);
     }
 
     public static void initClientTestClass() {
-        //ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
+        ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
     }
 }

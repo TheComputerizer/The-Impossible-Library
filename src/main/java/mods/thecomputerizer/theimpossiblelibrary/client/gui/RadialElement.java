@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.GuiUtil;
-import mods.thecomputerizer.theimpossiblelibrary.util.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -11,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -23,7 +21,6 @@ import java.util.stream.Collectors;
 /*
     Creates and renders a generic radial gui element
     Set the inner radius to 0 if you want a full circle to be rendered
-
  */
 public class RadialElement extends Gui {
     private final GuiScreen parentScreen;
@@ -50,11 +47,16 @@ public class RadialElement extends Gui {
         this.hover = false;
     }
 
+    /*
+        This will return null if nothing was successfully clicked on
+     */
     @Nullable
     public Object mousePressed(int mouseX, int mouseY, int mouseButton) {
-        if(mouseButton==0 && this.hover)
-            for(RadialButton button : this.buttons)
-                if(button.getHover()) return button.handleClick(this.parentScreen);
+        if(mouseButton==0 && this.parentScreen!=null) {
+            for (RadialButton button : this.buttons) {
+                return button.handleClick(this.parentScreen);
+            }
+        }
         return null;
     }
 
@@ -68,32 +70,32 @@ public class RadialElement extends Gui {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         Vector2f mouse = new Vector2f(mouseX,mouseY);
+        double mouseAngleDeg = Math.toDegrees(Math.atan2(mouseY - this.center.y, mouseX - this.center.x));
+        double mouseRelativeRadius = Math.sqrt(Math.pow(mouseX - this.center.x, 2) + Math.pow(mouseY - this.center.y, 2));
         float numButtons = this.buttons.size();
+        if(mouseAngleDeg < ((-0.5f/numButtons)+0.25f)*360) mouseAngleDeg += 360;
+        this.hover = MathUtil.isInCircle(this.center,mouseRelativeRadius,this.radius);
         if(!this.buttons.isEmpty()) {
             int buttonRes = (int)(this.resolution/numButtons);
             int index = 0;
             boolean checkHover = false;
             for (RadialButton button : this.buttons) {
-                float startAngle = (((index - 0.5f) / numButtons) + 0.25f) * 360;
-                float endAngle = (((index + 0.5f) / numButtons) + 0.25f) * 360;
-                if(button.draw(buffer, this.center, zLevel, this.radius, (float)Math.toRadians(startAngle),
-                        (float)Math.toRadians(endAngle), mouse, buttonRes))
-                    checkHover = true;
+                Vector2f angles = MathUtil.makeAngleVector(index,(int)numButtons);
+                button.setHover(this.hover,mouseAngleDeg,angles);
+                button.draw(buffer, this.center, zLevel, this.radius, MathUtil.toRadians(angles), mouse,
+                        MathUtil.getCenterPosOfSlice(angles,this.radius,this.center,(int)numButtons),buttonRes);
                 index++;
             }
             this.hover = checkHover;
         } else drawEmpty(buffer, zLevel, mouse);
         tessellator.draw();
-        //buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        //drawIcons(buffer, this.center, this.radius, zLevel, numButtons==1);
-        //tessellator.draw();
+        drawIcons(tessellator, this.center, this.radius, numButtons==1);
+        drawText(mouse,mouseRelativeRadius);
         GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
-        drawText(mouse);
     }
 
     private void drawEmpty(BufferBuilder buffer, float zLevel, Vector2f mouse) {
-        this.hover = MathUtil.isInCircle(mouse,this.center,this.radius);
         float startAngle = (float)Math.toRadians(-0.25f * 360);
         for (int i = 0; i < resolution; i++) {
             float angle1 = (float) Math.toRadians(startAngle + (i/resolution) * MathUtil.CIRCLE_RADIANS);
@@ -107,38 +109,26 @@ public class RadialElement extends Gui {
         }
     }
 
-    private void drawIcons(BufferBuilder buffer, Vector2f center, Vector2f radius, float zLevel, boolean hasOneButton) {
-        if(this.centerIcon!=null) GuiUtil.bufferSquareTexture(buffer,center,radius.x,zLevel,this.centerIcon);
-        //for(RadialButton button : this.buttons) button.drawCenterIcon(buffer,center,radius,zLevel,hasOneButton);
+    private void drawIcons(Tessellator tessellator, Vector2f center, Vector2f radius, boolean hasOneButton) {
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableAlpha();
+        if(this.centerIcon!=null)
+            GuiUtil.bufferSquareTexture(center,radius.y-((radius.y-radius.x)/4),this.centerIcon);
+        for(RadialButton button : this.buttons) button.drawCenterIcon((radius.y-radius.x)/2f);
+        GlStateManager.disableAlpha();
+        GlStateManager.disableTexture2D();
     }
 
-    private boolean isCenterHovering(Vector2f mouse) {
-        return !this.hover && MathUtil.isInCircle(mouse,this.center,new Vector2f(0,this.radius.y));
-    }
-
-    private void drawText(Vector2f mouse) {
-        int color;
-        if(this.centerText!=null) {
-            color = this.hover ? 16777120 : 14737632;
-            this.parentScreen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, this.centerText,
-                    (int)this.center.x, (int)this.center.y, color);
-        }
-        for(RadialButton button : this.buttons) {
-            String text = button.getCenterText();
-            if(text!=null) {
-                Vector2f centerPos = button.getCenterPos();
-                color = button.getHover() ? 16777120 : 14737632;
-                this.parentScreen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, text, (int)centerPos.x,
-                        (int)centerPos.y,color);
+    private void drawText(Vector2f mouse, double mouseRelativeRadius) {
+        if(this.parentScreen!=null) {
+            if (this.centerText != null) {
+                int color = mouseRelativeRadius < this.radius.x ? 16777120 : 14737632;
+                this.parentScreen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, this.centerText,
+                        (int) this.center.x, (int) this.center.y, color);
             }
+            for (RadialButton button : this.buttons) button.drawText(this.parentScreen, mouse);
+            if (mouseRelativeRadius < this.radius.x) parentScreen.drawHoveringText(this.centerTooltips, (int) mouse.x, (int) mouse.y);
         }
-        if(isCenterHovering(mouse) && !this.centerTooltips.isEmpty())
-            parentScreen.drawHoveringText(this.centerTooltips,(int)mouse.x,(int)mouse.y);
-        else
-            for(RadialButton button : this.buttons)
-                if(button.getHover())
-                    parentScreen.drawHoveringText(button.getTooltipLines(),(int)mouse.x,(int)mouse.y);
-
     }
 
     /*

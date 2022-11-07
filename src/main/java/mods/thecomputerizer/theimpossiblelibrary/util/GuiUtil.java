@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import javax.vecmath.Vector2f;
@@ -21,19 +23,14 @@ public class GuiUtil {
     }
 
     /*
-        Pushes a generic texture to a BufferBuilder for rendering via a ResourceLocation
+        Pushes a generic texture for rendering via a ResourceLocation
         Make sure to pass in a valid ResourceLocation since that does not get checked here
-        zLevel can be accessed from any class that extends GuiScreen
      */
-    public static void bufferSquareTexture(BufferBuilder builder, Vector2f center, float radius, float zLevel, ResourceLocation texture) {
+    public static void bufferSquareTexture(Vector2f center, float radius, ResourceLocation texture) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-        Vector2f ver1 = new Vector2f(center.x - (radius / 2f), center.y + (radius / 2f));
-        Vector2f ver2 = new Vector2f(center.x + (radius / 2f), center.y + (radius / 2f));
-        Vector2f ver3 = new Vector2f(center.x + (radius / 2f), center.y - (radius / 2f));
-        Vector2f ver4 = new Vector2f(center.x - (radius / 2f), center.y - (radius / 2f));
-        builder.pos(ver1.x, ver1.y, zLevel).tex(1d, 2d).endVertex();
-        builder.pos(ver2.x, ver2.y, zLevel).tex(2d, 2d).endVertex();
-        builder.pos(ver3.x, ver3.y, zLevel).tex(2d, 1d).endVertex();
-        builder.pos(ver4.x, ver4.y, zLevel).tex(1d, 1d).endVertex();
+        GlStateManager.color(1f, 1f, 1f, 1f);
+        GuiScreen.drawModalRectWithCustomSizedTexture((int) (center.x - radius / 2f), (int) (center.y - radius / 2f),
+                radius, radius, (int) radius, (int) radius, radius, radius);
+        GlStateManager.color(1f, 1f, 1f, 1f);
     }
 }

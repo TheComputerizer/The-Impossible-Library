@@ -1,23 +1,21 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.GuiUtil;
-import mods.thecomputerizer.theimpossiblelibrary.util.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.ResourceLocation;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Vector2f;
 import java.util.List;
 import java.util.function.Function;
 
-public class RadialButton {
+public class RadialButton extends Gui {
     private final List<String> tooltipLines;
     private final ResourceLocation centerIcon;
     private final String centerText;
-    private float centerRadius;
     private final int r;
     private final int b;
     private final int g;
@@ -34,20 +32,17 @@ public class RadialButton {
         this.r = 0;
         this.b = 0;
         this.g = 0;
-        this.a = 0;
+        this.a = 64;
         this.hover = false;
         this.centerPos = new Vector2f(0,0);
-        this.centerRadius = 0f;
         this.handlerFunction = applyClick;
     }
 
-    public boolean draw(BufferBuilder builder, Vector2f center, float zLevel, Vector2f radius, float startAngle,
-                        float endAngle, Vector2f mouse, int resolution) {
-        this.hover = MathUtil.isInCircleSlice(mouse,center,radius,startAngle,endAngle);
+    public void draw(BufferBuilder builder, Vector2f center, float zLevel, Vector2f radius, Vector2f angles,
+                        Vector2f mouse, Vector2f relativeCenter, int resolution) {
+        this.centerPos.set(relativeCenter);
         for (int i = 0; i < resolution; i++)
-            drawRadialSection(builder,center,zLevel,radius,startAngle,endAngle-startAngle,i,resolution);
-        this.centerPos.set(MathUtil.getVertex(center, MathUtil.getHalfway(radius), MathUtil.getHalfway(startAngle,endAngle)));
-        return this.hover;
+            drawRadialSection(builder,center,zLevel,radius,angles.x,angles.y-angles.x,i,resolution);
     }
 
     private void drawRadialSection(BufferBuilder buffer, Vector2f center, float zLevel, Vector2f radius, float startAngle,
@@ -62,31 +57,30 @@ public class RadialButton {
         else GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,this.r,this.g,this.b,this.a);
     }
 
-    public void drawCenterIcon(BufferBuilder buffer, Vector2f center, Vector2f radius, float zLevel, boolean isAlone) {
-        if(isAlone) this.centerPos.set(MathUtil.getVertex(center, MathUtil.getHalfway(radius), (float)Math.toRadians(90d)));
+    public void drawCenterIcon(float centerRadius) {
         if(this.centerIcon!=null)
-            GuiUtil.bufferSquareTexture(buffer,this.centerPos,this.centerRadius,zLevel,this.centerIcon);
+            GuiUtil.bufferSquareTexture(this.centerPos,centerRadius,this.centerIcon);
     }
 
-    public Vector2f getCenterPos() {
-        return this.centerPos;
+    /*
+        The angles are input in degrees here
+     */
+    public void setHover(boolean superHover, double mouseDeg, Vector2f angles) {
+        this.hover = superHover && mouseDeg>=angles.x && mouseDeg<angles.y;
     }
 
-    public String getCenterText() {
-        return this.centerText;
-    }
-
-    public boolean getHover() {
-        return this.hover;
-    }
-
-    public List<String> getTooltipLines() {
-        return this.tooltipLines;
+    public void drawText(GuiScreen parent, Vector2f mouse) {
+        if(this.centerText!=null) {
+            int color = this.hover ? 16777120 : 14737632;
+            drawCenteredString(parent.mc.fontRenderer, this.centerText, (int) this.centerPos.x, (int) this.centerPos.y, color);
+        }
+        if(this.hover) parent.drawHoveringText(this.tooltipLines, (int) mouse.x, (int) mouse.y);
     }
 
     @Nullable
     public Object handleClick(GuiScreen screen) {
-        return this.handlerFunction.apply(screen);
+        if(this.hover) return this.handlerFunction.apply(screen);
+        return null;
     }
 
     /*
