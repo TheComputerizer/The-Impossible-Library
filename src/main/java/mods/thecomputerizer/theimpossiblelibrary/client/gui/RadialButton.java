@@ -2,9 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -16,13 +19,13 @@ public class RadialButton extends Gui {
     private final List<String> tooltipLines;
     private final ResourceLocation centerIcon;
     private final String centerText;
-    private final int r;
-    private final int b;
-    private final int g;
-    private final int a;
     private final Function<GuiScreen, Object> handlerFunction;
-    private boolean hover;
     private final Vector2f centerPos;
+    private int r;
+    private int b;
+    private int g;
+    private int a;
+    private boolean hover;
 
     public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon, @Nullable String centerText,
                         Function<GuiScreen, Object> applyClick) {
@@ -36,6 +39,13 @@ public class RadialButton extends Gui {
         this.hover = false;
         this.centerPos = new Vector2f(0,0);
         this.handlerFunction = applyClick;
+    }
+
+    public void cetColor(int r, int b, int g, int a) {
+        this.r = r;
+        this.b = b;
+        this.g = g;
+        this.a = a;
     }
 
     public void draw(BufferBuilder builder, Vector2f center, float zLevel, Vector2f radius, Vector2f angles,
@@ -53,8 +63,10 @@ public class RadialButton extends Gui {
         Vector2f pos2In = MathUtil.getVertex(center,radius.x,angle2);
         Vector2f pos1Out = MathUtil.getVertex(center,radius.y,angle1);
         Vector2f pos2Out = MathUtil.getVertex(center,radius.y,angle2);
-        if(this.hover) GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,255,255,255,this.a);
-        else GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,this.r,this.g,this.b,this.a);
+        if(this.hover)
+            GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,Math.abs(this.r-255),Math.abs(this.r-255),Math.abs(this.r-255),this.a);
+        else
+            GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,this.r,this.g,this.b,this.a);
     }
 
     public void drawCenterIcon(float centerRadius) {
@@ -79,8 +91,15 @@ public class RadialButton extends Gui {
 
     @Nullable
     public Object handleClick(GuiScreen screen) {
-        if(this.hover) return this.handlerFunction.apply(screen);
+        if(this.hover) {
+            playPressSound(screen.mc.getSoundHandler());
+            return this.handlerFunction.apply(screen);
+        }
         return null;
+    }
+
+    protected void playPressSound(SoundHandler handler) {
+        handler.playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     /*

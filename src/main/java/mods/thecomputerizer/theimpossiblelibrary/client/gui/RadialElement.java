@@ -52,12 +52,14 @@ public class RadialElement extends Gui {
      */
     @Nullable
     public Object mousePressed(int mouseX, int mouseY, int mouseButton) {
+        Object ret = null;
         if(mouseButton==0 && this.parentScreen!=null) {
             for (RadialButton button : this.buttons) {
-                return button.handleClick(this.parentScreen);
+                ret = button.handleClick(this.parentScreen);
+                if(ret!=null) break;
             }
         }
-        return null;
+        return ret;
     }
 
     public void render(float zLevel, int mouseX, int mouseY) {
@@ -113,7 +115,7 @@ public class RadialElement extends Gui {
         GlStateManager.enableTexture2D();
         GlStateManager.enableAlpha();
         if(this.centerIcon!=null)
-            GuiUtil.bufferSquareTexture(center,radius.y-((radius.y-radius.x)/4),this.centerIcon);
+            GuiUtil.bufferSquareTexture(center,radius.x*2,this.centerIcon);
         for(RadialButton button : this.buttons) button.drawCenterIcon((radius.y-radius.x)/2f);
         GlStateManager.disableAlpha();
         GlStateManager.disableTexture2D();

@@ -15,16 +15,16 @@ import java.util.stream.Stream;
 public class DataUtil {
     private static boolean GLOBAL_LOAD_FAILED = false;
     private static boolean WORLD_LOAD_FAILED = false;
-    private static final List<String> explanation = Stream.of("Hi!",
-            "This folder is used to store data used by The Impossible Library and other mods that might use it as a dependency",
-            "--------------------------------------------------",
-            "For mod developers:",
-            "",
-            "--------------------------------------------------",
+    private static final List<String> explanation = Stream.of("Hi!\n",
+            "This folder is used to store data used by The Impossible Library and other mods that might use it as a dependency\n",
+            "--------------------------------------------------\n",
+            "For mod developers:\n",
+            "\n",
+            "--------------------------------------------------\n",
             "For modpack creators:",
-            "",
-            "--------------------------------------------------",
-            "For players:",
+            "\n",
+            "--------------------------------------------------\n",
+            "For players:\n",
             "").collect(Collectors.toList());
 
     public static void initGlobal() {
