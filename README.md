@@ -5,13 +5,14 @@ This mod was made to offer mod devs methods for doing things that are typically 
 
 Of course when doing the impossible it has to be done efficiently, so that is the second focus. If you see something that does not look good, or you have a suggestion/addition to the library, feel free to let me know and/or make a PR!
 
+Once I have a decent amount finished for the library I will be making a wiki to help explain exactly how to use the features present in the library!
+
 Some current features
 - File creation and manipulation
 - Generic image rendering to the screen
 - Global nbt data storage and retrieval
-
-Some WIP/partially implemented features
-- Support for radial gui elements
+- Support for radial gui elements and some helper methods regarding that
+- Custom async tick events able set by millisecond
 
 Some planned features
 - RGB shenanigans
@@ -38,4 +39,4 @@ dependencies {
   implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
 }
 ```
-The file ID for the latest version of `0.2` is `3939939`
+The file ID for the latest version of `0.1.0` is `4074735`
