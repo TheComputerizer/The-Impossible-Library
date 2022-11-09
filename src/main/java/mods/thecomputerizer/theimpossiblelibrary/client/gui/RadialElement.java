@@ -157,7 +157,7 @@ public class RadialElement extends Gui {
         This is included if you wanted to be able to assign a radial element to a static object and create it later
      */
     @FunctionalInterface
-    public interface CreatorFunction<G, R, I, S, T, K, B, C> {
-        C apply(@Nullable G parent, @Nullable R icon, I location, @Nullable S text, T tooltips, K res, B buttons);
+    public interface CreatorFunction<G, R, I, P, S, T, K, B, C> {
+        C apply(@Nullable G parent, @Nullable R icon, @Nullable P progress, I location, @Nullable S text, T tooltips, K res, B buttons);
     }
 }
