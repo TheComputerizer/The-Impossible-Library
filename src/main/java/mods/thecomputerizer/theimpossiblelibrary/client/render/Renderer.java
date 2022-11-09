@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.util.LogUtil;
+import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

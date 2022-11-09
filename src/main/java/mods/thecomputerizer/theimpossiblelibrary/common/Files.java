@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.util.LogUtil;
+import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;

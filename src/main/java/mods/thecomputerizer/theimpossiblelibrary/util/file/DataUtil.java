@@ -1,7 +1,8 @@
-package mods.thecomputerizer.theimpossiblelibrary.util;
+package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.common.Files;
+import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.logging.log4j.Level;

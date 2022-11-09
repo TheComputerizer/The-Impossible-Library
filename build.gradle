@@ -64,8 +64,6 @@ sourceSets {
 }
 
 configurations {
-    embed
-    compile.extendsFrom(embed)
     shade
     implementation.extendsFrom(shade)
     shadow.extendsFrom shade
@@ -75,6 +73,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     //external dependencies
+    shade("com.moandjiezana.toml:toml4j:0.7.2") { exclude group: 'com.google.code.gson', module: 'gson' } //for toml files
 
     //mixin
     implementation fg.deobf("curse.maven:mixin-booter-419286:3886235")

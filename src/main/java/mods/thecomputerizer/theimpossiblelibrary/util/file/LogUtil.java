@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.util;
+package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.common.Files;
