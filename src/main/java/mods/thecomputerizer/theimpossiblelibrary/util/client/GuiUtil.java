@@ -47,4 +47,11 @@ public class GuiUtil {
     public static Point4i reverseColors(Tuple4i colors) {
         return new Point4i(Math.abs(colors.x-255), Math.abs(colors.y-255), Math.abs(colors.z-255), colors.w);
     }
+
+    /*
+        Converts a color tuple into a single integer
+     */
+    public static int makeRGBAInt(Tuple4i colors) {
+        return (colors.x<<24)+(colors.y<<16)+(colors.z<<8)+colors.w;
+    }
 }

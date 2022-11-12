@@ -85,25 +85,26 @@ public class RadialElement extends Gui {
         double mouseRelativeRadius = Math.sqrt(Math.pow(mouseX - this.center.x, 2) + Math.pow(mouseY - this.center.y, 2));
         float numButtons = this.buttons.size();
         if(mouseAngleDeg < ((-0.5f/numButtons)+0.25f)*360) mouseAngleDeg += 360;
-        this.centerHover = MathUtil.isInCircle(this.center,mouseRelativeRadius,this.radius.x);
-        if(!this.centerHover) this.hover = MathUtil.isInCircle(this.center,mouseRelativeRadius,this.radius);
+        boolean currentScreen = Minecraft.getMinecraft().currentScreen == this.parentScreen;
+        if(currentScreen) {
+            this.centerHover = MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x);
+            if (!this.centerHover) this.hover = MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius);
+        }
         if(!this.buttons.isEmpty()) {
             int buttonRes = (int)(this.resolution/numButtons);
             int index = 0;
-            boolean checkHover = false;
             for (RadialButton button : this.buttons) {
                 Point2f angles = MathUtil.makeAngleTuple(index,(int)numButtons);
-                button.setHover(this.hover,mouseAngleDeg,angles);
+                if(currentScreen) button.setHover(this.hover,mouseAngleDeg,angles);
                 button.draw(builder, this.center, zLevel, this.radius, MathUtil.toRadians(angles), mouse,
                         MathUtil.getCenterPosOfSlice(angles,this.radius,this.center,(int)numButtons),buttonRes);
                 index++;
             }
-            this.hover = checkHover;
         } else drawEmpty(builder, zLevel, mouse);
         tessellator.draw();
         drawCenterProgress(tessellator,this.center);
         drawIcons(this.center, this.radius, numButtons==1);
-        drawText(mouse,mouseRelativeRadius);
+        drawText(mouse,mouseRelativeRadius, currentScreen);
         GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
     }
@@ -141,15 +142,15 @@ public class RadialElement extends Gui {
         }
     }
 
-    private void drawText(Point2i mouse, double mouseRelativeRadius) {
+    private void drawText(Point2i mouse, double mouseRelativeRadius, boolean isCurrent) {
         if(this.parentScreen!=null) {
             if (this.centerText != null) {
                 int color = this.centerHover ? 16777120 : 14737632;
                 this.parentScreen.drawCenteredString(Minecraft.getMinecraft().fontRenderer, this.centerText,
                         this.center.x, this.center.y, color);
             }
-            for (RadialButton button : this.buttons) button.drawText(this.parentScreen, mouse);
-            if (this.centerHover) parentScreen.drawHoveringText(this.centerTooltips, mouse.x, mouse.y);
+            for (RadialButton button : this.buttons) button.drawText(this.parentScreen, mouse, isCurrent);
+            if (this.centerHover && isCurrent) parentScreen.drawHoveringText(this.centerTooltips, mouse.x, mouse.y);
         }
     }
 

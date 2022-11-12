@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import mods.thecomputerizer.theimpossiblelibrary.common.Files;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.apache.logging.log4j.Level;
@@ -80,7 +79,7 @@ public class LogUtil {
 
         private ModLogger(String modid) {
             try {
-                File logFile = Files.generateNestedFile(injectParameters("./logs/mods/{}.log",modid),true);
+                File logFile = FileUtil.generateNestedFile(injectParameters("./logs/mods/{}.log",modid),true);
                 this.writer = new OutputStreamWriter(java.nio.file.Files.newOutputStream(Paths.get(logFile.toURI())), StandardCharsets.UTF_8);
                 this.logName = getModName(modid);
             } catch (Exception e) {

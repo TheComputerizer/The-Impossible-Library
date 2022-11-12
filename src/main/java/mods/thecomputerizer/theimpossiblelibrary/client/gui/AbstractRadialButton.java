@@ -27,6 +27,10 @@ public abstract class AbstractRadialButton extends Gui {
         this.colors.set(r, b, g, a);
     }
 
+    public Point2i getCenterPos() {
+        return this.centerPos;
+    }
+
     protected void drawRadialSection(BufferBuilder buffer, Point2i center, float zLevel, Point2i radius, float startAngle,
                                    float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;

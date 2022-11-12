@@ -1,13 +1,12 @@
-package mods.thecomputerizer.theimpossiblelibrary.common;
+package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
-import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
-public class Files {
+public class FileUtil {
 
     public static File generateNestedFile(String path, boolean overrideExisting) {
         return generateNestedFile(new File(path), overrideExisting);

@@ -1,8 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import mods.thecomputerizer.theimpossiblelibrary.common.Files;
-import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.logging.log4j.Level;
@@ -30,7 +28,7 @@ public class DataUtil {
 
     public static void initGlobal() {
         try {
-            writeExplanation(Files.generateNestedFile("./impossible_data/what_is_this_folder.txt",false));
+            writeExplanation(FileUtil.generateNestedFile("./impossible_data/what_is_this_folder.txt",false));
         } catch (IOException e) {
             LogUtil.logInternal(Level.ERROR, "There was an error generating the data folder or explanation file");
             GLOBAL_LOAD_FAILED = true;
@@ -38,7 +36,7 @@ public class DataUtil {
     }
 
     private static void writeExplanation(File file) throws IOException {
-        if(file!=null) Files.writeLinesToFile(file,explanation,false);
+        if(file!=null) FileUtil.writeLinesToFile(file,explanation,false);
         else throw new IOException("Failed to create file");
     }
 
@@ -64,7 +62,7 @@ public class DataUtil {
 
     private static void writeFileData(NBTTagCompound data, File directory, String modid) throws IOException {
         File dataFile = new File(directory, modid + ".dat");
-        dataFile = Files.generateNestedFile(dataFile,true);
+        dataFile = FileUtil.generateNestedFile(dataFile,true);
         if (dataFile != null) CompressedStreamTools.write(data, dataFile);
         else LogUtil.logInternal(Level.ERROR,"Could not write data for {} due to an error in creating the file",modid);
     }
@@ -73,7 +71,7 @@ public class DataUtil {
         File dataFile = new File(directory, modid + ".dat");
         if (dataFile.exists()) return CompressedStreamTools.read(dataFile);
         if (createIfAbsent) {
-            dataFile = Files.generateNestedFile(dataFile,false);
+            dataFile = FileUtil.generateNestedFile(dataFile,false);
             if (dataFile != null) return CompressedStreamTools.read(dataFile);
         }
         return null;

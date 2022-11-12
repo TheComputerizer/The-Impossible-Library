@@ -43,12 +43,12 @@ public class RadialButton extends AbstractRadialButton {
             GuiUtil.bufferSquareTexture(this.centerPos,centerRadius,this.centerIcon);
     }
 
-    public void drawText(GuiScreen parent, Point2i mouse) {
+    public void drawText(GuiScreen parent, Point2i mouse, boolean isCurrent) {
         if(this.centerText!=null) {
             int color = this.hover ? 16777120 : 14737632;
             drawCenteredString(parent.mc.fontRenderer, this.centerText, this.centerPos.x, this.centerPos.y, color);
         }
-        if(this.hover) parent.drawHoveringText(this.tooltipLines, mouse.x, mouse.y);
+        if(this.hover && isCurrent) parent.drawHoveringText(this.tooltipLines, mouse.x, mouse.y);
     }
 
     public void handleClick(GuiScreen screen) {
