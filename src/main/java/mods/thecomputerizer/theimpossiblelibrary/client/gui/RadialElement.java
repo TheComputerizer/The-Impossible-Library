@@ -18,6 +18,7 @@ import javax.vecmath.Point2i;
 import javax.vecmath.Point4i;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /*
@@ -28,36 +29,50 @@ public class RadialElement extends Gui {
     private final GuiScreen parentScreen;
     private final List<RadialButton> buttons;
     private final ResourceLocation centerIcon;
+    private final ResourceLocation altCenterIcon;
+    private final int iconRadius;
     private final RadialProgressBar centerProgress;
     private final List<String> centerTooltips;
     private final String centerText;
     private final float resolution;
+    private final float iconHoverSizeIncrease;
     private final Point2i center;
     private final Point2i radius;
     private boolean hover;
     private boolean centerHover;
 
-    public RadialElement(GuiScreen parent, @Nullable ResourceLocation center, @Nullable RadialProgressBar centerProgress,
-                         int centerX, int centerY, int radiusIn, int radiusOut, @Nullable String centerText, List<String>
-                                 centerTooltips, float resolution, RadialButton ... buttons) {
-        this(parent,center,centerProgress,centerX,centerY,radiusIn,radiusOut,centerText,centerTooltips,resolution,
-                Arrays.stream(buttons).collect(Collectors.toList()));
+    public RadialElement(GuiScreen parent, @Nullable ResourceLocation center, @Nullable ResourceLocation altCenter,
+                         @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
+                         int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
+                         float resolution, float hoverIncrease, RadialButton ... buttons) {
+        this(parent,center,altCenter,centerProgress,centerX,centerY,radiusIn,radiusOut,iconRadius,centerText,
+                centerTooltips,resolution,hoverIncrease, Arrays.stream(buttons).collect(Collectors.toList()));
     }
 
-    public RadialElement(GuiScreen parent, @Nullable ResourceLocation center, @Nullable RadialProgressBar centerProgress,
-                         int centerX, int centerY, int radiusIn, int radiusOut, @Nullable String centerText, List<String>
-                                 centerTooltips, float resolution, List<RadialButton> buttons) {
+    public RadialElement(GuiScreen parent, @Nullable ResourceLocation center, @Nullable ResourceLocation altCenter,
+                         @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
+                         int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
+                         float resolution, float hoverIncrease, List<RadialButton> buttons) {
         this.parentScreen = parent;
         this.buttons = buttons;
         this.centerTooltips = centerTooltips;
         this.centerIcon = center;
+        this.altCenterIcon = Objects.isNull(altCenter) ? center : altCenter;
+        this.iconRadius = iconRadius;
         this.centerProgress = centerProgress;
         this.centerText = centerText;
         this.resolution = resolution;
+        this.iconHoverSizeIncrease = hoverIncrease;
         this.center = new Point2i(centerX,centerY);
         this.radius = new Point2i(radiusIn,radiusOut);
         this.hover = false;
         this.centerHover = false;
+    }
+
+    protected boolean calculateCenterHover(double mouseRelativeRadius) {
+        if(this.centerIcon!=null) return mouseRelativeRadius<=this.iconRadius;
+        else if(this.centerProgress!=null) return this.centerProgress.getHover();
+        return MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x);
     }
 
     /*
@@ -87,9 +102,10 @@ public class RadialElement extends Gui {
         if(mouseAngleDeg < ((-0.5f/numButtons)+0.25f)*360) mouseAngleDeg += 360;
         boolean currentScreen = Minecraft.getMinecraft().currentScreen == this.parentScreen;
         if(currentScreen) {
-            this.centerHover = MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x);
+            this.centerHover = calculateCenterHover(mouseRelativeRadius);
             if (!this.centerHover) this.hover = MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius);
-        }
+            else this.hover = false;
+        } else this.centerHover = false;
         if(!this.buttons.isEmpty()) {
             int buttonRes = (int)(this.resolution/numButtons);
             int index = 0;
@@ -102,7 +118,7 @@ public class RadialElement extends Gui {
             }
         } else drawEmpty(builder, zLevel, mouse);
         tessellator.draw();
-        drawCenterProgress(tessellator,this.center);
+        drawCenterProgress(tessellator,this.center,currentScreen);
         drawIcons(this.center, this.radius, numButtons==1);
         drawText(mouse,mouseRelativeRadius, currentScreen);
         GlStateManager.enableTexture2D();
@@ -126,17 +142,25 @@ public class RadialElement extends Gui {
     private void drawIcons(Point2i center, Point2i radius, boolean hasOneButton) {
         GlStateManager.enableTexture2D();
         GlStateManager.enableAlpha();
-        if(this.centerIcon!=null)
-            GuiUtil.bufferSquareTexture(center,radius.x*2,this.centerIcon);
+        if(this.centerIcon!=null) {
+            ResourceLocation actualIcon = this.centerIcon;
+            int hoverIncrease = 0;
+            if(this.centerHover) {
+                actualIcon = this.altCenterIcon;
+                hoverIncrease = (int)(((float)this.iconRadius)*this.iconHoverSizeIncrease*2f);
+            }
+            GuiUtil.bufferSquareTexture(center, (this.iconRadius*2)+hoverIncrease, actualIcon);
+        }
         for(RadialButton button : this.buttons) button.drawCenterIcon((radius.y-radius.x)/2f);
         GlStateManager.disableAlpha();
         GlStateManager.disableTexture2D();
     }
 
-    private void drawCenterProgress(Tessellator tessellator, Point2i center) {
+    private void drawCenterProgress(Tessellator tessellator, Point2i center, boolean currentScreen) {
         if(this.centerProgress!=null) {
             tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-            this.centerProgress.setHover(this.centerHover);
+            if(currentScreen) this.centerProgress.setHover(this.centerHover);
+            else this.centerProgress.setHover(false);
             this.centerProgress.draw(tessellator.getBuffer(),this.center,this.zLevel);
             tessellator.draw();
         }
@@ -158,7 +182,8 @@ public class RadialElement extends Gui {
         This is included if you wanted to be able to assign a radial element to a static object and create it later
      */
     @FunctionalInterface
-    public interface CreatorFunction<G, R, I, P, S, T, K, B, C> {
-        C apply(@Nullable G parent, @Nullable R icon, @Nullable P progress, I location, @Nullable S text, T tooltips, K res, B buttons);
+    public interface CreatorFunction<P,C,AC,B,X,Y,I,O,IR,T,CT,R,HI,RB,E> {
+        E apply(P parent, @Nullable C center, @Nullable AC altCenter, @Nullable B bar, X x, Y y, I in, O out, IR iconRad,
+                @Nullable T text, CT tooltips, R res, HI hovInc, RB buttons);
     }
 }

@@ -84,7 +84,7 @@ public class MathUtil {
         float centerAngle;
         if(numSlices>1) centerAngle = (float) Math.toRadians(getHalfway(angles.x,angles.y));
         else centerAngle = (float)Math.toRadians(90d);
-        float relativeRadius = radius.y-((radius.y-radius.x)*0.4f);
+        float relativeRadius = radius.y-((radius.y-radius.x)*0.5f);
         return new Point2i((int) (center.x+relativeRadius*Math.cos(centerAngle)),
                 (int) (center.y+relativeRadius*Math.sin(centerAngle)));
     }

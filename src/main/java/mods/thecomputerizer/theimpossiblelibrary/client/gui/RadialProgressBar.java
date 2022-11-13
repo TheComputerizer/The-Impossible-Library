@@ -1,10 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
-import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.vecmath.Point2f;
@@ -45,6 +43,10 @@ public class RadialProgressBar extends AbstractRadialButton {
         float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y - this.centerPos.y, mousePos.x - this.centerPos.x));
         if(mouseAngleDeg<0) mouseAngleDeg = 360f+mouseAngleDeg;
         return mouseAngleDeg/360f;
+    }
+
+    public boolean getHover() {
+        return this.hover;
     }
 
     /*

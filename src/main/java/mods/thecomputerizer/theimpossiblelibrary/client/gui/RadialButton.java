@@ -10,20 +10,26 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Point2i;
 import javax.vecmath.Point4i;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class RadialButton extends AbstractRadialButton {
     private final List<String> tooltipLines;
     private final ResourceLocation centerIcon;
+    private final ResourceLocation altCenterIcon;
+    private final float iconHoverSizeIncrease;
     private final String centerText;
     private final BiConsumer<GuiScreen, RadialButton> handlerFunction;
 
-    public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon, @Nullable String centerText,
+    public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon,
+                        @Nullable ResourceLocation altCenterIcon, float hoverIncrease, @Nullable String centerText,
                         BiConsumer<GuiScreen, RadialButton> onClick) {
-        super(new Point4i(0,0,0,64));
+        super(new Point4i(0,0,0,255));
         this.handlerFunction = onClick;
         this.tooltipLines = tooltipLines;
         this.centerIcon = centerIcon;
+        this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
+        this.iconHoverSizeIncrease = hoverIncrease;
         this.centerText = centerText;
     }
 
@@ -39,8 +45,15 @@ public class RadialButton extends AbstractRadialButton {
     }
 
     public void drawCenterIcon(float centerRadius) {
-        if(this.centerIcon!=null)
-            GuiUtil.bufferSquareTexture(this.centerPos,centerRadius,this.centerIcon);
+        if(this.centerIcon!=null) {
+            ResourceLocation actualIcon = this.centerIcon;
+            float hoverIncrease = 0f;
+            if(this.hover) {
+                actualIcon = this.altCenterIcon;
+                hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
+            }
+            GuiUtil.bufferSquareTexture(this.centerPos, centerRadius+hoverIncrease, actualIcon);
+        }
     }
 
     public void drawText(GuiScreen parent, Point2i mouse, boolean isCurrent) {
@@ -62,7 +75,7 @@ public class RadialButton extends AbstractRadialButton {
         This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface
-    public interface CreatorFunction<L, R, S, F, B> {
-        B apply(L list, @Nullable R icon, @Nullable S text, F handler);
+    public interface CreatorFunction<L, R, AR, HI, S, F, B> {
+        B apply(L list, @Nullable R icon, @Nullable AR altIcon, HI hovInc, @Nullable S text, F handler);
     }
 }
