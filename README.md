@@ -39,4 +39,4 @@ dependencies {
   implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
 }
 ```
-The file ID for the latest version of `0.1.2` is `4083235`
+The file ID for the latest version of `0.1.3` is `4085411`
