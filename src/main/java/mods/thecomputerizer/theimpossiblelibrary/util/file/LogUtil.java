@@ -95,8 +95,18 @@ public class LogUtil {
             return modid;
         }
 
+        private String formattedMilli(int milli) {
+            if(milli<10) return "00"+milli;
+            if(milli<100) return "0"+milli;
+            return ""+milli;
+        }
+
         private String formattedTimeStamp(LocalDateTime time) {
-            return injectParameters("[{}:{}:{}:{}]",time.getHour(),time.getMinute(),time.getSecond(), time.getNano()/1000000);
+            int hour = time.getHour();
+            int minute = time.getMinute();
+            int second = time.getSecond();
+            return injectParameters("[{}:{}:{}:{}]",hour<10 ? "0"+hour : hour,minute<10 ? "0"+minute : minute,
+                    second<10 ? "0"+second : second, formattedMilli(time.getNano()/1000000));
         }
 
         private String formattedLogLevel(Level level) {
