@@ -110,7 +110,8 @@ public class LogUtil {
         }
 
         private String formattedLogLevel(Level level) {
-            return injectParameters("[{}/{}]",this.logName,level.name());
+            return injectParameters("[{}/{}]",this.logName,
+                    level.name().length()<5 ? level.name()+" " : level.name());
         }
 
         private String finalizeMessage(Level level, String constructedMessage) {
