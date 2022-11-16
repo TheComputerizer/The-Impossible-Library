@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
-import mods.thecomputerizer.theimpossiblelibrary.test.ClientTest;
+import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -27,7 +27,7 @@ public class TheImpossibleLibrary {
         EventBus bus = MinecraftForge.EVENT_BUS;
         if(e.getSide()==Side.CLIENT) {
             bus.register(Renderer.class);
-            //preInitClientTestClass(bus);
+            preInitClientTestClass(bus);
         }
     }
 
@@ -35,7 +35,7 @@ public class TheImpossibleLibrary {
     public void init(FMLInitializationEvent e) {
         //keybindings and other less important stuff can go here
         if(e.getSide()==Side.CLIENT) {
-            //initClientTestClass();
+            initClientTestClass();
         }
     }
 

@@ -1,55 +1,48 @@
-package mods.thecomputerizer.theimpossiblelibrary.test;
+package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialButton;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
+import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Keyboard;
 
+import javax.annotation.Nonnull;
+import javax.vecmath.Point2i;
+import javax.vecmath.Point4i;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings({"unused"})
-public class ClientTest {
+public class GuiTestClasses {
 
-    public static final KeyBinding TEST_KEYBIND = new KeyBinding("key.test", Keyboard.KEY_R, "key.categories.theimpossiblelibrary");
-
-    @SubscribeEvent
-    public static void onKeyInput(InputEvent.KeyInputEvent e) {
-        if (TEST_KEYBIND.isKeyDown()) {
-            //render testing
-            Minecraft.getMinecraft().displayGuiScreen(createTestGui(false));
-        }
+    public static TestOtherGui createTestOtherGui() {
+        return new TestOtherGui(null);
     }
 
-    private static TestGui createTestGui(boolean alt) {
-        return new TestGui(null,alt);
+    public static TestRadialGui createTestRadialGui(boolean alt) {
+        return new TestRadialGui(null,alt);
     }
 
-    private static RadialElement getInitialTest(TestGui parent, int[] loc) {
-        return new RadialElement(parent,getTestIcon("mt2",false,true),null,getTestProgressBar(),
+    private static RadialElement getFirstRadialElement(TestRadialGui parent, int[] loc) {
+        return new RadialElement(parent,getTestIcon("mt2",false,true),null, getTestRadialProgressBar(),
                 loc[0],loc[1],loc[2],loc[3],(int)(((float)loc[2])/2f),null,
-                Arrays.asList("Center Hover test1","Center Hover test2"),100f,0.1f,getTestButtons());
+                Arrays.asList("Center Hover test1","Center Hover test2"),100f,0.1f, getTestRadialButtons());
     }
 
-    private static RadialElement getAltTest(TestGui parent, int[] loc) {
-        return new RadialElement(parent,getTestIcon("mt2",false,true),null,getTestProgressBar(),
+    private static RadialElement getSecondRadialElement(TestRadialGui parent, int[] loc) {
+        return new RadialElement(parent,getTestIcon("mt2",false,true),null, getTestRadialProgressBar(),
                 loc[0],loc[1],loc[2],loc[3],(int)(((float)loc[2])/2f),null,
-                Arrays.asList("Center Hover test1","Center Hover test2"),100f,0.1f,getTestAltButtons());
+                Arrays.asList("Center Hover test1","Center Hover test2"),100f,0.1f, getTestAltRadialButtons());
     }
 
-    private static RadialProgressBar getTestProgressBar() {
+    private static RadialProgressBar getTestRadialProgressBar() {
         return new RadialProgressBar(0,25,0f,100,
                 (screen, button, mousePos) -> button.setProgress(button.mousePosToProgress(mousePos)));
     }
 
-    private static List<RadialButton> getTestButtons() {
+    private static List<RadialButton> getTestRadialButtons() {
         return Arrays.asList(new RadialButton(Arrays.asList("hover1-1","hover1-2"),
                         getTestIcon("log",false,false),getTestIcon("log",true,false),
                         0.25f,null,(screen, button) ->
@@ -61,14 +54,14 @@ public class ClientTest {
                 new RadialButton(Arrays.asList("hover3-1","hover3-2"),
                         getTestIcon("edit",false,false),getTestIcon("edit",true,false),
                         0.25f,null,(screen, button) ->
-                        Minecraft.getMinecraft().displayGuiScreen(createTestGui(true))),
+                        Minecraft.getMinecraft().displayGuiScreen(createTestRadialGui(true))),
                 new RadialButton(Arrays.asList("hover4-1","hover4-2"),
                         getTestIcon("reset",false,false),getTestIcon("reset",true,false),
                         0.25f,null,(screen, button) ->
-                        Minecraft.getMinecraft().displayGuiScreen(createTestGui(true))));
+                        Minecraft.getMinecraft().displayGuiScreen(createTestRadialGui(true))));
     }
 
-    private static List<RadialButton> getTestAltButtons() {
+    private static List<RadialButton> getTestAltRadialButtons() {
         return Arrays.asList(new RadialButton(Arrays.asList("hover1-1","hover1-2"),
                         getTestIcon("main",false,false),getTestIcon("main",true,false),
                         0.25f,null,(screen, button) ->
@@ -80,11 +73,11 @@ public class ClientTest {
                 new RadialButton(Arrays.asList("hover3-1","hover3-2"),
                         getTestIcon("command",false,false),getTestIcon("command",true,false),
                         0.25f,null,(screen, button) ->
-                        Minecraft.getMinecraft().displayGuiScreen(createTestGui(true))),
+                        Minecraft.getMinecraft().displayGuiScreen(createTestRadialGui(true))),
                 new RadialButton(Arrays.asList("hover4-1","hover4-2"),
                         getTestIcon("toggle",false,false),getTestIcon("toggle",true,false),
                         0.25f,null,(screen, button) ->
-                        Minecraft.getMinecraft().displayGuiScreen(createTestGui(true))));
+                        Minecraft.getMinecraft().displayGuiScreen(createTestRadialGui(true))));
     }
 
     private static ResourceLocation getTestIcon(String name, boolean hover, boolean center) {
@@ -96,26 +89,19 @@ public class ClientTest {
         }
     }
 
-    private static class TestGui extends GuiScreen {
+    private static abstract class TestGui extends GuiScreen {
+
         protected final GuiScreen parent;
-        protected RadialElement circleButton;
-        private final boolean alt;
-        private int buttonIDCounter;
+        protected Point2i center;
 
-        public TestGui(GuiScreen parent, boolean alt) {
+        public TestGui(GuiScreen parent) {
             this.parent = parent;
-            this.alt = alt;
-        }
-
-        private int[] setCenterCircle() {
-            return new int[]{(int) (((float) this.width) / 2f), (int) (((float) this.height) / 2f), 50, 100};
         }
 
         @Override
-        public void initGui() {
-            super.initGui();
-            if (this.alt) this.circleButton = getInitialTest(this, setCenterCircle());
-            else this.circleButton = getAltTest(this, setCenterCircle());
+        public void setWorldAndResolution(@Nonnull Minecraft mc, int width, int height) {
+            super.setWorldAndResolution(mc, width, height);
+            this.center = new Point2i((int) (((float) this.width) / 2f), (int) (((float) this.height) / 2f));
         }
 
         @Override
@@ -130,13 +116,51 @@ public class ClientTest {
             super.drawScreen(mouseX, mouseY, partialTicks);
         }
 
+        public abstract void drawStuff(int mouseX, int mouseY, float partialTicks);
+    }
+
+    private static class TestRadialGui extends TestGui {
+        protected RadialElement circleButton;
+        private final boolean alt;
+        private int buttonIDCounter;
+
+        public TestRadialGui(GuiScreen parent, boolean alt) {
+            super(parent);
+            this.alt = alt;
+        }
+
+        private int[] setCenterCircle() {
+            return new int[]{this.center.x, this.center.y, 50, 100};
+        }
+
+        @Override
+        public void initGui() {
+            super.initGui();
+            if (this.alt) this.circleButton = getFirstRadialElement(this, setCenterCircle());
+            else this.circleButton = getSecondRadialElement(this, setCenterCircle());
+        }
+
         @Override
         protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
             circleButton.mousePressed(mouseX, mouseY, mouseButton);
         }
 
+        @Override
         public void drawStuff(int mouseX, int mouseY, float partialTicks) {
             circleButton.render(this.zLevel, mouseX, mouseY);
+        }
+    }
+
+    private static class TestOtherGui extends TestGui {
+
+        public TestOtherGui(GuiScreen parent) {
+            super(parent);
+        }
+
+        @Override
+        public void drawStuff(int mouseX, int mouseY, float partialTicks) {
+            GuiUtil.drawBoxWithOutline(this.center,100, 50, new Point4i(0,0,0,255),
+                    new Point4i(255,255,255,255), this.zLevel);
         }
     }
 }

@@ -3,22 +3,19 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'gradle.plugin.com.github.johnrengelman', name: 'shadow', version: '7.1.2'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 
-version = '1.12.2-0.1.4'
+version = '1.12.2-0.1.5'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
@@ -26,7 +23,6 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
     mappings channel: 'snapshot', version: '20171003-1.12'
-    accessTransformer = file('src/main/resources/META-INF/theimpossiblelibrary_at.cfg')
     runs {
         client {
             workingDirectory project.file('run')
@@ -57,12 +53,6 @@ repositories {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-sourceSets {
-    main {
-        ext.refMap = "mixins.theimpossiblelibrary.refmap.json"
-    }
-}
-
 configurations {
     shade
     implementation.extendsFrom(shade)
@@ -74,10 +64,6 @@ dependencies {
 
     //external dependencies
     shade("com.moandjiezana.toml:toml4j:0.7.2") { exclude group: 'com.google.code.gson', module: 'gson' } //for toml files
-
-    //mixin
-    implementation fg.deobf("curse.maven:mixin-booter-419286:3886235")
-    implementation('org.spongepowered:mixin:0.8.4')
 }
 
 shadowJar {
@@ -100,14 +86,9 @@ processResources {
     inputs.property "mcversion", "1.12.2"
 }
 
-mixin {
-    disableAnnotationProcessorCheck()
-}
-
 jar {
     manifest {
         attributes([
-            "FMLAT": "theimpossiblelibrary_at.cfg",
             "Specification-Title": "theimpossiblelibrary",
             "Specification-Vendor": "the_computerizer",
             "Specification-Version": project.version,
