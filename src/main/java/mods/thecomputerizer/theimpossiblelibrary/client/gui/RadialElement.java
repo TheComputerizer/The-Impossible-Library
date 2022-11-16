@@ -96,8 +96,8 @@ public class RadialElement extends Gui {
         BufferBuilder builder = tessellator.getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         Point2i mouse = new Point2i(mouseX,mouseY);
-        double mouseAngleDeg = Math.toDegrees(Math.atan2(mouseY - this.center.y, mouseX - this.center.x));
-        double mouseRelativeRadius = Math.sqrt(Math.pow(mouseX - this.center.x, 2) + Math.pow(mouseY - this.center.y, 2));
+        double mouseAngleDeg = MathUtil.getAngle(mouse, this.center);
+        double mouseRelativeRadius = MathUtil.distance(mouse, this.center);
         float numButtons = this.buttons.size();
         if(mouseAngleDeg < ((-0.5f/numButtons)+0.25f)*360) mouseAngleDeg += 360;
         boolean currentScreen = Minecraft.getMinecraft().currentScreen == this.parentScreen;

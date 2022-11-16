@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.client;
 
+import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -38,14 +39,36 @@ public class GuiUtil {
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
+    public static void drawColoredRing(Point2i center, Tuple2i radii, Point4i color, int resolution,
+                                       float zLevel) {
+        GLColorStart(color);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        Point2f angles = MathUtil.makeAngleTuple(0,1);
+        float startAngle = (float) Math.toRadians(angles.x);
+        float angleDif = (float) Math.toRadians(angles.y-angles.x);
+        for(int i=0;i<resolution;i++) {
+            float angle1 = startAngle+(i/(float)resolution)*angleDif;
+            float angle2 = startAngle+((i+1)/(float)resolution)*angleDif;
+            Point2i pos1In = MathUtil.getVertex(center,(float)radii.x,angle1);
+            Point2i pos2In = MathUtil.getVertex(center,(float)radii.x,angle2);
+            Point2i pos1Out = MathUtil.getVertex(center,(float)radii.y,angle1);
+            Point2i pos2Out = MathUtil.getVertex(center,(float)radii.y,angle2);
+            setBuffer(builder,pos1In,pos2In,pos1Out,pos2Out,zLevel,color);
+        }
+        tessellator.draw();
+        GLColorFinish();
+    }
+
     /*
         Draws a colored box with an outline
         The zLevel can be obtained from any GuiScreen or set to 0
      */
     public static void drawBoxWithOutline(Tuple2i topLeft, int width, int height, Tuple4i color,
-                                          Tuple4i outlineColor, float zLevel) {
+                                          Tuple4i outlineColor, float outlineWidth, float zLevel) {
         drawBox(topLeft, width, height, color, zLevel);
-        drawBoxOutline(topLeft, width, height, color, zLevel);
+        drawBoxOutline(topLeft, width, height, outlineColor, outlineWidth, zLevel);
     }
 
     /*
@@ -70,27 +93,34 @@ public class GuiUtil {
         Draws the outline of a box
         The zLevel can be obtained from any GuiScreen or set to 0
      */
-    public static void drawBoxOutline(Tuple2i topLeft, int width, int height, Tuple4i color, float zLevel) {
+    public static void drawBoxOutline(Tuple2i topLeft, int width, int height, Tuple4i color, float outlineWidth, float zLevel) {
         Point2i topRight = new Point2i(topLeft.x+width,topLeft.y);
         Point2i bottomRight = new Point2i(topLeft.x+width,topLeft.y+height);
         Point2i bottomLeft = new Point2i(topLeft.x,topLeft.y+height);
-        drawLine(topLeft,topRight,color,zLevel);
-        drawLine(topRight,bottomRight,color,zLevel);
-        drawLine(bottomRight,bottomLeft,color,zLevel);
-        drawLine(bottomLeft,topLeft,color,zLevel);
+        drawLine(topLeft,topRight,color,outlineWidth,zLevel);
+        drawLine(topRight,bottomRight,color,outlineWidth,zLevel);
+        drawLine(bottomRight,bottomLeft,color,outlineWidth,zLevel);
+        drawLine(bottomLeft,topLeft,color,outlineWidth,zLevel);
     }
 
     /*
         Draws a colored line between 2 points
         The zLevel can be obtained from any GuiScreen or set to 0
      */
-    public static void drawLine(Tuple2i start, Tuple2i end, Tuple4i color, float zLevel) {
+    public static void drawLine(Tuple2i start, Tuple2i end, Tuple4i color, float width, float zLevel) {
+        double angle = MathUtil.getAngle(start, end);
+        Point2d start1 = MathUtil.getVertex(MathUtil.enhance(start),width/2d,Math.toRadians(angle+90d));
+        Point2d start2 = MathUtil.getVertex(MathUtil.enhance(start),width/2d,Math.toRadians(angle-90d));
+        Point2d end1 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle-90d));
+        Point2d end2 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle+90d));
         GLColorStart(color);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-        builder.pos(start.x, start.y, zLevel).endVertex();
-        builder.pos(end.x, end.y, zLevel).endVertex();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        tupleColor(builder.pos(start1.x, start1.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(start2.x, start2.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(end1.x, end1.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(end2.x, end2.y, zLevel),color).endVertex();
         tessellator.draw();
         GLColorFinish();
     }
@@ -125,7 +155,11 @@ public class GuiUtil {
         Utilizes a tuple to set the color the GLStateManager
      */
     public static void tupleColor(Tuple4i colors) {
-        GlStateManager.color(colors.x, colors.y, colors.z, colors.w);
+        float r = ((float)colors.x)/255f;
+        float g = ((float)colors.y)/255f;
+        float b = ((float)colors.z)/255f;
+        float a = ((float)colors.w)/255f;
+        GlStateManager.color(r, g, b, a);
     }
 
     /*

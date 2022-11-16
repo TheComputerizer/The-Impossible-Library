@@ -7,9 +7,16 @@ public class MathUtil {
     public static final double HALF_CIRCLE_RADIANS = Math.toRadians(180);
 
     /*
-        Gets the distance between 2D coordinate points
+        Gets the distance between 2D coordinate float points
      */
     public static double distance(Tuple2f vec1, Tuple2f vec2) {
+        return Math.sqrt(Math.pow(vec1.x-vec2.x,2)+Math.pow(vec1.y-vec2.y,2));
+    }
+
+    /*
+        Gets the distance between 2D coordinate integer points
+     */
+    public static double distance(Tuple2i vec1, Tuple2i vec2) {
         return Math.sqrt(Math.pow(vec1.x-vec2.x,2)+Math.pow(vec1.y-vec2.y,2));
     }
 
@@ -31,11 +38,33 @@ public class MathUtil {
     }
 
     /*
+        Returns the angle between 2 coordinate points in degrees
+     */
+    public static double getAngle(Tuple2i start, Tuple2i end) {
+        return Math.toDegrees(Math.atan2(start.y - end.y, start.x - end.x));
+    }
+
+    /*
+        Converts a points of integers to a point of doubles
+     */
+    public static Point2d enhance(Tuple2i initial) {
+        return new Point2d(initial.x, initial.y);
+    }
+
+    /*
         Helper math for radial gui elements
         Calculates a tuple to be pushed into a BufferBuilder using the center of the circle and the given radius and angle
+        The angle is in radians
      */
     public static Point2i getVertex(Point2i center, float radius, float angle) {
         return new Point2i((int) (center.x+(radius*(float)Math.cos(angle))),(int) (center.y+(radius*(float)Math.sin(angle))));
+    }
+
+    /*
+        More precise version of the above method
+     */
+    public static Point2d getVertex(Point2d center, double radius, double angle) {
+        return new Point2d(center.x+(radius*Math.cos(angle)),center.y+(radius*Math.sin(angle)));
     }
 
     /*

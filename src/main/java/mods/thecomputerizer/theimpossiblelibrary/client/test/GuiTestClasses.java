@@ -160,7 +160,9 @@ public class GuiTestClasses {
         @Override
         public void drawStuff(int mouseX, int mouseY, float partialTicks) {
             GuiUtil.drawBoxWithOutline(this.center,100, 50, new Point4i(0,0,0,255),
-                    new Point4i(255,255,255,255), this.zLevel);
+                    new Point4i(255,255,255,255), 1f, this.zLevel);
+            GuiUtil.drawColoredRing(this.center,new Point2i(199,200),new Point4i(255,255,255,255),
+                    360,this.zLevel);
         }
     }
 }
