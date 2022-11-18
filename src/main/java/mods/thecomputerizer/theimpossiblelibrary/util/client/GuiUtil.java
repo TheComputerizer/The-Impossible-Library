@@ -11,6 +11,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
@@ -123,6 +125,41 @@ public class GuiUtil {
         tupleColor(builder.pos(end2.x, end2.y, zLevel),color).endVertex();
         tessellator.draw();
         GLColorFinish();
+    }
+
+    /*
+        Splits a string into multiple lines and renders them
+        Returns the new y position under the rendered lines
+     */
+    public static int drawMultiLineString(GuiScreen screen, String original, int left, int right, int top, int spacing) {
+        List<String> lines = new ArrayList<>();
+        String[] words = original.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int lineWidth = 0;
+        for(String word : words) {
+            if(lineWidth==0) {
+                builder.append(word);
+                lineWidth+=screen.mc.fontRenderer.getStringWidth(word);
+            }
+            else {
+                String withSpace = " "+word;
+                int textWidth = screen.mc.fontRenderer.getStringWidth(withSpace);
+                if((left+lineWidth+textWidth)<right) {
+                    builder.append(withSpace);
+                    lineWidth+=textWidth;
+                } else {
+                    lines.add(builder.toString());
+                    builder = new StringBuilder();
+                    lineWidth = 0;
+                }
+            }
+        }
+        lines.add(builder.toString());
+        for(String line : lines) {
+            screen.drawString(screen.mc.fontRenderer,line,left,top, GuiUtil.WHITE);
+            top+=spacing;
+        }
+        return top;
     }
 
     /*
