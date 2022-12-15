@@ -304,7 +304,7 @@ public class TomlUtil {
      * Does the same thing as the above method except the result is stored in a single string with newline characters
      */
     public static String toString(Toml toml, int topLevelLines, int innerLines, int listSpaces, int depth) {
-        return TextUtil.ListToString(toLines(toml, topLevelLines, innerLines, listSpaces, depth),0);
+        return TextUtil.listToString(toLines(toml, topLevelLines, innerLines, listSpaces, depth),0);
     }
 
     private static String writePrimitive(String key, Object value, int depth) {
