@@ -61,7 +61,7 @@ public class TextUtil {
      * empty, null, or has only whitespace it will be replaced with a newline character or be removed if it is the final
      * element.
      */
-    public static String ListToString(Collection<String> list, int limit) {
+    public static String listToString(Collection<String> list, int limit) {
         if(Objects.isNull(list) || list.isEmpty()) return null;
         limit = limit>0 ? limit : Integer.MAX_VALUE;
         StringBuilder builder = new StringBuilder();
