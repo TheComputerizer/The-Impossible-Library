@@ -1,5 +1,5 @@
 # The-Impossible-Library
-This is the 1.12.2 branch
+This is the 1.16.5 branch
 
 This mod was made to offer mod devs methods for doing things that are typically thought of as impossible, hacky, tedious, or maybe even require a 3rd party java library.
 
@@ -39,4 +39,4 @@ dependencies {
   implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
 }
 ```
-The file ID for the latest version of `0.1.8` is `4175418`
+The file ID for the latest version of `0.1.8` is `WIP`
