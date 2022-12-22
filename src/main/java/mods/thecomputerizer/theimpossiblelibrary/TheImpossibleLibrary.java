@@ -1,77 +1,34 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
-import mods.thecomputerizer.theimpossiblelibrary.client.visual.Renderer;
-import mods.thecomputerizer.theimpossiblelibrary.common.Files;
-import mods.thecomputerizer.theimpossiblelibrary.test.ClientTest;
+
+import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
+import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
-import javax.annotation.Nullable;
-import java.io.File;
-
-@Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
+@Mod(Constants.MODID)
 public class TheImpossibleLibrary {
 
     public TheImpossibleLibrary() {
-        //generate config txt file for early loading stuff;
-    }
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent e) {
-        //registration stuff has to happen here!
-        EventBus bus = MinecraftForge.EVENT_BUS;
-        if(e.getSide()==Side.CLIENT) {
-            bus.register(Renderer.class);
-            //preInitClientTestClass(bus);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
+        DataUtil.initGlobal();
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            MinecraftForge.EVENT_BUS.register(Renderer.class);
+            initClientTestClass(MinecraftForge.EVENT_BUS);
         }
     }
-
-    @EventHandler
-    public void init(FMLInitializationEvent e) {
-        //keybindings and other less important stuff can go here
-        if(e.getSide()==Side.CLIENT) {
-            //initClientTestClass();
-        }
-    }
-
-    public static void preInitCommonTestClass(EventBus bus) {
-
-    }
-
-    public static void initCommonTestClass() {
-
-    }
-
-    public static void preInitClientTestClass(EventBus bus) {
-        bus.register(ClientTest.class);
-    }
-
-    public static void initClientTestClass() {
+    private void clientSetup(final FMLClientSetupEvent ev) {
         ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
     }
 
-    public static void logInfo(String message) {
-        Constants.LOGGER.info(message);
-    }
-
-    public static void logWarning(String message, @Nullable Throwable throwable) {
-        if(throwable!=null) Constants.LOGGER.warn(message, throwable);
-        Constants.LOGGER.warn(message);
-    }
-
-    public static void logError(String message, @Nullable Throwable throwable) {
-        if(throwable!=null) Constants.LOGGER.error(message, throwable);
-        Constants.LOGGER.warn(message);
-    }
-
-    public static void logFatal(String message, @Nullable Throwable throwable) {
-        if(throwable!=null) Constants.LOGGER.fatal(message, throwable);
-        Constants.LOGGER.warn(message);
+    public static void initClientTestClass(IEventBus bus) {
+        bus.register(ClientTest.class);
     }
 }

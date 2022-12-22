@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="All Rights Reserved"
+showAsResourcePack=false
+
+[[mods]]
+modId="theimpossiblelibrary"
+version="1.16.5-0.1.8"
+displayName="The Impossible Library"
+updateJSONURL=""
+displayURL="https://www.curseforge.com/minecraft/mc-mods/the-impossible-library"
+logoFile="logo"
+credits="The_Computerizer"
+authors="The_Computerizer"
+description='''
+      Lets you play music based on in game triggers
+      '''
+
+[[dependencies.theimpossiblelibrary]]
+modId="forge"
+mandatory=true
+versionRange="[36,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.theimpossiblelibrary]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5,1.17)"
+ordering="NONE"
+side="BOTH"
