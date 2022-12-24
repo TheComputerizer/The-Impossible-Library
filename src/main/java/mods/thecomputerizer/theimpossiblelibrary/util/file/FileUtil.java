@@ -42,7 +42,7 @@ public class FileUtil {
     public static void writeLineToFile(File file, String text, boolean append) {
         try {
             FileWriter writer = new FileWriter(file, append);
-            writer.write(text);
+            writer.write(text+"\n");
             writer.close();
         } catch (Exception e) {
             LogUtil.logInternal(Level.ERROR,"Failed to write line {} to file {}",text,file.getAbsolutePath(),e);
@@ -74,7 +74,7 @@ public class FileUtil {
     public static void writeLineToFile(FileWriter writer, File file, String text, boolean append) {
         try {
             if(append) writer.append(text);
-            else writer.write(text);
+            else writer.write(text+"\n");
         } catch (Exception e) {
             LogUtil.logInternal(Level.ERROR,"Failed to write line {} to file {}",text,file.getAbsolutePath(),e);
         }
