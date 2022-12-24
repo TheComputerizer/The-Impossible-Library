@@ -75,7 +75,10 @@ public class FileUtil {
     public static void writeLineToFile(BufferedWriter writer, File file, String text, boolean append) {
         try {
             if(append) writer.append(text);
-            else writer.write(text);
+            else {
+                writer.write(text);
+                writer.newLine();
+            }
         } catch (Exception e) {
             LogUtil.logInternal(Level.ERROR,"Failed to write line {} to file {}",text,file.getAbsolutePath(),e);
         }
