@@ -158,7 +158,8 @@ public class GuiUtil {
                 } else {
                     lines.add(builder.toString());
                     builder = new StringBuilder();
-                    lineWidth = 0;
+                    builder.append(word);
+                    lineWidth = screen.getMinecraft().font.width(word);
                 }
             }
         }

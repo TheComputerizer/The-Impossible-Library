@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import org.apache.logging.log4j.Level;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
@@ -41,7 +42,7 @@ public class FileUtil {
 
     public static void writeLineToFile(File file, String text, boolean append) {
         try {
-            FileWriter writer = new FileWriter(file, append);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
             writer.write(text);
             writer.close();
         } catch (Exception e) {
@@ -55,7 +56,7 @@ public class FileUtil {
 
     public static void writeLinesToFile(File file, List<String> text, boolean append) {
         try {
-            FileWriter writer = new FileWriter(file, append);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
             for (String line : text) writeLineToFile(writer, file, line, append);
             writer.close();
         } catch (Exception e) {
@@ -63,18 +64,21 @@ public class FileUtil {
         }
     }
 
-    public static void writeLinesToFile(FileWriter writer, String path, List<String> text, boolean append) {
+    public static void writeLinesToFile(BufferedWriter writer, String path, List<String> text, boolean append) {
         writeLinesToFile(writer, new File(path),text, append);
     }
 
-    public static void writeLinesToFile(FileWriter writer, File file, List<String> text, boolean append) {
+    public static void writeLinesToFile(BufferedWriter writer, File file, List<String> text, boolean append) {
         for (String line : text) writeLineToFile(writer, file, line, append);
     }
 
-    public static void writeLineToFile(FileWriter writer, File file, String text, boolean append) {
+    public static void writeLineToFile(BufferedWriter writer, File file, String text, boolean append) {
         try {
             if(append) writer.append(text);
-            else writer.write(text);
+            else {
+                writer.write(text);
+                writer.newLine();
+            }
         } catch (Exception e) {
             LogUtil.logInternal(Level.ERROR,"Failed to write line {} to file {}",text,file.getAbsolutePath(),e);
         }

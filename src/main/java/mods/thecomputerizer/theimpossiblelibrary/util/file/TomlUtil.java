@@ -74,28 +74,53 @@ public class TomlUtil {
      * can be in quotes like string values, but are not required to be
      */
     public static boolean readIfExists(Toml toml, String key, boolean def) {
-        Boolean test = toml.getBoolean(key);
-        return Objects.nonNull(test) ? test : Boolean.parseBoolean(toml.getString(key, def + ""));
+        try {
+            if(toml.contains(key)) return toml.getBoolean(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"boolean");
+        }
+        return Boolean.parseBoolean(toml.getString(key, def + ""));
     }
 
     public static int readIfExists(Toml toml, String key, int def) {
-        Long test = toml.getLong(key);
-        return Objects.nonNull(test) ? Integer.parseInt(""+test) : Integer.parseInt(toml.getString(key, def + ""));
+        try {
+            if(toml.contains(key)) return (int) (long) toml.getLong(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"long");
+        }
+        return Integer.parseInt(toml.getString(key, def + ""));
     }
 
     public static long readIfExists(Toml toml, String key, long def) {
-        Long test = toml.getLong(key);
-        return Objects.nonNull(test) ? test : Long.parseLong(toml.getString(key, def + ""));
+        try {
+            if(toml.contains(key)) return toml.getLong(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"long");
+        }
+        return Long.parseLong(toml.getString(key, def + ""));
     }
 
     public static float readIfExists(Toml toml, String key, float def) {
-        Double test = toml.getDouble(key);
-        return Objects.nonNull(test) ? Float.parseFloat(""+test) : Float.parseFloat(toml.getString(key, def + ""));
+        try {
+            if(toml.contains(key)) return (float) (double) toml.getDouble(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"float");
+        }
+        return Float.parseFloat(toml.getString(key, def + ""));
     }
 
     public static double readIfExists(Toml toml, String key, double def) {
-        Double test = toml.getDouble(key);
-        return Objects.nonNull(test) ? test : Double.parseDouble(toml.getString(key, def + ""));
+        try {
+            if(toml.contains(key)) return toml.getDouble(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"double");
+        }
+        return Double.parseDouble(toml.getString(key, def + ""));
     }
 
     /*
@@ -104,28 +129,53 @@ public class TomlUtil {
      * All of these return the def value if the key is not found.
      */
     public static String sneakyInt(Toml toml, String key, int def) {
-        Long test = toml.getLong(key);
-        return Objects.nonNull(test) ? ""+test : toml.getString(key,""+def);
+        try {
+            if(toml.contains(key)) return ""+toml.getLong(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"int");
+        }
+        return toml.getString(key, def + "");
     }
 
-    public static String sneakyInt(Toml toml, String key, long def) {
-        Long test = toml.getLong(key);
-        return Objects.nonNull(test) ? ""+test : toml.getString(key,""+def);
+    public static String sneakyLong(Toml toml, String key, long def) {
+        try {
+            if(toml.contains(key)) return ""+toml.getLong(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"long");
+        }
+        return toml.getString(key, def + "");
     }
 
     public static String sneakyFloat(Toml toml, String key, float def) {
-        Double test = toml.getDouble(key);
-        return Objects.nonNull(test) ? ""+test : toml.getString(key,""+def);
+        try {
+            if(toml.contains(key)) return ""+toml.getDouble(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"float");
+        }
+        return toml.getString(key, def + "");
     }
 
     public static String sneakyDouble(Toml toml, String key, double def) {
-        Double test = toml.getDouble(key);
-        return Objects.nonNull(test) ? ""+test : toml.getString(key,""+def);
+        try {
+            if(toml.contains(key)) return ""+toml.getDouble(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"double");
+        }
+        return toml.getString(key, def + "");
     }
 
     public static String sneakyBool(Toml toml, String key, boolean def) {
-        Boolean test = toml.getBoolean(key);
-        return Objects.nonNull(test) ? ""+test : toml.getString(key,""+def);
+        try {
+            if(toml.contains(key)) return ""+toml.getBoolean(key);
+        } catch (ClassCastException ignored) {
+            LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+                    "default",key,"boolean");
+        }
+        return toml.getString(key, def + "");
     }
 
     /*
@@ -133,12 +183,17 @@ public class TomlUtil {
      * want to ignore the object type entirely when reading in data. Returns the default value if they key is not found.
      */
     public static String sneakyGeneric(Toml toml, String key, Object def) {
-        Long longTest = toml.getLong(key);
-        if(Objects.nonNull(longTest)) return ""+longTest;
-        Double doubleTest = toml.getDouble(key);
-        if(Objects.nonNull(doubleTest)) return ""+doubleTest;
-        Boolean boolTest = toml.getBoolean(key);
-        if(Objects.nonNull(boolTest)) return ""+boolTest;
+        if(toml.contains(key)) {
+            try {
+                if (toml.contains(key)) return "" + toml.getLong(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return "" + toml.getDouble(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return "" + toml.getBoolean(key);
+            } catch (ClassCastException ignored) {}
+        }
         return toml.getString(key,Objects.nonNull(def) ? def.toString() : null);
     }
 
@@ -190,7 +245,7 @@ public class TomlUtil {
                 return foundList.stream().mapToInt(object -> Integer.parseInt(object.toString())).toArray();
             } catch (NumberFormatException ex) {
                 LogUtil.logInternal(Level.ERROR,"Error parsing integer for toml list with key {}! An element " +
-                                "was not a valid number. Error: {}",key,ex);
+                        "was not a valid number. Error: {}",key,ex);
             }
         }
         return def;
@@ -281,7 +336,7 @@ public class TomlUtil {
                     lines.add("");
             if(toml.containsPrimitive(key))
                 lines.add(writePrimitive(key,value,depth));
-             else if(Objects.nonNull(toml.getList(key)))
+            else if(Objects.nonNull(toml.getList(key)))
                 lines.add(writeList(key,(List<Object>) value, listSpaces, depth));
             else if(isTable) {
                 if(toml.containsTable(key)) {
