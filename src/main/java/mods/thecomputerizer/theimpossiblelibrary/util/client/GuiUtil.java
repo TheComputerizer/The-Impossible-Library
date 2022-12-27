@@ -35,7 +35,6 @@ public class GuiUtil {
         builder.vertex(pos1In.x, pos1In.y, offset).endVertex();
         builder.vertex(pos2In.x, pos2In.y, offset).endVertex();
         builder.vertex(pos2Out.x, pos2Out.y, offset).endVertex();
-        System.out.println("a");
         tessellator.end();
         GLColorFinish();
     }
