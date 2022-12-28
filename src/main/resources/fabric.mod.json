@@ -1,0 +1,42 @@
+
+{
+  "schemaVersion": 1,
+  "id": "theimpossiblelibrary",
+  "version": "${version}",
+
+  "name": "The Impossible Library",
+  "description": "Impossible!",
+  "authors": [
+    "The_Computerizer"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/the-impossible-library",
+    "sources": "https://github.com/TheComputerizer/The-Impossible-Library"
+  },
+
+  "license": "MIT",
+  "icon": "assets/theimpossiblelibrary/logo.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "mods.thecomputerizer.theimpossiblelibrary.TheImpossibleLibrary"
+    ],
+    "client": [
+      "mods.thecomputerizer.theimpossiblelibrary.ClientInit"
+    ]
+  },
+  "mixins": [
+    "theimpossiblelibrary.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.18.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

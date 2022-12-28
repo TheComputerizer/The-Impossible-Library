@@ -1,51 +1,53 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
-public class CustomTick extends Event {
+public class CustomTick {
 
-    private static final ArrayList<Long> registeredTickEvents = new ArrayList<>();
+    private static final HashMap<Long, CustomTick> registeredTickEvents = new HashMap<>();
 
-    public static void addCustomTickEvent(long millis) {
-        Runnable tickTimer = () -> MinecraftForge.EVENT_BUS.post(new CustomTick(millis));
+    public static CustomTick getOrCreateCustomTickEvent(long millis) {
+        if(isRegistered(millis)) return registeredTickEvents.get(millis);
+        CustomTick tick = new CustomTick();
+        Runnable tickTimer = tick::run;
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(tickTimer, 0, millis, TimeUnit.MILLISECONDS);
-        registeredTickEvents.add(millis);
+        registeredTickEvents.put(millis,tick);
+        return tick;
     }
 
-    public static void addCustomTickEvent(int ticksPerSecond) {
+    public static CustomTick getOrCreateCustomTickEvent(int ticksPerSecond) {
         long millis = (long)(1000f/ticksPerSecond);
-        Runnable tickTimer = () -> MinecraftForge.EVENT_BUS.post(new CustomTick(millis));
+        if(isRegistered(millis)) return registeredTickEvents.get(millis);
+        CustomTick tick = new CustomTick();
+        Runnable tickTimer = tick::run;
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(tickTimer, 0, millis, TimeUnit.MILLISECONDS);
-        registeredTickEvents.add(millis);
+        registeredTickEvents.put(millis,tick);
+        return tick;
     }
 
     public static boolean isRegistered(long millis) {
-        return registeredTickEvents.contains(millis);
+        return registeredTickEvents.containsKey(millis);
     }
 
-    public static boolean isRegistered(int ticks) {
-        return registeredTickEvents.contains((long)(1000f/ticks));
+    private final List<Supplier<Void>> runnable;
+    private CustomTick(){
+        this.runnable = new ArrayList<>();
     }
 
-    private final long tickRate;
-    private CustomTick(long tickRate){
-        this.tickRate = tickRate;
+    public void addRunnable(Supplier<Void> supplierFunction) {
+        this.runnable.add(supplierFunction);
     }
 
-    public boolean checkTickRate(long tickRate) {
-        return this.tickRate==tickRate;
-    }
-
-    public boolean checkTickRate(int tickRate) {
-        return this.tickRate==(long)(1000f/tickRate);
+    private void run() {
+        for(Supplier<Void> supplier : this.runnable)
+            supplier.get();
     }
 }

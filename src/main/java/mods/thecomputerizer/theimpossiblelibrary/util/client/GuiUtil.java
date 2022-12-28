@@ -140,11 +140,11 @@ public class GuiUtil {
         for(String word : words) {
             if(lineWidth==0) {
                 builder.append(word);
-                lineWidth+=screen.getMinecraft().font.width(word);
+                lineWidth+=Minecraft.getInstance().font.width(word);
             }
             else {
                 String withSpace = " "+word;
-                int textWidth = screen.getMinecraft().font.width(withSpace);
+                int textWidth = Minecraft.getInstance().font.width(withSpace);
                 if((left+lineWidth+textWidth)<right) {
                     builder.append(withSpace);
                     lineWidth+=textWidth;
@@ -152,13 +152,13 @@ public class GuiUtil {
                     lines.add(builder.toString());
                     builder = new StringBuilder();
                     builder.append(word);
-                    lineWidth = screen.getMinecraft().font.width(word);
+                    lineWidth = Minecraft.getInstance().font.width(word);
                 }
             }
         }
         lines.add(builder.toString());
         for(String line : lines) {
-            screen.getMinecraft().font.drawShadow(matrix,line,left,top, GuiUtil.WHITE);
+            Minecraft.getInstance().font.drawShadow(matrix,line,left,top, GuiUtil.WHITE);
             top+=spacing;
         }
         return top;

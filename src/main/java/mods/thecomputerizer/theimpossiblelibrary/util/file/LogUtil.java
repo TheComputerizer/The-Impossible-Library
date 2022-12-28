@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
@@ -92,8 +92,8 @@ public class LogUtil {
             Gets the name of a mod from a given modid or returns the modid if it cannot be found
          */
         private String getModName(String modid) {
-            IModFileInfo mod = ModList.get().getModFileById(modid);
-            return Objects.isNull(mod) ? modid : mod.getFile().getModInfos().get(0).getDisplayName();
+            Optional<ModContainer> mod = FabricLoaderImpl.INSTANCE.getModContainer(modid);
+            return mod.isPresent() ? mod.get().getMetadata().getName() : modid;
         }
 
         private String formattedMilli(int milli) {

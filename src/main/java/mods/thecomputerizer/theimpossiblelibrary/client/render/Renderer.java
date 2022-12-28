@@ -7,8 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
@@ -66,14 +64,11 @@ public class Renderer {
     }
 
     //Actual rendering methods
-    @SubscribeEvent
-    public static void renderAllBackgroundStuff(RenderGameOverlayEvent.Post e) {
-        if(e.getType()== RenderGameOverlayEvent.ElementType.ALL) {
-            int x = Minecraft.getInstance().getWindow().getScreenWidth();
-            int y = Minecraft.getInstance().getWindow().getScreenHeight();
-            Vector4f color = new Vector4f(1, 1, 1, 1);
-            for(PNG png : renderablePngs) renderPng(e.getMatrixStack(),png,color,x,y);
-        }
+    public static void renderAllBackgroundStuff(PoseStack matrix) {
+        int x = Minecraft.getInstance().getWindow().getScreenWidth();
+        int y = Minecraft.getInstance().getWindow().getScreenHeight();
+        Vector4f color = new Vector4f(1, 1, 1, 1);
+        for (PNG png : renderablePngs) renderPng(matrix, png, color, x, y);
     }
 
     public static void renderPng(PoseStack matrix, PNG png, Vector4f color, int resolutionX, int resolutionY) {

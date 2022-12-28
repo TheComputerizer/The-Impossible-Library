@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -61,14 +62,14 @@ public class RadialButton extends AbstractRadialButton {
     public void drawText(Screen parent, PoseStack matrix, Vector3f mouse, boolean isCurrent) {
         if(this.centerText!=null) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
+            drawCenteredString(matrix, Minecraft.getInstance().font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
         }
         if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }
 
     public void handleClick(Screen screen) {
         if(this.hover) {
-            playPressSound(screen.getMinecraft().getSoundManager());
+            playPressSound(Minecraft.getInstance().getSoundManager());
             this.handlerFunction.accept(screen, this);
         }
     }
