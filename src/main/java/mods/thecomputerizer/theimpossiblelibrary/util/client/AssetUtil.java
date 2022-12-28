@@ -1,48 +1,48 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.client;
 
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 
 public class AssetUtil {
 
-    public static TranslatableComponent genericLang(String modid, String category, String thing) {
+    public static TranslatableContents genericLang(String modid, String category, String thing) {
         return genericLang(modid, category, thing, true);
     }
 
-    public static TranslatableComponent genericLang(String modid, String category, String thing, boolean name) {
-        if(name) return new TranslatableComponent(category+"."+modid+"."+thing+".name");
-        return new TranslatableComponent(category+"."+modid+"."+thing);
+    public static TranslatableContents genericLang(String modid, String category, String thing, boolean name) {
+        if(name) return new TranslatableContents(category+"."+modid+"."+thing+".name");
+        return new TranslatableContents(category+"."+modid+"."+thing);
     }
 
-    public static TranslatableComponent extraLang(String modid, String category, String thing, String addition) {
+    public static TranslatableContents extraLang(String modid, String category, String thing, String addition) {
         return extraLang(modid, category, thing, addition, true);
     }
 
-    public static TranslatableComponent extraLang(String modid, String category, String thing, String addition, boolean name) {
+    public static TranslatableContents extraLang(String modid, String category, String thing, String addition, boolean name) {
 
-        if(name) return new TranslatableComponent(category+"."+modid+"."+thing+"."+addition+".name");
-        return new TranslatableComponent(category+"."+modid+"."+thing+"."+addition);
+        if(name) return new TranslatableContents(category+"."+modid+"."+thing+"."+addition+".name");
+        return new TranslatableContents(category+"."+modid+"."+thing+"."+addition);
     }
 
-    public static TranslatableComponent customLang(String key) {
+    public static TranslatableContents customLang(String key) {
         return customLang(key, true);
     }
 
-    public static TranslatableComponent customLang(String key, boolean name) {
-        if(name) return new TranslatableComponent(key+".name");
-        return new TranslatableComponent(key);
+    public static TranslatableContents customLang(String key, boolean name) {
+        if(name) return new TranslatableContents(key+".name");
+        return new TranslatableContents(key);
     }
 
     /*
         Checks if the lang key exists before returning and uses the set fallback key otherwise. If neither the main
         input key nor the fallback key exist this will return null.
      */
-    public static TranslatableComponent customLangWithFallBack(String key, String fallbackKey, boolean name, boolean fallbackName) {
+    public static TranslatableContents customLangWithFallBack(String key, String fallbackKey, boolean name, boolean fallbackName) {
         if(name) key+=".name";
-        if(Language.getInstance().has(key)) return new TranslatableComponent(key);
+        if(Language.getInstance().has(key)) return new TranslatableContents(key);
         if(fallbackName) fallbackKey+=".name";
-        if(Language.getInstance().has(fallbackKey)) return new TranslatableComponent(fallbackKey);
+        if(Language.getInstance().has(fallbackKey)) return new TranslatableContents(fallbackKey);
         return null;
     }
 

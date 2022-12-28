@@ -1,11 +1,11 @@
 modLoader="javafml"
-loaderVersion="[39,)"
+loaderVersion="[43,)"
 license="All Rights Reserved"
 showAsResourcePack=false
 
 [[mods]]
 modId="theimpossiblelibrary"
-version="1.18.2-0.1.9"
+version="1.19.2-0.1.9"
 displayName="The Impossible Library"
 updateJSONURL=""
 displayURL="https://www.curseforge.com/minecraft/mc-mods/the-impossible-library"
@@ -19,13 +19,13 @@ description='''
 [[dependencies.theimpossiblelibrary]]
 modId="forge"
 mandatory=true
-versionRange="[39,)"
+versionRange="[43,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.theimpossiblelibrary]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.18.1,1.19)"
+versionRange="[1.19.2,1.20)"
 ordering="NONE"
 side="BOTH"

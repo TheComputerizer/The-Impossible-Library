@@ -15,14 +15,14 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'maven-publish'
 
-version = '1.18.2-0.1.9'
+version = '1.19.2-0.1.9'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19.2'
     runs {
         client {
             workingDirectory project.file('run')
@@ -66,7 +66,7 @@ configurations {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.92'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.2.2'
 
     //external dependencies
     shade("com.moandjiezana.toml:toml4j:0.7.2") { exclude group: 'com.google.code.gson', module: 'gson' } //for toml files
@@ -113,3 +113,6 @@ publishing {
     }
 }
 tasks.assemble.dependsOn shadowJar
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

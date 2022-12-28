@@ -9,9 +9,9 @@ import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -98,7 +98,7 @@ public class GuiTestClasses {
         protected Vector3f center;
 
         public TestGui(Screen parent) {
-            super(new TextComponent("test_gui"));
+            super(MutableComponent.create(new LiteralContents("test_gui")));
             this.parent = parent;
         }
 

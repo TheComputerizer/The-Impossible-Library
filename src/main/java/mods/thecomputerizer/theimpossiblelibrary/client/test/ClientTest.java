@@ -15,7 +15,7 @@ public class ClientTest {
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.theimpossiblelibrary");
 
     @SubscribeEvent
-    public static void onKeyInput(InputEvent.KeyInputEvent e) {
+    public static void onKeyInput(InputEvent.Key e) {
         if (TEST_KEYBIND.isDown()) {
             //render testing
             Minecraft.getInstance().setScreen(GuiTestClasses.createTestOtherGui());

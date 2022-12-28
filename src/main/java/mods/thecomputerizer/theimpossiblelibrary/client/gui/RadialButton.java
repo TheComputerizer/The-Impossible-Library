@@ -6,7 +6,8 @@ import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -28,7 +29,8 @@ public class RadialButton extends AbstractRadialButton {
                         BiConsumer<Screen, RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(TextComponent::new).collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(line -> MutableComponent.create(new LiteralContents(line)))
+                .collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
