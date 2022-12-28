@@ -1,19 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -25,19 +23,19 @@ import java.util.stream.Collectors;
     Creates and renders a generic radial gui element
     Set the inner radius to 0 if you want a full circle to be rendered
  */
-public class RadialElement extends AbstractGui {
+public class RadialElement extends GuiComponent {
     private final Screen parentScreen;
     private final List<RadialButton> buttons;
     private final ResourceLocation centerIcon;
     private final ResourceLocation altCenterIcon;
     private final int iconRadius;
     private final RadialProgressBar centerProgress;
-    private final List<ITextComponent> centerTooltips;
+    private final List<Component> centerTooltips;
     private final String centerText;
     private final float resolution;
     private final float iconHoverSizeIncrease;
-    private final Vector2f center;
-    private final Vector2f radius;
+    private final Vector3f center;
+    private final Vector3f radius;
     private boolean hover;
     private boolean centerHover;
 
@@ -55,7 +53,7 @@ public class RadialElement extends AbstractGui {
                          float resolution, float hoverIncrease, List<RadialButton> buttons) {
         this.parentScreen = parent;
         this.buttons = buttons;
-        this.centerTooltips = centerTooltips.stream().map(StringTextComponent::new).collect(Collectors.toList());
+        this.centerTooltips = centerTooltips.stream().map(TextComponent::new).collect(Collectors.toList());
         this.centerIcon = center;
         this.altCenterIcon = Objects.isNull(altCenter) ? center : altCenter;
         this.iconRadius = iconRadius;
@@ -63,8 +61,8 @@ public class RadialElement extends AbstractGui {
         this.centerText = centerText;
         this.resolution = resolution;
         this.iconHoverSizeIncrease = hoverIncrease;
-        this.center = new Vector2f(centerX,centerY);
-        this.radius = new Vector2f(radiusIn,radiusOut);
+        this.center = new Vector3f(centerX,centerY,0);
+        this.radius = new Vector3f(radiusIn,radiusOut,0);
         this.hover = false;
         this.centerHover = false;
     }
@@ -72,7 +70,7 @@ public class RadialElement extends AbstractGui {
     protected boolean calculateCenterHover(double mouseRelativeRadius) {
         if(this.centerIcon!=null) return mouseRelativeRadius<=this.iconRadius;
         else if(this.centerProgress!=null) return this.centerProgress.getHover();
-        return MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x);
+        return MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x());
     }
 
     /*
@@ -80,19 +78,18 @@ public class RadialElement extends AbstractGui {
      */
     public void mousePressed(int mouseX, int mouseY, int mouseButton) {
         if(mouseButton==0 && this.parentScreen!=null) {
-            if(this.centerProgress!=null) this.centerProgress.handleClick(this.parentScreen,new Vector2f(mouseX,mouseY));
+            if(this.centerProgress!=null) this.centerProgress.handleClick(this.parentScreen,new Vector3f(mouseX,mouseY,0));
             for (RadialButton button : this.buttons)
                 button.handleClick(this.parentScreen);
         }
     }
 
-    public void render(MatrixStack matrix, float offset, int mouseX, int mouseY) {
-        RenderSystem.pushMatrix();
-        RenderSystem.disableAlphaTest();
+    public void render(PoseStack matrix, float offset, int mouseX, int mouseY) {
+        matrix.pushPose();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Vector2f mouse = new Vector2f(mouseX,mouseY);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        Vector3f mouse = new Vector3f(mouseX,mouseY,0);
         double mouseAngleDeg = MathUtil.getAngle(mouse, this.center);
         double mouseRelativeRadius = MathUtil.distance(mouse, this.center);
         float numButtons = this.buttons.size();
@@ -107,7 +104,7 @@ public class RadialElement extends AbstractGui {
             int buttonRes = (int)(this.resolution/numButtons);
             int index = 0;
             for (RadialButton button : this.buttons) {
-                Vector2f angles = MathUtil.makeAngleVector(index,(int)numButtons);
+                Vector3f angles = MathUtil.makeAngleVector(index,(int)numButtons);
                 if(currentScreen) button.setHover(this.hover,mouseAngleDeg,angles);
                 button.draw(this.center, offset, this.radius, MathUtil.toRadians(angles), mouse,
                         MathUtil.getCenterPosOfSlice(angles,this.radius,this.center,(int)numButtons),buttonRes);
@@ -117,27 +114,26 @@ public class RadialElement extends AbstractGui {
         drawCenterProgress(this.center,offset,currentScreen);
         drawIcons(matrix, this.center, this.radius, numButtons==1);
         drawText(matrix, mouse,mouseRelativeRadius, currentScreen);
-        RenderSystem.popAttributes();
-        RenderSystem.popMatrix();
+        matrix.popPose();
     }
 
-    private void drawEmpty(float zLevel, Vector2f mouse) {
+    private void drawEmpty(float zLevel, Vector3f mouse) {
         float startAngle = (float)Math.toRadians(-0.25f * 360);
         for (int i = 0; i < resolution; i++) {
             float angle1 = (float) Math.toRadians(startAngle + (i/resolution) * MathUtil.CIRCLE_RADIANS);
             float angle2 = (float) Math.toRadians(startAngle + ((i + 1)/resolution) * MathUtil.CIRCLE_RADIANS);
-            Vector2f pos1In = MathUtil.getVertex(center, radius.x, angle1);
-            Vector2f pos2In = MathUtil.getVertex(center, radius.x, angle2);
-            Vector2f pos1Out = MathUtil.getVertex(center, radius.y, angle1);
-            Vector2f pos2Out = MathUtil.getVertex(center, radius.y, angle2);
+            Vector3f pos1In = MathUtil.getVertex(center, radius.x(), angle1);
+            Vector3f pos2In = MathUtil.getVertex(center, radius.x(), angle2);
+            Vector3f pos1Out = MathUtil.getVertex(center, radius.y(), angle1);
+            Vector3f pos2Out = MathUtil.getVertex(center, radius.y(), angle2);
             if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,new Vector4f(255,255,255,64));
             else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,new Vector4f(0,0,0,64));
         }
     }
 
-    private void drawIcons(MatrixStack matrix, Vector2f center, Vector2f radius, boolean hasOneButton) {
+    private void drawIcons(PoseStack matrix, Vector3f center, Vector3f radius, boolean hasOneButton) {
         RenderSystem.enableTexture();
-        RenderSystem.enableAlphaTest();
+        RenderSystem.defaultBlendFunc();
         if(this.centerIcon!=null) {
             ResourceLocation actualIcon = this.centerIcon;
             int hoverIncrease = 0;
@@ -147,12 +143,11 @@ public class RadialElement extends AbstractGui {
             }
             GuiUtil.bufferSquareTexture(matrix, center, (this.iconRadius*2)+hoverIncrease, actualIcon);
         }
-        for(RadialButton button : this.buttons) button.drawCenterIcon(matrix,(radius.y-radius.x)/2f);
-        RenderSystem.disableAlphaTest();
+        for(RadialButton button : this.buttons) button.drawCenterIcon(matrix,(radius.y()-radius.x())/2f);
         RenderSystem.disableTexture();
     }
 
-    private void drawCenterProgress(Vector2f center, float offset, boolean currentScreen) {
+    private void drawCenterProgress(Vector3f center, float offset, boolean currentScreen) {
         if(this.centerProgress!=null) {
             if(currentScreen) this.centerProgress.setHover(this.centerHover);
             else this.centerProgress.setHover(false);
@@ -160,16 +155,16 @@ public class RadialElement extends AbstractGui {
         }
     }
 
-    private void drawText(MatrixStack matrix, Vector2f mouse, double mouseRelativeRadius, boolean isCurrent) {
+    private void drawText(PoseStack matrix, Vector3f mouse, double mouseRelativeRadius, boolean isCurrent) {
         if(this.parentScreen!=null) {
             if (this.centerText != null) {
                 int color = this.centerHover ? 16777120 : 14737632;
-                drawCenteredString(matrix, Minecraft.getInstance().font, this.centerText,(int) this.center.x,
-                        (int) this.center.y, color);
+                drawCenteredString(matrix, Minecraft.getInstance().font, this.centerText,(int) this.center.x(),
+                        (int) this.center.y(), color);
             }
             for (RadialButton button : this.buttons) button.drawText(this.parentScreen, matrix, mouse, isCurrent);
             if (this.centerHover && isCurrent)
-                this.parentScreen.renderComponentTooltip(matrix, this.centerTooltips, (int) mouse.x, (int) mouse.y);
+                this.parentScreen.renderComponentTooltip(matrix, this.centerTooltips, (int) mouse.x(), (int) mouse.y());
         }
     }
 

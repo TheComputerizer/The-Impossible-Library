@@ -1,17 +1,18 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialButton;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -94,27 +95,27 @@ public class GuiTestClasses {
     private static abstract class TestGui extends Screen {
 
         protected final Screen parent;
-        protected Vector2f center;
+        protected Vector3f center;
 
         public TestGui(Screen parent) {
-            super(new StringTextComponent("test_gui"));
+            super(new TextComponent("test_gui"));
             this.parent = parent;
         }
 
         @Override
-        public void init(@Nonnull Minecraft mc, int width, int height) {
-            super.init(mc, width, height);
-            this.center = new Vector2f((int) (((float) this.width) / 2f), (int) (((float) this.height) / 2f));
+        public void init() {
+            super.init();
+            this.center = new Vector3f((int) (((float) this.width) / 2f), (int) (((float) this.height) / 2f),0);
         }
 
         @Override
-        public void render(@Nonnull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        public void render(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
             this.renderBackground(matrix);
             drawStuff(matrix, mouseX, mouseY, partialTicks);
             super.render(matrix, mouseX, mouseY, partialTicks);
         }
 
-        public abstract void drawStuff(MatrixStack matrix, int mouseX, int mouseY, float partialTicks);
+        public abstract void drawStuff(PoseStack matrix, int mouseX, int mouseY, float partialTicks);
     }
 
     private static class TestRadialGui extends TestGui {
@@ -128,7 +129,7 @@ public class GuiTestClasses {
         }
 
         private int[] setCenterCircle() {
-            return new int[]{(int) this.center.x, (int) this.center.y, 50, 100};
+            return new int[]{(int) this.center.x(), (int) this.center.y(), 50, 100};
         }
 
         @Override
@@ -145,7 +146,7 @@ public class GuiTestClasses {
         }
 
         @Override
-        public void drawStuff(MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        public void drawStuff(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
             circleButton.render(matrix, getBlitOffset(), mouseX, mouseY);
         }
     }
@@ -157,10 +158,10 @@ public class GuiTestClasses {
         }
 
         @Override
-        public void drawStuff(MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+        public void drawStuff(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
             GuiUtil.drawBoxWithOutline(this.center,100, 50, new Vector4f(0,0,0,255),
                     new Vector4f(255,255,255,255), 5f, getBlitOffset());
-            GuiUtil.drawColoredRing(this.center,new Vector2f(195,200),new Vector4f(255,255,255,255),
+            GuiUtil.drawColoredRing(this.center,new Vector3f(195,200,0),new Vector4f(255,255,255,255),
                     360,getBlitOffset());
         }
     }

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public class PNG {
     }
 
     public void loadToManager() {
-        Minecraft.getInstance().getTextureManager().bind(this.source);
+        Minecraft.getInstance().getTextureManager().bindForSetup(this.source);
     }
 
     public void setHorizontal(String horizontal) {

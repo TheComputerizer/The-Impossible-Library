@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,8 +11,8 @@ import org.lwjgl.glfw.GLFW;
 @SuppressWarnings({"unused"})
 public class ClientTest {
 
-    public static final KeyBinding TEST_KEYBIND = new KeyBinding("key.test", KeyConflictContext.UNIVERSAL,
-            InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.theimpossiblelibrary");
+    public static final KeyMapping TEST_KEYBIND = new KeyMapping("key.test", KeyConflictContext.UNIVERSAL,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.theimpossiblelibrary");
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent e) {

@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
@@ -92,7 +92,7 @@ public class LogUtil {
             Gets the name of a mod from a given modid or returns the modid if it cannot be found
          */
         private String getModName(String modid) {
-            ModFileInfo mod = ModList.get().getModFileById(modid);
+            IModFileInfo mod = ModList.get().getModFileById(modid);
             return Objects.isNull(mod) ? modid : mod.getFile().getModInfos().get(0).getDisplayName();
         }
 

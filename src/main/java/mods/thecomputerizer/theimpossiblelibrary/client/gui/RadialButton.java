@@ -1,14 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class RadialButton extends AbstractRadialButton {
-    private final List<ITextComponent> tooltipLines;
+    private final List<Component> tooltipLines;
     private final ResourceLocation centerIcon;
     private final ResourceLocation altCenterIcon;
     private final float iconHoverSizeIncrease;
@@ -29,25 +28,25 @@ public class RadialButton extends AbstractRadialButton {
                         BiConsumer<Screen, RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(StringTextComponent::new).collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(TextComponent::new).collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
         this.centerText = centerText;
     }
 
-    public void setHover(boolean superHover, double mouseDeg, Vector2f angles) {
-        this.hover = superHover && mouseDeg>=angles.x && mouseDeg<angles.y;
+    public void setHover(boolean superHover, double mouseDeg, Vector3f angles) {
+        this.hover = superHover && mouseDeg>=angles.x() && mouseDeg<angles.y();
     }
 
-    public void draw(Vector2f center, float zLevel, Vector2f radius, Vector2f angles,
-                     Vector2f mouse, Vector2f relativeCenter, int resolution) {
+    public void draw(Vector3f center, float zLevel, Vector3f radius, Vector3f angles,
+                     Vector3f mouse, Vector3f relativeCenter, int resolution) {
         this.centerPos = relativeCenter;
         for (int i = 0; i < resolution; i++)
-            drawRadialSection(center,zLevel,radius,angles.x,angles.y-angles.x,i,resolution);
+            drawRadialSection(center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
 
-    public void drawCenterIcon(MatrixStack matrix, float centerRadius) {
+    public void drawCenterIcon(PoseStack matrix, float centerRadius) {
         if(this.centerIcon!=null) {
             ResourceLocation actualIcon = this.centerIcon;
             float hoverIncrease = 0f;
@@ -59,12 +58,12 @@ public class RadialButton extends AbstractRadialButton {
         }
     }
 
-    public void drawText(Screen parent, MatrixStack matrix, Vector2f mouse, boolean isCurrent) {
+    public void drawText(Screen parent, PoseStack matrix, Vector3f mouse, boolean isCurrent) {
         if(this.centerText!=null) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int) this.centerPos.x, (int) this.centerPos.y, color);
+            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
         }
-        if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x, (int) mouse.y);
+        if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }
 
     public void handleClick(Screen screen) {

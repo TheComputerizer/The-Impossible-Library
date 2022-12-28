@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector4f;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Level;
@@ -76,16 +76,16 @@ public class Renderer {
         }
     }
 
-    public static void renderPng(MatrixStack matrix, PNG png, Vector4f color, int resolutionX, int resolutionY) {
-        RenderSystem.pushMatrix();
-        RenderSystem.pushTextureAttributes();
-        RenderSystem.enableAlphaTest();
+    public static void renderPng(PoseStack matrix, PNG png, Vector4f color, int resolutionX, int resolutionY) {
+        matrix.pushPose();
+        RenderSystem.disableTexture();
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         png.loadToManager();
-        RenderSystem.color4f(color.x(), color.y(), color.z(), 1f);
+        RenderSystem.setShaderColor(color.x(), color.y(), color.z(), 1f);
         float scaleX  = (0.25f*((float)resolutionY/(float)resolutionX))*png.getScaleX();
         float scaleY = 0.25f*png.getScaleY();
-        RenderSystem.scalef(scaleX,scaleY,1f);
+        matrix.scale(scaleX,scaleY,1f);
         int xOffset = 0;
         int yOffset = 0;
         if(png.getHorizontal().matches("center")) xOffset = (int) ((resolutionX/2f)-((float)resolutionX*(scaleX/2f)));
@@ -94,8 +94,7 @@ public class Renderer {
         else if(png.getVertical().matches("top")) yOffset = (int) (resolutionY-((float)resolutionY*(scaleY/2f)));
         float posX = (xOffset*(1/scaleX))+png.getX();
         float posY = (yOffset*(1/scaleY))+png.getY();
-        AbstractGui.blit(matrix,(int) posX, (int) posY, 0, 0, resolutionX, resolutionY, resolutionX, resolutionY);
-        RenderSystem.popAttributes();
-        RenderSystem.popMatrix();
+        GuiComponent.blit(matrix,(int) posX, (int) posY, 0, 0, resolutionX, resolutionY, resolutionX, resolutionY);
+        matrix.popPose();
     }
 }
