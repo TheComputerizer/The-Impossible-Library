@@ -10,10 +10,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -39,21 +39,22 @@ public class RadialElement extends GuiComponent {
     private boolean hover;
     private boolean centerHover;
 
-    public RadialElement(Screen parent, @Nullable ResourceLocation center, @Nullable ResourceLocation altCenter,
-                         @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
-                         int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
+    public RadialElement(Screen parent, ResourceLocation center, ResourceLocation altCenter,
+                         RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
+                         int radiusOut, int iconRadius, String centerText, List<String> centerTooltips,
                          float resolution, float hoverIncrease, RadialButton ... buttons) {
         this(parent,center,altCenter,centerProgress,centerX,centerY,radiusIn,radiusOut,iconRadius,centerText,
                 centerTooltips,resolution,hoverIncrease, Arrays.stream(buttons).collect(Collectors.toList()));
     }
 
-    public RadialElement(Screen parent, @Nullable ResourceLocation center, @Nullable ResourceLocation altCenter,
-                         @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
-                         int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
+    public RadialElement(Screen parent, ResourceLocation center, ResourceLocation altCenter,
+                         RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
+                         int radiusOut, int iconRadius, String centerText, List<String> centerTooltips,
                          float resolution, float hoverIncrease, List<RadialButton> buttons) {
         this.parentScreen = parent;
         this.buttons = buttons;
-        this.centerTooltips = centerTooltips.stream().map(TextComponent::new).collect(Collectors.toList());
+        this.centerTooltips = centerTooltips.stream().map(line -> MutableComponent.create(new LiteralContents(line)))
+                .collect(Collectors.toList());
         this.centerIcon = center;
         this.altCenterIcon = Objects.isNull(altCenter) ? center : altCenter;
         this.iconRadius = iconRadius;
@@ -173,7 +174,7 @@ public class RadialElement extends GuiComponent {
      */
     @FunctionalInterface
     public interface CreatorFunction<P,C,AC,B,X,Y,I,O,IR,T,CT,R,HI,RB,E> {
-        E apply(P parent, @Nullable C center, @Nullable AC altCenter, @Nullable B bar, X x, Y y, I in, O out, IR iconRad,
-                @Nullable T text, CT tooltips, R res, HI hovInc, RB buttons);
+        E apply(P parent, C center, AC altCenter, B bar, X x, Y y, I in, O out, IR iconRad,
+                T text, CT tooltips, R res, HI hovInc, RB buttons);
     }
 }

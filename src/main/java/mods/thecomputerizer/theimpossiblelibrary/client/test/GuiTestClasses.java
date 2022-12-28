@@ -9,12 +9,12 @@ import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nonnull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -98,7 +98,7 @@ public class GuiTestClasses {
         protected Vector3f center;
 
         public TestGui(Screen parent) {
-            super(new TextComponent("test_gui"));
+            super(MutableComponent.create(new LiteralContents("test_gui")));
             this.parent = parent;
         }
 
@@ -109,7 +109,7 @@ public class GuiTestClasses {
         }
 
         @Override
-        public void render(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
+        public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
             this.renderBackground(matrix);
             drawStuff(matrix, mouseX, mouseY, partialTicks);
             super.render(matrix, mouseX, mouseY, partialTicks);

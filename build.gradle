@@ -1,9 +1,9 @@
 //file:noinspection GroovyUnusedAssignment
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
 }
-version = '1.18.2-fabric-0.1.9'
+version = '1.19.2-fabric-0.1.9'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
