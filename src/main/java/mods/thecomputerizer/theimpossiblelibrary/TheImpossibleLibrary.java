@@ -20,11 +20,11 @@ public class TheImpossibleLibrary {
         DataUtil.initGlobal();
         if (FMLEnvironment.dist == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(Renderer.class);
-            initClientTestClass(MinecraftForge.EVENT_BUS);
+            //initClientTestClass(MinecraftForge.EVENT_BUS);
         }
     }
     private void keyBindSetup(final RegisterKeyMappingsEvent ev) {
-        ev.register(ClientTest.TEST_KEYBIND);
+        //ev.register(ClientTest.TEST_KEYBIND);
     }
 
     public static void initClientTestClass(IEventBus bus) {
