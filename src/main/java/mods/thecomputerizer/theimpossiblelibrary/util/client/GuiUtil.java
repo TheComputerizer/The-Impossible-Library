@@ -30,7 +30,7 @@ public class GuiUtil {
         vectorColor(builder.vertex(pos1In.x(), pos1In.y(), offset),color).endVertex();
         vectorColor(builder.vertex(pos2In.x(), pos2In.y(), offset),color).endVertex();
         vectorColor(builder.vertex(pos2Out.x(), pos2Out.y(), offset),color).endVertex();
-        BufferUploader.draw(builder.end());
+        BufferUploader.drawWithShader(builder.end());
         GLColorFinish();
     }
 
@@ -85,7 +85,7 @@ public class GuiUtil {
         vectorColor(builder.vertex(topLeft.x(), bottomRight.y(), offset), color).endVertex();
         vectorColor(builder.vertex(bottomRight.x(), bottomRight.y(), offset), color).endVertex();
         vectorColor(builder.vertex(bottomRight.x(), topLeft.y(), offset), color).endVertex();
-        BufferUploader.draw(builder.end());
+        BufferUploader.drawWithShader(builder.end());
         GLColorFinish();
     }
 
@@ -120,7 +120,7 @@ public class GuiUtil {
         vectorColor(builder.vertex(start2.x(), start2.y(), offset), color).endVertex();
         vectorColor(builder.vertex(end1.x(), end1.y(), offset), color).endVertex();
         vectorColor(builder.vertex(end2.x(), end2.y(), offset), color).endVertex();
-        BufferUploader.draw(builder.end());
+        BufferUploader.drawWithShader(builder.end());
         GLColorFinish();
     }
 
