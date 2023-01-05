@@ -39,8 +39,7 @@ public class GuiUtil {
         Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
     public static void bufferSquareTexture(PoseStack matrix, Vector3f center, float radius, ResourceLocation texture) {
-        Minecraft.getInstance().getTextureManager().bindForSetup(texture);
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        RenderSystem.setShaderTexture(0,texture);
         GuiComponent.blit(matrix,(int) (center.x() - radius / 2f), (int) (center.y() - radius / 2f),
                 0, 0, (int) radius, (int) radius, (int) radius, (int) radius);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
