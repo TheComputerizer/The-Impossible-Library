@@ -21,12 +21,17 @@ public class GuiUtil {
         Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
         zLevel can be accessed from any class that extends GuiScreen
      */
-    public static void setBuffer(BufferBuilder builder, Point2i pos1In, Point2i pos2In, Point2i pos1Out, Point2i pos2Out,
-                                 float zLevel, Point4i colors) {
-        tupleColor(builder.pos(pos1Out.x, pos1Out.y, zLevel),colors).endVertex();
-        tupleColor(builder.pos(pos1In.x, pos1In.y, zLevel),colors).endVertex();
-        tupleColor(builder.pos(pos2In.x, pos2In.y, zLevel),colors).endVertex();
-        tupleColor(builder.pos(pos2Out.x, pos2Out.y, zLevel),colors).endVertex();
+    public static void setBuffer(Point2i pos1In, Point2i pos2In, Point2i pos1Out, Point2i pos2Out,
+                                 float zLevel, Point4i color) {
+        GLColorStart(color);
+        BufferBuilder builder = Tessellator.getInstance().getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        tupleColor(builder.pos(pos1Out.x, pos1Out.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(pos1In.x, pos1In.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(pos2In.x, pos2In.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(pos2Out.x, pos2Out.y, zLevel),color).endVertex();
+        Tessellator.getInstance().draw();
+        GLColorFinish();
     }
 
     /*
@@ -43,10 +48,6 @@ public class GuiUtil {
 
     public static void drawColoredRing(Point2i center, Tuple2i radii, Point4i color, int resolution,
                                        float zLevel) {
-        GLColorStart(color);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         Point2f angles = MathUtil.makeAngleTuple(0,1);
         float startAngle = (float) Math.toRadians(angles.x);
         float angleDif = (float) Math.toRadians(angles.y-angles.x);
@@ -57,10 +58,8 @@ public class GuiUtil {
             Point2i pos2In = MathUtil.getVertex(center,(float)radii.x,angle2);
             Point2i pos1Out = MathUtil.getVertex(center,(float)radii.y,angle1);
             Point2i pos2Out = MathUtil.getVertex(center,(float)radii.y,angle2);
-            setBuffer(builder,pos1In,pos2In,pos1Out,pos2Out,zLevel,color);
+            setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,color);
         }
-        tessellator.draw();
-        GLColorFinish();
     }
 
     /*
@@ -80,14 +79,13 @@ public class GuiUtil {
     public static void drawBox(Tuple2i topLeft, int width, int height, Tuple4i color, float zLevel) {
         Point2i bottomRight = new Point2i(topLeft.x+width,topLeft.y+height);
         GLColorStart(color);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        builder.pos(topLeft.x, topLeft.y, zLevel).endVertex();
-        builder.pos(topLeft.x, bottomRight.y, zLevel).endVertex();
-        builder.pos(bottomRight.x, bottomRight.y, zLevel).endVertex();
-        builder.pos(bottomRight.x, topLeft.y, zLevel).endVertex();
-        tessellator.draw();
+        BufferBuilder builder = Tessellator.getInstance().getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        tupleColor(builder.pos(topLeft.x, topLeft.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(topLeft.x, bottomRight.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(bottomRight.x, bottomRight.y, zLevel),color).endVertex();
+        tupleColor(builder.pos(bottomRight.x, topLeft.y, zLevel),color).endVertex();
+        Tessellator.getInstance().draw();
         GLColorFinish();
     }
 
@@ -116,37 +114,85 @@ public class GuiUtil {
         Point2d end1 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle-90d));
         Point2d end2 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle+90d));
         GLColorStart(color);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
+        BufferBuilder builder = Tessellator.getInstance().getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         tupleColor(builder.pos(start1.x, start1.y, zLevel),color).endVertex();
         tupleColor(builder.pos(start2.x, start2.y, zLevel),color).endVertex();
         tupleColor(builder.pos(end1.x, end1.y, zLevel),color).endVertex();
         tupleColor(builder.pos(end2.x, end2.y, zLevel),color).endVertex();
-        tessellator.draw();
+        Tessellator.getInstance().draw();
         GLColorFinish();
     }
 
     /*
         Splits a string into multiple lines and renders them
-        Returns the new y position under the rendered lines
+        Use lineNums and pos to cap the number of lines that can be rendered and which line to start rendering on
+        Returns the y position after the rendered lines
      */
-    public static int drawMultiLineString(GuiScreen screen, String original, int left, int right, int top, int spacing) {
+    public static int drawMultiLineString(GuiScreen screen, String original, int left, int right, int top, int spacing,
+                                          int lineNums, int pos, int color) {
+        if(lineNums<=0) lineNums = Integer.MAX_VALUE;
+        if(pos<0) pos = 0;
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
         int lineWidth = 0;
+        int linePos = 0;
+        int lineCounter = 0;
         for(String word : words) {
-            if(lineWidth==0) {
+            if (lineWidth == 0) {
                 builder.append(word);
-                lineWidth+=screen.mc.fontRenderer.getStringWidth(word);
-            }
-            else {
-                String withSpace = " "+word;
+                lineWidth += screen.mc.fontRenderer.getStringWidth(word);
+            } else {
+                String withSpace = " " + word;
                 int textWidth = screen.mc.fontRenderer.getStringWidth(withSpace);
-                if((left+lineWidth+textWidth)<right) {
+                if ((left + lineWidth + textWidth) < right) {
                     builder.append(withSpace);
-                    lineWidth+=textWidth;
+                    lineWidth += textWidth;
+                } else {
+                    if (linePos < pos) linePos++;
+                    else {
+                        lines.add(builder.toString());
+                        lineCounter++;
+                        if (lineCounter >= lineNums) {
+                            builder = new StringBuilder();
+                            break;
+                        }
+                    }
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = screen.mc.fontRenderer.getStringWidth(word);
+                }
+            }
+        }
+        if(builder.length()>0) lines.add(builder.toString());
+        for(String line : lines) {
+            screen.drawString(screen.mc.fontRenderer,line,left,top, color);
+            top+=spacing;
+        }
+        return top;
+    }
+
+    /*
+        Returns the total number of lines a string would be if it was split
+     */
+    public static int howManyLinesWillThisBe(GuiScreen screen, String original, int left, int right, int top, int spacing) {
+        List<String> lines = new ArrayList<>();
+        String[] words = original.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int lineWidth = 0;
+        int linePos = 0;
+        int lineCounter = 0;
+        for(String word : words) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += screen.mc.fontRenderer.getStringWidth(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = screen.mc.fontRenderer.getStringWidth(withSpace);
+                if ((left + lineWidth + textWidth) < right) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
                 } else {
                     lines.add(builder.toString());
                     builder = new StringBuilder();
@@ -154,13 +200,10 @@ public class GuiUtil {
                     lineWidth = screen.mc.fontRenderer.getStringWidth(word);
                 }
             }
+            lineCounter++;
         }
         lines.add(builder.toString());
-        for(String line : lines) {
-            screen.drawString(screen.mc.fontRenderer,line,left,top, GuiUtil.WHITE);
-            top+=spacing;
-        }
-        return top;
+        return lines.size();
     }
 
     /*

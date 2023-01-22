@@ -19,7 +19,7 @@ public class PNG {
     private long milliStatus;
 
     public PNG(ResourceLocation location) throws IOException {
-        if(!location.getResourcePath().contains(".png")) throw new IOException("Tried to initialize a non png file to a png object! " +
+        if(!location.getPath().contains(".png")) throw new IOException("Tried to initialize a non png file to a png object! " +
                 "Make sure that you have the correct file extension on your resource location.");
         this.source = location;
         this.milliStatus = 0;

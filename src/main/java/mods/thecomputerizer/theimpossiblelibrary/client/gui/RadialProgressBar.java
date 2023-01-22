@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.vecmath.Point2f;
@@ -66,13 +65,13 @@ public class RadialProgressBar extends AbstractRadialButton {
     /*
         The relative center is what determines where on the screen the center of the progress bar is
      */
-    public void draw(BufferBuilder builder, Point2i relativeCenter, float zLevel) {
+    public void draw(Point2i relativeCenter, float zLevel) {
         if(this.progress>0) {
             this.centerPos.set(relativeCenter);
             Point2f angles = MathUtil.toRadians(MathUtil.progressAngles(this.progress));
             int adjustedRes = (int) (((float)this.resolution)*this.progress);
             for (int i = 0; i < this.resolution; i++)
-                drawRadialSection(builder, relativeCenter, zLevel, this.radii, angles.x, angles.y - angles.x, i, this.resolution);
+                drawRadialSection(relativeCenter, zLevel, this.radii, angles.x, angles.y - angles.x, i, this.resolution);
         }
     }
 

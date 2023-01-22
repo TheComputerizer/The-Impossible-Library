@@ -1,16 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
+import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Point2f;
@@ -92,9 +88,6 @@ public class RadialElement extends Gui {
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         Point2i mouse = new Point2i(mouseX,mouseY);
         double mouseAngleDeg = MathUtil.getAngle(mouse, this.center);
         double mouseRelativeRadius = MathUtil.distance(mouse, this.center);
@@ -112,20 +105,19 @@ public class RadialElement extends Gui {
             for (RadialButton button : this.buttons) {
                 Point2f angles = MathUtil.makeAngleTuple(index,(int)numButtons);
                 if(currentScreen) button.setHover(this.hover,mouseAngleDeg,angles);
-                button.draw(builder, this.center, zLevel, this.radius, MathUtil.toRadians(angles), mouse,
+                button.draw(this.center, zLevel, this.radius, MathUtil.toRadians(angles), mouse,
                         MathUtil.getCenterPosOfSlice(angles,this.radius,this.center,(int)numButtons),buttonRes);
                 index++;
             }
-        } else drawEmpty(builder, zLevel, mouse);
-        tessellator.draw();
-        drawCenterProgress(tessellator,this.center,currentScreen);
+        } else drawEmpty(zLevel, mouse);
+        drawCenterProgress(this.center,currentScreen);
         drawIcons(this.center, this.radius, numButtons==1);
         drawText(mouse,mouseRelativeRadius, currentScreen);
         GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
     }
 
-    private void drawEmpty(BufferBuilder buffer, float zLevel, Point2i mouse) {
+    private void drawEmpty(float zLevel, Point2i mouse) {
         float startAngle = (float)Math.toRadians(-0.25f * 360);
         for (int i = 0; i < resolution; i++) {
             float angle1 = (float) Math.toRadians(startAngle + (i/resolution) * MathUtil.CIRCLE_RADIANS);
@@ -134,8 +126,8 @@ public class RadialElement extends Gui {
             Point2i pos2In = MathUtil.getVertex(center, radius.x, angle2);
             Point2i pos1Out = MathUtil.getVertex(center, radius.y, angle1);
             Point2i pos2Out = MathUtil.getVertex(center, radius.y, angle2);
-            if(this.hover) GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,new Point4i(255,255,255,64));
-            else GuiUtil.setBuffer(buffer,pos1In,pos2In,pos1Out,pos2Out,zLevel,new Point4i(0,0,0,64));
+            if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,new Point4i(255,255,255,64));
+            else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,new Point4i(0,0,0,64));
         }
     }
 
@@ -156,13 +148,11 @@ public class RadialElement extends Gui {
         GlStateManager.disableTexture2D();
     }
 
-    private void drawCenterProgress(Tessellator tessellator, Point2i center, boolean currentScreen) {
+    private void drawCenterProgress(Point2i center, boolean currentScreen) {
         if(this.centerProgress!=null) {
-            tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
             if(currentScreen) this.centerProgress.setHover(this.centerHover);
             else this.centerProgress.setHover(false);
-            this.centerProgress.draw(tessellator.getBuffer(),this.center,this.zLevel);
-            tessellator.draw();
+            this.centerProgress.draw(this.center,this.zLevel);
         }
     }
 

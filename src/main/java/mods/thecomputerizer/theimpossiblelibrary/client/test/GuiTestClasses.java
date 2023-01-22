@@ -5,13 +5,17 @@ import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialButton;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
+import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.Level;
+import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Point2i;
 import javax.vecmath.Point4i;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -153,16 +157,77 @@ public class GuiTestClasses {
 
     private static class TestOtherGui extends TestGui {
 
+        private int copyPastaLines;
+        private int scrollPos;
+
         public TestOtherGui(GuiScreen parent) {
             super(parent);
+            this.copyPastaLines = 0;
+            this.scrollPos = 0;
+        }
+
+        @Override
+        public void handleMouseInput() throws IOException {
+            super.handleMouseInput();
+            int scroll = Mouse.getEventDWheel();
+            if(scroll!=0) {
+                if(scroll<1) {
+                    if (this.copyPastaLines-10>this.scrollPos) this.scrollPos++;
+                } else if(this.scrollPos>0) this.scrollPos--;
+            }
+        }
+
+        @Override
+        public void initGui() {
+            super.initGui();
+            this.copyPastaLines = GuiUtil.howManyLinesWillThisBe(this,"Here's the thing. You said a " +
+                    "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
+                    "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
+                    "crows. If you want to be \"specific\" like you said, then you shouldn't either. They're not the " +
+                    "same thing. If you're saying \"crow family\" you're referring to the taxonomic grouping of " +
+                    "Corvidae, which includes things from nutcrackers to blue jays to ravens. So your reasoning for " +
+                    "calling a jackdaw a crow is because random people \"call the black ones crows?\" Let's get grackles " +
+                    "and blackbirds in there, then, too. Also, calling someone a human or an ape? It's not one or the " +
+                    "other, that's not how taxonomy works. They're both. A jackdaw is a jackdaw and a member of the crow " +
+                    "family. But that's not what you said. You said a jackdaw is a crow, which is not true unless you're " +
+                    "okay with calling all members of the crow family crows, which means you'd call blue jays, ravens, " +
+                    "and other birds crows, too. Which you said you don't. It's okay to just admit you're wrong, you know?",
+                    0,this.width/2,0,4);
+            LogUtil.logInternal(Level.INFO,"pasta lines {}",this.copyPastaLines);
         }
 
         @Override
         public void drawStuff(int mouseX, int mouseY, float partialTicks) {
+            /*
             GuiUtil.drawBoxWithOutline(this.center,100, 50, new Point4i(0,0,0,255),
                     new Point4i(255,255,255,255), 1f, this.zLevel);
             GuiUtil.drawColoredRing(this.center,new Point2i(199,200),new Point4i(255,255,255,255),
                     360,this.zLevel);
+             */
+            GuiUtil.drawMultiLineString(this,"Here's the thing. You said a " +
+                            "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
+                            "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
+                            "crows. If you want to be \"specific\" like you said, then you shouldn't either. They're not the " +
+                            "same thing. If you're saying \"crow family\" you're referring to the taxonomic grouping of " +
+                            "Corvidae, which includes things from nutcrackers to blue jays to ravens. So your reasoning for " +
+                            "calling a jackdaw a crow is because random people \"call the black ones crows?\" Let's get grackles " +
+                            "and blackbirds in there, then, too. Also, calling someone a human or an ape? It's not one or the " +
+                            "other, that's not how taxonomy works. They're both. A jackdaw is a jackdaw and a member of the crow " +
+                            "family. But that's not what you said. You said a jackdaw is a crow, which is not true unless you're " +
+                            "okay with calling all members of the crow family crows, which means you'd call blue jays, ravens, " +
+                            "and other birds crows, too. Which you said you don't. It's okay to just admit you're wrong, you know?",
+                    0,this.width/2,0,this.fontRenderer.FONT_HEIGHT+2,10,this.scrollPos,GuiUtil.WHITE);
+            if(this.copyPastaLines>10) drawScrollBar();
+        }
+
+        private void drawScrollBar() {
+            float indices = this.copyPastaLines-10;
+            int perIndex = (int)(((float)this.height)/indices);
+            int top = perIndex*this.scrollPos;
+            int x = this.width-1;
+            Point2i start = new Point2i(x, top);
+            Point2i end = new Point2i(x, Math.min(this.height,top+perIndex));
+            GuiUtil.drawLine(start,end,new Point4i(200,200,255,255), 2f, this.zLevel);
         }
     }
 }

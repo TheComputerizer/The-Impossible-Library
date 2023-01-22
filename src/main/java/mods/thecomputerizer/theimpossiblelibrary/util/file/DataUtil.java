@@ -15,16 +15,20 @@ public class DataUtil {
     private static boolean GLOBAL_LOAD_FAILED = false;
     private static boolean WORLD_LOAD_FAILED = false;
     private static final List<String> explanation = Stream.of("Hi!\n",
-            "This folder is used to store data used by The Impossible Library and other mods that might use it as a dependency\n",
+            "This folder is used to store data used by The Impossible Library and other mods that might use it as a " +
+                    "dependency\n",
             "--------------------------------------------------\n",
             "For mod developers:\n",
-            "\n",
+            "If you registered any global data through The Impossible Library, this is where that gets stored! So if " +
+                    "you see your modid here, everything is working as intended.\n",
             "--------------------------------------------------\n",
-            "For modpack creators:",
-            "\n",
+            "For modpack creators:\n",
+            "This is where mods that utilize the global data system implemented by The Impossible Library have their " +
+                    "data stored! If you want to quickly reset a specific mod's data, you can delete its file here.\n",
             "--------------------------------------------------\n",
             "For players:\n",
-            "").collect(Collectors.toList());
+            "You probably do not have to worry about this folder, but if a specific mod is breaking that appears here, " +
+                    "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!").collect(Collectors.toList());
 
     public static void initGlobal() {
         try {

@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -37,11 +36,11 @@ public class RadialButton extends AbstractRadialButton {
         this.hover = superHover && mouseDeg>=angles.x && mouseDeg<angles.y;
     }
 
-    public void draw(BufferBuilder builder, Point2i center, float zLevel, Point2i radius, Point2f angles,
+    public void draw(Point2i center, float zLevel, Point2i radius, Point2f angles,
                      Point2i mouse, Point2i relativeCenter, int resolution) {
         this.centerPos.set(relativeCenter);
         for (int i = 0; i < resolution; i++)
-            drawRadialSection(builder,center,zLevel,radius,angles.x,angles.y-angles.x,i,resolution);
+            drawRadialSection(center,zLevel,radius,angles.x,angles.y-angles.x,i,resolution);
     }
 
     public void drawCenterIcon(float centerRadius) {
