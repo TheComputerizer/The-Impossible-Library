@@ -16,7 +16,7 @@ fancyGradle {
     }
 }
 
-version = '1.12.2-0.2.0'
+version = '1.12.2-0.2.1'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
@@ -30,7 +30,6 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
         }
-
         server {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -52,8 +51,6 @@ repositories {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
 configurations {
     shade
     implementation.extendsFrom(shade)
@@ -68,7 +65,7 @@ dependencies {
 }
 
 shadowJar {
-    relocate 'com.moandjiezana.toml', 'mods.thecomputerizer.theimpossiblelibrary.libraries.moandjiezana.toml'
+    relocate 'com.moandjiezana.toml', 'libraries.com.moandjiezana.toml'
     configurations = [project.configurations.shadow]
     classifier ''
 }

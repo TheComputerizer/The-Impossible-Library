@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
@@ -157,6 +158,7 @@ public class GuiTestClasses {
 
     private static class TestOtherGui extends TestGui {
 
+        private GuiTextField textBox;
         private int copyPastaLines;
         private int scrollPos;
 
@@ -178,8 +180,23 @@ public class GuiTestClasses {
         }
 
         @Override
+        protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+            this.textBox.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+
+        @Override
+        protected void keyTyped(char typedChar, int keyCode) throws  IOException {
+            super.keyTyped(typedChar, keyCode);
+            this.textBox.textboxKeyTyped(typedChar, keyCode);
+        }
+
+        @Override
         public void initGui() {
             super.initGui();
+            this.textBox = new GuiTextField(69,this.fontRenderer,(this.width/4)*3,0,
+                    (this.width/4)-2,16);
+            this.textBox.setMaxStringLength(32500);
+            this.textBox.setText("");
             this.copyPastaLines = GuiUtil.howManyLinesWillThisBe(this,"Here's the thing. You said a " +
                     "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                     "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
@@ -218,6 +235,7 @@ public class GuiTestClasses {
                             "and other birds crows, too. Which you said you don't. It's okay to just admit you're wrong, you know?",
                     0,this.width/2,0,this.fontRenderer.FONT_HEIGHT+2,10,this.scrollPos,GuiUtil.WHITE);
             if(this.copyPastaLines>10) drawScrollBar();
+            this.textBox.drawTextBox();
         }
 
         private void drawScrollBar() {
