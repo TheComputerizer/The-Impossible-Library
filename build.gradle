@@ -61,10 +61,13 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     //external dependencies
-    shade('com.moandjiezana.toml:toml4j:0.7.2') { exclude group: 'com.google.code.gson', module: 'gson' } //for toml files
+    shade('com.moandjiezana.toml:toml4j:0.7.2') {  //for toml files
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
 }
 
 shadowJar {
+    // relocate so the classpath is not identical to anything else that might also be shading the same things
     relocate 'com.moandjiezana.toml', 'libraries.com.moandjiezana.toml'
     configurations = [project.configurations.shadow]
     classifier ''
@@ -76,6 +79,7 @@ reobf {
         mappings = createMcpToSrg.output
     }
 }
+
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     inputs.property 'version', project.version
@@ -87,6 +91,7 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {

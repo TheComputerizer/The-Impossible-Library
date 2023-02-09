@@ -27,7 +27,7 @@ public class Renderer {
         return null;
     }
 
-    /*
+    /**
        accepts gifs, MP4s, and pngs
        horizontal accepts left, center, and right
        vertical accepts bottom, center, and top

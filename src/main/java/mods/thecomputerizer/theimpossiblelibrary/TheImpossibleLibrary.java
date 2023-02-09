@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary;
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -25,18 +26,24 @@ public class TheImpossibleLibrary {
     public void preInit(FMLPreInitializationEvent e) {
         //registration stuff has to happen here!
         EventBus bus = MinecraftForge.EVENT_BUS;
+        //only register testing stuff in a dev environment
+        boolean devEnv = (boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
         if(e.getSide()==Side.CLIENT) {
             bus.register(Renderer.class);
-            //preInitClientTestClass(bus);
+            if(devEnv) preInitClientTestClass(bus);
         }
+        if(devEnv) preInitCommonTestClass(bus);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent e) {
         //keybindings and other less important stuff can go here
+        //only register testing stuff in a dev environment
+        boolean devEnv = (boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
         if(e.getSide()==Side.CLIENT) {
-            //initClientTestClass();
+            if(devEnv) initClientTestClass();
         }
+        if(devEnv) initCommonTestClass();
     }
 
     public static void preInitCommonTestClass(EventBus bus) {

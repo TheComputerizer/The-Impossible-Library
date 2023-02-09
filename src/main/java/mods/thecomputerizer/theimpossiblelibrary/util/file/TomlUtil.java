@@ -1,11 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import com.moandjiezana.toml.Toml;
+import mods.thecomputerizer.theimpossiblelibrary.common.toml.Holder;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Path;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 //Helper methods for reading toml files because toml is better than json
 public class TomlUtil {
 
-    /*
+    /**
      * Basic helper methods for getting toml instances
      */
     public static Toml get(InputStream stream) {
@@ -34,42 +36,42 @@ public class TomlUtil {
         return new Toml().read(file);
     }
 
-    /*
+    /**
      * Makes a toml instance with default values from another instance.
      */
     public static Toml of(Toml toml) {
         return new Toml().read(toml);
     }
 
-    /*
+    /**
      * Reads in a toml file that was converted to a string, most likely for packet reasons.
      */
     public static Toml parse(String tomlAsString) {
         return new Toml().read(tomlAsString);
     }
 
-    /*
+    /**
      * Converts a toml instance to a map, for anyone that finds those easier to deal with.
      */
     public static Map<String, Object> toMap(Toml toml) {
         return toml.toMap();
     }
 
-    /*
+    /**
      * Converts a toml instance to a generic object for the heretics that like json.
      */
     public static <T> T  toType(Toml toml, Class<T> clazz) {
         return toml.to(clazz);
     }
 
-    /*
+    /**
      * Most basic method to read in a string element (in quotes) from a toml instance.
      */
     public static String readIfExists(Toml toml, String key, String def) {
         return toml.getString(key, def);
     }
 
-    /*
+    /**
      * To account for users that may be unfamiliar with TOML formatting, any values read in with the following methods
      * can be in quotes like string values, but are not required to be
      */
@@ -123,7 +125,7 @@ public class TomlUtil {
         return Double.parseDouble(toml.getString(key, def + ""));
     }
 
-    /*
+    /**
      * These are the same as the above methods but are returned as strings to be parsed later. This can make it a bit
      * more streamlined to read larger blocks of data at once by parsing it on demand rather than when it is read in.
      * All of these return the def value if the key is not found.
@@ -178,7 +180,7 @@ public class TomlUtil {
         return toml.getString(key, def + "");
     }
 
-    /*
+    /**
      * Generic catch all method to read in any accepted type except Date and return it as a string. Only use this if you
      * want to ignore the object type entirely when reading in data. Returns the default value if they key is not found.
      */
@@ -197,14 +199,45 @@ public class TomlUtil {
         return toml.getString(key,Objects.nonNull(def) ? def.toString() : null);
     }
 
-    /*
+    /**
+     * Another generic catch all method that returns an Object of any type rather than converting it to a string.
+     * Handles any toml accepted non-table type. Returns null if the key does not exist or if it is not able to return
+     * a primitive type for whatever reason.
+     */
+    public static Object genericObject(Toml toml, String key) {
+        if(toml.contains(key)) {
+            try {
+                if (toml.contains(key)) return toml.getString(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return toml.getLong(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return toml.getDouble(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return toml.getBoolean(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return toml.getDate(key);
+            } catch (ClassCastException ignored) {}
+            try {
+                if (toml.contains(key)) return toml.getList(key);
+            } catch (ClassCastException ignored) {}
+            LogUtil.logInternal(Level.ERROR, "Generic with key {} was not a primitive type and could not be " +
+                    "read in",key);
+        }
+        return null;
+    }
+
+    /**
      * I am not sure how to handle the quotes here, so this one does not have a fallback for checking whether it has them.
      */
     public static Date readIfExists(Toml toml, String key, Date def) {
         return toml.getDate(key,def);
     }
 
-    /*
+    /**
      * This method is the easiest way of reading in data stored as a list, but it does not have a quote fallback.
      * Returns the def value if no list is present.
      */
@@ -213,7 +246,7 @@ public class TomlUtil {
         return def;
     }
 
-    /*
+    /**
      * Reads in a generic list and converts it to a string. This can be used as a quote fallback, but it will need to be
      * parsed afterwards if string is not the desired return type. Returns the string output of the def value if no list
      * is present.
@@ -223,7 +256,7 @@ public class TomlUtil {
         return Objects.nonNull(def) ? def.stream().map(Objects::toString).collect(Collectors.toList()) : null;
     }
 
-    /*
+    /**
      * Does the same thing as the above method but with arrays instead of collections
      */
     public static String[] readGenericArray(Toml toml, String key, Object[] def) {
@@ -231,7 +264,7 @@ public class TomlUtil {
         return Objects.nonNull(read) ? read.toArray(new String[0]) : null;
     }
 
-    /*
+    /**
      * All the following methods return arrays of specific types read in from a toml list. The toml lists can either
      * have all elements in quotes or no elements in quotes, as the parser can not determine the type of a mixed list.
      * Returns the def value if no list is present.
@@ -277,7 +310,7 @@ public class TomlUtil {
         return def;
     }
 
-    /*
+    /**
      * I could not figure out how to make these return their primitive types efficiently, but these are functionally identical
      */
     public static Float[] readIfExists(Toml toml, String key, Float[] def) {
@@ -305,7 +338,7 @@ public class TomlUtil {
         return def;
     }
 
-    /*
+    /**
      * I am not sure how to handle the quotes here, so this one does not have a fallback for checking whether it has them.
      */
     public static Date[] readIfExists(Toml toml, String key, Date[] def) {
@@ -316,7 +349,28 @@ public class TomlUtil {
         return def;
     }
 
-    /*
+    /**
+     * Converts a nested table name stored as a collection of parent and child names into a single string.
+     * Assumes the input collection is properly ordered
+     */
+    public static String condensePath(Collection<String> path) {
+        return condensePath(path.toArray(new String[0]));
+    }
+
+    /**
+     * Converts a nested table name stored as an array of parent and child names into a single string.
+     * Assumes the input collection is properly ordered
+     */
+    public static String condensePath(String ... path) {
+        StringBuilder builder = new StringBuilder();
+        for(int i=0;i<path.length;i++) {
+            if(i+1==path.length) builder.append(path[i]);
+            else builder.append(path[i]).append(".");
+        }
+        return builder.toString();
+    }
+
+    /**
      * Converts a toml instance to a list of lines for packets or file writing. The topLevelLines input is how many
      * blank lines to put in between top level tables. The innerLines input is how many spaces to put between inner level
      * tables. The listSpaces input is many spaces to put after the [ and before the ] for toml lists.
@@ -355,7 +409,7 @@ public class TomlUtil {
         return lines;
     }
 
-    /*
+    /**
      * Does the same thing as the above method except the result is stored in a single string with newline characters
      */
     public static String toString(Toml toml, int topLevelLines, int innerLines, int listSpaces, int depth) {
@@ -394,5 +448,31 @@ public class TomlUtil {
         for(int i=0;i<depth;i++) builder.append("\t");
         if(isDouble) return builder.append("[[").append(key).append("]]").toString();
         return builder.append("[").append(key).append("]").toString();
+    }
+
+    /**
+     * Stores more information than normally reading a TOML file, such as comments and the precise number of blank spaces
+     */
+    public static Holder readFully(URI uri) throws IOException {
+        return readFully(new File(uri));
+    }
+
+    public static Holder readFully(Path path) throws IOException {
+        return readFully(new File(path.toUri()));
+    }
+
+    public static Holder readFully(String filePath) throws IOException {
+        return readFully(new File(filePath));
+    }
+
+    public static Holder readFully(File file) throws IOException {
+        return new Holder(file);
+    }
+
+    /**
+     * Needs 2 copies of the same input stream for reading in the TOML backing and the custom stuff
+     */
+    public static Holder readFully(InputStream stream) throws IOException {
+        return new Holder(stream);
     }
 }

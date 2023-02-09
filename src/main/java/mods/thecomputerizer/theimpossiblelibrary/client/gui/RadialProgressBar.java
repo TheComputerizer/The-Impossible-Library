@@ -15,7 +15,7 @@ public class RadialProgressBar extends AbstractRadialButton {
     private final TriConsumer<GuiScreen, RadialProgressBar, Point2i> handlerFunction;
     private float progress;
 
-    /*
+    /**
         For radii: x=inner y=outer
         For colors: x=r y=g z=b w=a
         Resolution determines how round the circular progress bar will be. Higher = more round
@@ -34,7 +34,7 @@ public class RadialProgressBar extends AbstractRadialButton {
         this.progress = progress;
     }
 
-    /*
+    /**
         Determines the percentage progress the mouse is pointing to
         This can be used within the handler function
      */
@@ -48,21 +48,21 @@ public class RadialProgressBar extends AbstractRadialButton {
         return this.hover;
     }
 
-    /*
+    /**
         Use this if the radial progress bar is in the center of a radial element
      */
     public void setHover(boolean superHover) {
         this.hover = superHover;
     }
 
-    /*
+    /**
         Use this if the radial progress bar is standalone
      */
     public void setHover(Point2i relativeCenter, double mouseDistance) {
         this.hover = MathUtil.isInCircle(relativeCenter, mouseDistance, this.radii);
     }
 
-    /*
+    /**
         The relative center is what determines where on the screen the center of the progress bar is
      */
     public void draw(Point2i relativeCenter, float zLevel) {

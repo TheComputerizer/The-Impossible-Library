@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.util.client;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -18,7 +17,7 @@ import java.util.List;
 public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
 
-    /*
+    /**
         Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
         zLevel can be accessed from any class that extends GuiScreen
      */
@@ -35,7 +34,7 @@ public class GuiUtil {
         GLColorFinish();
     }
 
-    /*
+    /**
         Pushes a generic texture for rendering via a ResourceLocation
         Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
@@ -63,7 +62,7 @@ public class GuiUtil {
         }
     }
 
-    /*
+    /**
         Draws a colored box with an outline
         The zLevel can be obtained from any GuiScreen or set to 0
      */
@@ -73,7 +72,7 @@ public class GuiUtil {
         drawBoxOutline(topLeft, width, height, outlineColor, outlineWidth, zLevel);
     }
 
-    /*
+    /**
        Draws a box using tuple inputs
        The zLevel can be obtained from any GuiScreen or set to 0
     */
@@ -90,7 +89,7 @@ public class GuiUtil {
         GLColorFinish();
     }
 
-    /*
+    /**
         Draws the outline of a box
         The zLevel can be obtained from any GuiScreen or set to 0
      */
@@ -104,7 +103,7 @@ public class GuiUtil {
         drawLine(bottomLeft,topLeft,color,outlineWidth,zLevel);
     }
 
-    /*
+    /**
         Draws a colored line between 2 points
         The zLevel can be obtained from any GuiScreen or set to 0
      */
@@ -125,7 +124,7 @@ public class GuiUtil {
         GLColorFinish();
     }
 
-    /*
+    /**
         Splits a string into multiple lines and renders them
         Use lineNums and pos to cap the number of lines that can be rendered and which line to start rendering on
         Returns the y position after the rendered lines
@@ -174,7 +173,7 @@ public class GuiUtil {
         return top;
     }
 
-    /*
+    /**
         Returns the total number of lines a string would be if it was split
      */
     public static int howManyLinesWillThisBe(GuiScreen screen, String original, int left, int right, int top, int spacing) {
@@ -207,7 +206,7 @@ public class GuiUtil {
         return lines.size();
     }
 
-    /*
+    /**
         Primes the GLStateManager to draw a solid color
      */
     public static void GLColorStart(Tuple4i color) {
@@ -218,7 +217,7 @@ public class GuiUtil {
         tupleColor(color);
     }
 
-    /*
+    /**
         Resets some necessary GLStateManager stuff so other rendering works as intended
      */
     public static void GLColorFinish() {
@@ -226,14 +225,14 @@ public class GuiUtil {
         GlStateManager.disableBlend();
     }
 
-    /*
+    /**
         Utilizes a tuple to set the color for a BufferBuilder
      */
     public static BufferBuilder tupleColor(BufferBuilder builder, Tuple4i colors) {
         return builder.color(colors.x, colors.y, colors.z, colors.w);
     }
 
-    /*
+    /**
         Utilizes a tuple to set the color the GLStateManager
      */
     public static void tupleColor(Tuple4i colors) {
@@ -244,7 +243,7 @@ public class GuiUtil {
         GlStateManager.color(r, g, b, a);
     }
 
-    /*
+    /**
         Reverses a color tuple which
         This is generally used to set an opposite hover color
      */
@@ -252,14 +251,14 @@ public class GuiUtil {
         return new Point4i(Math.abs(colors.x-255), Math.abs(colors.y-255), Math.abs(colors.z-255), colors.w);
     }
 
-    /*
+    /**
         Converts a color tuple into a single integer
      */
     public static int makeRGBAInt(Tuple4i colors) {
         return makeRGBAInt(colors.x,colors.y,colors.z,colors.w);
     }
 
-    /*
+    /**
         Converts rgba integers into a single color integer
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {

@@ -44,7 +44,7 @@ public class DataUtil {
         else throw new IOException("Failed to create file");
     }
 
-    /*
+    /**
         Writes global nbt data to a dat file for a given modid
         Will fail if the data folder failed to initialize or the data module is turned off
      */
@@ -53,7 +53,7 @@ public class DataUtil {
         else LogUtil.logInternal(Level.WARN, "There was a problem when initializing global data for The Impossible Library so data for {} could not be written",modid);
     }
 
-    /*
+    /**
         Gets global data stored in a dat file for the modid input
         Returns null if the file does not exist and is not set to be created
         Will also return null if the data folder failed to initialize or the data module is turned off

@@ -87,7 +87,7 @@ public class LogUtil {
             }
         }
 
-        /*
+        /**
             Gets the name of a mod from a given modid or returns the modid if it cannot be found
          */
         private String getModName(String modid) {
