@@ -21,7 +21,7 @@ public class Variable extends AbstractType {
     /**
      * The value of the variable
      */
-    private final Object value;
+    private Object value;
 
     public Variable(int absoluteIndex, @Nullable Table parentTable, String name, Object value) {
         super(absoluteIndex, parentTable);
@@ -46,6 +46,15 @@ public class Variable extends AbstractType {
 
     public Object get() {
         return this.value;
+    }
+
+    public void set(Object val) {
+        this.value = val;
+    }
+
+    public void invert() {
+        if(this.value instanceof Boolean)
+            set(!(boolean)this.value);
     }
 
     /**
