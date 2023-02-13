@@ -273,12 +273,14 @@ public class Holder {
      * Removes a generic type from the indexed map and decrements the indices of the rest of the types as needed
      */
     public void remove(AbstractType type) {
-        int index = type.getAbsoluteIndex();
-        if(index<this.indexedTypes.size()-1)
-            for (int i = index+1; i < this.indexedTypes.size(); i++)
-                this.indexedTypes.get(i).decrementAbsoluteIndex();
-        this.indexedTypes.remove(type);
-        sortIndex();
+        if(Objects.nonNull(type)) {
+            int index = type.getAbsoluteIndex();
+            if (index < this.indexedTypes.size() - 1)
+                for (int i = index + 1; i < this.indexedTypes.size(); i++)
+                    this.indexedTypes.get(i).decrementAbsoluteIndex();
+            this.indexedTypes.remove(type);
+            sortIndex();
+        }
     }
 
     private void sortIndex() {

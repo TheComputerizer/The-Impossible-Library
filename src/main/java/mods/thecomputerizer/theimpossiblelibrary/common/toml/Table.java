@@ -286,13 +286,18 @@ public class Table extends AbstractType {
     }
 
     /**
-     * Gets a variable object by name or an empty optional if it does not exist. Does not check the value type, as there
-     * are methods to do that within the variable class.
+     * Gets a variable object by name or creates a new one with the default value if one does not exist. If the default
+     * value is null, no new variable will be created and null will be returned
      */
-    public Optional<Variable> getVar(String name) {
+    public Variable getOrCreateVar(String name, @Nullable Object defVal) {
         for(Variable var : getVars())
-            if(var.is(name)) return Optional.of(var);
-        return Optional.empty();
+            if(var.is(name)) return var;
+        if(Objects.nonNull(defVal)) {
+            Variable var = new Variable(getMaxIndexInternal(getContents()),this,name,defVal);
+            addItem(var);
+            return var;
+        }
+        return null;
     }
 
     /**
@@ -305,9 +310,8 @@ public class Table extends AbstractType {
      */
     @SuppressWarnings("unchecked")
     public <T> T getValOrDefault(String name, T defVal, boolean allowParsing, boolean strictNumbers, Class<?> ... listTypes) {
-        Optional<Variable> foundVar = getVar(name);
-        if(!foundVar.isPresent()) return defVal;
-        Variable var = foundVar.get();
+        Variable var = getOrCreateVar(name,null);
+        if(Objects.isNull(var)) return defVal;
         if(defVal instanceof Boolean) return (T) var.getAsBool(allowParsing).orElse((Boolean)defVal);
         if(defVal instanceof String) return (T) var.getAsString().orElse((String)defVal);
         if(defVal instanceof Long)
