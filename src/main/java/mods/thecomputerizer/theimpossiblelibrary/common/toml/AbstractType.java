@@ -57,6 +57,10 @@ public abstract class AbstractType {
         return this.parentTable;
     }
 
+    public boolean isTopLevel() {
+        return Objects.isNull(this.parentTable);
+    }
+
     public String getSpacing() {
         return TextUtil.withTabs("",Objects.isNull(this.parentTable) ? 0 : this.parentTable.getLevel());
     }

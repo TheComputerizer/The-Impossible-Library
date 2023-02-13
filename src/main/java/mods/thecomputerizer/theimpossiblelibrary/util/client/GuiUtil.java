@@ -2,17 +2,21 @@ package mods.thecomputerizer.theimpossiblelibrary.util.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
@@ -129,7 +133,7 @@ public class GuiUtil {
         Use lineNums and pos to cap the number of lines that can be rendered and which line to start rendering on
         Returns the y position after the rendered lines
      */
-    public static int drawMultiLineString(GuiScreen screen, String original, int left, int right, int top, int spacing,
+    public static int drawMultiLineString(FontRenderer font, String original, int left, int right, int top, int spacing,
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
@@ -142,10 +146,10 @@ public class GuiUtil {
         for(String word : words) {
             if (lineWidth == 0) {
                 builder.append(word);
-                lineWidth += screen.mc.fontRenderer.getStringWidth(word);
+                lineWidth += font.getStringWidth(word);
             } else {
                 String withSpace = " " + word;
-                int textWidth = screen.mc.fontRenderer.getStringWidth(withSpace);
+                int textWidth = font.getStringWidth(withSpace);
                 if ((left + lineWidth + textWidth) < right) {
                     builder.append(withSpace);
                     lineWidth += textWidth;
@@ -161,13 +165,13 @@ public class GuiUtil {
                     }
                     builder = new StringBuilder();
                     builder.append(word);
-                    lineWidth = screen.mc.fontRenderer.getStringWidth(word);
+                    lineWidth = font.getStringWidth(word);
                 }
             }
         }
         if(builder.length()>0) lines.add(builder.toString());
         for(String line : lines) {
-            screen.drawString(screen.mc.fontRenderer,line,left,top, color);
+            font.drawStringWithShadow(line,left,top,color);
             top+=spacing;
         }
         return top;
@@ -176,7 +180,7 @@ public class GuiUtil {
     /**
         Returns the total number of lines a string would be if it was split
      */
-    public static int howManyLinesWillThisBe(GuiScreen screen, String original, int left, int right, int top, int spacing) {
+    public static int howManyLinesWillThisBe(FontRenderer font, String original, int left, int right, int top, int spacing) {
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
@@ -186,10 +190,10 @@ public class GuiUtil {
         for(String word : words) {
             if (lineWidth == 0) {
                 builder.append(word);
-                lineWidth += screen.mc.fontRenderer.getStringWidth(word);
+                lineWidth += font.getStringWidth(word);
             } else {
                 String withSpace = " " + word;
-                int textWidth = screen.mc.fontRenderer.getStringWidth(withSpace);
+                int textWidth = font.getStringWidth(withSpace);
                 if ((left + lineWidth + textWidth) < right) {
                     builder.append(withSpace);
                     lineWidth += textWidth;
@@ -197,13 +201,98 @@ public class GuiUtil {
                     lines.add(builder.toString());
                     builder = new StringBuilder();
                     builder.append(word);
-                    lineWidth = screen.mc.fontRenderer.getStringWidth(word);
+                    lineWidth = font.getStringWidth(word);
                 }
             }
             lineCounter++;
         }
         lines.add(builder.toString());
         return lines.size();
+    }
+
+    /**
+     * Similar to drawMultiLineString except it is assumed this is not being called from within a GUI but rather
+     * making use of the Text class.
+     */
+    public static void drawMultiLineTitle(ScaledResolution res, String text, String subText, boolean centeredText, int x,
+                                          int y, float scaleX, float scaleY, float subScale, String color,
+                                          String subColor, float opacity, float subOpacity, int lineSpacing) {
+        FontRenderer font = Minecraft.getMinecraft().fontRenderer;
+        List<String> textLines = new ArrayList<>();
+        List<String> subLines = new ArrayList<>();
+        TextFormatting textFormat = TextFormatting.getValueByName(color);
+        if(Objects.isNull(textFormat)) textFormat = TextFormatting.RED;
+        TextFormatting subFormat = TextFormatting.getValueByName(subColor);
+        if(Objects.isNull(subFormat)) subFormat = TextFormatting.WHITE;
+        String[] words = text.split(" ");
+        String[] subWords = subText.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int left = centeredText ? 0 : x;
+        int lineWidth = 0;
+        int lineCounter = 0;
+        for(String word : words) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.getStringWidth(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.getStringWidth(withSpace);
+                if ((left + lineWidth + textWidth) < res.getScaledWidth()) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    textLines.add(builder.toString());
+                    lineCounter++;
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.getStringWidth(word);
+                }
+            }
+        }
+        if(builder.length()>0) textLines.add(builder.toString());
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scaleX, scaleY, 1f);
+        for(String line : textLines) {
+            if(centeredText)
+                font.drawStringWithShadow(textFormat+line,(x/scaleX)-((float)font.getStringWidth(line))/2,
+                        (float)y/scaleY, -1);
+            else font.drawStringWithShadow(textFormat+line,x/scaleX,y/scaleY,-1);
+            y+=lineSpacing;
+        }
+        GlStateManager.popMatrix();
+        builder = new StringBuilder();
+        lineWidth = 0;
+        lineCounter = 0;
+        for(String word : subWords) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.getStringWidth(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.getStringWidth(withSpace);
+                if ((left + lineWidth + textWidth) < res.getScaledWidth()) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    subLines.add(builder.toString());
+                    lineCounter++;
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.getStringWidth(word);
+                }
+            }
+        }
+        if(builder.length()>0) subLines.add(builder.toString());
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scaleX*subScale, scaleY*subScale, 1f);
+        for(String line : subLines) {
+            if(centeredText)
+                font.drawStringWithShadow(subFormat+line,(x/(scaleX*subScale))-((float)font.getStringWidth(line))/2,
+                        (float)y/(scaleY*subScale), -1);
+            else font.drawStringWithShadow(subFormat+line,x/(scaleX*subScale),y/(scaleY*subScale),-1);
+            y+=lineSpacing;
+        }
+        GlStateManager.popMatrix();
     }
 
     /**

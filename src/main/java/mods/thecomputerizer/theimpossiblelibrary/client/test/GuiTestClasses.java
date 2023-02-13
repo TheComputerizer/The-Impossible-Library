@@ -197,7 +197,7 @@ public class GuiTestClasses {
                     (this.width/4)-2,16);
             this.textBox.setMaxStringLength(32500);
             this.textBox.setText("");
-            this.copyPastaLines = GuiUtil.howManyLinesWillThisBe(this,"Here's the thing. You said a " +
+            this.copyPastaLines = GuiUtil.howManyLinesWillThisBe(this.fontRenderer,"Here's the thing. You said a " +
                     "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                     "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
                     "crows. If you want to be \"specific\" like you said, then you shouldn't either. They're not the " +
@@ -221,7 +221,7 @@ public class GuiTestClasses {
             GuiUtil.drawColoredRing(this.center,new Point2i(199,200),new Point4i(255,255,255,255),
                     360,this.zLevel);
              */
-            GuiUtil.drawMultiLineString(this,"Here's the thing. You said a " +
+            GuiUtil.drawMultiLineString(this.fontRenderer,"Here's the thing. You said a " +
                             "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                             "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
                             "crows. If you want to be \"specific\" like you said, then you shouldn't either. They're not the " +

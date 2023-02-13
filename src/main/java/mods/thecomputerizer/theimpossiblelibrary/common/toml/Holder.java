@@ -446,6 +446,13 @@ public class Holder {
     }
 
     /**
+     * Returns a list of all top-level table with unique names.
+     */
+    public List<Table> getUniqueTables() {
+        return getTableNames().stream().map(this::getTableByName).collect(Collectors.toList());
+    }
+
+    /**
      * Returns a list of top-level tables whose name matches the input.
      */
     public List<Table> getTablesByName(String name) {
@@ -528,6 +535,72 @@ public class Holder {
                     tableArrayIndex,TomlUtil.condensePath(path),ex);
             return null;
         }
+    }
+
+    /**
+     * Returns all top-level variable objects
+     */
+    public List<Variable> getVars() {
+        return this.indexedTypes.stream().filter(type -> type instanceof Variable && type.isTopLevel())
+                .map(type -> (Variable)type).collect(Collectors.toList());
+    }
+
+    /**
+     * Checks whether a top-level variable with the given name exists.
+     */
+    public boolean hasVar(String name) {
+        for(Variable var : getVars())
+            if(var.is(name)) return true;
+        return false;
+    }
+
+    /**
+     * Gets a top-level variable or an empty optional if it does not exist.
+     * Does not check the value type, as there are methods to do that within the variable class.
+     */
+    public Optional<Variable> getVar(String name) {
+        for(Variable var : getVars())
+            if(var.is(name)) return Optional.of(var);
+        return Optional.empty();
+    }
+
+    /**
+     * Generic method for getting any value type or the default value. The type of the default value is used when getting
+     * the value of the variable object and as such it must be an accepted primitive type. If the type is something that
+     * can be parsed from a string, you can choose whether to allow that via allowParsing. The strictNumbers input will
+     * control whether integer and long values can be read in from floats and doubles and vice versa If the type is a
+     * list, you can use listTypes to whitelist classTypes within the list. If the whitelist is empty any type is acceptable.
+     * Note that empty lists will automatically fail the type check.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getValOrDefault(String name, T defVal, boolean allowParsing, boolean strictNumbers, Class<?> ... listTypes) {
+        Optional<Variable> foundVar = getVar(name);
+        if(!foundVar.isPresent()) return defVal;
+        Variable var = foundVar.get();
+        if(defVal instanceof Boolean) return (T) var.getAsBool(allowParsing).orElse((Boolean)defVal);
+        if(defVal instanceof String) return (T) var.getAsString().orElse((String)defVal);
+        if(defVal instanceof Long)
+            return strictNumbers ? (T) var.getAsLongStrict().orElse((Long)defVal) :
+                    (T) var.getAsLong(allowParsing).orElse((Long)defVal);
+        if(defVal instanceof Integer)
+            return strictNumbers ? (T) var.getAsIntStrict().orElse((Integer)defVal) :
+                    (T) var.getAsInt(allowParsing).orElse((Integer)defVal);
+        if(defVal instanceof Double)
+            return strictNumbers ? (T) var.getAsDoubleStrict().orElse((Double)defVal) :
+                    (T) var.getAsDouble(allowParsing).orElse((Double)defVal);
+        if(defVal instanceof Float)
+            return strictNumbers ? (T) var.getAsFloatStrict().orElse((Float)defVal) :
+                    (T) var.getAsFloat(allowParsing).orElse((Float)defVal);
+        if(defVal instanceof Date) return (T) var.getAsDate(allowParsing).orElse((Date)defVal);
+        if(defVal instanceof List<?>) return (T)var.getAsList(listTypes).orElse((List<?>)defVal);
+        return defVal;
+    }
+
+    /**
+     * Uses the above method, but allowParsing is true, strictNumbers is false, and there is no list type whitelist
+     */
+    public <T> T getValOrDefault(String name, T defVal) {
+        return getValOrDefault(name, defVal, true, false);
     }
 
     /**
