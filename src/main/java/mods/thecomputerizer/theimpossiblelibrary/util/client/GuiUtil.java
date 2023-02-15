@@ -227,6 +227,8 @@ public class GuiUtil {
         String[] words = text.split(" ");
         String[] subWords = subText.split(" ");
         StringBuilder builder = new StringBuilder();
+        x = x>=0 ? x : res.getScaledWidth()/2;
+        y = y>=0 ? y : res.getScaledHeight()/2;
         int left = centeredText ? 0 : x;
         int lineWidth = 0;
         int lineCounter = 0;

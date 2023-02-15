@@ -27,6 +27,13 @@ public class Holder {
     private final Toml backing;
     private final List<AbstractType> indexedTypes;
 
+    /**
+     * Allows the holder to the built created and then built programmatically
+     */
+    public static Holder makeEmpty() {
+        return new Holder();
+    }
+
     public Holder(File tomlFile) throws IOException {
         this(Files.newInputStream(tomlFile.toPath()));
     }
@@ -57,6 +64,11 @@ public class Holder {
         }
         this.indexedTypes = new ArrayList<>();
         buildIndex(fileLines);
+    }
+
+    private Holder() {
+        this.backing = null;
+        this.indexedTypes = new ArrayList<>();
     }
 
     private ByteArrayOutputStream getByteStream(InputStream stream) throws IOException {
@@ -439,6 +451,38 @@ public class Holder {
     }
 
     /**
+     * Returns all variable objects present under this table as a map of their names and values
+     */
+    public Map<String, Object> getVarMap() {
+        return getVars().stream().collect(Collectors.toMap(Variable::getName,Variable::get));
+    }
+
+    /**
+     * Checks whether a variable object with the given name exists under this table.
+     */
+    public boolean hasVar(String name) {
+        for(Variable var : getVars())
+            if(var.is(name)) return true;
+        return false;
+    }
+
+
+    /**
+     * Gets a variable object by name or creates a new one with the default value if one does not exist. If the default
+     * value is null, no new variable will be created and null will be returned
+     */
+    public Variable getOrCreateVar(@Nullable Table parent, String name, @Nullable Object defVal) {
+        if(Objects.isNull(parent)) {
+            Optional<Variable> optional = getVar(name);
+            return optional.orElse(addVariable(null, name, defVal));
+        }
+        Variable var = parent.getOrCreateVar(name,null);
+        if(Objects.isNull(var))
+            var = addVariable(parent, name, defVal);
+        return var;
+    }
+
+    /**
      * Returns a list of all top-level table names.
      */
     public List<String> getTableNames() {
@@ -545,15 +589,6 @@ public class Holder {
     public List<Variable> getVars() {
         return this.indexedTypes.stream().filter(type -> type instanceof Variable && type.isTopLevel())
                 .map(type -> (Variable)type).collect(Collectors.toList());
-    }
-
-    /**
-     * Checks whether a top-level variable with the given name exists.
-     */
-    public boolean hasVar(String name) {
-        for(Variable var : getVars())
-            if(var.is(name)) return true;
-        return false;
     }
 
     /**

@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import net.minecraft.client.gui.ScaledResolution;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -99,7 +98,7 @@ public abstract class Renderable {
         String alignment = getParameterAs("vertical_alignment","center",String.class);
         int yOffset = alignment.matches("center") ? (int) (int) ((resolutionY/2f)-(resolutionY*(scaleY/2f))) :
                 alignment.matches("top") ? 0 : (int) (resolutionY-(resolutionY*(scaleY/2f)));
-        return (int)((yOffset*(1/scaleY))+getParameterAs("x",0, Integer.class));
+        return (int)((yOffset*(1/scaleY))+getParameterAs("y",0, Integer.class));
     }
 
     public boolean canRender() {

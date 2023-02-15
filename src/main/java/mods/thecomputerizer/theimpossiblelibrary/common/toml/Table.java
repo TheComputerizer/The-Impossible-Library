@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import com.moandjiezana.toml.Toml;
-import mods.thecomputerizer.theimpossiblelibrary.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
@@ -80,6 +79,9 @@ public class Table extends AbstractType {
 
     public boolean isInArray() {
         return this.arrIndex>=0;
+    }
+    public int getArrIndex() {
+        return Math.max(this.arrIndex, 0);
     }
 
     public void addItem(AbstractType type) {
