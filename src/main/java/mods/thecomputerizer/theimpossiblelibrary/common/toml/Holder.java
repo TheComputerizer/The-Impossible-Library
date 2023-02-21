@@ -90,7 +90,6 @@ public class Holder {
         Table parentTable = null;
         String tabChar = "\t";
         for(int i=0;i<fileLines.size();i++) {
-            LogUtil.logInternal(Level.INFO,"toml line index {}",i);
             String line = fileLines.get(i);
             if(line.trim().isEmpty()) {
                 int num = 1;
@@ -108,7 +107,6 @@ public class Holder {
                 this.indexedTypes.add(blank);
                 if(Objects.nonNull(parentTable)) parentTable.addItem(blank);
                 absoluteIndex++;
-                LogUtil.logInternal(Level.INFO,"read in {} blank lines",num);
             } else {
                 if(line.trim().startsWith("#")) {
                     List<String> comments = new ArrayList<>();
@@ -127,7 +125,6 @@ public class Holder {
                     this.indexedTypes.add(comment);
                     if(Objects.nonNull(parentTable)) parentTable.addItem(comment);
                     absoluteIndex++;
-                    LogUtil.logInternal(Level.INFO,"read in {} comment lines",comments.size());
                 } else if(line.contains("=")) {
                     String varName = line.substring(0,line.indexOf('=')).trim();
                     if(varName.isEmpty() || line.substring(line.indexOf('=')+1).isEmpty())
@@ -152,7 +149,6 @@ public class Holder {
                             this.indexedTypes.add(var);
                             if(Objects.nonNull(parentTable)) parentTable.addItem(var);
                             absoluteIndex++;
-                            LogUtil.logInternal(Level.INFO,"read in var {}",varName);
                         }
                     }
                 } else if(line.contains("[") && line.contains("]")) {
@@ -165,8 +161,6 @@ public class Holder {
                     else {
                         parentTable = findClosestParentTable(null, Arrays.copyOfRange(path,0,path.length-1));
                         if(Objects.isNull(parentTable)) badTableName = true;
-                        else LogUtil.logInternal(Level.INFO, "Found parent {} for table {} at path {}",
-                                parentTable.getName(),name,TomlUtil.condensePath(path));
                     }
                     if(badTableName)
                         LogUtil.logInternal(Level.ERROR, "Could not find parent table(s) for nested table of " +
@@ -193,7 +187,7 @@ public class Holder {
                             if (Objects.nonNull(parentTable)) parentTable.addItem(table);
                             absoluteIndex++;
                             parentTable = table;
-                            LogUtil.logInternal(Level.INFO,"read in table {} from path {}",name,TomlUtil.condensePath(path));
+                            LogUtil.logInternal(Level.DEBUG,"read in table {} from path {}",name,TomlUtil.condensePath(path));
                         } else
                             LogUtil.logInternal(Level.ERROR, "Table of name {} was unable to be parsed correctly", name);
                     }
