@@ -62,14 +62,13 @@ public class Variable extends AbstractType {
      * returns an empty Optional.
      */
     public Optional<Boolean> getAsBool(boolean allowParse) {
-        if(!(this.value instanceof Boolean)) {
-            if(!(this.value instanceof String)) return Optional.empty();
-            if(allowParse)
-                return ((String)this.value).matches("true") || ((String)this.value).matches("false") ?
-                        Optional.of(Boolean.parseBoolean((String)this.value)) : Optional.empty();
-            return Optional.empty();
+        if (this.value instanceof Boolean) return Optional.of((boolean) this.value);
+        if (!(this.value instanceof String)) return Optional.empty();
+        if (allowParse) {
+            if (((String) this.value).trim().toLowerCase().matches("true")) return Optional.of(true);
+            if (((String) this.value).trim().toLowerCase().matches("false")) return Optional.of(false);
         }
-        else return Optional.of((boolean)this.value);
+        return Optional.empty();
     }
 
     /**
