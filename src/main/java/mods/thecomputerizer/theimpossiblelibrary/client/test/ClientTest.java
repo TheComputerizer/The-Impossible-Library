@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Holder;
+import mods.thecomputerizer.theimpossiblelibrary.common.toml.IndexFinder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Table;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Variable;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.FileUtil;
@@ -52,7 +53,7 @@ public class ClientTest {
         testMap.put("third", "test3");
         testMap.put("fifth", "test5");
         List<Variable> vars = testHolder.addVariableMap(song,testMap);
-        testHolder.addComment(song, Arrays.asList("c1","c2","c3"),new Holder.IndexFinder(song,vars.get(3)));
-        testHolder.addVariable(song,"fourth","test44",new Holder.IndexFinder(song,vars.get(3)));
+        testHolder.addComment(song, Arrays.asList("c1","c2","c3"),new IndexFinder(song,vars.get(3)));
+        testHolder.addVariable(song,"fourth","test44",new IndexFinder(song,vars.get(3)));
     }
 }
