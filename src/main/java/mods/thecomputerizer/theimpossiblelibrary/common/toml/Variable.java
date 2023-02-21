@@ -53,8 +53,7 @@ public class Variable extends AbstractType {
     }
 
     public void invert() {
-        if(this.value instanceof Boolean)
-            set(!(boolean)this.value);
+        getAsBool(true).ifPresent(aBoolean -> set(!aBoolean));
     }
 
     /**
