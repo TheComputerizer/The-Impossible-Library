@@ -84,7 +84,7 @@ public class Variable extends AbstractType {
     public Optional<Long> getAsLong(boolean allowParse) {
         if(this.value instanceof Long || this.value instanceof Integer ||
                 this.value instanceof Float || this.value instanceof Double)
-            return Optional.of((long)this.value);
+            return Optional.of(((Number)this.value).longValue());
         if(this.value instanceof String && allowParse) {
             try {
                 return Optional.of(Long.parseLong((String)this.value));
@@ -99,7 +99,8 @@ public class Variable extends AbstractType {
      * Checks to see if the value is an integer or long, otherwise returns an empty Optional.
      */
     public Optional<Long> getAsLongStrict() {
-        return this.value instanceof Long || this.value instanceof Integer ? Optional.of((long)this.value) : Optional.empty();
+        return this.value instanceof Long || this.value instanceof Integer ?
+                Optional.of(((Number)this.value).longValue()) : Optional.empty();
     }
 
     /**
@@ -109,7 +110,7 @@ public class Variable extends AbstractType {
     public Optional<Integer> getAsInt(boolean allowParse) {
         if(this.value instanceof Long || this.value instanceof Integer ||
                 this.value instanceof Float || this.value instanceof Double)
-            return Optional.of((int)this.value);
+            return Optional.of(((Number)this.value).intValue());
         if(this.value instanceof String && allowParse) {
             try {
                 return Optional.of(Integer.parseInt((String)this.value));
@@ -124,7 +125,8 @@ public class Variable extends AbstractType {
      * Checks to see if the value is an integer or long, otherwise returns an empty Optional.
      */
     public Optional<Integer> getAsIntStrict() {
-        return this.value instanceof Long || this.value instanceof Integer ? Optional.of((int)this.value) : Optional.empty();
+        return this.value instanceof Long || this.value instanceof Integer ?
+                Optional.of(((Number)this.value).intValue()) : Optional.empty();
     }
 
     /**
@@ -134,7 +136,7 @@ public class Variable extends AbstractType {
     public Optional<Double> getAsDouble(boolean allowParse) {
         if(this.value instanceof Long || this.value instanceof Integer ||
                 this.value instanceof Float || this.value instanceof Double)
-            return Optional.of((double)this.value);
+            return Optional.of(((Number)this.value).doubleValue());
         if(this.value instanceof String && allowParse) {
             try {
                 return Optional.of(Double.parseDouble((String)this.value));
@@ -149,7 +151,8 @@ public class Variable extends AbstractType {
      * Checks to see if the value is a float or double, otherwise returns an empty Optional.
      */
     public Optional<Double> getAsDoubleStrict() {
-        return this.value instanceof Double || this.value instanceof Float ? Optional.of((double)this.value) : Optional.empty();
+        return this.value instanceof Double || this.value instanceof Float ?
+                Optional.of(((Number)this.value).doubleValue()) : Optional.empty();
     }
 
     /**
@@ -159,7 +162,7 @@ public class Variable extends AbstractType {
     public Optional<Float> getAsFloat(boolean allowParse) {
         if(this.value instanceof Long || this.value instanceof Integer ||
                 this.value instanceof Float || this.value instanceof Double)
-            return Optional.of((float)this.value);
+            return Optional.of(((Number)this.value).floatValue());
         if(this.value instanceof String && allowParse) {
             try {
                 return Optional.of(Float.parseFloat((String)this.value));
@@ -174,7 +177,8 @@ public class Variable extends AbstractType {
      * Checks to see if the value is a float or double, otherwise returns an empty Optional.
      */
     public Optional<Float> getAsFloatStrict() {
-        return this.value instanceof Double || this.value instanceof Float ? Optional.of((float)this.value) : Optional.empty();
+        return this.value instanceof Double || this.value instanceof Float ?
+                Optional.of(((Number)this.value).floatValue()) : Optional.empty();
     }
 
     /**
