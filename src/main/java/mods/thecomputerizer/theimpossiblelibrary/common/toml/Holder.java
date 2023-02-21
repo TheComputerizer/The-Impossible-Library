@@ -136,7 +136,8 @@ public class Holder {
                         Object value = Objects.isNull(parentTable) ? TomlUtil.genericObject(this.backing,varName) :
                                 TomlUtil.genericObject(parentTable.getBacking(),varName);
                         if(Objects.nonNull(value)) {
-                            String spacing = line.substring(0,line.indexOf(varName.charAt(0))-1);
+                            int ind = line.indexOf(varName.charAt(0))-1;
+                            String spacing = line.substring(0, Math.max(ind, 0));
                             int level = 1;
                             if(!spacing.isEmpty())
                                 level = spacing.length()-spacing.replaceAll(tabChar,"").length()+
