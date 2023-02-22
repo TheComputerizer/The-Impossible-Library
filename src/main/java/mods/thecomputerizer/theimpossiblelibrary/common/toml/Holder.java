@@ -333,6 +333,7 @@ public class Holder {
      */
     public void removeTable(@Nonnull Table toRemove) {
         List<AbstractType> tableContents = toRemove.getNestedContents();
+        if(!toRemove.isTopLevel()) toRemove.getParent().removeItem(toRemove);
         for (AbstractType type : tableContents) {
             if (Objects.nonNull(type.getParent())) type.getParent().removeItem(type);
             remove(type);
