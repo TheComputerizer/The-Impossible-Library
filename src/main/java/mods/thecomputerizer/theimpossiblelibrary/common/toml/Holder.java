@@ -304,12 +304,12 @@ public class Holder {
             List<Table> foundTables = Objects.isNull(parentTable) ? getTablesByName(name) :
                     parentTable.getTablesByName(name);
             if(!foundTables.isEmpty())
-                for (Table table : foundTables) removeTableInternal(table);
+                for (Table table : foundTables) removeTable(table);
             else logBadTableRemove(parentTable,tableArrayIndex,name);
         } else {
             Table toRemove = Objects.isNull(parentTable) ? getTableByName(name, tableArrayIndex) :
                     parentTable.getTableByName(name, tableArrayIndex);
-            if (Objects.nonNull(toRemove)) removeTableInternal(toRemove);
+            if (Objects.nonNull(toRemove)) removeTable(toRemove);
             else logBadTableRemove(parentTable,tableArrayIndex,name);
         }
     }
@@ -329,9 +329,9 @@ public class Holder {
     }
 
     /**
-     * Removes an individual table from the indexed list. For internal use only.
+     * Remove a table if you have the table object
      */
-    private void removeTableInternal(@Nonnull Table toRemove) {
+    public void removeTable(@Nonnull Table toRemove) {
         List<AbstractType> tableContents = toRemove.getNestedContents();
         for (AbstractType type : tableContents) {
             if (Objects.nonNull(type.getParent())) type.getParent().removeItem(type);
