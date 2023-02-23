@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
+import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 
 import javax.annotation.Nullable;
@@ -23,10 +25,29 @@ public class Variable extends AbstractType {
      */
     private Object value;
 
+    private boolean isValid = true;
+
+    /**
+     * For decoding from a packet. Cannot handle null values
+     */
+    public Variable(ByteBuf buf, @Nullable Table parentTable) {
+        super(buf, parentTable);
+        this.name = NetworkUtil.readString(buf);
+        this.value = NetworkUtil.parseGenericObj(buf);
+        this.isValid = Objects.nonNull(this.value);
+    }
+
     public Variable(int absoluteIndex, @Nullable Table parentTable, String name, Object value) {
         super(absoluteIndex, parentTable);
         this.name = name;
         this.value = value;
+    }
+
+    /**
+     * Used to determine if the variable was properly decoded from a packet
+     */
+    public boolean isValid() {
+        return this.isValid;
     }
 
     public String getValueType() {
@@ -211,5 +232,12 @@ public class Variable extends AbstractType {
         return Collections.singletonList(getSpacing()+this.name+" = "+
                 (!(this.value instanceof List<?>) ? !(this.value instanceof String) ?
                         this.value : "\""+this.value+"\"" : TextUtil.compileCollection((List<?>)this.value)));
+    }
+
+    @Override
+    public void write(ByteBuf buf) {
+        super.write(buf);
+        NetworkUtil.writeString(buf,this.name);
+        NetworkUtil.writeGenericObj(buf,this.value);
     }
 }

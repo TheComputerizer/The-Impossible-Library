@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import com.moandjiezana.toml.Toml;
+import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
@@ -39,6 +41,16 @@ public class Table extends AbstractType {
      */
     private int arrIndex;
 
+    public Table(ByteBuf buf, @Nullable Table parentTable) {
+        super(buf, parentTable);
+        this.backing = null;
+        this.level = buf.readInt();
+        this.arrIndex = buf.readInt();
+        this.tableName = NetworkUtil.readString(buf);
+        this.contents = NetworkUtil.readGenericList(buf,buf1 ->
+                TomlPart.getByID(NetworkUtil.readString(buf1)).decode(buf1,this));
+    }
+
     public Table(int absoluteIndex, @Nullable Table parentTable, int level, String tableName) {
         this(absoluteIndex,parentTable,level,tableName,null);
     }
@@ -73,8 +85,18 @@ public class Table extends AbstractType {
         return this.level;
     }
 
+    /**
+     * Gets the name of the table
+     */
     public String getName() {
         return this.tableName;
+    }
+
+    /**
+     * Gets the full table path including any potential parent tables
+     */
+    public String getPath() {
+        return inheritTableName(this,this.tableName);
     }
 
     public boolean isInArray() {
@@ -353,6 +375,15 @@ public class Table extends AbstractType {
     public List<String> toLines() {
         return Collections.singletonList(getSpacing()+(this.arrIndex>=0 ? "[[" : "[")
                 +inheritTableName(this,this.tableName)+(this.arrIndex>=0 ? "]]" : "]"));
+    }
+
+    @Override
+    public void write(ByteBuf buf) {
+        super.write(buf);
+        buf.writeInt(this.level);
+        buf.writeInt(this.arrIndex);
+        NetworkUtil.writeString(buf,this.tableName);
+        NetworkUtil.writeGenericList(buf,this.contents,((buf1, type) -> type.write(buf1)));
     }
 
     /**

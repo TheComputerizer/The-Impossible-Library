@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import com.moandjiezana.toml.Toml;
+import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
 import org.apache.logging.log4j.Level;
@@ -32,6 +34,10 @@ public class Holder {
      */
     public static Holder makeEmpty() {
         return new Holder();
+    }
+
+    public static Holder decoded(ByteBuf buf) {
+        return new Holder(buf);
     }
 
     public Holder(File tomlFile) throws IOException {
@@ -71,6 +77,13 @@ public class Holder {
         this.indexedTypes = new ArrayList<>();
     }
 
+    private Holder(ByteBuf buf) {
+        this.backing = null;
+        this.indexedTypes = NetworkUtil.readGenericList(buf,buf1 ->
+                TomlPart.getByID(NetworkUtil.readString(buf1)).decode(buf1,null)).stream()
+                .sorted(Comparator.comparingInt(AbstractType::getAbsoluteIndex)).collect(Collectors.toList());
+    }
+
     private ByteArrayOutputStream getByteStream(InputStream stream) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -103,7 +116,7 @@ public class Holder {
                     }
                     i2++;
                 }
-                BlankLine blank = new BlankLine(absoluteIndex,parentTable,num);
+                BlankLine blank = new BlankLine(absoluteIndex,num);
                 this.indexedTypes.add(blank);
                 if(Objects.nonNull(parentTable)) parentTable.addItem(blank);
                 absoluteIndex++;
@@ -417,15 +430,15 @@ public class Holder {
      * Add some blank lines. Use an IndexFinder if you want to control where in the index the
      * variable should be added. Blank lines cannot be under a table.
      */
-    public BlankLine andBlank(@Nullable Table parentTable, int lines, IndexFinder finder) {
-        BlankLine blank = new BlankLine(nextPotentialIndex(finder), parentTable, lines);
+    public BlankLine andBlank(int lines, IndexFinder finder) {
+        BlankLine blank = new BlankLine(nextPotentialIndex(finder), lines);
         this.indexedTypes.add(blank);
         sortIndex();
         return blank;
     }
 
-    public BlankLine andBlank(@Nullable Table parentTable, int lines) {
-        return andBlank(parentTable, lines, new IndexFinder(parentTable));
+    public BlankLine andBlank(int lines) {
+        return andBlank(lines, new IndexFinder());
     }
 
     public void moveTable(Table table, IndexFinder finder) {
@@ -646,5 +659,10 @@ public class Holder {
                 .collect(Collectors.toList());
         return this.indexedTypes.stream().filter(type -> !ignoredClasses.contains(type.getClass()))
                 .map(AbstractType::toLines).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+    public void encode(ByteBuf buf, boolean withBlanks, boolean withComments) {
+        List<AbstractType> topLevels = getTopLevelTypes(withBlanks,withComments);
+        NetworkUtil.writeGenericList(buf,getTopLevelTypes(withBlanks,withComments),(buf1, type) -> type.write(buf1));
     }
 }

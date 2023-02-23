@@ -1,5 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
+import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
+
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +17,11 @@ public final class Comment extends AbstractType {
      */
     private final List<String> comments;
 
+    public Comment(ByteBuf buf, @Nullable Table parentTable) {
+        super(buf,parentTable);
+        this.comments = NetworkUtil.readGenericList(buf,NetworkUtil::readString);
+    }
+
     public Comment(int absoluteIndex, @Nullable Table parentTable, List<String> orderedCommentLines) {
         super(absoluteIndex,parentTable);
         this.comments = orderedCommentLines;
@@ -26,5 +34,11 @@ public final class Comment extends AbstractType {
     @Override
     public List<String> toLines() {
         return this.comments.stream().map(comment -> getSpacing()+"#"+comment).collect(Collectors.toList());
+    }
+
+    @Override
+    public void write(ByteBuf buf) {
+        super.write(buf);
+        NetworkUtil.writeGenericList(buf,this.comments,NetworkUtil::writeString);
     }
 }
