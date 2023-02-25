@@ -82,10 +82,5 @@ public abstract class AbstractType {
     public void write(ByteBuf buf) {
         NetworkUtil.writeString(buf,TomlPart.getByClass(this.getClass()).getID());
         buf.writeInt(this.absoluteIndex);
-        if(Objects.isNull(this.parentTable)) buf.writeBoolean(false);
-        else {
-            buf.writeBoolean(true);
-            NetworkUtil.writeString(buf,this.parentTable.getPath());
-        }
     }
 }

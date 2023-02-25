@@ -28,6 +28,7 @@ public class Holder {
 
     private final Toml backing;
     private final List<AbstractType> indexedTypes;
+    private final List<VarMatcher> matchers;
 
     /**
      * Allows the holder to the built created and then built programmatically
@@ -70,11 +71,13 @@ public class Holder {
         }
         this.indexedTypes = new ArrayList<>();
         buildIndex(fileLines);
+        this.matchers = new ArrayList<>();
     }
 
     private Holder() {
         this.backing = null;
         this.indexedTypes = new ArrayList<>();
+        this.matchers = new ArrayList<>();
     }
 
     private Holder(ByteBuf buf) {
@@ -82,6 +85,7 @@ public class Holder {
         this.indexedTypes = NetworkUtil.readGenericList(buf,buf1 ->
                 TomlPart.getByID(NetworkUtil.readString(buf1)).decode(buf1,null)).stream()
                 .sorted(Comparator.comparingInt(AbstractType::getAbsoluteIndex)).collect(Collectors.toList());
+        this.matchers = new ArrayList<>();
     }
 
     private ByteArrayOutputStream getByteStream(InputStream stream) throws IOException {
@@ -234,6 +238,17 @@ public class Holder {
                 }
             } else tables.get(0).setArrayIndex(-1);
         }
+    }
+
+    public void addMatcher(VarMatcher matcher) {
+        this.matchers.add(matcher);
+    }
+
+    public boolean matches(Variable var) {
+        for(VarMatcher matcher : this.matchers)
+            if(!matcher.matches(var.getName(),var.get()))
+                return false;
+        return true;
     }
 
     /**
@@ -658,11 +673,24 @@ public class Holder {
         List<Class<? extends AbstractType>> ignoredClasses = Arrays.stream(toIgnore).map(TomlPart::getClassType)
                 .collect(Collectors.toList());
         return this.indexedTypes.stream().filter(type -> !ignoredClasses.contains(type.getClass()))
+                .filter(type -> {
+                    if (type instanceof Variable)
+                        return runMatcher((Variable) type);
+                    return true;
+                })
                 .map(AbstractType::toLines).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
+    private boolean runMatcher(Variable var) {
+        return Objects.nonNull(var.getParent()) ? var.getParent().matches(var) : matches(var);
+    }
+
     public void encode(ByteBuf buf, boolean withBlanks, boolean withComments) {
-        List<AbstractType> topLevels = getTopLevelTypes(withBlanks,withComments);
+        List<AbstractType> topLevels = getTopLevelTypes(withBlanks,withComments).stream().filter(type -> {
+            if (type instanceof Variable)
+                return runMatcher((Variable) type);
+            return true;
+        }).collect(Collectors.toList());
         NetworkUtil.writeGenericList(buf,getTopLevelTypes(withBlanks,withComments),(buf1, type) -> type.write(buf1));
     }
 }

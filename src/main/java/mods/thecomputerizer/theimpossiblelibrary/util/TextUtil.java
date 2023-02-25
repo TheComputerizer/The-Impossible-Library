@@ -67,6 +67,18 @@ public class TextUtil {
      * element.
      */
     public static String listToString(Collection<String> list, int limit) {
+        return listToString(list,limit,System.lineSeparator());
+    }
+
+    public static String listToString(Collection<String> list) {
+        return listToString(list,0,System.lineSeparator());
+    }
+
+    public static String listToString(Collection<String> list, String split) {
+        return listToString(list,0,split);
+    }
+
+    public static String listToString(Collection<String> list, int limit, String split) {
         if(Objects.isNull(list) || list.isEmpty()) return null;
         limit = limit>0 ? limit : Integer.MAX_VALUE;
         StringBuilder builder = new StringBuilder();
@@ -78,7 +90,7 @@ public class TextUtil {
                 }
             }
             if(index<list.size() && index<limit) {
-                builder.append(System.lineSeparator());
+                builder.append(split);
                 index++;
             }
             else if(index==limit) return builder.toString();

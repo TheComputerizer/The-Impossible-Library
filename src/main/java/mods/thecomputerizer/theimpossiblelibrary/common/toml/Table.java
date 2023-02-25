@@ -37,10 +37,14 @@ public class Table extends AbstractType {
     private final List<AbstractType> contents;
 
     /**
+     * Used to filter the output of the table when writing.
+     */
+    private final List<VarMatcher> matchers;
+
+    /**
      * Determines the index of the table array this table is in or -1 if it is not in one.
      */
     private int arrIndex;
-
     public Table(ByteBuf buf, @Nullable Table parentTable) {
         super(buf, parentTable);
         this.backing = null;
@@ -49,6 +53,7 @@ public class Table extends AbstractType {
         this.tableName = NetworkUtil.readString(buf);
         this.contents = NetworkUtil.readGenericList(buf,buf1 ->
                 TomlPart.getByID(NetworkUtil.readString(buf1)).decode(buf1,this));
+        this.matchers = new ArrayList<>();
     }
 
     public Table(int absoluteIndex, @Nullable Table parentTable, int level, String tableName) {
@@ -58,6 +63,7 @@ public class Table extends AbstractType {
     public Table(int absoluteIndex, @Nullable Table parentTable, int level, String tableName, @Nullable Toml backing) {
         super(absoluteIndex, parentTable);
         this.contents = new ArrayList<>();
+        this.matchers = new ArrayList<>();
         this.level = level;
         this.tableName = tableName;
         this.backing = backing;
@@ -79,6 +85,17 @@ public class Table extends AbstractType {
                 }
              } else tables.get(0).setArrayIndex(-1);
         }
+    }
+
+    public void addMatcher(VarMatcher matcher) {
+        this.matchers.add(matcher);
+    }
+
+    public boolean matches(Variable var) {
+        for(VarMatcher matcher : this.matchers)
+            if(!matcher.matches(var.getName(),var.get()))
+                return false;
+        return true;
     }
 
     public int getLevel() {
@@ -383,7 +400,11 @@ public class Table extends AbstractType {
         buf.writeInt(this.level);
         buf.writeInt(this.arrIndex);
         NetworkUtil.writeString(buf,this.tableName);
-        NetworkUtil.writeGenericList(buf,this.contents,((buf1, type) -> type.write(buf1)));
+        NetworkUtil.writeGenericList(buf,this.contents.stream().filter(type -> {
+            if (type instanceof Variable)
+                return matches((Variable)type);
+            return true;
+        }).collect(Collectors.toList()),((buf1, type) -> type.write(buf1)));
     }
 
     /**
