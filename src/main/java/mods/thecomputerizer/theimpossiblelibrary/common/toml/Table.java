@@ -350,11 +350,12 @@ public class Table extends AbstractType {
      * Note that empty lists will automatically fail the type check.
      */
     @SuppressWarnings("unchecked")
-    public <T> T getValOrDefault(String name, T defVal, boolean allowParsing, boolean strictNumbers, Class<?> ... listTypes) {
+    public <T> T getValOrDefault(String name, T defVal, boolean allowParsing, boolean allowToString,
+                                 boolean strictNumbers, Class<?> ... listTypes) {
         Variable var = getOrCreateVar(name,null);
         if(Objects.isNull(var)) return defVal;
         if(defVal instanceof Boolean) return (T) var.getAsBool(allowParsing).orElse((Boolean)defVal);
-        if(defVal instanceof String) return (T) var.getAsString().orElse((String)defVal);
+        if(defVal instanceof String) return (T) var.getAsString(allowToString).orElse((String)defVal);
         if(defVal instanceof Long)
             return strictNumbers ? (T) var.getAsLongStrict().orElse((Long)defVal) :
                     (T) var.getAsLong(allowParsing).orElse((Long)defVal);
@@ -376,7 +377,7 @@ public class Table extends AbstractType {
      * Uses the above method, but allowParsing is true, strictNumbers is false, and there is no list type whitelist
      */
     public <T> T getValOrDefault(String name, T defVal) {
-        return getValOrDefault(name, defVal, true, false);
+        return getValOrDefault(name, defVal, true, true, false);
     }
 
     public Toml getBacking() {

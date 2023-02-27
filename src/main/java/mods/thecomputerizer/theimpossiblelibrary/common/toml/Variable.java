@@ -94,10 +94,11 @@ public class Variable extends AbstractType {
     }
 
     /**
-     * Checks to see if the value is a string, otherwise returns an empty Optional.
+     * Checks to see if the value is a string, otherwise returns an empty optional unless allowToString is enabled
      */
-    public Optional<String> getAsString() {
-        return this.value instanceof String ? Optional.of((String)this.value) : Optional.empty();
+    public Optional<String> getAsString(boolean allowToString) {
+        return this.value instanceof String ? Optional.of((String)this.value) :
+                allowToString ? Optional.of(this.value.toString()) : Optional.empty();
     }
 
     /**

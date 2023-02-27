@@ -635,12 +635,13 @@ public class Holder {
      * Note that empty lists will automatically fail the type check.
      */
     @SuppressWarnings("unchecked")
-    public <T> T getValOrDefault(String name, T defVal, boolean allowParsing, boolean strictNumbers, Class<?> ... listTypes) {
+    public <T> T getValOrDefault(String name, T defVal, boolean allowParsing, boolean allowToString,
+                                 boolean strictNumbers, Class<?> ... listTypes) {
         Optional<Variable> foundVar = getVar(name);
         if(!foundVar.isPresent()) return defVal;
         Variable var = foundVar.get();
         if(defVal instanceof Boolean) return (T) var.getAsBool(allowParsing).orElse((Boolean)defVal);
-        if(defVal instanceof String) return (T) var.getAsString().orElse((String)defVal);
+        if(defVal instanceof String) return (T) var.getAsString(allowToString).orElse((String)defVal);
         if(defVal instanceof Long)
             return strictNumbers ? (T) var.getAsLongStrict().orElse((Long)defVal) :
                     (T) var.getAsLong(allowParsing).orElse((Long)defVal);
@@ -662,7 +663,7 @@ public class Holder {
      * Uses the above method, but allowParsing is true, strictNumbers is false, and there is no list type whitelist
      */
     public <T> T getValOrDefault(String name, T defVal) {
-        return getValOrDefault(name, defVal, true, false);
+        return getValOrDefault(name, defVal, true, true,false);
     }
 
     /**
