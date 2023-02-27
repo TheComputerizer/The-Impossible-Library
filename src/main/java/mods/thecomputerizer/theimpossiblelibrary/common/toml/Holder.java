@@ -103,6 +103,7 @@ public class Holder {
      * Builds the internal indexed map of blank lines, comments, tables, and variables.
      */
     private void buildIndex(List<String> fileLines) {
+        LogUtil.logInternal(Level.INFO,"build index 1");
         int absoluteIndex = 0;
         Table parentTable = null;
         String tabChar = "\t";
@@ -211,8 +212,11 @@ public class Holder {
                 }
             }
         }
+        LogUtil.logInternal(Level.INFO,"build index 2");
         indexTableArrays();
+        LogUtil.logInternal(Level.INFO,"build index 3");
         sortIndex();
+        LogUtil.logInternal(Level.INFO,"finish build index");
     }
 
     /**
@@ -309,11 +313,12 @@ public class Holder {
      */
     public void remove(AbstractType type) {
         if(Objects.nonNull(type)) {
-            int index = type.getAbsoluteIndex();
-            if (index < this.indexedTypes.size() - 1)
-                for (int i = index + 1; i < this.indexedTypes.size(); i++)
-                    this.indexedTypes.get(i).decrementAbsoluteIndex();
             this.indexedTypes.remove(type);
+            for(int i=0;i<this.indexedTypes.size();i++) {
+                AbstractType update = indexedTypes.get(i);
+                update.setAbsoluteIndex(i);
+
+            }
             sortIndex();
         }
     }
@@ -468,7 +473,7 @@ public class Holder {
         remove(type);
         int index = nextPotentialIndex(finder);
         while(type.getAbsoluteIndex()<index) type.incrementAbsoluteIndex();
-        while(type.getAbsoluteIndex()>index) type.decrementAbsoluteIndex();
+        while(type.getAbsoluteIndex()>index) type.setAbsoluteIndex(type.getAbsoluteIndex()-1);
         this.indexedTypes.add(type);
         sortIndex();
         finder.addToPotentialParent(type);

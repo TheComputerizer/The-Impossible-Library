@@ -50,8 +50,8 @@ public abstract class AbstractType {
     /**
      * This should only be called by the holder class to when removing an element
      */
-    public void decrementAbsoluteIndex() {
-        this.absoluteIndex--;
+    public void setAbsoluteIndex(int correctIndex) {
+        this.absoluteIndex = correctIndex;
     }
 
     /**
