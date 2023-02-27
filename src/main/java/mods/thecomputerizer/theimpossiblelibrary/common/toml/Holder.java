@@ -103,7 +103,6 @@ public class Holder {
      * Builds the internal indexed map of blank lines, comments, tables, and variables.
      */
     private void buildIndex(List<String> fileLines) {
-        LogUtil.logInternal(Level.INFO,"build index 1");
         int absoluteIndex = 0;
         Table parentTable = null;
         String tabChar = "\t";
@@ -212,11 +211,8 @@ public class Holder {
                 }
             }
         }
-        LogUtil.logInternal(Level.INFO,"build index 2");
         indexTableArrays();
-        LogUtil.logInternal(Level.INFO,"build index 3");
         sortIndex();
-        LogUtil.logInternal(Level.INFO,"finish build index");
     }
 
     /**

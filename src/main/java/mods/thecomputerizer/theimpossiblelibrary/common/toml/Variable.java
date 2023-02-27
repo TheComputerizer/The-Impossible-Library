@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
+import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
+import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -229,9 +231,11 @@ public class Variable extends AbstractType {
 
     @Override
     public List<String> toLines() {
-        return Collections.singletonList(getSpacing()+this.name+" = "+
+        String line = getSpacing()+this.name+" = "+
                 (!(this.value instanceof List<?>) ? !(this.value instanceof String) ?
-                        this.value : "\""+this.value+"\"" : TextUtil.compileCollection((List<?>)this.value)));
+                        this.value : "\""+this.value+"\"" : TextUtil.compileCollection((List<?>)this.value));
+        LogUtil.logInternal(Level.INFO,"Writing var '{}'",line);
+        return Collections.singletonList(line);
     }
 
     @Override
