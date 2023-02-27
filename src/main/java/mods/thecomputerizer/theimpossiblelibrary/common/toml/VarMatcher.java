@@ -22,7 +22,7 @@ public class VarMatcher {
     }
 
     public boolean matches(String name, Object val) {
-        if(this.conditions.isEmpty() || Objects.isNull(val)) return true;
+        if(this.conditions.isEmpty() || Objects.isNull(val) || !this.conditions.containsKey(name)) return true;
         try {
             return this.conditions.containsKey(name) && this.conditions.get(name).apply(val);
         } catch (Exception e) {
