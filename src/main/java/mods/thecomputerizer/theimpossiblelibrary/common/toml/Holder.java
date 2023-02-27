@@ -204,7 +204,6 @@ public class Holder {
                             if (Objects.nonNull(parentTable)) parentTable.addItem(table);
                             absoluteIndex++;
                             parentTable = table;
-                            LogUtil.logInternal(Level.DEBUG,"read in table {} from path {}",name,TomlUtil.condensePath(path));
                         } else
                             LogUtil.logInternal(Level.ERROR, "Table of name {} was unable to be parsed correctly", name);
                     }
