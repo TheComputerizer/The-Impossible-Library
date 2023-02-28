@@ -92,7 +92,7 @@ public class NetworkUtil {
         if(Objects.nonNull(toString)) writeString(buf,toString.apply(val));
         else {
             writeString(buf,val.getClass().getName());
-            if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, val));
+            if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
             else writeString(buf,val.toString());
         }
     }
