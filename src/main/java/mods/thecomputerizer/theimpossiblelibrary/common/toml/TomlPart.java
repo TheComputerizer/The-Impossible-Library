@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -40,7 +39,6 @@ public enum TomlPart {
     }
 
     public AbstractType decode(ByteBuf buf, @Nullable Table parent) {
-        Constants.LOGGER.error("DECODING TYPE {}",this.id);
         return this.packetReader.apply(buf,parent);
     }
 
