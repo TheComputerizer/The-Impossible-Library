@@ -405,7 +405,7 @@ public class Table extends AbstractType {
             if (type instanceof Variable)
                 return matches((Variable)type);
             return true;
-        }).collect(Collectors.toList()),((buf1, type) -> type.write(buf1)));
+        }).collect(Collectors.toList()),(buf1, type) -> type.write(buf1));
     }
 
     /**

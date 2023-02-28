@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -13,7 +14,7 @@ public enum TomlPart {
     BLANK_LINE("blank_line", BlankLine.class, (buf, table) -> new BlankLine(buf)),
     COMMENT("comment", Comment.class, Comment::new),
     VARIABLE("variable", Variable.class, Variable::new),
-    TABLE("table", Table.class, Variable::new);
+    TABLE("table", Table.class, Table::new);
 
     private static final HashMap<String, TomlPart> PART_LIST = new HashMap<>();
     private static final HashMap<Class<? extends AbstractType>, TomlPart> CLASS_LIST = new HashMap<>();
@@ -39,6 +40,7 @@ public enum TomlPart {
     }
 
     public AbstractType decode(ByteBuf buf, @Nullable Table parent) {
+        Constants.LOGGER.error("DECODING TYPE {}",this.id);
         return this.packetReader.apply(buf,parent);
     }
 

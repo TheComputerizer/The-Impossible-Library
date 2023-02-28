@@ -2,11 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.util;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
@@ -93,7 +91,9 @@ public class NetworkUtil {
         else {
             writeString(buf,val.getClass().getName());
             if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
-            else writeString(buf,val.toString());
+            else {
+                writeString(buf,val.toString());
+            }
         }
     }
 
@@ -110,19 +110,15 @@ public class NetworkUtil {
     public static Object parseGenericObj(ByteBuf buf, @Nullable Function<String, Object> fromString) {
         if (Objects.nonNull(fromString)) return fromString.apply(readString(buf));
         boolean valid = true;
-        Class<?> valType = null;
-        String className = NetworkUtil.readString(buf);
+        Class<?> valType;
+        String className = readString(buf);
         try {
             valType = Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            LogUtil.logInternal(Level.ERROR, "Could not find class name {} when parsing a generic object from " +
-                    "a packet!", className);
             ex.printStackTrace();
-            valid = false;
+            throw new RuntimeException("Could not find class name {} when parsing a generic object from a packet!");
         }
-        String val = NetworkUtil.readString(buf);
-        if (!valid) return null;
-        return valType.isAssignableFrom(List.class) ? readGenericList(buf,NetworkUtil::parseGenericObj) :
-                GenericUtils.parseGenericType(val,valType);
+        return List.class.isAssignableFrom(valType) ? readGenericList(buf,NetworkUtil::parseGenericObj) :
+                GenericUtils.parseGenericType(readString(buf),valType);
     }
 }
