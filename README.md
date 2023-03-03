@@ -20,6 +20,7 @@ Some planned features
 - MP4 rendering
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
+Modrinth Project: (Awaiting approval)
 
 ## How to include this mod as a dependency
 
@@ -39,4 +40,4 @@ dependencies {
   implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
 }
 ```
-The file ID for the latest version of `1.12.2-0.2.1` is `4373081`
+The file ID for the latest version of `1.12.2-0.2.2` is `4418997`
