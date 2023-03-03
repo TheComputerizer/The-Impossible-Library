@@ -20,6 +20,7 @@ Some planned features
 - MP4 rendering
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
+
 Modrinth Project: (Awaiting approval)
 
 ## How to include this mod as a dependency
