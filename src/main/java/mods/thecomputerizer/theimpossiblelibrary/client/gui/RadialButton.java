@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector4f;
@@ -74,7 +73,7 @@ public class RadialButton extends AbstractRadialButton {
         }
     }
 
-    /*
+    /**
         This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface

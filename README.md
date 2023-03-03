@@ -21,6 +21,8 @@ Some planned features
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
 
+Modrinth Project: (Awaiting approval)
+
 ## How to include this mod as a dependency
 
 You can just use curse maven like so
@@ -39,4 +41,4 @@ dependencies {
   implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
 }
 ```
-The file ID for the latest version of `1.16.5-0.1.9-hf2` is `4275598`
+The file ID for the latest version of `1.16.5-0.2.2` is `???????`

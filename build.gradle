@@ -1,20 +1,11 @@
 //file:noinspection GroovyUnusedAssignment
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'gradle.plugin.com.github.johnrengelman', name: 'shadow', version: '7.1.2'
-    }
+//file:noinspection GroovyAssignabilityCheck
+plugins {
+    id 'net.minecraftforge.gradle' version '5.1+'
+    id 'com.github.johnrengelman.shadow' version '7.1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'maven-publish'
 
-version = '1.16.5-0.1.9-hf'
+version = '1.16.5-0.2.2'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
@@ -28,7 +19,6 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
         }
-
         server {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -40,23 +30,17 @@ repositories {
     google()
     mavenCentral()
     maven {
-        url = uri("https://www.cursemaven.com")
+        url = uri('https://www.cursemaven.com')
         content {
-            includeGroup "curse.maven"
+            includeGroup 'curse.maven'
         }
     }
     maven {
-        url = uri("https://m2.dv8tion.net/releases")
+        url = uri('https://m2.dv8tion.net/releases')
     }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-sourceSets {
-    main {
-        ext.refMap = "mixins.theimpossiblelibrary.refmap.json"
-    }
-}
 
 configurations {
     shade
@@ -68,10 +52,14 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.29'
 
     //external dependencies
-    shade("com.moandjiezana.toml:toml4j:0.7.2") { exclude group: 'com.google.code.gson', module: 'gson' } //for toml files
+    shade("com.moandjiezana.toml:toml4j:0.7.2") {
+        exclude group: 'com.google.code.gson', module: 'gson'  //for toml files
+    }
 }
 
 shadowJar {
+    // relocate so the classpath is not identical to anything else that might also be shading the same things
+    relocate 'com.moandjiezana.toml', 'libraries.com.moandjiezana.toml'
     configurations = [project.configurations.shadow]
     classifier ''
 }
@@ -80,6 +68,14 @@ reobf {
     shadowJar {
         dependsOn createMcpToSrg
         mappings = createMcpToSrg.output
+    }
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from (sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'version': project.version
     }
 }
 
@@ -99,16 +95,4 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
 tasks.assemble.dependsOn shadowJar

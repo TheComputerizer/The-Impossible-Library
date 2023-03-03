@@ -42,6 +42,7 @@ public class FileUtil {
 
     public static void writeLineToFile(File file, String text, boolean append) {
         try {
+            if(!file.exists()) generateNestedFile(file,true);
             BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
             writer.write(text);
             writer.close();
@@ -56,6 +57,7 @@ public class FileUtil {
 
     public static void writeLinesToFile(File file, List<String> text, boolean append) {
         try {
+            if(!file.exists()) generateNestedFile(file,true);
             BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
             for (String line : text) writeLineToFile(writer, file, line, append);
             writer.close();
@@ -74,6 +76,7 @@ public class FileUtil {
 
     public static void writeLineToFile(BufferedWriter writer, File file, String text, boolean append) {
         try {
+            if(!file.exists()) generateNestedFile(file,true);
             if(append) writer.append(text);
             else {
                 writer.write(text);

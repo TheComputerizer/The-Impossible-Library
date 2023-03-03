@@ -4,42 +4,44 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector4f;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
 
-    /*
+    /**
         Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
         offset can be accessed from any class that extends GuiScreen
      */
     public static void setBuffer(Vector2f pos1In, Vector2f pos2In, Vector2f pos1Out, Vector2f pos2Out,
                                  float offset, Vector4f colors) {
         GLColorStart(colors);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuilder();
+        BufferBuilder builder = Tessellator.getInstance().getBuilder();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        builder.vertex(pos1Out.x, pos1Out.y, offset).endVertex();
-        builder.vertex(pos1In.x, pos1In.y, offset).endVertex();
-        builder.vertex(pos2In.x, pos2In.y, offset).endVertex();
-        builder.vertex(pos2Out.x, pos2Out.y, offset).endVertex();
-        tessellator.end();
+        vectorColor(builder.vertex(pos1Out.x, pos1Out.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(pos1In.x, pos1In.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(pos2In.x, pos2In.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(pos2Out.x, pos2Out.y, offset),colors).endVertex();
+        Tessellator.getInstance().end();
         GLColorFinish();
     }
 
-    /*
+    /**
         Pushes a generic texture for rendering via a ResourceLocation
         Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
@@ -53,8 +55,6 @@ public class GuiUtil {
 
     public static void drawColoredRing(Vector2f center, Vector2f radii, Vector4f color, int resolution,
                                        float offset) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuilder();
         Vector2f angles = MathUtil.makeAngleVector(0,1);
         float startAngle = (float) Math.toRadians(angles.x);
         float angleDif = (float) Math.toRadians(angles.y-angles.x);
@@ -69,7 +69,7 @@ public class GuiUtil {
         }
     }
 
-    /*
+    /**
         Draws a colored box with an outline
         The offset can be obtained from any GuiScreen or set to 0
      */
@@ -79,25 +79,24 @@ public class GuiUtil {
         drawBoxOutline(topLeft, width, height, outlineColor, outlineWidth, offset);
     }
 
-    /*
+    /**
        Draws a box using tuple inputs
        The offset can be obtained from any GuiScreen or set to 0
     */
-    public static void drawBox(Vector2f topLeft, int width, int height, Vector4f color, float offset) {
+    public static void drawBox(Vector2f topLeft, int width, int height, Vector4f colors, float offset) {
         Vector2f bottomRight = new Vector2f(topLeft.x+width,topLeft.y+height);
-        GLColorStart(color);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuilder();
+        GLColorStart(colors);
+        BufferBuilder builder = Tessellator.getInstance().getBuilder();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        builder.vertex(topLeft.x, topLeft.y, offset).endVertex();
-        builder.vertex(topLeft.x, bottomRight.y, offset).endVertex();
-        builder.vertex(bottomRight.x, bottomRight.y, offset).endVertex();
-        builder.vertex(bottomRight.x, topLeft.y, offset).endVertex();
-        tessellator.end();
+        vectorColor(builder.vertex(topLeft.x, topLeft.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(topLeft.x, bottomRight.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(bottomRight.x, bottomRight.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(bottomRight.x, topLeft.y, offset),colors).endVertex();
+        Tessellator.getInstance().end();
         GLColorFinish();
     }
 
-    /*
+    /**
         Draws the outline of a box
         The offset can be obtained from any GuiScreen or set to 0
      */
@@ -111,76 +110,208 @@ public class GuiUtil {
         drawLine(bottomLeft,topLeft,color,outlineWidth,offset);
     }
 
-    /*
+    /**
         Draws a colored line between 2 points
         The offset can be obtained from any GuiScreen or set to 0
      */
-    public static void drawLine(Vector2f start, Vector2f end, Vector4f color, float width, float offset) {
+    public static void drawLine(Vector2f start, Vector2f end, Vector4f colors, float width, float offset) {
         double angle = MathUtil.getAngle(start, end);
         Vector2f start1 = MathUtil.getVertex(start,width/2d,Math.toRadians(angle+90d));
         Vector2f start2 = MathUtil.getVertex(start,width/2d,Math.toRadians(angle-90d));
         Vector2f end1 = MathUtil.getVertex(end,width/2d,Math.toRadians(angle-90d));
         Vector2f end2 = MathUtil.getVertex(end,width/2d,Math.toRadians(angle+90d));
-        GLColorStart(color);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuilder();
+        GLColorStart(colors);
+        BufferBuilder builder = Tessellator.getInstance().getBuilder();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        builder.vertex(start1.x, start1.y, offset).endVertex();
-        builder.vertex(start2.x, start2.y, offset).endVertex();
-        builder.vertex(end1.x, end1.y, offset).endVertex();
-        builder.vertex(end2.x, end2.y, offset).endVertex();
-        tessellator.end();
+        vectorColor(builder.vertex(start1.x, start1.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(start2.x, start2.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(end1.x, end1.y, offset),colors).endVertex();
+        vectorColor(builder.vertex(end2.x, end2.y, offset),colors).endVertex();
+        Tessellator.getInstance().end();
         GLColorFinish();
     }
 
-    /*
-        Splits a string into multiple lines and renders them
-        Returns the new y position under the rendered lines
+    /**
+     Splits a string into multiple lines and renders them
+     Use lineNums and pos to cap the number of lines that can be rendered and which line to start rendering on
+     Returns the y position after the rendered lines
      */
-    public static int drawMultiLineString(Screen screen, MatrixStack matrix, String original, int left, int right,
-                                          int top, int spacing) {
+    public static int drawMultiLineString(MatrixStack matrix, FontRenderer font, String original, int left, int right, int top, int spacing,
+                                          int lineNums, int pos, int color) {
+        if(lineNums<=0) lineNums = Integer.MAX_VALUE;
+        if(pos<0) pos = 0;
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
         int lineWidth = 0;
+        int linePos = 0;
+        int lineCounter = 0;
         for(String word : words) {
-            if(lineWidth==0) {
+            if (lineWidth == 0) {
                 builder.append(word);
-                lineWidth+=screen.getMinecraft().font.width(word);
-            }
-            else {
-                String withSpace = " "+word;
-                int textWidth = screen.getMinecraft().font.width(withSpace);
-                if((left+lineWidth+textWidth)<right) {
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < right) {
                     builder.append(withSpace);
-                    lineWidth+=textWidth;
+                    lineWidth += textWidth;
                 } else {
-                    lines.add(builder.toString());
+                    if (linePos < pos) linePos++;
+                    else {
+                        lines.add(builder.toString());
+                        lineCounter++;
+                        if (lineCounter >= lineNums) {
+                            builder = new StringBuilder();
+                            break;
+                        }
+                    }
                     builder = new StringBuilder();
                     builder.append(word);
-                    lineWidth = screen.getMinecraft().font.width(word);
+                    lineWidth = font.width(word);
                 }
             }
         }
-        lines.add(builder.toString());
+        if(builder.length()>0) lines.add(builder.toString());
         for(String line : lines) {
-            screen.getMinecraft().font.drawShadow(matrix,line,left,top, GuiUtil.WHITE);
+            font.drawShadow(matrix,line,left,top,color);
             top+=spacing;
         }
         return top;
     }
 
-    /*
+    /**
+     Returns the total number of lines a string would be if it was split
+     */
+    public static int howManyLinesWillThisBe(FontRenderer font, String original, int left, int right, int top, int spacing) {
+        List<String> lines = new ArrayList<>();
+        String[] words = original.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int lineWidth = 0;
+        int linePos = 0;
+        int lineCounter = 0;
+        for(String word : words) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < right) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    lines.add(builder.toString());
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.width(word);
+                }
+            }
+            lineCounter++;
+        }
+        lines.add(builder.toString());
+        return lines.size();
+    }
+
+    /**
+     * Similar to drawMultiLineString except it is assumed this is not being called from within a GUI but rather
+     * making use of the Text class.
+     */
+    public static void drawMultiLineTitle(MatrixStack matrix, MainWindow res, String text, String subText, boolean centeredText, int x,
+                                          int y, float scaleX, float scaleY, float subScale, String color,
+                                          String subColor, float opacity, float subOpacity, int lineSpacing) {
+        FontRenderer font = Minecraft.getInstance().font;
+        List<String> textLines = new ArrayList<>();
+        List<String> subLines = new ArrayList<>();
+        TextFormatting textFormat = TextFormatting.getByName(color);
+        if(Objects.isNull(textFormat)) textFormat = TextFormatting.RED;
+        TextFormatting subFormat = TextFormatting.getByName(subColor);
+        if(Objects.isNull(subFormat)) subFormat = TextFormatting.WHITE;
+        String[] words = text.split(" ");
+        String[] subWords = subText.split(" ");
+        StringBuilder builder = new StringBuilder();
+        x = x>=0 ? x : res.getGuiScaledWidth()/2;
+        y = y>=0 ? y : res.getGuiScaledHeight()/2;
+        int left = centeredText ? 0 : x;
+        int lineWidth = 0;
+        int lineCounter = 0;
+        for(String word : words) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < res.getGuiScaledWidth()) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    textLines.add(builder.toString());
+                    lineCounter++;
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.width(word);
+                }
+            }
+        }
+        if(builder.length()>0) textLines.add(builder.toString());
+        matrix.pushPose();
+        matrix.scale(scaleX, scaleY, 1f);
+        for(String line : textLines) {
+            if(centeredText)
+                font.drawShadow(matrix,textFormat+line,(x/scaleX)-((float)font.width(line))/2,
+                        (float)y/scaleY, -1);
+            else font.drawShadow(matrix,textFormat+line,x/scaleX,y/scaleY,-1);
+            y+=lineSpacing;
+        }
+        matrix.popPose();
+        builder = new StringBuilder();
+        lineWidth = 0;
+        lineCounter = 0;
+        for(String word : subWords) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < res.getGuiScaledWidth()) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    subLines.add(builder.toString());
+                    lineCounter++;
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.width(word);
+                }
+            }
+        }
+        if(builder.length()>0) subLines.add(builder.toString());
+        matrix.pushPose();
+        matrix.scale(scaleX*subScale, scaleY*subScale, 1f);
+        for(String line : subLines) {
+            if(centeredText)
+                font.drawShadow(matrix,subFormat+line,(x/(scaleX*subScale))-((float)font.width(line))/2,
+                        (float)y/(scaleY*subScale), -1);
+            else font.drawShadow(matrix,subFormat+line,x/(scaleX*subScale),y/(scaleY*subScale),-1);
+            y+=lineSpacing;
+        }
+        matrix.popPose();
+    }
+
+    /**
         Primes the GLStateManager to draw a solid color
      */
     public static void GLColorStart(Vector4f color) {
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
+        RenderSystem.defaultBlendFunc();
         vectorColor(color);
     }
 
-    /*
+    /**
         Resets some necessary GLStateManager stuff so other rendering works as intended
      */
     public static void GLColorFinish() {
@@ -188,14 +319,14 @@ public class GuiUtil {
         RenderSystem.disableBlend();
     }
 
-    /*
+    /**
         Utilizes a tuple to set the color for a BufferBuilder
      */
     public static IVertexBuilder vectorColor(IVertexBuilder builder, Vector4f colors) {
         return builder.color(colors.x(), colors.y(), colors.z(), colors.w());
     }
 
-    /*
+    /**
         Utilizes a vector to set the color the GLStateManager
      */
     public static void vectorColor(Vector4f colors) {
@@ -206,7 +337,7 @@ public class GuiUtil {
         RenderSystem.color4f(r, g, b, a);
     }
 
-    /*
+    /**
         Reverses a color vector
         This is generally used to set an opposite hover color
      */
@@ -214,14 +345,14 @@ public class GuiUtil {
         return new Vector4f(Math.abs(colors.x()-255), Math.abs(colors.y()-255), Math.abs(colors.z()-255), colors.w());
     }
 
-    /*
+    /**
         Converts a color tuple into a single integer
      */
     public static int makeRGBAInt(Vector4f colors) {
         return makeRGBAInt((int)colors.x(),(int)colors.y(),(int)colors.z(),(int)colors.w());
     }
 
-    /*
+    /**
         Converts rgba integers into a single color integer
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {

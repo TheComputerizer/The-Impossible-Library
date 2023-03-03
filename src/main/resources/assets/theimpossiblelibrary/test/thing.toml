@@ -1,0 +1,51 @@
+# comment
+
+[hello]
+    name = "thing"
+    # comment2
+
+
+    [hello.next]
+        [[hello.next.furtherbeyond]]
+            thing = "first"
+
+# comment3
+
+        # comment4
+
+
+
+
+            end = 1
+
+        [[hello.next.furtherbeyond]]
+            # comment5
+        # comment6
+
+            thing = "second"
+            end = 2
+
+    [hello.extra]
+        # comment7
+        [[hello.extra.furtherbeyond]]
+            thing = "third"
+
+
+
+            # comment8
+            end = 3
+        [[hello.extra.furtherbeyond]]
+
+# comment9
+
+
+
+        # comment10
+        thing = "fourth"
+    # comment11
+        end = 4
+
+
+
+
+# commentlast
