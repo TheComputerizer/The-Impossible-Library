@@ -21,11 +21,11 @@ public class TheImpossibleLibrary {
         DataUtil.initGlobal();
         if (FMLEnvironment.dist == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(Renderer.class);
-            if(!FMLEnvironment.production) initClientTestClass(MinecraftForge.EVENT_BUS);
+            //if(!FMLEnvironment.production) initClientTestClass(MinecraftForge.EVENT_BUS);
         }
     }
     private void clientSetup(final FMLClientSetupEvent ev) {
-        if(!FMLEnvironment.production) ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
+        //if(!FMLEnvironment.production) ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
     }
 
     public static void initClientTestClass(IEventBus bus) {
