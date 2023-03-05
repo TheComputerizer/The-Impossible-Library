@@ -72,7 +72,7 @@ reobf {
 }
 
 processResources {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from (sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
         expand 'version': project.version
