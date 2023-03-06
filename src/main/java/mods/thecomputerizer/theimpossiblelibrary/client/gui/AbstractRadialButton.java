@@ -37,10 +37,8 @@ public abstract class AbstractRadialButton extends GuiComponent {
         Vector3f pos2In = MathUtil.getVertex(center,radius.x(),angle2);
         Vector3f pos1Out = MathUtil.getVertex(center,radius.y(),angle1);
         Vector3f pos2Out = MathUtil.getVertex(center,radius.y(),angle2);
-        if(this.hover)
-            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,GuiUtil.reverseColors(this.colors));
-        else
-            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,this.colors);
+        if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,GuiUtil.reverseColors(this.colors));
+        else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,this.colors);
     }
 
     protected void playPressSound(SoundManager handler) {

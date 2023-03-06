@@ -1,38 +1,38 @@
 //file:noinspection GroovyUnusedAssignment
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'gradle.plugin.com.github.johnrengelman', name: 'shadow', version: '7.1.2'
-    }
+//file:noinspection GroovyAssignabilityCheck
+plugins {
+    id 'net.minecraftforge.gradle' version '5.1+'
+    id 'com.github.johnrengelman.shadow' version '7.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'maven-publish'
 
-version = '1.18.2-0.1.9'
+version = '1.18.2-0.2.2'
 group = 'mods.thecomputerizer.theimpossiblelibrary'
 archivesBaseName = 'theimpossiblelibrary'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
     runs {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            mods {
+                theimpossiblelibrary {
+                    source sourceSets.main
+                }
+            }
         }
-
         server {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            mods {
+                theimpossiblelibrary {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
@@ -53,12 +53,6 @@ repositories {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-sourceSets {
-    main {
-        ext.refMap = "mixins.theimpossiblelibrary.refmap.json"
-    }
-}
-
 configurations {
     shade
     implementation.extendsFrom(shade)
@@ -66,13 +60,17 @@ configurations {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.92'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.2.1'
 
     //external dependencies
-    shade("com.moandjiezana.toml:toml4j:0.7.2") { exclude group: 'com.google.code.gson', module: 'gson' } //for toml files
+    shade("com.moandjiezana.toml:toml4j:0.7.2") {
+        exclude group: 'com.google.code.gson', module: 'gson' //for toml files
+    }
 }
 
 shadowJar {
+    // relocate so the classpath is not identical to anything else that might also be shading the same things
+    relocate 'com.moandjiezana.toml', 'libraries.com.moandjiezana.toml'
     configurations = [project.configurations.shadow]
     classifier ''
 }
@@ -84,15 +82,19 @@ reobf {
     }
 }
 
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from (sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'version': project.version
+    }
+}
+
 jar {
     manifest {
         attributes([
-                "Specification-Title": "theimpossiblelibrary",
-                "Specification-Vendor": "the_computerizer",
-                "Specification-Version": project.version,
                 "Implementation-Title": project.name,
                 "Implementation-Version": project.version,
-                "Implementation-Vendor" :"the_computerizer",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
@@ -100,16 +102,4 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
 tasks.assemble.dependsOn shadowJar

@@ -73,7 +73,7 @@ public class RadialButton extends AbstractRadialButton {
         }
     }
 
-    /*
+    /**
         This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface
