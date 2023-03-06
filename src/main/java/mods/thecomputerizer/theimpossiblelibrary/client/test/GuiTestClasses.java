@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.ReadBookScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.ResourceLocation;
@@ -221,6 +222,7 @@ public class GuiTestClasses {
                     new Vector4f(255,255,255,255), 1f, this.getBlitOffset());
             GuiUtil.drawColoredRing(this.center,new Vector2f(199,200),new Vector4f(255,255,255,255),
                     360,this.getBlitOffset());
+            GuiUtil.bufferSquareTexture(matrix,this.center,100f, ReadBookScreen.BOOK_LOCATION);
             GuiUtil.drawMultiLineString(matrix,this.font,"Here's the thing. You said a " +
                             "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                             "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
