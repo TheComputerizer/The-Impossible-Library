@@ -34,7 +34,7 @@ public class AssetUtil {
         return new TranslatableContents(key);
     }
 
-    /*
+    /**
         Checks if the lang key exists before returning and uses the set fallback key otherwise. If neither the main
         input key nor the fallback key exist this will return null.
      */

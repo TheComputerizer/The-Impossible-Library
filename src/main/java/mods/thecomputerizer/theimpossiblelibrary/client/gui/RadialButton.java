@@ -10,11 +10,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 public class RadialButton extends AbstractRadialButton {
     private final List<Component> tooltipLines;
@@ -24,13 +24,12 @@ public class RadialButton extends AbstractRadialButton {
     private final String centerText;
     private final BiConsumer<Screen, RadialButton> handlerFunction;
 
-    public RadialButton(List<String> tooltipLines, ResourceLocation centerIcon,
-                        ResourceLocation altCenterIcon, float hoverIncrease, String centerText,
+    public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon,
+                        @Nullable ResourceLocation altCenterIcon, float hoverIncrease, @Nullable String centerText,
                         BiConsumer<Screen, RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(line -> MutableComponent.create(new LiteralContents(line)))
-                .collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(line -> (Component)MutableComponent.create(new LiteralContents(line))).toList();
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
@@ -75,11 +74,11 @@ public class RadialButton extends AbstractRadialButton {
         }
     }
 
-    /*
+    /**
         This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface
     public interface CreatorFunction<L, R, AR, HI, S, F, B> {
-        B apply(L list, R icon, AR altIcon, HI hovInc, S text, F handler);
+        B apply(L list, @Nullable R icon, @Nullable AR altIcon, HI hovInc, @Nullable S text, F handler);
     }
 }

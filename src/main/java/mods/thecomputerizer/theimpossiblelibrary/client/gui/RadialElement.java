@@ -14,12 +14,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/*
+/**
     Creates and renders a generic radial gui element
     Set the inner radius to 0 if you want a full circle to be rendered
  */
@@ -39,22 +40,21 @@ public class RadialElement extends GuiComponent {
     private boolean hover;
     private boolean centerHover;
 
-    public RadialElement(Screen parent, ResourceLocation center, ResourceLocation altCenter,
-                         RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
-                         int radiusOut, int iconRadius, String centerText, List<String> centerTooltips,
+    public RadialElement(Screen parent, @Nullable ResourceLocation center, @Nullable ResourceLocation altCenter,
+                         @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
+                         int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
                          float resolution, float hoverIncrease, RadialButton ... buttons) {
         this(parent,center,altCenter,centerProgress,centerX,centerY,radiusIn,radiusOut,iconRadius,centerText,
                 centerTooltips,resolution,hoverIncrease, Arrays.stream(buttons).collect(Collectors.toList()));
     }
 
-    public RadialElement(Screen parent, ResourceLocation center, ResourceLocation altCenter,
-                         RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
-                         int radiusOut, int iconRadius, String centerText, List<String> centerTooltips,
+    public RadialElement(Screen parent, @Nullable ResourceLocation center, @Nullable ResourceLocation altCenter,
+                         @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
+                         int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
                          float resolution, float hoverIncrease, List<RadialButton> buttons) {
         this.parentScreen = parent;
         this.buttons = buttons;
-        this.centerTooltips = centerTooltips.stream().map(line -> MutableComponent.create(new LiteralContents(line)))
-                .collect(Collectors.toList());
+        this.centerTooltips = centerTooltips.stream().map(line -> (Component)MutableComponent.create(new LiteralContents(line))).toList();
         this.centerIcon = center;
         this.altCenterIcon = Objects.isNull(altCenter) ? center : altCenter;
         this.iconRadius = iconRadius;
@@ -74,7 +74,7 @@ public class RadialElement extends GuiComponent {
         return MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x());
     }
 
-    /*
+    /**
         Remember to call this method from your GUI class if you want to be able to click on the buttons here
      */
     public void mousePressed(int mouseX, int mouseY, int mouseButton) {
@@ -169,12 +169,12 @@ public class RadialElement extends GuiComponent {
         }
     }
 
-    /*
+    /**
         This is included if you wanted to be able to assign a radial element to a static object and create it later
      */
     @FunctionalInterface
     public interface CreatorFunction<P,C,AC,B,X,Y,I,O,IR,T,CT,R,HI,RB,E> {
-        E apply(P parent, C center, AC altCenter, B bar, X x, Y y, I in, O out, IR iconRad,
-                T text, CT tooltips, R res, HI hovInc, RB buttons);
+        E apply(P parent, @Nullable C center, @Nullable AC altCenter, @Nullable B bar, X x, Y y, I in, O out, IR iconRad,
+                @Nullable T text, CT tooltips, R res, HI hovInc, RB buttons);
     }
 }
