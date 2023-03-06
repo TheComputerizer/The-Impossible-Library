@@ -1,23 +1,26 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.client;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
 
-    /*
+    /**
         Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
         offset can be accessed from any class that extends GuiScreen
      */
@@ -35,7 +38,7 @@ public class GuiUtil {
         GLColorFinish();
     }
 
-    /*
+    /**
         Pushes a generic texture for rendering via a ResourceLocation
         Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
@@ -62,7 +65,7 @@ public class GuiUtil {
         }
     }
 
-    /*
+    /**
         Draws a colored box with an outline
         The offset can be obtained from any GuiScreen or set to 0
      */
@@ -72,7 +75,7 @@ public class GuiUtil {
         drawBoxOutline(topLeft, width, height, outlineColor, outlineWidth, offset);
     }
 
-    /*
+    /**
        Draws a box using tuple inputs
        The offset can be obtained from any GuiScreen or set to 0
     */
@@ -90,7 +93,7 @@ public class GuiUtil {
         GLColorFinish();
     }
 
-    /*
+    /**
         Draws the outline of a box
         The offset can be obtained from any GuiScreen or set to 0
      */
@@ -104,7 +107,7 @@ public class GuiUtil {
         drawLine(bottomLeft,topLeft,color,outlineWidth,offset);
     }
 
-    /*
+    /**
         Draws a colored line between 2 points
         The offset can be obtained from any GuiScreen or set to 0
      */
@@ -126,44 +129,175 @@ public class GuiUtil {
         GLColorFinish();
     }
 
-    /*
+    /**
         Splits a string into multiple lines and renders them
         Returns the new y position under the rendered lines
      */
-    public static int drawMultiLineString(Screen screen, PoseStack matrix, String original, int left, int right,
-                                          int top, int spacing) {
+    public static int drawMultiLineString(PoseStack matrix, Font font, String original, int left, int right, int top, int spacing,
+                                          int lineNums, int pos, int color) {
+        if(lineNums<=0) lineNums = Integer.MAX_VALUE;
+        if(pos<0) pos = 0;
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
         int lineWidth = 0;
+        int linePos = 0;
+        int lineCounter = 0;
         for(String word : words) {
-            if(lineWidth==0) {
+            if (lineWidth == 0) {
                 builder.append(word);
-                lineWidth+=Minecraft.getInstance().font.width(word);
-            }
-            else {
-                String withSpace = " "+word;
-                int textWidth = Minecraft.getInstance().font.width(withSpace);
-                if((left+lineWidth+textWidth)<right) {
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < right) {
                     builder.append(withSpace);
-                    lineWidth+=textWidth;
+                    lineWidth += textWidth;
                 } else {
-                    lines.add(builder.toString());
+                    if (linePos < pos) linePos++;
+                    else {
+                        lines.add(builder.toString());
+                        lineCounter++;
+                        if (lineCounter >= lineNums) {
+                            builder = new StringBuilder();
+                            break;
+                        }
+                    }
                     builder = new StringBuilder();
                     builder.append(word);
-                    lineWidth = Minecraft.getInstance().font.width(word);
+                    lineWidth = font.width(word);
                 }
             }
         }
-        lines.add(builder.toString());
+        if(builder.length()>0) lines.add(builder.toString());
         for(String line : lines) {
-            Minecraft.getInstance().font.drawShadow(matrix,line,left,top, GuiUtil.WHITE);
+            font.drawShadow(matrix,line,left,top,color);
             top+=spacing;
         }
         return top;
     }
 
-    /*
+    /**
+     Returns the total number of lines a string would be if it was split
+     */
+    public static int howManyLinesWillThisBe(Font font, String original, int left, int right, int top, int spacing) {
+        List<String> lines = new ArrayList<>();
+        String[] words = original.split(" ");
+        StringBuilder builder = new StringBuilder();
+        int lineWidth = 0;
+        int linePos = 0;
+        int lineCounter = 0;
+        for(String word : words) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < right) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    lines.add(builder.toString());
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.width(word);
+                }
+            }
+            lineCounter++;
+        }
+        lines.add(builder.toString());
+        return lines.size();
+    }
+
+    /**
+     * Similar to drawMultiLineString except it is assumed this is not being called from within a GUI but rather
+     * making use of the Text class.
+     */
+    public static void drawMultiLineTitle(PoseStack matrix, Window res, String text, String subText, boolean centeredText, int x,
+                                          int y, float scaleX, float scaleY, float subScale, String color,
+                                          String subColor, float opacity, float subOpacity, int lineSpacing) {
+        Font font = Minecraft.getInstance().font;
+        List<String> textLines = new ArrayList<>();
+        List<String> subLines = new ArrayList<>();
+        ChatFormatting textFormat = ChatFormatting.getByName(color);
+        if(Objects.isNull(textFormat)) textFormat = ChatFormatting.RED;
+        ChatFormatting subFormat = ChatFormatting.getByName(subColor);
+        if(Objects.isNull(subFormat)) subFormat = ChatFormatting.WHITE;
+        String[] words = text.split(" ");
+        String[] subWords = subText.split(" ");
+        StringBuilder builder = new StringBuilder();
+        x = x>=0 ? x : res.getGuiScaledWidth()/2;
+        y = y>=0 ? y : res.getGuiScaledHeight()/2;
+        int left = centeredText ? 0 : x;
+        int lineWidth = 0;
+        int lineCounter = 0;
+        for(String word : words) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < res.getGuiScaledWidth()) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    textLines.add(builder.toString());
+                    lineCounter++;
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.width(word);
+                }
+            }
+        }
+        if(builder.length()>0) textLines.add(builder.toString());
+        matrix.pushPose();
+        matrix.scale(scaleX, scaleY, 1f);
+        for(String line : textLines) {
+            if(centeredText)
+                font.drawShadow(matrix,textFormat+line,(x/scaleX)-((float)font.width(line))/2,
+                        (float)y/scaleY, -1);
+            else font.drawShadow(matrix,textFormat+line,x/scaleX,y/scaleY,-1);
+            y+=lineSpacing;
+        }
+        matrix.popPose();
+        builder = new StringBuilder();
+        lineWidth = 0;
+        lineCounter = 0;
+        for(String word : subWords) {
+            if (lineWidth == 0) {
+                builder.append(word);
+                lineWidth += font.width(word);
+            } else {
+                String withSpace = " " + word;
+                int textWidth = font.width(withSpace);
+                if ((left + lineWidth + textWidth) < res.getGuiScaledWidth()) {
+                    builder.append(withSpace);
+                    lineWidth += textWidth;
+                } else {
+                    subLines.add(builder.toString());
+                    lineCounter++;
+                    builder = new StringBuilder();
+                    builder.append(word);
+                    lineWidth = font.width(word);
+                }
+            }
+        }
+        if(builder.length()>0) subLines.add(builder.toString());
+        matrix.pushPose();
+        matrix.scale(scaleX*subScale, scaleY*subScale, 1f);
+        for(String line : subLines) {
+            if(centeredText)
+                font.drawShadow(matrix,subFormat+line,(x/(scaleX*subScale))-((float)font.width(line))/2,
+                        (float)y/(scaleY*subScale), -1);
+            else font.drawShadow(matrix,subFormat+line,x/(scaleX*subScale),y/(scaleY*subScale),-1);
+            y+=lineSpacing;
+        }
+        matrix.popPose();
+    }
+
+    /**
         Primes the GLStateManager to draw a solid color
      */
     public static void GLColorStart(Vector4f color) {
@@ -173,7 +307,7 @@ public class GuiUtil {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
     }
 
-    /*
+    /**
         Resets some necessary GLStateManager stuff so other rendering works as intended
      */
     public static void GLColorFinish() {
@@ -181,14 +315,14 @@ public class GuiUtil {
         RenderSystem.disableBlend();
     }
 
-    /*
+    /**
         Sets the color of a vertex given a color vector
      */
     public static VertexConsumer vectorColor(VertexConsumer vertex, Vector4f colors) {
         return vertex.color(colors.x()/255f, colors.y()/255f, colors.z()/255f, colors.w()/255f);
     }
 
-    /*
+    /**
         Reverses a color vector
         This is generally used to set an opposite hover color
      */
@@ -196,14 +330,14 @@ public class GuiUtil {
         return new Vector4f(Math.abs(colors.x()-255), Math.abs(colors.y()-255), Math.abs(colors.z()-255), colors.w());
     }
 
-    /*
+    /**
         Converts a color tuple into a single integer
      */
     public static int makeRGBAInt(Vector4f colors) {
         return makeRGBAInt((int)colors.x(),(int)colors.y(),(int)colors.z(),(int)colors.w());
     }
 
-    /*
+    /**
         Converts rgba integers into a single color integer
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {

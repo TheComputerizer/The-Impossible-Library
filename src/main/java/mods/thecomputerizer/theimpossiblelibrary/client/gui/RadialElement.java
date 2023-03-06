@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-/*
+/**
     Creates and renders a generic radial gui element
     Set the inner radius to 0 if you want a full circle to be rendered
  */
@@ -73,7 +73,7 @@ public class RadialElement extends GuiComponent {
         return MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x());
     }
 
-    /*
+    /**
         Remember to call this method from your GUI class if you want to be able to click on the buttons here
      */
     public void mousePressed(int mouseX, int mouseY, int mouseButton) {
@@ -168,7 +168,7 @@ public class RadialElement extends GuiComponent {
         }
     }
 
-    /*
+    /**
         This is included if you wanted to be able to assign a radial element to a static object and create it later
      */
     @FunctionalInterface

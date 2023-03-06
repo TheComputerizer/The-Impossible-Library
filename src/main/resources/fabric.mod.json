@@ -26,12 +26,10 @@
       "mods.thecomputerizer.theimpossiblelibrary.ClientInit"
     ]
   },
-  "mixins": [
-    "theimpossiblelibrary.mixins.json"
-  ],
+  "mixins": [],
 
   "depends": {
-    "fabricloader": ">=0.14.6",
+    "fabricloader": ">=0.14.17",
     "fabric": "*",
     "minecraft": "~1.18.2",
     "java": ">=17"
