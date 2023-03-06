@@ -15,16 +15,20 @@ public class DataUtil {
     private static boolean GLOBAL_LOAD_FAILED = false;
     private static boolean WORLD_LOAD_FAILED = false;
     private static final List<String> explanation = Stream.of("Hi!\n",
-            "This folder is used to store data used by The Impossible Library and other mods that might use it as a dependency\n",
+            "This folder is used to store data used by The Impossible Library and other mods that might use it as a " +
+                    "dependency\n",
             "--------------------------------------------------\n",
             "For mod developers:\n",
-            "\n",
+            "If you registered any global data through The Impossible Library, this is where that gets stored! So if " +
+                    "you see your modid here, everything is working as intended.\n",
             "--------------------------------------------------\n",
-            "For modpack creators:",
-            "\n",
+            "For modpack creators:\n",
+            "This is where mods that utilize the global data system implemented by The Impossible Library have their " +
+                    "data stored! If you want to quickly reset a specific mod's data, you can delete its file here.\n",
             "--------------------------------------------------\n",
             "For players:\n",
-            "").collect(Collectors.toList());
+            "You probably do not have to worry about this folder, but if a specific mod is breaking that appears here, " +
+                    "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!").collect(Collectors.toList());
 
     public static void initGlobal() {
         try {
@@ -40,7 +44,7 @@ public class DataUtil {
         else throw new IOException("Failed to create file");
     }
 
-    /*
+    /**
         Writes global nbt data to a dat file for a given modid
         Will fail if the data folder failed to initialize or the data module is turned off
      */
@@ -49,7 +53,7 @@ public class DataUtil {
         else LogUtil.logInternal(Level.WARN, "There was a problem when initializing global data for The Impossible Library so data for {} could not be written",modid);
     }
 
-    /*
+    /**
         Gets global data stored in a dat file for the modid input
         Returns null if the file does not exist and is not set to be created
         Will also return null if the data folder failed to initialize or the data module is turned off
