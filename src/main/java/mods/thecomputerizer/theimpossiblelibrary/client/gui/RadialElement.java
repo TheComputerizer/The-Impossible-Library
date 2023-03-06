@@ -85,7 +85,7 @@ public class RadialElement extends AbstractGui {
     }
 
     public void render(MatrixStack matrix, float offset, int mouseX, int mouseY) {
-        RenderSystem.pushMatrix();
+        matrix.pushPose();
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
@@ -115,8 +115,7 @@ public class RadialElement extends AbstractGui {
         drawCenterProgress(this.center,offset,currentScreen);
         drawIcons(matrix, this.center, this.radius, numButtons==1);
         drawText(matrix, mouse,mouseRelativeRadius, currentScreen);
-        RenderSystem.popAttributes();
-        RenderSystem.popMatrix();
+        matrix.popPose();
     }
 
     private void drawEmpty(float zLevel, Vector2f mouse) {

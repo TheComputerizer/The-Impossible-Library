@@ -32,7 +32,7 @@ public class ClientTest {
     public static void onKeyInput(InputEvent.KeyInputEvent e) {
         if (TEST_KEYBIND.isDown()) {
             //render testing
-            Minecraft.getInstance().setScreen(GuiTestClasses.createTestOtherGui());
+            Minecraft.getInstance().setScreen(GuiTestClasses.createTestRadialGui(false));
             try {
                 Holder testHolder = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
                         .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).getInputStream());
