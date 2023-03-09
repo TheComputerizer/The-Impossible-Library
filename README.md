@@ -1,5 +1,5 @@
 # The-Impossible-Library
-This is the 1.16.5 branch
+This is the 1.18.2 Fabric branch
 
 This mod was made to offer mod devs methods for doing things that are typically thought of as impossible, hacky, tedious, or maybe even require a 3rd party java library.
 
@@ -21,6 +21,8 @@ Some planned features
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
 
+Modrinth Project: https://modrinth.com/mod/the-impossible-library
+
 ## How to include this mod as a dependency
 
 You can just use curse maven like so
@@ -28,15 +30,34 @@ You can just use curse maven like so
 ```
 repositories {
     maven {
-        url = uri("https://www.cursemaven.com")
+        url = uri('https://www.cursemaven.com')
         content {
-            includeGroup "curse.maven"
+            includeGroup 'curse.maven'
         }
     }
 }
 
 dependencies {
-  implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
+  modImplementation 'curse.maven:the-impossible-library-661115:fileID'
 }
 ```
-The file ID for the latest version of `1.18.2-fabric-0.1.9` is `4276146`
+The file ID for the latest version of `1.18.2-fabric-0.2.2` is `4426341`
+
+Alternatively, if you wish to use the modrinth maven, you can do it like this
+```
+
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = uri('https://api.modrinth.com/maven')
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+}
+
+dependencies {
+  modImplementation 'maven.modrinth:the-impossible-library:1.18.2-fabric-fileVersion'
+}
+```
+The where the latest file version is `0.2.2`
