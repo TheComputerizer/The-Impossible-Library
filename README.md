@@ -59,4 +59,5 @@ repositories {
 dependencies {
   implementation fg.deobf('maven.modrinth:the-impossible-library:1.12.2-fileVersion')
 }
+```
 The where the latest file version is `0.2.2`
