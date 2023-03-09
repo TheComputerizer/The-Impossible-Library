@@ -30,15 +30,15 @@ You can just use curse maven like so
 ```
 repositories {
     maven {
-        url = uri("https://www.cursemaven.com")
+        url = uri('https://www.cursemaven.com')
         content {
-            includeGroup "curse.maven"
+            includeGroup 'curse.maven'
         }
     }
 }
 
 dependencies {
-  implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
+  implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
 The file ID for the latest version of `1.12.2-0.2.2` is `4418997`
