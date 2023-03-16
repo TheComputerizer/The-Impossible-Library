@@ -1,6 +1,4 @@
-//file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
-
 plugins {
     id 'net.minecraftforge.gradle' version '5.1+'
     id 'com.github.johnrengelman.shadow' version '7.1.+'
@@ -16,14 +14,14 @@ fancyGradle {
     }
 }
 
-version = '1.12.2-0.2.2'
-group = 'mods.thecomputerizer.theimpossiblelibrary'
-archivesBaseName = 'theimpossiblelibrary'
+version = "${project.minecraft_version}-${project.mod_version}"
+group = project.maven_group
+archivesBaseName = project.base_name
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
-    mappings channel: 'stable', version: '39-1.12'
+    mappings channel: 'stable', version: project.mappings_version
     runs {
         client {
             workingDirectory project.file('run')
@@ -58,17 +56,17 @@ configurations {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
     //external dependencies
-    shade('com.moandjiezana.toml:toml4j:0.7.2') {  //for toml files
+    shade("com.moandjiezana.toml:toml4j:${project.toml4j_version}") {  //for toml files
         exclude group: 'com.google.code.gson', module: 'gson'
     }
 }
 
 shadowJar {
-    // relocate so the classpath is not identical to anything else that might also be shading the same things
-    relocate 'com.moandjiezana.toml', 'libraries.com.moandjiezana.toml'
+    //necessary relocation
+    relocate 'com.moandjiezana.toml', "${project.shadow_group}.moandjiezana.toml"
     configurations = [project.configurations.shadow]
     classifier ''
 }
@@ -83,26 +81,22 @@ reobf {
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     inputs.property 'version', project.version
-    inputs.property 'mcversion', '1.12.2'
+    inputs.property 'mcversion', project.minecraft_version
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version': project.version, 'mcversion': '1.12.2'
+        expand 'version': project.version, 'mcversion': project.minecraft_version
     }
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
-    //exclude '**/theimpossiblelibrary/test/**'
+    exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
     manifest {
         attributes([
-            "Specification-Title": "theimpossiblelibrary",
-            "Specification-Vendor": "the_computerizer",
-            "Specification-Version": project.version,
             "Implementation-Title": project.name,
             "Implementation-Version": project.version,
-            "Implementation-Vendor" :"the_computerizer",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
