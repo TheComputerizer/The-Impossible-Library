@@ -21,7 +21,7 @@ Some planned features
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
 
-Modrinth Project: (Awaiting approval)
+Modrinth Project: https://modrinth.com/mod/the-impossible-library
 
 ## How to include this mod as a dependency
 
@@ -30,15 +30,34 @@ You can just use curse maven like so
 ```
 repositories {
     maven {
-        url = uri("https://www.cursemaven.com")
+        url = uri('https://www.cursemaven.com')
         content {
-            includeGroup "curse.maven"
+            includeGroup 'curse.maven'
         }
     }
 }
 
 dependencies {
-  implementation fg.deobf("curse.maven:the-impossible-library-661115:fileID")
+  implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
 The file ID for the latest version of `1.12.2-0.2.2` is `4418997`
+
+Alternatively, if you wish to use the modrinth maven, you can do it like this
+```
+
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = uri('https://api.modrinth.com/maven')
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+}
+
+dependencies {
+  implementation fg.deobf('maven.modrinth:the-impossible-library:1.12.2-fileVersion')
+}
+```
+The where the latest file version is `0.2.2`
