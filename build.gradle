@@ -1,18 +1,17 @@
-//file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'net.minecraftforge.gradle' version '5.1+'
     id 'com.github.johnrengelman.shadow' version '7.1.+'
 }
 
-version = '1.16.5-0.2.2'
-group = 'mods.thecomputerizer.theimpossiblelibrary'
-archivesBaseName = 'theimpossiblelibrary'
+version = "${project.minecraft_version}-${project.mod_version}"
+group = project.maven_group
+archivesBaseName = project.base_name
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 minecraft {
-    mappings channel: 'official', version: '1.16.5'
+    mappings channel: 'official', version: project.minecraft_version
     runs {
         client {
             workingDirectory project.file('run')
@@ -49,17 +48,17 @@ configurations {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.29'
+    minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
     //external dependencies
-    shade("com.moandjiezana.toml:toml4j:0.7.2") {
-        exclude group: 'com.google.code.gson', module: 'gson'  //for toml files
+    shade("com.moandjiezana.toml:toml4j:${project.toml4j_version}") {  //for toml files
+        exclude group: 'com.google.code.gson', module: 'gson'
     }
 }
 
 shadowJar {
-    // relocate so the classpath is not identical to anything else that might also be shading the same things
-    relocate 'com.moandjiezana.toml', 'libraries.com.moandjiezana.toml'
+    //necessary relocation
+    relocate 'com.moandjiezana.toml', "${project.shadow_group}.moandjiezana.toml"
     configurations = [project.configurations.shadow]
     classifier ''
 }
@@ -77,17 +76,14 @@ processResources {
         include 'META-INF/mods.toml'
         expand 'version': project.version
     }
+    exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
     manifest {
         attributes([
-                "Specification-Title": "theimpossiblelibrary",
-                "Specification-Vendor": "the_computerizer",
-                "Specification-Version": project.version,
                 "Implementation-Title": project.name,
                 "Implementation-Version": project.version,
-                "Implementation-Vendor" :"the_computerizer",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

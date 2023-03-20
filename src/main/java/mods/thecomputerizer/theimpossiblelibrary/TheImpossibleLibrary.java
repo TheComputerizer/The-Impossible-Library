@@ -16,16 +16,18 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 @Mod(Constants.MODID)
 public class TheImpossibleLibrary {
 
+    private static final boolean IS_DEV_ENV = false;
+
     public TheImpossibleLibrary() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
         DataUtil.initGlobal();
         if (FMLEnvironment.dist == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(Renderer.class);
-            //if(!FMLEnvironment.production) initClientTestClass(MinecraftForge.EVENT_BUS);
+            if(IS_DEV_ENV) initClientTestClass(MinecraftForge.EVENT_BUS);
         }
     }
     private void clientSetup(final FMLClientSetupEvent ev) {
-        //if(!FMLEnvironment.production) ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
+        if(IS_DEV_ENV) ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
     }
 
     public static void initClientTestClass(IEventBus bus) {
