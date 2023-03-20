@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
+import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.client.render.Text;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Holder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.IndexFinder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Table;
@@ -28,20 +30,42 @@ public class ClientTest {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent e) {
         if (TEST_KEYBIND.isKeyDown()) {
-            //render testing
-            Minecraft.getMinecraft().displayGuiScreen(GuiTestClasses.createTestOtherGui());
-            //test smart toml reading and printing
-            try {
-                Holder testHolder = TomlUtil.readFully(Minecraft.getMinecraft().getResourceManager()
-                        .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).getInputStream());
-                testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
-                testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
-                testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
-                FileUtil.writeLinesToFile(new File(Constants.DATA_DIRECTORY, "test2.toml"),
-                        testHolder.toLines(),false);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            renderableTest();
+            //guiTest();
+            //tomlTest();
+        }
+    }
+
+    private static void renderableTest() {
+        try {
+            Holder transitions = TomlUtil.readFully(Minecraft.getMinecraft().getResourceManager()
+                    .getResource(new ResourceLocation(Constants.MODID, "test/transitions.toml")).getInputStream());
+            Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
+            Table image = transitions.getTableByName("image");
+            Renderer.addRenderable(Renderer.initializePng(new ResourceLocation(Constants.MODID,
+                    image.getValOrDefault("name","missing")),image.getVarMap()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void guiTest() {
+        //render testing
+        Minecraft.getMinecraft().displayGuiScreen(GuiTestClasses.createTestOtherGui());
+    }
+
+    private static void tomlTest() {
+        //test smart toml reading and printing
+        try {
+            Holder testHolder = TomlUtil.readFully(Minecraft.getMinecraft().getResourceManager()
+                    .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).getInputStream());
+            testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
+            testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
+            testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
+            FileUtil.writeLinesToFile(new File(Constants.DATA_DIRECTORY, "test2.toml"),
+                    testHolder.toLines(),false);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

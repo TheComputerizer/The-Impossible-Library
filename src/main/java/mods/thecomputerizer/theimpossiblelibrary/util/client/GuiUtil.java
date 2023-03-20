@@ -133,6 +133,7 @@ public class GuiUtil {
         Use lineNums and pos to cap the number of lines that can be rendered and which line to start rendering on
         Returns the y position after the rendered lines
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static int drawMultiLineString(FontRenderer font, String original, int left, int right, int top, int spacing,
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
@@ -256,10 +257,10 @@ public class GuiUtil {
         GlStateManager.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
-                font.drawStringWithShadow(textFormat+line,(x/scaleX)-((float)font.getStringWidth(line))/2,
-                        (float)y/scaleY, -1);
-            else font.drawStringWithShadow(textFormat+line,x/scaleX,y/scaleY,-1);
-            y+=lineSpacing;
+                font.drawStringWithShadow(line,(x/scaleX)-((float)font.getStringWidth(line))/2,
+                        (float)y/scaleY, convertTextFormatting(subFormat,(int)(255f*opacity)));
+            else font.drawStringWithShadow(line,x/scaleX,y/scaleY,convertTextFormatting(subFormat,(int)(255f*opacity)));
+            y+=lineSpacing*5;
         }
         GlStateManager.popMatrix();
         builder = new StringBuilder();
@@ -285,13 +286,15 @@ public class GuiUtil {
             }
         }
         if(builder.length()>0) subLines.add(builder.toString());
+        float subScaleX = scaleX*subScale;
+        float subScaleY = scaleY*subScale;
         GlStateManager.pushMatrix();
-        GlStateManager.scale(scaleX*subScale, scaleY*subScale, 1f);
+        GlStateManager.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)
-                font.drawStringWithShadow(subFormat+line,(x/(scaleX*subScale))-((float)font.getStringWidth(line))/2,
-                        (float)y/(scaleY*subScale), -1);
-            else font.drawStringWithShadow(subFormat+line,x/(scaleX*subScale),y/(scaleY*subScale),-1);
+                font.drawStringWithShadow(line,(x/subScaleX)-((float)font.getStringWidth(line))/2,
+                        (float)y/subScaleY, convertTextFormatting(textFormat,(int)(255f*subOpacity)));
+            else font.drawStringWithShadow(line,x/subScaleX,y/subScaleY,convertTextFormatting(textFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
         GlStateManager.popMatrix();
@@ -354,5 +357,30 @@ public class GuiUtil {
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
+    }
+
+    /**
+         Converts a TextFormatting object into a single color integer with an optional alpha value
+     */
+    public static int convertTextFormatting(TextFormatting format, int a) {
+        int r,b,g;
+        switch (format) {
+            case DARK_RED: return makeRGBAInt(170,0,0,a);
+            case RED: return makeRGBAInt(255,85,85,a);
+            case GOLD: return makeRGBAInt(255,170,0,a);
+            case YELLOW: return makeRGBAInt(255,255,85,a);
+            case DARK_GREEN: return makeRGBAInt(0,170,0,a);
+            case GREEN: return makeRGBAInt(85,255,85,a);
+            case AQUA: return makeRGBAInt(85,255,255,a);
+            case DARK_AQUA: return makeRGBAInt(0,170,170,a);
+            case DARK_BLUE: return makeRGBAInt(0,0,170,a);
+            case BLUE: return makeRGBAInt(85,85,255,a);
+            case LIGHT_PURPLE: return makeRGBAInt(255,85,255,a);
+            case DARK_PURPLE: return makeRGBAInt(170,0,170,a);
+            case GRAY: return makeRGBAInt(170,170,170,a);
+            case DARK_GRAY: return makeRGBAInt(85,85,85,a);
+            case BLACK: return makeRGBAInt(0,0,0,a);
+            default: return makeRGBAInt(255,255,255,a);
+        }
     }
 }

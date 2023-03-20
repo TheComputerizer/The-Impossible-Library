@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import net.minecraft.client.gui.ScaledResolution;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,13 +28,23 @@ public abstract class Renderable {
      * parameter name does not exist or the cast fails. Note that you must input both the default value and the class
      * of the default value separately for the cast to work properly
      */
+    @SuppressWarnings("unchecked")
     public <T> T getParameterAs(String name, T defVal, Class<T> genericClass) {
         try {
             Object val = this.parameters.get(name);
-            return Objects.isNull(val) ? defVal : genericClass.cast(val);
-        } catch (ClassCastException ignored) {
-            return defVal;
+            if(Objects.isNull(val)) return defVal;
+            if(val instanceof List<?>) return genericClass.cast(val);
+            if(defVal instanceof String) return (T)val.toString();
+            if(defVal instanceof Boolean) return (T)(Object)Boolean.parseBoolean(val.toString());
+            if(defVal instanceof Number) {
+                String num = val.toString();
+                return (T)(defVal instanceof Long ? Long.parseLong(num) : defVal instanceof Integer ? Integer.parseInt(num) :
+                        defVal instanceof Double ? Double.parseDouble(num) : defVal instanceof Float ? Float.parseFloat(num) :
+                                defVal instanceof Byte ? Byte.parseByte(num) : defVal);
+            }
+        } catch (ClassCastException | NumberFormatException ignored) {
         }
+        return defVal;
     }
     public void initializeTimers() {
         this.maxTime = getParameterAs("time",100L,Long.class);
@@ -56,7 +67,7 @@ public abstract class Renderable {
             }
         }
         long fadeIn = this.maxTime-this.totalTimer;
-        if(fadeIn<=this.fadeInTimer && this.fadeInTimer>0) this.fadeInTimer--;
+        if(this.fadeInTimer>0) this.fadeInTimer--;
         if(this.totalTimer<=this.fadeOutTimer) this.fadeOutTimer--;
         this.totalTimer--;
         return true;
@@ -72,8 +83,8 @@ public abstract class Renderable {
 
     public float getOpacity() {
         float def = getParameterAs("opacity",1f, Float.class);
-        if(this.fadeInTimer>0) return def*((float)this.fadeInTimer)/((float)this.maxFadeIn);
-        if(this.fadeOutTimer>0) return def*((float)this.fadeOutTimer)/((float)this.maxFadeOut);
+        if(this.fadeInTimer>0) return def*(1-(((float)this.fadeInTimer)/((float)this.maxFadeIn)));
+        if(this.fadeOutTimer<this.maxFadeOut) return def*(((float)this.fadeOutTimer)/((float)this.maxFadeOut));
         return def;
     }
 

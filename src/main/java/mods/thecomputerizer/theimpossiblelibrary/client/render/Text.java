@@ -32,13 +32,31 @@ public class Text extends Renderable {
     }
 
     @Override
+    public int posX(float resolutionX, float resolutionY) {
+        float scaleX  = getParameterAs("scale_x", 1f, Float.class)*5f;
+        String alignment = getParameterAs("horizontal_alignment","center",String.class);
+        int xOffset = alignment.matches("center") ? (int) ((resolutionX/2f)-(resolutionX*(scaleX/2f))) :
+                alignment.matches("right") ? (int) (resolutionX-(resolutionX*(scaleX/2f))) : 0;
+        return (int)((xOffset*(1/scaleX))+getParameterAs("x",0, Integer.class));
+    }
+
+    @Override
+    public int posY(float resolutionY) {
+        float scaleY  = getParameterAs("scale_y", 1f, Float.class)*5f;
+        String alignment = getParameterAs("vertical_alignment","center",String.class);
+        int yOffset = alignment.matches("center") ? (int) (int) ((resolutionY/2f)-(resolutionY*(scaleY/2f))) :
+                alignment.matches("top") ? 0 : (int) (resolutionY-(resolutionY*(scaleY/2f)));
+        return (int)((yOffset*(1/scaleY))+getParameterAs("y",0, Integer.class));
+    }
+
+    @Override
     public void render(ScaledResolution res) {
         if(canRender()) GuiUtil.drawMultiLineTitle(res,this.text, this.subtext,
                 getParameterAs("centered", true, Boolean.class),
-                getParameterAs("x", -1, Integer.class),
-                getParameterAs("y", -1, Integer.class),
-                getParameterAs("scale_x", 1f, Float.class),
-                getParameterAs("scale_y", 1f, Float.class),
+                posX(res.getScaledWidth(),res.getScaledHeight()),
+                posY(res.getScaledHeight()),
+                getParameterAs("scale_x", 1f, Float.class)*5f,
+                getParameterAs("scale_y", 1f, Float.class)*5f,
                 getParameterAs("subtitle_scale", 0.75f, Float.class),
                 getParameterAs("title_color", "red", String.class),
                 getParameterAs("subtitle_color", "white", String.class),getOpacity(),getOpacity(),
