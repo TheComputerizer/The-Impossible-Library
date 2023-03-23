@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
+import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.client.render.Text;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Holder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.IndexFinder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Table;
@@ -22,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused", "OptionalGetWithoutIsPresent"})
 public class ClientTest {
 
     public static final KeyMapping TEST_KEYBIND = new KeyMapping("key.test", KeyConflictContext.UNIVERSAL,
@@ -31,19 +33,42 @@ public class ClientTest {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key e) {
         if (TEST_KEYBIND.isDown()) {
-            //render testing
-            Minecraft.getInstance().setScreen(GuiTestClasses.createTestOtherGui());
-            try {
-                Holder testHolder = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                        .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).get().open());
-                testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
-                testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
-                testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
-                FileUtil.writeLinesToFile(new File(Constants.DATA_DIRECTORY, "test2.toml"),
-                        testHolder.toLines(),false);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            renderableTest();
+            //guiTest();
+            //tomlTest();
+        }
+    }
+
+    private static void renderableTest() {
+        try {
+            Holder transitions = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
+                    .getResource(new ResourceLocation(Constants.MODID, "test/transitions.toml")).get().open());
+            Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
+            Table image = transitions.getTableByName("image");
+            Renderer.addRenderable(Renderer.initializePng(new ResourceLocation(Constants.MODID,
+                    image.getValOrDefault("name","missing")),image.getVarMap()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void guiTest() {
+        //render testing
+        Minecraft.getInstance().setScreen(GuiTestClasses.createTestOtherGui());
+    }
+
+    private static void tomlTest() {
+        //test smart toml reading and printing
+        try {
+            Holder testHolder = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
+                    .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).get().open());
+            testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
+            testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
+            testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
+            FileUtil.writeLinesToFile(new File(Constants.DATA_DIRECTORY, "test2.toml"),
+                    testHolder.toLines(),false);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

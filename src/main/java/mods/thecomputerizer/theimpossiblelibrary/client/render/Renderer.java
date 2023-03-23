@@ -3,12 +3,12 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -27,6 +27,7 @@ public class Renderer {
 
     public static void addRenderable(Renderable renderable) {
         renderables.add(renderable);
+        renderable.initializeTimers();
     }
 
     public static void removeRenderable(Renderable renderable) {
@@ -34,13 +35,14 @@ public class Renderer {
     }
 
     @SubscribeEvent
+    public static void tickRenderables(TickEvent.ClientTickEvent ev) {
+        if(ev.phase == TickEvent.Phase.END)
+            renderables.removeIf(renderable -> !renderable.tick());
+    }
+
+    @SubscribeEvent
     public static void renderOverlay(RenderGuiOverlayEvent.Post e) {
-        Iterator<Renderable> renderableIterator = renderables.iterator();
-        while (renderableIterator.hasNext()) {
-            Renderable renderable = renderableIterator.next();
-            renderable.render(e.getPoseStack(), e.getWindow());
-            if (!renderable.canRender())
-                renderableIterator.remove();
-        }
+        for(Renderable type : renderables)
+            type.render(e.getPoseStack(),e.getWindow());
     }
 }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("UnusedReturnValue")
 public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
 
@@ -253,10 +254,10 @@ public class GuiUtil {
         matrix.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
-                font.drawShadow(matrix,textFormat+line,(x/scaleX)-((float)font.width(line))/2,
-                        (float)y/scaleY, -1);
-            else font.drawShadow(matrix,textFormat+line,x/scaleX,y/scaleY,-1);
-            y+=lineSpacing;
+                font.drawShadow(matrix,line,(x/scaleX)-((float)font.width(line))/2,
+                        (float)y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
+            else font.drawShadow(matrix,line,x/scaleX,y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
+            y+=lineSpacing*5;
         }
         matrix.popPose();
         builder = new StringBuilder();
@@ -282,13 +283,15 @@ public class GuiUtil {
             }
         }
         if(builder.length()>0) subLines.add(builder.toString());
+        float subScaleX = scaleX*subScale;
+        float subScaleY = scaleY*subScale;
         matrix.pushPose();
-        matrix.scale(scaleX*subScale, scaleY*subScale, 1f);
+        matrix.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)
-                font.drawShadow(matrix,subFormat+line,(x/(scaleX*subScale))-((float)font.width(line))/2,
-                        (float)y/(scaleY*subScale), -1);
-            else font.drawShadow(matrix,subFormat+line,x/(scaleX*subScale),y/(scaleY*subScale),-1);
+                font.drawShadow(matrix,line,(x/subScaleX)-((float)font.width(line))/2,
+                        (float)y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
         matrix.popPose();
@@ -339,5 +342,30 @@ public class GuiUtil {
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
+    }
+
+    /**
+    Converts a ChatFormatting object into a single color integer with an optional alpha value
+     */
+    public static int convertChatFormatting(ChatFormatting format, int a) {
+        int r,b,g;
+        return switch (format) {
+            case DARK_RED -> makeRGBAInt(170, 0, 0, a);
+            case RED -> makeRGBAInt(255, 85, 85, a);
+            case GOLD -> makeRGBAInt(255, 170, 0, a);
+            case YELLOW -> makeRGBAInt(255, 255, 85, a);
+            case DARK_GREEN -> makeRGBAInt(0, 170, 0, a);
+            case GREEN -> makeRGBAInt(85, 255, 85, a);
+            case AQUA -> makeRGBAInt(85, 255, 255, a);
+            case DARK_AQUA -> makeRGBAInt(0, 170, 170, a);
+            case DARK_BLUE -> makeRGBAInt(0, 0, 170, a);
+            case BLUE -> makeRGBAInt(85, 85, 255, a);
+            case LIGHT_PURPLE -> makeRGBAInt(255, 85, 255, a);
+            case DARK_PURPLE -> makeRGBAInt(170, 0, 170, a);
+            case GRAY -> makeRGBAInt(170, 170, 170, a);
+            case DARK_GRAY -> makeRGBAInt(85, 85, 85, a);
+            case BLACK -> makeRGBAInt(0, 0, 0, a);
+            default -> makeRGBAInt(255, 255, 255, a);
+        };
     }
 }
