@@ -1,12 +1,10 @@
-//file:noinspection GroovyUnusedAssignment
 //file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'fabric-loom' version '1.0-SNAPSHOT'
-    id 'maven-publish'
 }
-version = '1.19.2-fabric-0.2.2'
-group = 'mods.thecomputerizer.theimpossiblelibrary'
-archivesBaseName = 'theimpossiblelibrary'
+version = "${project.minecraft_version}-fabric-${project.mod_version}"
+group = project.maven_group
+archivesBaseName = project.base_name
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -29,13 +27,13 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.19.2:2022.11.27@zip")
+        parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
     }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     //external dependencies
-    include (implementation("com.moandjiezana.toml:toml4j:0.7.2") {
+    include (implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") {
         exclude group: 'com.google.code.gson', module: 'gson'
     })
 }
@@ -45,6 +43,7 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
+    exclude '**/theimpossiblelibrary/test/**'
 }
 
 java {

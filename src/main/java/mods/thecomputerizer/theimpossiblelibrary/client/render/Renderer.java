@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -27,20 +26,19 @@ public class Renderer {
 
     public static void addRenderable(Renderable renderable) {
         renderables.add(renderable);
+        renderable.initializeTimers();
     }
 
     public static void removeRenderable(Renderable renderable) {
         renderables.remove(renderable);
     }
 
+    public static void tickRenderables() {
+        renderables.removeIf(renderable -> !renderable.tick());
+    }
+
 
     public static void renderAllBackgroundStuff(PoseStack matrix, Window window) {
-        Iterator<Renderable> renderableIterator = renderables.iterator();
-        while (renderableIterator.hasNext()) {
-            Renderable renderable = renderableIterator.next();
-            renderable.render(matrix, window);
-            if (!renderable.canRender())
-                renderableIterator.remove();
-        }
+        for(Renderable type : renderables) type.render(matrix,window);
     }
 }

@@ -29,7 +29,7 @@
   "mixins": [],
 
   "depends": {
-    "fabricloader": ">=0.14.17",
+    "fabricloader": ">=0.14.14",
     "fabric": "*",
     "minecraft": "~1.19.2",
     "java": ">=17"
