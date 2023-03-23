@@ -258,8 +258,8 @@ public class GuiUtil {
         for(String line : textLines) {
             if(centeredText)
                 font.drawShadow(matrix,line,(x/scaleX)-((float)font.width(line))/2,
-                        (float)y/scaleY, convertTextFormatting(textFormat,(int)(255f*opacity)));
-            else font.drawShadow(matrix,line,x/scaleX,y/scaleY,convertTextFormatting(textFormat,(int)(255f*opacity)));
+                        (float)y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
+            else font.drawShadow(matrix,line,x/scaleX,y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
             y+=lineSpacing*5;
         }
         matrix.popPose();
@@ -293,8 +293,8 @@ public class GuiUtil {
         for(String line : subLines) {
             if(centeredText)
                 font.drawShadow(matrix,line,(x/subScaleX)-((float)font.width(line))/2,
-                        (float)y/subScaleY, convertTextFormatting(subFormat,(int)(255f*subOpacity)));
-            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY,convertTextFormatting(subFormat,(int)(255f*subOpacity)));
+                        (float)y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
         matrix.popPose();
@@ -348,9 +348,9 @@ public class GuiUtil {
     }
 
     /**
-     Converts a TextFormatting object into a single color integer with an optional alpha value
+     Converts a ChatFormatting object into a single color integer with an optional alpha value
      */
-    public static int convertTextFormatting(ChatFormatting format, int a) {
+    public static int convertChatFormatting(ChatFormatting format, int a) {
         int r,b,g;
         return switch (format) {
             case DARK_RED -> makeRGBAInt(170, 0, 0, a);
