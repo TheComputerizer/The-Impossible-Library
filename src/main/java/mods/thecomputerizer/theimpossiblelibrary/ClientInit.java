@@ -12,23 +12,25 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientInit implements ClientModInitializer {
-    //public static KeyMapping TEST_KEYBIND;
+    private static final boolean IS_DEV_ENV = false;
+    public static KeyMapping TEST_KEYBIND;
     @Override
-    public void onInitializeClient() {/*
+    public void onInitializeClient() {
         setUpClientEvents();
-        TEST_KEYBIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.test", InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_R, "key.categories.theimpossiblelibrary"));
-             */
+        if(IS_DEV_ENV) {
+            TEST_KEYBIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.test", InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_R, "key.categories.theimpossiblelibrary"));
+        }
     }
 
     private static void setUpClientEvents() {
-        /*
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (TEST_KEYBIND.isDown()) ClientTest.onTestKey();
+            Renderer.tickRenderables();
+            if(IS_DEV_ENV)
+                if(TEST_KEYBIND.isDown())
+                    ClientTest.onTestKey();
         });
 
         WorldRenderEvents.LAST.register(context -> Renderer.renderAllBackgroundStuff(context.matrixStack(),Minecraft.getInstance().getWindow()));
-
-         */
     }
 }
