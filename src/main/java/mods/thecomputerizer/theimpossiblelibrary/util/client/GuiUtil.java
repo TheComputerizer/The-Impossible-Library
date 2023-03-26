@@ -254,6 +254,9 @@ public class GuiUtil {
         }
         if(builder.length()>0) textLines.add(builder.toString());
         GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableAlpha();
         GlStateManager.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
@@ -289,6 +292,9 @@ public class GuiUtil {
         float subScaleX = scaleX*subScale;
         float subScaleY = scaleY*subScale;
         GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableAlpha();
         GlStateManager.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)

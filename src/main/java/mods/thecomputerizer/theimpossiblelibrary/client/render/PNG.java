@@ -30,6 +30,9 @@ public class PNG extends Renderable {
             int resX = res.getScaledWidth();
             int resY = res.getScaledHeight();
             GlStateManager.pushMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.disableAlpha();
             GlStateManager.color(1f, 1f, 1f, getOpacity());
             Minecraft.getMinecraft().getTextureManager().bindTexture(this.source);
             GlStateManager.scale(scaleX(resX,resY), scaleY(), 1f);
