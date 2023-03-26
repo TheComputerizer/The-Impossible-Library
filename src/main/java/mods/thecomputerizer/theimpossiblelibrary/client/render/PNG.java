@@ -31,6 +31,9 @@ public class PNG extends Renderable {
             int resX = res.getGuiScaledWidth();
             int resY = res.getGuiScaledHeight();
             matrix.pushPose();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableAlphaTest();
             RenderSystem.color4f(1f, 1f, 1f, getOpacity());
             Minecraft.getInstance().getTextureManager().bind(this.source);
             matrix.scale(scaleX(resX,resY), scaleY(), 1f);
