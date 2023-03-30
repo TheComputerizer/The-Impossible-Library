@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
@@ -31,6 +31,6 @@ public class ClientInit implements ClientModInitializer {
                     ClientTest.onTestKey();
         });
 
-        WorldRenderEvents.LAST.register(context -> Renderer.renderAllBackgroundStuff(context.matrixStack(),Minecraft.getInstance().getWindow()));
+        HudRenderCallback.EVENT.register((matrix, delta) -> Renderer.renderAllBackgroundStuff(matrix,Minecraft.getInstance().getWindow()));
     }
 }
