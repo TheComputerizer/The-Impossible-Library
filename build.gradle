@@ -43,7 +43,7 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
-    exclude '**/theimpossiblelibrary/test/**'
+    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 java {
