@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.test;
 import com.mojang.blaze3d.platform.InputConstants;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.client.render.Text;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Holder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.IndexFinder;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Table;
@@ -42,7 +43,7 @@ public class ClientTest {
         try {
             Holder transitions = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
                     .getResource(new ResourceLocation(Constants.MODID, "test/transitions.toml")).get().open());
-            //Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
+            Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
             Table image = transitions.getTableByName("image");
             Renderer.addRenderable(Renderer.initializePng(new ResourceLocation(Constants.MODID,
                     image.getValOrDefault("name","missing")),image.getVarMap()));
