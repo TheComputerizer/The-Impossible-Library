@@ -68,7 +68,7 @@ public abstract class Renderable {
             }
         }
         long fadeIn = this.maxTime-this.totalTimer;
-        if(fadeIn<=this.fadeInTimer && this.fadeInTimer>0) this.fadeInTimer--;
+        if(this.fadeInTimer>0) this.fadeInTimer--;
         if(this.totalTimer<=this.fadeOutTimer) this.fadeOutTimer--;
         this.totalTimer--;
         return true;
