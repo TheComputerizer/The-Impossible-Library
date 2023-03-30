@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
-
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
@@ -18,15 +17,17 @@ public class TheImpossibleLibrary {
     private static final boolean IS_DEV_ENV = false;
 
     public TheImpossibleLibrary() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keyBindSetup);
         DataUtil.initGlobal();
         if (FMLEnvironment.dist == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(Renderer.class);
-            if(IS_DEV_ENV) initClientTestClass(MinecraftForge.EVENT_BUS);
+            if(IS_DEV_ENV) {
+                FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keyBindSetup);
+                initClientTestClass(MinecraftForge.EVENT_BUS);
+            }
         }
     }
     private void keyBindSetup(final RegisterKeyMappingsEvent ev) {
-        if(IS_DEV_ENV) ev.register(ClientTest.TEST_KEYBIND);
+        ev.register(ClientTest.TEST_KEYBIND);
     }
 
     public static void initClientTestClass(IEventBus bus) {

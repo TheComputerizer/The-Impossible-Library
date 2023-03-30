@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.util.client;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
@@ -47,6 +48,21 @@ public class GuiUtil {
         GuiComponent.blit(matrix,(int) (center.x() - radius / 2f), (int) (center.y() - radius / 2f),
                 0, 0, (int) radius, (int) radius, (int) radius, (int) radius);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    }
+
+    public static void enforceAlphaTexture(PoseStack matrix, int x, int y, int width, int height, float alpha,
+                                           ResourceLocation texture) {
+        RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        RenderSystem.setShaderColor(1f,1f,1f,alpha);
+        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+        Matrix4f matrix4f = matrix.last().pose();
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        bufferbuilder.vertex(matrix4f, (float)x, (float)(y+height), 0f).color(1f, 1f, 1f, alpha).uv(0, 1).endVertex();
+        bufferbuilder.vertex(matrix4f, (float)(x+width), (float)(y+height), 0f).color(1f, 1f, 1f, alpha).uv(1, 1).endVertex();
+        bufferbuilder.vertex(matrix4f, (float)(x+width), (float)y, 0f).color(1f, 1f, 1f, alpha).uv(1, 0).endVertex();
+        bufferbuilder.vertex(matrix4f, (float)x, (float)y, 0f).color(1f, 1f, 1f, alpha).uv(0, 0).endVertex();
+        BufferUploader.drawWithShader(bufferbuilder.end());
     }
 
     public static void drawColoredRing(Vector3f center, Vector3f radii, Vector4f color, int resolution,
@@ -251,6 +267,8 @@ public class GuiUtil {
         }
         if(builder.length()>0) textLines.add(builder.toString());
         matrix.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         matrix.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
@@ -286,6 +304,8 @@ public class GuiUtil {
         float subScaleX = scaleX*subScale;
         float subScaleY = scaleY*subScale;
         matrix.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         matrix.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)

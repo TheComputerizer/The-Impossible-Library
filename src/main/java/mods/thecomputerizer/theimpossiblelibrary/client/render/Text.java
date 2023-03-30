@@ -60,7 +60,8 @@ public class Text extends Renderable {
                 getParameterAs("scale_y", 1f, Float.class)*5f,
                 getParameterAs("subtitle_scale", 0.75f, Float.class),
                 getParameterAs("title_color", "red", String.class),
-                getParameterAs("subtitle_color", "white", String.class),getOpacity(),getOpacity(),
+                getParameterAs("subtitle_color", "white", String.class),
+                Math.max(0.1f,getOpacity()), Math.max(0.1f,getOpacity()),
                 Minecraft.getInstance().font.lineHeight+Minecraft.getInstance().font.lineHeight/2);
     }
 }

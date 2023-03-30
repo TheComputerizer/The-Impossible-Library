@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
+import mods.thecomputerizer.theimpossiblelibrary.Constants;
 
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,10 @@ public abstract class Renderable {
     }
 
     public boolean tick() {
+        if(this instanceof PNG) {
+            Constants.LOGGER.error("PNG: TIME {} ALPHA {} OPACITY {}",this.totalTimer,getOpacity(),getParameterAs("opacity",1f, Float.class));
+            Constants.LOGGER.error("FADE: IN {} OUT {} IN MAX {} OUT MAX {}",this.fadeInTimer,this.fadeOutTimer,this.maxFadeIn,this.maxFadeOut);
+        }
         if(this.totalTimer<=0) {
             if(getParameterAs("loop",false,Boolean.class)) {
                 initializeTimers();
@@ -68,7 +73,7 @@ public abstract class Renderable {
             }
         }
         long fadeIn = this.maxTime-this.totalTimer;
-        if(fadeIn<=this.fadeInTimer && this.fadeInTimer>0) this.fadeInTimer--;
+        if(this.fadeInTimer>0) this.fadeInTimer--;
         if(this.totalTimer<=this.fadeOutTimer) this.fadeOutTimer--;
         this.totalTimer--;
         return true;
