@@ -16,7 +16,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 @Mod(Constants.MODID)
 public class TheImpossibleLibrary {
 
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
 
     public TheImpossibleLibrary() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
