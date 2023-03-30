@@ -269,6 +269,7 @@ public class GuiUtil {
         matrix.pushPose();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1f,1f,1f,opacity);
         matrix.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
@@ -306,6 +307,7 @@ public class GuiUtil {
         matrix.pushPose();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1f,1f,1f,subOpacity);
         matrix.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)
