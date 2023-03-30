@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientInit implements ClientModInitializer {
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
     public static KeyMapping TEST_KEYBIND;
     @Override
     public void onInitializeClient() {
