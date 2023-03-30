@@ -54,7 +54,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     shade
-    implementation.extendsFrom(shade)
+    minecraftLibrary.extendsFrom(shade)
     shadow.extendsFrom shade
 }
 

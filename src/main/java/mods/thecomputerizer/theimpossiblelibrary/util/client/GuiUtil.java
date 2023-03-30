@@ -254,6 +254,8 @@ public class GuiUtil {
         }
         if(builder.length()>0) textLines.add(builder.toString());
         matrix.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         matrix.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
@@ -289,6 +291,8 @@ public class GuiUtil {
         float subScaleX = scaleX*subScale;
         float subScaleY = scaleY*subScale;
         matrix.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         matrix.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)

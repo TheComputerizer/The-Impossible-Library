@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 
@@ -31,8 +30,10 @@ public class PNG extends Renderable {
             int resX = res.getGuiScaledWidth();
             int resY = res.getGuiScaledHeight();
             matrix.pushPose();
-            RenderSystem.setShaderColor(1f, 1f, 1f, getOpacity());
-            Minecraft.getInstance().getTextureManager().bindForSetup(this.source);
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.setShaderColor(1f, 1f, 1f, Math.max(0.1f,getOpacity()));
+            RenderSystem.setShaderTexture(0, this.source);
             matrix.scale(scaleX(resX,resY), scaleY(), 1f);
             int x = posX(resX,resY);
             int y = posY(resY);
