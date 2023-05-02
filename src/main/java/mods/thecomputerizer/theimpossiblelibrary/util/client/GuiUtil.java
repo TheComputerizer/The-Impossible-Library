@@ -261,8 +261,8 @@ public class GuiUtil {
         for(String line : textLines) {
             if(centeredText)
                 font.drawStringWithShadow(line,(x/scaleX)-((float)font.getStringWidth(line))/2,
-                        (float)y/scaleY, convertTextFormatting(subFormat,(int)(255f*opacity)));
-            else font.drawStringWithShadow(line,x/scaleX,y/scaleY,convertTextFormatting(subFormat,(int)(255f*opacity)));
+                        (float)y/scaleY, FontUtil.convertTextFormatting(subFormat,(int)(255f*opacity)));
+            else font.drawStringWithShadow(line,x/scaleX,y/scaleY, FontUtil.convertTextFormatting(subFormat,(int)(255f*opacity)));
             y+=lineSpacing*5;
         }
         GlStateManager.popMatrix();
@@ -299,8 +299,8 @@ public class GuiUtil {
         for(String line : subLines) {
             if(centeredText)
                 font.drawStringWithShadow(line,(x/subScaleX)-((float)font.getStringWidth(line))/2,
-                        (float)y/subScaleY, convertTextFormatting(textFormat,(int)(255f*subOpacity)));
-            else font.drawStringWithShadow(line,x/subScaleX,y/subScaleY,convertTextFormatting(textFormat,(int)(255f*subOpacity)));
+                        (float)y/subScaleY, FontUtil.convertTextFormatting(textFormat,(int)(255f*subOpacity)));
+            else font.drawStringWithShadow(line,x/subScaleX,y/subScaleY, FontUtil.convertTextFormatting(textFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
         GlStateManager.popMatrix();
@@ -363,30 +363,5 @@ public class GuiUtil {
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
-    }
-
-    /**
-         Converts a TextFormatting object into a single color integer with an optional alpha value
-     */
-    public static int convertTextFormatting(TextFormatting format, int a) {
-        int r,b,g;
-        switch (format) {
-            case DARK_RED: return makeRGBAInt(170,0,0,a);
-            case RED: return makeRGBAInt(255,85,85,a);
-            case GOLD: return makeRGBAInt(255,170,0,a);
-            case YELLOW: return makeRGBAInt(255,255,85,a);
-            case DARK_GREEN: return makeRGBAInt(0,170,0,a);
-            case GREEN: return makeRGBAInt(85,255,85,a);
-            case AQUA: return makeRGBAInt(85,255,255,a);
-            case DARK_AQUA: return makeRGBAInt(0,170,170,a);
-            case DARK_BLUE: return makeRGBAInt(0,0,170,a);
-            case BLUE: return makeRGBAInt(85,85,255,a);
-            case LIGHT_PURPLE: return makeRGBAInt(255,85,255,a);
-            case DARK_PURPLE: return makeRGBAInt(170,0,170,a);
-            case GRAY: return makeRGBAInt(170,170,170,a);
-            case DARK_GRAY: return makeRGBAInt(85,85,85,a);
-            case BLACK: return makeRGBAInt(0,0,0,a);
-            default: return makeRGBAInt(255,255,255,a);
-        }
     }
 }

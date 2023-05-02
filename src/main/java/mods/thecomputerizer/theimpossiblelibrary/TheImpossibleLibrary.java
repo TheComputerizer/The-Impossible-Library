@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary;
 
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
+import mods.thecomputerizer.theimpossiblelibrary.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -12,10 +13,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
-@SuppressWarnings({"DefaultAnnotationParam"})
-@Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION, dependencies = Constants.DEPENDENCIES)
+@Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION)
 public class TheImpossibleLibrary {
 
+    //This has to be set before the preInit phase
+    public static boolean CLIENT_ONLY = false;
     private static final boolean IS_DEV_ENV = false;
 
     public TheImpossibleLibrary() {
@@ -25,23 +27,22 @@ public class TheImpossibleLibrary {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        //registration stuff has to happen here!
-        EventBus bus = MinecraftForge.EVENT_BUS;
+        //registration stuff has to happen here
+        if(!CLIENT_ONLY) NetworkHandler.init();
         //only register testing stuff in a dev environment
         if(e.getSide()==Side.CLIENT) {
-            bus.register(Renderer.class);
-            if(IS_DEV_ENV) preInitClientTestClass(bus);
+            MinecraftForge.EVENT_BUS.register(Renderer.class);
+            if(IS_DEV_ENV) preInitClientTestClass(MinecraftForge.EVENT_BUS);
         }
-        if(IS_DEV_ENV) preInitCommonTestClass(bus);
+        if(IS_DEV_ENV) preInitCommonTestClass(MinecraftForge.EVENT_BUS);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent e) {
         //keybindings and other less important stuff can go here
         //only register testing stuff in a dev environment
-        if(e.getSide()==Side.CLIENT) {
+        if(e.getSide()==Side.CLIENT)
             if(IS_DEV_ENV) initClientTestClass();
-        }
         if(IS_DEV_ENV) initCommonTestClass();
     }
 

@@ -1,9 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TextUtil {
@@ -60,36 +58,54 @@ public class TextUtil {
     }
 
     /**
-     * Converts a list of strings to a single string with newline characters with an optional limiter. The limit
+     * Converts a list or array of strings to a single string with newline characters with an optional limiter. The limit
      * input determines the maximum number of elements that can be read in before it gets cut off. Setting the limit to 0
      * or below will disable it. Returns null if the input list is empty or null. If an element in the input list is
      * empty, null, or has only whitespace it will be replaced with a newline character or be removed if it is the final
      * element.
      */
-    public static String listToString(Collection<String> list, int limit) {
-        return listToString(list,limit,System.lineSeparator());
-    }
 
     public static String listToString(Collection<String> list) {
-        return listToString(list,0,System.lineSeparator());
+        return arrayToString(0,System.lineSeparator(),list.toArray(new Object[0]));
+    }
+
+    public static String arrayToString(Object ... array) {
+        return arrayToString(0,System.lineSeparator(),array);
+    }
+
+    public static String listToString(Collection<String> list, int limit) {
+        return arrayToString(limit,System.lineSeparator(),list.toArray(new Object[0]));
+    }
+
+    public static String arrayToString(int limit, Object ... array) {
+        return arrayToString(limit,System.lineSeparator(),array);
     }
 
     public static String listToString(Collection<String> list, String split) {
-        return listToString(list,0,split);
+        return arrayToString(0,split,list.toArray(new Object[0]));
+    }
+
+    public static String arrayToString(String split, Object ... array) {
+        return arrayToString(0,split,array);
     }
 
     public static String listToString(Collection<String> list, int limit, String split) {
         if(Objects.isNull(list) || list.isEmpty()) return null;
+        return arrayToString(limit,split,list.toArray(new Object[0]));
+    }
+
+    public static String arrayToString(int limit, String split, Object ... array) {
+        if(Objects.isNull(array) || array.length==0) return null;
         limit = limit>0 ? limit : Integer.MAX_VALUE;
         StringBuilder builder = new StringBuilder();
         int index = 1;
-        for(String element : list) {
+        for(Object element : array) {
             if (Objects.nonNull(element)) {
-                if (!element.trim().isEmpty()) {
-                    builder.append(element);
-                }
+                String asString = element.toString();
+                if (!asString.trim().isEmpty())
+                    builder.append(asString);
             }
-            if(index<list.size() && index<limit) {
+            if(index<array.length && index<limit) {
                 builder.append(split);
                 index++;
             }
@@ -105,5 +121,119 @@ public class TextUtil {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < tabs; i++) builder.append("\t");
         return builder.append(original).toString();
+    }
+
+    public static String capitalize(String original) {
+        if(Objects.isNull(original) || original.length()==0) return original;
+        return String.valueOf(original.charAt(0)).toUpperCase()+original.substring(1).toLowerCase();
+    }
+
+    /**
+     * Assumes the input string is camel case
+     */
+    public static String makeCaseTypeFromCamel(String original, TextCasing type) {
+        String[] words = TextCasing.CAMEL.split(original);
+        if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
+        if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
+        if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
+        return TextCasing.KEBAB.combine(words);
+    }
+
+    /**
+     * Assumes the input string is pascal case
+     */
+    public static String makeCaseTypeFromPascal(String original, TextCasing type) {
+        String[] words = TextCasing.PASCAL.split(original);
+        if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
+        if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
+        if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
+        return TextCasing.KEBAB.combine(words);
+    }
+
+    /**
+     * Assumes the input string is snake case
+     */
+    public static String makeCaseTypeFromSnake(String original, TextCasing type) {
+        String[] words = TextCasing.SNAKE.split(original);
+        if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
+        if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
+        if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
+        return TextCasing.KEBAB.combine(words);
+    }
+
+    /**
+     * Assumes the input string is kebab case
+     */
+    public static String makeCaseTypeFromKebab(String original, TextCasing type) {
+        String[] words = TextCasing.KEBAB.split(original);
+        if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
+        if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
+        if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
+        return TextCasing.KEBAB.combine(words);
+    }
+
+    public enum TextCasing {
+
+        CAMEL("camel", (input) -> input.split("(?=\\p{Upper})"), (words) -> {
+            StringBuilder builder = new StringBuilder();
+            if(Objects.isNull(words) || words.length==0) return builder.toString();
+            for(int i=0;i<words.length;i++) {
+                if(i==0) builder.append(words[i].toLowerCase());
+                else builder.append(capitalize(words[i]));
+            }
+            return builder.toString();
+        }),
+        PASCAL("pascal", (input) -> input.split("(?<=.)(?=\\p{Upper})"), (words) -> {
+            StringBuilder builder = new StringBuilder();
+            if(Objects.isNull(words)) return builder.toString();
+            for(String word : words)
+                builder.append(capitalize(word));
+            return builder.toString();
+        }),
+        SNAKE("snake", (input) -> input.split("_"), (words) -> {
+            StringBuilder builder = new StringBuilder();
+            if(Objects.isNull(words) || words.length==0) return builder.toString();
+            for(int i=0;i<words.length;i++) {
+                builder.append(words[i].toLowerCase());
+                if(i<words.length-1) builder.append("_");
+            }
+            return builder.toString();
+        }),
+        KEBAB("kebab", (input) -> input.split("-"), (words) -> {
+            StringBuilder builder = new StringBuilder();
+            if(Objects.isNull(words) || words.length==0) return builder.toString();
+            for(int i=0;i<words.length;i++) {
+                builder.append(words[i].toLowerCase());
+                if(i<words.length-1) builder.append("-");
+            }
+            return builder.toString();
+        });
+        private final String name;
+        private final Function<String,String[]> splitFunc;
+        private final Function<String[],String> combineFunc;
+        TextCasing(String name, Function<String,String[]> splitFunc, Function<String[],String> combineFunc) {
+            this.name = name;
+            this.splitFunc = splitFunc;
+            this.combineFunc = combineFunc;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public String[] split(String input) {
+            return this.splitFunc.apply(input);
+        }
+
+        public String combine(String ... words) {
+            return this.combineFunc.apply(words);
+        }
+
+        public static final Map<String, TextCasing> BY_NAME = new HashMap<>();
+
+        static {
+            for (TextCasing casing : values())
+                BY_NAME.putIfAbsent(casing.name,casing);
+        }
     }
 }
