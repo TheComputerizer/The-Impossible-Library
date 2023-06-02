@@ -11,13 +11,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec2f;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point2i;
-import javax.vecmath.Point4i;
+import javax.vecmath.Point4f;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -99,20 +98,20 @@ public class GuiTestClasses {
     private static abstract class TestGui extends GuiScreen {
 
         protected final GuiScreen parent;
-        protected Point2i center;
+        protected Vec2f center;
 
         public TestGui(GuiScreen parent) {
             this.parent = parent;
         }
 
-        protected Point2f getcenterFloat() {
-            return new Point2f(this.center.x,this.center.y);
+        protected Vec2f getcenterFloat() {
+            return new Vec2f(this.center.x,this.center.y);
         }
 
         @Override
         public void setWorldAndResolution(@Nonnull Minecraft mc, int width, int height) {
             super.setWorldAndResolution(mc, width, height);
-            this.center = new Point2i((int) (((float) this.width) / 2f), (int) (((float) this.height) / 2f));
+            this.center = new Vec2f((int) (((float) this.width) / 2f), (int) (((float) this.height) / 2f));
         }
 
         @Override
@@ -141,7 +140,7 @@ public class GuiTestClasses {
         }
 
         private int[] setCenterCircle() {
-            return new int[]{this.center.x, this.center.y, 50, 100};
+            return new int[]{(int)this.center.x, (int)this.center.y, 50, 100};
         }
 
         @Override
@@ -224,10 +223,9 @@ public class GuiTestClasses {
             /*
             GuiUtil.drawBoxWithOutline(this.center,100, 50, new Point4i(0,0,0,255),
                     new Point4i(255,255,255,255), 1f, this.zLevel);
-
              */
-            FontUtil.renderChar('E',getcenterFloat(),this.fontRenderer,new Point4i(255,255,255,255));
-            GuiUtil.drawColoredRing(this.center,new Point2i(199,200),new Point4i(255,255,255,255),
+            FontUtil.renderChar('E',getcenterFloat(),this.fontRenderer,new Point4f(255,255,255,255));
+            GuiUtil.drawColoredRing(this.center,new Vec2f(199,200),new Point4f(255,255,255,255),
                     360,this.zLevel);
             GuiUtil.drawMultiLineString(this.fontRenderer,"Here's the thing. You said a " +
                             "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
@@ -251,9 +249,9 @@ public class GuiTestClasses {
             int perIndex = (int)(((float)this.height)/indices);
             int top = perIndex*this.scrollPos;
             int x = this.width-1;
-            Point2i start = new Point2i(x, top);
-            Point2i end = new Point2i(x, Math.min(this.height,top+perIndex));
-            GuiUtil.drawLine(start,end,new Point4i(200,200,255,255), 2f, this.zLevel);
+            Vec2f start = new Vec2f(x, top);
+            Vec2f end = new Vec2f(x, Math.min(this.height,top+perIndex));
+            GuiUtil.drawLine(start,end,new Point4f(200,200,255,255), 2f, this.zLevel);
         }
     }
 }

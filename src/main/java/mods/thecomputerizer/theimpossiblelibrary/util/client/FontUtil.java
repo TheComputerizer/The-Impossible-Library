@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -29,7 +30,7 @@ public class FontUtil {
     /**
      * Render a single character, basically the same as FontRenderer does it
      */
-    public static void renderChar(char c, Tuple2f pos, FontRenderer font, Tuple4i colors) {
+    public static void renderChar(char c, Vec2f pos, FontRenderer font, Tuple4f colors) {
         if(c==160 || c==' ') return;
         int i = ASCII_CHARS.indexOf(c);
         if(i!=1 && !font.getUnicodeFlag())
@@ -75,12 +76,12 @@ public class FontUtil {
         float v = (float)(c/16*8);
         return new Point4f(u/128f,(u+width-1f)/128f,v/128f,(v+7.99f)/128f);
     }
-    private static void renderAsciiChar(int c, Tuple2f pos, float width, FontRenderer font, Tuple4i colors) {
+    private static void renderAsciiChar(int c, Vec2f pos, float width, FontRenderer font, Tuple4f colors) {
         bufferAsciiTex(font);
         drawAsciiChar(false,pos,getAsciiUV(c,width),width - 0.01F,colors);
     }
 
-    private static void drawAsciiChar(boolean triangles, Tuple2f pos, Tuple4f uv, float width, Tuple4i colors) {
+    private static void drawAsciiChar(boolean triangles, Vec2f pos, Tuple4f uv, float width, Tuple4f colors) {
         if(triangles) {
             GlStateManager.glBegin(GL11.GL_TRIANGLE_STRIP);
             GuiUtil.tupleColor(colors);
@@ -123,7 +124,7 @@ public class FontUtil {
         return new Point4f(u/256f,(u+width)/256f,v/256f,(v+15.98f)/256f);
     }
 
-    private static void renderUnicodeChar(char c, Tuple2f pos, FontRenderer font, Tuple4i colors) {
+    private static void renderUnicodeChar(char c, Vec2f pos, FontRenderer font, Tuple4f colors) {
         int i = font.glyphWidth[c] & 255;
         if (i == 0) return;
         bufferUnicodeTexInner(c, font);
@@ -131,7 +132,7 @@ public class FontUtil {
         drawUnicodeChar(true,pos,getUnicodeUV(c,i),width,colors);
     }
 
-    private static void drawUnicodeChar(boolean triangles, Tuple2f pos, Tuple4f uv, float width, Tuple4i colors) {
+    private static void drawUnicodeChar(boolean triangles, Vec2f pos, Tuple4f uv, float width, Tuple4f colors) {
         if(triangles) {
             GlStateManager.glBegin(GL11.GL_TRIANGLE_STRIP);
             GuiUtil.tupleColor(colors);

@@ -6,38 +6,46 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.util.math.Vec2f;
 
-import javax.vecmath.Point2i;
-import javax.vecmath.Point4i;
+import javax.vecmath.Point4f;
 
 public abstract class AbstractRadialButton extends Gui {
 
-    protected final Point4i colors;
-    protected final Point2i centerPos;
+    protected final Point4f colors;
+    private Vec2f centerPos;
     protected boolean hover;
 
-    protected AbstractRadialButton(Point4i colors) {
+    protected AbstractRadialButton(Point4f colors) {
         this.colors = colors;
         this.hover = false;
-        this.centerPos = new Point2i(0,0);
+        this.centerPos = new Vec2f(0,0);
     }
 
     public void setColor(int r, int b, int g, int a) {
         this.colors.set(r, b, g, a);
     }
 
-    public Point2i getCenterPos() {
+    protected void setCenterPos(float x, float y) {
+        this.centerPos = new Vec2f(x,y);
+    }
+
+    protected void setCenterPos(Vec2f newCenter) {
+        this.centerPos = newCenter;
+    }
+
+    public Vec2f getCenterPos() {
         return this.centerPos;
     }
 
-    protected void drawRadialSection(Point2i center, float zLevel, Point2i radius, float startAngle,
+    protected void drawRadialSection(Vec2f center, float zLevel, Vec2f radius, float startAngle,
                                    float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
         float angle2 = startAngle+((index+1)/(float)resolution)*angleDif;
-        Point2i pos1In = MathUtil.getVertex(center,radius.x,angle1);
-        Point2i pos2In = MathUtil.getVertex(center,radius.x,angle2);
-        Point2i pos1Out = MathUtil.getVertex(center,radius.y,angle1);
-        Point2i pos2Out = MathUtil.getVertex(center,radius.y,angle2);
+        Vec2f pos1In = MathUtil.getVertex(center,radius.x,angle1);
+        Vec2f pos2In = MathUtil.getVertex(center,radius.x,angle2);
+        Vec2f pos1Out = MathUtil.getVertex(center,radius.y,angle1);
+        Vec2f pos2Out = MathUtil.getVertex(center,radius.y,angle2);
         if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,GuiUtil.reverseColors(this.colors));
         else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,this.colors);
     }

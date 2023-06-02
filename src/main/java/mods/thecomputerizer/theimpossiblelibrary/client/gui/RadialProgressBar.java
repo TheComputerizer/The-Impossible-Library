@@ -2,17 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.math.Vec2f;
 import org.apache.logging.log4j.util.TriConsumer;
 
-import javax.vecmath.Point2f;
-import javax.vecmath.Point2i;
-import javax.vecmath.Point4i;
+import javax.vecmath.Point4f;
 
 public class RadialProgressBar extends AbstractRadialButton {
 
-    private final Point2i radii;
+    private final Vec2f radii;
     private final int resolution;
-    private final TriConsumer<GuiScreen, RadialProgressBar, Point2i> handlerFunction;
+    private final TriConsumer<GuiScreen, RadialProgressBar, Vec2f> handlerFunction;
     private float progress;
 
     /**
@@ -22,10 +21,10 @@ public class RadialProgressBar extends AbstractRadialButton {
         The initial progress should be a percentage
      */
     public RadialProgressBar(int innerRadius, int outerRadius, float initialProgress, int resolution,
-                             TriConsumer<GuiScreen, RadialProgressBar, Point2i> onClick) {
-        super(new Point4i(0,0,0,128));
+                             TriConsumer<GuiScreen, RadialProgressBar, Vec2f> onClick) {
+        super(new Point4f(0,0,0,128));
         this.handlerFunction = onClick;
-        this.radii = new Point2i(innerRadius, outerRadius);
+        this.radii = new Vec2f(innerRadius, outerRadius);
         this.resolution = resolution;
         this.progress = initialProgress;
     }
@@ -38,8 +37,8 @@ public class RadialProgressBar extends AbstractRadialButton {
         Determines the percentage progress the mouse is pointing to
         This can be used within the handler function
      */
-    public float mousePosToProgress(Point2i mousePos) {
-        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y - this.centerPos.y, mousePos.x - this.centerPos.x));
+    public float mousePosToProgress(Vec2f mousePos) {
+        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y - getCenterPos().y, mousePos.x - getCenterPos().x));
         if(mouseAngleDeg<0) mouseAngleDeg = 360f+mouseAngleDeg;
         return mouseAngleDeg/360f;
     }
@@ -58,24 +57,24 @@ public class RadialProgressBar extends AbstractRadialButton {
     /**
         Use this if the radial progress bar is standalone
      */
-    public void setHover(Point2i relativeCenter, double mouseDistance) {
+    public void setHover(Vec2f relativeCenter, double mouseDistance) {
         this.hover = MathUtil.isInCircle(relativeCenter, mouseDistance, this.radii);
     }
 
     /**
         The relative center is what determines where on the screen the center of the progress bar is
      */
-    public void draw(Point2i relativeCenter, float zLevel) {
+    public void draw(Vec2f relativeCenter, float zLevel) {
         if(this.progress>0) {
-            this.centerPos.set(relativeCenter);
-            Point2f angles = MathUtil.toRadians(MathUtil.progressAngles(this.progress));
+            this.setCenterPos(relativeCenter);
+            Vec2f angles = MathUtil.toRadians(MathUtil.progressAngles(this.progress));
             int adjustedRes = (int) (((float)this.resolution)*this.progress);
             for (int i = 0; i < this.resolution; i++)
                 drawRadialSection(relativeCenter, zLevel, this.radii, angles.x, angles.y - angles.x, i, this.resolution);
         }
     }
 
-    public void handleClick(GuiScreen screen, Point2i mousePos) {
+    public void handleClick(GuiScreen screen, Vec2f mousePos) {
         if(this.hover) {
             playPressSound(screen.mc.getSoundHandler());
             this.handlerFunction.accept(screen, this, mousePos);

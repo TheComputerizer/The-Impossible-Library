@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -25,8 +26,8 @@ public class GuiUtil {
         Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
         zLevel can be accessed from any class that extends GuiScreen
      */
-    public static void setBuffer(Point2i pos1In, Point2i pos2In, Point2i pos1Out, Point2i pos2Out,
-                                 float zLevel, Point4i color) {
+    public static void setBuffer(Vec2f pos1In, Vec2f pos2In, Vec2f pos1Out, Vec2f pos2Out,
+                                 float zLevel, Tuple4f color) {
         GLColorStart(color);
         BufferBuilder builder = Tessellator.getInstance().getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -42,7 +43,7 @@ public class GuiUtil {
         Pushes a generic texture for rendering via a ResourceLocation
         Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
-    public static void bufferSquareTexture(Tuple2i center, float radius, ResourceLocation texture) {
+    public static void bufferSquareTexture(Vec2f center, float radius, ResourceLocation texture) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
         GlStateManager.color(1f, 1f, 1f, 1f);
         GuiScreen.drawModalRectWithCustomSizedTexture((int) (center.x - radius / 2f), (int) (center.y - radius / 2f),
@@ -50,18 +51,18 @@ public class GuiUtil {
         GlStateManager.color(1f, 1f, 1f, 1f);
     }
 
-    public static void drawColoredRing(Point2i center, Tuple2i radii, Point4i color, int resolution,
+    public static void drawColoredRing(Vec2f center, Vec2f radii, Tuple4f color, int resolution,
                                        float zLevel) {
-        Point2f angles = MathUtil.makeAngleTuple(0,1);
+        Vec2f angles = MathUtil.makeAngleTuple(0,1);
         float startAngle = (float) Math.toRadians(angles.x);
         float angleDif = (float) Math.toRadians(angles.y-angles.x);
         for(int i=0;i<resolution;i++) {
             float angle1 = startAngle+(i/(float)resolution)*angleDif;
             float angle2 = startAngle+((i+1)/(float)resolution)*angleDif;
-            Point2i pos1In = MathUtil.getVertex(center,(float)radii.x,angle1);
-            Point2i pos2In = MathUtil.getVertex(center,(float)radii.x,angle2);
-            Point2i pos1Out = MathUtil.getVertex(center,(float)radii.y,angle1);
-            Point2i pos2Out = MathUtil.getVertex(center,(float)radii.y,angle2);
+            Vec2f pos1In = MathUtil.getVertex(center, radii.x,angle1);
+            Vec2f pos2In = MathUtil.getVertex(center, radii.x,angle2);
+            Vec2f pos1Out = MathUtil.getVertex(center, radii.y,angle1);
+            Vec2f pos2Out = MathUtil.getVertex(center, radii.y,angle2);
             setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,color);
         }
     }
@@ -70,8 +71,8 @@ public class GuiUtil {
         Draws a colored box with an outline
         The zLevel can be obtained from any GuiScreen or set to 0
      */
-    public static void drawBoxWithOutline(Tuple2i topLeft, int width, int height, Tuple4i color,
-                                          Tuple4i outlineColor, float outlineWidth, float zLevel) {
+    public static void drawBoxWithOutline(Vec2f topLeft, int width, int height, Tuple4f color,
+                                          Tuple4f outlineColor, float outlineWidth, float zLevel) {
         drawBox(topLeft, width, height, color, zLevel);
         drawBoxOutline(topLeft, width, height, outlineColor, outlineWidth, zLevel);
     }
@@ -80,8 +81,8 @@ public class GuiUtil {
        Draws a box using tuple inputs
        The zLevel can be obtained from any GuiScreen or set to 0
     */
-    public static void drawBox(Tuple2i topLeft, int width, int height, Tuple4i color, float zLevel) {
-        Point2i bottomRight = new Point2i(topLeft.x+width,topLeft.y+height);
+    public static void drawBox(Vec2f topLeft, int width, int height, Tuple4f color, float zLevel) {
+        Vec2f bottomRight = new Vec2f(topLeft.x+width,topLeft.y+height);
         GLColorStart(color);
         BufferBuilder builder = Tessellator.getInstance().getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -97,10 +98,10 @@ public class GuiUtil {
         Draws the outline of a box
         The zLevel can be obtained from any GuiScreen or set to 0
      */
-    public static void drawBoxOutline(Tuple2i topLeft, int width, int height, Tuple4i color, float outlineWidth, float zLevel) {
-        Point2i topRight = new Point2i(topLeft.x+width,topLeft.y);
-        Point2i bottomRight = new Point2i(topLeft.x+width,topLeft.y+height);
-        Point2i bottomLeft = new Point2i(topLeft.x,topLeft.y+height);
+    public static void drawBoxOutline(Vec2f topLeft, int width, int height, Tuple4f color, float outlineWidth, float zLevel) {
+        Vec2f topRight = new Vec2f(topLeft.x+width,topLeft.y);
+        Vec2f bottomRight = new Vec2f(topLeft.x+width,topLeft.y+height);
+        Vec2f bottomLeft = new Vec2f(topLeft.x,topLeft.y+height);
         drawLine(topLeft,topRight,color,outlineWidth,zLevel);
         drawLine(topRight,bottomRight,color,outlineWidth,zLevel);
         drawLine(bottomRight,bottomLeft,color,outlineWidth,zLevel);
@@ -111,12 +112,12 @@ public class GuiUtil {
         Draws a colored line between 2 points
         The zLevel can be obtained from any GuiScreen or set to 0
      */
-    public static void drawLine(Tuple2i start, Tuple2i end, Tuple4i color, float width, float zLevel) {
+    public static void drawLine(Vec2f start, Vec2f end, Tuple4f color, float width, float zLevel) {
         double angle = MathUtil.getAngle(start, end);
-        Point2d start1 = MathUtil.getVertex(MathUtil.enhance(start),width/2d,Math.toRadians(angle+90d));
-        Point2d start2 = MathUtil.getVertex(MathUtil.enhance(start),width/2d,Math.toRadians(angle-90d));
-        Point2d end1 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle-90d));
-        Point2d end2 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle+90d));
+        Vec2f start1 = MathUtil.getVertex(MathUtil.enhance(start),width/2d,Math.toRadians(angle+90d));
+        Vec2f start2 = MathUtil.getVertex(MathUtil.enhance(start),width/2d,Math.toRadians(angle-90d));
+        Vec2f end1 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle-90d));
+        Vec2f end2 = MathUtil.getVertex(MathUtil.enhance(end),width/2d,Math.toRadians(angle+90d));
         GLColorStart(color);
         BufferBuilder builder = Tessellator.getInstance().getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
@@ -309,7 +310,7 @@ public class GuiUtil {
     /**
         Primes the GLStateManager to draw a solid color
      */
-    public static void GLColorStart(Tuple4i color) {
+    public static void GLColorStart(Tuple4f color) {
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
@@ -328,18 +329,18 @@ public class GuiUtil {
     /**
         Utilizes a tuple to set the color for a BufferBuilder
      */
-    public static BufferBuilder tupleColor(BufferBuilder builder, Tuple4i colors) {
+    public static BufferBuilder tupleColor(BufferBuilder builder, Tuple4f colors) {
         return builder.color(colors.x, colors.y, colors.z, colors.w);
     }
 
     /**
         Utilizes a tuple to set the color the GLStateManager
      */
-    public static void tupleColor(Tuple4i colors) {
-        float r = ((float)colors.x)/255f;
-        float g = ((float)colors.y)/255f;
-        float b = ((float)colors.z)/255f;
-        float a = ((float)colors.w)/255f;
+    public static void tupleColor(Tuple4f colors) {
+        float r = colors.x /255f;
+        float g = colors.y /255f;
+        float b = colors.z /255f;
+        float a = colors.w /255f;
         GlStateManager.color(r, g, b, a);
     }
 
@@ -347,15 +348,15 @@ public class GuiUtil {
         Reverses a color tuple which
         This is generally used to set an opposite hover color
      */
-    public static Point4i reverseColors(Tuple4i colors) {
-        return new Point4i(Math.abs(colors.x-255), Math.abs(colors.y-255), Math.abs(colors.z-255), colors.w);
+    public static Tuple4f reverseColors(Tuple4f colors) {
+        return new Point4f(Math.abs(colors.x-255), Math.abs(colors.y-255), Math.abs(colors.z-255), colors.w);
     }
 
     /**
         Converts a color tuple into a single integer
      */
-    public static int makeRGBAInt(Tuple4i colors) {
-        return makeRGBAInt(colors.x,colors.y,colors.z,colors.w);
+    public static int makeRGBAInt(Tuple4f colors) {
+        return makeRGBAInt((int)colors.x,(int)colors.y,(int)colors.z,(int)colors.w);
     }
 
     /**

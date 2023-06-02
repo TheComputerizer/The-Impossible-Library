@@ -3,11 +3,10 @@ package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec2f;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Point2f;
-import javax.vecmath.Point2i;
-import javax.vecmath.Point4i;
+import javax.vecmath.Point4f;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -23,7 +22,7 @@ public class RadialButton extends AbstractRadialButton {
     public RadialButton(List<String> tooltipLines, @Nullable ResourceLocation centerIcon,
                         @Nullable ResourceLocation altCenterIcon, float hoverIncrease, @Nullable String centerText,
                         BiConsumer<GuiScreen, RadialButton> onClick) {
-        super(new Point4i(0,0,0,255));
+        super(new Point4f(0,0,0,255));
         this.handlerFunction = onClick;
         this.tooltipLines = tooltipLines;
         this.centerIcon = centerIcon;
@@ -32,13 +31,13 @@ public class RadialButton extends AbstractRadialButton {
         this.centerText = centerText;
     }
 
-    public void setHover(boolean superHover, double mouseDeg, Point2f angles) {
+    public void setHover(boolean superHover, double mouseDeg, Vec2f angles) {
         this.hover = superHover && mouseDeg>=angles.x && mouseDeg<angles.y;
     }
 
-    public void draw(Point2i center, float zLevel, Point2i radius, Point2f angles,
-                     Point2i mouse, Point2i relativeCenter, int resolution) {
-        this.centerPos.set(relativeCenter);
+    public void draw(Vec2f center, float zLevel, Vec2f radius, Vec2f angles,
+                     Vec2f mouse, Vec2f relativeCenter, int resolution) {
+        setCenterPos(relativeCenter);
         for (int i = 0; i < resolution; i++)
             drawRadialSection(center,zLevel,radius,angles.x,angles.y-angles.x,i,resolution);
     }
@@ -51,16 +50,16 @@ public class RadialButton extends AbstractRadialButton {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
             }
-            GuiUtil.bufferSquareTexture(this.centerPos, centerRadius+hoverIncrease, actualIcon);
+            GuiUtil.bufferSquareTexture(getCenterPos(), centerRadius+hoverIncrease, actualIcon);
         }
     }
 
-    public void drawText(GuiScreen parent, Point2i mouse, boolean isCurrent) {
+    public void drawText(GuiScreen parent, Vec2f mouse, boolean isCurrent) {
         if(this.centerText!=null) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(parent.mc.fontRenderer, this.centerText, this.centerPos.x, this.centerPos.y, color);
+            drawCenteredString(parent.mc.fontRenderer, this.centerText, (int)getCenterPos().x, (int)getCenterPos().y, color);
         }
-        if(this.hover && isCurrent) parent.drawHoveringText(this.tooltipLines, mouse.x, mouse.y);
+        if(this.hover && isCurrent) parent.drawHoveringText(this.tooltipLines, (int)mouse.x, (int)mouse.y);
     }
 
     public void handleClick(GuiScreen screen) {
