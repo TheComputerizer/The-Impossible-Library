@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
-import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
 import mods.thecomputerizer.theimpossiblelibrary.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
@@ -18,7 +17,7 @@ public class TheImpossibleLibrary {
 
     //This has to be set before the preInit phase
     public static boolean CLIENT_ONLY = false;
-    private static final boolean IS_DEV_ENV = false;
+    private static final boolean IS_DEV_ENV = true;
 
     public TheImpossibleLibrary() {
         //early loading stuff like directory generation
@@ -30,11 +29,11 @@ public class TheImpossibleLibrary {
         //registration stuff has to happen here
         if(!CLIENT_ONLY) NetworkHandler.init();
         //only register testing stuff in a dev environment
-        if(e.getSide()==Side.CLIENT) {
-            MinecraftForge.EVENT_BUS.register(Renderer.class);
-            if(IS_DEV_ENV) preInitClientTestClass(MinecraftForge.EVENT_BUS);
+        if(IS_DEV_ENV) {
+            if(e.getSide()==Side.CLIENT)
+                preInitClientTestClass(MinecraftForge.EVENT_BUS);
+            preInitCommonTestClass(MinecraftForge.EVENT_BUS);
         }
-        if(IS_DEV_ENV) preInitCommonTestClass(MinecraftForge.EVENT_BUS);
     }
 
     @EventHandler

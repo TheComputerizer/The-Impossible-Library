@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialButton;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
+import mods.thecomputerizer.theimpossiblelibrary.util.client.FontUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Level;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nonnull;
+import javax.vecmath.Point2f;
 import javax.vecmath.Point2i;
 import javax.vecmath.Point4i;
 import java.io.IOException;
@@ -101,6 +103,10 @@ public class GuiTestClasses {
 
         public TestGui(GuiScreen parent) {
             this.parent = parent;
+        }
+
+        protected Point2f getcenterFloat() {
+            return new Point2f(this.center.x,this.center.y);
         }
 
         @Override
@@ -218,9 +224,11 @@ public class GuiTestClasses {
             /*
             GuiUtil.drawBoxWithOutline(this.center,100, 50, new Point4i(0,0,0,255),
                     new Point4i(255,255,255,255), 1f, this.zLevel);
+
+             */
+            FontUtil.renderChar('E',getcenterFloat(),this.fontRenderer,new Point4i(255,255,255,255));
             GuiUtil.drawColoredRing(this.center,new Point2i(199,200),new Point4i(255,255,255,255),
                     360,this.zLevel);
-             */
             GuiUtil.drawMultiLineString(this.fontRenderer,"Here's the thing. You said a " +
                             "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                             "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
