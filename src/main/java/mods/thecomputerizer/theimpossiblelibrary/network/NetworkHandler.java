@@ -11,7 +11,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public final class NetworkHandler {
@@ -41,20 +40,12 @@ public final class NetworkHandler {
     }
 
     /**
-     * Handles both client and server packets so if something is being sent to the server the player can just be null.
+     * Handles both client and server packets. Assumes players have already been added to messages getting sent to clients
      */
-    public static <M extends MessageImpl> void sendMessageImpl(M message, @Nullable EntityPlayerMP player) {
+    public static <M extends MessageImpl> void sendMessageImpl(M message) {
         if(!REGISTERED_MESSAGES.contains(message.getClass())) LogUtil.logInternal(Level.ERROR,"Message of " +
                 "class {} has not been registered and cannot be sent!",message.getClass().getName());
-        else {
-            if(message.getSide()==Side.SERVER)
-                sendToServer(message);
-            else {
-                if(Objects.isNull(player)) LogUtil.logInternal(Level.ERROR,"Message of class {} is registered " +
-                        "to get send to the client so the player cannot be null!",message.getClass().getName());
-                else sendToPlayer(message,player);
-            }
-        }
+        else message.send();
     }
 
     @SideOnly(Side.CLIENT)
