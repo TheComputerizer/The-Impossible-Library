@@ -33,8 +33,8 @@ public final class NetworkHandler {
     }
 
     @SafeVarargs
-    public static <M extends MessageImpl> void queuePacketRegistries(Tuple<Class<M>,Side> ... packetQueues) {
-        for(Tuple<Class<M>,Side> packetTuple : packetQueues)
+    public static void queuePacketRegistries(Tuple<Class<? extends MessageImpl>,Side> ... packetQueues) {
+        for(Tuple<Class<? extends MessageImpl>,Side> packetTuple : packetQueues)
             queuePacketRegister(packetTuple.getFirst(),packetTuple.getSecond(),null);
     }
 
