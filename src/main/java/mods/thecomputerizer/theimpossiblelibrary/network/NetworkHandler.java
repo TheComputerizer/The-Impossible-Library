@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.network;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -11,7 +12,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Supplier;
 
 public final class NetworkHandler {
 
@@ -25,7 +28,15 @@ public final class NetworkHandler {
      * not be registered if CLIENT_ONLY is turned on in the main mod class.
      */
     public static void queuePacketRegister(Class<? extends MessageImpl> classType, Side sendTo) {
-        PACKET_QUEUES.add(new PacketQueue<>(classType,sendTo));
+        queuePacketRegister(classType,sendTo,null);
+    }
+
+    /**
+     * Only use this version if you need a custom extension of the PacketHandler class
+     */
+    public static <M extends MessageImpl> void queuePacketRegister(
+            Class<M> classType, Side sendTo, Supplier<? extends PacketHandler<M>> customPacketHandler) {
+        PACKET_QUEUES.add(new PacketQueue<>(classType,sendTo,customPacketHandler));
     }
 
     public static void init() {
@@ -57,18 +68,40 @@ public final class NetworkHandler {
         NETWORK.sendTo(packet, player);
     }
 
+    public static void sendToTracking(IMessage packet, Entity tracking) {
+        NETWORK.sendToAllTracking(packet,tracking);
+    }
+
+    public static void sendToTracking(IMessage packet, NetworkRegistry.TargetPoint point) {
+        NETWORK.sendToAllTracking(packet,point);
+    }
+
+    public static void sendToDimension(IMessage packet, int dimension) {
+        NETWORK.sendToDimension(packet,dimension);
+    }
+
+    public static void sendToAllAround(IMessage packet, NetworkRegistry.TargetPoint point) {
+        NETWORK.sendToAllAround(packet,point);
+    }
+
     private static final class PacketQueue<M extends MessageImpl> {
 
         private final Class<M> type;
         private final Side sendTo;
+        private final Supplier<? extends PacketHandler<M>> customPacketHandler;
 
-        private PacketQueue(Class<M> classType, Side sendTo) {
+        private PacketQueue(Class<M> classType, Side sendTo, @Nullable Supplier<? extends PacketHandler<M>> customPacketHandler) {
             this.type = classType;
             this.sendTo = sendTo;
+            this.customPacketHandler = customPacketHandler;
         }
 
         private void register(SimpleNetworkWrapper network, int globalID) {
-            network.registerMessage(new PacketHandler<>(),this.type,globalID,this.sendTo);
+            network.registerMessage(makeHandler(),this.type,globalID,this.sendTo);
+        }
+
+        private PacketHandler<M> makeHandler() {
+            return Objects.nonNull(this.customPacketHandler) ? this.customPacketHandler.get() : new PacketHandler<>();
         }
     }
 }
