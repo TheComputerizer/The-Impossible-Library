@@ -4,32 +4,36 @@ import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class DataUtil {
     private static boolean GLOBAL_LOAD_FAILED = false;
-    private static final List<String> explanation = Stream.of("Hi!\n",
+    private static final List<String> EXPLANATION = Arrays.asList("Hi!",
             "This folder is used to store data used by The Impossible Library and other mods that might use it as a " +
                     "dependency\n",
             "--------------------------------------------------\n",
-            "For mod developers:\n",
+            "For mod developers:",
             "If you registered any global data through The Impossible Library, this is where that gets stored! So if " +
                     "you see your modid here, everything is working as intended.\n",
             "--------------------------------------------------\n",
-            "For modpack creators:\n",
+            "For modpack creators:",
             "This is where mods that utilize the global data system implemented by The Impossible Library have their " +
                     "data stored! If you want to quickly reset a specific mod's data, you can delete its file here.\n",
             "--------------------------------------------------\n",
-            "For players:\n",
+            "For players:",
             "You probably do not have to worry about this folder, but if a specific mod is breaking that appears here, " +
-                    "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!").collect(Collectors.toList());
+                    "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!");
 
     public static void initGlobal() {
         try {
@@ -40,31 +44,48 @@ public class DataUtil {
         }
     }
 
-    public static void writeWorldData(NBTTagCompound data, String modid, String worldName) throws IOException {
-        NBTTagCompound globalTag =  getGlobalData(modid,true);
-        if(Objects.nonNull(globalTag)) {
-            getOrCreateCompound(globalTag, "world_data").setTag(worldName, data);
-            writeGlobalData(data, modid);
+    private static void writeExplanation(File file) throws IOException {
+        if(Objects.nonNull(file)) FileUtil.writeLinesToFile(file, EXPLANATION,false);
+        else throw new IOException("Failed to create file");
+    }
+
+    /**
+     * This has to be called from the server
+     */
+    public static void writeWorldData(NBTTagCompound data, String modid, @Nonnull World world) throws IOException {
+        if(FMLCommonHandler.instance().getSide()==Side.CLIENT) LogUtil.logInternal(Level.ERROR,"Mod with id {}" +
+                " tried to write data to the wrong side! World data can only be written from the server!");
+        else {
+            NBTTagCompound globalTag = getGlobalData(modid, true);
+            if (Objects.nonNull(globalTag)) {
+                WorldInfo info = world.getSaveHandler().loadWorldInfo();
+                if(Objects.nonNull(info)) {
+                    getOrCreateCompound(globalTag, "world_data").setTag(info.getWorldName(), data);
+                    writeGlobalData(data, modid);
+                }
+            }
         }
     }
 
     /**
-     * Returns null if the data is unable to be read for some reason
+     * Returns null if the data is unable to be read for some reason. This has to be called from the server
      */
-    public static NBTTagCompound readWorldData(NBTTagCompound data, String modid, String worldName) {
-        try {
-            NBTTagCompound globalTag = getGlobalData(modid, true);
-            if (Objects.nonNull(globalTag))
-                return getOrCreateCompound(getOrCreateCompound(globalTag, "world_data"), worldName);
-        } catch (IOException ex) {
-            LogUtil.logInternal(Level.ERROR,"Unable to read mod data for modid {} in world {}",modid,worldName,ex);
+    public static NBTTagCompound readWorldData(NBTTagCompound data, String modid, @Nonnull World world) {
+        if(FMLCommonHandler.instance().getSide()==Side.CLIENT) LogUtil.logInternal(Level.ERROR,"Mod with id {}" +
+                " tried to write data to the wrong side! World data can only be written from the server!");
+        else {
+            WorldInfo info = world.getSaveHandler().loadWorldInfo();
+            if(Objects.nonNull(info)) {
+                try {
+                    NBTTagCompound globalTag = getGlobalData(modid, true);
+                    if (Objects.nonNull(globalTag))
+                        return getOrCreateCompound(getOrCreateCompound(globalTag, "world_data"), info.getWorldName());
+                } catch (IOException ex) {
+                    LogUtil.logInternal(Level.ERROR, "Unable to read mod data for modid {} in world {}", modid, info.getWorldName(), ex);
+                }
+            }
         }
         return null;
-    }
-
-    private static void writeExplanation(File file) throws IOException {
-        if(file!=null) FileUtil.writeLinesToFile(file,explanation,false);
-        else throw new IOException("Failed to create file");
     }
 
     /**
@@ -79,7 +100,7 @@ public class DataUtil {
     /**
         Gets global data stored in a dat file for the modid input
         Returns null if the file does not exist and is not set to be created
-        Will also return null if the data folder failed to initialize or the data module is turned off
+        Will also return null if the data folder failed to initialize or the data module is turned off.
      */
     public static NBTTagCompound getGlobalData(String modid, boolean createIfAbsent) throws IOException {
         if(!GLOBAL_LOAD_FAILED) return getFileData(Constants.DATA_DIRECTORY, modid, createIfAbsent);

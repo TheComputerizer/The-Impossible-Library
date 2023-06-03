@@ -26,7 +26,6 @@ public class TheImpossibleLibrary {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        //registration stuff has to happen here
         if(!CLIENT_ONLY) NetworkHandler.init();
         //only register testing stuff in a dev environment
         if(IS_DEV_ENV) {
@@ -38,11 +37,11 @@ public class TheImpossibleLibrary {
 
     @EventHandler
     public void init(FMLInitializationEvent e) {
-        //keybindings and other less important stuff can go here
         //only register testing stuff in a dev environment
-        if(e.getSide()==Side.CLIENT)
-            if(IS_DEV_ENV) initClientTestClass();
-        if(IS_DEV_ENV) initCommonTestClass();
+        if(IS_DEV_ENV) {
+            if(e.getSide()==Side.CLIENT) initClientTestClass();
+            initCommonTestClass();
+        }
     }
 
     public static void preInitCommonTestClass(EventBus bus) {
