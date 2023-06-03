@@ -104,11 +104,8 @@ public final class NetworkHandler {
         }
 
         private void register(SimpleNetworkWrapper network, int globalID) {
-            network.registerMessage(makeHandler(),this.type,globalID,this.sendTo);
-        }
-
-        private PacketHandler<M> makeHandler() {
-            return Objects.nonNull(this.customPacketHandler) ? this.customPacketHandler.get() : new PacketHandler<>();
+            network.registerMessage(Objects.nonNull(this.customPacketHandler) ? this.customPacketHandler.get() :
+                    new PacketHandler<>(),this.type,globalID,this.sendTo);
         }
     }
 }
