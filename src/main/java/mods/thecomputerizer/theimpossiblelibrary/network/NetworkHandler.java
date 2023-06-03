@@ -21,7 +21,11 @@ public final class NetworkHandler {
     private static SimpleNetworkWrapper NETWORK;
     private static int globalPacketDisc;
 
-    private static void queuePacketRegister(Class<? extends MessageImpl> classType, Side sendTo) {
+    /**
+     * This has to be called in the mod constructor or mod using this needs to be loaded before this one. Packets will
+     * not be registered if CLIENT_ONLY is turned on in the main mod class.
+     */
+    public static void queuePacketRegister(Class<? extends MessageImpl> classType, Side sendTo) {
         PACKET_QUEUES.add(new PacketQueue<>(classType,sendTo));
     }
 
