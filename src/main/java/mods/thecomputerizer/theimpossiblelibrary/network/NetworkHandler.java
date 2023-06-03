@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -29,6 +30,12 @@ public final class NetworkHandler {
      */
     public static void queuePacketRegister(Class<? extends MessageImpl> classType, Side sendTo) {
         queuePacketRegister(classType,sendTo,null);
+    }
+
+    @SafeVarargs
+    public static <M extends MessageImpl> void queuePacketRegistries(Tuple<Class<M>,Side> ... packetQueues) {
+        for(Tuple<Class<M>,Side> packetTuple : packetQueues)
+            queuePacketRegister(packetTuple.getFirst(),packetTuple.getSecond(),null);
     }
 
     /**
