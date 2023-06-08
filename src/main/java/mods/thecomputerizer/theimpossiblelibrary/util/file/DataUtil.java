@@ -1,13 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.util.file;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.nbt.*;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
@@ -49,41 +43,21 @@ public class DataUtil {
         else throw new IOException("Failed to create file");
     }
 
-    /**
-     * This has to be called from the server
-     */
-    public static void writeWorldData(NBTTagCompound data, String modid, @Nonnull World world) throws IOException {
-        if(FMLCommonHandler.instance().getSide()==Side.CLIENT) LogUtil.logInternal(Level.ERROR,"Mod with id {}" +
-                " tried to write data to the wrong side! World data can only be written from the server!");
-        else {
-            NBTTagCompound globalTag = getGlobalData(modid, true);
-            if (Objects.nonNull(globalTag)) {
-                WorldInfo info = world.getSaveHandler().loadWorldInfo();
-                if(Objects.nonNull(info)) {
-                    getOrCreateCompound(globalTag, "world_data").setTag(info.getWorldName(), data);
-                    writeGlobalData(data, modid);
-                }
-            }
+    public static void writeWorldData(NBTTagCompound data, String modid, @Nonnull String worldName) throws IOException {
+        NBTTagCompound globalTag = getGlobalData(modid, true);
+        if (Objects.nonNull(globalTag)) {
+            getOrCreateCompound(globalTag, "world_data").setTag(worldName, data);
+            writeGlobalData(data, modid);
         }
     }
 
-    /**
-     * Returns null if the data is unable to be read for some reason. This has to be called from the server
-     */
-    public static NBTTagCompound readWorldData(NBTTagCompound data, String modid, @Nonnull World world) {
-        if(FMLCommonHandler.instance().getSide()==Side.CLIENT) LogUtil.logInternal(Level.ERROR,"Mod with id {}" +
-                " tried to write data to the wrong side! World data can only be written from the server!");
-        else {
-            WorldInfo info = world.getSaveHandler().loadWorldInfo();
-            if(Objects.nonNull(info)) {
-                try {
-                    NBTTagCompound globalTag = getGlobalData(modid, true);
-                    if (Objects.nonNull(globalTag))
-                        return getOrCreateCompound(getOrCreateCompound(globalTag, "world_data"), info.getWorldName());
-                } catch (IOException ex) {
-                    LogUtil.logInternal(Level.ERROR, "Unable to read mod data for modid {} in world {}", modid, info.getWorldName(), ex);
-                }
-            }
+    public static NBTTagCompound getWorldData(String modid, @Nonnull String worldName) {
+        try {
+            NBTTagCompound globalTag = getGlobalData(modid, true);
+            if (Objects.nonNull(globalTag))
+                return getOrCreateCompound(getOrCreateCompound(globalTag, "world_data"), worldName);
+        } catch (IOException ex) {
+            LogUtil.logInternal(Level.ERROR, "Unable to read mod data for modid {} in world {}", modid, worldName, ex);
         }
         return null;
     }
@@ -137,5 +111,21 @@ public class DataUtil {
         NBTTagCompound compound = new NBTTagCompound();
         tag.setTag(key,compound);
         return compound;
+    }
+
+
+
+    /**
+     * Throws an IOException if the key already exists as and is not of the type NBTTagList
+     */
+    public static NBTTagList getOrCreateList(NBTTagCompound tag, String key) throws IOException {
+        if(tag.hasKey(key)) {
+            NBTBase baseTag = tag.getTag(key);
+            if(!(baseTag instanceof NBTTagList)) throw new IOException("Tried to get existing tag of the wrong type!");
+            return (NBTTagList)baseTag;
+        }
+        NBTTagList list = new NBTTagList();
+        tag.setTag(key,list);
+        return list;
     }
 }

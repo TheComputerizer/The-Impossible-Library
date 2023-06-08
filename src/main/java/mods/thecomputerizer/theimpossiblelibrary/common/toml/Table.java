@@ -6,6 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
@@ -45,6 +48,35 @@ public class Table extends AbstractType {
      * Determines the index of the table array this table is in or -1 if it is not in one.
      */
     private int arrIndex;
+    public Table(NBTTagCompound tag, @Nullable Table parentTable) {
+        super(tag, parentTable);
+        this.backing = null;
+        this.level = tag.getInteger("level");
+        this.arrIndex = tag.getInteger("arrIndex");
+        this.tableName = tag.getString("name");
+        this.contents = readContents(tag.getTag("contents"));
+        this.matchers = new ArrayList<>();
+    }
+
+    private List<AbstractType> readContents(NBTBase tag) {
+        List<AbstractType> ret = new ArrayList<>();
+        if(tag instanceof NBTTagList) {
+            for(NBTBase test : (NBTTagList)tag) {
+                if(test instanceof NBTTagCompound) {
+                    NBTTagCompound element = (NBTTagCompound)test;
+                    String type = element.getString("type");
+                    if(type.matches("table"))
+                        ret.add(new Table(element.getCompoundTag("contents"),this));
+                    else {
+                        Variable var = new Variable(element.getCompoundTag("contents"),this);
+                        if(var.isValid()) ret.add(var);
+                    }
+                } else break;
+            }
+        }
+        return ret;
+    }
+
     public Table(ByteBuf buf, @Nullable Table parentTable) {
         super(buf, parentTable);
         this.backing = null;
@@ -415,5 +447,31 @@ public class Table extends AbstractType {
         if(Objects.nonNull(table.parentTable))
             return inheritTableName(table.parentTable,table.parentTable.getName()+"."+concat);
         return concat;
+    }
+
+    /**
+     * Only saves variables and child tables
+     */
+    public NBTTagCompound writeToTag() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("absoluteIndex",this.getAbsoluteIndex());
+        tag.setString("name",this.tableName);
+        tag.setInteger("level",this.level);
+        tag.setInteger("arrIndex",this.arrIndex);
+        NBTTagList contents = new NBTTagList();
+        for(AbstractType type : this.getContents()) {
+            NBTTagCompound element = new NBTTagCompound();
+            if(type instanceof Table) {
+                Table table = (Table)type;
+                element.setString("type","table");
+                tag.setTag("contents",table.writeToTag());
+            } else if(type instanceof Variable) {
+                Variable var = (Variable)type;
+                element.setString("type","variable");
+                tag.setTag("contents",var.writeToTag());
+            }
+        }
+        tag.setTag("contents",contents);
+        return tag;
     }
 }
