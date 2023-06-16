@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -28,19 +27,44 @@ public final class NetworkHandler {
      * This has to be called in the mod constructor or mod using this needs to be loaded before this one. Packets will
      * not be registered if CLIENT_ONLY is turned on in the main mod class.
      */
-    public static void queuePacketRegister(Class<? extends MessageImpl> classType, Side sendTo) {
-        queuePacketRegister(classType,sendTo,null);
+    public static void queueServerPacketRegister(Class<? extends MessageImpl> classType) {
+        queuePacketRegister(classType,Side.SERVER,null);
+    }
+    public static void queueClientPacketRegister(Class<? extends MessageImpl> classType) {
+        queuePacketRegister(classType,Side.CLIENT,null);
     }
 
     @SafeVarargs
-    public static void queuePacketRegistries(Tuple<Class<? extends MessageImpl>,Side> ... packetQueues) {
-        for(Tuple<Class<? extends MessageImpl>,Side> packetTuple : packetQueues)
-            queuePacketRegister(packetTuple.getFirst(),packetTuple.getSecond(),null);
+    public static void queueServerPacketRegistries(Class<? extends MessageImpl>... packetQueues) {
+        for(Class<? extends MessageImpl> classType : packetQueues)
+            queuePacketRegister(classType,Side.SERVER,null);
+    }
+    @SafeVarargs
+    public static void queueClientPacketRegistries(Class<? extends MessageImpl>... packetQueues) {
+        for(Class<? extends MessageImpl> classType : packetQueues)
+            queuePacketRegister(classType,Side.CLIENT,null);
+    }
+
+    public static void queueServerPacketRegistries(Collection<Class<? extends MessageImpl>> packetQueues) {
+        for(Class<? extends MessageImpl> classType : packetQueues)
+            queuePacketRegister(classType,Side.SERVER,null);
+    }
+    public static void queueClientPacketRegistries(Collection<Class<? extends MessageImpl>> packetQueues) {
+        for(Class<? extends MessageImpl> classType : packetQueues)
+            queuePacketRegister(classType,Side.CLIENT,null);
     }
 
     /**
-     * Only use this version if you need a custom extension of the PacketHandler class
+     * Only use these versions if you need a custom extension of the PacketHandler class
      */
+    public static <M extends MessageImpl> void queueServerPacketRegister(
+            Class<M> classType, Supplier<? extends PacketHandler<M>> customPacketHandler) {
+        PACKET_QUEUES.add(new PacketQueue<>(classType,Side.SERVER,customPacketHandler));
+    }
+    public static <M extends MessageImpl> void queueClientPacketRegister(
+            Class<M> classType, Supplier<? extends PacketHandler<M>> customPacketHandler) {
+        PACKET_QUEUES.add(new PacketQueue<>(classType,Side.CLIENT,customPacketHandler));
+    }
     public static <M extends MessageImpl> void queuePacketRegister(
             Class<M> classType, Side sendTo, Supplier<? extends PacketHandler<M>> customPacketHandler) {
         PACKET_QUEUES.add(new PacketQueue<>(classType,sendTo,customPacketHandler));
