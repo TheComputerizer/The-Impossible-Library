@@ -3,16 +3,16 @@ package mods.thecomputerizer.theimpossiblelibrary.util.client;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,20 +43,19 @@ public class GuiUtil {
         Pushes a generic texture for rendering via a ResourceLocation
         Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
-    public static void bufferSquareTexture(PoseStack matrix, Vector3f center, float radius, ResourceLocation texture) {
-        RenderSystem.setShaderTexture(0,texture);
-        GuiComponent.blit(matrix,(int) (center.x() - radius / 2f), (int) (center.y() - radius / 2f),
+    public static void bufferSquareTexture(GuiGraphics graphics, Vector3f center, float radius, ResourceLocation texture) {
+        graphics.blit(texture,(int) (center.x() - radius / 2f), (int) (center.y() - radius / 2f),
                 0, 0, (int) radius, (int) radius, (int) radius, (int) radius);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
 
-    public static void enforceAlphaTexture(PoseStack matrix, int x, int y, int width, int height, float alpha,
+    public static void enforceAlphaTexture(GuiGraphics graphics, int x, int y, int width, int height, float alpha,
                                            ResourceLocation texture) {
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderColor(1f,1f,1f,alpha);
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        Matrix4f matrix4f = matrix.last().pose();
+        Matrix4f matrix4f = graphics.pose().last().pose();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
         bufferbuilder.vertex(matrix4f, (float)x, (float)(y+height), 0f).color(1f, 1f, 1f, alpha).uv(0, 1).endVertex();
         bufferbuilder.vertex(matrix4f, (float)(x+width), (float)(y+height), 0f).color(1f, 1f, 1f, alpha).uv(1, 1).endVertex();
@@ -147,7 +146,7 @@ public class GuiUtil {
         Splits a string into multiple lines and renders them
         Returns the new y position under the rendered lines
      */
-    public static int drawMultiLineString(PoseStack matrix, Font font, String original, int left, int right, int top, int spacing,
+    public static int drawMultiLineString(GuiGraphics graphics, Font font, String original, int left, int right, int top, int spacing,
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
@@ -185,7 +184,7 @@ public class GuiUtil {
         }
         if(builder.length()>0) lines.add(builder.toString());
         for(String line : lines) {
-            font.drawShadow(matrix,line,left,top,color);
+            graphics.drawString(font,line,left,top,color);
             top+=spacing;
         }
         return top;
@@ -228,7 +227,7 @@ public class GuiUtil {
      * Similar to drawMultiLineString except it is assumed this is not being called from within a GUI but rather
      * making use of the Text class.
      */
-    public static void drawMultiLineTitle(PoseStack matrix, Window res, String text, String subText, boolean centeredText, int x,
+    public static void drawMultiLineTitle(GuiGraphics graphics, Window res, String text, String subText, boolean centeredText, int x,
                                           int y, float scaleX, float scaleY, float subScale, String color,
                                           String subColor, float opacity, float subOpacity, int lineSpacing) {
         Font font = Minecraft.getInstance().font;
@@ -266,18 +265,19 @@ public class GuiUtil {
             }
         }
         if(builder.length()>0) textLines.add(builder.toString());
-        matrix.pushPose();
+        graphics.pose().pushPose();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        matrix.scale(scaleX, scaleY, 1f);
+        graphics.pose().scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
             if(centeredText)
-                font.drawShadow(matrix,line,(x/scaleX)-((float)font.width(line))/2,
-                        (float)y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
-            else font.drawShadow(matrix,line,x/scaleX,y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
+                graphics.drawString(font,line,(int)((x/scaleX)-((float)font.width(line))/2f),
+                        (int)((float)y/scaleY), convertChatFormatting(textFormat,(int)(255f*opacity)));
+            else graphics.drawString(font,line,(int)(x/scaleX),(int)(y/scaleY),
+                    convertChatFormatting(textFormat,(int)(255f*opacity)));
             y+=lineSpacing*5;
         }
-        matrix.popPose();
+        graphics.pose().popPose();
         builder = new StringBuilder();
         lineWidth = 0;
         lineCounter = 0;
@@ -303,18 +303,19 @@ public class GuiUtil {
         if(builder.length()>0) subLines.add(builder.toString());
         float subScaleX = scaleX*subScale;
         float subScaleY = scaleY*subScale;
-        matrix.pushPose();
+        graphics.pose().pushPose();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        matrix.scale(subScaleX, subScaleY, 1f);
+        graphics.pose().scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
             if(centeredText)
-                font.drawShadow(matrix,line,(x/subScaleX)-((float)font.width(line))/2,
-                        (float)y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
-            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+                graphics.drawString(font,line,(int)((x/subScaleX)-((float)font.width(line))/2f),
+                        (int)((float)y/subScaleY), convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+            else graphics.drawString(font,line,(int)(x/subScaleX),(int)(y/subScaleY),
+                    convertChatFormatting(subFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
-        matrix.popPose();
+        graphics.pose().popPose();
     }
 
     /**
@@ -322,7 +323,7 @@ public class GuiUtil {
      */
     public static void GLColorStart(Vector4f color) {
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
+        RenderSystem.resetTextureMatrix();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
     }
@@ -331,7 +332,7 @@ public class GuiUtil {
         Resets some necessary GLStateManager stuff so other rendering works as intended
      */
     public static void GLColorFinish() {
-        RenderSystem.enableTexture();
+        RenderSystem.resetTextureMatrix();
         RenderSystem.disableBlend();
     }
 

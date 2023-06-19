@@ -12,7 +12,6 @@ import java.util.Objects;
  * Underlying methods and fields used by all TOML object types in the toml package
  * Use the {@link Holder} class for accessing and modifying an indexed TOML file
  */
-@SuppressWarnings("GrazieInspection")
 public abstract class AbstractType {
 
     /**

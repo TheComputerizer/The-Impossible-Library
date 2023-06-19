@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
@@ -38,7 +38,7 @@ public class Renderer {
     }
 
 
-    public static void renderAllBackgroundStuff(PoseStack matrix, Window window) {
-        for(Renderable type : renderables) type.render(matrix,window);
+    public static void renderAllBackgroundStuff(GuiGraphics graphics, Window window) {
+        for(Renderable type : renderables) type.render(graphics,window);
     }
 }

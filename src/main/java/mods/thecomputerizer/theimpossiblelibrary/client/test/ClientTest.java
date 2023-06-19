@@ -18,19 +18,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"unused", "OptionalGetWithoutIsPresent"})
+@SuppressWarnings("unused")
 public class ClientTest {
 
     public static void onTestKey() {
-        renderableTest();
-        //guiTest();
+        //renderableTest();
+        guiTest();
         //tomlTest();
     }
 
     private static void renderableTest() {
         try {
             Holder transitions = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                    .getResource(new ResourceLocation(Constants.MODID, "test/transitions.toml")).get().open());
+                    .open(new ResourceLocation(Constants.MODID, "test/transitions.toml")));
             Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
             Table image = transitions.getTableByName("image");
             Renderer.addRenderable(Renderer.initializePng(new ResourceLocation(Constants.MODID,
@@ -49,7 +49,7 @@ public class ClientTest {
         //test smart toml reading and printing
         try {
             Holder testHolder = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                    .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).get().open());
+                    .open(new ResourceLocation(Constants.MODID,"test/thing.toml")));
             testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
             testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
             testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);

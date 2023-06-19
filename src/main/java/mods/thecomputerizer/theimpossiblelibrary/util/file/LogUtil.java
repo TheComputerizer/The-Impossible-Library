@@ -99,7 +99,7 @@ public class LogUtil {
         private String formattedMilli(int milli) {
             if(milli<10) return "00"+milli;
             if(milli<100) return "0"+milli;
-            return ""+milli;
+            return String.valueOf(milli);
         }
 
         private String formattedTimeStamp(LocalDateTime time) {

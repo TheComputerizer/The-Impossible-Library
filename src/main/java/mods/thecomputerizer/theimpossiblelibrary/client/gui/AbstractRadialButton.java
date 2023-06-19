@@ -1,15 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvents;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-public abstract class AbstractRadialButton extends GuiComponent {
+public abstract class AbstractRadialButton {
 
     protected final Vector4f colors;
     protected Vector3f centerPos;
@@ -29,7 +28,7 @@ public abstract class AbstractRadialButton extends GuiComponent {
         return this.centerPos;
     }
 
-    protected void drawRadialSection(Vector3f center, float zLevel, Vector3f radius, float startAngle,
+    protected void drawRadialSection(Vector3f center, Vector3f radius, float startAngle,
                                    float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
         float angle2 = startAngle+((index+1)/(float)resolution)*angleDif;
@@ -38,9 +37,9 @@ public abstract class AbstractRadialButton extends GuiComponent {
         Vector3f pos1Out = MathUtil.getVertex(center,radius.y(),angle1);
         Vector3f pos2Out = MathUtil.getVertex(center,radius.y(),angle2);
         if(this.hover)
-            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,GuiUtil.reverseColors(this.colors));
+            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,0f,GuiUtil.reverseColors(this.colors));
         else
-            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,this.colors);
+            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,0f,this.colors);
     }
 
     protected void playPressSound(SoundManager handler) {

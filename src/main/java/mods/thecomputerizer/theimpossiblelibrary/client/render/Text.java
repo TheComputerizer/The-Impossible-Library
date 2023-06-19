@@ -1,11 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Used to simulate a title command but with more versatility
@@ -51,8 +54,8 @@ public class Text extends Renderable {
     }
 
     @Override
-    public void render(PoseStack matrix, Window res) {
-        if(canRender()) GuiUtil.drawMultiLineTitle(matrix,res,this.text, this.subtext,
+    public void render(GuiGraphics graphics, Window res) {
+        if(canRender()) GuiUtil.drawMultiLineTitle(graphics,res,this.text, this.subtext,
                 getParameterAs("centered", true, Boolean.class),
                 posX(res.getGuiScaledWidth(),res.getGuiScaledHeight()),
                 posY(res.getGuiScaledWidth()),

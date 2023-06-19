@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -24,14 +24,14 @@ public class NetworkUtil {
     }
 
     public static void writeEntityType(FriendlyByteBuf buf, EntityType<?> type) {
-        ResourceLocation resource = Objects.nonNull(type) ? Registry.ENTITY_TYPE.getKey(type) : null;
+        ResourceLocation resource = Objects.nonNull(type) ? BuiltInRegistries.ENTITY_TYPE.getKey(type) : null;
         buf.writeResourceLocation(Objects.nonNull(resource) ? resource : new ResourceLocation(Constants.MODID,"missing"));
     }
 
     public static Optional<EntityType<?>> readEntityType(FriendlyByteBuf buf) {
         ResourceLocation location = buf.readResourceLocation();
         return location.getPath().matches("missing") ? Optional.empty() :
-                Optional.of(Registry.ENTITY_TYPE.get(location));
+                Optional.of(BuiltInRegistries.ENTITY_TYPE.get(location));
     }
 
     public static <V> void writeGenericList(FriendlyByteBuf buf, List<V> list, BiConsumer<FriendlyByteBuf, V> valFunc) {

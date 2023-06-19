@@ -1,6 +1,7 @@
 //file:noinspection GroovyAssignabilityCheck
+//file:noinspection GroovyAccessibility
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.2.+'
 }
 version = "${project.minecraft_version}-fabric-${project.mod_version}"
 group = project.maven_group
@@ -25,10 +26,13 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    /*
     mappings loom.layered() {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
     }
+    */
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
@@ -42,12 +46,17 @@ processResources {
     inputs.property "version", project.version
     filesMatching("fabric.mod.json") {
         expand "version": project.version
+        //expand "access": project.access
     }
     //exclude '**/theimpossiblelibrary/test/**'
 }
 
 java {
     withSourcesJar()
+}
+
+loom {
+    //accessWidenerPath = file("src/main/resources/${project.access}")
 }
 
 jar {

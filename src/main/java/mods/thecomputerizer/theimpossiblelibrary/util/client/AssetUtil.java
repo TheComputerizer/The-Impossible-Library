@@ -11,8 +11,8 @@ public class AssetUtil {
     }
 
     public static TranslatableContents genericLang(String modid, String category, String thing, boolean name) {
-        if(name) return new TranslatableContents(category+"."+modid+"."+thing+".name");
-        return new TranslatableContents(category+"."+modid+"."+thing);
+        if(name) return new TranslatableContents(category+"."+modid+"."+thing+".name","unknown_key",new Object[]{});
+        return new TranslatableContents(category+"."+modid+"."+thing,"unknown_key",new Object[]{});
     }
 
     public static TranslatableContents extraLang(String modid, String category, String thing, String addition) {
@@ -21,8 +21,8 @@ public class AssetUtil {
 
     public static TranslatableContents extraLang(String modid, String category, String thing, String addition, boolean name) {
 
-        if(name) return new TranslatableContents(category+"."+modid+"."+thing+"."+addition+".name");
-        return new TranslatableContents(category+"."+modid+"."+thing+"."+addition);
+        if(name) return new TranslatableContents(category+"."+modid+"."+thing+"."+addition+".name","unknown_key",new Object[]{});
+        return new TranslatableContents(category+"."+modid+"."+thing+"."+addition,"unknown_key",new Object[]{});
     }
 
     public static TranslatableContents customLang(String key) {
@@ -30,8 +30,8 @@ public class AssetUtil {
     }
 
     public static TranslatableContents customLang(String key, boolean name) {
-        if(name) return new TranslatableContents(key+".name");
-        return new TranslatableContents(key);
+        if(name) return new TranslatableContents(key+".name","unknown_key",new Object[]{});
+        return new TranslatableContents(key,"unknown_key",new Object[]{});
     }
 
     /**
@@ -40,9 +40,9 @@ public class AssetUtil {
      */
     public static TranslatableContents customLangWithFallBack(String key, String fallbackKey, boolean name, boolean fallbackName) {
         if(name) key+=".name";
-        if(Language.getInstance().has(key)) return new TranslatableContents(key);
+        if(Language.getInstance().has(key)) return new TranslatableContents(key,"unknown_key",new Object[]{});
         if(fallbackName) fallbackKey+=".name";
-        if(Language.getInstance().has(fallbackKey)) return new TranslatableContents(fallbackKey);
+        if(Language.getInstance().has(fallbackKey)) return new TranslatableContents(fallbackKey,"unknown_fallback_key",new Object[]{});
         return null;
     }
 

@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
 import java.util.Map;
@@ -129,5 +129,5 @@ public abstract class Renderable {
         this.maxFadeOut = 0;
     }
 
-    abstract void render(PoseStack matrix, Window res);
+    abstract void render(GuiGraphics graphics, Window res);
 }

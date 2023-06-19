@@ -82,7 +82,7 @@ public class TomlUtil {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"boolean");
         }
-        return Boolean.parseBoolean(toml.getString(key, def + ""));
+        return Boolean.parseBoolean(toml.getString(key, String.valueOf(def)));
     }
 
     public static int readIfExists(Toml toml, String key, int def) {
@@ -92,7 +92,7 @@ public class TomlUtil {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"long");
         }
-        return Integer.parseInt(toml.getString(key, def + ""));
+        return Integer.parseInt(toml.getString(key, String.valueOf(def)));
     }
 
     public static long readIfExists(Toml toml, String key, long def) {
@@ -102,7 +102,7 @@ public class TomlUtil {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"long");
         }
-        return Long.parseLong(toml.getString(key, def + ""));
+        return Long.parseLong(toml.getString(key, String.valueOf(def)));
     }
 
     public static float readIfExists(Toml toml, String key, float def) {
@@ -112,7 +112,7 @@ public class TomlUtil {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"float");
         }
-        return Float.parseFloat(toml.getString(key, def + ""));
+        return Float.parseFloat(toml.getString(key, String.valueOf(def)));
     }
 
     public static double readIfExists(Toml toml, String key, double def) {
@@ -122,7 +122,7 @@ public class TomlUtil {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"double");
         }
-        return Double.parseDouble(toml.getString(key, def + ""));
+        return Double.parseDouble(toml.getString(key, String.valueOf(def)));
     }
 
     /**
@@ -132,52 +132,52 @@ public class TomlUtil {
      */
     public static String sneakyInt(Toml toml, String key, int def) {
         try {
-            if(toml.contains(key)) return ""+toml.getLong(key);
+            if(toml.contains(key)) return String.valueOf(toml.getLong(key));
         } catch (ClassCastException ignored) {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"int");
         }
-        return toml.getString(key, def + "");
+        return toml.getString(key, String.valueOf(def));
     }
 
     public static String sneakyLong(Toml toml, String key, long def) {
         try {
-            if(toml.contains(key)) return ""+toml.getLong(key);
+            if(toml.contains(key)) return String.valueOf(toml.getLong(key));
         } catch (ClassCastException ignored) {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"long");
         }
-        return toml.getString(key, def + "");
+        return toml.getString(key, String.valueOf(def));
     }
 
     public static String sneakyFloat(Toml toml, String key, float def) {
         try {
-            if(toml.contains(key)) return ""+toml.getDouble(key);
+            if(toml.contains(key)) return String.valueOf(toml.getDouble(key));
         } catch (ClassCastException ignored) {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"float");
         }
-        return toml.getString(key, def + "");
+        return toml.getString(key, String.valueOf(def));
     }
 
     public static String sneakyDouble(Toml toml, String key, double def) {
         try {
-            if(toml.contains(key)) return ""+toml.getDouble(key);
+            if(toml.contains(key)) return String.valueOf(toml.getDouble(key));
         } catch (ClassCastException ignored) {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"double");
         }
-        return toml.getString(key, def + "");
+        return toml.getString(key, String.valueOf(def));
     }
 
     public static String sneakyBool(Toml toml, String key, boolean def) {
         try {
-            if(toml.contains(key)) return ""+toml.getBoolean(key);
+            if(toml.contains(key)) return String.valueOf(toml.getBoolean(key));
         } catch (ClassCastException ignored) {
             LogUtil.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"boolean");
         }
-        return toml.getString(key, def + "");
+        return toml.getString(key, String.valueOf(def));
     }
 
     /**
@@ -187,13 +187,13 @@ public class TomlUtil {
     public static String sneakyGeneric(Toml toml, String key, Object def) {
         if(toml.contains(key)) {
             try {
-                if (toml.contains(key)) return "" + toml.getLong(key);
+                if (toml.contains(key)) return String.valueOf(toml.getLong(key));
             } catch (ClassCastException ignored) {}
             try {
-                if (toml.contains(key)) return "" + toml.getDouble(key);
+                if (toml.contains(key)) return String.valueOf(toml.getDouble(key));
             } catch (ClassCastException ignored) {}
             try {
-                if (toml.contains(key)) return "" + toml.getBoolean(key);
+                if (toml.contains(key)) return String.valueOf(toml.getBoolean(key));
             } catch (ClassCastException ignored) {}
         }
         return toml.getString(key,Objects.nonNull(def) ? def.toString() : null);
@@ -248,7 +248,7 @@ public class TomlUtil {
 
     /**
      * Reads in a generic list and converts it to a string. This can be used as a quote fallback, but it will need to be
-     * parsed afterwards if string is not the desired return type. Returns the string output of the def value if no list
+     * parsed afterward if string is not the desired return type. Returns the string output of the def value if no list
      * is present.
      */
     public static Collection<String> readListAsString(Toml toml, String key, Collection<?> def) {

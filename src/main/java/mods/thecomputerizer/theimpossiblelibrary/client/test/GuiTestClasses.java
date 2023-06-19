@@ -1,8 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialButton;
 import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialElement;
@@ -10,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
@@ -17,6 +15,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Level;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.Arrays;
 import java.util.List;
@@ -112,13 +112,13 @@ public class GuiTestClasses {
         }
 
         @Override
-        public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
-            this.renderBackground(matrix);
-            drawStuff(matrix, mouseX, mouseY, partialTicks);
-            super.render(matrix, mouseX, mouseY, partialTicks);
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+            this.renderBackground(graphics);
+            drawStuff(graphics, mouseX, mouseY, partialTicks);
+            super.render(graphics, mouseX, mouseY, partialTicks);
         }
 
-        public abstract void drawStuff(PoseStack matrix, int mouseX, int mouseY, float partialTicks);
+        public abstract void drawStuff(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
     }
 
     private static class TestRadialGui extends TestGui {
@@ -144,13 +144,13 @@ public class GuiTestClasses {
 
         @Override
         public boolean mouseClicked(double x, double y, int button) {
-            circleButton.mousePressed((int) x, (int) y, button);
+            this.circleButton.mousePressed((int) x, (int) y, button);
             return true;
         }
 
         @Override
-        public void drawStuff(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
-            circleButton.render(matrix, getBlitOffset(), mouseX, mouseY);
+        public void drawStuff(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+            this.circleButton.render(graphics, mouseX, mouseY);
         }
     }
 
@@ -217,13 +217,13 @@ public class GuiTestClasses {
         }
 
         @Override
-        public void drawStuff(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
+        public void drawStuff(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
             GuiUtil.drawBoxWithOutline(this.center,100, 50, new Vector4f(0,0,0,255),
-                    new Vector4f(255,255,255,255), 1f, this.getBlitOffset());
+                    new Vector4f(255,255,255,255), 1f, 0f);
             GuiUtil.drawColoredRing(this.center,new Vector3f(199,200,0),new Vector4f(255,255,255,255),
-                    360,this.getBlitOffset());
-            GuiUtil.bufferSquareTexture(matrix,this.center,100f, BookEditScreen.BACKGROUND_LOCATION);
-            GuiUtil.drawMultiLineString(matrix,this.font,"Here's the thing. You said a " +
+                    360, 0f);
+            GuiUtil.bufferSquareTexture(graphics,this.center,100f, BookEditScreen.BACKGROUND_LOCATION);
+            GuiUtil.drawMultiLineString(graphics,this.font,"Here's the thing. You said a " +
                             "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                             "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +
                             "crows. If you want to be \"specific\" like you said, then you shouldn't either. They're not the " +
@@ -237,7 +237,7 @@ public class GuiTestClasses {
                             "and other birds crows, too. Which you said you don't. It's okay to just admit you're wrong, you know?",
                     0,this.width/2,0,this.font.lineHeight+2,10,this.scrollPos,GuiUtil.WHITE);
             if(this.copyPastaLines>10) drawScrollBar();
-            this.textBox.render(matrix, mouseX, mouseY, partialTicks);
+            this.textBox.render(graphics, mouseX, mouseY, partialTicks);
         }
 
         private void drawScrollBar() {
@@ -247,7 +247,7 @@ public class GuiTestClasses {
             int x = this.width-1;
             Vector3f start = new Vector3f(x, top,0);
             Vector3f end = new Vector3f(x, Math.min(this.height,top+perIndex),0);
-            GuiUtil.drawLine(start,end,new Vector4f(200,200,255,255), 2f, this.getBlitOffset());
+            GuiUtil.drawLine(start,end,new Vector4f(200,200,255,255), 2f, 0f);
         }
     }
 }

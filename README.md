@@ -1,5 +1,5 @@
 # The-Impossible-Library
-This is the 1.19.2 Fabric branch
+This is the 1.20.1 Fabric branch
 
 This mod was made to offer mod devs methods for doing things that are typically thought of as impossible, hacky, tedious, or maybe even require a 3rd party java library.
 
@@ -41,7 +41,7 @@ dependencies {
   modImplementation 'curse.maven:the-impossible-library-661115:fileID'
 }
 ```
-The file ID for the latest version of `1.19.2-fabric-0.2.2` is `4426369`
+The file ID for the latest version of `1.20.1-fabric-0.2.4` is `4426369`
 
 Alternatively, if you wish to use the modrinth maven, you can do it like this
 ```
@@ -57,7 +57,7 @@ repositories {
 }
 
 dependencies {
-  modImplementation 'maven.modrinth:the-impossible-library:1.19.2-fabric-fileVersion'
+  modImplementation 'maven.modrinth:the-impossible-library:1.20.1-fabric-fileVersion'
 }
 ```
-The where the latest file version is `0.2.2`
+The where the latest file version is `0.2.4`

@@ -1,16 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,31 +41,32 @@ public class RadialButton extends AbstractRadialButton {
         this.hover = superHover && mouseDeg>=angles.x() && mouseDeg<angles.y();
     }
 
-    public void draw(Vector3f center, float zLevel, Vector3f radius, Vector3f angles,
+    public void draw(Vector3f center, Vector3f radius, Vector3f angles,
                      Vector3f mouse, Vector3f relativeCenter, int resolution) {
         this.centerPos = relativeCenter;
         for (int i = 0; i < resolution; i++)
-            drawRadialSection(center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
+            drawRadialSection(center,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
 
-    public void drawCenterIcon(PoseStack matrix, float centerRadius) {
-        if(this.centerIcon!=null) {
+    public void drawCenterIcon(GuiGraphics graphics, float centerRadius) {
+        if(Objects.nonNull(this.centerIcon)) {
             ResourceLocation actualIcon = this.centerIcon;
             float hoverIncrease = 0f;
             if(this.hover) {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
             }
-            GuiUtil.bufferSquareTexture(matrix, this.centerPos, centerRadius+hoverIncrease, actualIcon);
+            GuiUtil.bufferSquareTexture(graphics, this.centerPos, centerRadius+hoverIncrease, actualIcon);
         }
     }
 
-    public void drawText(Screen parent, PoseStack matrix, Vector3f mouse, boolean isCurrent) {
-        if(this.centerText!=null) {
+    public void drawText(Screen parent, GuiGraphics graphics, Vector3f mouse, boolean isCurrent) {
+        Font font = Minecraft.getInstance().font;
+        if(Objects.nonNull(this.centerText)) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(matrix, Minecraft.getInstance().font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
+            graphics.drawCenteredString(font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
         }
-        if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
+        if(this.hover && isCurrent) graphics.renderComponentTooltip(font, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }
 
     public void handleClick(Screen screen) {
