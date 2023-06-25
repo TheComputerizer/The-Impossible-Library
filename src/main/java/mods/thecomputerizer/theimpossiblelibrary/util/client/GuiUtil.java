@@ -330,7 +330,7 @@ public class GuiUtil {
         Utilizes a tuple to set the color for a BufferBuilder
      */
     public static BufferBuilder tupleColor(BufferBuilder builder, Tuple4f colors) {
-        return builder.color(colors.x, colors.y, colors.z, colors.w);
+        return builder.color((int)colors.x, (int)colors.y, (int)colors.z, (int)colors.w);
     }
 
     /**
