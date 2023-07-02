@@ -1,8 +1,9 @@
-//file:noinspection GroovyAssignabilityCheck
+
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1+'
-    id 'com.github.johnrengelman.shadow' version '7.1.+'
+    id 'net.minecraftforge.gradle' version '6.+'
+    id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'wtf.gofancy.fancygradle' version '1.1.+'
+    id 'java'
 }
 
 fancyGradle {
@@ -69,7 +70,7 @@ shadowJar {
     //necessary relocation
     relocate 'com.moandjiezana.toml', "${project.shadow_group}.moandjiezana.toml"
     configurations = [project.configurations.shadow]
-    classifier ''
+    setArchiveClassifier('')
 }
 
 reobf {
@@ -90,7 +91,7 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
-    exclude '**/theimpossiblelibrary/test/**'
+    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
@@ -104,5 +105,6 @@ jar {
     }
 }
 
-jar.finalizedBy('reobfJar')
-tasks.assemble.dependsOn shadowJar
+tasks.assemble.dependsOn('shadowJar')
+tasks.shadowJar.dependsOn('reobfJar')
+tasks.jar.finalizedBy('reobfJar')

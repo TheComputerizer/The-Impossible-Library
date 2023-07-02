@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
+import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,4 +15,8 @@ public class Constants {
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static final Random RANDOM = new Random();
     public static final File DATA_DIRECTORY = new File("./impossible_data");
+
+    public static ResourceLocation res(String path) {
+        return new ResourceLocation(MODID,path);
+    }
 }

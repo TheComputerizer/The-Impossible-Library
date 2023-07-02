@@ -30,8 +30,8 @@ public class ClientTest {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent e) {
         if (TEST_KEYBIND.isKeyDown()) {
-            //renderableTest();
-            guiTest();
+            renderableTest();
+            //guiTest();
             //tomlTest();
         }
     }

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,7 +19,10 @@ import java.util.Map;
 @Mod.EventBusSubscriber(modid = Constants.MODID, value = Side.CLIENT)
 public class Renderer {
 
-    private static final ArrayList<Renderable> renderables = new ArrayList<>();
+    private static final ArrayList<Renderable> RENDERABLES = new ArrayList<>();
+
+    public static final ResourceLocation ANIMATION_MAP_LOCATION = Constants.res("textures/atlas/animations.png");
+    private static TextureMap animationSprites;
 
     public static PNG initializePng(ResourceLocation location, Map<String, Object> parameters) {
         try {
@@ -30,24 +34,24 @@ public class Renderer {
     }
 
     public static void addRenderable(Renderable renderable) {
-        renderables.add(renderable);
+        RENDERABLES.add(renderable);
         renderable.initializeTimers();
     }
 
     public static void removeRenderable(Renderable renderable) {
-        renderables.remove(renderable);
+        RENDERABLES.remove(renderable);
     }
 
     @SubscribeEvent
     public static void tickRenderables(TickEvent.ClientTickEvent ev) {
         if(ev.phase == TickEvent.Phase.END)
-            renderables.removeIf(renderable -> !renderable.tick());
+            RENDERABLES.removeIf(renderable -> !renderable.tick());
     }
 
     @SubscribeEvent
     public static void renderAllBackgroundStuff(RenderGameOverlayEvent.Post e) {
         if(e.getType()==RenderGameOverlayEvent.ElementType.ALL)
-            for(Renderable type : renderables)
+            for(Renderable type : RENDERABLES)
                 type.render(e.getResolution());
     }
 }

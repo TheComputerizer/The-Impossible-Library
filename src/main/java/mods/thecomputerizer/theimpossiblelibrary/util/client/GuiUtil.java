@@ -139,50 +139,23 @@ public class GuiUtil {
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
-        List<String> lines = new ArrayList<>();
-        String[] words = original.split(" ");
-        StringBuilder builder = new StringBuilder();
-        int lineWidth = 0;
-        int linePos = 0;
-        int lineCounter = 0;
-        for(String word : words) {
-            if (lineWidth == 0) {
-                builder.append(word);
-                lineWidth += font.getStringWidth(word);
-            } else {
-                String withSpace = " " + word;
-                int textWidth = font.getStringWidth(withSpace);
-                if ((left + lineWidth + textWidth) < right) {
-                    builder.append(withSpace);
-                    lineWidth += textWidth;
-                } else {
-                    if (linePos < pos) linePos++;
-                    else {
-                        lines.add(builder.toString());
-                        lineCounter++;
-                        if (lineCounter >= lineNums) {
-                            builder = new StringBuilder();
-                            break;
-                        }
-                    }
-                    builder = new StringBuilder();
-                    builder.append(word);
-                    lineWidth = font.getStringWidth(word);
-                }
+        int index = 0;
+        for(String line : splitLines(font, original, left, right)) {
+            if(index>=pos) {
+                font.drawStringWithShadow(line, left, top, color);
+                top += spacing;
+                lineNums--;
+                if (lineNums <= 0) break;
             }
-        }
-        if(builder.length()>0) lines.add(builder.toString());
-        for(String line : lines) {
-            font.drawStringWithShadow(line,left,top,color);
-            top+=spacing;
+            index++;
         }
         return top;
     }
 
     /**
-        Returns the total number of lines a string would be if it was split
+     * Splits a string into an array of lines
      */
-    public static int howManyLinesWillThisBe(FontRenderer font, String original, int left, int right, int top, int spacing) {
+    public static List<String> splitLines(FontRenderer font, String original, int left, int right) {
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
@@ -209,7 +182,14 @@ public class GuiUtil {
             lineCounter++;
         }
         lines.add(builder.toString());
-        return lines.size();
+        return lines;
+    }
+
+    /**
+        Returns the total number of lines a string would be if it was split
+     */
+    public static int howManyLinesWillThisBe(FontRenderer font, String original, int left, int right) {
+        return splitLines(font, original, left, right).size();
     }
 
     /**
