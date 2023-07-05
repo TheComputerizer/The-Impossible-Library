@@ -128,5 +128,5 @@ public abstract class Renderable {
         this.maxFadeOut = 0;
     }
 
-    abstract void render(ScaledResolution res);
+    abstract void render(ScaledResolution res, float partialTick);
 }

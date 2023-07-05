@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,12 +20,11 @@ public class Renderer {
 
     private static final ArrayList<Renderable> RENDERABLES = new ArrayList<>();
 
-    public static final ResourceLocation ANIMATION_MAP_LOCATION = Constants.res("textures/atlas/animations.png");
-    private static TextureMap animationSprites;
 
     public static PNG initializePng(ResourceLocation location, Map<String, Object> parameters) {
         try {
-            return new PNG(location, parameters);
+            boolean isAnimated = parameters.containsKey("animated") && Boolean.parseBoolean(parameters.get("animated").toString());
+            return isAnimated ? new SpriteSheet(location, parameters) : new PNG(location, parameters);
         } catch (IOException ex) {
             LogUtil.logInternal(Level.ERROR,"Failed to initialize png at resource location {}",location,ex);
         }
@@ -52,6 +50,6 @@ public class Renderer {
     public static void renderAllBackgroundStuff(RenderGameOverlayEvent.Post e) {
         if(e.getType()==RenderGameOverlayEvent.ElementType.ALL)
             for(Renderable type : RENDERABLES)
-                type.render(e.getResolution());
+                type.render(e.getResolution(), e.getPartialTicks());
     }
 }

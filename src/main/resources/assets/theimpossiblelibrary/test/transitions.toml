@@ -4,4 +4,6 @@
     scale_x = 4
 
 [image]
-    name = "test/dimensional_singularity.png"
+    name = "test/final_singularity.png"
+    animated = true
+    fps = 20

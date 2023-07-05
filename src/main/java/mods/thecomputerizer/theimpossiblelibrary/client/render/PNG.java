@@ -19,28 +19,35 @@ public class PNG extends Renderable {
      */
     public PNG(ResourceLocation location, Map<String, Object> parameters) throws IOException {
         super(parameters);
-        if(!location.getPath().contains(".png")) throw new IOException("Tried to initialize a non png file to a png " +
+        if(!location.getPath().endsWith(".png")) throw new IOException("Tried to initialize a non png file to a png " +
                 "object! Make sure that you have the correct file extension on your resource location. ["+location+"]");
         this.source = location;
     }
 
+    protected void preRender() {
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableAlpha();
+        GlStateManager.color(1f, 1f, 1f, getOpacity());
+    }
+
     @Override
-    public void render(ScaledResolution res) {
+    public void render(ScaledResolution res, float partialTick) {
         if(canRender()) {
+            preRender();
             int resX = res.getScaledWidth();
             int resY = res.getScaledHeight();
-            GlStateManager.pushMatrix();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            GlStateManager.disableAlpha();
-            GlStateManager.color(1f, 1f, 1f, getOpacity());
             Minecraft.getMinecraft().getTextureManager().bindTexture(this.source);
             GlStateManager.scale(scaleX(resX,resY), scaleY(), 1f);
             int x = posX(resX,resY);
             int y = posY(resY);
             GuiScreen.drawModalRectWithCustomSizedTexture(x,y,resX,resY,resX,resY,resX,resY);
-            GlStateManager.color(1F, 1F, 1F, 1);
-            GlStateManager.popMatrix();
+            postRender();
         }
+    }
+
+    protected void postRender() {
+        GlStateManager.popMatrix();
     }
 }

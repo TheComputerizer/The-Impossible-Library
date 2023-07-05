@@ -16,7 +16,7 @@ public class TheImpossibleLibrary {
      * This has to be set before the FMLPreInitializationEvent phase!
      */
     public static boolean CLIENT_ONLY = false;
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
 
     public TheImpossibleLibrary() {
         DataUtil.initGlobal();

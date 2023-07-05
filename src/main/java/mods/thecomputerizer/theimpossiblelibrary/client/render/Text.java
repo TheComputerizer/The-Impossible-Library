@@ -50,7 +50,7 @@ public class Text extends Renderable {
     }
 
     @Override
-    public void render(ScaledResolution res) {
+    public void render(ScaledResolution res, float partialTick) {
         if(canRender()) GuiUtil.drawMultiLineTitle(res,this.text, this.subtext,
                 getParameterAs("centered", true, Boolean.class),
                 posX(res.getScaledWidth(),res.getScaledHeight()),
