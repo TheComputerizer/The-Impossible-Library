@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
@@ -59,10 +60,14 @@ public class LogUtil {
     }
 
     public static String injectParameters(String message, Object ... parameters) {
+        if(Objects.isNull(message)) return "null";
         int index = 0;
         while(message.contains("{}")) {
             String replacement = "";
-            if(index<parameters.length) replacement = parameters[index].toString();
+            if(index<parameters.length) {
+                Object parameter = parameters[index];
+                replacement = Objects.nonNull(parameter) ? parameter.toString() : "null";
+            }
             message = message.replaceFirst("\\{}",replacement);
             index++;
         }
@@ -116,8 +121,9 @@ public class LogUtil {
         }
 
         private String formattedLogLevel(Level level) {
+            String name = Objects.nonNull(level) ? level.name() : "NULL";
             return injectParameters("[{}/{}]",this.logName,
-                    level.name().length()<5 ? level.name()+" " : level.name());
+                    name.length()<5 ? name+" " : name);
         }
 
         private String finalizeMessage(Level level, String constructedMessage) {
