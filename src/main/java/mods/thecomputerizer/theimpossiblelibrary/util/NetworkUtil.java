@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
+import com.ibm.icu.text.CharsetDetector;
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +14,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 public class NetworkUtil {
 
+    private static final CharsetDetector CHARSET_HANDLER = new CharsetDetector();
+
     public static void writeString(ByteBuf buf, String string) {
+        string = CHARSET_HANDLER.getString(string.getBytes(),"UTF-8");
         buf.writeInt(string.length());
         buf.writeCharSequence(string, StandardCharsets.UTF_8);
     }
@@ -24,9 +28,7 @@ public class NetworkUtil {
     }
 
     public static void writeResourceLocation(ByteBuf buf, ResourceLocation source) {
-        String asString = source.toString();
-        buf.writeInt(asString.length());
-        buf.writeCharSequence(asString, StandardCharsets.UTF_8);
+        writeString(buf,source.toString());
     }
 
     public static ResourceLocation readResourceLocation(ByteBuf buf) {
