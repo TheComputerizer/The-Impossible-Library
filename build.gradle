@@ -19,14 +19,14 @@ version = "${project.minecraft_version}-${project.mod_version}"
 group = project.maven_group
 archivesBaseName = project.base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
 
 minecraft {
-    mappings channel: 'stable', version: project.mappings_version
+    mappings channel: 'stable', version: mappings_version
     accessTransformer = file('src/main/resources/META-INF/theimpossiblelibrary_at.cfg')
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
         }
@@ -68,7 +68,7 @@ dependencies {
 
 shadowJar {
     //necessary relocation
-    relocate 'com.moandjiezana.toml', "${project.shadow_group}.moandjiezana.toml"
+    relocate 'com.moandjiezana.toml', "${shadow_group}.moandjiezana.toml"
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
 }
@@ -83,10 +83,10 @@ reobf {
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft_version
+    inputs.property 'mcversion', minecraft_version
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version': project.version, 'mcversion': project.minecraft_version
+        expand 'version': project.version, 'mcversion': minecraft_version
     }
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
