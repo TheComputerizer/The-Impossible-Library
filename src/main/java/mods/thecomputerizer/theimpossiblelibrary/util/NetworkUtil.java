@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
-import com.ibm.icu.text.CharsetDetector;
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import net.minecraft.util.ResourceLocation;
@@ -8,16 +7,19 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 public class NetworkUtil {
 
-    private static final CharsetDetector CHARSET_HANDLER = new CharsetDetector();
 
     public static void writeString(ByteBuf buf, String string) {
-        string = CHARSET_HANDLER.getString(string.getBytes(),"UTF-8");
+        if(Objects.nonNull(string) && !string.isEmpty()) {
+            ByteBuffer buffer = StandardCharsets.UTF_8.encode(string);
+            string = StandardCharsets.UTF_8.decode(buffer).toString();
+        }
         buf.writeInt(string.length());
         buf.writeCharSequence(string, StandardCharsets.UTF_8);
     }
@@ -32,8 +34,7 @@ public class NetworkUtil {
     }
 
     public static ResourceLocation readResourceLocation(ByteBuf buf) {
-        int strLength = buf.readInt();
-        return new ResourceLocation((String)buf.readCharSequence(strLength, StandardCharsets.UTF_8));
+        return new ResourceLocation(readString(buf));
     }
 
     public static void writeEntityType(ByteBuf buf, EntityEntry type) {
@@ -93,9 +94,7 @@ public class NetworkUtil {
         else {
             writeString(buf,val.getClass().getName());
             if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
-            else {
-                writeString(buf,val.toString());
-            }
+            else writeString(buf,val.toString());
         }
     }
 
