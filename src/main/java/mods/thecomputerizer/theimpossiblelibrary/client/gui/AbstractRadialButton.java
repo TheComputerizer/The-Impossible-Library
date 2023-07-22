@@ -12,7 +12,7 @@ import net.minecraft.util.math.vector.Vector4f;
 public abstract class AbstractRadialButton extends AbstractGui {
 
     protected final Vector4f colors;
-    protected Vector2f centerPos;
+    private Vector2f centerPos;
     protected boolean hover;
 
     protected AbstractRadialButton(Vector4f colors) {
@@ -29,6 +29,14 @@ public abstract class AbstractRadialButton extends AbstractGui {
         return this.centerPos;
     }
 
+    protected void setCenterPos(float x, float y) {
+        this.centerPos = new Vector2f(x,y);
+    }
+
+    protected void setCenterPos(Vector2f newCenter) {
+        this.centerPos = newCenter;
+    }
+
     protected void drawRadialSection(Vector2f center, float zLevel, Vector2f radius, float startAngle,
                                    float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
@@ -42,6 +50,6 @@ public abstract class AbstractRadialButton extends AbstractGui {
     }
 
     protected void playPressSound(SoundHandler handler) {
-        handler.play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        handler.play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
     }
 }

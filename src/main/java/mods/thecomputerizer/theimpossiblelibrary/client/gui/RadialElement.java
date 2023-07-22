@@ -68,8 +68,8 @@ public class RadialElement extends AbstractGui {
     }
 
     protected boolean calculateCenterHover(double mouseRelativeRadius) {
-        if(this.centerIcon!=null) return mouseRelativeRadius<=this.iconRadius;
-        else if(this.centerProgress!=null) return this.centerProgress.getHover();
+        if(Objects.nonNull(this.centerIcon)) return mouseRelativeRadius<=this.iconRadius;
+        else if(Objects.nonNull(this.centerProgress)) return this.centerProgress.getHover();
         return MathUtil.isInCircle(this.center, mouseRelativeRadius, this.radius.x);
     }
 
@@ -77,8 +77,8 @@ public class RadialElement extends AbstractGui {
         Remember to call this method from your GUI class if you want to be able to click on the buttons here
      */
     public void mousePressed(int mouseX, int mouseY, int mouseButton) {
-        if(mouseButton==0 && this.parentScreen!=null) {
-            if(this.centerProgress!=null) this.centerProgress.handleClick(this.parentScreen,new Vector2f(mouseX,mouseY));
+        if(mouseButton==0 && Objects.nonNull(this.parentScreen)) {
+            if(Objects.nonNull(this.centerProgress)) this.centerProgress.handleClick(this.parentScreen,new Vector2f(mouseX,mouseY));
             for (RadialButton button : this.buttons)
                 button.handleClick(this.parentScreen);
         }
@@ -89,7 +89,7 @@ public class RadialElement extends AbstractGui {
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.color4f(1f,1f,1f,1f);
         Vector2f mouse = new Vector2f(mouseX,mouseY);
         double mouseAngleDeg = MathUtil.getAngle(mouse, this.center);
         double mouseRelativeRadius = MathUtil.distance(mouse, this.center);
@@ -135,7 +135,7 @@ public class RadialElement extends AbstractGui {
     private void drawIcons(MatrixStack matrix, Vector2f center, Vector2f radius, boolean hasOneButton) {
         RenderSystem.enableTexture();
         RenderSystem.enableAlphaTest();
-        if(this.centerIcon!=null) {
+        if(Objects.nonNull(this.centerIcon)) {
             ResourceLocation actualIcon = this.centerIcon;
             int hoverIncrease = 0;
             if(this.centerHover) {
@@ -150,7 +150,7 @@ public class RadialElement extends AbstractGui {
     }
 
     private void drawCenterProgress(Vector2f center, float offset, boolean currentScreen) {
-        if(this.centerProgress!=null) {
+        if(Objects.nonNull(this.centerProgress)) {
             if(currentScreen) this.centerProgress.setHover(this.centerHover);
             else this.centerProgress.setHover(false);
             this.centerProgress.draw(this.center,offset);
@@ -158,15 +158,15 @@ public class RadialElement extends AbstractGui {
     }
 
     private void drawText(MatrixStack matrix, Vector2f mouse, double mouseRelativeRadius, boolean isCurrent) {
-        if(this.parentScreen!=null) {
-            if (this.centerText != null) {
+        if(Objects.nonNull(this.parentScreen)) {
+            if(Objects.nonNull(this.centerText)) {
                 int color = this.centerHover ? 16777120 : 14737632;
-                drawCenteredString(matrix, Minecraft.getInstance().font, this.centerText,(int) this.center.x,
-                        (int) this.center.y, color);
+                drawCenteredString(matrix, Minecraft.getInstance().font,this.centerText,(int)this.center.x,
+                        (int)this.center.y,color);
             }
-            for (RadialButton button : this.buttons) button.drawText(this.parentScreen, matrix, mouse, isCurrent);
-            if (this.centerHover && isCurrent)
-                this.parentScreen.renderComponentTooltip(matrix, this.centerTooltips, (int) mouse.x, (int) mouse.y);
+            for(RadialButton button : this.buttons) button.drawText(this.parentScreen,matrix,mouse,isCurrent);
+            if(this.centerHover && isCurrent)
+                this.parentScreen.renderComponentTooltip(matrix,this.centerTooltips,(int)mouse.x,(int)mouse.y);
         }
     }
 

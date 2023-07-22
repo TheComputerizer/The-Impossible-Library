@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -14,6 +15,10 @@ import java.util.function.Function;
 public class NetworkUtil {
 
     public static void writeString(PacketBuffer buf, String string) {
+        if(Objects.nonNull(string) && !string.isEmpty()) {
+            ByteBuffer buffer = StandardCharsets.UTF_8.encode(string);
+            string = StandardCharsets.UTF_8.decode(buffer).toString();
+        }
         buf.writeInt(string.length());
         buf.writeCharSequence(string, StandardCharsets.UTF_8);
     }
@@ -80,9 +85,7 @@ public class NetworkUtil {
         else {
             writeString(buf,val.getClass().getName());
             if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
-            else {
-                writeString(buf,val.toString());
-            }
+            else writeString(buf,val.toString());
         }
     }
 

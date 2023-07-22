@@ -1,31 +1,31 @@
 modLoader="javafml"
 loaderVersion="[36,)"
-license="All Rights Reserved"
+license="MIT"
 showAsResourcePack=false
 
 [[mods]]
-modId="theimpossiblelibrary"
-version="${version}"
-displayName="The Impossible Library"
-updateJSONURL=""
-displayURL="https://www.curseforge.com/minecraft/mc-mods/the-impossible-library"
-logoFile="logo"
-credits="The_Computerizer"
-authors="The_Computerizer"
-description='''
-      Makes the impossible possible in Minecraft
-      '''
+    modId="theimpossiblelibrary"
+    version="${version}"
+    displayName="The Impossible Library"
+    updateJSONURL=""
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/the-impossible-library"
+    logoFile="logo"
+    credits="The_Computerizer"
+    authors="The_Computerizer"
+    description='''
+        Makes the impossible possible in Minecraft
+        '''
 
-[[dependencies.theimpossiblelibrary]]
-modId="forge"
-mandatory=true
-versionRange="[36,)"
-ordering="NONE"
-side="BOTH"
+    [[dependencies.theimpossiblelibrary]]
+        modId="forge"
+        mandatory=true
+        versionRange="[36,)"
+        ordering="NONE"
+        side="BOTH"
 
-[[dependencies.theimpossiblelibrary]]
-modId="minecraft"
-mandatory=true
-versionRange="[1.16.5,1.17)"
-ordering="NONE"
-side="BOTH"
+    [[dependencies.theimpossiblelibrary]]
+        modId="minecraft"
+        mandatory=true
+        versionRange="[1.16.5]"
+        ordering="NONE"
+        side="BOTH"

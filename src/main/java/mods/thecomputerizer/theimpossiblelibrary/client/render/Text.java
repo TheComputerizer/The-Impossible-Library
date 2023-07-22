@@ -51,16 +51,20 @@ public class Text extends Renderable {
     }
 
     @Override
-    public void render(MatrixStack matrix, MainWindow res) {
-        if(canRender()) GuiUtil.drawMultiLineTitle(matrix,res,this.text, this.subtext,
-                getParameterAs("centered", true, Boolean.class),
-                posX(res.getGuiScaledWidth(),res.getGuiScaledHeight()),
-                posY(res.getGuiScaledWidth()),
-                getParameterAs("scale_x", 1f, Float.class)*5f,
-                getParameterAs("scale_y", 1f, Float.class)*5f,
-                getParameterAs("subtitle_scale", 0.75f, Float.class),
-                getParameterAs("title_color", "red", String.class),
-                getParameterAs("subtitle_color", "white", String.class),getOpacity(),getOpacity(),
-                Minecraft.getInstance().font.lineHeight+Minecraft.getInstance().font.lineHeight/2);
+    public void render(MatrixStack matrix, MainWindow res, float partialTick) {
+        if(canRender()) {
+            float opacity = getOpacity();
+            //Constants.LOGGER.error("TEXT OPACITY IS {}",opacity);
+            GuiUtil.drawMultiLineTitle(matrix,res,this.text, this.subtext,
+                    getParameterAs("centered", true, Boolean.class),
+                    posX(res.getGuiScaledWidth(),res.getGuiScaledHeight()),
+                    posY(res.getGuiScaledWidth()),
+                    getParameterAs("scale_x", 1f, Float.class)*5f,
+                    getParameterAs("scale_y", 1f, Float.class)*5f,
+                    getParameterAs("subtitle_scale", 0.75f, Float.class),
+                    getParameterAs("title_color", "red", String.class),
+                    getParameterAs("subtitle_color", "white", String.class),opacity,opacity,
+                    Minecraft.getInstance().font.lineHeight+Minecraft.getInstance().font.lineHeight/2);
+        }
     }
 }

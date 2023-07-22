@@ -1,5 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
+import mods.thecomputerizer.theimpossiblelibrary.Constants;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +25,7 @@ public class GenericUtils {
     }
 
     /**
-     * By this only handles primitive types for the most part, so it may be better to just do whatever you want manually
+     * This only handles primitive types for the most part, so it may be better to just do whatever you want manually
      */
     public static Object parseGenericType(String val, Class<?> valType) {
         Object ret;
@@ -33,5 +39,53 @@ public class GenericUtils {
         else ret = valType.isAssignableFrom(Boolean.class) ? Boolean.parseBoolean(val) :
                 valType.isAssignableFrom(Date.class) ? Date.parse(val) : val;
         return ret;
+    }
+
+    /**
+     * Assumes the value is stored as a string
+     */
+    public static Object parseGenericFromTag(CompoundNBT tag) {
+        String className = tag.getString("type");
+        if(className.isEmpty()) return null;
+        try {
+            Class<?> valType = Class.forName(className);
+            if(List.class.isAssignableFrom(valType)) return readFromList(tag.get("value"));
+            String storedVal = tag.getString("value");
+            if(storedVal.isEmpty()) return null;
+            return parseGenericType(storedVal,valType);
+        } catch (ClassNotFoundException ex) {
+            Constants.LOGGER.error("Could not find class name {} when parsing a generic object from NBT!",className,ex);
+        }
+        return null;
+    }
+
+    private static List<?> readFromList(INBT base) {
+        if(!(base instanceof ListNBT)) return null;
+        List<Object> ret = new ArrayList<>();
+        ListNBT list = (ListNBT)base;
+        for(INBT test : list) {
+            if(!(test instanceof CompoundNBT)) return null;
+            CompoundNBT tag = (CompoundNBT)test;
+            ret.add(parseGenericFromTag((CompoundNBT)test));
+        }
+        return ret;
+    }
+
+    public static void writeGenericToTag(CompoundNBT tag, Object obj) {
+        tag.putString("type",obj.getClass().getName());
+        if(obj instanceof List<?>) tag.put("value",writeList(obj));
+        else tag.putString("value",obj.toString());
+    }
+
+    private static ListNBT writeList(Object obj) {
+        ListNBT list = new ListNBT();
+        List<?> val = (List<?>)obj;
+        for(Object element : val) {
+            CompoundNBT tag = new CompoundNBT();
+            tag.putString("type",element.getClass().getName());
+            if(element instanceof List<?>) tag.put("value",writeList(element));
+            else tag.putString("value",element.toString());
+        }
+        return list;
     }
 }

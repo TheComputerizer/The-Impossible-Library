@@ -37,7 +37,7 @@ public class RadialProgressBar extends AbstractRadialButton {
         This can be used within the handler function
      */
     public float mousePosToProgress(Vector2f mousePos) {
-        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y - this.centerPos.y, mousePos.x - this.centerPos.x));
+        float mouseAngleDeg = (float)Math.toDegrees(Math.atan2(mousePos.y-getCenterPos().y,mousePos.x-getCenterPos().x));
         if(mouseAngleDeg<0) mouseAngleDeg = 360f+mouseAngleDeg;
         return mouseAngleDeg/360f;
     }
@@ -57,7 +57,7 @@ public class RadialProgressBar extends AbstractRadialButton {
         Use this if the radial progress bar is standalone
      */
     public void setHover(Vector2f relativeCenter, double mouseDistance) {
-        this.hover = MathUtil.isInCircle(relativeCenter, mouseDistance, this.radii);
+        this.hover = MathUtil.isInCircle(relativeCenter,mouseDistance,this.radii);
     }
 
     /**
@@ -65,18 +65,18 @@ public class RadialProgressBar extends AbstractRadialButton {
      */
     public void draw(Vector2f relativeCenter, float zLevel) {
         if(this.progress>0) {
-            this.centerPos = relativeCenter;
+            setCenterPos(relativeCenter);
             Vector2f angles = MathUtil.toRadians(MathUtil.progressAngles(this.progress));
-            int adjustedRes = (int) (((float)this.resolution)*this.progress);
+            int adjustedRes = (int)(((float)this.resolution)*this.progress);
             for (int i = 0; i < this.resolution; i++)
-                drawRadialSection(relativeCenter, zLevel, this.radii, angles.x, angles.y - angles.x, i, this.resolution);
+                drawRadialSection(relativeCenter,zLevel,this.radii,angles.x,angles.y-angles.x,i,this.resolution);
         }
     }
 
     public void handleClick(Screen screen, Vector2f mousePos) {
         if(this.hover) {
             playPressSound(screen.getMinecraft().getSoundManager());
-            this.handlerFunction.accept(screen, this, mousePos);
+            this.handlerFunction.accept(screen,this, mousePos);
         }
     }
 }

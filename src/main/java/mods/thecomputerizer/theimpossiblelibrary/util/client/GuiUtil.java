@@ -141,50 +141,23 @@ public class GuiUtil {
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
-        List<String> lines = new ArrayList<>();
-        String[] words = original.split(" ");
-        StringBuilder builder = new StringBuilder();
-        int lineWidth = 0;
-        int linePos = 0;
-        int lineCounter = 0;
-        for(String word : words) {
-            if (lineWidth == 0) {
-                builder.append(word);
-                lineWidth += font.width(word);
-            } else {
-                String withSpace = " " + word;
-                int textWidth = font.width(withSpace);
-                if ((left + lineWidth + textWidth) < right) {
-                    builder.append(withSpace);
-                    lineWidth += textWidth;
-                } else {
-                    if (linePos < pos) linePos++;
-                    else {
-                        lines.add(builder.toString());
-                        lineCounter++;
-                        if (lineCounter >= lineNums) {
-                            builder = new StringBuilder();
-                            break;
-                        }
-                    }
-                    builder = new StringBuilder();
-                    builder.append(word);
-                    lineWidth = font.width(word);
-                }
+        int index = 0;
+        for(String line : splitLines(font, original, left, right)) {
+            if(index>=pos) {
+                font.drawShadow(matrix,line,left,top,color);
+                top += spacing;
+                lineNums--;
+                if (lineNums <= 0) break;
             }
-        }
-        if(builder.length()>0) lines.add(builder.toString());
-        for(String line : lines) {
-            font.drawShadow(matrix,line,left,top,color);
-            top+=spacing;
+            index++;
         }
         return top;
     }
 
     /**
-     Returns the total number of lines a string would be if it was split
+     * Splits a string into a list of lines
      */
-    public static int howManyLinesWillThisBe(FontRenderer font, String original, int left, int right, int top, int spacing) {
+    public static List<String> splitLines(FontRenderer font, String original, int left, int right) {
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
@@ -211,7 +184,14 @@ public class GuiUtil {
             lineCounter++;
         }
         lines.add(builder.toString());
-        return lines.size();
+        return lines;
+    }
+
+    /**
+     Returns the total number of lines a string would be if it was split
+     */
+    public static int howManyLinesWillThisBe(FontRenderer font, String original, int left, int right) {
+        return splitLines(font, original, left, right).size();
     }
 
     /**
@@ -264,8 +244,8 @@ public class GuiUtil {
         for(String line : textLines) {
             if(centeredText)
                 font.drawShadow(matrix,line,(x/scaleX)-((float)font.width(line))/2,
-                        (float)y/scaleY, convertTextFormatting(textFormat,(int)(255f*opacity)));
-            else font.drawShadow(matrix,line,x/scaleX,y/scaleY,convertTextFormatting(textFormat,(int)(255f*opacity)));
+                        (float)y/scaleY,FontUtil.convertTextFormatting(textFormat,(int)(255f*opacity)));
+            else font.drawShadow(matrix,line,x/scaleX,y/scaleY,FontUtil.convertTextFormatting(textFormat,(int)(255f*opacity)));
             y+=lineSpacing*5;
         }
         matrix.popPose();
@@ -302,8 +282,8 @@ public class GuiUtil {
         for(String line : subLines) {
             if(centeredText)
                 font.drawShadow(matrix,line,(x/subScaleX)-((float)font.width(line))/2,
-                        (float)y/subScaleY, convertTextFormatting(subFormat,(int)(255f*subOpacity)));
-            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY,convertTextFormatting(subFormat,(int)(255f*subOpacity)));
+                        (float)y/subScaleY,FontUtil.convertTextFormatting(subFormat,(int)(255f*subOpacity)));
+            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY,FontUtil.convertTextFormatting(subFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
         matrix.popPose();
@@ -339,10 +319,10 @@ public class GuiUtil {
         Utilizes a vector to set the color the GLStateManager
      */
     public static void vectorColor(Vector4f colors) {
-        float r = colors.x() /255f;
-        float g = colors.y() /255f;
-        float b = colors.z() /255f;
-        float a = colors.w() /255f;
+        float r = colors.x()/255f;
+        float g = colors.y()/255f;
+        float b = colors.z()/255f;
+        float a = colors.w()/255f;
         RenderSystem.color4f(r, g, b, a);
     }
 
@@ -366,30 +346,5 @@ public class GuiUtil {
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
-    }
-
-    /**
-     Converts a TextFormatting object into a single color integer with an optional alpha value
-     */
-    public static int convertTextFormatting(TextFormatting format, int a) {
-        int r,b,g;
-        switch (format) {
-            case DARK_RED: return makeRGBAInt(170,0,0,a);
-            case RED: return makeRGBAInt(255,85,85,a);
-            case GOLD: return makeRGBAInt(255,170,0,a);
-            case YELLOW: return makeRGBAInt(255,255,85,a);
-            case DARK_GREEN: return makeRGBAInt(0,170,0,a);
-            case GREEN: return makeRGBAInt(85,255,85,a);
-            case AQUA: return makeRGBAInt(85,255,255,a);
-            case DARK_AQUA: return makeRGBAInt(0,170,170,a);
-            case DARK_BLUE: return makeRGBAInt(0,0,170,a);
-            case BLUE: return makeRGBAInt(85,85,255,a);
-            case LIGHT_PURPLE: return makeRGBAInt(255,85,255,a);
-            case DARK_PURPLE: return makeRGBAInt(170,0,170,a);
-            case GRAY: return makeRGBAInt(170,170,170,a);
-            case DARK_GRAY: return makeRGBAInt(85,85,85,a);
-            case BLACK: return makeRGBAInt(0,0,0,a);
-            default: return makeRGBAInt(255,255,255,a);
-        }
     }
 }

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 import mods.thecomputerizer.theimpossiblelibrary.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nullable;
@@ -26,6 +27,16 @@ public class Variable extends AbstractType {
     private Object value;
 
     private boolean isValid = true;
+
+    /**
+     * For decoding from NBT. Cannot handle null values
+     */
+    public Variable(CompoundNBT tag, @Nullable Table parentTable) {
+        super(tag, parentTable);
+        this.name = tag.getString("name");
+        this.value = this.name.isEmpty() ? null : GenericUtils.parseGenericFromTag(tag);
+        this.isValid = Objects.nonNull(this.value);
+    }
 
     /**
      * For decoding from a packet. Cannot handle null values
@@ -241,5 +252,13 @@ public class Variable extends AbstractType {
         super.write(buf);
         NetworkUtil.writeString(buf,this.name);
         NetworkUtil.writeGenericObj(buf,this.value);
+    }
+
+    public CompoundNBT writeToTag() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putInt("absoluteIndex",this.getAbsoluteIndex());
+        tag.putString("name",this.name);
+        GenericUtils.writeGenericToTag(tag,this.value);
+        return tag;
     }
 }

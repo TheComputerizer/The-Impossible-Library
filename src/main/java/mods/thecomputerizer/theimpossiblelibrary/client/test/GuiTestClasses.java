@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.client.gui.RadialProgressBar;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.ReadBookScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.ResourceLocation;
@@ -103,6 +102,10 @@ public class GuiTestClasses {
         public TestGui(Screen parent) {
             super(new StringTextComponent("test_gui"));
             this.parent = parent;
+        }
+
+        protected Vector2f getcenterFloat() {
+            return new Vector2f(this.center.x,this.center.y);
         }
 
         @Override
@@ -210,7 +213,7 @@ public class GuiTestClasses {
                             "family. But that's not what you said. You said a jackdaw is a crow, which is not true unless you're " +
                             "okay with calling all members of the crow family crows, which means you'd call blue jays, ravens, " +
                             "and other birds crows, too. Which you said you don't. It's okay to just admit you're wrong, you know?",
-                    0,this.width/2,0,4);
+                    0,this.width/2);
             LogUtil.logInternal(Level.INFO,"pasta lines {}",this.copyPastaLines);
             this.children.add(this.textBox);
             this.setInitialFocus(this.textBox);
@@ -218,11 +221,9 @@ public class GuiTestClasses {
 
         @Override
         public void drawStuff(MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
-            GuiUtil.drawBoxWithOutline(this.center,100, 50, new Vector4f(0,0,0,255),
-                    new Vector4f(255,255,255,255), 1f, this.getBlitOffset());
+            //FontUtil.renderChar('E',getcenterFloat(),this.font,new Vector4f(255,255,255,255));
             GuiUtil.drawColoredRing(this.center,new Vector2f(199,200),new Vector4f(255,255,255,255),
-                    360,this.getBlitOffset());
-            GuiUtil.bufferSquareTexture(matrix,this.center,100f, ReadBookScreen.BOOK_LOCATION);
+                    360,getBlitOffset());
             GuiUtil.drawMultiLineString(matrix,this.font,"Here's the thing. You said a " +
                             "\"jackdaw is a crow.\" Is it in the same family? Yes. No one's arguing that. As someone who is a " +
                             "scientist who studies crows, I am telling you, specifically, in science, no one calls jackdaws " +

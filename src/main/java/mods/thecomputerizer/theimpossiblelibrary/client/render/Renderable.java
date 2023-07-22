@@ -129,5 +129,5 @@ public abstract class Renderable {
         this.maxFadeOut = 0;
     }
 
-    abstract void render(MatrixStack matrix, MainWindow res);
+    abstract void render(MatrixStack matrix, MainWindow res, float partialTick);
 }

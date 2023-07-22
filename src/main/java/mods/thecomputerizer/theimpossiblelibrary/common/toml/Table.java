@@ -5,6 +5,9 @@ import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import org.apache.logging.log4j.Level;
 
@@ -45,6 +48,36 @@ public class Table extends AbstractType {
      * Determines the index of the table array this table is in or -1 if it is not in one.
      */
     private int arrIndex;
+
+    public Table(CompoundNBT tag, @Nullable Table parentTable) {
+        super(tag, parentTable);
+        this.backing = null;
+        this.level = tag.getInt("level");
+        this.arrIndex = tag.getInt("arrIndex");
+        this.tableName = tag.getString("name");
+        this.contents = readContents(tag.get("contents"));
+        this.matchers = new ArrayList<>();
+    }
+
+    private List<AbstractType> readContents(INBT tag) {
+        List<AbstractType> ret = new ArrayList<>();
+        if(tag instanceof ListNBT) {
+            for(INBT test : (ListNBT)tag) {
+                if(test instanceof CompoundNBT) {
+                    CompoundNBT element = (CompoundNBT)test;
+                    String type = element.getString("type");
+                    if(type.matches("table"))
+                        ret.add(new Table(element.getCompound("contents"),this));
+                    else {
+                        Variable var = new Variable(element.getCompound("contents"),this);
+                        if(var.isValid()) ret.add(var);
+                    }
+                } else break;
+            }
+        }
+        return ret;
+    }
+
     public Table(PacketBuffer buf, @Nullable Table parentTable) {
         super(buf, parentTable);
         this.backing = null;
@@ -415,5 +448,31 @@ public class Table extends AbstractType {
         if(Objects.nonNull(table.parentTable))
             return inheritTableName(table.parentTable,table.parentTable.getName()+"."+concat);
         return concat;
+    }
+
+    /**
+     * Only saves variables and child tables
+     */
+    public CompoundNBT writeToTag() {
+        CompoundNBT tag = new CompoundNBT();
+        tag.putInt("absoluteIndex",this.getAbsoluteIndex());
+        tag.putString("name",this.tableName);
+        tag.putInt("level",this.level);
+        tag.putInt("arrIndex",this.arrIndex);
+        ListNBT contents = new ListNBT();
+        for(AbstractType type : this.getContents()) {
+            CompoundNBT element = new CompoundNBT();
+            if(type instanceof Table) {
+                Table table = (Table)type;
+                element.putString("type","table");
+                tag.put("contents",table.writeToTag());
+            } else if(type instanceof Variable) {
+                Variable var = (Variable)type;
+                element.putString("type","variable");
+                tag.put("contents",var.writeToTag());
+            }
+        }
+        tag.put("contents",contents);
+        return tag;
     }
 }

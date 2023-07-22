@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 
 import javax.annotation.Nullable;
@@ -12,7 +13,6 @@ import java.util.Objects;
  * Underlying methods and fields used by all TOML object types in the toml package
  * Use the {@link Holder} class for accessing and modifying an indexed TOML file
  */
-@SuppressWarnings("GrazieInspection")
 public abstract class AbstractType {
 
     /**
@@ -24,6 +24,11 @@ public abstract class AbstractType {
      * The parent table this type is under or null if it is top-level.
      */
     protected final Table parentTable;
+
+    protected AbstractType(CompoundNBT tag, @Nullable Table parentTable) {
+        this.absoluteIndex = tag.getInt("absoluteIndex");
+        this.parentTable = parentTable;
+    }
 
     protected AbstractType(PacketBuffer buf, @Nullable Table parentTable) {
         this.absoluteIndex = buf.readInt();

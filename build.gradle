@@ -1,20 +1,21 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'net.minecraftforge.gradle' version '5.1+'
-    id 'com.github.johnrengelman.shadow' version '7.1.+'
+    id 'net.minecraftforge.gradle' version '6.+'
+    id 'com.github.johnrengelman.shadow' version '8.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 version = "${project.minecraft_version}-${project.mod_version}"
 group = project.maven_group
 archivesBaseName = project.base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
 
 minecraft {
-    mappings channel: 'official', version: project.minecraft_version
+    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
         }
@@ -39,8 +40,6 @@ repositories {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
 configurations {
     shade
     implementation.extendsFrom(shade)
@@ -58,9 +57,9 @@ dependencies {
 
 shadowJar {
     //necessary relocation
-    relocate 'com.moandjiezana.toml', "${project.shadow_group}.moandjiezana.toml"
+    relocate 'com.moandjiezana.toml', "${shadow_group}.moandjiezana.toml"
     configurations = [project.configurations.shadow]
-    classifier ''
+    setArchiveClassifier('')
 }
 
 reobf {
@@ -76,7 +75,7 @@ processResources {
         include 'META-INF/mods.toml'
         expand 'version': project.version
     }
-    exclude '**/theimpossiblelibrary/test/**'
+    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
@@ -89,6 +88,6 @@ jar {
     }
 }
 
-jar.finalizedBy('reobfJar')
-
-tasks.assemble.dependsOn shadowJar
+tasks.assemble.dependsOn('shadowJar')
+tasks.shadowJar.dependsOn('reobfJar')
+tasks.jar.finalizedBy('reobfJar')
