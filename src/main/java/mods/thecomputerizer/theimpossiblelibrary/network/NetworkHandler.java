@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.network;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -12,8 +13,11 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.apache.http.params.CoreProtocolPNames.PROTOCOL_VERSION;
@@ -30,49 +34,39 @@ public class NetworkHandler {
      * This has to be called in the mod constructor or mod using this needs to be loaded before this one. Packets will
      * not be registered if CLIENT_ONLY is turned on in the main mod class.
      */
-    public static void queueServerPacketRegister(Class<? extends MessageImpl> classType, boolean isLogin) {
-        queuePacketRegister(classType,false,isLogin,null);
-    }
-    public static void queueClientPacketRegister(Class<? extends MessageImpl> classType, boolean isLogin) {
-        queuePacketRegister(classType,true,isLogin,null);
+    public static <M extends MessageImpl> void queueServerPacketRegister(
+            Class<M> type, Function<PacketBuffer,M> decoder, boolean isLogin) {
+        queuePacketRegister(type,decoder,true,isLogin);
     }
 
-    @SafeVarargs
-    public static void queueServerPacketRegistries(boolean isLogin, Class<? extends MessageImpl>... packetQueues) {
-        for(Class<? extends MessageImpl> classType : packetQueues)
-            queuePacketRegister(classType,false,isLogin,null);
-    }
-    @SafeVarargs
-    public static void queueClientPacketRegistries(boolean isLogin, Class<? extends MessageImpl>... packetQueues) {
-        for(Class<? extends MessageImpl> classType : packetQueues)
-            queuePacketRegister(classType,true,isLogin,null);
+    public static <M extends MessageImpl> void queueClientPacketRegister(
+            Class<M> type, Function<PacketBuffer,M> decoder, boolean isLogin) {
+        queuePacketRegister(type,decoder,false,isLogin);
     }
 
-    public static void queueServerPacketRegistries(Collection<Class<? extends MessageImpl>> packetQueues, boolean isLogin) {
-        for(Class<? extends MessageImpl> classType : packetQueues)
-            queuePacketRegister(classType,false,isLogin,null);
-    }
-    public static void queueClientPacketRegistries(Collection<Class<? extends MessageImpl>> packetQueues, boolean isLogin) {
-        for(Class<? extends MessageImpl> classType : packetQueues)
-            queuePacketRegister(classType,true,isLogin,null);
+    public static <M extends MessageImpl> void queuePacketRegister(Class<M> type, Function<PacketBuffer,M> decoder,
+                                                                   boolean isClient, boolean isLogin) {
+        NetworkDirection direction = isClient ? isLogin ? NetworkDirection.LOGIN_TO_CLIENT : NetworkDirection.PLAY_TO_CLIENT :
+                isLogin ? NetworkDirection.LOGIN_TO_SERVER : NetworkDirection.PLAY_TO_SERVER;
+        PACKET_QUEUES.add(new PacketQueue<>(type,decoder,direction));
     }
 
     /**
      * Only use these versions if you need a custom extension of IPacketHandler
      */
     public static <M extends MessageImpl> void queueServerPacketRegister(
-            Class<M> classType, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
-        queuePacketRegister(classType,false,isLogin,customPacketHandler);
+            Class<M> type, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
+        queuePacketRegister(type,false,isLogin,customPacketHandler);
     }
     public static <M extends MessageImpl> void queueClientPacketRegister(
-            Class<M> classType, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
-        queuePacketRegister(classType,true,isLogin,customPacketHandler);
+            Class<M> type, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
+        queuePacketRegister(type,true,isLogin,customPacketHandler);
     }
     public static <M extends MessageImpl> void queuePacketRegister(
-            Class<M> classType, boolean isClient, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
+            Class<M> type, boolean isClient, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         NetworkDirection direction = isClient ? isLogin ? NetworkDirection.LOGIN_TO_CLIENT : NetworkDirection.PLAY_TO_CLIENT :
                 isLogin ? NetworkDirection.LOGIN_TO_SERVER : NetworkDirection.PLAY_TO_SERVER;
-        PACKET_QUEUES.add(new PacketQueue<>(classType,direction,customPacketHandler));
+        PACKET_QUEUES.add(new PacketQueue<>(type,customPacketHandler,direction));
     }
 
     public static void init() {
@@ -121,19 +115,28 @@ public class NetworkHandler {
     private static final class PacketQueue<M extends MessageImpl> {
 
         private final Class<M> type;
-        private final NetworkDirection direction;
-        private final Supplier<? extends DefaultPacketHandler<M>> customPacketHandler;
+        private final Function<PacketBuffer,M> decoder;
+        private final NetworkDirection dir;
+        private final Supplier<? extends DefaultPacketHandler<M>> customHandler;
 
-        private PacketQueue(Class<M> classType, NetworkDirection direction, @Nullable Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
-            this.type = classType;
-            this.direction = direction;
-            this.customPacketHandler = customPacketHandler;
+        private PacketQueue(Class<M> type, Function<PacketBuffer,M> decoder, NetworkDirection dir) {
+            this.type = type;
+            this.decoder = decoder;
+            this.dir = dir;
+            this.customHandler = null;
+        }
+
+        private PacketQueue(Class<M> type, Supplier<? extends DefaultPacketHandler<M>> handler, NetworkDirection dir) {
+            this.type = type;
+            this.decoder = null;
+            this.dir = dir;
+            this.customHandler = handler;
         }
 
         private void register(SimpleChannel network, int globalID) {
-            IPacketHandler<M> handler = Objects.nonNull(this.customPacketHandler) ?
-                    this.customPacketHandler.get() : new DefaultPacketHandler<>(this.type);
-            network.registerMessage(globalID,this.type,handler::encode,handler::decode,handler::handle,Optional.of(this.direction));
+            IPacketHandler<M> handler = Objects.nonNull(this.customHandler) ?
+                    this.customHandler.get() : new DefaultPacketHandler<>(this.decoder);
+            network.registerMessage(globalID,this.type,handler::encode,handler::decode,handler::handle,Optional.of(this.dir));
         }
     }
 }
