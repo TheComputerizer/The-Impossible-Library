@@ -38,13 +38,24 @@ public class NetworkHandler {
             Class<M> type, Function<PacketBuffer,M> decoder, boolean isLogin) {
         queuePacketRegister(type,decoder,true,isLogin);
     }
-
     public static <M extends MessageImpl> void queueClientPacketRegister(
             Class<M> type, Function<PacketBuffer,M> decoder, boolean isLogin) {
         queuePacketRegister(type,decoder,false,isLogin);
     }
 
-    public static <M extends MessageImpl> void queuePacketRegister(Class<M> type, Function<PacketBuffer,M> decoder,
+    /**
+     * Assumes isLogin is false
+     */
+    public static <M extends MessageImpl> void queueServerPacketRegister(
+            Class<M> type, Function<PacketBuffer,M> decoder) {
+        queuePacketRegister(type,decoder,true,false);
+    }
+    public static <M extends MessageImpl> void queueClientPacketRegister(
+            Class<M> type, Function<PacketBuffer,M> decoder) {
+        queuePacketRegister(type,decoder,false,false);
+    }
+
+    private static <M extends MessageImpl> void queuePacketRegister(Class<M> type, Function<PacketBuffer,M> decoder,
                                                                    boolean isClient, boolean isLogin) {
         NetworkDirection direction = isClient ? isLogin ? NetworkDirection.LOGIN_TO_CLIENT : NetworkDirection.PLAY_TO_CLIENT :
                 isLogin ? NetworkDirection.LOGIN_TO_SERVER : NetworkDirection.PLAY_TO_SERVER;
@@ -62,7 +73,20 @@ public class NetworkHandler {
             Class<M> type, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         queuePacketRegister(type,true,isLogin,customPacketHandler);
     }
-    public static <M extends MessageImpl> void queuePacketRegister(
+
+    /**
+     * Assumes isLogin is false
+     */
+    public static <M extends MessageImpl> void queueServerPacketRegister(
+            Class<M> type, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
+        queuePacketRegister(type,false,false,customPacketHandler);
+    }
+    public static <M extends MessageImpl> void queueClientPacketRegister(
+            Class<M> type, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
+        queuePacketRegister(type,true,false,customPacketHandler);
+    }
+
+    private static <M extends MessageImpl> void queuePacketRegister(
             Class<M> type, boolean isClient, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         NetworkDirection direction = isClient ? isLogin ? NetworkDirection.LOGIN_TO_CLIENT : NetworkDirection.PLAY_TO_CLIENT :
                 isLogin ? NetworkDirection.LOGIN_TO_SERVER : NetworkDirection.PLAY_TO_SERVER;
