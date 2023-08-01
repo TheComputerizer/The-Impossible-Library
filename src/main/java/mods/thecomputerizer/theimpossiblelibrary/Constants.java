@@ -15,4 +15,8 @@ public class Constants {
     public static ResourceLocation res(String path) {
         return new ResourceLocation(MODID,path);
     }
+
+    public static void testLog(String msg, Object ... parameters) {
+        if(TheImpossibleLibrary.isDevLogging()) LOGGER.error(msg,parameters);
+    }
 }

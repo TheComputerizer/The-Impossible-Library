@@ -16,8 +16,9 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 @Mod(Constants.MODID)
 public class TheImpossibleLibrary {
 
-    public static boolean CLIENT_ONLY = false;
     private static final boolean IS_DEV_ENV = false;
+    private static boolean CLIENT_ONLY = false;
+    private static boolean DEV_LOG = false;
 
     public TheImpossibleLibrary() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -36,5 +37,21 @@ public class TheImpossibleLibrary {
 
     private void clientSetup(final FMLClientSetupEvent ev) {
         if(IS_DEV_ENV) ClientRegistry.registerKeyBinding(ClientTest.TEST_KEYBIND);
+    }
+
+    public static void enableClientOnly() {
+        CLIENT_ONLY = true;
+    }
+
+    public static boolean isClientOnly() {
+        return CLIENT_ONLY;
+    }
+
+    public static void enableDevLog() {
+        DEV_LOG = true;
+    }
+
+    public static boolean isDevLogging() {
+        return DEV_LOG;
     }
 }

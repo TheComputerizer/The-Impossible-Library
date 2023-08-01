@@ -34,11 +34,11 @@ public class NetworkHandler {
      * This has to be called in the mod constructor or mod using this needs to be loaded before this one. Packets will
      * not be registered if CLIENT_ONLY is turned on in the main mod class.
      */
-    public static <M extends MessageImpl> void queueServerPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToClient(
             Class<M> type, Function<PacketBuffer,M> decoder, boolean isLogin) {
         queuePacketRegister(type,decoder,true,isLogin);
     }
-    public static <M extends MessageImpl> void queueClientPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToServer(
             Class<M> type, Function<PacketBuffer,M> decoder, boolean isLogin) {
         queuePacketRegister(type,decoder,false,isLogin);
     }
@@ -46,11 +46,11 @@ public class NetworkHandler {
     /**
      * Assumes isLogin is false
      */
-    public static <M extends MessageImpl> void queueServerPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToClient(
             Class<M> type, Function<PacketBuffer,M> decoder) {
         queuePacketRegister(type,decoder,true,false);
     }
-    public static <M extends MessageImpl> void queueClientPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToServer(
             Class<M> type, Function<PacketBuffer,M> decoder) {
         queuePacketRegister(type,decoder,false,false);
     }
@@ -65,11 +65,11 @@ public class NetworkHandler {
     /**
      * Only use these versions if you need a custom extension of IPacketHandler
      */
-    public static <M extends MessageImpl> void queueServerPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToClient(
             Class<M> type, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         queuePacketRegister(type,false,isLogin,customPacketHandler);
     }
-    public static <M extends MessageImpl> void queueClientPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToServer(
             Class<M> type, boolean isLogin, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         queuePacketRegister(type,true,isLogin,customPacketHandler);
     }
@@ -77,11 +77,11 @@ public class NetworkHandler {
     /**
      * Assumes isLogin is false
      */
-    public static <M extends MessageImpl> void queueServerPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToClient(
             Class<M> type, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         queuePacketRegister(type,false,false,customPacketHandler);
     }
-    public static <M extends MessageImpl> void queueClientPacketRegister(
+    public static <M extends MessageImpl> void queuePacketRegisterToServer(
             Class<M> type, Supplier<? extends DefaultPacketHandler<M>> customPacketHandler) {
         queuePacketRegister(type,true,false,customPacketHandler);
     }
@@ -117,6 +117,7 @@ public class NetworkHandler {
      */
     @OnlyIn(Dist.CLIENT)
     public static void sendToServer(MessageImpl packet) {
+        Constants.testLog("Sending MessageImpl packet with class {} to the server",packet.getClass());
         HANDLER.sendToServer(packet);
     }
 
@@ -131,6 +132,7 @@ public class NetworkHandler {
      * Sends the input message to the input supplier for the input PacketDistributor
      */
     public static <T> void sendToDist(MessageImpl packet, PacketDistributor<T> dist, Supplier<T> packetSupplier) {
+        Constants.testLog("Sending MessageImpl packet with class {} to PacketDistributor {}",packet.getClass(),dist);
         HANDLER.send(dist.with(packetSupplier),packet);
     }
 
