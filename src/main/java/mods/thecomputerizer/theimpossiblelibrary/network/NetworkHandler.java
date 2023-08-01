@@ -4,11 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.Level;
 
@@ -124,17 +124,15 @@ public class NetworkHandler {
      * Sends the input message to the input player
      */
     public static void sendToPlayer(MessageImpl packet, @Nonnull ServerPlayerEntity player) {
-        HANDLER.sendTo(packet,player.connection.getConnection(),NetworkDirection.PLAY_TO_CLIENT);
+        sendToDist(packet,PacketDistributor.PLAYER,() -> player);
     }
 
     /**
-     * Sends the input message to all the players in the input world
+     * Sends the input message to the input supplier for the input PacketDistributor
      */
-    public static void sendToWorld(MessageImpl packet, ServerWorld world) {
-        for(ServerPlayerEntity player : world.players())
-            if(Objects.nonNull(player)) sendToPlayer(packet,player);
+    public static <T> void sendToDist(MessageImpl packet, PacketDistributor<T> dist, Supplier<T> packetSupplier) {
+        HANDLER.send(dist.with(packetSupplier),packet);
     }
-
 
     private static final class PacketQueue<M extends MessageImpl> {
 
