@@ -17,7 +17,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 public class TheImpossibleLibrary {
 
     public static boolean CLIENT_ONLY = false;
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
 
     public TheImpossibleLibrary() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
