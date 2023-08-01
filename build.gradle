@@ -75,7 +75,7 @@ processResources {
         include 'META-INF/mods.toml'
         expand 'version': project.version
     }
-    //exclude '**/theimpossiblelibrary/test/**'
+    exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
