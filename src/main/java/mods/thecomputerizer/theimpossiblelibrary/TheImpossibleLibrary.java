@@ -16,7 +16,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 @Mod(Constants.MODID)
 public class TheImpossibleLibrary {
 
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
     private static boolean CLIENT_ONLY = false;
     private static boolean DEV_LOG = false;
 

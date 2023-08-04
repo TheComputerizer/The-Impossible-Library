@@ -50,7 +50,6 @@ public class SpriteSheet extends PNG {
         long curMillis = Util.getMillis();
         long elapsedMillis = curMillis-this.prevMillis;
         this.prevMillis = curMillis;
-        Constants.testLog("IT HAS BEEN {} MILLISECONDS SINCE THE LAST RENDER TICK",elapsedMillis);
         this.milliCounter+=elapsedMillis;
         while(this.milliCounter>=this.millisPerFrame) {
             this.curFrame++;
