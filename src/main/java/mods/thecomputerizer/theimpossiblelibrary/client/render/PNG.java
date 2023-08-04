@@ -12,16 +12,22 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class PNG extends Renderable {
 
-    private final ResourceLocation source;
+    protected final ResourceLocation source;
 
     /**
      * Preload a PNG image with parameters for use in the Renderer class.
      */
     public PNG(ResourceLocation location, Map<String, Object> parameters) throws IOException {
         super(parameters);
-        if(!location.getPath().contains(".png")) throw new IOException("Tried to initialize a non png file to a png object! " +
-                "Make sure that you have the correct file extension on your resource location.");
+        if(!location.getPath().endsWith(".png")) throw new IOException("Tried to initialize a non png file to a png " +
+                "object! Make sure that you have the correct file extension on your resource location. ["+location+"]");
         this.source = location;
+    }
+
+    protected void preRender(PoseStack matrix) {
+        matrix.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
     }
 
     @Override
@@ -31,13 +37,14 @@ public class PNG extends Renderable {
             int resY = res.getGuiScaledHeight();
             int x = posX(resX,resY);
             int y = posY(resY);
-            matrix.pushPose();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
+            preRender(matrix);
             matrix.scale(scaleX(resX,resY), scaleY(), 1f);
             GuiUtil.enforceAlphaTexture(matrix,x,y,resX,resY,Math.max(0.1f,getOpacity()),this.source);
-            //GuiComponent.blit(matrix, x, y, 0, 0, resX, resY, resX, resY);
-            matrix.popPose();
+            postRender(matrix);
         }
+    }
+
+    protected void postRender(PoseStack matrix) {
+        matrix.popPose();
     }
 }

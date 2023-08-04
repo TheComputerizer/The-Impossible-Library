@@ -12,7 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 public abstract class AbstractRadialButton extends GuiComponent {
 
     protected final Vector4f colors;
-    protected Vector3f centerPos;
+    private Vector3f centerPos;
     protected boolean hover;
 
     protected AbstractRadialButton(Vector4f colors) {
@@ -29,6 +29,14 @@ public abstract class AbstractRadialButton extends GuiComponent {
         return this.centerPos;
     }
 
+    protected void setCenterPos(float x, float y) {
+        this.centerPos = new Vector3f(x,y,0);
+    }
+
+    protected void setCenterPos(Vector3f newCenter) {
+        this.centerPos = newCenter;
+    }
+
     protected void drawRadialSection(Vector3f center, float zLevel, Vector3f radius, float startAngle,
                                    float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
@@ -37,13 +45,11 @@ public abstract class AbstractRadialButton extends GuiComponent {
         Vector3f pos2In = MathUtil.getVertex(center,radius.x(),angle2);
         Vector3f pos1Out = MathUtil.getVertex(center,radius.y(),angle1);
         Vector3f pos2Out = MathUtil.getVertex(center,radius.y(),angle2);
-        if(this.hover)
-            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,GuiUtil.reverseColors(this.colors));
-        else
-            GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,this.colors);
+        if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,GuiUtil.reverseColors(this.colors));
+        else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,this.colors);
     }
 
     protected void playPressSound(SoundManager handler) {
-        handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
     }
 }

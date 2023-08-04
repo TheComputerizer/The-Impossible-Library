@@ -13,8 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.BookEditScreen;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
@@ -22,6 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("ClassEscapesDefinedScope")
 public class GuiTestClasses {
 
     public static TestOtherGui createTestOtherGui() {
@@ -102,7 +102,7 @@ public class GuiTestClasses {
         protected Vector3f center;
 
         public TestGui(Screen parent) {
-            super(MutableComponent.create(new LiteralContents("test_gui_text")));
+            super(Component.literal("test_gui"));
             this.parent = parent;
         }
 
@@ -196,8 +196,7 @@ public class GuiTestClasses {
         @Override
         public void init() {
             super.init();
-            this.textBox = new EditBox(this.font,(this.width/4)*3,0,(this.width/4)-2,16,
-                    MutableComponent.create(new LiteralContents("test_gui_text")));
+            this.textBox = new EditBox(this.font,(this.width/4)*3,0,(this.width/4)-2,16,Component.literal("test_gui_text"));
             this.textBox.setMaxLength(32500);
             this.textBox.setValue("");
             this.copyPastaLines = GuiUtil.howManyLinesWillThisBe(this.font,"Here's the thing. You said a " +
@@ -212,7 +211,7 @@ public class GuiTestClasses {
                             "family. But that's not what you said. You said a jackdaw is a crow, which is not true unless you're " +
                             "okay with calling all members of the crow family crows, which means you'd call blue jays, ravens, " +
                             "and other birds crows, too. Which you said you don't. It's okay to just admit you're wrong, you know?",
-                    0,this.width/2,0,4);
+                    0,this.width/2);
             LogUtil.logInternal(Level.INFO,"pasta lines {}",this.copyPastaLines);
             this.setInitialFocus(this.textBox);
         }

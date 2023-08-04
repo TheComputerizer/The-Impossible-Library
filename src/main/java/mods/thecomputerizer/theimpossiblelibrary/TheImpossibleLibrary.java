@@ -1,13 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary;
 
+
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
+import mods.thecomputerizer.theimpossiblelibrary.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.DataUtil;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
@@ -15,22 +17,44 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 public class TheImpossibleLibrary {
 
     private static final boolean IS_DEV_ENV = false;
+    private static boolean CLIENT_ONLY = false;
+    private static boolean DEV_LOG = false;
 
     public TheImpossibleLibrary() {
-        DataUtil.initGlobal();
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modBus.addListener(this::commonSetup);
+        if(FMLEnvironment.dist.isClient()) {
             MinecraftForge.EVENT_BUS.register(Renderer.class);
             if(IS_DEV_ENV) {
-                FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keyBindSetup);
-                initClientTestClass(MinecraftForge.EVENT_BUS);
+                modBus.addListener(this::keyBindSetup);
+                MinecraftForge.EVENT_BUS.register(ClientTest.class);
             }
         }
+        DataUtil.initGlobal();
+        if(IS_DEV_ENV) DEV_LOG = true;
     }
+
+    private void commonSetup(final FMLClientSetupEvent ev) {
+        if(!CLIENT_ONLY) NetworkHandler.init();
+    }
+
     private void keyBindSetup(final RegisterKeyMappingsEvent ev) {
         ev.register(ClientTest.TEST_KEYBIND);
     }
 
-    public static void initClientTestClass(IEventBus bus) {
-        bus.register(ClientTest.class);
+    public static void enableClientOnly() {
+        CLIENT_ONLY = true;
+    }
+
+    public static boolean isClientOnly() {
+        return CLIENT_ONLY;
+    }
+
+    public static void enableDevLog() {
+        DEV_LOG = true;
+    }
+
+    public static boolean isDevLogging() {
+        return DEV_LOG;
     }
 }

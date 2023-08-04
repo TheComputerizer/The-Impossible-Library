@@ -13,7 +13,7 @@ public class RadialProgressBar extends AbstractRadialButton {
     private final TriConsumer<Screen, RadialProgressBar, Vector3f> handlerFunction;
     private float progress;
 
-    /*
+    /**
         For radii: x=inner y=outer
         For colors: x=r y=g z=b w=a
         Resolution determines how round the circular progress bar will be. Higher = more round
@@ -32,12 +32,12 @@ public class RadialProgressBar extends AbstractRadialButton {
         this.progress = progress;
     }
 
-    /*
+    /**
         Determines the percentage progress the mouse is pointing to
         This can be used within the handler function
      */
     public float mousePosToProgress(Vector3f mousePos) {
-        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y() - this.centerPos.y(), mousePos.x() - this.centerPos.x()));
+        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y()-getCenterPos().y(), mousePos.x()-getCenterPos().x()));
         if(mouseAngleDeg<0) mouseAngleDeg = 360f+mouseAngleDeg;
         return mouseAngleDeg/360f;
     }
@@ -46,26 +46,26 @@ public class RadialProgressBar extends AbstractRadialButton {
         return this.hover;
     }
 
-    /*
+    /**
         Use this if the radial progress bar is in the center of a radial element
      */
     public void setHover(boolean superHover) {
         this.hover = superHover;
     }
 
-    /*
+    /**
         Use this if the radial progress bar is standalone
      */
     public void setHover(Vector3f relativeCenter, double mouseDistance) {
         this.hover = MathUtil.isInCircle(relativeCenter, mouseDistance, this.radii);
     }
 
-    /*
+    /**
         The relative center is what determines where on the screen the center of the progress bar is
      */
     public void draw(Vector3f relativeCenter, float zLevel) {
         if(this.progress>0) {
-            this.centerPos = relativeCenter;
+            setCenterPos(relativeCenter);
             Vector3f angles = MathUtil.toRadians(MathUtil.progressAngles(this.progress));
             int adjustedRes = (int) (((float)this.resolution)*this.progress);
             for (int i = 0; i < this.resolution; i++)

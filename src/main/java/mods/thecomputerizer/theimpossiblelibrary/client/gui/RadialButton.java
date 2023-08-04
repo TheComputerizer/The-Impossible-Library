@@ -6,8 +6,6 @@ import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -29,8 +27,7 @@ public class RadialButton extends AbstractRadialButton {
                         BiConsumer<Screen, RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(line -> MutableComponent.create(new LiteralContents(line)))
-                .collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(Component::translatable).collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
@@ -43,7 +40,7 @@ public class RadialButton extends AbstractRadialButton {
 
     public void draw(Vector3f center, float zLevel, Vector3f radius, Vector3f angles,
                      Vector3f mouse, Vector3f relativeCenter, int resolution) {
-        this.centerPos = relativeCenter;
+        setCenterPos(relativeCenter);
         for (int i = 0; i < resolution; i++)
             drawRadialSection(center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
@@ -56,14 +53,14 @@ public class RadialButton extends AbstractRadialButton {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
             }
-            GuiUtil.bufferSquareTexture(matrix, this.centerPos, centerRadius+hoverIncrease, actualIcon);
+            GuiUtil.bufferSquareTexture(matrix,getCenterPos(),centerRadius+hoverIncrease, actualIcon);
         }
     }
 
     public void drawText(Screen parent, PoseStack matrix, Vector3f mouse, boolean isCurrent) {
-        if(this.centerText!=null) {
+        if(Objects.nonNull(this.centerText)) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
+            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int)getCenterPos().x(), (int)getCenterPos().y(), color);
         }
         if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }
@@ -75,7 +72,7 @@ public class RadialButton extends AbstractRadialButton {
         }
     }
 
-    /*
+    /**
         This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface
