@@ -37,7 +37,7 @@ public class RadialProgressBar extends AbstractRadialButton {
         This can be used within the handler function
      */
     public float mousePosToProgress(Vector3f mousePos) {
-        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y() - this.centerPos.y(), mousePos.x() - this.centerPos.x()));
+        float mouseAngleDeg = (float) Math.toDegrees(Math.atan2(mousePos.y()-getCenterPos().y(), mousePos.x()-getCenterPos().x()));
         if(mouseAngleDeg<0) mouseAngleDeg = 360f+mouseAngleDeg;
         return mouseAngleDeg/360f;
     }
@@ -65,7 +65,7 @@ public class RadialProgressBar extends AbstractRadialButton {
      */
     public void draw(Vector3f relativeCenter, float zLevel) {
         if(this.progress>0) {
-            this.centerPos = relativeCenter;
+            setCenterPos(relativeCenter);
             Vector3f angles = MathUtil.toRadians(MathUtil.progressAngles(this.progress));
             int adjustedRes = (int) (((float)this.resolution)*this.progress);
             for (int i = 0; i < this.resolution; i++)

@@ -12,7 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.util.file.FileUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,6 +32,7 @@ public class ClientTest {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent e) {
         if (TEST_KEYBIND.isDown()) {
+            Constants.testLog("KEY DOWN??");
             renderableTest();
             //guiTest();
             //tomlTest();
@@ -42,13 +42,13 @@ public class ClientTest {
     private static void renderableTest() {
         try {
             Holder transitions = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                    .getResource(new ResourceLocation(Constants.MODID, "test/transitions.toml")).getInputStream());
+                    .getResource(Constants.res("test/transitions.toml")).getInputStream());
             Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
             Table image = transitions.getTableByName("image");
-            Renderer.addRenderable(Renderer.initializePng(new ResourceLocation(Constants.MODID,
-                    image.getValOrDefault("name","missing")),image.getVarMap()));
+            Renderer.addRenderable(Renderer.initializePng(Constants.res(image.getValOrDefault("name","missing")),
+                    image.getVarMap()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Constants.testLog("Renderable test failed!",ex);
         }
     }
 
@@ -61,14 +61,14 @@ public class ClientTest {
         //test smart toml reading and printing
         try {
             Holder testHolder = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                    .getResource(new ResourceLocation(Constants.MODID,"test/thing.toml")).getInputStream());
+                    .getResource(Constants.res("test/thing.toml")).getInputStream());
             testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
             testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
             testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
             FileUtil.writeLinesToFile(new File(Constants.DATA_DIRECTORY, "test2.toml"),
                     testHolder.toLines(),false);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Constants.testLog("Toml test failed!",ex);
         }
     }
 

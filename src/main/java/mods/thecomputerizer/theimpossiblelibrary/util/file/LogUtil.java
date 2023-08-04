@@ -60,10 +60,14 @@ public class LogUtil {
     }
 
     public static String injectParameters(String message, Object ... parameters) {
+        if(Objects.isNull(message)) return "null";
         int index = 0;
         while(message.contains("{}")) {
             String replacement = "";
-            if(index<parameters.length) replacement = parameters[index].toString();
+            if(index<parameters.length) {
+                Object parameter = parameters[index];
+                replacement = Objects.nonNull(parameter) ? parameter.toString() : "null";
+            }
             message = message.replaceFirst("\\{}",replacement);
             index++;
         }
@@ -77,15 +81,21 @@ public class LogUtil {
     public static class ModLogger {
         private Writer writer;
         private String logName;
+        private int linesWritten;
 
         private ModLogger(String modid) {
             try {
                 File logFile = FileUtil.generateNestedFile(injectParameters("./logs/mods/{}.log",modid),true);
                 this.writer = new OutputStreamWriter(java.nio.file.Files.newOutputStream(Paths.get(logFile.toURI())), StandardCharsets.UTF_8);
                 this.logName = getModName(modid);
+                this.linesWritten = 0;
             } catch (Exception e) {
                 logInternal(Level.ERROR,"Could not create log file for {}",modid,e);
             }
+        }
+
+        public int getLinesWritten() {
+            return this.linesWritten;
         }
 
         /**
@@ -99,7 +109,7 @@ public class LogUtil {
         private String formattedMilli(int milli) {
             if(milli<10) return "00"+milli;
             if(milli<100) return "0"+milli;
-            return ""+milli;
+            return String.valueOf(milli);
         }
 
         private String formattedTimeStamp(LocalDateTime time) {
@@ -111,8 +121,9 @@ public class LogUtil {
         }
 
         private String formattedLogLevel(Level level) {
+            String name = Objects.nonNull(level) ? level.name() : "NULL";
             return injectParameters("[{}/{}]",this.logName,
-                    level.name().length()<5 ? level.name()+" " : level.name());
+                    name.length()<5 ? name+" " : name);
         }
 
         private String finalizeMessage(Level level, String constructedMessage) {
@@ -123,6 +134,7 @@ public class LogUtil {
             try {
                 this.writer.write(finalizeMessage(level, injectParameters(message, parameters)));
                 this.writer.flush();
+                this.linesWritten++;
             } catch (IOException e) {
                 logInternal(level, "Failed to write message to external log for {}",this.logName,e);
             }

@@ -41,7 +41,7 @@ public class RadialButton extends AbstractRadialButton {
 
     public void draw(Vector3f center, float zLevel, Vector3f radius, Vector3f angles,
                      Vector3f mouse, Vector3f relativeCenter, int resolution) {
-        this.centerPos = relativeCenter;
+        setCenterPos(relativeCenter);
         for (int i = 0; i < resolution; i++)
             drawRadialSection(center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
@@ -54,14 +54,14 @@ public class RadialButton extends AbstractRadialButton {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
             }
-            GuiUtil.bufferSquareTexture(matrix, this.centerPos, centerRadius+hoverIncrease, actualIcon);
+            GuiUtil.bufferSquareTexture(matrix,getCenterPos(),centerRadius+hoverIncrease, actualIcon);
         }
     }
 
     public void drawText(Screen parent, PoseStack matrix, Vector3f mouse, boolean isCurrent) {
-        if(this.centerText!=null) {
+        if(Objects.nonNull(this.centerText)) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
+            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int)getCenterPos().x(), (int)getCenterPos().y(), color);
         }
         if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }

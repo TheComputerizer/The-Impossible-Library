@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -14,6 +15,10 @@ import java.util.function.Function;
 public class NetworkUtil {
 
     public static void writeString(FriendlyByteBuf buf, String string) {
+        if(Objects.nonNull(string) && !string.isEmpty()) {
+            ByteBuffer buffer = StandardCharsets.UTF_8.encode(string);
+            string = StandardCharsets.UTF_8.decode(buffer).toString();
+        }
         buf.writeInt(string.length());
         buf.writeCharSequence(string, StandardCharsets.UTF_8);
     }
@@ -80,9 +85,7 @@ public class NetworkUtil {
         else {
             writeString(buf,val.getClass().getName());
             if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
-            else {
-                writeString(buf,val.toString());
-            }
+            else writeString(buf,val.toString());
         }
     }
 
@@ -104,8 +107,8 @@ public class NetworkUtil {
         try {
             valType = Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-            throw new RuntimeException("Could not find class name {} when parsing a generic object from a packet!");
+            Constants.LOGGER.error("Could not find class name {} when parsing a generic object from a packet!",className,ex);
+            throw new RuntimeException("Could not find class name when parsing a generic object from a packet!",ex);
         }
         return List.class.isAssignableFrom(valType) ? readGenericList(buf,NetworkUtil::parseGenericObj) :
                 GenericUtils.parseGenericType(readString(buf),valType);
