@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class GuiUtil {
         vectorColor(builder.vertex(pos1In.x(), pos1In.y(), offset),color).endVertex();
         vectorColor(builder.vertex(pos2In.x(), pos2In.y(), offset),color).endVertex();
         vectorColor(builder.vertex(pos2Out.x(), pos2Out.y(), offset),color).endVertex();
-        BufferUploader.drawWithShader(builder.end());
+        Tesselator.getInstance().end();
         GLColorFinish();
     }
 
@@ -52,17 +53,21 @@ public class GuiUtil {
 
     public static void enforceAlphaTexture(PoseStack matrix, int x, int y, int width, int height, float alpha,
                                            ResourceLocation texture) {
+        enforceAlphaTexture(matrix.last().pose(),x,y,width,height,alpha,texture,0f,1f,0f,1f);
+    }
+
+    public static void enforceAlphaTexture(Matrix4f matrix, int x, int y, int width, int height, float alpha,
+                                           ResourceLocation texture, float uMin, float uMax, float vMin, float vMax) {
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.setShaderColor(1f,1f,1f,alpha);
-        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        Matrix4f matrix4f = matrix.last().pose();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-        bufferbuilder.vertex(matrix4f, (float)x, (float)(y+height), 0f).color(1f, 1f, 1f, alpha).uv(0, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, (float)(x+width), (float)(y+height), 0f).color(1f, 1f, 1f, alpha).uv(1, 1).endVertex();
-        bufferbuilder.vertex(matrix4f, (float)(x+width), (float)y, 0f).color(1f, 1f, 1f, alpha).uv(1, 0).endVertex();
-        bufferbuilder.vertex(matrix4f, (float)x, (float)y, 0f).color(1f, 1f, 1f, alpha).uv(0, 0).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        vertexColor(buffer.vertex(matrix,(float)x,(float)(y+height),0f),1f, 1f,1f,alpha).uv(uMin,vMax).endVertex();
+        vertexColor(buffer.vertex(matrix,(float)(x+width),(float)(y+height),0f),1f,1f,1f,alpha).uv(uMax,vMax).endVertex();
+        vertexColor(buffer.vertex(matrix,(float)(x+width),(float)y,0f),1f,1f,1f,alpha).uv(uMax,vMin).endVertex();
+        vertexColor(buffer.vertex(matrix,(float)x,(float)y,0f),1f,1f,1f,alpha).uv(uMin,vMin).endVertex();
+        Tesselator.getInstance().end();
     }
 
     public static void drawColoredRing(Vector3f center, Vector3f radii, Vector4f color, int resolution,
@@ -104,7 +109,7 @@ public class GuiUtil {
         vectorColor(builder.vertex(topLeft.x(), bottomRight.y(), offset), color).endVertex();
         vectorColor(builder.vertex(bottomRight.x(), bottomRight.y(), offset), color).endVertex();
         vectorColor(builder.vertex(bottomRight.x(), topLeft.y(), offset), color).endVertex();
-        BufferUploader.drawWithShader(builder.end());
+        Tesselator.getInstance().end();
         GLColorFinish();
     }
 
@@ -139,7 +144,7 @@ public class GuiUtil {
         vectorColor(builder.vertex(start2.x(), start2.y(), offset), color).endVertex();
         vectorColor(builder.vertex(end1.x(), end1.y(), offset), color).endVertex();
         vectorColor(builder.vertex(end2.x(), end2.y(), offset), color).endVertex();
-        BufferUploader.drawWithShader(builder.end());
+        Tesselator.getInstance().end();
         GLColorFinish();
     }
 
@@ -151,50 +156,23 @@ public class GuiUtil {
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
-        List<String> lines = new ArrayList<>();
-        String[] words = original.split(" ");
-        StringBuilder builder = new StringBuilder();
-        int lineWidth = 0;
-        int linePos = 0;
-        int lineCounter = 0;
-        for(String word : words) {
-            if (lineWidth == 0) {
-                builder.append(word);
-                lineWidth += font.width(word);
-            } else {
-                String withSpace = " " + word;
-                int textWidth = font.width(withSpace);
-                if ((left + lineWidth + textWidth) < right) {
-                    builder.append(withSpace);
-                    lineWidth += textWidth;
-                } else {
-                    if (linePos < pos) linePos++;
-                    else {
-                        lines.add(builder.toString());
-                        lineCounter++;
-                        if (lineCounter >= lineNums) {
-                            builder = new StringBuilder();
-                            break;
-                        }
-                    }
-                    builder = new StringBuilder();
-                    builder.append(word);
-                    lineWidth = font.width(word);
-                }
+        int index = 0;
+        for(String line : splitLines(font, original, left, right)) {
+            if(index>=pos) {
+                font.drawShadow(matrix,line,left,top,color);
+                top += spacing;
+                lineNums--;
+                if (lineNums <= 0) break;
             }
-        }
-        if(builder.length()>0) lines.add(builder.toString());
-        for(String line : lines) {
-            font.drawShadow(matrix,line,left,top,color);
-            top+=spacing;
+            index++;
         }
         return top;
     }
 
     /**
-     Returns the total number of lines a string would be if it was split
+     * Splits a string into a list of lines
      */
-    public static int howManyLinesWillThisBe(Font font, String original, int left, int right, int top, int spacing) {
+    public static List<String> splitLines(Font font, String original, int left, int right) {
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
         StringBuilder builder = new StringBuilder();
@@ -221,7 +199,14 @@ public class GuiUtil {
             lineCounter++;
         }
         lines.add(builder.toString());
-        return lines.size();
+        return lines;
+    }
+
+    /**
+     Returns the total number of lines a string would be if it was split
+     */
+    public static int howManyLinesWillThisBe(Font font, String original, int left, int right) {
+        return splitLines(font, original, left, right).size();
     }
 
     /**
@@ -231,6 +216,9 @@ public class GuiUtil {
     public static void drawMultiLineTitle(PoseStack matrix, Window res, String text, String subText, boolean centeredText, int x,
                                           int y, float scaleX, float scaleY, float subScale, String color,
                                           String subColor, float opacity, float subOpacity, int lineSpacing) {
+        matrix.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         Font font = Minecraft.getInstance().font;
         List<String> textLines = new ArrayList<>();
         List<String> subLines = new ArrayList<>();
@@ -265,16 +253,16 @@ public class GuiUtil {
                 }
             }
         }
-        if(builder.length()>0) textLines.add(builder.toString());
+        if(!builder.isEmpty()) textLines.add(builder.toString());
         matrix.pushPose();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
         matrix.scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
+            Component lineComponent = Component.literal(line);
             if(centeredText)
-                font.drawShadow(matrix,line,(x/scaleX)-((float)font.width(line))/2,
-                        (float)y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
-            else font.drawShadow(matrix,line,x/scaleX,y/scaleY, convertChatFormatting(textFormat,(int)(255f*opacity)));
+                font.drawShadow(matrix,lineComponent,(x/scaleX)-((float)font.width(lineComponent))/2,
+                        (float)y/scaleY, FontUtil.convertChatFormatting(textFormat,(int)(255f*opacity)));
+            else font.drawShadow(matrix,lineComponent,x/scaleX,y/scaleY,
+                    FontUtil.convertChatFormatting(textFormat,(int)(255f*opacity)));
             y+=lineSpacing*5;
         }
         matrix.popPose();
@@ -300,20 +288,22 @@ public class GuiUtil {
                 }
             }
         }
-        if(builder.length()>0) subLines.add(builder.toString());
+        if(!builder.isEmpty()) subLines.add(builder.toString());
         float subScaleX = scaleX*subScale;
         float subScaleY = scaleY*subScale;
         matrix.pushPose();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
         matrix.scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
+            Component lineComponent = Component.literal(line);
             if(centeredText)
-                font.drawShadow(matrix,line,(x/subScaleX)-((float)font.width(line))/2,
-                        (float)y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
-            else font.drawShadow(matrix,line,x/subScaleX,y/subScaleY, convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+                font.drawShadow(matrix,lineComponent,(x/subScaleX)-((float)font.width(lineComponent))/2,
+                        (float)y/subScaleY, FontUtil.convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+            else font.drawShadow(matrix,lineComponent,x/subScaleX,y/subScaleY,
+                    FontUtil.convertChatFormatting(subFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
+        matrix.popPose();
+        RenderSystem.disableBlend();
         matrix.popPose();
     }
 
@@ -343,6 +333,13 @@ public class GuiUtil {
     }
 
     /**
+     * Alternate vertex coloring method
+     */
+    public static VertexConsumer vertexColor(VertexConsumer vertex, float r, float g, float b, float a) {
+        return vertex.color(r,g,b,a);
+    }
+
+    /**
         Reverses a color vector
         This is generally used to set an opposite hover color
      */
@@ -362,30 +359,5 @@ public class GuiUtil {
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
-    }
-
-    /**
-     Converts a ChatFormatting object into a single color integer with an optional alpha value
-     */
-    public static int convertChatFormatting(ChatFormatting format, int a) {
-        int r,b,g;
-        return switch (format) {
-            case DARK_RED -> makeRGBAInt(170, 0, 0, a);
-            case RED -> makeRGBAInt(255, 85, 85, a);
-            case GOLD -> makeRGBAInt(255, 170, 0, a);
-            case YELLOW -> makeRGBAInt(255, 255, 85, a);
-            case DARK_GREEN -> makeRGBAInt(0, 170, 0, a);
-            case GREEN -> makeRGBAInt(85, 255, 85, a);
-            case AQUA -> makeRGBAInt(85, 255, 255, a);
-            case DARK_AQUA -> makeRGBAInt(0, 170, 170, a);
-            case DARK_BLUE -> makeRGBAInt(0, 0, 170, a);
-            case BLUE -> makeRGBAInt(85, 85, 255, a);
-            case LIGHT_PURPLE -> makeRGBAInt(255, 85, 255, a);
-            case DARK_PURPLE -> makeRGBAInt(170, 0, 170, a);
-            case GRAY -> makeRGBAInt(170, 170, 170, a);
-            case DARK_GRAY -> makeRGBAInt(85, 85, 85, a);
-            case BLACK -> makeRGBAInt(0, 0, 0, a);
-            default -> makeRGBAInt(255, 255, 255, a);
-        };
     }
 }

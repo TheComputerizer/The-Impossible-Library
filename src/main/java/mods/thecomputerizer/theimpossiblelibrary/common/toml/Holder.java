@@ -7,8 +7,9 @@ import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.Level;
-
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -360,7 +361,7 @@ public class Holder {
     /**
      * Remove a table if you have the table object
      */
-    public void removeTable(Table toRemove) {
+    public void removeTable(@NotNull Table toRemove) {
         List<AbstractType> tableContents = toRemove.getNestedContents();
         if(!toRemove.isTopLevel()) toRemove.getParent().removeItem(toRemove);
         for (AbstractType type : tableContents) {

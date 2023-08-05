@@ -3,21 +3,27 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
+@Environment(EnvType.CLIENT)
 public class Renderer {
 
-    private static final ArrayList<Renderable> renderables = new ArrayList<>();
+    private static final List<Renderable> RENDERABLES = Collections.synchronizedList(new ArrayList<>());
 
     public static PNG initializePng(ResourceLocation location, Map<String, Object> parameters) {
         try {
-            return new PNG(location, parameters);
+            boolean isAnimated = parameters.containsKey("animated") && Boolean.parseBoolean(parameters.get("animated").toString());
+            return isAnimated ? new SpriteSheet(location, parameters) : new PNG(location, parameters);
         } catch (IOException ex) {
             LogUtil.logInternal(Level.ERROR,"Failed to initialize png at resource location {}",location,ex);
         }
@@ -25,20 +31,29 @@ public class Renderer {
     }
 
     public static void addRenderable(Renderable renderable) {
-        renderables.add(renderable);
-        renderable.initializeTimers();
+        synchronized (RENDERABLES) {
+            RENDERABLES.add(renderable);
+            renderable.initializeTimers();
+        }
     }
 
     public static void removeRenderable(Renderable renderable) {
-        renderables.remove(renderable);
+        synchronized (RENDERABLES) {
+            RENDERABLES.remove(renderable);
+        }
     }
 
     public static void tickRenderables() {
-        renderables.removeIf(renderable -> !renderable.tick());
+        synchronized (RENDERABLES) {
+            RENDERABLES.removeIf(renderable -> !renderable.tick());
+        }
     }
 
 
     public static void renderAllBackgroundStuff(PoseStack matrix, Window window) {
-        for(Renderable type : renderables) type.render(matrix,window);
+        synchronized (RENDERABLES) {
+            for(Renderable type : RENDERABLES)
+                type.render(matrix,window);
+        }
     }
 }

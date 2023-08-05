@@ -3,11 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@Environment(EnvType.CLIENT)
 public abstract class Renderable {
 
     private final Map<String, Object> parameters;
@@ -82,10 +85,16 @@ public abstract class Renderable {
         this.parameters.put(name,val);
     }
 
+    protected float minOpacity() {
+        return 0f;
+    }
+
     public float getOpacity() {
-        float def = getParameterAs("opacity",1f, Float.class);
-        if(this.fadeInTimer>0) return def*(1-(((float)this.fadeInTimer)/((float)this.maxFadeIn)));
-        if(this.fadeOutTimer<this.maxFadeOut) return def*(((float)this.fadeOutTimer)/((float)this.maxFadeOut));
+        float min = minOpacity();
+        float range = 1f-min;
+        float def = Math.max(min,getParameterAs("opacity",1f, Float.class));
+        if(this.fadeInTimer>0) return def*(1f-(range*(((float)this.fadeInTimer)/((float)this.maxFadeIn))));
+        if(this.fadeOutTimer<this.maxFadeOut) return min+(def*range*(((float)this.fadeOutTimer)/((float)this.maxFadeOut)));
         return def;
     }
 

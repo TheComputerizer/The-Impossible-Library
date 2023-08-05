@@ -1,12 +1,12 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.2.+'
 }
+
 version = "${project.minecraft_version}-fabric-${project.mod_version}"
 group = project.maven_group
 archivesBaseName = project.base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
 
 repositories {
     google()
@@ -19,8 +19,6 @@ repositories {
         url = uri("https://m2.dv8tion.net/releases")
     }
 }
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
@@ -48,10 +46,4 @@ processResources {
 
 java {
     withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
 }
