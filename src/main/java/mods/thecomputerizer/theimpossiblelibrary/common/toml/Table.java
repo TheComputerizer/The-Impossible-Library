@@ -5,10 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.util.NetworkUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.TextUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,6 +48,35 @@ public class Table extends AbstractType {
      * Determines the index of the table array this table is in or -1 if it is not in one.
      */
     private int arrIndex;
+
+    public Table(CompoundTag tag, @Nullable Table parentTable) {
+        super(tag, parentTable);
+        this.backing = null;
+        this.level = tag.getInt("level");
+        this.arrIndex = tag.getInt("arrIndex");
+        this.tableName = tag.getString("name");
+        this.contents = readContents(tag.get("contents"));
+        this.matchers = new ArrayList<>();
+    }
+
+    private List<AbstractType> readContents(Tag tag) {
+        List<AbstractType> ret = new ArrayList<>();
+        if(tag instanceof ListTag) {
+            for(Tag test : (ListTag)tag) {
+                if(test instanceof CompoundTag element) {
+                    String type = element.getString("type");
+                    if(type.matches("table"))
+                        ret.add(new Table(element.getCompound("contents"),this));
+                    else {
+                        Variable var = new Variable(element.getCompound("contents"),this);
+                        if(var.isValid()) ret.add(var);
+                    }
+                } else break;
+            }
+        }
+        return ret;
+    }
+
     public Table(FriendlyByteBuf buf, @Nullable Table parentTable) {
         super(buf, parentTable);
         this.backing = null;
@@ -415,5 +447,29 @@ public class Table extends AbstractType {
         if(Objects.nonNull(table.parentTable))
             return inheritTableName(table.parentTable,table.parentTable.getName()+"."+concat);
         return concat;
+    }
+
+    /**
+     * Only saves variables and child tables
+     */
+    public CompoundTag writeToTag() {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("absoluteIndex",this.getAbsoluteIndex());
+        tag.putString("name",this.tableName);
+        tag.putInt("level",this.level);
+        tag.putInt("arrIndex",this.arrIndex);
+        ListTag contents = new ListTag();
+        for(AbstractType type : this.getContents()) {
+            CompoundTag element = new CompoundTag();
+            if(type instanceof Table table) {
+                element.putString("type","table");
+                tag.put("contents",table.writeToTag());
+            } else if(type instanceof Variable var) {
+                element.putString("type","variable");
+                tag.put("contents",var.writeToTag());
+            }
+        }
+        tag.put("contents",contents);
+        return tag;
     }
 }

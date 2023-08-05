@@ -248,7 +248,7 @@ public class TomlUtil {
 
     /**
      * Reads in a generic list and converts it to a string. This can be used as a quote fallback, but it will need to be
-     * parsed afterwards if string is not the desired return type. Returns the string output of the def value if no list
+     * parsed afterward if string is not the desired return type. Returns the string output of the def value if no list
      * is present.
      */
     public static Collection<String> readListAsString(Toml toml, String key, Collection<?> def) {

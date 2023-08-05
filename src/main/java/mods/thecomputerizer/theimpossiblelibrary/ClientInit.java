@@ -12,12 +12,11 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientInit implements ClientModInitializer {
-    private static final boolean IS_DEV_ENV = false;
-    public static KeyMapping TEST_KEYBIND;
+    private static KeyMapping TEST_KEYBIND;
     @Override
     public void onInitializeClient() {
         setUpClientEvents();
-        if(IS_DEV_ENV) {
+        if(TheImpossibleLibrary.isDevEnv()) {
             TEST_KEYBIND = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.test", InputConstants.Type.KEYSYM,
                     GLFW.GLFW_KEY_R, "key.categories.theimpossiblelibrary"));
         }
@@ -26,11 +25,9 @@ public class ClientInit implements ClientModInitializer {
     private static void setUpClientEvents() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             Renderer.tickRenderables();
-            if(IS_DEV_ENV)
-                if(TEST_KEYBIND.isDown())
-                    ClientTest.onTestKey();
+            if(TheImpossibleLibrary.isDevEnv() && TEST_KEYBIND.isDown())
+                ClientTest.onTestKey();
         });
-
         HudRenderCallback.EVENT.register((matrix, delta) -> Renderer.renderAllBackgroundStuff(matrix,Minecraft.getInstance().getWindow()));
     }
 }

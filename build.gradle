@@ -1,12 +1,12 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.2.+'
 }
+
 version = "${project.minecraft_version}-fabric-${project.mod_version}"
 group = project.maven_group
 archivesBaseName = project.base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
 
 repositories {
     google()
@@ -45,16 +45,6 @@ processResources {
     exclude '**/theimpossiblelibrary/test/**'
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 17
-}
-
 java {
     withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
 }
