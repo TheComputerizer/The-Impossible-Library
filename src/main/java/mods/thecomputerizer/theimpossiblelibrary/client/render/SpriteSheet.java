@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
@@ -8,14 +9,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import org.joml.Matrix4f;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
@@ -36,10 +35,8 @@ public class SpriteSheet extends PNG {
         int fps = getParameterAs("fps",20, Integer.class);
         this.millisPerFrame = (long)(1000f/((float)fps));
         this.milliCounter = 0;
-        Resource resource = getResource();
-        try (InputStream resourceStream = resource.open()) {
-            SpriteContents size = new SpriteContents(resource::toString, resourceStream);
-            this.frames = size.height / size.width;
+        try (NativeImage size = NativeImage.read(getResource().open())) {
+            this.frames = size.getHeight() / size.getWidth();
         }
         this.curFrame = 0;
         this.startedRendering = false;
