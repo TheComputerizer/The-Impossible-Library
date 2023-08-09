@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION)
 public class TheImpossibleLibrary {
 
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
     private static boolean CLIENT_ONLY = false;
     private static boolean DEV_LOG = false;
 

@@ -91,7 +91,7 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
-    //exclude '**/theimpossiblelibrary/test/**'
+    exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
