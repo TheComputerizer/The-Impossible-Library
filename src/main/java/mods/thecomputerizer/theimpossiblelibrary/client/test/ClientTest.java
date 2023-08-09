@@ -9,8 +9,9 @@ import mods.thecomputerizer.theimpossiblelibrary.common.toml.Table;
 import mods.thecomputerizer.theimpossiblelibrary.common.toml.Variable;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.FileUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.TomlUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
 import java.util.Arrays;
@@ -18,26 +19,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused"})
+@Environment(EnvType.CLIENT)
 public class ClientTest {
 
     public static void onTestKey() {
-        //renderableTest();
-        guiTest();
+        Constants.testLog("KEY DOWN??");
+        renderableTest();
+        //guiTest();
         //tomlTest();
     }
 
     private static void renderableTest() {
         try {
             Holder transitions = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                    .open(new ResourceLocation(Constants.MODID, "test/transitions.toml")));
-            Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
-            Table image = transitions.getTableByName("image");
-            Renderer.addRenderable(Renderer.initializePng(new ResourceLocation(Constants.MODID,
-                    image.getValOrDefault("name","missing")),image.getVarMap()));
+                    .getResourceOrThrow(Constants.res("test/transitions.toml")).open());
+            renderableTitleTest(transitions);
+            renderableImageTest(transitions);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Constants.testLog("Renderable test failed!",ex);
         }
+    }
+
+    private static void renderableTitleTest(Holder transitions) {
+        Renderer.addRenderable(new Text(transitions.getTableByName("title").getVarMap()));
+    }
+
+    private static void renderableImageTest(Holder transitions) {
+        Table image = transitions.getTableByName("image");
+        Renderer.addRenderable(Renderer.initializePng(Constants.res(image.getValOrDefault("name","missing")),
+                image.getVarMap()));
     }
 
     private static void guiTest() {
@@ -49,14 +60,14 @@ public class ClientTest {
         //test smart toml reading and printing
         try {
             Holder testHolder = TomlUtil.readFully(Minecraft.getInstance().getResourceManager()
-                    .open(new ResourceLocation(Constants.MODID,"test/thing.toml")));
+                    .getResourceOrThrow(Constants.res("test/thing.toml")).open());
             testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
             testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
             testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
             FileUtil.writeLinesToFile(new File(Constants.DATA_DIRECTORY, "test2.toml"),
                     testHolder.toLines(),false);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Constants.testLog("Toml test failed!",ex);
         }
     }
 

@@ -1,13 +1,12 @@
-//file:noinspection GroovyAssignabilityCheck
-//file:noinspection GroovyAccessibility
 plugins {
     id 'fabric-loom' version '1.2.+'
 }
+
 version = "${project.minecraft_version}-fabric-${project.mod_version}"
 group = project.maven_group
 archivesBaseName = project.base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
 
 repositories {
     google()
@@ -21,18 +20,12 @@ repositories {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    /*
     mappings loom.layered() {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
     }
-    */
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
@@ -53,14 +46,4 @@ processResources {
 
 java {
     withSourcesJar()
-}
-
-loom {
-    //accessWidenerPath = file("src/main/resources/${project.access}")
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
 }

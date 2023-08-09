@@ -42,7 +42,7 @@ public class AssetUtil {
         if(name) key+=".name";
         if(Language.getInstance().has(key)) return new TranslatableContents(key,"unknown_key",new Object[]{});
         if(fallbackName) fallbackKey+=".name";
-        if(Language.getInstance().has(fallbackKey)) return new TranslatableContents(fallbackKey,"unknown_fallback_key",new Object[]{});
+        if(Language.getInstance().has(fallbackKey)) return new TranslatableContents(fallbackKey,"unknown_key",new Object[]{});
         return null;
     }
 

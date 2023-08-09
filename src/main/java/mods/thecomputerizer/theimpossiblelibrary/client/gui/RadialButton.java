@@ -6,8 +6,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -16,6 +14,7 @@ import org.joml.Vector4f;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class RadialButton extends AbstractRadialButton {
     private final List<Component> tooltipLines;
@@ -30,7 +29,7 @@ public class RadialButton extends AbstractRadialButton {
                         BiConsumer<Screen, RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(line -> (Component)MutableComponent.create(new LiteralContents(line))).toList();
+        this.tooltipLines = tooltipLines.stream().map(Component::literal).collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
@@ -41,11 +40,11 @@ public class RadialButton extends AbstractRadialButton {
         this.hover = superHover && mouseDeg>=angles.x() && mouseDeg<angles.y();
     }
 
-    public void draw(Vector3f center, Vector3f radius, Vector3f angles,
+    public void draw(Vector3f center, float zLevel, Vector3f radius, Vector3f angles,
                      Vector3f mouse, Vector3f relativeCenter, int resolution) {
-        this.centerPos = relativeCenter;
+        setCenterPos(relativeCenter);
         for (int i = 0; i < resolution; i++)
-            drawRadialSection(center,radius,angles.x(),angles.y()-angles.x(),i,resolution);
+            drawRadialSection(center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
 
     public void drawCenterIcon(GuiGraphics graphics, float centerRadius) {
@@ -56,7 +55,7 @@ public class RadialButton extends AbstractRadialButton {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
             }
-            GuiUtil.bufferSquareTexture(graphics, this.centerPos, centerRadius+hoverIncrease, actualIcon);
+            GuiUtil.bufferSquareTexture(graphics,getCenterPos(),centerRadius+hoverIncrease, actualIcon);
         }
     }
 
@@ -64,7 +63,7 @@ public class RadialButton extends AbstractRadialButton {
         Font font = Minecraft.getInstance().font;
         if(Objects.nonNull(this.centerText)) {
             int color = this.hover ? 16777120 : 14737632;
-            graphics.drawCenteredString(font, this.centerText, (int) this.centerPos.x(), (int) this.centerPos.y(), color);
+            graphics.drawCenteredString(font, this.centerText, (int) getCenterPos().x(), (int) getCenterPos().y(), color);
         }
         if(this.hover && isCurrent) graphics.renderComponentTooltip(font, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }

@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.common.toml;
 
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.logging.log4j.LogManager;
-
 import org.jetbrains.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Set;
 import java.util.function.BiFunction;

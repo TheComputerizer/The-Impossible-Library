@@ -8,8 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -54,7 +52,7 @@ public class RadialElement {
                          float resolution, float hoverIncrease, List<RadialButton> buttons) {
         this.parentScreen = parent;
         this.buttons = buttons;
-        this.centerTooltips = centerTooltips.stream().map(line -> (Component)MutableComponent.create(new LiteralContents(line))).toList();
+        this.centerTooltips = centerTooltips.stream().map(Component::literal).collect(Collectors.toList());
         this.centerIcon = center;
         this.altCenterIcon = Objects.isNull(altCenter) ? center : altCenter;
         this.iconRadius = iconRadius;
@@ -78,17 +76,17 @@ public class RadialElement {
         Remember to call this method from your GUI class if you want to be able to click on the buttons here
      */
     public void mousePressed(int mouseX, int mouseY, int mouseButton) {
-        if(mouseButton==0 && this.parentScreen!=null) {
+        if(mouseButton==0 && Objects.nonNull(this.parentScreen)) {
             if(Objects.nonNull(this.centerProgress)) this.centerProgress.handleClick(this.parentScreen,new Vector3f(mouseX,mouseY,0));
             for (RadialButton button : this.buttons)
                 button.handleClick(this.parentScreen);
         }
     }
 
-    public void render(GuiGraphics graphics, int mouseX, int mouseY) {
+    public void render(GuiGraphics graphics, float offset, int mouseX, int mouseY) {
         graphics.pose().pushPose();
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1f,1f,1f,1f);
         Vector3f mouse = new Vector3f(mouseX,mouseY,0);
         double mouseAngleDeg = MathUtil.getAngle(mouse, this.center);
         double mouseRelativeRadius = MathUtil.distance(mouse, this.center);
@@ -106,18 +104,18 @@ public class RadialElement {
             for (RadialButton button : this.buttons) {
                 Vector3f angles = MathUtil.makeAngleVector(index,(int)numButtons);
                 if(currentScreen) button.setHover(this.hover,mouseAngleDeg,angles);
-                button.draw(this.center, this.radius, MathUtil.toRadians(angles), mouse,
+                button.draw(this.center, offset, this.radius, MathUtil.toRadians(angles), mouse,
                         MathUtil.getCenterPosOfSlice(angles,this.radius,this.center,(int)numButtons),buttonRes);
                 index++;
             }
-        } else drawEmpty(mouse);
-        drawCenterProgress(this.center,currentScreen);
+        } else drawEmpty(offset, mouse);
+        drawCenterProgress(this.center,offset,currentScreen);
         drawIcons(graphics, this.center, this.radius, numButtons==1);
         drawText(graphics, mouse,mouseRelativeRadius, currentScreen);
         graphics.pose().popPose();
     }
 
-    private void drawEmpty(Vector3f mouse) {
+    private void drawEmpty(float zLevel, Vector3f mouse) {
         float startAngle = (float)Math.toRadians(-0.25f * 360);
         for (int i = 0; i < resolution; i++) {
             float angle1 = (float) Math.toRadians(startAngle + (i/resolution) * MathUtil.CIRCLE_RADIANS);
@@ -126,8 +124,8 @@ public class RadialElement {
             Vector3f pos2In = MathUtil.getVertex(center, radius.x(), angle2);
             Vector3f pos1Out = MathUtil.getVertex(center, radius.y(), angle1);
             Vector3f pos2Out = MathUtil.getVertex(center, radius.y(), angle2);
-            if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,0f,new Vector4f(255,255,255,64));
-            else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,0f,new Vector4f(0,0,0,64));
+            if(this.hover) GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,new Vector4f(255,255,255,64));
+            else GuiUtil.setBuffer(pos1In,pos2In,pos1Out,pos2Out,zLevel,new Vector4f(0,0,0,64));
         }
     }
 
@@ -145,11 +143,11 @@ public class RadialElement {
         for(RadialButton button : this.buttons) button.drawCenterIcon(graphics,(radius.y()-radius.x())/2f);
     }
 
-    private void drawCenterProgress(Vector3f center, boolean currentScreen) {
+    private void drawCenterProgress(Vector3f center, float offset, boolean currentScreen) {
         if(Objects.nonNull(this.centerProgress)) {
             if(currentScreen) this.centerProgress.setHover(this.centerHover);
             else this.centerProgress.setHover(false);
-            this.centerProgress.draw(this.center);
+            this.centerProgress.draw(this.center,offset);
         }
     }
 
@@ -158,7 +156,7 @@ public class RadialElement {
             Font font = Minecraft.getInstance().font;
             if (Objects.nonNull(this.centerText)) {
                 int color = this.centerHover ? 16777120 : 14737632;
-                graphics.drawCenteredString(font, this.centerText,(int) this.center.x(), (int) this.center.y(), color);
+                graphics.drawCenteredString(font,this.centerText,(int) this.center.x(), (int) this.center.y(), color);
             }
             for (RadialButton button : this.buttons) button.drawText(this.parentScreen, graphics, mouse, isCurrent);
             if (this.centerHover && isCurrent)
