@@ -12,13 +12,15 @@ import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = Constants.MODID, value = Dist.CLIENT)
 public class Renderer {
 
-    private static final ArrayList<Renderable> RENDERABLES = new ArrayList<>();
+    private static final List<Renderable> RENDERABLES = Collections.synchronizedList(new ArrayList<>());
 
     public static PNG initializePng(ResourceLocation location, Map<String, Object> parameters) {
         try {
@@ -31,24 +33,34 @@ public class Renderer {
     }
 
     public static void addRenderable(Renderable renderable) {
-        RENDERABLES.add(renderable);
-        renderable.initializeTimers();
+        synchronized (RENDERABLES) {
+            RENDERABLES.add(renderable);
+            renderable.initializeTimers();
+        }
     }
 
     public static void removeRenderable(Renderable renderable) {
-        RENDERABLES.remove(renderable);
+        synchronized (RENDERABLES) {
+            RENDERABLES.remove(renderable);
+        }
     }
 
     @SubscribeEvent
     public static void tickRenderables(TickEvent.ClientTickEvent ev) {
-        if(ev.phase == TickEvent.Phase.END)
-            RENDERABLES.removeIf(renderable -> !renderable.tick());
+        if(ev.phase==TickEvent.Phase.END) {
+            synchronized (RENDERABLES) {
+                RENDERABLES.removeIf(renderable -> !renderable.tick());
+            }
+        }
     }
 
     @SubscribeEvent
     public static void renderAllBackgroundStuff(RenderGameOverlayEvent.Post e) {
-        if(e.getType()==RenderGameOverlayEvent.ElementType.ALL)
-            for(Renderable type : RENDERABLES)
-                type.render(e.getMatrixStack(),e.getWindow(),e.getPartialTicks());
+        if(e.getType()==RenderGameOverlayEvent.ElementType.ALL) {
+            synchronized (RENDERABLES) {
+                for (Renderable type : RENDERABLES)
+                    type.render(e.getMatrixStack(),e.getWindow());
+            }
+        }
     }
 }

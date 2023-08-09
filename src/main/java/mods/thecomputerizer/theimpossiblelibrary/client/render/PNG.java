@@ -34,7 +34,7 @@ public class PNG extends Renderable {
     }
 
     @Override
-    public void render(MatrixStack matrix, MainWindow res, float partialTick) {
+    public void render(MatrixStack matrix, MainWindow res) {
         if(canRender()) {
             preRender(matrix);
             int resX = res.getGuiScaledWidth();

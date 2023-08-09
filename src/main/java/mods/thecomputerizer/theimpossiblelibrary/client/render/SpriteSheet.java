@@ -10,21 +10,22 @@ import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.IResource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.vector.Matrix4f;
-import org.apache.commons.compress.utils.IOUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 public class SpriteSheet extends PNG {
 
     private final int frames;
-    private final int millisPerFrame;
+    private final long millisPerFrame;
     private int curFrame;
-    private boolean startedRendering = false;
-    private float prevPartialTick;
-    private int milliCounter;
+    private boolean startedRendering;
+    private long prevMillis;
+    private long milliCounter;
 
     /**
      * Preload a PNG animated sprite sheet with parameters for use in the Renderer class.
@@ -35,22 +36,23 @@ public class SpriteSheet extends PNG {
         this.millisPerFrame = (int)(1000f/((float)fps));
         this.milliCounter = 0;
         IResource resource = getResource();
-        PngSizeInfo size = new PngSizeInfo(resource.toString(),resource.getInputStream());
-        this.frames = size.height/size.width;
+        try(InputStream resourceStream = resource.getInputStream()) {
+            PngSizeInfo size = new PngSizeInfo(resource.toString(),resourceStream);
+            this.frames = size.height / size.width;
+        }
         this.curFrame = 0;
-        IOUtils.closeQuietly(resource);
-        Constants.LOGGER.error("INITIALIZED SPRITE WITH {} FRAMES AND FPS MILLIS OF {}",this.frames,this.millisPerFrame);
+        Constants.testLog("INITIALIZED SPRITE WITH {} FRAMES AND FPS MILLIS OF {}",this.frames,this.millisPerFrame);
     }
 
     private IResource getResource() throws IOException {
         return Minecraft.getInstance().getResourceManager().getResource(this.source);
     }
 
-    private void renderTick(float partialTick) {
-        float percentAdvanced = partialTick<this.prevPartialTick ? (1f+partialTick)-this.prevPartialTick :
-                partialTick-this.prevPartialTick;
-        int millis = (int)(percentAdvanced*50f);
-        this.milliCounter+=millis;
+    private void renderTick() {
+        long curMillis = Util.getMillis();
+        long elapsedMillis = curMillis-this.prevMillis;
+        this.prevMillis = curMillis;
+        this.milliCounter+=elapsedMillis;
         while(this.milliCounter>=this.millisPerFrame) {
             this.curFrame++;
             if(this.curFrame>=this.frames) this.curFrame = 0;
@@ -59,11 +61,11 @@ public class SpriteSheet extends PNG {
     }
 
     @Override
-    public void render(MatrixStack matrix, MainWindow res, float partialTick) {
-        if(this.startedRendering) renderTick(partialTick);
+    public void render(MatrixStack matrix, MainWindow res) {
+        if(this.startedRendering) renderTick();
         if(canRender()) {
             if(!this.startedRendering) {
-                this.prevPartialTick = partialTick;
+                this.prevMillis = Util.getMillis();
                 this.startedRendering = true;
             }
             preRender(matrix);

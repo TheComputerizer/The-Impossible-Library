@@ -29,6 +29,7 @@ public class TheImpossibleLibrary {
             if(IS_DEV_ENV) MinecraftForge.EVENT_BUS.register(ClientTest.class);
         }
         DataUtil.initGlobal();
+        if(IS_DEV_ENV) DEV_LOG = true;
     }
 
     private void commonSetup(final FMLClientSetupEvent ev) {

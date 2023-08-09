@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "mods.thecomputerizer.theimpossiblelibrary.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "theimpossiblelibrary.refmap.json",
+  "mixins": [],
+  "client": [
+    "MixinFont"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

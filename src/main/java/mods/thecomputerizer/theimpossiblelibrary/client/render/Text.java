@@ -26,10 +26,15 @@ public class Text extends Renderable {
     public void initializeTimers() {
         super.initializeTimers();
         Random random = new Random();
-        if(this.potentialText.size()>0)
+        if(!this.potentialText.isEmpty())
             this.text = this.potentialText.get(random.nextInt(this.potentialText.size())).toString();
-        if(this.potentialSubtext.size()>0)
+        if(!this.potentialSubtext.isEmpty())
             this.subtext = this.potentialSubtext.get(random.nextInt(this.potentialSubtext.size())).toString();
+    }
+
+    @Override
+    protected float minOpacity() {
+        return 0.016f;
     }
 
     @Override
@@ -51,10 +56,9 @@ public class Text extends Renderable {
     }
 
     @Override
-    public void render(MatrixStack matrix, MainWindow res, float partialTick) {
+    public void render(MatrixStack matrix, MainWindow res) {
         if(canRender()) {
             float opacity = getOpacity();
-            //Constants.LOGGER.error("TEXT OPACITY IS {}",opacity);
             GuiUtil.drawMultiLineTitle(matrix,res,this.text, this.subtext,
                     getParameterAs("centered", true, Boolean.class),
                     posX(res.getGuiScaledWidth(),res.getGuiScaledHeight()),
