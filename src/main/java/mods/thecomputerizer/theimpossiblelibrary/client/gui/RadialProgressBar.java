@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.client.gui.screens.Screen;
 import org.apache.logging.log4j.util.TriConsumer;

@@ -2,14 +2,17 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.IOException;
 import java.util.Map;
 
 @SuppressWarnings("unused")
+@OnlyIn(Dist.CLIENT)
 public class PNG extends Renderable {
 
     protected final ResourceLocation source;
@@ -24,27 +27,27 @@ public class PNG extends Renderable {
         this.source = location;
     }
 
-    protected void preRender(PoseStack matrix) {
-        matrix.pushPose();
+    protected void preRender(GuiGraphics graphics) {
+        graphics.pose().pushPose();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
     }
 
     @Override
-    public void render(PoseStack matrix, Window res) {
+    public void render(GuiGraphics graphics, Window res) {
         if(canRender()) {
             int resX = res.getGuiScaledWidth();
             int resY = res.getGuiScaledHeight();
             int x = posX(resX,resY);
             int y = posY(resY);
-            preRender(matrix);
-            matrix.scale(scaleX(resX,resY), scaleY(), 1f);
-            GuiUtil.enforceAlphaTexture(matrix,x,y,resX,resY,Math.max(0.1f,getOpacity()),this.source);
-            postRender(matrix);
+            preRender(graphics);
+            graphics.pose().scale(scaleX(resX,resY), scaleY(), 1f);
+            GuiUtil.enforceAlphaTexture(graphics.pose(),x,y,resX,resY,Math.max(0.1f,getOpacity()),this.source);
+            postRender(graphics);
         }
     }
 
-    protected void postRender(PoseStack matrix) {
-        matrix.popPose();
+    protected void postRender(GuiGraphics graphics) {
+        graphics.pose().popPose();
     }
 }

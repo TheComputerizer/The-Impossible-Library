@@ -3,17 +3,16 @@ package mods.thecomputerizer.theimpossiblelibrary.util.client;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,29 +23,28 @@ public class GuiUtil {
     public static final int WHITE = makeRGBAInt(255,255,255,255);
 
     /**
-        Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
-        offset can be accessed from any class that extends GuiScreen
+     Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
+     offset can be accessed from any class that extends GuiScreen
      */
     public static void setBuffer(Vector3f pos1In, Vector3f pos2In, Vector3f pos1Out, Vector3f pos2Out,
                                  float offset, Vector4f color) {
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
         GLColorStart(color);
         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        vectorColor(builder.vertex(pos1Out.x(),pos1Out.y(),offset),color).endVertex();
-        vectorColor(builder.vertex(pos1In.x(),pos1In.y(),offset),color).endVertex();
-        vectorColor(builder.vertex(pos2In.x(),pos2In.y(),offset),color).endVertex();
-        vectorColor(builder.vertex(pos2Out.x(),pos2Out.y(),offset),color).endVertex();
+        vectorColor(builder.vertex(pos1Out.x(), pos1Out.y(), offset),color).endVertex();
+        vectorColor(builder.vertex(pos1In.x(), pos1In.y(), offset),color).endVertex();
+        vectorColor(builder.vertex(pos2In.x(), pos2In.y(), offset),color).endVertex();
+        vectorColor(builder.vertex(pos2Out.x(), pos2Out.y(), offset),color).endVertex();
         Tesselator.getInstance().end();
         GLColorFinish();
     }
 
     /**
-        Pushes a generic texture for rendering via a ResourceLocation
-        Make sure to pass in a valid ResourceLocation since that does not get checked here
+     Pushes a generic texture for rendering via a ResourceLocation
+     Make sure to pass in a valid ResourceLocation since that does not get checked here
      */
-    public static void bufferSquareTexture(PoseStack matrix, Vector3f center, float radius, ResourceLocation texture) {
-        RenderSystem.setShaderTexture(0,texture);
-        GuiComponent.blit(matrix,(int) (center.x() - radius / 2f), (int) (center.y() - radius / 2f),
+    public static void bufferSquareTexture(GuiGraphics graphics, Vector3f center, float radius, ResourceLocation texture) {
+        graphics.blit(texture,(int) (center.x() - radius / 2f), (int) (center.y() - radius / 2f),
                 0, 0, (int) radius, (int) radius, (int) radius, (int) radius);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     }
@@ -87,8 +85,8 @@ public class GuiUtil {
     }
 
     /**
-        Draws a colored box with an outline
-        The offset can be obtained from any GuiScreen or set to 0
+     Draws a colored box with an outline
+     The offset can be obtained from any GuiScreen or set to 0
      */
     public static void drawBoxWithOutline(Vector3f topLeft, int width, int height, Vector4f color,
                                           Vector4f outlineColor, float outlineWidth, float offset) {
@@ -97,9 +95,9 @@ public class GuiUtil {
     }
 
     /**
-       Draws a box using tuple inputs
-       The offset can be obtained from any GuiScreen or set to 0
-    */
+     Draws a box using tuple inputs
+     The offset can be obtained from any GuiScreen or set to 0
+     */
     public static void drawBox(Vector3f topLeft, int width, int height, Vector4f color, float offset) {
         Vector3f bottomRight = new Vector3f(topLeft.x()+width,topLeft.y()+height,0);
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
@@ -114,8 +112,8 @@ public class GuiUtil {
     }
 
     /**
-        Draws the outline of a box
-        The offset can be obtained from any GuiScreen or set to 0
+     Draws the outline of a box
+     The offset can be obtained from any GuiScreen or set to 0
      */
     public static void drawBoxOutline(Vector3f topLeft, int width, int height, Vector4f color, float outlineWidth, float offset) {
         Vector3f topRight = new Vector3f(topLeft.x()+width,topLeft.y(),0);
@@ -128,8 +126,8 @@ public class GuiUtil {
     }
 
     /**
-        Draws a colored line between 2 points
-        The offset can be obtained from any GuiScreen or set to 0
+     Draws a colored line between 2 points
+     The offset can be obtained from any GuiScreen or set to 0
      */
     public static void drawLine(Vector3f start, Vector3f end, Vector4f color, float width, float offset) {
         double angle = MathUtil.getAngle(start, end);
@@ -149,17 +147,17 @@ public class GuiUtil {
     }
 
     /**
-        Splits a string into multiple lines and renders them
-        Returns the new y position under the rendered lines
+     Splits a string into multiple lines and renders them
+     Returns the new y position under the rendered lines
      */
-    public static int drawMultiLineString(PoseStack matrix, Font font, String original, int left, int right, int top, int spacing,
+    public static int drawMultiLineString(GuiGraphics graphics, Font font, String original, int left, int right, int top, int spacing,
                                           int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
         int index = 0;
         for(String line : splitLines(font, original, left, right)) {
             if(index>=pos) {
-                font.drawShadow(matrix,line,left,top,color);
+                graphics.drawString(font,line,left,top,color);
                 top += spacing;
                 lineNums--;
                 if (lineNums <= 0) break;
@@ -213,10 +211,10 @@ public class GuiUtil {
      * Similar to drawMultiLineString except it is assumed this is not being called from within a GUI but rather
      * making use of the Text class.
      */
-    public static void drawMultiLineTitle(PoseStack matrix, Window res, String text, String subText, boolean centeredText, int x,
+    public static void drawMultiLineTitle(GuiGraphics graphics, Window res, String text, String subText, boolean centeredText, int x,
                                           int y, float scaleX, float scaleY, float subScale, String color,
                                           String subColor, float opacity, float subOpacity, int lineSpacing) {
-        matrix.pushPose();
+        graphics.pose().pushPose();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         Font font = Minecraft.getInstance().font;
@@ -254,18 +252,17 @@ public class GuiUtil {
             }
         }
         if(!builder.isEmpty()) textLines.add(builder.toString());
-        matrix.pushPose();
-        matrix.scale(scaleX, scaleY, 1f);
+        graphics.pose().pushPose();
+        graphics.pose().scale(scaleX, scaleY, 1f);
         for(String line : textLines) {
-            Component lineComponent = Component.literal(line);
             if(centeredText)
-                font.drawShadow(matrix,lineComponent,(x/scaleX)-((float)font.width(lineComponent))/2,
-                        (float)y/scaleY, FontUtil.convertChatFormatting(textFormat,(int)(255f*opacity)));
-            else font.drawShadow(matrix,lineComponent,x/scaleX,y/scaleY,
+                graphics.drawString(font,line,(int)((x/scaleX)-((float)font.width(line))/2),
+                        (int)((float)y/scaleY), FontUtil.convertChatFormatting(textFormat,(int)(255f*opacity)));
+            else graphics.drawString(font,line,(int)(x/scaleX),(int)(y/scaleY),
                     FontUtil.convertChatFormatting(textFormat,(int)(255f*opacity)));
             y+=lineSpacing*5;
         }
-        matrix.popPose();
+        graphics.pose().popPose();
         builder = new StringBuilder();
         lineWidth = 0;
         lineCounter = 0;
@@ -291,42 +288,41 @@ public class GuiUtil {
         if(!builder.isEmpty()) subLines.add(builder.toString());
         float subScaleX = scaleX*subScale;
         float subScaleY = scaleY*subScale;
-        matrix.pushPose();
-        matrix.scale(subScaleX, subScaleY, 1f);
+        graphics.pose().pushPose();
+        graphics.pose().scale(subScaleX, subScaleY, 1f);
         for(String line : subLines) {
-            Component lineComponent = Component.literal(line);
             if(centeredText)
-                font.drawShadow(matrix,lineComponent,(x/subScaleX)-((float)font.width(lineComponent))/2,
-                        (float)y/subScaleY, FontUtil.convertChatFormatting(subFormat,(int)(255f*subOpacity)));
-            else font.drawShadow(matrix,lineComponent,x/subScaleX,y/subScaleY,
+                graphics.drawString(font,line,(int)((x/subScaleX)-((float)font.width(line))/2),
+                        (int)((float)y/subScaleY), FontUtil.convertChatFormatting(subFormat,(int)(255f*subOpacity)));
+            else graphics.drawString(font,line,(int)(x/subScaleX),(int)(y/subScaleY),
                     FontUtil.convertChatFormatting(subFormat,(int)(255f*subOpacity)));
             y+=lineSpacing;
         }
-        matrix.popPose();
+        graphics.pose().popPose();
         RenderSystem.disableBlend();
-        matrix.popPose();
+        graphics.pose().popPose();
     }
 
     /**
-        Primes the GLStateManager to draw a solid color
+     Primes the GLStateManager to draw a solid color
      */
     public static void GLColorStart(Vector4f color) {
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
+        RenderSystem.resetTextureMatrix();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
     }
 
     /**
-        Resets some necessary GLStateManager stuff so other rendering works as intended
+     Resets some necessary GLStateManager stuff so other rendering works as intended
      */
     public static void GLColorFinish() {
-        RenderSystem.enableTexture();
+        RenderSystem.resetTextureMatrix();
         RenderSystem.disableBlend();
     }
 
     /**
-        Sets the color of a vertex given a color vector
+     Sets the color of a vertex given a color vector
      */
     public static VertexConsumer vectorColor(VertexConsumer vertex, Vector4f colors) {
         return vertex.color(colors.x()/255f, colors.y()/255f, colors.z()/255f, colors.w()/255f);
@@ -340,22 +336,22 @@ public class GuiUtil {
     }
 
     /**
-        Reverses a color vector
-        This is generally used to set an opposite hover color
+     Reverses a color vector
+     This is generally used to set an opposite hover color
      */
     public static Vector4f reverseColors(Vector4f colors) {
         return new Vector4f(Math.abs(colors.x()-255), Math.abs(colors.y()-255), Math.abs(colors.z()-255), colors.w());
     }
 
     /**
-        Converts a color tuple into a single integer
+     Converts a color tuple into a single integer
      */
     public static int makeRGBAInt(Vector4f colors) {
         return makeRGBAInt((int)colors.x(),(int)colors.y(),(int)colors.z(),(int)colors.w());
     }
 
     /**
-        Converts rgba integers into a single color integer
+     Converts rgba integers into a single color integer
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);

@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.util;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 public class MathUtil {
     public static final double CIRCLE_RADIANS = Math.toRadians(360);

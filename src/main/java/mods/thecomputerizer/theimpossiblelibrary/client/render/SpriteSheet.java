@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
-import com.mojang.blaze3d.platform.PngInfo;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
 import net.minecraft.Util;
@@ -13,9 +15,9 @@ import net.minecraft.server.packs.resources.Resource;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
+@OnlyIn(Dist.CLIENT)
 public class SpriteSheet extends PNG {
 
     private final int frames;
@@ -34,9 +36,8 @@ public class SpriteSheet extends PNG {
         this.millisPerFrame = (long)(1000f/((float)fps));
         this.milliCounter = 0;
         Resource resource = getResource();
-        try (InputStream resourceStream = resource.open()) {
-            PngInfo size = new PngInfo(resource::toString, resourceStream);
-            this.frames = size.height / size.width;
+        try (NativeImage size = NativeImage.read(resource.open())) {
+            this.frames = size.getHeight() / size.getWidth();
         }
         this.curFrame = 0;
         this.startedRendering = false;
@@ -60,7 +61,7 @@ public class SpriteSheet extends PNG {
     }
 
     @Override
-    public void render(PoseStack matrix, Window res) {
+    public void render(GuiGraphics graphics, Window res) {
         if(this.startedRendering) renderTick();
         if(canRender()) {
             if(!this.startedRendering) {
@@ -69,10 +70,10 @@ public class SpriteSheet extends PNG {
             }
             int resX = res.getGuiScaledWidth();
             int resY = res.getGuiScaledHeight();
-            preRender(matrix);
-            matrix.scale(scaleX(resX,resY),scaleY(), 1f);
-            drawSprite(matrix.last().pose(),posX(resX,resY),posY(resY),resX,resY);
-            postRender(matrix);
+            preRender(graphics);
+            graphics.pose().scale(scaleX(resX,resY),scaleY(), 1f);
+            drawSprite(graphics.pose().last().pose(),posX(resX,resY),posY(resY),resX,resY);
+            postRender(graphics);
         }
     }
 

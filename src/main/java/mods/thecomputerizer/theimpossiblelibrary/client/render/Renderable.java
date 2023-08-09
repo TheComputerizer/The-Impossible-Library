@@ -2,12 +2,15 @@ package mods.thecomputerizer.theimpossiblelibrary.client.render;
 
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@OnlyIn(Dist.CLIENT)
 public abstract class Renderable {
 
     private final Map<String, Object> parameters;
@@ -135,5 +138,5 @@ public abstract class Renderable {
         this.maxFadeOut = 0;
     }
 
-    abstract void render(PoseStack matrix, Window res);
+    abstract void render(GuiGraphics graphics, Window res);
 }

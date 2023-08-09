@@ -58,7 +58,7 @@ public class Renderer {
     public static void renderAllBackgroundStuff(RenderGuiEvent.Post e) {
         synchronized (RENDERABLES) {
             for(Renderable type : RENDERABLES)
-                type.render(e.getPoseStack(),e.getWindow());
+                type.render(e.getGuiGraphics(),e.getWindow());
         }
     }
 }

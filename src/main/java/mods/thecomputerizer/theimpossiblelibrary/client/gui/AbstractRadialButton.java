@@ -1,15 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.MathUtil;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvents;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-public abstract class AbstractRadialButton extends GuiComponent {
+public abstract class AbstractRadialButton {
 
     protected final Vector4f colors;
     private Vector3f centerPos;
@@ -38,7 +37,7 @@ public abstract class AbstractRadialButton extends GuiComponent {
     }
 
     protected void drawRadialSection(Vector3f center, float zLevel, Vector3f radius, float startAngle,
-                                   float angleDif, int index, int resolution) {
+                                     float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
         float angle2 = startAngle+((index+1)/(float)resolution)*angleDif;
         Vector3f pos1In = MathUtil.getVertex(center,radius.x(),angle1);

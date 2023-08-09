@@ -1,14 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import mods.thecomputerizer.theimpossiblelibrary.util.client.GuiUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -27,7 +29,7 @@ public class RadialButton extends AbstractRadialButton {
                         BiConsumer<Screen, RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(Component::translatable).collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(Component::literal).collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
@@ -45,35 +47,36 @@ public class RadialButton extends AbstractRadialButton {
             drawRadialSection(center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
 
-    public void drawCenterIcon(PoseStack matrix, float centerRadius) {
-        if(this.centerIcon!=null) {
+    public void drawCenterIcon(GuiGraphics graphics, float centerRadius) {
+        if(Objects.nonNull(this.centerIcon)) {
             ResourceLocation actualIcon = this.centerIcon;
             float hoverIncrease = 0f;
             if(this.hover) {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = centerRadius*this.iconHoverSizeIncrease;
             }
-            GuiUtil.bufferSquareTexture(matrix,getCenterPos(),centerRadius+hoverIncrease, actualIcon);
+            GuiUtil.bufferSquareTexture(graphics,getCenterPos(),centerRadius+hoverIncrease, actualIcon);
         }
     }
 
-    public void drawText(Screen parent, PoseStack matrix, Vector3f mouse, boolean isCurrent) {
+    public void drawText(Screen parent, GuiGraphics graphics, Vector3f mouse, boolean isCurrent) {
+        Font font = Minecraft.getInstance().font;
         if(Objects.nonNull(this.centerText)) {
             int color = this.hover ? 16777120 : 14737632;
-            drawCenteredString(matrix, parent.getMinecraft().font, this.centerText, (int)getCenterPos().x(), (int)getCenterPos().y(), color);
+            graphics.drawCenteredString(font, this.centerText, (int) getCenterPos().x(), (int) getCenterPos().y(), color);
         }
-        if(this.hover && isCurrent) parent.renderComponentTooltip(matrix, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
+        if(this.hover && isCurrent) graphics.renderComponentTooltip(font, this.tooltipLines, (int) mouse.x(), (int) mouse.y());
     }
 
     public void handleClick(Screen screen) {
         if(this.hover) {
-            playPressSound(screen.getMinecraft().getSoundManager());
+            playPressSound(Minecraft.getInstance().getSoundManager());
             this.handlerFunction.accept(screen, this);
         }
     }
 
     /**
-        This is included if you wanted to be able to assign a button to a static object and create it later
+     This is included if you wanted to be able to assign a button to a static object and create it later
      */
     @FunctionalInterface
     public interface CreatorFunction<L, R, AR, HI, S, F, B> {
