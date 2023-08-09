@@ -13,9 +13,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
@@ -37,10 +37,11 @@ public class SpriteSheet extends PNG {
         this.millisPerFrame = (long)(1000f/((float)fps));
         this.milliCounter = 0;
         Resource resource = getResource();
-        PngInfo size = new PngInfo(resource.toString(),resource.getInputStream());
-        this.frames = size.height/size.width;
+        try(InputStream resourceStream = resource.getInputStream()) {
+            PngInfo size = new PngInfo(resource.toString(),resourceStream);
+            this.frames = size.height / size.width;
+        }
         this.curFrame = 0;
-        IOUtils.closeQuietly(resource);
         this.startedRendering = false;
         Constants.testLog("INITIALIZED SPRITE WITH {} FRAMES AND FPS MILLIS OF {}",this.frames,this.millisPerFrame);
     }
