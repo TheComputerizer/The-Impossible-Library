@@ -12,14 +12,13 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = Constants.MODID, name = Constants.NAME, version = Constants.VERSION)
 public class TheImpossibleLibrary {
 
-    /**
-     * This has to be set before the FMLPreInitializationEvent phase!
-     */
-    public static boolean CLIENT_ONLY = false;
-    private static final boolean IS_DEV_ENV = false;
+    private static final boolean IS_DEV_ENV = true;
+    private static boolean CLIENT_ONLY = false;
+    private static boolean DEV_LOG = false;
 
     public TheImpossibleLibrary() {
         DataUtil.initGlobal();
+        if(IS_DEV_ENV) DEV_LOG = true;
     }
 
     @EventHandler
@@ -31,5 +30,24 @@ public class TheImpossibleLibrary {
     @EventHandler
     public void init(FMLInitializationEvent e) {
         if(e.getSide()==Side.CLIENT) ClientInit.preInit(IS_DEV_ENV,CLIENT_ONLY);
+    }
+
+    /**
+     * This has to be set before the FMLPreInitializationEvent phase!
+     */
+    public static void enableClientOnly() {
+        CLIENT_ONLY = true;
+    }
+
+    public static boolean isClientOnly() {
+        return CLIENT_ONLY;
+    }
+
+    public static void enableDevLog() {
+        DEV_LOG = true;
+    }
+
+    public static boolean isDevLogging() {
+        return DEV_LOG;
     }
 }

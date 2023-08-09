@@ -33,7 +33,7 @@ public class PNG extends Renderable {
     }
 
     @Override
-    public void render(ScaledResolution res, float partialTick) {
+    public void render(ScaledResolution res) {
         if(canRender()) {
             preRender();
             int resX = res.getScaledWidth();

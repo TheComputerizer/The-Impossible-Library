@@ -25,9 +25,9 @@ public class Text extends Renderable {
     public void initializeTimers() {
         super.initializeTimers();
         Random random = new Random();
-        if(this.potentialText.size()>0)
+        if(!this.potentialText.isEmpty())
             this.text = this.potentialText.get(random.nextInt(this.potentialText.size())).toString();
-        if(this.potentialSubtext.size()>0)
+        if(!this.potentialSubtext.isEmpty())
             this.subtext = this.potentialSubtext.get(random.nextInt(this.potentialSubtext.size())).toString();
     }
 
@@ -50,16 +50,19 @@ public class Text extends Renderable {
     }
 
     @Override
-    public void render(ScaledResolution res, float partialTick) {
-        if(canRender()) GuiUtil.drawMultiLineTitle(res,this.text, this.subtext,
-                getParameterAs("centered", true, Boolean.class),
-                posX(res.getScaledWidth(),res.getScaledHeight()),
-                posY(res.getScaledHeight()),
-                getParameterAs("scale_x", 1f, Float.class)*5f,
-                getParameterAs("scale_y", 1f, Float.class)*5f,
-                getParameterAs("subtitle_scale", 0.75f, Float.class),
-                getParameterAs("title_color", "red", String.class),
-                getParameterAs("subtitle_color", "white", String.class),getOpacity(),getOpacity(),
-                Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT+Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT/2);
+    public void render(ScaledResolution res) {
+        if(canRender()) {
+            float opacity = getOpacity();
+            int fontHeight = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+            GuiUtil.drawMultiLineTitle(res,this.text,this.subtext,
+                    getParameterAs("centered",true,Boolean.class),
+                    posX(res.getScaledWidth(),res.getScaledHeight()),posY(res.getScaledHeight()),
+                    getParameterAs("scale_x",1f,Float.class)*5f,
+                    getParameterAs("scale_y",1f,Float.class)*5f,
+                    getParameterAs("subtitle_scale",0.75f,Float.class),
+                    getParameterAs("title_color","red",String.class),
+                    getParameterAs("subtitle_color","white",String.class),
+                    opacity,opacity,fontHeight+fontHeight/2);
+        }
     }
 }
