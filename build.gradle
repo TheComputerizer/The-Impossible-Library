@@ -41,7 +41,7 @@ processResources {
         expand "version": project.version
         //expand "access": project.access
     }
-    //exclude '**/theimpossiblelibrary/test/**'
+    exclude '**/theimpossiblelibrary/test/**'
 }
 
 java {

@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 public class TheImpossibleLibrary implements ModInitializer {
 
-    private static final boolean IS_DEV_ENV = true;
+    private static final boolean IS_DEV_ENV = false;
     private static boolean CLIENT_ONLY = false;
     private static boolean DEV_LOG = false;
 
