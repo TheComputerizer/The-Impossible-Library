@@ -14,8 +14,8 @@ import java.util.Objects;
 @SuppressWarnings("ConstantValue")
 public class ClientEventTest {
 
-    private static final boolean RESOURCE = true;
-    private static final boolean SOUND = true;
+    private static final boolean RESOURCE = false;
+    private static final boolean SOUND = false;
     private static final boolean ADVANCEMENT = true;
 
     public static void init() {

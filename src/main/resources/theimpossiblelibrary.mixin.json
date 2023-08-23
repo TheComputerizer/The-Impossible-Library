@@ -4,9 +4,12 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "theimpossiblelibrary.refmap.json",
   "mixins": [
+    "MixinEntityCallbacks",
+    "MixinPersistentEntitySectionManager",
     "MixinServerLevel"
   ],
   "client": [
+    "MixinAbstractSoundInstance",
     "MixinFont",
     "MixinReloadState",
     "MixinResourceLoadStateTracker",

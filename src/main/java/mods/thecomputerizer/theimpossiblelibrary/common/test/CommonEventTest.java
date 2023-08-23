@@ -12,8 +12,8 @@ import java.util.Objects;
 
 public class CommonEventTest {
 
-    private static final boolean ENTITY = true;
-    private static final boolean LOGIN = true;
+    private static final boolean ENTITY = false;
+    private static final boolean LOGIN = false;
     private static final boolean ADVANCEMENT = true;
 
     public static void init() {
