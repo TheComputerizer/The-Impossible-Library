@@ -105,9 +105,9 @@ public class NetworkHandler {
         private ResourceLocation register() {
                 if (Objects.nonNull(this.registryName)) {
                     String modid = this.registryName.getNamespace();
-                    if (modid.matches("minecraft") || modid.matches(Constants.MODID)) {
-                        LogUtil.logInternal(Level.ERROR, "Please do not register packets under the Minecraft or {}" +
-                                " namespaces. {} will be skipped.", Constants.MODID, this.registryName);
+                    if (modid.matches("minecraft")) {
+                        LogUtil.logInternal(Level.ERROR, "Please do not register packets under the Minecraft" +
+                                " namespace. {} will be skipped.", this.registryName);
                         return null;
                     } else
                         return this.isToClient ? registerToClient() : registerToServer();

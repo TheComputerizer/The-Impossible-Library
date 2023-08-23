@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import mods.thecomputerizer.theimpossiblelibrary.events.AdvancmentEvents;
+import mods.thecomputerizer.theimpossiblelibrary.events.AdvancementEvents;
 import mods.thecomputerizer.theimpossiblelibrary.events.PlaySoundEvent;
 import mods.thecomputerizer.theimpossiblelibrary.events.ResourcesLoadedEvent;
-import net.minecraft.advancements.Advancement;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class ClientEventTest {
 
     private static final boolean RESOURCE = false;
     private static final boolean SOUND = false;
-    private static final boolean ADVANCEMENT = true;
+    private static final boolean ADVANCEMENT = false;
 
     public static void init() {
         Constants.testLog("INITIALIZING CLIENT EVENT TESTS");
@@ -30,7 +30,7 @@ public class ClientEventTest {
         }
         if(ADVANCEMENT) {
             Constants.testLog("ENABLED TEST ADVANCEMENT EVENT");
-            AdvancmentEvents.CLIENT_GRANTED.register(ClientEventTest::testAdvancementEvent);
+            AdvancementEvents.CLIENT_GRANTED.register(ClientEventTest::testAdvancementEvent);
         }
     }
 
@@ -57,7 +57,7 @@ public class ClientEventTest {
         return sound;
     }
 
-    private static void testAdvancementEvent(Advancement advancement) {
-        Constants.testLog("TESTING CLIENT ADVANCEMENT EVENT");
+    private static void testAdvancementEvent(ResourceLocation advancementLocation) {
+        Constants.testLog("TESTING CLIENT ADVANCEMENT EVENT {}",advancementLocation);
     }
 }

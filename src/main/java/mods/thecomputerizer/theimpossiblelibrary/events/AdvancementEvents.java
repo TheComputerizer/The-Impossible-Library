@@ -5,9 +5,10 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-public class AdvancmentEvents {
+public class AdvancementEvents {
 
     public static Event<ServerGranted> SERVER_GRANTED = EventFactory.createArrayBacked(ServerGranted.class, events -> (player,advancement) -> {
         for (ServerGranted event : events)
@@ -15,9 +16,9 @@ public class AdvancmentEvents {
     });
 
     @Environment(EnvType.CLIENT)
-    public static Event<ClientGranted> CLIENT_GRANTED = EventFactory.createArrayBacked(ClientGranted.class, events -> advancement -> {
+    public static Event<ClientGranted> CLIENT_GRANTED = EventFactory.createArrayBacked(ClientGranted.class, events -> advancementLocation -> {
         for (ClientGranted event : events)
-            event.register(advancement);
+            event.register(advancementLocation);
     });
 
     public interface ServerGranted {
@@ -34,6 +35,6 @@ public class AdvancmentEvents {
         /**
          * Called when an advancement is granted to player on the client side
          */
-        void register(Advancement advancement);
+        void register(ResourceLocation advancementLocation);
     }
 }

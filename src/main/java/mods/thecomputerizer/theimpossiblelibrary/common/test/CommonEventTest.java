@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.common.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
-import mods.thecomputerizer.theimpossiblelibrary.events.AdvancmentEvents;
+import mods.thecomputerizer.theimpossiblelibrary.events.AdvancementEvents;
 import mods.thecomputerizer.theimpossiblelibrary.events.EntityAddedEvent;
 import mods.thecomputerizer.theimpossiblelibrary.events.ServerPlayerLoginEvent;
 import net.minecraft.advancements.Advancement;
@@ -14,7 +14,7 @@ public class CommonEventTest {
 
     private static final boolean ENTITY = false;
     private static final boolean LOGIN = false;
-    private static final boolean ADVANCEMENT = true;
+    private static final boolean ADVANCEMENT = false;
 
     public static void init() {
         Constants.testLog("INITIALIZING COMMON EVENT TESTS");
@@ -28,7 +28,7 @@ public class CommonEventTest {
         }
         if(ADVANCEMENT) {
             Constants.testLog("ENABLED TEST ADVANCEMENT EVENT");
-            AdvancmentEvents.SERVER_GRANTED.register(CommonEventTest::testAdvancementEvent);
+            AdvancementEvents.SERVER_GRANTED.register(CommonEventTest::testAdvancementEvent);
         }
     }
 

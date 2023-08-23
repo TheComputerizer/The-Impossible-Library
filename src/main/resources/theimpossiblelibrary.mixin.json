@@ -6,6 +6,7 @@
   "mixins": [
     "MixinEntityCallbacks",
     "MixinPersistentEntitySectionManager",
+    "MixinPlayerAdvancements",
     "MixinServerLevel"
   ],
   "client": [
