@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
+import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientEventTest;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -22,12 +23,13 @@ public class ClientInit implements ClientModInitializer {
         }
     }
 
-    private static void setUpClientEvents() {
+    private void setUpClientEvents() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             Renderer.tickRenderables();
             if(TheImpossibleLibrary.isDevEnv() && TEST_KEYBIND.isDown())
                 ClientTest.onTestKey();
         });
         HudRenderCallback.EVENT.register((graphics, delta) -> Renderer.renderAllBackgroundStuff(graphics,Minecraft.getInstance().getWindow()));
+        if(TheImpossibleLibrary.isDevEnv()) ClientEventTest.init();
     }
 }

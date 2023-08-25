@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.mixin;
+package mods.thecomputerizer.theimpossiblelibrary.mixin.mixins;
 
 import net.minecraft.client.gui.Font;
 import org.spongepowered.asm.mixin.Mixin;
