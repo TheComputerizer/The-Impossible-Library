@@ -26,7 +26,9 @@
       "mods.thecomputerizer.theimpossiblelibrary.ClientInit"
     ]
   },
-  "mixins": [],
+  "mixins": [
+    "theimpossiblelibrary.mixin.json"
+  ],
 
   "depends": {
     "fabricloader": ">=0.14.14",
