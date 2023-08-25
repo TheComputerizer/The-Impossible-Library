@@ -86,7 +86,7 @@ public class NetworkHandler {
         Constants.testLog("Attempting to send MessageImpl packet with class {} to the server",packet.getClass());
         if(canSendToServer(packet)) ClientPlayNetworking.send(packet.getRegistryName(),packet.encode());
         else LogUtil.logInternal(Level.ERROR,"Unable to send packet with class {} to the server! Was it " +
-                "registered correctly?",packet.getClass());
+                "registered correctly? [{}]",packet.getClass(),packet.getRegistryName());
     }
 
     /**

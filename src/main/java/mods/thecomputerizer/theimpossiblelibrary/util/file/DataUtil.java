@@ -7,6 +7,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.util.Objects;
 
 public class DataUtil {
     private static boolean GLOBAL_LOAD_FAILED = false;
-    private static boolean WORLD_LOAD_FAILED = false;
     private static final List<String> EXPLANATION = Arrays.asList("Hi!",
             "This folder is used to store data used by The Impossible Library and other mods that might use it as a " +
                     "dependency\n",
@@ -50,8 +50,8 @@ public class DataUtil {
     public static void writeWorldData(CompoundTag data, String modid, @NotNull String worldName) throws IOException {
         CompoundTag globalTag = getGlobalData(modid, true);
         if (Objects.nonNull(globalTag)) {
-            getOrCreateCompound(globalTag, "world_data").put(worldName, data);
-            writeGlobalData(data, modid);
+            getOrCreateCompound(globalTag, "worldData").put(worldName,data);
+            writeGlobalData(globalTag,modid);
         }
     }
 
@@ -59,7 +59,7 @@ public class DataUtil {
         try {
             CompoundTag globalTag = getGlobalData(modid, true);
             if (Objects.nonNull(globalTag))
-                return getOrCreateCompound(getOrCreateCompound(globalTag, "world_data"), worldName);
+                return getOrCreateCompound(getOrCreateCompound(globalTag,"worldData"),worldName);
         } catch (IOException ex) {
             LogUtil.logInternal(Level.ERROR, "Unable to read mod data for modid {} in world {}", modid, worldName, ex);
         }
@@ -71,7 +71,7 @@ public class DataUtil {
      Will fail if the data folder failed to initialize or the data module is turned off
      */
     public static void writeGlobalData(CompoundTag data, String modid) throws IOException {
-        if(!GLOBAL_LOAD_FAILED) writeFileData(data, Constants.DATA_DIRECTORY, modid);
+        if(!GLOBAL_LOAD_FAILED) writeFileData(data,Constants.DATA_DIRECTORY,modid);
         else LogUtil.logInternal(Level.WARN, "There was a problem when initializing global data for The Impossible Library so data for {} could not be written",modid);
     }
 
@@ -80,27 +80,44 @@ public class DataUtil {
      Returns null if the file does not exist and is not set to be created
      Will also return null if the data folder failed to initialize or the data module is turned off.
      */
-    public static CompoundTag getGlobalData(String modid, boolean createIfAbsent) throws IOException {
-        if(!GLOBAL_LOAD_FAILED) return getFileData(Constants.DATA_DIRECTORY, modid, createIfAbsent);
+    public static @Nullable CompoundTag getGlobalData(String modid, boolean createIfAbsent) throws IOException {
+        if(!GLOBAL_LOAD_FAILED) return getFileData(Constants.DATA_DIRECTORY,modid,createIfAbsent);
         LogUtil.logInternal(Level.WARN, "There was a problem when initializing global data for The Impossible Library so data for {} could not be retrieved",modid);
         return null;
     }
 
     private static void writeFileData(CompoundTag data, File directory, String modid) throws IOException {
-        File dataFile = new File(directory, modid + ".dat");
-        dataFile = FileUtil.generateNestedFile(dataFile,true);
-        if(Objects.nonNull(dataFile)) NbtIo.write(data, dataFile);
+        File dataFile = getOrCreateDataFile(directory,modid,true);
+        if(Objects.nonNull(dataFile)) NbtIo.write(data,dataFile);
         else LogUtil.logInternal(Level.ERROR,"Could not write data for {} due to an error in creating the file",modid);
     }
 
     private static CompoundTag getFileData(File directory, String modid, boolean createIfAbsent) throws IOException {
-        File dataFile = new File(directory, modid + ".dat");
-        if (dataFile.exists()) return NbtIo.read(dataFile);
-        if (createIfAbsent) {
-            dataFile = FileUtil.generateNestedFile(dataFile,false);
-            if (dataFile != null) return NbtIo.read(dataFile);
+        File dataFile = getOrCreateDataFile(directory,modid,createIfAbsent);
+        return Objects.nonNull(dataFile) ? NbtIo.read(dataFile) : null;
+    }
+
+    /**
+     * Does not overwrite a file that is already there
+     */
+    private static File getOrCreateDataFile(File directory, String modid, boolean createIfAbsent) throws IOException {
+        return getOrCreateDataFile(new File(directory,modid+".dat"),createIfAbsent);
+    }
+
+    /**
+     * Does not overwrite a file that is already there
+     */
+    private static File getOrCreateDataFile(@NotNull File dataFile, boolean createIfAbsent) throws IOException {
+        if(!dataFile.exists()) {
+            if(createIfAbsent) {
+                dataFile = FileUtil.generateNestedFile(dataFile, false);
+                if (Objects.nonNull(dataFile))
+                    NbtIo.write(new CompoundTag(), dataFile);
+                return dataFile;
+            }
+            return null;
         }
-        return null;
+        return dataFile;
     }
 
     /**
