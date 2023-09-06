@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.mixin.mixins;
 
 import mods.thecomputerizer.theimpossiblelibrary.Constants;
+import mods.thecomputerizer.theimpossiblelibrary.TheImpossibleLibrary;
 import mods.thecomputerizer.theimpossiblelibrary.events.ResourcesLoadedEvent;
 import mods.thecomputerizer.theimpossiblelibrary.mixin.access.IReloadStateAccess;
 import mods.thecomputerizer.theimpossiblelibrary.util.file.LogUtil;
@@ -34,7 +35,8 @@ public class MixinResourceLoadStateTracker {
     @Unique
     private IReloadStateAccess theimpossiblelibrary$getReloadState() {
         try {
-            Field field = ResourceLoadStateTracker.class.getDeclaredField("reloadState");
+            String fieldName = TheImpossibleLibrary.isDevEnv() ? "reloadState" : "field_33699";
+            Field field = ResourceLoadStateTracker.class.getDeclaredField(fieldName);
             Object reloadState = field.get(theimpossiblelibrary$cast());
             return reloadState instanceof IReloadStateAccess ? (IReloadStateAccess)reloadState : null;
         } catch (NoSuchFieldException | IllegalAccessException ex) {

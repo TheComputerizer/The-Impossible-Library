@@ -2,7 +2,7 @@
   "required": true,
   "package": "mods.thecomputerizer.theimpossiblelibrary.mixin.mixins",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "theimpossiblelibrary.refmap.json",
+  "refmap": "theimpossiblelibrary-refmap.json",
   "mixins": [
     "MixinEntityCallbacks",
     "MixinPersistentEntitySectionManager",
