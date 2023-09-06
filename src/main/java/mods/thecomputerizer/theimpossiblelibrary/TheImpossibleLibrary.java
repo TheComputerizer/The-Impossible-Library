@@ -9,7 +9,7 @@ import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
@@ -34,7 +34,7 @@ public class TheImpossibleLibrary {
         if(IS_DEV_ENV) DEV_LOG = true;
     }
 
-    private void commonSetup(final FMLClientSetupEvent ev) {
+    private void commonSetup(final FMLCommonSetupEvent ev) {
         if(!CLIENT_ONLY) NetworkHandler.init();
     }
 
