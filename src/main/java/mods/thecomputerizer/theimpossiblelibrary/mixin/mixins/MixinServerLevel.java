@@ -13,7 +13,6 @@ public class MixinServerLevel {
 
     @Inject(at = @At("TAIL"), method = "addNewPlayer")
     private void theimpossiblelibrary$addNewPlayer(ServerPlayer player, CallbackInfo ci) {
-        ServerLevel level;
         if(!player.isRemoved()) ServerPlayerLoginEvent.EVENT.invoker().register(player);
     }
 }
