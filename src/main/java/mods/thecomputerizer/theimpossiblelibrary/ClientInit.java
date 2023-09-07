@@ -4,6 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import mods.thecomputerizer.theimpossiblelibrary.client.render.Renderer;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientEventTest;
 import mods.thecomputerizer.theimpossiblelibrary.client.test.ClientTest;
+import mods.thecomputerizer.theimpossiblelibrary.events.ResourcesLoadedEvent;
+import mods.thecomputerizer.theimpossiblelibrary.network.NetworkHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -24,6 +26,9 @@ public class ClientInit implements ClientModInitializer {
     }
 
     private void setUpClientEvents() {
+        ResourcesLoadedEvent.EVENT.register(() -> {
+            if(!TheImpossibleLibrary.isClientOnly()) NetworkHandler.init();
+        });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             Renderer.tickRenderables();
             if(TheImpossibleLibrary.isDevEnv() && TEST_KEYBIND.isDown())
