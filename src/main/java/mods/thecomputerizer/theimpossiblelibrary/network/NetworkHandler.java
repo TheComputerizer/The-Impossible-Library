@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -45,7 +46,10 @@ public class NetworkHandler {
         REGISTERED_MESSAGES.clear();
         for(PacketQueue<? extends MessageImpl> packetQueue : PACKET_QUEUES) {
             ResourceLocation location = packetQueue.register();
-            if(Objects.nonNull(location)) REGISTERED_MESSAGES.put(location,packetQueue.type);
+            if(Objects.nonNull(location)) {
+                REGISTERED_MESSAGES.put(location,packetQueue.type);
+                Constants.testLog("Registered message with name {}",location);
+            }
         }
     }
 
@@ -84,7 +88,8 @@ public class NetworkHandler {
     @Environment(EnvType.CLIENT)
     public static void sendToServer(MessageImpl packet) {
         Constants.testLog("Attempting to send MessageImpl packet with class {} to the server",packet.getClass());
-        if(canSendToServer(packet)) ClientPlayNetworking.send(packet.getRegistryName(),packet.encode());
+        if(REGISTERED_MESSAGES.containsKey(packet.getRegistryName()))
+            ClientPlayNetworking.send(packet.getRegistryName(),packet.encode());
         else LogUtil.logInternal(Level.ERROR,"Unable to send packet with class {} to the server! Was it " +
                 "registered correctly? [{}]",packet.getClass(),packet.getRegistryName());
     }
@@ -94,7 +99,8 @@ public class NetworkHandler {
      */
     public static void sendToPlayer(MessageImpl packet, @NotNull ServerPlayer player) {
         Constants.testLog("Attempting to send MessageImpl packet with class {} to a player",packet.getClass());
-        if(canSendToPlayer(player,packet)) ServerPlayNetworking.send(player,packet.getRegistryName(),packet.encode());
+        if(REGISTERED_MESSAGES.containsKey(packet.getRegistryName()))
+            ServerPlayNetworking.send(player,packet.getRegistryName(),packet.encode());
         else LogUtil.logInternal(Level.ERROR,"Unable to send packet with class {} to a player! Was it " +
                 "registered correctly?",packet.getClass());
     }
@@ -115,7 +121,12 @@ public class NetworkHandler {
                 return null;
             }
 
-            private ResourceLocation registerToClient() {
+        private ResourceLocation registerToClient() {
+            if(FabricLoaderImpl.INSTANCE.getEnvironmentType()==EnvType.CLIENT) registerToClientInner();
+            return this.registryName;
+        }
+
+            private void registerToClientInner() {
                 ClientPlayNetworking.registerGlobalReceiver(this.registryName, (minecraft, listener, buf, response) -> {
                     Class<? extends MessageImpl> regClass = REGISTERED_MESSAGES.get(this.registryName);
                     if (Objects.nonNull(regClass)) {
@@ -127,7 +138,6 @@ public class NetworkHandler {
                     } else LogUtil.logInternal(Level.ERROR, "Client received message with an unknown registry name " +
                             "of {}! Decoding will be skipped which may cause issues!", this.registryName);
                 });
-                return this.registryName;
             }
 
             private ResourceLocation registerToServer() {
