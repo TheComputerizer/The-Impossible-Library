@@ -41,7 +41,7 @@ dependencies {
   implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
-The file ID for the latest version of `1.12.2-0.2.2` is `4418997`
+The file ID for the latest version of `1.12.2-0.3.0` is `4727144`
 
 Alternatively, if you wish to use the modrinth maven, you can do it like this
 ```
@@ -60,4 +60,4 @@ dependencies {
   implementation fg.deobf('maven.modrinth:the-impossible-library:1.12.2-fileVersion')
 }
 ```
-where the latest file version is `0.2.2`
+where the latest file version is `0.3.0`
