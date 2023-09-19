@@ -1,5 +1,5 @@
 # The-Impossible-Library
-This is the 1.19.2 Forge branch
+This is the 1.20.1 Forge branch (THIS BRANCH IS WIP AND HAS NOT BEEN RELEASED YET)
 
 This mod was made to offer mod devs methods for doing things that are typically thought of as impossible, hacky, tedious, or maybe even require a 3rd party java library.
 
@@ -41,7 +41,7 @@ dependencies {
   implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
-The file ID for the latest version of `1.19.2-0.2.2.1` is `4424446`
+The file ID for the latest version of `1.20.1-UNRELEASED` is `UNRELEASED`
 
 Alternatively, if you wish to use the modrinth maven, you can do it like this
 ```
@@ -57,7 +57,7 @@ repositories {
 }
 
 dependencies {
-  implementation fg.deobf('maven.modrinth:the-impossible-library:1.19.2-fileVersion')
+  implementation fg.deobf('maven.modrinth:the-impossible-library:1.20.1-fileVersion')
 }
 ```
-The where the latest file version is `0.2.2`
+The where the latest file version is `UNRELEASED`
