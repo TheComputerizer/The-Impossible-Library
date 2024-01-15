@@ -151,12 +151,12 @@ public class Holder {
                                 TomlUtil.genericObject(parentTable.getBacking(),varName);
                         if(Objects.nonNull(value)) {
                             int ind = line.indexOf(varName.charAt(0));
-                            String spacing = line.substring(0, Math.max(ind, 0));
+                            String spacing = line.substring(0,Math.max(ind,0));
                             int level = 1;
                             if(!spacing.isEmpty()) {
-                                int tabs = spacing.length() - spacing.replaceAll(tabChar, "").length();
+                                int tabs = spacing.length()-spacing.replaceAll(tabChar,"").length();
                                 String withoutTabs = spacing.replaceAll(tabChar, "");
-                                int spaces = (withoutTabs.length() - withoutTabs.replaceAll(" ", "").length() / 4);
+                                int spaces = (withoutTabs.length()-withoutTabs.replaceAll(" ","").length()/4);
                                 level = tabs + spaces;
                             }
                             if(Objects.nonNull(parentTable)) {
@@ -165,7 +165,7 @@ public class Holder {
                                     if(Objects.isNull(parentTable)) break;
                                 }
                             }
-                            Variable var = new Variable(absoluteIndex, parentTable, varName, value);
+                            Variable var = new Variable(absoluteIndex,parentTable,varName,value);
                             this.indexedTypes.add(var);
                             if(Objects.nonNull(parentTable)) parentTable.addItem(var);
                             absoluteIndex++;
@@ -179,19 +179,19 @@ public class Holder {
                     boolean badTableName = false;
                     if(path.length==1) parentTable = null;
                     else {
-                        parentTable = findClosestParentTable(null, Arrays.copyOfRange(path,0,path.length-1));
+                        parentTable = findClosestParentTable(null,Arrays.copyOfRange(path,0,path.length-1));
                         if(Objects.isNull(parentTable)) badTableName = true;
                     }
                     if(badTableName)
                         LogUtil.logInternal(Level.ERROR, "Could not find parent table(s) for nested table of " +
                                 "name {}",TomlUtil.condensePath(path));
                     else {
-                        if ((Objects.isNull(parentTable) && (this.backing.containsTable(name) ||
+                        if((Objects.isNull(parentTable) && (this.backing.containsTable(name) ||
                                         this.backing.containsTableArray(name))) ||
                                 Objects.nonNull(parentTable) && (parentTable.getBacking().containsTable(name) ||
                                                 parentTable.getBacking().containsTableArray(name))) {
                             int bracketIndex = line.indexOf('[');
-                            String spacing = bracketIndex==0 ? "" : line.substring(0, line.indexOf('[') - 1);
+                            String spacing = bracketIndex==0 ? "" : line.substring(0,line.indexOf('[')-1);
                             int level = Objects.isNull(parentTable) ? 1 : parentTable.getLevel()+1;
                             Toml tableBacking;
                             if(multi) {
@@ -200,15 +200,15 @@ public class Holder {
                                 int index = Objects.nonNull(parentTable) ?
                                         parentTable.getTablesByName(name).size() : this.getTablesByName(name).size();
                                 tableBacking = tables.get(index);
-                            } else tableBacking =  Objects.nonNull(parentTable) ?
+                            } else tableBacking = Objects.nonNull(parentTable) ?
                                     parentTable.getBacking().getTable(name) : this.backing.getTable(name);
-                            Table table = new Table(absoluteIndex, parentTable, level, name, tableBacking);
+                            Table table = new Table(absoluteIndex,parentTable,level,name,tableBacking);
                             this.indexedTypes.add(table);
-                            if (Objects.nonNull(parentTable)) parentTable.addItem(table);
+                            if(Objects.nonNull(parentTable))parentTable.addItem(table);
                             absoluteIndex++;
                             parentTable = table;
                         } else
-                            LogUtil.logInternal(Level.ERROR, "Table of name {} was unable to be parsed correctly", name);
+                            LogUtil.logInternal(Level.ERROR,"Table of name {} was unable to be parsed correctly", name);
                     }
                 }
             }
