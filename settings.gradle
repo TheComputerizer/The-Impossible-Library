@@ -2,12 +2,35 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven {
-            name 'MinecraftForge'
-            url 'https://maven.minecraftforge.net/'
+            name = 'Forge'
+            url = uri('https://maven.minecraftforge.net/')
         }
         maven {
-            name 'ParchmentMC'
-            url 'https://maven.parchmentmc.org'
+            name = 'Garden of Fancy'
+            url = uri('https://maven.gofancy.wtf/releases')
         }
     }
 }
+rootProject.name = 'The_Impossible_Library'
+include 'api',
+        'fabric', 'forge', 'legacy', 'neoforge',
+        'legacy:legacy.1_12',
+        'fabric:fabric.1_16', 'forge:forge.1_16',
+        'fabric:fabric.1_18', 'forge:forge.1_18',
+        'fabric:fabric.1_19', 'forge:forge.1_19',
+        'fabric:fabric.1_20', 'neoforge:neoforge.1_20',
+        'fabric:fabric.1_21', 'neoforge:neoforge.1_21'
+findProject(':neoforge:neoforge.1_20')?.name = 'neoforge.1_20'
+findProject(':forge:forge.1_19')?.name = 'forge.1_19'
+findProject(':forge:forge.1_18')?.name = 'forge.1_18'
+findProject(':forge:forge.1_16')?.name = 'forge.1_16'
+findProject(':fabric:fabric.1_16')?.name = 'fabric.1_16'
+findProject(':fabric:fabric.1_18')?.name = 'fabric.1_18'
+findProject(':fabric:fabric.1_19')?.name = 'fabric.1_19'
+findProject(':fabric:fabric.1_20')?.name = 'fabric.1_20'
+findProject(':fabric:fabric.1_21')?.name = 'fabric.1_21'
+findProject(':neoforge:neoforge.1_21')?.name = 'neoforge.1_21'
+findProject(':legacy:legacy.1_12')?.name = 'legacy.1_12'
+include 'legacy:legacy.1_12'
+findProject(':legacy:legacy.1_12')?.name = 'legacy.1_12'
+
