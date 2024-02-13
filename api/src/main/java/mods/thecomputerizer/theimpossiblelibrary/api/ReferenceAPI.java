@@ -77,6 +77,10 @@ public abstract class ReferenceAPI<RES> {
     private final Supplier<String> nameSupplier;
     private final Supplier<String> versionSupplier;
 
+    protected ReferenceAPI(Supplier<Boolean> clientSupplier) {
+        this(clientSupplier,null,null,null,null);
+    }
+
     protected ReferenceAPI(
             Supplier<Boolean> clientSupplier, Supplier<String> dependenciesSupplier, Supplier<String> modIDSupplier,
             Supplier<String> nameSupplier, Supplier<String> versionSupplier) {

@@ -3,19 +3,26 @@ plugins {
 }
 
 allprojects {
+    plugins.apply('idea')
     plugins.apply('java')
+    plugins.apply('java-library')
     version = project.mod_version
-    group = project.maven_group
-    archivesBaseName = project.mod_id
-}
-
-subprojects {
+    group = project.base_package
     repositories {
         mavenCentral()
     }
     dependencies {
         annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
+        compileOnly("org.projectlombok:lombok:${project.lombok_version}")
     }
+    java {
+        archivesBaseName = project.mod_id
+    }
+
+}
+
+subprojects {
+    java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
 }
 
 repositories {

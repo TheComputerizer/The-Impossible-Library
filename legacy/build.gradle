@@ -1,3 +1,12 @@
+allprojects {
+    dependencies {
+        annotationProcessor("com.google.code.gson:gson:${project.gson_annotation}")
+        annotationProcessor("com.google.guava:guava:${project.guava_annotation}")
+        annotationProcessor("org.ow2.asm:asm-debug-all:${project.asm_debug_annotation}")
+    }
+}
+
 dependencies {
-    implementation project(':api')
+    //parent module
+    implementation(project(':forge'))
 }

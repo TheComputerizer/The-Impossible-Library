@@ -1,10 +1,12 @@
 dependencies {
-    implementation("com.google.code.findbugs:jsr305:${project.jsr_version}")
-    implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}")
-    implementation("io.netty:netty-all:${project.netty_version}")
-    implementation("org.apache.commons:commons-lang3:${project.lang3_version}")
-    implementation("org.apache.logging.log4j:log4j-core:${project.log4j_version}")
-    implementation("org.joml:joml:${project.joml_version}")
+    compileOnly("com.google.code.findbugs:jsr305:${project.jsr_version}")
+    compileOnly("com.moandjiezana.toml:toml4j:${project.toml4j_version}")
+    compileOnly("io.netty:netty-all:${project.netty_version}")
+    compileOnly("org.apache.commons:commons-lang3:${project.lang3_version}")
+    compileOnly("org.apache.logging.log4j:log4j-core:${project.log4j_version}")
+    compileOnly("org.joml:joml:${project.joml_version}")
+    compileOnly("org.lwjgl.lwjgl:lwjgl:${project.lwjgl_version}")
+
 }
 
 subprojects {

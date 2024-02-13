@@ -1,0 +1,8 @@
+package mods.thecomputerizer.theimpossiblelibrary.api.client;
+
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+
+public interface ClientAPI extends CommonAPI {
+
+    ScreenAPI<?> getScreenAPI();
+}

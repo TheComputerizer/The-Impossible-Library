@@ -1,11 +1,7 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'java'
-    id 'net.minecraftforge.gradle' version '6.0.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'net.neoforged.gradle.userdev' version '7.+'
 }
-
-group = project.maven_group
-version = "${project.minecraft_version}-${project.mod_version}"
 
 java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
 
@@ -56,7 +52,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${project.neoforge_version}")
+    implementation("net.neoforged:forge:${project.minecraft_version}-${project.neoforge_version}")
     implementation project(':neoforge')
 }
 
