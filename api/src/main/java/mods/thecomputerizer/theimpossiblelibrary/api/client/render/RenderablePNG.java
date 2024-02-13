@@ -2,16 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class RenderablePNG extends Renderable {
 
-    protected final ResourceLocationAPI source;
+    protected final ResourceLocationAPI<?> source;
 
-    public RenderablePNG(ResourceLocationAPI source, Map<String, Object> parameters) throws IOException {
+    public RenderablePNG(ResourceLocationAPI<?> source, Map<String, Object> parameters) throws IOException {
         super(parameters);
         if(!source.getPath().endsWith(".png"))
             throw new IOException("Tried to initialize a non png file to a png " +

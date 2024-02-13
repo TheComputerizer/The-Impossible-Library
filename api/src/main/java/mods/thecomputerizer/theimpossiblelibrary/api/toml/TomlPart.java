@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nullable;
@@ -19,7 +20,7 @@ public enum TomlPart {
     private static final Map<String,TomlPart> PART_LIST = new HashMap<>();
     private static final Map<Class<? extends AbstractType>,TomlPart> CLASS_LIST = new HashMap<>();
     private final String id;
-    private final Class<? extends AbstractType> classType;
+    @Getter private final Class<? extends AbstractType> classType;
     private final BiFunction<ByteBuf,Table,AbstractType> packetReader;
     TomlPart(String id, Class<? extends AbstractType> classType, BiFunction<ByteBuf,Table,AbstractType> packetReader) {
         this.id = id;
@@ -29,10 +30,6 @@ public enum TomlPart {
 
     public String getID() {
         return this.id;
-    }
-
-    public Class<? extends AbstractType> getClassType() {
-        return this.classType;
     }
 
     public boolean matchesType(AbstractType type) {

@@ -25,14 +25,6 @@ subprojects {
     java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
 }
 
-repositories {
-
-}
-
-dependencies {
-
-}
-
 /*
 shadowJar {
     //necessary relocation

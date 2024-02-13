@@ -114,7 +114,7 @@ public class IndexFinder {
     private int adjustForTopTables(int query, int max, boolean above, List<AbstractType> topLevelElements) {
         if (query <= 0) return 0;
         if (query > max) return max;
-        List<Integer> indices = topLevelElements.stream().map(AbstractType::getAbsoluteIndex).toList();
+        List<Integer> indices = topLevelElements.stream().map(AbstractType::getAbsoluteIndex).collect(Collectors.toList());
         return indices.contains(query) ? query : above ? getNextHighest(query, max, topLevelElements) :
                 getNextLowest(query, topLevelElements);
     }

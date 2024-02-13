@@ -1,4 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
-public interface EntityAPI<ENTITY,LIVING,MOB> {
+public interface EntityAPI<ENTITY> extends RegistryEntryAPI<ENTITY> {
+
+    ENTITY getEntity();
 }

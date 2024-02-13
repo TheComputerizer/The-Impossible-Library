@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -30,7 +32,7 @@ public class Variable extends AbstractType {
     /**
      * For decoding from NBT. Cannot handle null values
      */
-    public Variable(CompoundTag tag, @Nullable Table parentTable) {
+    public Variable(CompoundTagAPI tag, @Nullable Table parentTable) {
         super(tag, parentTable);
         this.name = tag.getString("name");
         this.value = this.name.isEmpty() ? null : GenericUtils.parseGenericFromTag(tag);
@@ -253,8 +255,8 @@ public class Variable extends AbstractType {
         NetworkHelper.writeGenericObj(buf,this.value);
     }
 
-    public CompoundTag writeToTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundTagAPI writeToTag() {
+        CompoundTagAPI tag = TILRef.getCommonAPI().getTagAPI().makeCompoundTag();
         tag.putInt("absoluteIndex",this.getAbsoluteIndex());
         tag.putString("name",this.name);
         GenericUtils.writeGenericToTag(tag,this.value);

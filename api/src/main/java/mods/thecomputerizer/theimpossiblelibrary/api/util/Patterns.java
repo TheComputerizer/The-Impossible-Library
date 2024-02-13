@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 
 public class Patterns {
 
+    public static final Pattern ARRAY_DEF = Pattern.compile("(\\[*]*)");
+
     public static Matcher getMatcher(CharSequence str, String regex) {
         return getMatcher(str,regex,0);
     }

@@ -1,10 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import com.moandjiezana.toml.Toml;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.LogHelper;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +80,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return toml.getBoolean(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"boolean");
         }
         return Boolean.parseBoolean(toml.getString(key, def + ""));
@@ -91,7 +90,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return (int) (long) toml.getLong(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"long");
         }
         return Integer.parseInt(toml.getString(key, def + ""));
@@ -101,7 +100,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return toml.getLong(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"long");
         }
         return Long.parseLong(toml.getString(key, def + ""));
@@ -111,7 +110,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return (float) (double) toml.getDouble(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"float");
         }
         return Float.parseFloat(toml.getString(key, def + ""));
@@ -121,7 +120,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return toml.getDouble(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"double");
         }
         return Double.parseDouble(toml.getString(key, def + ""));
@@ -136,7 +135,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return ""+toml.getLong(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"int");
         }
         return toml.getString(key, def + "");
@@ -146,7 +145,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return ""+toml.getLong(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"long");
         }
         return toml.getString(key, def + "");
@@ -156,7 +155,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return ""+toml.getDouble(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"float");
         }
         return toml.getString(key, def + "");
@@ -166,7 +165,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return ""+toml.getDouble(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"double");
         }
         return toml.getString(key, def + "");
@@ -176,7 +175,7 @@ public class TomlHelper {
         try {
             if(toml.contains(key)) return ""+toml.getBoolean(key);
         } catch (ClassCastException ignored) {
-            LogHelper.logInternal(Level.DEBUG,"Key {} was not of type {} and will be read in as a string or " +
+            TILRef.logDebug("Key {} was not of type {} and will be read in as a string or " +
                     "default",key,"boolean");
         }
         return toml.getString(key, def + "");
@@ -226,7 +225,7 @@ public class TomlHelper {
             try {
                 if (toml.contains(key)) return toml.getList(key);
             } catch (ClassCastException ignored) {}
-            LogHelper.logInternal(Level.ERROR, "Generic with key {} was not a primitive type and could not be " +
+            TILRef.logError( "Generic with key {} was not a primitive type and could not be " +
                     "read in",key);
         }
         return null;
@@ -279,7 +278,7 @@ public class TomlHelper {
             try {
                 return foundList.stream().mapToInt(object -> Integer.parseInt(object.toString())).toArray();
             } catch (NumberFormatException ex) {
-                LogHelper.logInternal(Level.ERROR,"Error parsing integer for toml list with key {}! An element " +
+                TILRef.logError("Error parsing integer for toml list with key {}! An element " +
                                 "was not a valid number. Error: {}",key,ex);
             }
         }
@@ -292,7 +291,7 @@ public class TomlHelper {
             try {
                 return foundList.stream().mapToLong(object -> Long.parseLong(object.toString())).toArray();
             } catch (NumberFormatException ex) {
-                LogHelper.logInternal(Level.ERROR,"Error parsing long for toml list with key {}! An element " +
+                TILRef.logError("Error parsing long for toml list with key {}! An element " +
                         "was not a valid number. Error: {}",key,ex);
             }
         }
@@ -305,7 +304,7 @@ public class TomlHelper {
             try {
                 return foundList.stream().mapToDouble(object -> Double.parseDouble(object.toString())).toArray();
             } catch (NumberFormatException ex) {
-                LogHelper.logInternal(Level.ERROR,"Error parsing long for toml list with key {}! An element " +
+                TILRef.logError("Error parsing long for toml list with key {}! An element " +
                         "was not a valid number. Error: {}",key,ex);
             }
         }
@@ -321,7 +320,7 @@ public class TomlHelper {
             try {
                 return foundList.stream().map(object -> Float.parseFloat(object.toString())).toArray(Float[]::new);
             } catch (NumberFormatException ex) {
-                LogHelper.logInternal(Level.ERROR,"Error parsing long for toml list with key {}! An element " +
+                TILRef.logError("Error parsing long for toml list with key {}! An element " +
                         "was not a valid number. Error: {}",key,ex);
             }
         }
@@ -333,7 +332,7 @@ public class TomlHelper {
             try {
                 return foundList.stream().map(object -> Boolean.parseBoolean(object.toString())).toArray(Boolean[]::new);
             } catch (NumberFormatException ex) {
-                LogHelper.logInternal(Level.ERROR,"Error parsing long for toml list with key {}! An element " +
+                TILRef.logError("Error parsing long for toml list with key {}! An element " +
                         "was not a valid number. Error: {}",key,ex);
             }
         }
@@ -420,7 +419,7 @@ public class TomlHelper {
 
     private static String writePrimitive(String key, Object value, int depth) {
         StringBuilder builder = new StringBuilder();
-        builder.append("\t".repeat(Math.max(0, depth)));
+        TextHelper.repeat("\t",Math.max(0, depth));
         builder.append(key).append(" = ");
         if(value instanceof String) return builder.append("\"").append(value).append("\"").toString();
         return builder.append(value).toString();
@@ -428,9 +427,9 @@ public class TomlHelper {
 
     private static String writeList(String key, List<Object> values, int spacing, int depth) {
         StringBuilder builder = new StringBuilder();
-        builder.append("\t".repeat(Math.max(0, depth)));
+        TextHelper.repeat("\t",Math.max(0, depth));
         builder.append(key).append(" = [");
-        builder.append(" ".repeat(Math.max(0, spacing)));
+        TextHelper.repeat(" ",Math.max(0, spacing));
         int index = 0;
         for(Object value : values) {
             if (value instanceof String)
@@ -441,13 +440,13 @@ public class TomlHelper {
                 index++;
             }
         }
-        builder.append(" ".repeat(Math.max(0, spacing)));
+        TextHelper.repeat(" ",Math.max(0, spacing));
         return builder.append("]").toString();
     }
 
     private static String writeTableName(String key, boolean isDouble, int depth) {
         StringBuilder builder = new StringBuilder();
-        builder.append("\t".repeat(Math.max(0, depth)));
+        TextHelper.repeat("\t",Math.max(0, depth));
         if(isDouble) return builder.append("[[").append(key).append("]]").toString();
         return builder.append("[").append(key).append("]").toString();
     }

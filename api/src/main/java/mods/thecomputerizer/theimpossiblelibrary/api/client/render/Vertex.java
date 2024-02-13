@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.ReferenceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
@@ -30,9 +30,9 @@ public class Vertex {
 
     public Vertex setColor(float r, float g, float b, float a) {
         if(this.bIndex >=this.buffer.length)
-            ReferenceAPI.logError("Tried to buffer the color of a filled vertex!");
+            TILRef.logError("Tried to buffer the color of a filled vertex!");
         else if(this.buffer[this.bIndex].length!=4)
-            ReferenceAPI.logError("Tried to buffer the color of a vertex in the wrong spot!");
+            TILRef.logError("Tried to buffer the color of a vertex in the wrong spot!");
         else {
             this.buffer[this.bIndex][0] = r;
             this.buffer[this.bIndex][1] = g;
@@ -49,9 +49,9 @@ public class Vertex {
 
     public Vertex setPosition(double x, double y, double z) {
         if(this.bIndex >=this.buffer.length)
-            ReferenceAPI.logError("Tried to buffer the position of a filled vertex!");
+            TILRef.logError("Tried to buffer the position of a filled vertex!");
         else if(this.buffer[this.bIndex].length!=3)
-            ReferenceAPI.logError("Tried to buffer the position of a vertex in the wrong spot!");
+            TILRef.logError("Tried to buffer the position of a vertex in the wrong spot!");
         else {
             this.buffer[this.bIndex][0] = x;
             this.buffer[this.bIndex][1] = x;
@@ -67,9 +67,9 @@ public class Vertex {
 
     public Vertex setTexture(double u, double v) {
         if(this.bIndex >=this.buffer.length)
-            ReferenceAPI.logError("Tried to buffer the texture of a filled vertex!");
+            TILRef.logError("Tried to buffer the texture of a filled vertex!");
         else if(this.buffer[this.bIndex].length!=4)
-            ReferenceAPI.logError("Tried to buffer the texture of a vertex in the wrong spot!");
+            TILRef.logError("Tried to buffer the texture of a vertex in the wrong spot!");
         else {
             this.buffer[this.bIndex][0] = u;
             this.buffer[this.bIndex][1] = v;

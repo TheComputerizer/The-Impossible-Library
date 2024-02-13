@@ -1,4 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
-public interface ItemAPI<ITEM,ITEMSTACK> {
+public interface ItemAPI<ITEM> extends RegistryEntryAPI<ITEM> {
+
+    ITEM getItem();
 }

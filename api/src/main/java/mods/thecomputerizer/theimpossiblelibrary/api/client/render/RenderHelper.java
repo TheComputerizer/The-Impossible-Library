@@ -1,12 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.LogHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
-import org.apache.logging.log4j.Level;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -27,7 +26,7 @@ public class RenderHelper {
     }
 
     public static void bufferSquareTex(MinecraftAPI mc, Vector2f center, float radius, float alpha,
-                                       ResourceLocationAPI texture) {
+                                       ResourceLocationAPI<?> texture) {
         float length = radius*2f;
         drawTexturedRect(mc,(int)(center.x()-radius/2f),(int)(center.y()-radius/2f),
                 (int)length,(int)length,alpha,texture,0f,length,0f,length);
@@ -175,7 +174,7 @@ public class RenderHelper {
     }
 
     public static void drawTexturedRect(MinecraftAPI mc, int x, int y, int width, int height, float alpha,
-                                        ResourceLocationAPI texture, float uMin, float uMax, float vMin, float vMax) {
+                                        ResourceLocationAPI<?> texture, float uMin, float uMax, float vMin, float vMax) {
         texture.bind(mc);
         mc.getRenderer().setColor(1f,1f,1f,alpha);
         VertexWrapper buffer = mc.getBufferBuilder();
@@ -187,7 +186,7 @@ public class RenderHelper {
     }
 
     public static void enforceAlphaTexture(MinecraftAPI mc, int x, int y, int width, int height, float alpha,
-                                           ResourceLocationAPI texture) {
+                                           ResourceLocationAPI<?> texture) {
         drawTexturedRect(mc,x,y,width,height,alpha,texture,0f,1f,0f,1f);
     }
 
@@ -213,12 +212,12 @@ public class RenderHelper {
         renderer.setPosColorShader();
     }
 
-    public static RenderablePNG initPNG(ResourceLocationAPI source, Map<String,Object> parameters) {
+    public static RenderablePNG initPNG(ResourceLocationAPI<?> source, Map<String,Object> parameters) {
         try {
             boolean isAnimated = parameters.containsKey("animated") && Boolean.parseBoolean(parameters.get("animated").toString());
             return isAnimated ? new RenderableAnimated(source,parameters) : new RenderablePNG(source,parameters);
-        } catch (IOException ex) {
-            LogHelper.logInternal(Level.ERROR,"Failed to initialize png at resource location {}",source,ex);
+        } catch(IOException ex) {
+            TILRef.logError("Failed to initialize png at resource location {}",source,ex);
         }
         return null;
     }

@@ -1,6 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
-public interface RegistryEntryAPI<REGISTRY> {
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
-    REGISTRY getRegistry();
+public interface RegistryEntryAPI<V> {
+
+    ResourceLocationAPI<?> getID();
+    V getValue();
+    ResourceLocationAPI<?> getRegistryKey();
 }

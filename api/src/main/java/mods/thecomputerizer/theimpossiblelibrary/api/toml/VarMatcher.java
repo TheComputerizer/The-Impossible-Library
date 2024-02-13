@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.util.LogHelper;
-import org.apache.logging.log4j.Level;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,13 +10,13 @@ import java.util.function.Function;
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class VarMatcher {
 
-    private final Map<String, Function<Object, Boolean>> conditions;
+    private final Map<String, Function<Object,Boolean>> conditions;
 
     public VarMatcher() {
         this.conditions = new HashMap<>();
     }
 
-    public void addCondition(String name, Function<Object, Boolean> matcher) {
+    public void addCondition(String name, Function<Object,Boolean> matcher) {
         this.conditions.put(name, matcher);
     }
 
@@ -25,8 +24,8 @@ public class VarMatcher {
         if(this.conditions.isEmpty() || Objects.isNull(val) || !this.conditions.containsKey(name)) return true;
         try {
             return this.conditions.containsKey(name) && this.conditions.get(name).apply(val);
-        } catch (Exception e) {
-            LogHelper.logInternal(Level.ERROR,"Error in variable whitelist matcher",e);
+        } catch(Exception ex) {
+            TILRef.logError("Error in variable whitelist matcher",ex);
         }
         return false;
     }

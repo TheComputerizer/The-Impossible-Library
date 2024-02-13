@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.ReferenceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
@@ -25,14 +25,14 @@ public abstract class VertexWrapper {
 
     public VertexWrapper color(Vector4f color) {
         if(this.vIndex>=this.vertices.length)
-            ReferenceAPI.logError("Tried to buffer the color of a filled vertex wrapper!");
+            TILRef.logError("Tried to buffer the color of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setColor(color);
         return this;
     }
 
     public VertexWrapper color(float r, float g, float b, float a) {
         if(this.vIndex>=this.vertices.length)
-            ReferenceAPI.logError("Tried to buffer the color of a filled vertex wrapper!");
+            TILRef.logError("Tried to buffer the color of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setColor(r,g,b,a);
         return this;
     }
@@ -49,7 +49,7 @@ public abstract class VertexWrapper {
 
     public @Nullable Vertex getCurrentVertex() {
         if(this.vIndex>=this.vertices.length) {
-            ReferenceAPI.logError("Tried to get the current vertex of a filled vertex wrapper!");
+            TILRef.logError("Tried to get the current vertex of a filled vertex wrapper!");
             return null;
         }
         return this.vertices[this.vIndex];
@@ -61,14 +61,14 @@ public abstract class VertexWrapper {
 
     public VertexWrapper pos(Vector3d pos) {
         if(this.vIndex>=this.vertices.length)
-            ReferenceAPI.logError("Tried to buffer the position of a filled vertex wrapper!");
+            TILRef.logError("Tried to buffer the position of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setPosition(pos);
         return this;
     }
 
     public VertexWrapper pos(double x, double y, double z) {
         if(this.vIndex>=this.vertices.length)
-            ReferenceAPI.logError("Tried to buffer the position of a filled vertex wrapper!");
+            TILRef.logError("Tried to buffer the position of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setPosition(x,y,z);
         return this;
     }
@@ -84,14 +84,14 @@ public abstract class VertexWrapper {
 
     public VertexWrapper tex(Vector2d uv) {
         if(this.vIndex>=this.vertices.length)
-            ReferenceAPI.logError("Tried to buffer the texture of a filled vertex wrapper!");
+            TILRef.logError("Tried to buffer the texture of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setTexture(uv);
         return this;
     }
 
     public VertexWrapper tex(double u, double v) {
         if(this.vIndex>=this.vertices.length)
-            ReferenceAPI.logError("Tried to buffer the texture of a filled vertex wrapper!");
+            TILRef.logError("Tried to buffer the texture of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setTexture(u,v);
         return this;
     }

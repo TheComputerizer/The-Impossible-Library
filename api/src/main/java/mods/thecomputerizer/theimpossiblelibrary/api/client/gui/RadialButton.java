@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class RadialButton extends AbstractRadialButton {
 
     private final List<TextAPI<?>> tooltipLines;
-    private final ResourceLocationAPI centerIcon;
-    private final ResourceLocationAPI altCenterIcon;
+    private final ResourceLocationAPI<?> centerIcon;
+    private final ResourceLocationAPI<?> altCenterIcon;
     private final float iconHoverSizeIncrease;
     private final String centerText;
     private final BiConsumer<ScreenAPI<?>,RadialButton> handlerFunction;
 
-    public RadialButton(MinecraftAPI mc, List<String> tooltipLines, @Nullable ResourceLocationAPI centerIcon,
-                        @Nullable ResourceLocationAPI altCenterIcon, float hoverIncrease, @Nullable String centerText,
+    public RadialButton(MinecraftAPI mc, List<String> tooltipLines, @Nullable ResourceLocationAPI<?> centerIcon,
+                        @Nullable ResourceLocationAPI<?> altCenterIcon, float hoverIncrease, @Nullable String centerText,
                         BiConsumer<ScreenAPI<?>,RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
@@ -50,7 +50,7 @@ public class RadialButton extends AbstractRadialButton {
 
     public void drawCenterIcon(MinecraftAPI mc, float centerRadius) {
         if(Objects.nonNull(this.centerIcon)) {
-            ResourceLocationAPI actualIcon = this.centerIcon;
+            ResourceLocationAPI<?> actualIcon = this.centerIcon;
             float hoverIncrease = 0f;
             if(this.hover) {
                 actualIcon = this.altCenterIcon;

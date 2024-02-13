@@ -5,28 +5,27 @@ import io.netty.buffer.ByteBuf;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class DefaultPacketHandler<CONTEXT,M extends MessageImplAPI<?,?,?>> implements IPacketHandler<CONTEXT,M> {
+public class DefaultPacketHandler implements IPacketHandler {
 
-    private final Function<ByteBuf,M> messageDecoder;
+    private final Function<ByteBuf,? extends MessageImplAPI<?,?>> messageDecoder;
 
-    public DefaultPacketHandler(Function<ByteBuf,M> messageDecoder) {
+    public <M extends MessageImplAPI<?,?>> DefaultPacketHandler(Function<ByteBuf,M> messageDecoder) {
         this.messageDecoder = messageDecoder;
     }
 
     @Override
-    public void encode(M message, ByteBuf buf) {
+    public <B extends ByteBuf,M extends MessageImplAPI<?,?>> void encode(M message, B buf) {
         message.encode(buf);
     }
 
     @Override
-    public M decode(ByteBuf buf) {
-        return this.messageDecoder.apply(buf);
+    @SuppressWarnings("unchecked")
+    public <B extends ByteBuf,M extends MessageImplAPI<?,?>> M decode(B buf) {
+        return (M)this.messageDecoder.apply(buf);
     }
 
     @Override
-    public void handle(M message, Supplier<CONTEXT> ctxSupplier) {
-        CONTEXT ctx = ctxSupplier.get();
-        message.handle(ctx);
-        ctx.setPacketHandled(true);
+    public <M extends MessageImplAPI<?,?>> void handle(M message, Supplier<?> ctxSupplier) {
+        message.handle(ctxSupplier.get());
     }
 }

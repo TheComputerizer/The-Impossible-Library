@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.ReferenceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class RenderableAnimated extends RenderablePNG {
     private long prevMillis;
     private long milliCounter;
 
-    public RenderableAnimated(ResourceLocationAPI source, Map<String, Object> parameters) throws IOException {
+    public RenderableAnimated(ResourceLocationAPI<?> source, Map<String, Object> parameters) throws IOException {
         super(source,parameters);
         int fps = getParameterAs("fps",20);
         this.millisPerFrame = (long)(1000f/((float)fps));
@@ -27,7 +27,7 @@ public class RenderableAnimated extends RenderablePNG {
         this.frames = source.getSpriteFrames();
         this.curFrame = 0;
         this.startedRendering = false;
-        ReferenceAPI.logDebug("Initialized sprite with {} frames and FPS millis of {}",this.frames,this.millisPerFrame);
+        TILRef.logDebug("Initialized sprite with {} frames and FPS millis of {}",this.frames,this.millisPerFrame);
     }
 
     private void renderTick() {

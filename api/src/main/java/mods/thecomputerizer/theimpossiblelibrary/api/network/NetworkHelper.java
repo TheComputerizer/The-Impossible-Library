@@ -1,7 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.ReferenceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 
 import javax.annotation.Nullable;
@@ -10,7 +14,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 public class NetworkHelper {
+
+    public static <N> @Nullable N getNetwork() {
+        NetworkAPI<N> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getNetwork() : null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <N> @Nullable NetworkAPI<N> getNetworkAPI() {
+        return (NetworkAPI<N>)TILRef.getCommonSubAPI("NetworkAPI",CommonAPI::getNetworkAPI);
+    }
 
     /**
      * This assumes the object is stored as a string.
@@ -30,17 +46,11 @@ public class NetworkHelper {
         try {
             valType = Class.forName(className);
         } catch (ClassNotFoundException ex) {
-            ReferenceAPI.logError( "Could not find class name {} when parsing a generic object from a packet!",className,ex);
+            TILRef.logError( "Could not find class name {} when parsing a generic object from a packet!",className,ex);
             throw new RuntimeException("Could not find class name when parsing a generic object from a packet!",ex);
         }
         return List.class.isAssignableFrom(valType) ? readGenericList(buf, NetworkHelper::parseGenericObj) :
                 GenericUtils.parseGenericType(readString(buf),valType);
-    }
-
-    public static Optional<EntityType<?>> readEntityType(ByteBuf buf) {
-        ResourceLocation location = buf.readResourceLocation();
-        return location.getPath().matches("missing") ? Optional.empty() :
-                Optional.ofNullable(ForgeRegistries.ENTITY_TYPES.getValue(location));
     }
 
     public static <V> List<V> readGenericList(ByteBuf buf, Function<ByteBuf, V> valFunc) {
@@ -60,14 +70,54 @@ public class NetworkHelper {
         return ret;
     }
 
+    public static @Nullable RegistryEntryAPI<?> readRegistryEntry(ByteBuf buf) {
+        ResourceLocationAPI<?> registryKey = readResourceLocation(buf);
+        ResourceLocationAPI<?> entryID = readResourceLocation(buf);
+        return RegistryHelper.getEntryIfPresent(registryKey,entryID);
+    }
+
+    public static @Nullable ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
+        NetworkAPI<?> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.readResourceLocation(buf) : null;
+    }
+
     public static String readString(ByteBuf buf) {
         int strLength = buf.readInt();
         return (String)buf.readCharSequence(strLength, StandardCharsets.UTF_8);
     }
 
-    public static void writeEntityType(ByteBuf buf, EntityType<?> type) {
-        ResourceLocation resource = Objects.nonNull(type) ? ForgeRegistries.ENTITY_TYPES.getKey(type) : null;
-        buf.writeResourceLocation(Objects.nonNull(resource) ? resource : Constants.res("missing"));
+    public static void registerMessage(Object handler) {
+        NetworkAPI<?> api = getNetworkAPI();
+        if(Objects.nonNull(api)) api.registerMessage(handler);
+    }
+
+    public static <SIDE,M extends MessageImplAPI<?,?>> void registerMessage(int id, Class<M> clazz, SIDE side) {
+        NetworkAPI<?> api = getNetworkAPI();
+        if(Objects.nonNull(api)) api.registerMessage(id,clazz,side);
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static <CONTEXT,B extends ByteBuf,M extends MessageImplAPI<?,?>> void registerMessage(
+            int id, Class<M> clazz, BiConsumer<M,B> encoder, Function<B,M> decoder,
+            BiConsumer<M,Supplier<CONTEXT>> handler, Optional<?> dir) {
+        NetworkAPI<?> api = getNetworkAPI();
+        if(Objects.nonNull(api)) api.registerMessage(id,clazz,encoder,decoder,handler,dir);
+    }
+
+    public static @Nullable ResourceLocationAPI<?> registerMessage(ResourceLocationAPI<?> resource, boolean toClient) {
+        NetworkAPI<?> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.registerMessage(resource,toClient) : null;
+    }
+
+    public static <P,M extends MessageImplAPI<?,?>> void sendToPlayer(M message, P player) {
+        NetworkAPI<?> api = getNetworkAPI();
+        if(Objects.nonNull(api) && Objects.nonNull(message) && Objects.nonNull(player))
+            api.sendToPlayer(message,player);
+    }
+
+    public static <M extends MessageImplAPI<?,?>> void sendToServer(M message) {
+        NetworkAPI<?> api = getNetworkAPI();
+        if(Objects.nonNull(api) && Objects.nonNull(message)) api.sendToServer(message);
     }
 
     public static <V> void writeGenericList(ByteBuf buf, List<V> list, BiConsumer<ByteBuf, V> valFunc) {
@@ -101,6 +151,15 @@ public class NetworkHelper {
             if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
             else writeString(buf,val.toString());
         }
+    }
+
+    public static void writeRegistryEntry(ByteBuf buf, RegistryEntryAPI<?> entry) {
+        writeResourceLocation(buf,entry.getRegistryKey());
+        writeResourceLocation(buf,entry.getID());
+    }
+
+    public static void writeResourceLocation(ByteBuf buf, ResourceLocationAPI<?> resource) {
+        writeString(buf,resource.toString());
     }
 
     public static void writeString(ByteBuf buf, String string) {

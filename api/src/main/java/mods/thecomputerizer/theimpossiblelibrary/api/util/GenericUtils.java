@@ -1,5 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,8 +66,27 @@ public class GenericUtils {
     }
 
     /**
+     * Assumes the value is stored as a string
+     */
+    public static Object parseGenericFromTag(CompoundTagAPI tag) {
+        String className = tag.getString("type");
+        if(className.isEmpty()) return null;
+        try {
+            Class<?> valType = Class.forName(className);
+            if(List.class.isAssignableFrom(valType)) return readFromList(tag.getListTag("value"));
+            String storedVal = tag.getString("value");
+            if(storedVal.isEmpty()) return null;
+            return parseGenericType(storedVal,valType);
+        } catch (ClassNotFoundException ex) {
+            TILRef.logError("Could not find class name {} when parsing a generic object from Tag!",className,ex);
+        }
+        return null;
+    }
+
+    /**
      * This only handles primitive types for the most part, so it may be better to just do whatever you want manually
      */
+    @SuppressWarnings("deprecation")
     public static Object parseGenericType(String unparsed, Class<?> valType) {
         switch(valType.getSimpleName()) {
             case "Boolean": return Boolean.parseBoolean(unparsed);
@@ -76,48 +101,34 @@ public class GenericUtils {
         }
     }
 
-    /**
-     * Assumes the value is stored as a string
-     */
-    public static Object parseGenericFromTag(CompoundTag tag) {
-        String className = tag.getString("type");
-        if(className.isEmpty()) return null;
-        try {
-            Class<?> valType = Class.forName(className);
-            if(List.class.isAssignableFrom(valType)) return readFromList(tag.get("value"));
-            String storedVal = tag.getString("value");
-            if(storedVal.isEmpty()) return null;
-            return parseGenericType(storedVal,valType);
-        } catch (ClassNotFoundException ex) {
-            Constants.LOGGER.error("Could not find class name {} when parsing a generic object from NBT!",className,ex);
-        }
-        return null;
-    }
-
-    private static List<?> readFromList(Tag base) {
-        if(!(base instanceof ListTag list)) return null;
+    private static List<?> readFromList(ListTagAPI list) {
         List<Object> ret = new ArrayList<>();
-        for(Tag test : list) {
-            if(!(test instanceof CompoundTag tag)) return null;
-            ret.add(parseGenericFromTag(tag));
+        for(BaseTagAPI based : list.iterable()) {
+            if(based.isCompound()) ret.add(parseGenericFromTag(based.asCompundTag()));
+            else return null;
         }
         return ret;
     }
 
-    public static void writeGenericToTag(CompoundTag tag, Object obj) {
+    public static void writeGenericToTag(CompoundTagAPI tag, Object obj) {
         tag.putString("type",obj.getClass().getName());
-        if(obj instanceof List<?>) tag.put("value",writeList(obj));
+        if(obj instanceof List<?>) tag.putTag("value",writeList(obj));
         else tag.putString("value",obj.toString());
     }
 
-    private static ListTag writeList(Object obj) {
-        ListTag list = new ListTag();
-        List<?> val = (List<?>)obj;
-        for(Object element : val) {
-            CompoundTag tag = new CompoundTag();
-            tag.putString("type",element.getClass().getName());
-            if(element instanceof List<?>) tag.put("value",writeList(element));
-            else tag.putString("value",element.toString());
+    private static ListTagAPI writeList(Object obj) {
+        ListTagAPI list = TagHelper.makeListTag();
+        if(Objects.nonNull(list)) {
+            List<?> val = (List<?>) obj;
+            for(Object element : val) {
+                CompoundTagAPI tag = TagHelper.makeCompoundTag();
+                if(Objects.nonNull(tag)) {
+                    tag.putString("type", element.getClass().getName());
+                    if(element instanceof List<?>) tag.putTag("value",writeList(element));
+                    else tag.putString("value",element.toString());
+                    list.addTag(tag);
+                }
+            }
         }
         return list;
     }

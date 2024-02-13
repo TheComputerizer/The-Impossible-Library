@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * Wrapper used for bundling generic helper methods with a Mappable instnace that has Wrapperable values
+ * Wrapper used for bundling generic helper methods with a Mappable instance that has Wrapperable values
  */
 public class WrapperableMappable<K,V> extends Mappable<K,Wrapperable<V>> {
 
@@ -24,7 +24,7 @@ public class WrapperableMappable<K,V> extends Mappable<K,Wrapperable<V>> {
     }
 
     /**
-     * Adds the elemennt to the wrapperable value at the key or adds the input value and then adds the element to it
+     * Adds the element to the wrapperable value at the key or adds the input value and then adds the element to it
      */
     public void addIfAbsent(@Nullable K key, Wrapperable<V> val, V element) {
         val = putIfAbsent(key,val);
@@ -72,7 +72,7 @@ public class WrapperableMappable<K,V> extends Mappable<K,Wrapperable<V>> {
     }
 
     /**
-     * Adds all the values from the wrappable values of the map to the output collection
+     * Adds all the values from the wrapperable values of the map to the output collection
      */
     public void insertFlatValues(Collection<V> output) {
         forAllValues(output::add);

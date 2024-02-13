@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.joml.Vector2f;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 public class RadialElement {
     private final ScreenAPI<?> parentScreen;
     private final List<RadialButton> buttons;
-    private final ResourceLocationAPI centerIcon;
-    private final ResourceLocationAPI altCenterIcon;
+    private final ResourceLocationAPI<?> centerIcon;
+    private final ResourceLocationAPI<?> altCenterIcon;
     private final int iconRadius;
     private final RadialProgressBar centerProgress;
     private final List<TextAPI<?>> centerTooltips;
@@ -37,7 +37,7 @@ public class RadialElement {
     private boolean hover;
     private boolean centerHover;
 
-    public RadialElement(ScreenAPI<?> parent, @Nullable ResourceLocationAPI center, @Nullable ResourceLocationAPI altCenter,
+    public RadialElement(ScreenAPI<?> parent, @Nullable ResourceLocationAPI<?> center, @Nullable ResourceLocationAPI<?> altCenter,
                          @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
                          int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
                          float resolution, float hoverIncrease, RadialButton ... buttons) {
@@ -45,7 +45,7 @@ public class RadialElement {
                 centerTooltips,resolution,hoverIncrease,Arrays.stream(buttons).collect(Collectors.toList()));
     }
 
-    public RadialElement(ScreenAPI<?> parent, @Nullable ResourceLocationAPI center, @Nullable ResourceLocationAPI altCenter,
+    public RadialElement(ScreenAPI<?> parent, @Nullable ResourceLocationAPI<?> center, @Nullable ResourceLocationAPI<?> altCenter,
                          @Nullable RadialProgressBar centerProgress, int centerX, int centerY, int radiusIn,
                          int radiusOut, int iconRadius, @Nullable String centerText, List<String> centerTooltips,
                          float resolution, float hoverIncrease, List<RadialButton> buttons) {
@@ -139,7 +139,7 @@ public class RadialElement {
         renderer.enableTexture();
         renderer.enableAlpha();
         if(Objects.nonNull(this.centerIcon)) {
-            ResourceLocationAPI actualIcon = this.centerIcon;
+            ResourceLocationAPI<?> actualIcon = this.centerIcon;
             int hoverIncrease = 0;
             if(this.centerHover) {
                 actualIcon = this.altCenterIcon;

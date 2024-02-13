@@ -2,10 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import com.moandjiezana.toml.Toml;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.LogHelper;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -17,7 +18,7 @@ public class Table extends AbstractType {
     /**
      * The level this table is on. Used for spacing and to handle nested elements.
      */
-    private final int level;
+    @Getter private final int level;
 
     /**
      * The name of this table. When writing, the names of the parent table will be inherited for proper TOML formatting.
@@ -28,12 +29,14 @@ public class Table extends AbstractType {
      * The TOML object backing the table makes things easier to parse correctly. This will be null if it is a new table
      * added separately after parsing.
      */
-    private final Toml backing;
+    @Getter private final Toml backing;
 
     /**
      * The TOML holder contents contained within the table
+     *  Gets the contents of this table.
+
      */
-    private final List<AbstractType> contents;
+    @Getter private final List<AbstractType> contents;
 
     /**
      * Used to filter the output of the table when writing.
@@ -45,30 +48,29 @@ public class Table extends AbstractType {
      */
     private int arrIndex;
 
-    public Table(CompoundTag tag, @Nullable Table parentTable) {
+    public Table(CompoundTagAPI tag, @Nullable Table parentTable) {
         super(tag, parentTable);
         this.backing = null;
-        this.level = tag.getInt("level");
-        this.arrIndex = tag.getInt("arrIndex");
+        this.level = tag.getPrimitiveTag("level").asInt();
+        this.arrIndex = tag.getPrimitiveTag("arrIndex").asInt();
         this.tableName = tag.getString("name");
-        this.contents = readContents(tag.get("contents"));
+        this.contents = readContents(tag.getListTag("contents"));
         this.matchers = new ArrayList<>();
     }
 
-    private List<AbstractType> readContents(Tag tag) {
+    private List<AbstractType> readContents(ListTagAPI tag) {
         List<AbstractType> ret = new ArrayList<>();
-        if(tag instanceof ListTag) {
-            for(Tag test : (ListTag)tag) {
-                if(test instanceof CompoundTag element) {
-                    String type = element.getString("type");
-                    if(type.matches("table"))
-                        ret.add(new Table(element.getCompound("contents"),this));
-                    else {
-                        Variable var = new Variable(element.getCompound("contents"),this);
-                        if(var.isValid()) ret.add(var);
-                    }
-                } else break;
-            }
+        for(BaseTagAPI test : tag.iterable()) {
+            if(test.isCompound()) {
+                CompoundTagAPI compound = test.asCompundTag();
+                String type = compound.getString("type");
+                if(type.matches("table"))
+                    ret.add(new Table(compound.getCompoundTag("contents"),this));
+                else {
+                    Variable var = new Variable(compound.getCompoundTag("contents"),this);
+                    if(var.isValid()) ret.add(var);
+                }
+            } else break;
         }
         return ret;
     }
@@ -126,10 +128,6 @@ public class Table extends AbstractType {
         return true;
     }
 
-    public int getLevel() {
-        return this.level;
-    }
-
     /**
      * Gets the name of the table
      */
@@ -157,13 +155,6 @@ public class Table extends AbstractType {
 
     public void removeItem(AbstractType type) {
         this.contents.remove(type);
-    }
-
-    /**
-     * Gets the contents of this table.
-     */
-    public List<AbstractType> getContents() {
-        return this.contents;
     }
 
     /**
@@ -235,7 +226,7 @@ public class Table extends AbstractType {
     }
 
     public boolean has(int absoluteIndex) {
-        return this.contents.stream().map(AbstractType::getAbsoluteIndex).toList().contains(absoluteIndex);
+        return this.contents.stream().map(AbstractType::getAbsoluteIndex).collect(Collectors.toList()).contains(absoluteIndex);
     }
 
     /**
@@ -289,7 +280,7 @@ public class Table extends AbstractType {
     public Table getTableByName(String name, int tableArrayIndex) {
         List<Table> foundTables = getTablesByName(name);
         if(foundTables.isEmpty()) {
-            LogHelper.logInternal(Level.ERROR, "Child table under {} with name {} did not exist",this.tableName,name);
+            TILRef.logError("Child table under {} with name {} did not exist",this.tableName,name);
             return null;
         }
         if(foundTables.size()==1) return foundTables.get(0);
@@ -297,7 +288,7 @@ public class Table extends AbstractType {
             if(tableArrayIndex<0) tableArrayIndex = 0;
             return foundTables.get(tableArrayIndex);
         } catch (IndexOutOfBoundsException ex) {
-            LogHelper.logInternal(Level.ERROR, "Index {} under table {} for child table array {} was invalid with " +
+            TILRef.logError("Index {} under table {} for child table array {} was invalid with " +
                             "error {}", tableArrayIndex,this.tableName,name,ex);
             return null;
         }
@@ -325,7 +316,7 @@ public class Table extends AbstractType {
             String[] childPath = Arrays.copyOfRange(path,1,path.length);
             int[] childArrayIndices = Arrays.copyOfRange(tableArrayIndices,1,tableArrayIndices.length);
         }
-        LogHelper.logInternal(Level.ERROR, "Child table under {} from path {} did not exist", this.tableName,
+        TILRef.logError("Child table under {} from path {} did not exist", this.tableName,
                 TomlHelper.condensePath(path));
         return null;
     }
@@ -408,10 +399,6 @@ public class Table extends AbstractType {
         return getValOrDefault(name, defVal, true, true, false);
     }
 
-    public Toml getBacking() {
-        return this.backing;
-    }
-
     @Override
     public String getSpacing() {
         return TextHelper.withTabs("",this.level-1);
@@ -448,24 +435,24 @@ public class Table extends AbstractType {
     /**
      * Only saves variables and child tables
      */
-    public CompoundTag writeToTag() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundTagAPI writeToTag() {
+        CompoundTagAPI tag = TagHelper.makeCompoundTag();
         tag.putInt("absoluteIndex",this.getAbsoluteIndex());
         tag.putString("name",this.tableName);
         tag.putInt("level",this.level);
         tag.putInt("arrIndex",this.arrIndex);
-        ListTag contents = new ListTag();
+        ListTagAPI contents = TagHelper.makeListTag();
         for(AbstractType type : this.getContents()) {
-            CompoundTag element = new CompoundTag();
-            if(type instanceof Table table) {
+            CompoundTagAPI element = TagHelper.makeCompoundTag();
+            if(type instanceof Table) {
                 element.putString("type","table");
-                tag.put("contents",table.writeToTag());
-            } else if(type instanceof Variable var) {
+                tag.putTag("contents",((Table)type).writeToTag());
+            } else if(type instanceof Variable) {
                 element.putString("type","variable");
-                tag.put("contents",var.writeToTag());
+                tag.putTag("contents",((Variable)type).writeToTag());
             }
         }
-        tag.put("contents",contents);
+        tag.putTag("contents",contents);
         return tag;
     }
 }

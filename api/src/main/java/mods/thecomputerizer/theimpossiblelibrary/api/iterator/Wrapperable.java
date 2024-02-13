@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.ReferenceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import javax.annotation.Nullable;
@@ -157,7 +157,7 @@ public class Wrapperable<E> implements Iterable<E> {
      */
     protected Iterable<E> fixInstance(Iterable<E> itr) {
         if(itr instanceof Mappable<?,?>) {
-            ReferenceAPI.logWarn("Returning the entry set a mappable instance as an iterator!");
+            TILRef.logWarn("Returning the entry set a mappable instance as an iterator!");
             return (Iterable<E>)((Mappable<?,?>)itr).entrySet();
         }
         if(itr instanceof Wrapperable<?>) return fixInstanceInner((Wrapperable<E>)itr);
@@ -233,7 +233,7 @@ public class Wrapperable<E> implements Iterable<E> {
             String base = "Failed to cast backend iterable instance to ";
             if(Objects.isNull(onCastException))
                 throw new ClassCastException(base+clazz.getName()+"! No input exception handler is present");
-            ReferenceAPI.logError("{}{}! Input exception handler will be called",base,clazz,ex);
+            TILRef.logError("{}{}! Input exception handler will be called",base,clazz,ex);
             return (T)onCastException.apply(this);
         }
     }
@@ -241,7 +241,7 @@ public class Wrapperable<E> implements Iterable<E> {
     public Class<?> getElementClass() {
         E element = getNonNullElement();
         if(Objects.isNull(element)) {
-            ReferenceAPI.logWarn("Unable to get the element class of a wrappable instance! Is the instance empty?");
+            TILRef.logWarn("Unable to get the element class of a wrappable instance! Is the instance empty?");
             return Object.class;
         }
         return element.getClass();
@@ -404,7 +404,7 @@ public class Wrapperable<E> implements Iterable<E> {
                 count++;
             }
             if(Objects.nonNull(removal)) remove(removal);
-            else ReferenceAPI.logDebug("Failed to remove null element of wrappable instance");
+            else TILRef.logDebug("Failed to remove null element of wrappable instance");
         }
     }
 

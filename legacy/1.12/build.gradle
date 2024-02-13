@@ -29,8 +29,13 @@ minecraft {
 }
 
 dependencies {
-    implementation project(':legacy')
     minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
+
+    annotationProcessor("com.google.code.gson:gson:${project.gson_annotation}")
+    annotationProcessor("com.google.guava:guava:${project.guava_annotation}")
+    annotationProcessor("org.ow2.asm:asm-debug-all:${project.asm_debug_annotation}")
+
+    implementation project(':legacy')
 }
 
 processResources {

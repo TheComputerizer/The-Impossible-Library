@@ -2,10 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import com.moandjiezana.toml.Toml;
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.LogHelper;
-import org.apache.logging.log4j.Level;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,6 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * Type storage for toml files separated into table, comments, and blank lines
+ * TODO rewrite this class
  */
 public class Holder {
 
@@ -60,7 +60,7 @@ public class Holder {
                 line = br.readLine();
             }
         } catch (Exception ex) {
-            LogHelper.logInternal(Level.ERROR, "Unable to index toml file with error {}", ex);
+            TILRef.logError("Unable to index toml file with error {}", ex);
             fileLines = new ArrayList<>();
         } finally {
             stream.close();
@@ -144,7 +144,7 @@ public class Holder {
                 } else if(line.contains("=")) {
                     String varName = line.substring(0,line.indexOf('=')).trim();
                     if(varName.isEmpty() || line.substring(line.indexOf('=')+1).isEmpty())
-                        LogHelper.logInternal(Level.WARN, "Variable line '{}' was unable to be parsed correctly",line);
+                        TILRef.logWarn("Variable line '{}' was unable to be parsed correctly",line);
                     else {
                         Object value = Objects.isNull(parentTable) ? TomlHelper.genericObject(this.backing,varName) :
                                 TomlHelper.genericObject(parentTable.getBacking(),varName);
@@ -182,7 +182,7 @@ public class Holder {
                         if(Objects.isNull(parentTable)) badTableName = true;
                     }
                     if(badTableName)
-                        LogHelper.logInternal(Level.ERROR, "Could not find parent table(s) for nested table of " +
+                        TILRef.logError("Could not find parent table(s) for nested table of " +
                                 "name {}", TomlHelper.condensePath(path));
                     else {
                         if ((Objects.isNull(parentTable) && (this.backing.containsTable(name) ||
@@ -207,7 +207,7 @@ public class Holder {
                             absoluteIndex++;
                             parentTable = table;
                         } else
-                            LogHelper.logInternal(Level.ERROR, "Table of name {} was unable to be parsed correctly", name);
+                            TILRef.logError("Table of name {} was unable to be parsed correctly", name);
                     }
                 }
             }
@@ -354,7 +354,7 @@ public class Holder {
 
     private void logBadTableRemove(Table parentTable, int arrIndex, String name) {
         boolean top = Objects.nonNull(parentTable);
-        LogHelper.logInternal(Level.DEBUG, "Tried to remove nonexistent {}table {}{}{}", top ? "top-level " : "",
+        TILRef.logDebug("Tried to remove nonexistent {}table {}{}{}", top ? "top-level " : "",
                 top ? " from parent "+parentTable.getName() : "",arrIndex<0 ? "" : " with array index "+arrIndex,name);
     }
 
@@ -405,7 +405,7 @@ public class Holder {
             sortIndex();
             finder.addToPotentialParent(var);
             return var;
-        } else LogHelper.logInternal(Level.WARN,"Unable to add variable of name {} to the toml index with unknown" +
+        } else TILRef.logDebug("Unable to add variable of name {} to the toml index with unknown" +
                 "or null value type {}",name,Objects.isNull(value) ? "null" : value.getClass().getName());
         return null;
     }
@@ -540,7 +540,7 @@ public class Holder {
     public Table getTableByName(String name, int tableArrayIndex) {
         List<Table> foundTables = getTablesByName(name);
         if(foundTables.isEmpty()) {
-            LogHelper.logInternal(Level.ERROR, "Top-level table with name {} did not exist",name);
+            TILRef.logError("Top-level table with name {} did not exist",name);
             return null;
         }
         if(foundTables.size()==1) return foundTables.get(0);
@@ -548,7 +548,7 @@ public class Holder {
             if(tableArrayIndex<0) tableArrayIndex = 0;
             return foundTables.get(tableArrayIndex);
         } catch (IndexOutOfBoundsException ex) {
-            LogHelper.logInternal(Level.ERROR, "Index {} for table array {} was invalid with error {}",
+            TILRef.logError("Index {} for table array {} was invalid with error {}",
                     tableArrayIndex,name,ex);
             return null;
         }
@@ -583,7 +583,7 @@ public class Holder {
             String[] childPath = Arrays.copyOfRange(path,1,path.length);
             int[] childArrayIndices = Arrays.copyOfRange(tableArrayIndices,1,tableArrayIndices.length);
         }
-        LogHelper.logInternal(Level.ERROR, "Top-level table from path {} did not exist", TomlHelper.condensePath(path));
+        TILRef.logError("Top-level table from path {} did not exist", TomlHelper.condensePath(path));
         return null;
     }
 
@@ -603,7 +603,7 @@ public class Holder {
             if(tableArrayIndex<0) tableArrayIndex = 0;
             return foundTables.get(tableArrayIndex);
         } catch (IndexOutOfBoundsException ex) {
-            LogHelper.logInternal(Level.ERROR, "Index {} for table array at path {} was invalid with error {}",
+            TILRef.logError("Index {} for table array at path {} was invalid with error {}",
                     tableArrayIndex, TomlHelper.condensePath(path),ex);
             return null;
         }

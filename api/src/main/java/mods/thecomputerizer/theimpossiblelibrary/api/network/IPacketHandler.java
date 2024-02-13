@@ -4,9 +4,9 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.function.Supplier;
 
-public interface IPacketHandler<CONTEXT,M extends MessageImplAPI<?,?,?>> {
+public interface IPacketHandler {
 
-    void encode(M message, ByteBuf buf);
-    M decode(ByteBuf buf);
-    void handle(M message, Supplier<CONTEXT> ctxSupplier);
+    <B extends ByteBuf,M extends MessageImplAPI<?,?>> void encode(M message, B buf);
+    <B extends ByteBuf,M extends MessageImplAPI<?,?>> M decode(B buf);
+    <M extends MessageImplAPI<?,?>> void handle(M message, Supplier<?> ctxSupplier);
 }

@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.ReferenceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
@@ -37,7 +37,7 @@ public abstract class Renderable {
             T casted = GenericUtils.castGenericType(this.parameters.get(name),(Class<T>)defVal.getClass());
             return Objects.nonNull(casted) ? casted : defVal;
         } catch(ClassCastException | NumberFormatException ex) {
-            ReferenceAPI.logDebug("Failed to parse value from parameter with name {}!",name,ex);
+            TILRef.logDebug("Failed to parse value from parameter with name {}!",name,ex);
         }
         return defVal;
     }

@@ -1,8 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.data.TagAPI;
+import lombok.Getter;
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
@@ -17,16 +19,19 @@ public abstract class AbstractType {
 
     /**
      * Used for direct indexing of an entire toml object from top to bottom.
+     * -- SETTER --
+     *  This should only be called by the holder class to when removing an element
+
      */
-    private int absoluteIndex;
+    @Setter @Getter private int absoluteIndex;
 
     /**
      * The parent table this type is under or null if it is top-level.
      */
     protected final Table parentTable;
 
-    protected AbstractType(Object tag, @Nullable Table parentTable) {
-        this.absoluteIndex = TagAPI.getInstance().getInt(tag,"absoluteIndex");
+    protected AbstractType(CompoundTagAPI tag, @Nullable Table parentTable) {
+        this.absoluteIndex = tag.getPrimitiveTag("absoluteIndex").asInt();
         this.parentTable = parentTable;
     }
 
@@ -48,20 +53,6 @@ public abstract class AbstractType {
         this.parentTable = from.parentTable;
     }
 
-    public int getAbsoluteIndex() {
-        return this.absoluteIndex;
-    }
-
-    /**
-     * This should only be called by the holder class to when removing an element
-     */
-    public void setAbsoluteIndex(int correctIndex) {
-        this.absoluteIndex = correctIndex;
-    }
-
-    /**
-     * This should only be called by the holder class to when add or moving an element
-     */
     public void incrementAbsoluteIndex() {
         this.absoluteIndex++;
     }

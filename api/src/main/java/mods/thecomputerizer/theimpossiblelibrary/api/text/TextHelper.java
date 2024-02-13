@@ -32,6 +32,15 @@ public class TextHelper {
     }
 
     /**
+     * Implementation of String#repeat for the versions that rely on Java 8
+     */
+    public static String repeat(String base, int num) {
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i<num; i++) builder.append(base);
+        return builder.toString();
+    }
+
+    /**
      * Splits a string into a list of strings based on the input separator
      */
     public static List<String> splitToList(String original, String splitBy) {
