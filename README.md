@@ -41,7 +41,7 @@ dependencies {
   implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
-The file ID for the latest version of `0.4.0-universal` is `UNRELEASED`
+The file ID for the latest version of `0.4.0+universal` is `UNRELEASED`
 
 Alternatively, if you wish to use the modrinth maven, you can do it like this
 ```
