@@ -7,14 +7,12 @@ import net.minecraft.client.gui.GuiScreen;
 
 public class ClientLegacy extends CommonLegacy implements ClientAPI {
 
-    private final ScreenAPI<GuiScreen> screen;
-
     public ClientLegacy() {
-        this.screen = new ScreenLegacy();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ScreenAPI<?> getScreenAPI() {
-        return this.screen;
+    public <S> ScreenAPI<S> getScreenAPI(S screen) {
+        return (ScreenAPI<S>)new ScreenLegacy((GuiScreen)screen);
     }
 }

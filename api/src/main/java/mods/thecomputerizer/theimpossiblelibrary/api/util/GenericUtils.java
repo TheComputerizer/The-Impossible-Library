@@ -104,7 +104,7 @@ public class GenericUtils {
     private static List<?> readFromList(ListTagAPI list) {
         List<Object> ret = new ArrayList<>();
         for(BaseTagAPI based : list.iterable()) {
-            if(based.isCompound()) ret.add(parseGenericFromTag(based.asCompundTag()));
+            if(based.isCompound()) ret.add(parseGenericFromTag(based.asCompoundTag()));
             else return null;
         }
         return ret;

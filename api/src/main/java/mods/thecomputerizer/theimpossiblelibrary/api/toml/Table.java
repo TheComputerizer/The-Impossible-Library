@@ -62,7 +62,7 @@ public class Table extends AbstractType {
         List<AbstractType> ret = new ArrayList<>();
         for(BaseTagAPI test : tag.iterable()) {
             if(test.isCompound()) {
-                CompoundTagAPI compound = test.asCompundTag();
+                CompoundTagAPI compound = test.asCompoundTag();
                 String type = compound.getString("type");
                 if(type.matches("table"))
                     ret.add(new Table(compound.getCompoundTag("contents"),this));

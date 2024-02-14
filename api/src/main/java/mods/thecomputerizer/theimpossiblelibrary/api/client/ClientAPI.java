@@ -4,5 +4,5 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 
 public interface ClientAPI extends CommonAPI {
 
-    ScreenAPI<?> getScreenAPI();
+    <S> ScreenAPI<S> getScreenAPI(S screen);
 }

@@ -40,7 +40,7 @@ public class RenderHelper {
         Vector3f bottomRight = new Vector3f(topLeft.x()+width,topLeft.y()+height,0);
         RenderAPI renderer = mc.getRenderer();
         initSolidColor(renderer,color);
-        VertexWrapper buffer = mc.getBufferBuilder();
+        VertexWrapper buffer = mc.getBufferBuilderPTC(4);
         buffer.start();
         buffer.pos(topLeft.x,topLeft.y,offset).color(color).endVertex();
         buffer.pos(topLeft.x,bottomRight.y,offset).color(color).endVertex();
@@ -177,11 +177,11 @@ public class RenderHelper {
                                         ResourceLocationAPI<?> texture, float uMin, float uMax, float vMin, float vMax) {
         texture.bind(mc);
         mc.getRenderer().setColor(1f,1f,1f,alpha);
-        VertexWrapper buffer = mc.getBufferBuilder();
-        buffer.pos(x,y+height,1d).color(1f,1f,1f,alpha).tex(uMin,vMax).endVertex();
-        buffer.pos(x+width,y+height,1d).color(1f,1f,1f,alpha).tex(uMax,vMax).endVertex();
-        buffer.pos(x+width,y,1d).color(1f,1f,1f,alpha).tex(uMax,vMin).endVertex();
-        buffer.pos(x,y,1d).color(1f,1f,1f,alpha).tex(uMin,vMin).endVertex();
+        VertexWrapper buffer = mc.getBufferBuilderPC(4);
+        buffer.pos(x,y+height,1d).tex(uMin,vMax).color(1f,1f,1f,alpha).endVertex();
+        buffer.pos(x+width,y+height,1d).tex(uMax,vMax).color(1f,1f,1f,alpha).endVertex();
+        buffer.pos(x+width,y,1d).tex(uMax,vMin).color(1f,1f,1f,alpha).endVertex();
+        buffer.pos(x,y,1d).tex(uMin,vMin).color(1f,1f,1f,alpha).endVertex();
         buffer.finish();
     }
 
@@ -243,7 +243,7 @@ public class RenderHelper {
                                  float offset, Vector4f color) {
         RenderAPI renderer = mc.getRenderer();
         initSolidColor(renderer,color);
-        VertexWrapper buffer = mc.getBufferBuilder();
+        VertexWrapper buffer = mc.getBufferBuilderPC(4);
         buffer.start();
         buffer.pos(pos1Out.x,pos1Out.y,offset).color(color).endVertex();
         buffer.pos(pos1In.x,pos1In.y,offset).color(color).endVertex();

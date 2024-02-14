@@ -9,11 +9,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 
 public interface MinecraftAPI {
 
-    VertexWrapper getBufferBuilder();
+    /**
+     * POSITION_COLOR
+     */
+    VertexWrapper getBufferBuilderPC(int vertices);
+    /**
+     * POSITION_TEX_COLOR
+     */
+    VertexWrapper getBufferBuilderPTC(int vertices);
     FontAPI getFont();
     TextAPI<?> getLiteralText(String text);
     RenderAPI getRenderer();
-    ResourceAPI getResource();
     TextAPI<?> getTranslatedText(String key, Object ... args);
     MinecraftWindow getWindow();
     boolean isCurrentScreen(ScreenAPI<?> screen);

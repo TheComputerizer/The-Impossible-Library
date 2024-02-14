@@ -23,8 +23,7 @@ public class TILRef {
     public static final String MODID = "theimpossiblelibrary";
     public static final String NAME = "The Impossible Library";
     public static final String VERSION = "0.4.0";
-    private static ClientAPI API_CLIENT;
-    private static CommonAPI API_COMMON;
+    private static CommonAPI API;
     private static Reference INSTANCE;
 
     /**
@@ -32,7 +31,7 @@ public class TILRef {
      */
     public static @Nullable ClientAPI getClientAPI() {
         if(Objects.nonNull(INSTANCE)) {
-            if(INSTANCE.isClient()) return API_CLIENT;
+            if(INSTANCE.isClient()) return (ClientAPI)API;
             logError("The client API can only be retrieved from the client side!");
             return null;
         }
@@ -45,19 +44,19 @@ public class TILRef {
             logError("Cannot get client sub API {} since this is not the client side!");
             return null;
         }
-        if(Objects.nonNull(API_CLIENT)) return getter.apply(API_CLIENT);
+        if(Objects.nonNull(API)) return getter.apply((ClientAPI)API);
         logError("Cannot get client sub API {} since the client API is null!",name);
         return null;
     }
 
     public static @Nullable CommonAPI getCommonAPI() {
-        if(Objects.nonNull(INSTANCE)) return API_COMMON;
+        if(Objects.nonNull(INSTANCE)) return API;
         logError("Cannot get the common API until the reference API has been initialized!");
         return null;
     }
 
     public static <A> @Nullable A getCommonSubAPI(String name, Function<CommonAPI,A> getter) {
-        if(Objects.nonNull(API_COMMON)) return getter.apply(API_COMMON);
+        if(Objects.nonNull(API)) return getter.apply(API);
         logError("Cannot get common sub API {} since the common API is null!",name);
         return null;
     }
@@ -65,7 +64,7 @@ public class TILRef {
     /**
      * Initializes the base reference API
      */
-    public static Reference init(Supplier<Boolean> isClient, String dependencies) {
+    public static Reference instance(Supplier<Boolean> isClient, String dependencies) {
         if(Objects.isNull(INSTANCE)) INSTANCE = new Reference(isClient.get(),dependencies,MODID,NAME,VERSION);
         return INSTANCE;
     }
@@ -111,26 +110,15 @@ public class TILRef {
         logNullable(Level.WARN,msg,args);
     }
 
-    public static @Nullable ResourceLocationAPI res(String path) {
+    public static @Nullable ResourceLocationAPI<?> res(String path) {
         if(Objects.nonNull(INSTANCE)) return INSTANCE.getResource(path);
         logError("Cannot get a ResourceLocation until the reference API has been initialized!");
         return null;
     }
 
-    /**
-     * Only set this on the client
-     */
-    public static void setClientAPI(ClientAPI api) {
+    public static void setAPI(CommonAPI api) {
         if(Objects.isNull(INSTANCE))
-            logError("Cannot set the client API until the reference API has been initialized!");
-        else if(!INSTANCE.isClient())
-            logError("The client API can only be set from the client side!");
-        else API_CLIENT = api;
-    }
-
-    public static void setCommonAPI(CommonAPI api) {
-        if(Objects.isNull(INSTANCE))
-            logError("Cannot set the common API until the reference API has been initialized!");
-        else API_COMMON = api;
+            logError("Cannot set the API until the reference API has been initialized!");
+        else API = api;
     }
 }

@@ -14,13 +14,13 @@ public abstract class MessageImplLegacy implements MessageImplAPI<Side,EntityPla
 
     private final Set<EntityPlayerMP> players = new HashSet<>();
     @Override
-    public MessageImplAPI<?, ?> addPlayers(EntityPlayerMP ... players) {
+    public MessageImplAPI<?,?> addPlayers(EntityPlayerMP ... players) {
         this.players.addAll(Arrays.asList(players));
         return this;
     }
 
     @Override
-    public MessageImplAPI<?, ?> addPlayers(Iterable<EntityPlayerMP> players) {
+    public MessageImplAPI<?,?> addPlayers(Iterable<EntityPlayerMP> players) {
         for(EntityPlayerMP player : players) this.players.add(player);
         return this;
     }

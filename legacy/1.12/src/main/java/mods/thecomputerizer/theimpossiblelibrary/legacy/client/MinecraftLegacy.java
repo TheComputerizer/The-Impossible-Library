@@ -6,9 +6,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.font.FontLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.RenderLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.VertexWrapperLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextStringLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextTranslationLegacy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import java.util.Objects;
 
@@ -22,49 +27,55 @@ public class MinecraftLegacy implements MinecraftAPI {
     }
 
     private final Minecraft mc;
-    private FontAPI font;
+    private final FontAPI font;
+    private final RenderAPI render;
 
     private MinecraftLegacy(Minecraft mc) {
         this.mc = mc;
+        this.font = new FontLegacy();
+        this.render = new RenderLegacy();
     }
 
     @Override
-    public VertexWrapper getBufferBuilder() {
-        return null;
+    public VertexWrapper getBufferBuilderPC(int vertices) {
+        return new VertexWrapperLegacy(DefaultVertexFormats.POSITION_COLOR,vertices,3,4);
+    }
+
+    @Override
+    public VertexWrapper getBufferBuilderPTC(int vertices) {
+        return new VertexWrapperLegacy(DefaultVertexFormats.POSITION_TEX_COLOR,vertices,3,2,4);
     }
 
     @Override
     public FontAPI getFont() {
-        return null;
+        return this.font;
     }
 
     @Override
     public TextAPI<?> getLiteralText(String text) {
-        return null;
+        return new TextStringLegacy(text);
     }
 
     @Override
     public RenderAPI getRenderer() {
-        return null;
-    }
-
-    @Override
-    public ResourceAPI getResource() {
-        return null;
+        return this.render;
     }
 
     @Override
     public TextAPI<?> getTranslatedText(String key, Object... args) {
-        return null;
+        return new TextTranslationLegacy(key,args);
     }
 
+    /**
+     * TODO Cache this?
+     */
     @Override
     public MinecraftWindow getWindow() {
-        return null;
+        return new MinecraftWindow(this.mc.displayWidth,this.mc.displayHeight,1);
     }
 
     @Override
     public boolean isCurrentScreen(ScreenAPI<?> screen) {
-        return false;
+        return screen.getScreen()==this.mc.currentScreen;
     }
 }

@@ -40,6 +40,7 @@ public abstract class VertexWrapper {
     protected abstract void draw();
 
     public void endVertex() {
+        onVertexEnded(this.vertices[this.vIndex].getBuffer());
         this.vIndex++;
     }
 
@@ -58,6 +59,8 @@ public abstract class VertexWrapper {
     public Vertex getVertex(int i) {
         return this.vertices[i];
     }
+
+    protected abstract void onVertexEnded(Number[][] numbers);
 
     public VertexWrapper pos(Vector3d pos) {
         if(this.vIndex>=this.vertices.length)

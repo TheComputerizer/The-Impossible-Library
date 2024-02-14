@@ -5,7 +5,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.tag;
  */
 public interface BaseTagAPI {
 
-    CompoundTagAPI asCompundTag();
+    CompoundTagAPI asCompoundTag();
     ListTagAPI asListTag();
     boolean isCompound();
     boolean isList();

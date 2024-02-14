@@ -4,8 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 
-public class CompoundTagLegacy extends BaseTagLegacy implements CompoundTagAPI {
+public class CompoundTagLegacy extends BaseTagLegacy<NBTTagCompound> implements CompoundTagAPI {
+    protected CompoundTagLegacy(NBTTagCompound tag) {
+        super(tag);
+    }
+
     @Override
     public boolean contains(String key) {
         return false;

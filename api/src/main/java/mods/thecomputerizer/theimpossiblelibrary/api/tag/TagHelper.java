@@ -60,7 +60,7 @@ public class TagHelper {
         if(tag.contains(key)) {
             BaseTagAPI baseTag = tag.getTag(key);
             if(!baseTag.isCompound()) throw new IOException("Tried to get existing tag of the wrong type!");
-            return baseTag.asCompundTag();
+            return baseTag.asCompoundTag();
         }
         CompoundTagAPI compound = makeCompoundTag();
         tag.putTag(key,compound);

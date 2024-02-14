@@ -419,7 +419,7 @@ public class TomlHelper {
 
     private static String writePrimitive(String key, Object value, int depth) {
         StringBuilder builder = new StringBuilder();
-        TextHelper.repeat("\t",Math.max(0, depth));
+        builder.append(TextHelper.repeat("\t",Math.max(0, depth)));
         builder.append(key).append(" = ");
         if(value instanceof String) return builder.append("\"").append(value).append("\"").toString();
         return builder.append(value).toString();
@@ -427,7 +427,7 @@ public class TomlHelper {
 
     private static String writeList(String key, List<Object> values, int spacing, int depth) {
         StringBuilder builder = new StringBuilder();
-        TextHelper.repeat("\t",Math.max(0, depth));
+        builder.append(TextHelper.repeat("\t",Math.max(0, depth)));
         builder.append(key).append(" = [");
         TextHelper.repeat(" ",Math.max(0, spacing));
         int index = 0;
@@ -440,13 +440,13 @@ public class TomlHelper {
                 index++;
             }
         }
-        TextHelper.repeat(" ",Math.max(0, spacing));
+        builder.append(TextHelper.repeat(" ",Math.max(0, spacing)));
         return builder.append("]").toString();
     }
 
     private static String writeTableName(String key, boolean isDouble, int depth) {
         StringBuilder builder = new StringBuilder();
-        TextHelper.repeat("\t",Math.max(0, depth));
+        builder.append(TextHelper.repeat("\t",Math.max(0, depth)));
         if(isDouble) return builder.append("[[").append(key).append("]]").toString();
         return builder.append("[").append(key).append("]").toString();
     }

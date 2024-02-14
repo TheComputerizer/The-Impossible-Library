@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
+import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -7,7 +8,7 @@ import org.joml.Vector4f;
 
 public class Vertex {
 
-    private Number[][] buffer;
+    @Getter private Number[][] buffer;
     private int bIndex;
 
     public Vertex(int ... sizes) {
