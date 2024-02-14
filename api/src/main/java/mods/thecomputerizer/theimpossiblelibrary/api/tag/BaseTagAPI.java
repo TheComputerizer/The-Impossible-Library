@@ -7,6 +7,8 @@ public interface BaseTagAPI {
 
     CompoundTagAPI asCompoundTag();
     ListTagAPI asListTag();
+    PrimitiveTagAPI asPrimitiveTag();
+    StringTagAPI asStringTag();
     boolean isCompound();
     boolean isList();
     boolean isString();

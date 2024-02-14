@@ -36,6 +36,10 @@ dependencies {
     annotationProcessor("org.ow2.asm:asm-debug-all:${project.asm_debug_annotation}")
 
     implementation project(':legacy')
+    implementation("org.joml:joml:${project.joml_version}")
+    implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") {  //for toml files
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
 }
 
 processResources {
@@ -49,7 +53,7 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
-    exclude '**/theimpossiblelibrary/test/**'
+    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
@@ -59,4 +63,18 @@ jar {
                 'FMLAT': mod_accesstransformer
         ])
     }
+}
+
+//Spec<Task> noForge = { Task it -> !it.name.startsWith("forge") } as Spec<Task>
+
+tasks.withType(JavaCompile).configureEach {
+    source(project(':api').sourceSets.main.allJava)
+}
+
+tasks.withType(Javadoc).configureEach {
+    source(project(":api").sourceSets.main.allJava)
+}
+
+tasks.withType(ProcessResources).configureEach {
+    from project(":api").sourceSets.main.resources
 }

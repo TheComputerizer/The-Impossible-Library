@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "theimpossiblelibrary",
+    "name": "The Impossible Library",
+    "description": "Makes the impossible possible",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["The_Computerizer"],
+    "credits": "The_Computerizer",
+    "logoFile": "logo",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

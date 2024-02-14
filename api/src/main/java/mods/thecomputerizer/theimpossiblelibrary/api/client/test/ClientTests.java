@@ -23,8 +23,7 @@ public class ClientTests {
 
     private static void renderableTest() {
         try {
-            Holder transitions = TomlHelper.readFully(ResourceHelper.getResourceStream(
-                    TILRef.res("test/transitions.toml")));
+            Holder transitions = TomlHelper.readFully(ResourceHelper.getResourceStream(TILRef.res("test/transitions.toml")));
             renderableTitleTest(transitions);
             renderableImageTest(transitions);
         } catch(Exception ex) {

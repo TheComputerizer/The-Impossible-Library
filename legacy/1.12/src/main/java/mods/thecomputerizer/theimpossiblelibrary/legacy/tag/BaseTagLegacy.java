@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import net.minecraft.nbt.*;
 
 @Getter
-public abstract class BaseTagLegacy<N extends NBTBase> implements BaseTagAPI {
+public class BaseTagLegacy<N extends NBTBase> implements BaseTagAPI {
 
     protected final N tag;
 
@@ -26,6 +26,20 @@ public abstract class BaseTagLegacy<N extends NBTBase> implements BaseTagAPI {
     public ListTagAPI asListTag() {
         if(this instanceof ListTagAPI) return (ListTagAPI)this;
         if(this.tag instanceof NBTTagList) return new ListTagLegacy((NBTTagList)this.tag);
+        return null;
+    }
+
+    @Override
+    public PrimitiveTagLegacy asPrimitiveTag() {
+        if(this instanceof PrimitiveTagLegacy) return (PrimitiveTagLegacy)this;
+        if(this.tag instanceof NBTPrimitive) return new PrimitiveTagLegacy((NBTPrimitive)this.tag);
+        return null;
+    }
+
+    @Override
+    public StringTagLegacy asStringTag() {
+        if(this instanceof StringTagLegacy) return (StringTagLegacy)this;
+        if(this.tag instanceof NBTTagString) return new StringTagLegacy((NBTTagString)this.tag);
         return null;
     }
 

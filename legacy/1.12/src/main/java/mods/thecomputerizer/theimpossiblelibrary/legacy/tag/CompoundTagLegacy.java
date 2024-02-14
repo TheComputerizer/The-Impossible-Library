@@ -14,22 +14,22 @@ public class CompoundTagLegacy extends BaseTagLegacy<NBTTagCompound> implements 
 
     @Override
     public boolean contains(String key) {
-        return false;
+        return this.tag.hasKey(key);
     }
 
     @Override
     public CompoundTagAPI getCompoundTag(String key) {
-        return null;
+        return new CompoundTagLegacy(this.tag.getCompoundTag(key));
     }
 
     @Override
     public ListTagAPI getListTag(String key) {
-        return null;
+        return getTag(key).asListTag();
     }
 
     @Override
     public PrimitiveTagAPI getPrimitiveTag(String key) {
-        return null;
+        return getTag(key).asPrimitiveTag();
     }
 
     @Override
@@ -39,21 +39,22 @@ public class CompoundTagLegacy extends BaseTagLegacy<NBTTagCompound> implements 
 
     @Override
     public BaseTagAPI getTag(String key) {
-        return null;
+        return new BaseTagLegacy<>(this.tag.getTag(key));
     }
 
     @Override
     public void putInt(String key, int value) {
-
+        this.tag.setInteger(key,value);
     }
 
     @Override
     public void putString(String key, String value) {
-
+        this.tag.setString(key,value);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void putTag(String key, BaseTagAPI tag) {
-
+        this.tag.setTag(key,((BaseTagLegacy<NBTBase>)tag).tag);
     }
 }
