@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * Type storage for toml files separated into table, comments, and blank lines
- * TODO rewrite this class
+ * TODO Rewrite this class & replace toml4j backend
  */
 public class Holder {
 

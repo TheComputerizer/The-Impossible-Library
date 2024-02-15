@@ -19,7 +19,7 @@ public class RenderHelper {
     private static Random RANDOM;
 
     public static void addRenderable(Renderable renderable) {
-        synchronized (RENDERABLES) {
+        synchronized(RENDERABLES) {
             RENDERABLES.add(renderable);
             renderable.initializeTimers(getRandom());
         }
@@ -40,7 +40,7 @@ public class RenderHelper {
         Vector3f bottomRight = new Vector3f(topLeft.x()+width,topLeft.y()+height,0);
         RenderAPI renderer = mc.getRenderer();
         initSolidColor(renderer,color);
-        VertexWrapper buffer = mc.getBufferBuilderPTC(4);
+        VertexWrapper buffer = mc.getBufferBuilderPC(4);
         buffer.start();
         buffer.pos(topLeft.x,topLeft.y,offset).color(color).endVertex();
         buffer.pos(topLeft.x,bottomRight.y,offset).color(color).endVertex();
@@ -177,7 +177,8 @@ public class RenderHelper {
                                         ResourceLocationAPI<?> texture, float uMin, float uMax, float vMin, float vMax) {
         texture.bind(mc);
         mc.getRenderer().setColor(1f,1f,1f,alpha);
-        VertexWrapper buffer = mc.getBufferBuilderPC(4);
+        VertexWrapper buffer = mc.getBufferBuilderPTC(4);
+        buffer.start();
         buffer.pos(x,y+height,1d).tex(uMin,vMax).color(1f,1f,1f,alpha).endVertex();
         buffer.pos(x+width,y+height,1d).tex(uMax,vMax).color(1f,1f,1f,alpha).endVertex();
         buffer.pos(x+width,y,1d).tex(uMax,vMin).color(1f,1f,1f,alpha).endVertex();

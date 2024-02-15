@@ -65,7 +65,9 @@ public class TILRef {
      * Initializes the base reference API
      */
     public static Reference instance(Supplier<Boolean> isClient, String dependencies) {
-        if(Objects.isNull(INSTANCE)) INSTANCE = new Reference(isClient.get(),dependencies,MODID,NAME,VERSION);
+        if(Objects.isNull(INSTANCE)) {
+            INSTANCE = new Reference(isClient.get(),dependencies,MODID,NAME,VERSION);
+        }
         return INSTANCE;
     }
 

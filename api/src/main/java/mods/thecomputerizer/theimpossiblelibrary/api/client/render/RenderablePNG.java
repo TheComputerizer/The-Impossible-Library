@@ -24,6 +24,7 @@ public class RenderablePNG extends Renderable {
         renderer.enableBlend();
         renderer.defaultBlendFunc();
         renderer.disableAlpha();
+        renderer.setColor(1f,1f,1f,getOpacity());
     }
 
     @Override

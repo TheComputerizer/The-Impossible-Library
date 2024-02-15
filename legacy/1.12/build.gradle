@@ -12,18 +12,26 @@ fancyGradle {
     }
 }
 
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
+
 minecraft {
     mappings channel: 'stable', version: mappings_version
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
+        def args = [
+                '-DtilDev=true'
+        ]
         client {
-            workingDirectory file('run')
+            workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArgs args
         }
         server {
+            workingDirectory file('run_server')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+            jvmArgs args
         }
     }
 }
@@ -36,10 +44,6 @@ dependencies {
     annotationProcessor("org.ow2.asm:asm-debug-all:${project.asm_debug_annotation}")
 
     implementation project(':legacy')
-    implementation("org.joml:joml:${project.joml_version}")
-    implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") {  //for toml files
-        exclude group: 'com.google.code.gson', module: 'gson'
-    }
 }
 
 processResources {

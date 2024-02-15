@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.VertexWrap
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextStringLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextTranslationLegacy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import java.util.Objects;
@@ -71,7 +72,8 @@ public class MinecraftLegacy implements MinecraftAPI {
      */
     @Override
     public MinecraftWindow getWindow() {
-        return new MinecraftWindow(this.mc.displayWidth,this.mc.displayHeight,1);
+        ScaledResolution res = new ScaledResolution(this.mc);
+        return new MinecraftWindow(res.getScaledWidth(),res.getScaledHeight(),res.getScaleFactor());
     }
 
     @Override

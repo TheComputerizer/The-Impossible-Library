@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderableText;
@@ -15,7 +16,8 @@ import java.util.Map;
 
 public class ClientTests {
 
-    public static void onTestKeyDown() {
+    public static void runTests() {
+        TILRef.logWarn("Running client tests");
         renderableTest();
         //guiTest();
         //tomlTest();
@@ -23,6 +25,7 @@ public class ClientTests {
 
     private static void renderableTest() {
         try {
+            TILDev.logWarn("RENDERABLE TEST");
             Holder transitions = TomlHelper.readFully(ResourceHelper.getResourceStream(TILRef.res("test/transitions.toml")));
             renderableTitleTest(transitions);
             renderableImageTest(transitions);
@@ -32,10 +35,12 @@ public class ClientTests {
     }
 
     private static void renderableTitleTest(Holder transitions) {
+        TILDev.logWarn("TITLE TEST");
         RenderHelper.addRenderable(new RenderableText(transitions.getTableByName("title").getVarMap()));
     }
 
     private static void renderableImageTest(Holder transitions) {
+        TILDev.logWarn("IMAGE TEST");
         Table image = transitions.getTableByName("image");
         RenderHelper.addRenderable(RenderHelper.initPNG(TILRef.res(image.getValOrDefault("name","missing")),
                 image.getVarMap()));

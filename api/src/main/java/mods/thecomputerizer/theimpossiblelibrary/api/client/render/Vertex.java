@@ -18,6 +18,7 @@ public class Vertex {
     public void clearBuffer() {
         for(int i=0; i<this.buffer.length; i++)
             this.buffer[i] = new Number[this.buffer[i].length];
+        this.bIndex = 0;
     }
 
     public void setBufferSize(int ... sizes) {
@@ -30,10 +31,11 @@ public class Vertex {
     }
 
     public Vertex setColor(float r, float g, float b, float a) {
-        if(this.bIndex >=this.buffer.length)
+        if(this.bIndex>=this.buffer.length)
             TILRef.logError("Tried to buffer the color of a filled vertex!");
         else if(this.buffer[this.bIndex].length!=4)
-            TILRef.logError("Tried to buffer the color of a vertex in the wrong spot!");
+            TILRef.logError("Tried to buffer the color of a vertex in the wrong spot! Index: {} | Size: {}",
+                    this.bIndex,this.buffer[this.bIndex].length);
         else {
             this.buffer[this.bIndex][0] = r;
             this.buffer[this.bIndex][1] = g;
@@ -49,14 +51,15 @@ public class Vertex {
     }
 
     public Vertex setPosition(double x, double y, double z) {
-        if(this.bIndex >=this.buffer.length)
+        if(this.bIndex>=this.buffer.length)
             TILRef.logError("Tried to buffer the position of a filled vertex!");
         else if(this.buffer[this.bIndex].length!=3)
-            TILRef.logError("Tried to buffer the position of a vertex in the wrong spot!");
+            TILRef.logError("Tried to buffer the position of a vertex in the wrong spot! Index: {} | Size: {}",
+                    this.bIndex,this.buffer[this.bIndex].length);
         else {
             this.buffer[this.bIndex][0] = x;
-            this.buffer[this.bIndex][1] = x;
-            this.buffer[this.bIndex][2] = x;
+            this.buffer[this.bIndex][1] = y;
+            this.buffer[this.bIndex][2] = z;
             this.bIndex++;
         }
         return this;
@@ -69,8 +72,9 @@ public class Vertex {
     public Vertex setTexture(double u, double v) {
         if(this.bIndex >=this.buffer.length)
             TILRef.logError("Tried to buffer the texture of a filled vertex!");
-        else if(this.buffer[this.bIndex].length!=4)
-            TILRef.logError("Tried to buffer the texture of a vertex in the wrong spot!");
+        else if(this.buffer[this.bIndex].length!=2)
+            TILRef.logError("Tried to buffer the texture of a vertex in the wrong spot! Index: {} | Size: {}",
+                    this.bIndex,this.buffer[this.bIndex].length);
         else {
             this.buffer[this.bIndex][0] = u;
             this.buffer[this.bIndex][1] = v;

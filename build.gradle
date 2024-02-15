@@ -1,65 +1,53 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.+'
+    id 'idea'
+    id 'java'
+    id 'java-library'
 }
 
-allprojects {
-    plugins.apply('idea')
-    plugins.apply('java')
-    plugins.apply('java-library')
-    version = project.mod_version
-    group = project.base_package
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
-        compileOnly("org.projectlombok:lombok:${project.lombok_version}")
-    }
-    java {
-        archivesBaseName = project.mod_id
-    }
+group = project.base_package
+version = project.mod_version
 
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
+
+configurations {
+    shade
+    implementation.extendsFrom(shade)
+    shadow.extendsFrom shade
 }
 
-subprojects {
-    java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
-}
-
-/*
 shadowJar {
-    //necessary relocation
-    relocate 'com.moandjiezana.toml', "${shadow_group}.moandjiezana.toml"
+    //relocate shaded dependencies to the shadow package to prevent library conflicts
+    //relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
+    //relocate 'org.joml', "${shadow_package}.org.joml"
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
-mixin {
-    add sourceSets.main, "theimpossiblelibrary.refmap.json"
-}
-
-processResources {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from (sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version
-    }
-    exclude '** /theimpossiblelibrary/test/ **'
-}
- */
-
-/*
 tasks.assemble.dependsOn('shadowJar')
-tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')
- */
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+subprojects {
+    plugins.apply('idea')
+    plugins.apply('java')
+    plugins.apply('java-library')
+
+    version = project.mod_version
+    group = project.base_package
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
+        compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+    }
+
+    java {
+        archivesBaseName = project.mod_id
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
 }

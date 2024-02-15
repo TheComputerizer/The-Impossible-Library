@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.resource;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 public class ResourceLocationLegacy implements ResourceLocationAPI<ResourceLocation> {
@@ -14,7 +15,7 @@ public class ResourceLocationLegacy implements ResourceLocationAPI<ResourceLocat
 
     @Override
     public void bind(MinecraftAPI mc) {
-
+        Minecraft.getMinecraft().getTextureManager().bindTexture(this.resource);
     }
 
     @Override

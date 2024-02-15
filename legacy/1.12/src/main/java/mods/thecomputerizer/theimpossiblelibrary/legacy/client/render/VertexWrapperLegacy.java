@@ -41,7 +41,7 @@ public class VertexWrapperLegacy extends VertexWrapper {
             this.buffer.pos(numbers[0].doubleValue(),numbers[1].doubleValue(),numbers[2].doubleValue());
         else if(element==COLOR_4UB)
             this.buffer.color(numbers[0].floatValue(),numbers[1].floatValue(),numbers[2].floatValue(),numbers[3].floatValue());
-        else if(element==TEX_2F)
+        else if(element==TEX_2F || element==TEX_2S)
             this.buffer.tex(numbers[0].doubleValue(),numbers[1].doubleValue());
     }
 }

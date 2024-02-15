@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 
 public interface CommonAPI {
 
+    CommonEventsAPI getCommonEventsAPI();
     ModAPI getModAPI();
     NetworkAPI<?> getNetworkAPI();
     Reference getReference();

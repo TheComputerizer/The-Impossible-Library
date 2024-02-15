@@ -21,6 +21,7 @@ public abstract class VertexWrapper {
 
     protected void clearBuffers() {
         for(Vertex vertex : this.vertices) vertex.clearBuffer();
+        this.vIndex = 0;
     }
 
     public VertexWrapper color(Vector4f color) {
