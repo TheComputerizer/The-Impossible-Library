@@ -165,7 +165,9 @@ public class RadialElement {
                 renderer.drawCenteredString(font,this.centerText,(int)this.center.x,(int)this.center.y,color);
             }
             for(RadialButton button : this.buttons) button.drawText(renderer,mouse,isCurrent);
-            renderer.renderTooltip(font,this.centerTooltips,(int)mouse.x,(int)mouse.y);
+            MinecraftWindow window = renderer.getWindow();
+            renderer.renderTooltip(font,this.centerTooltips,(int)mouse.x,(int)mouse.y,(int)window.getWidthF(),
+                    (int)window.getHeightF(),-1);
         }
     }
 

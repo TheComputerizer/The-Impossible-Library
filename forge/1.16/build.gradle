@@ -16,7 +16,7 @@ minecraft {
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'info'
             jvmArgs args
         }
         server {
@@ -44,10 +44,9 @@ mixin {
 
 processResources {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from (sourceSets.main.resources.srcDirs) {
+    from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
-        expand 'version': project.version
-        expand 'description': project.mod_description
+        expand 'version': project.version, 'description': project.mod_description
     }
     //exclude '**/theimpossiblelibrary/test/**'
 }
@@ -64,16 +63,16 @@ jar {
     }
 }
 
-//Spec<Task> noForge = { Task it -> !it.name.startsWith("forge") } as Spec<Task>
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.named('compileJava',JavaCompile) {
+    source(project(':api').sourceSets.main.allSource)
+}
+
+tasks.named('javadoc',Javadoc) {
     source(project(':api').sourceSets.main.allJava)
 }
 
-tasks.withType(Javadoc).configureEach {
-    source(project(":api").sourceSets.main.allJava)
-}
-
-tasks.withType(ProcessResources).configureEach {
-    from project(":api").sourceSets.main.resources
+tasks.named('processResources',ProcessResources) {
+    from project(':api').sourceSets.main.resources
 }

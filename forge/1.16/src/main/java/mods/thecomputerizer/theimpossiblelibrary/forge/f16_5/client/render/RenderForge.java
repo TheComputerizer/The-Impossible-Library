@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.MinecraftForgeTIL;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -141,7 +142,7 @@ public class RenderForge implements RenderAPI {
 
     @Override
     public FontAPI getFont() {
-        return null;
+        return MinecraftForgeTIL.getInstance().getFont();
     }
 
     @Override
@@ -151,12 +152,12 @@ public class RenderForge implements RenderAPI {
 
     @Override
     public MinecraftAPI getMinecraft() {
-        return null;
+        return MinecraftForgeTIL.getInstance();
     }
 
     @Override
     public MinecraftWindow getWindow() {
-        return null;
+        return MinecraftForgeTIL.getInstance().getWindow();
     }
 
     @Override

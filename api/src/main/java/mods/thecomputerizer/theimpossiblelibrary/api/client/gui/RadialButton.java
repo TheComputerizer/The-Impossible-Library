@@ -68,7 +68,11 @@ public class RadialButton extends AbstractRadialButton {
             int color = this.hover ? 16777120 : 14737632;
             renderer.drawCenteredString(font,this.centerText,(int)getCenterPos().x(),(int)getCenterPos().y(),color);
         }
-        if(this.hover && isCurrent) renderer.renderTooltip(font,this.tooltipLines,(int) mouse.x(),(int) mouse.y());
+        if(this.hover && isCurrent) {
+            MinecraftWindow window = renderer.getWindow();
+            renderer.renderTooltip(font,this.tooltipLines,(int)mouse.x(),(int)mouse.y(),(int)window.getWidthF(),
+                    (int)window.getHeightF(),-1);
+        }
     }
 
     public void handleClick(ScreenAPI<?> screen) {
