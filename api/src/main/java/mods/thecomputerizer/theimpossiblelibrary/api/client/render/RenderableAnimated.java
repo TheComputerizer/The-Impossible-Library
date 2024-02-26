@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
 import java.io.IOException;
@@ -43,28 +42,27 @@ public class RenderableAnimated extends RenderablePNG {
     }
 
     @Override
-    public void render(MinecraftAPI mc) {
+    public void render(RenderAPI renderer) {
         if(this.startedRendering) renderTick();
         if(canRender()) {
             if(!this.startedRendering) {
                 this.prevMillis = System.currentTimeMillis();
                 this.startedRendering = true;
             }
-            int resX = (int)mc.getWindow().getWidth();
-            int resY = (int)mc.getWindow().getHeight();
-            RenderAPI renderer = mc.getRenderer();
+            int resX = (int)renderer.getWindow().getWidth();
+            int resY = (int)renderer.getWindow().getHeight();
             preRender(renderer);
             renderer.scale(scaleX(resX,resY),scaleY(),1f);
-            drawSprite(mc,posX(mc.getWindow()),posY(resY),resX,resY);
+            drawSprite(renderer,posX(renderer.getWindow()),posY(resY),resX,resY);
             postRender(renderer);
         }
     }
 
-    private void drawSprite(MinecraftAPI mc, int x, int y, int width, int height) {
+    private void drawSprite(RenderAPI renderer, int x, int y, int width, int height) {
         float framePercent = 1f/((float)this.frames);
         float vMin = (float)Math.max(0d,this.curFrame*framePercent);
         float vMax = (float)Math.min(1d,(this.curFrame+1)*framePercent);
-        RenderHelper.drawTexturedRect(mc,x,y,width,height,Math.max(0.1f,getOpacity()),this.source,0f,1f,vMin,vMax);
+        RenderHelper.drawTexturedRect(renderer,x,y,width,height,Math.max(0.1f,getOpacity()),this.source,0f,1f,vMin,vMax);
     }
 
     @Override

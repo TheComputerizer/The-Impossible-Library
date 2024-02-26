@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 
 import java.util.ArrayList;
@@ -51,14 +50,14 @@ public class RenderableText extends Renderable {
     }
 
     @Override
-    public void render(MinecraftAPI mc) {
+    public void render(RenderAPI renderer) {
         if(canRender()) {
             float opacity = getOpacity();
-            int fontHeight = mc.getFont().getFontHeight();
+            int fontHeight = renderer.getFont().getFontHeight();
             TextBuffer title = createTitleBuffer(opacity,fontHeight);
             TextBuffer subtitle = createSubtitleBuffer(opacity,fontHeight);
-            RenderHelper.drawMultiLineTitle(mc,title,subtitle, getParameterAs("centered",true),
-                    posX(mc.getWindow()),posY(mc.getWindow().getHeightF()));
+            RenderHelper.drawMultiLineTitle(renderer,title,subtitle, getParameterAs("centered",true),
+                    posX(renderer.getWindow()),posY(renderer.getWindow().getHeightF()));
         }
     }
 

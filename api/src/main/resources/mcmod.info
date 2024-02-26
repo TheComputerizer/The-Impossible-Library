@@ -2,7 +2,7 @@
   {
     "modid": "theimpossiblelibrary",
     "name": "The Impossible Library",
-    "description": "Makes the impossible possible",
+    "description": "${description}",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "",

@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import org.lwjgl.opengl.GL11;
 
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
 
@@ -13,15 +12,15 @@ public class VertexWrapperLegacy extends VertexWrapper {
 
     private final VertexFormat format;
     private final BufferBuilder buffer;
-    public VertexWrapperLegacy(VertexFormat format, int numVertices, int... vertexSizes) {
-        super(numVertices,vertexSizes);
+    public VertexWrapperLegacy(int mode, VertexFormat format, int numVertices, int... vertexSizes) {
+        super(mode,numVertices,vertexSizes);
         this.format = format;
         this.buffer = Tessellator.getInstance().getBuffer();
     }
 
     @Override
     protected void begin() {
-        this.buffer.begin(GL11.GL_QUADS,this.format);
+        this.buffer.begin(this.mode,this.format);
     }
 
     @Override

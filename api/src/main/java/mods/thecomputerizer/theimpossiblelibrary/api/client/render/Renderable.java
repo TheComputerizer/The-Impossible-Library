@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 
@@ -125,5 +124,5 @@ public abstract class Renderable {
         this.maxFadeOut = 0;
     }
 
-    abstract void render(MinecraftAPI mc);
+    abstract void render(RenderAPI renderer);
 }

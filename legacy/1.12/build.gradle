@@ -12,8 +12,6 @@ fancyGradle {
     }
 }
 
-java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
-
 minecraft {
     mappings channel: 'stable', version: mappings_version
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")

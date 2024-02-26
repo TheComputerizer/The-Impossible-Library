@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
@@ -25,12 +24,12 @@ public class RadialButton extends AbstractRadialButton {
     private final String centerText;
     private final BiConsumer<ScreenAPI<?>,RadialButton> handlerFunction;
 
-    public RadialButton(MinecraftAPI mc, List<String> tooltipLines, @Nullable ResourceLocationAPI<?> centerIcon,
+    public RadialButton(RenderAPI renderer, List<String> tooltipLines, @Nullable ResourceLocationAPI<?> centerIcon,
                         @Nullable ResourceLocationAPI<?> altCenterIcon, float hoverIncrease, @Nullable String centerText,
                         BiConsumer<ScreenAPI<?>,RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(mc::getLiteralText).collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(renderer.getMinecraft()::getLiteralText).collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;
@@ -41,14 +40,14 @@ public class RadialButton extends AbstractRadialButton {
         this.hover = superHover && mouseDeg>=angles.x() && mouseDeg<angles.y();
     }
 
-    public void draw(MinecraftAPI mc, Vector2f center, float zLevel, Vector2f radius, Vector2f angles,
+    public void draw(RenderAPI renderer, Vector2f center, float zLevel, Vector2f radius, Vector2f angles,
                      Vector2f mouse, Vector2f relativeCenter, int resolution) {
         setCenterPos(relativeCenter);
         for (int i = 0; i < resolution; i++)
-            drawRadialSection(mc,center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
+            drawRadialSection(renderer,center,zLevel,radius,angles.x(),angles.y()-angles.x(),i,resolution);
     }
 
-    public void drawCenterIcon(MinecraftAPI mc, float centerRadius) {
+    public void drawCenterIcon(RenderAPI renderer, float centerRadius) {
         if(Objects.nonNull(this.centerIcon)) {
             ResourceLocationAPI<?> actualIcon = this.centerIcon;
             float hoverIncrease = 0f;
@@ -58,14 +57,13 @@ public class RadialButton extends AbstractRadialButton {
             }
             Vector2f center = getCenterPos();
             float radius = centerRadius+hoverIncrease;
-            MinecraftWindow window = mc.getWindow();
-            RenderHelper.bufferSquareTex(mc,center,centerRadius+hoverIncrease,this.colors.w,actualIcon);
+            MinecraftWindow window = renderer.getWindow();
+            RenderHelper.bufferSquareTex(renderer,center,centerRadius+hoverIncrease,this.colors.w,actualIcon);
         }
     }
 
-    public void drawText(MinecraftAPI mc, Vector2f mouse, boolean isCurrent) {
-        FontAPI font = mc.getFont();
-        RenderAPI renderer = mc.getRenderer();
+    public void drawText(RenderAPI renderer, Vector2f mouse, boolean isCurrent) {
+        FontAPI font = renderer.getFont();
         if(Objects.nonNull(this.centerText)) {
             int color = this.hover ? 16777120 : 14737632;
             renderer.drawCenteredString(font,this.centerText,(int)getCenterPos().x(),(int)getCenterPos().y(),color);
@@ -75,7 +73,7 @@ public class RadialButton extends AbstractRadialButton {
 
     public void handleClick(ScreenAPI<?> screen) {
         if(this.hover) {
-            playPressSound(screen.getMinecraft());
+            playPressSound();
             this.handlerFunction.accept(screen,this);
         }
     }

@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.joml.Vector2f;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -25,10 +25,10 @@ public class RenderHelper {
         }
     }
 
-    public static void bufferSquareTex(MinecraftAPI mc, Vector2f center, float radius, float alpha,
+    public static void bufferSquareTex(RenderAPI renderer, Vector2f center, float radius, float alpha,
                                        ResourceLocationAPI<?> texture) {
         float length = radius*2f;
-        drawTexturedRect(mc,(int)(center.x()-radius/2f),(int)(center.y()-radius/2f),
+        drawTexturedRect(renderer,(int)(center.x()-radius/2f),(int)(center.y()-radius/2f),
                 (int)length,(int)length,alpha,texture,0f,length,0f,length);
     }
 
@@ -36,11 +36,10 @@ public class RenderHelper {
      * Draws a box using tuple inputs
      * The offset should be 0 for GUI screens
      */
-    public static void drawBox(MinecraftAPI mc, Vector2f topLeft, int width, int height, Vector4f color, float offset) {
+    public static void drawBox(RenderAPI renderer, Vector2f topLeft, int width, int height, Vector4f color, float offset) {
         Vector3f bottomRight = new Vector3f(topLeft.x()+width,topLeft.y()+height,0);
-        RenderAPI renderer = mc.getRenderer();
         initSolidColor(renderer,color);
-        VertexWrapper buffer = mc.getBufferBuilderPC(4);
+        VertexWrapper buffer = renderer.getBufferBuilderPC(renderer.getGLAPI().quads(),4);
         buffer.start();
         buffer.pos(topLeft.x,topLeft.y,offset).color(color).endVertex();
         buffer.pos(topLeft.x,bottomRight.y,offset).color(color).endVertex();
@@ -54,28 +53,28 @@ public class RenderHelper {
      * Draws the outline of a box
      * The offset should be 0 for GUI screens
      */
-    public static void drawBoxOutline(MinecraftAPI mc, Vector2f topLeft, int width, int height, Vector4f color,
+    public static void drawBoxOutline(RenderAPI renderer, Vector2f topLeft, int width, int height, Vector4f color,
                                       float outlineWidth, float offset) {
         Vector2f topRight = new Vector2f(topLeft.x()+width,topLeft.y());
         Vector2f bottomRight = new Vector2f(topLeft.x()+width,topLeft.y()+height);
         Vector2f bottomLeft = new Vector2f(topLeft.x(),topLeft.y()+height);
-        drawLine(mc,topLeft,topRight,color,outlineWidth,offset);
-        drawLine(mc,topRight,bottomRight,color,outlineWidth,offset);
-        drawLine(mc,bottomRight,bottomLeft,color,outlineWidth,offset);
-        drawLine(mc,bottomLeft,topLeft,color,outlineWidth,offset);
+        drawLine(renderer,topLeft,topRight,color,outlineWidth,offset);
+        drawLine(renderer,topRight,bottomRight,color,outlineWidth,offset);
+        drawLine(renderer,bottomRight,bottomLeft,color,outlineWidth,offset);
+        drawLine(renderer,bottomLeft,topLeft,color,outlineWidth,offset);
     }
 
     /**
      * Draws a colored box with an outline
      * The offset should be 0 for GUI screens
      */
-    public static void drawBoxWithOutline(MinecraftAPI mc, Vector2f topLeft, int width, int height, Vector4f color,
+    public static void drawBoxWithOutline(RenderAPI renderer, Vector2f topLeft, int width, int height, Vector4f color,
                                           Vector4f outlineColor, float outlineWidth, float offset) {
-        drawBox(mc,topLeft,width,height,color,offset);
-        drawBoxOutline(mc,topLeft,width,height,outlineColor,outlineWidth,offset);
+        drawBox(renderer,topLeft,width,height,color,offset);
+        drawBoxOutline(renderer,topLeft,width,height,outlineColor,outlineWidth,offset);
     }
 
-    public static void drawColoredRing(MinecraftAPI mc, Vector2f center, Vector2f radii, Vector4f color, int resolution,
+    public static void drawColoredRing(RenderAPI renderer, Vector2f center, Vector2f radii, Vector4f color, int resolution,
                                        float offset) {
         Vector2f angles = MathHelper.makeAngleVector(0,1);
         float startAngle = (float) Math.toRadians(angles.x());
@@ -87,34 +86,57 @@ public class RenderHelper {
             Vector2f pos2In = MathHelper.getVertex(center, radii.x(),angle2);
             Vector2f pos1Out = MathHelper.getVertex(center, radii.y(),angle1);
             Vector2f pos2Out = MathHelper.getVertex(center, radii.y(),angle2);
-            setBuffer(mc,pos1In,pos2In,pos1Out,pos2Out,offset,color);
+            setBuffer(renderer,pos1In,pos2In,pos1Out,pos2Out,offset,color);
         }
+    }
+
+    /**
+     * Interfaces directly with OpenGL to draw a line. Assumes the color has already been set
+     * Used by the geometry system
+     */
+    public static void drawLineDirect(RenderAPI renderer, Vector3d start, Vector3d end) {
+        GLAPI gl = renderer.getGLAPI();
+        gl.directBegin(gl.lines());
+        gl.directVertex((float)start.x,(float)start.y,(float)start.z);
+        gl.directVertex((float)end.x,(float)end.y,(float)end.z);
+        gl.directEnd();
+    }
+
+    /**
+     * Interfaces directly with OpenGL to draw a line. Assumes the color has already been set
+     * Used by the geometry system
+     */
+    public static void drawLineDirect(RenderAPI renderer, Vector3f start, Vector3f end) {
+        GLAPI gl = renderer.getGLAPI();
+        gl.directBegin(gl.lines());
+        gl.directVertex(start.x,start.y,start.z);
+        gl.directVertex(end.x,end.y,end.z);
+        gl.directEnd();
     }
 
     /**
      * Draws a colored line between 2
      * The offset should be 0 for GUI screens
      */
-    public static void drawLine(MinecraftAPI mc, Vector2f start, Vector2f end, Vector4f color, float width, float offset) {
+    public static void drawLine(RenderAPI renderer, Vector2f start, Vector2f end, Vector4f color, float width, float offset) {
         double angle = MathHelper.getAngle(start, end);
         Vector2f start1 = MathHelper.getVertex(start,width/2d,Math.toRadians(angle+90d));
         Vector2f start2 = MathHelper.getVertex(start,width/2d,Math.toRadians(angle-90d));
         Vector2f end1 = MathHelper.getVertex(end,width/2d,Math.toRadians(angle-90d));
         Vector2f end2 = MathHelper.getVertex(end,width/2d,Math.toRadians(angle+90d));
-        setBuffer(mc,start1,start2,end1,end2,offset,color);
+        setBuffer(renderer,start1,start2,end1,end2,offset,color);
     }
 
     /**
      * Splits a string into multiple lines and renders them
      * Returns the new y position under the rendered lines
      */
-    public static int drawMultiLineString(MinecraftAPI mc, String original, int left, int right,
+    public static int drawMultiLineString(RenderAPI renderer, String original, int left, int right,
                                           int top, int spacing, int lineNums, int pos, int color) {
         if(lineNums<=0) lineNums = Integer.MAX_VALUE;
         if(pos<0) pos = 0;
         int index = 0;
-        RenderAPI renderer = mc.getRenderer();
-        FontAPI font = mc.getFont();
+        FontAPI font = renderer.getFont();
         for(String line : FontHelper.splitLines(font,original,left,right)) {
             if(index>=pos) {
                 renderer.drawString(font,line,left,top,color);
@@ -132,17 +154,16 @@ public class RenderHelper {
      * making use of the Text class.
      */
     public static void drawMultiLineTitle(
-            MinecraftAPI mc, TextBuffer title, TextBuffer subtitle, boolean centered, int x, int y) {
-        RenderAPI renderer = mc.getRenderer();
+            RenderAPI renderer, TextBuffer title, TextBuffer subtitle, boolean centered, int x, int y) {
         renderer.pushMatrix();
         renderer.enableBlend();
         renderer.defaultBlendFunc();
-        int width = (int)mc.getWindow().getWidth();
-        int height = (int)mc.getWindow().getHeight();
+        int width = (int)renderer.getWindow().getWidth();
+        int height = (int)renderer.getWindow().getHeight();
         x = x>=0 ? x : width/2;
         y = y>=0 ? y : height/2;
         int left = centered ? 0 : x;
-        FontAPI font = mc.getFont();
+        FontAPI font = renderer.getFont();
         List<String> textLines = FontHelper.splitLines(font,title.getText(),left,width);
         renderer.pushMatrix();
         float scaleX = title.getScaleX()*subtitle.getScaleX();
@@ -173,11 +194,11 @@ public class RenderHelper {
         renderer.popMatrix();
     }
 
-    public static void drawTexturedRect(MinecraftAPI mc, int x, int y, int width, int height, float alpha,
+    public static void drawTexturedRect(RenderAPI renderer, int x, int y, int width, int height, float alpha,
                                         ResourceLocationAPI<?> texture, float uMin, float uMax, float vMin, float vMax) {
-        texture.bind(mc);
-        mc.getRenderer().setColor(1f,1f,1f,alpha);
-        VertexWrapper buffer = mc.getBufferBuilderPTC(4);
+        renderer.bindTexture(texture);
+        renderer.setColor(1f,1f,1f,alpha);
+        VertexWrapper buffer = renderer.getBufferBuilderPTC(renderer.getGLAPI().quads(),4);
         buffer.start();
         buffer.pos(x,y+height,1d).tex(uMin,vMax).color(1f,1f,1f,alpha).endVertex();
         buffer.pos(x+width,y+height,1d).tex(uMax,vMax).color(1f,1f,1f,alpha).endVertex();
@@ -186,9 +207,9 @@ public class RenderHelper {
         buffer.finish();
     }
 
-    public static void enforceAlphaTexture(MinecraftAPI mc, int x, int y, int width, int height, float alpha,
+    public static void enforceAlphaTexture(RenderAPI renderer, int x, int y, int width, int height, float alpha,
                                            ResourceLocationAPI<?> texture) {
-        drawTexturedRect(mc,x,y,width,height,alpha,texture,0f,1f,0f,1f);
+        drawTexturedRect(renderer,x,y,width,height,alpha,texture,0f,1f,0f,1f);
     }
 
     /**
@@ -230,9 +251,9 @@ public class RenderHelper {
     }
 
 
-    public static void renderAllBackgroundStuff(MinecraftAPI mc) {
+    public static void renderAllBackgroundStuff(RenderAPI renderer) {
         synchronized (RENDERABLES) {
-            for(Renderable type : RENDERABLES) type.render(mc);
+            for(Renderable type : RENDERABLES) type.render(renderer);
         }
     }
 
@@ -240,11 +261,10 @@ public class RenderHelper {
      * Pushes a colored section to a BufferBuilder for rendering given 4 corner positions stored in vectors
      * offset if how far away from the screen the section is rendered
      */
-    public static void setBuffer(MinecraftAPI mc, Vector2f pos1In, Vector2f pos2In, Vector2f pos1Out, Vector2f pos2Out,
+    public static void setBuffer(RenderAPI renderer, Vector2f pos1In, Vector2f pos2In, Vector2f pos1Out, Vector2f pos2Out,
                                  float offset, Vector4f color) {
-        RenderAPI renderer = mc.getRenderer();
         initSolidColor(renderer,color);
-        VertexWrapper buffer = mc.getBufferBuilderPC(4);
+        VertexWrapper buffer = renderer.getBufferBuilderPC(renderer.getGLAPI().quads(),4);
         buffer.start();
         buffer.pos(pos1Out.x,pos1Out.y,offset).color(color).endVertex();
         buffer.pos(pos1In.x,pos1In.y,offset).color(color).endVertex();

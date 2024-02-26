@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
@@ -37,7 +38,7 @@ public abstract class AbstractRadialButton {
         this.centerPos = newCenter;
     }
 
-    protected void drawRadialSection(MinecraftAPI mc, Vector2f center, float offset, Vector2f radius, float startAngle,
+    protected void drawRadialSection(RenderAPI renderer, Vector2f center, float offset, Vector2f radius, float startAngle,
                                      float angleDif, int index, int resolution) {
         float angle1 = startAngle+(index/(float)resolution)*angleDif;
         float angle2 = startAngle+((index+1)/(float)resolution)*angleDif;
@@ -46,10 +47,10 @@ public abstract class AbstractRadialButton {
         Vector2f pos1Out = MathHelper.getVertex(center,radius.y(),angle1);
         Vector2f pos2Out = MathHelper.getVertex(center,radius.y(),angle2);
         Vector4f hoverColor = this.hover ? ColorHelper.reverseColors(this.colors) : this.colors;
-        RenderHelper.setBuffer(mc,pos1In,pos2In,pos1Out,pos2Out,offset,hoverColor);
+        RenderHelper.setBuffer(renderer,pos1In,pos2In,pos1Out,pos2Out,offset,hoverColor);
     }
 
-    protected void playPressSound(MinecraftAPI mc) {
-        if(Objects.nonNull(this.clickSound)) this.clickSound.play(mc,1f);
+    protected void playPressSound() {
+        if(Objects.nonNull(this.clickSound)) this.clickSound.play(1f);
     }
 }

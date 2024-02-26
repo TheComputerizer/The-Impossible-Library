@@ -9,10 +9,12 @@ import javax.annotation.Nullable;
 
 public abstract class VertexWrapper {
 
+    protected final int mode;
     private final Vertex[] vertices;
     private int vIndex;
 
-    protected VertexWrapper(int numVertices, int ... vertexSizes) {
+    protected VertexWrapper(int mode, int numVertices, int ... vertexSizes) {
+        this.mode = mode;
         this.vertices = new Vertex[numVertices];
         for(int i=0; i<numVertices; i++) this.vertices[i] = new Vertex(vertexSizes);
     }

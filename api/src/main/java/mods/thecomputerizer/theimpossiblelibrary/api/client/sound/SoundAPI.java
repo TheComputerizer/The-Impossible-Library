@@ -4,5 +4,5 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 
 public interface SoundAPI {
 
-    void play(MinecraftAPI mc, float volume);
+    void play(float volume);
 }

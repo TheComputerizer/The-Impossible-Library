@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.joml.Vector2f;
@@ -62,19 +62,19 @@ public class RadialProgressBar extends AbstractRadialButton {
     /**
      * The relative center is what determines where on the screen the center of the progress bar is
      */
-    public void draw(MinecraftAPI mc, Vector2f relativeCenter, float offset) {
+    public void draw(RenderAPI renderer, Vector2f relativeCenter, float offset) {
         if(this.progress>0) {
             this.setCenterPos(relativeCenter);
             Vector2f angles = MathHelper.toRadians(MathHelper.progressAngles(this.progress));
             int adjustedRes = (int)(((float)this.resolution)*this.progress);
             for(int i=0; i<this.resolution; i++)
-                drawRadialSection(mc,relativeCenter,offset,this.radii,angles.x,angles.y-angles.x,i,this.resolution);
+                drawRadialSection(renderer,relativeCenter,offset,this.radii,angles.x,angles.y-angles.x,i,this.resolution);
         }
     }
 
     public void handleClick(ScreenAPI<?> screen, Vector2f mousePos) {
         if(this.hover) {
-            playPressSound(screen.getMinecraft());
+            playPressSound();
             this.handlerFunction.accept(screen,this, mousePos);
         }
     }

@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
@@ -28,17 +27,16 @@ public class RenderablePNG extends Renderable {
     }
 
     @Override
-    void render(MinecraftAPI mc) {
+    void render(RenderAPI renderer) {
         if(canRender()) {
-            RenderAPI renderer = mc.getRenderer();
             preRender(renderer);
-            MinecraftWindow window = mc.getWindow();
+            MinecraftWindow window = renderer.getWindow();
             int resX = (int)window.getWidth();
             int resY = (int)window.getHeight();
             renderer.scale(scaleX(resX,resY),scaleY(),1f);
             int x = posX(window);
             int y = posY(resY);
-            RenderHelper.enforceAlphaTexture(mc,x,y,resX,resY,Math.max(0.1f,getOpacity()),this.source);
+            RenderHelper.enforceAlphaTexture(renderer,x,y,resX,resY,Math.max(0.1f,getOpacity()),this.source);
             postRender(renderer);
         }
     }

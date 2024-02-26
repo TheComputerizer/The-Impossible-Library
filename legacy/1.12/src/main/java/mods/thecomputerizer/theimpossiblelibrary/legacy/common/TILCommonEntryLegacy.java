@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.TILLegacy;

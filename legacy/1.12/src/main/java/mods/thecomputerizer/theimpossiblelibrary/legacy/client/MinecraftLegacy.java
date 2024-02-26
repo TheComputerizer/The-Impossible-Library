@@ -5,16 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.font.FontLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.RenderLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.VertexWrapperLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextStringLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextTranslationLegacy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import java.util.Objects;
 
@@ -35,16 +32,6 @@ public class MinecraftLegacy implements MinecraftAPI {
         this.mc = mc;
         this.font = new FontLegacy();
         this.render = new RenderLegacy();
-    }
-
-    @Override
-    public VertexWrapper getBufferBuilderPC(int vertices) {
-        return new VertexWrapperLegacy(DefaultVertexFormats.POSITION_COLOR,vertices,3,4);
-    }
-
-    @Override
-    public VertexWrapper getBufferBuilderPTC(int vertices) {
-        return new VertexWrapperLegacy(DefaultVertexFormats.POSITION_TEX_COLOR,vertices,3,2,4);
     }
 
     @Override

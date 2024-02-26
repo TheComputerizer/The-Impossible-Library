@@ -1,5 +1,79 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '6.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
 java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
 
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
+    runs {
+        def args = [
+                '-DtilDev=true'
+        ]
+        client {
+            workingDirectory file('run_client')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            jvmArgs args
+        }
+        server {
+            workingDirectory file('run_server')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            jvmArgs args
+        }
+    }
+}
+
 dependencies {
+    minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
+
+    annotationProcessor("org.spongepowered:mixin:${project.mixin_version}:processor")
+
     implementation project(':forge')
+    implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
+    implementation("org.joml:joml:${project.joml_version}")
+}
+
+mixin {
+    add sourceSets.main, mod_refmap
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from (sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'version': project.version
+        expand 'description': project.mod_description
+    }
+    //exclude '**/theimpossiblelibrary/test/**'
+}
+
+jar {
+    manifest {
+        attributes([
+                'FMLAT': project.mod_accesstransformer,
+                'Implementation-Title': project.name,
+                'MixinConfigs': project.mod_mixin,
+                'TweakClass': project.mod_tweakclass,
+                'TweakOrder': 0
+        ])
+    }
+}
+
+//Spec<Task> noForge = { Task it -> !it.name.startsWith("forge") } as Spec<Task>
+
+tasks.withType(JavaCompile).configureEach {
+    source(project(':api').sourceSets.main.allJava)
+}
+
+tasks.withType(Javadoc).configureEach {
+    source(project(":api").sourceSets.main.allJava)
+}
+
+tasks.withType(ProcessResources).configureEach {
+    from project(":api").sourceSets.main.resources
 }

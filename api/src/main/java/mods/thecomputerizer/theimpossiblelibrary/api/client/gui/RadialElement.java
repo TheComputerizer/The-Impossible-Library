@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
@@ -84,8 +83,7 @@ public class RadialElement {
         }
     }
 
-    public void render(MinecraftAPI mc, float offset, int mouseX, int mouseY) {
-        RenderAPI renderer = mc.getRenderer();
+    public void render(RenderAPI renderer, float offset, int mouseX, int mouseY) {
         renderer.pushMatrix();
         renderer.disableAlpha();
         renderer.enableBlend();
@@ -96,7 +94,7 @@ public class RadialElement {
         double mouseRelativeRadius = MathHelper.distance(mouse,this.center);
         float numButtons = this.buttons.size();
         if(mouseAngleDeg<((-0.5f/numButtons)+0.25f)*360d) mouseAngleDeg+=360d;
-        boolean currentScreen = mc.isCurrentScreen(this.parentScreen);
+        boolean currentScreen = renderer.getMinecraft().isCurrentScreen(this.parentScreen);
         if(currentScreen) {
             this.centerHover = calculateCenterHover(mouseRelativeRadius);
             if(!this.centerHover) this.hover = MathHelper.isInCircle(this.center,mouseRelativeRadius,this.radius);
@@ -108,19 +106,19 @@ public class RadialElement {
             for (RadialButton button : this.buttons) {
                 Vector2f angles = MathHelper.makeAngleVector(index,(int)numButtons);
                 if(currentScreen) button.setHover(this.hover,mouseAngleDeg,angles);
-                button.draw(mc,this.center,offset,this.radius,MathHelper.toRadians(angles),mouse,
+                button.draw(renderer,this.center,offset,this.radius,MathHelper.toRadians(angles),mouse,
                         MathHelper.getCenterPosOfSlice(angles,this.radius,this.center,(int)numButtons),buttonRes);
                 index++;
             }
-        } else drawEmpty(mc,offset,mouse);
-        drawCenterProgress(mc,this.center,currentScreen,offset);
-        drawIcons(mc,this.center,this.radius,numButtons==1);
-        drawText(mc,mouse,mouseRelativeRadius,currentScreen);
+        } else drawEmpty(renderer,offset,mouse);
+        drawCenterProgress(renderer,this.center,currentScreen,offset);
+        drawIcons(renderer,this.center,this.radius,numButtons==1);
+        drawText(renderer,mouse,mouseRelativeRadius,currentScreen);
         renderer.enableTexture();
         renderer.popMatrix();
     }
 
-    private void drawEmpty(MinecraftAPI mc, float offset, Vector2f mouse) {
+    private void drawEmpty(RenderAPI renderer, float offset, Vector2f mouse) {
         float startAngle = (float)Math.toRadians(-0.25f*360);
         for(int i=0; i<this.resolution; i++) {
             float angle1 = (float)Math.toRadians(startAngle+(i/this.resolution)*MathHelper.CIRCLE_RADIANS);
@@ -130,12 +128,11 @@ public class RadialElement {
             Vector2f pos1Out = MathHelper.getVertex(this.center,this.radius.y,angle1);
             Vector2f pos2Out = MathHelper.getVertex(this.center,this.radius.y,angle2);
             Vector4f color = this.hover ? new Vector4f(255,255,255,64) : new Vector4f(0,0,0,64);
-            RenderHelper.setBuffer(mc,pos1In,pos2In,pos1Out,pos2Out,offset,color);
+            RenderHelper.setBuffer(renderer,pos1In,pos2In,pos1Out,pos2Out,offset,color);
         }
     }
 
-    private void drawIcons(MinecraftAPI mc, Vector2f center, Vector2f radius, boolean hasOneButton) {
-        RenderAPI renderer = mc.getRenderer();
+    private void drawIcons(RenderAPI renderer, Vector2f center, Vector2f radius, boolean hasOneButton) {
         renderer.enableTexture();
         renderer.enableAlpha();
         if(Objects.nonNull(this.centerIcon)) {
@@ -145,30 +142,29 @@ public class RadialElement {
                 actualIcon = this.altCenterIcon;
                 hoverIncrease = (int)(((float)this.iconRadius)*this.iconHoverSizeIncrease*2f);
             }
-            RenderHelper.bufferSquareTex(mc,center,(this.iconRadius*2)+hoverIncrease,1f,actualIcon);
+            RenderHelper.bufferSquareTex(renderer,center,(this.iconRadius*2)+hoverIncrease,1f,actualIcon);
         }
-        for(RadialButton button : this.buttons) button.drawCenterIcon(mc,(radius.y-radius.x)/2f);
+        for(RadialButton button : this.buttons) button.drawCenterIcon(renderer,(radius.y-radius.x)/2f);
         renderer.disableAlpha();
         renderer.disableTexture();
     }
 
-    private void drawCenterProgress(MinecraftAPI mc, Vector2f center, boolean currentScreen, float offset) {
+    private void drawCenterProgress(RenderAPI renderer, Vector2f center, boolean currentScreen, float offset) {
         if(Objects.nonNull(this.centerProgress)) {
             if(currentScreen) this.centerProgress.setHover(this.centerHover);
             else this.centerProgress.setHover(false);
-            this.centerProgress.draw(mc,this.center,offset);
+            this.centerProgress.draw(renderer,this.center,offset);
         }
     }
 
-    private void drawText(MinecraftAPI mc, Vector2f mouse, double mouseRelativeRadius, boolean isCurrent) {
+    private void drawText(RenderAPI renderer, Vector2f mouse, double mouseRelativeRadius, boolean isCurrent) {
         if(Objects.nonNull(this.parentScreen)) {
-            RenderAPI renderer = mc.getRenderer();
-            FontAPI font = mc.getFont();
+            FontAPI font = renderer.getFont();
             if(Objects.nonNull(this.centerText)) {
                 int color = this.centerHover ? 16777120 : 14737632;
                 renderer.drawCenteredString(font,this.centerText,(int)this.center.x,(int)this.center.y,color);
             }
-            for(RadialButton button : this.buttons) button.drawText(mc,mouse,isCurrent);
+            for(RadialButton button : this.buttons) button.drawText(renderer,mouse,isCurrent);
             renderer.renderTooltip(font,this.centerTooltips,(int)mouse.x,(int)mouse.y);
         }
     }

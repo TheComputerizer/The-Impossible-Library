@@ -9,14 +9,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 
 public interface MinecraftAPI {
 
-    /**
-     * POSITION_COLOR
-     */
-    VertexWrapper getBufferBuilderPC(int vertices);
-    /**
-     * POSITION_TEX_COLOR
-     */
-    VertexWrapper getBufferBuilderPTC(int vertices);
     FontAPI getFont();
     TextAPI<?> getLiteralText(String text);
     RenderAPI getRenderer();
