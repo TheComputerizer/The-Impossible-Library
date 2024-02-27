@@ -1,4 +1,5 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'net.minecraftforge.gradle' version '6.+'
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
@@ -28,6 +29,12 @@ minecraft {
     }
 }
 
+configurations {
+    shade
+    implementation.extendsFrom(shade)
+    shadow.extendsFrom(shade)
+}
+
 dependencies {
     minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
 
@@ -38,12 +45,47 @@ dependencies {
 
     //noinspection DependencyNotationArgument
     implementation project(':api')
-    implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
-    implementation("org.joml:joml:${project.joml_version}")
+    shade("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
+    shade("org.joml:joml:${project.joml_version}")
+}
+
+shadowJar {
+    //relocate shaded dependencies to the shadow package to prevent library conflicts
+    relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
+    relocate 'org.joml', "${shadow_package}.org.joml"
+    configurations = [project.configurations.shadow]
+    setArchiveClassifier('')
+}
+
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
+    }
 }
 
 mixin {
     add sourceSets.main, mod_refmap
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    var replacements = [
+            'loader_range': forge_version_range,
+            'minecraft_range': minecraft_range,
+            'mod_author': mod_authors,
+            'mod_description': mod_description,
+            'mod_license': mod_license,
+            'mod_id': mod_id,
+            'mod_name': mod_name,
+            'mod_version': version
+    ]
+    inputs.properties replacements
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand replacements
+    }
+    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
@@ -58,8 +100,12 @@ jar {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.named("compileJava", JavaCompile) {
     source(project(":api").sourceSets.main.allSource)
+}
+
+tasks.named("compileTestJava", JavaCompile) {
+    source(project(":api").sourceSets.test.allJava)
 }
 
 tasks.withType(Javadoc).configureEach {
@@ -72,18 +118,9 @@ tasks.withType(Jar).configureEach {
 }
 
 tasks.withType(ProcessResources).configureEach {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'loader_range': forge_version_range,
-                'minecraft_range': minecraft_range,
-                'mod_author': mod_authors,
-                'mod_description': mod_description,
-                'mod_license': mod_license,
-                'mod_id': mod_id,
-                'mod_name': mod_name,
-                'mod_version': version
-    }
     from(project(":api").sourceSets.main.resources)
-    //exclude '**/theimpossiblelibrary/test/**'
 }
+
+tasks.assemble.dependsOn('shadowJar')
+tasks.shadowJar.dependsOn('reobfJar')
+tasks.jar.finalizedBy('reobfJar')

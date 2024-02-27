@@ -1,3 +1,4 @@
+//file:noinspection DependencyNotationArgument
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'idea'
@@ -7,17 +8,20 @@ plugins {
 
 java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
 
-configurations {
-    shade
-    implementation.extendsFrom(shade)
-    shadow.extendsFrom shade
+dependencies {
+    shadow(project(':legacy:legacy.1_12')) { transitive = false }
+    shadow(project(':forge:forge.1_16')) { transitive = false }
+    shadow("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
+    shadow("org.joml:joml:${project.joml_version}") { transitive = false }
 }
+
 shadowJar {
     //relocate shaded dependencies to the shadow package to prevent library conflicts
-    //relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
-    //relocate 'org.joml', "${shadow_package}.org.joml"
+    relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
+    relocate 'org.joml', "${shadow_package}.org.joml"
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
+    exclude '**/*.java'
 }
 
 tasks.assemble.dependsOn('shadowJar')
