@@ -12,6 +12,8 @@ fancyGradle {
     }
 }
 
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
+
 minecraft {
     mappings channel: 'stable', version: mappings_version
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
@@ -40,8 +42,14 @@ dependencies {
     annotationProcessor("com.google.code.gson:gson:${project.gson_annotation}")
     annotationProcessor("com.google.guava:guava:${project.guava_annotation}")
     annotationProcessor("org.ow2.asm:asm-debug-all:${project.asm_debug_annotation}")
+    annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
 
+    compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+
+    //noinspection DependencyNotationArgument
     implementation project(':legacy')
+    implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
+    implementation("org.joml:joml:${project.joml_version}")
 }
 
 processResources {
@@ -67,16 +75,19 @@ jar {
     }
 }
 
-//Spec<Task> noForge = { Task it -> !it.name.startsWith("forge") } as Spec<Task>
-
 tasks.withType(JavaCompile).configureEach {
-    source(project(':api').sourceSets.main.allJava)
+    source(project(":api").sourceSets.main.allSource)
 }
 
 tasks.withType(Javadoc).configureEach {
     source(project(":api").sourceSets.main.allJava)
 }
 
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(project(":api").sourceSets.main.allSource)
+}
+
 tasks.withType(ProcessResources).configureEach {
-    from project(":api").sourceSets.main.resources
+    from(project(":api").sourceSets.main.resources)
 }

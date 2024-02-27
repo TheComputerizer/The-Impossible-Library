@@ -1,14 +1,6 @@
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
+
 dependencies {
+    //noinspection DependencyNotationArgument
     implementation project(':forge')
-}
-
-allprojects {
-    java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
-}
-
-subprojects {
-    dependencies {
-        implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
-        implementation("org.joml:joml:${project.joml_version}")
-    }
 }

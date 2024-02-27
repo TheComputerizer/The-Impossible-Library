@@ -1,4 +1,3 @@
-//file:noinspection GroovyAssignabilityCheck
 plugins {
     id 'net.neoforged.gradle.userdev' version '7.+'
 }
@@ -53,6 +52,8 @@ repositories {
 
 dependencies {
     implementation("net.neoforged:forge:${project.minecraft_version}-${project.neoforge_version}")
+
+    //noinspection DependencyNotationArgument
     implementation project(':neoforge')
 }
 
@@ -66,10 +67,6 @@ tasks.withType(ProcessResources).configureEach {
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml']) {
-        expand replaceProperties + [project: project]
+        expand replaceProperties+[project: project]
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
 }

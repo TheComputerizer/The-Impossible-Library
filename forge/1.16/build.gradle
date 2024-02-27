@@ -16,7 +16,7 @@ minecraft {
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'info'
+            property 'forge.logging.console.level', 'debug'
             jvmArgs args
         }
         server {
@@ -31,24 +31,19 @@ minecraft {
 dependencies {
     minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
 
+    annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
     annotationProcessor("org.spongepowered:mixin:${project.mixin_version}:processor")
 
-    implementation project(':forge')
+    compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+
+    //noinspection DependencyNotationArgument
+    implementation project(':api')
     implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
     implementation("org.joml:joml:${project.joml_version}")
 }
 
 mixin {
     add sourceSets.main, mod_refmap
-}
-
-processResources {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version, 'description': project.mod_description
-    }
-    //exclude '**/theimpossiblelibrary/test/**'
 }
 
 jar {
@@ -63,16 +58,32 @@ jar {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-tasks.named('compileJava',JavaCompile) {
-    source(project(':api').sourceSets.main.allSource)
+tasks.withType(JavaCompile).configureEach {
+    source(project(":api").sourceSets.main.allSource)
 }
 
-tasks.named('javadoc',Javadoc) {
-    source(project(':api').sourceSets.main.allJava)
+tasks.withType(Javadoc).configureEach {
+    source(project(":api").sourceSets.main.allJava)
 }
 
-tasks.named('processResources',ProcessResources) {
-    from project(':api').sourceSets.main.resources
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(project(":api").sourceSets.main.allSource)
+}
+
+tasks.withType(ProcessResources).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'loader_range': forge_version_range,
+                'minecraft_range': minecraft_range,
+                'mod_author': mod_authors,
+                'mod_description': mod_description,
+                'mod_license': mod_license,
+                'mod_id': mod_id,
+                'mod_name': mod_name,
+                'mod_version': version
+    }
+    from(project(":api").sourceSets.main.resources)
+    //exclude '**/theimpossiblelibrary/test/**'
 }

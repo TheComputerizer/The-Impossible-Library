@@ -5,9 +5,6 @@ plugins {
     id 'java-library'
 }
 
-group = project.base_package
-version = project.mod_version
-
 java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
 
 configurations {
@@ -15,7 +12,6 @@ configurations {
     implementation.extendsFrom(shade)
     shadow.extendsFrom shade
 }
-
 shadowJar {
     //relocate shaded dependencies to the shadow package to prevent library conflicts
     //relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
@@ -26,28 +22,34 @@ shadowJar {
 
 tasks.assemble.dependsOn('shadowJar')
 
-subprojects {
-    plugins.apply('idea')
-    plugins.apply('java')
-    plugins.apply('java-library')
-
-    version = project.mod_version
+allprojects {
     group = project.base_package
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
-        compileOnly("org.projectlombok:lombok:${project.lombok_version}")
-    }
+    version = project.mod_version
 
     java {
         archivesBaseName = project.mod_id
     }
 
+    repositories {
+        mavenCentral()
+    }
+
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
+    }
+}
+
+subprojects {
+    plugins.apply('idea')
+    plugins.apply('java')
+    plugins.apply('java-library')
+
+    dependencies {
+        annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
+
+        compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+
+        implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
+        implementation("org.joml:joml:${project.joml_version}")
     }
 }

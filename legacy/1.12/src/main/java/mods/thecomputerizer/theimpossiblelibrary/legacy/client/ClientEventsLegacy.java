@@ -154,7 +154,7 @@ public class ClientEventsLegacy extends CommonEventsLegacy implements ClientEven
         });
         ClientEventsHelper.addListener(Post.class,event -> {
             if(event.getType()==ElementType.ALL)
-                RenderHelper.renderAllBackgroundStuff(MinecraftLegacy.getInstance());
+                RenderHelper.renderAllBackgroundStuff(MinecraftLegacy.getInstance().getRenderer());
         });
     }
 }

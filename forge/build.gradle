@@ -1,5 +1,6 @@
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
+
 dependencies {
+    //noinspection DependencyNotationArgument
     implementation project(':api')
 }
-
-java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
