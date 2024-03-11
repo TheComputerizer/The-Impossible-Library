@@ -18,7 +18,7 @@ public class ShapeHolder {
     public ShapeHolder(Convex3D shape) {
         this.shape = shape;
         this.childHolders = new ArrayList<>();
-        this.relativePosVec = VectorHelper.ZERO;
+        this.relativePosVec = VectorHelper.ZERO_3D;
     }
 
     public void addChild(Convex3D shape, Consumer<ShapeHolder> holderSettings) {

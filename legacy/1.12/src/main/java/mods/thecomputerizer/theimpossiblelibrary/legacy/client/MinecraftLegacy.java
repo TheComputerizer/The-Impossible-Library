@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
@@ -65,6 +65,6 @@ public class MinecraftLegacy implements MinecraftAPI {
 
     @Override
     public boolean isCurrentScreen(ScreenAPI<?> screen) {
-        return screen.getScreen()==this.mc.currentScreen;
+        return screen.get()==this.mc.currentScreen;
     }
 }

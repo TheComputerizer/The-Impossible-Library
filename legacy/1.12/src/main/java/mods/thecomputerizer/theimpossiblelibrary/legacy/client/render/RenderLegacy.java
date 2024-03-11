@@ -20,6 +20,9 @@ import java.util.List;
 public class RenderLegacy implements RenderAPI {
 
     private final GLLegacy gl;
+    private int mouseX;
+    private int mouseY;
+    private float partialTicks;
 
     public RenderLegacy() {
         this.gl = new GLLegacy();
@@ -141,6 +144,21 @@ public class RenderLegacy implements RenderAPI {
     }
 
     @Override
+    public int getMouseX() {
+        return this.mouseX;
+    }
+
+    @Override
+    public int getMouseY() {
+        return this.mouseY;
+    }
+
+    @Override
+    public float getPartialTicks() {
+        return this.partialTicks;
+    }
+
+    @Override
     public MinecraftWindow getWindow() {
         return MinecraftLegacy.getInstance().getWindow();
     }
@@ -181,6 +199,19 @@ public class RenderLegacy implements RenderAPI {
     @Override
     public void setColor(float r, float g, float b, float a) {
         GlStateManager.color(r,g,b,a);
+    }
+
+    @Override
+    public RenderAPI setMouse(int x, int y) {
+        this.mouseX = x;
+        this.mouseY = y;
+        return this;
+    }
+
+    @Override
+    public RenderAPI setPartialTicks(float partialTicks) {
+        this.partialTicks = partialTicks;
+        return this;
     }
 
     @Override

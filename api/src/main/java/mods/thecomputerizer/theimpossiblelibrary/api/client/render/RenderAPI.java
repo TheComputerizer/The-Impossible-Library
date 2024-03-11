@@ -39,6 +39,9 @@ public interface RenderAPI {
     FontAPI getFont();
     GLAPI getGLAPI();
     MinecraftAPI getMinecraft();
+    int getMouseX();
+    int getMouseY();
+    float getPartialTicks();
     MinecraftWindow getWindow();
     RenderAPI init(Object context);
     void popMatrix();
@@ -48,6 +51,8 @@ public interface RenderAPI {
     void rotate(float angle, float x, float y, float z);
     void scale(float x, float y, float z);
     void setColor(float r, float g, float b, float a);
+    RenderAPI setMouse(int x, int y);
+    RenderAPI setPartialTicks(float partialTicks);
     void setPosColorShader();
     void translate(double x, double y, double z);
     void translate(float x, float y, float z);

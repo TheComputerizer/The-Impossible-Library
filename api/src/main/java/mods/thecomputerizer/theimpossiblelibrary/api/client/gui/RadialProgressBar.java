@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.apache.logging.log4j.util.TriConsumer;

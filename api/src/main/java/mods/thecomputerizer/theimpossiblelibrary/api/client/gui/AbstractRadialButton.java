@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;

@@ -34,8 +34,16 @@ public class MathHelper {
         Returns the angle between 2 coordinate points in degrees
      */
     public static double getAngle(Vector2f start, Vector2f end) {
-        return Math.toDegrees(Math.atan2(start.y() - end.y(), start.x() - end.x()));
+        return getAngle(start.x,start.y,end.x,end.y);
     }
+
+    /**
+     Returns the angle between 2 coordinate points in degrees
+     */
+    public static double getAngle(float startX, float startY, float endX, float endY) {
+        return Math.toDegrees(Math.atan2(startY-endY,startX-endX));
+    }
+
 
     /**
         Helper math for radial gui elements
@@ -43,14 +51,21 @@ public class MathHelper {
         The angle is in radians
      */
     public static Vector2f getVertex(Vector2f center, float radius, float angle) {
-        return new Vector2f(center.x()+(radius*(float)Math.cos(angle)),center.y()+(radius*(float)Math.sin(angle)));
+        return getVertex(center.x,center.y,radius,angle);
+    }
+
+    public static Vector2f getVertex(float centerX, float centerY, float radius, float angle) {
+        return new Vector2f(centerX+(radius*(float)Math.cos(angle)),centerY+(radius*(float)Math.sin(angle)));
     }
 
     /**
         More precise version of the above method
      */
     public static Vector2f getVertex(Vector2f center, double radius, double angle) {
-        return new Vector2f((float) (center.x()+(radius*Math.cos(angle))),(float) (center.y()+(radius*Math.sin(angle))));
+        return getVertex(center.x,center.y,radius,angle);
+    }
+    public static Vector2f getVertex(float centerX, float centerY, double radius, double angle) {
+        return new Vector2f((float)((double)centerX+(radius*Math.cos(angle))),(float)((double)centerY+(radius*Math.sin(angle))));
     }
 
     /**

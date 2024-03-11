@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;

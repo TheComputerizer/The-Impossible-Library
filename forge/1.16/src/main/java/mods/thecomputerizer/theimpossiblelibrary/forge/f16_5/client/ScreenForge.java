@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import net.minecraft.client.gui.screen.Screen;
 
 import java.util.Objects;

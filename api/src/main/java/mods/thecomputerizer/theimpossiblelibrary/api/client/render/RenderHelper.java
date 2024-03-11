@@ -33,18 +33,21 @@ public class RenderHelper {
     }
 
     /**
-     * Draws a box using tuple inputs
+     * Draws a box using vector inputs
      * The offset should be 0 for GUI screens
      */
     public static void drawBox(RenderAPI renderer, Vector2f topLeft, int width, int height, Vector4f color, float offset) {
-        Vector3f bottomRight = new Vector3f(topLeft.x()+width,topLeft.y()+height,0);
+        drawBox(renderer,topLeft.x,topLeft.y,width,height,color,offset);
+    }
+
+    public static void drawBox(RenderAPI renderer, float x, float y, int width, int height, Vector4f color, float offset) {
         initSolidColor(renderer,color);
         VertexWrapper buffer = renderer.getBufferBuilderPC(renderer.getGLAPI().quads(),4);
         buffer.start();
-        buffer.pos(topLeft.x,topLeft.y,offset).color(color).endVertex();
-        buffer.pos(topLeft.x,bottomRight.y,offset).color(color).endVertex();
-        buffer.pos(bottomRight.x,bottomRight.y,offset).color(color).endVertex();
-        buffer.pos(bottomRight.x,topLeft.y,offset).color(color).endVertex();
+        buffer.pos(x,y,offset).color(color).endVertex();
+        buffer.pos(x,y+height,offset).color(color).endVertex();
+        buffer.pos(x+width,y+height,offset).color(color).endVertex();
+        buffer.pos(x+width,y,offset).color(color).endVertex();
         buffer.finish();
         finishSolidColor(renderer);
     }
@@ -55,13 +58,15 @@ public class RenderHelper {
      */
     public static void drawBoxOutline(RenderAPI renderer, Vector2f topLeft, int width, int height, Vector4f color,
                                       float outlineWidth, float offset) {
-        Vector2f topRight = new Vector2f(topLeft.x()+width,topLeft.y());
-        Vector2f bottomRight = new Vector2f(topLeft.x()+width,topLeft.y()+height);
-        Vector2f bottomLeft = new Vector2f(topLeft.x(),topLeft.y()+height);
-        drawLine(renderer,topLeft,topRight,color,outlineWidth,offset);
-        drawLine(renderer,topRight,bottomRight,color,outlineWidth,offset);
-        drawLine(renderer,bottomRight,bottomLeft,color,outlineWidth,offset);
-        drawLine(renderer,bottomLeft,topLeft,color,outlineWidth,offset);
+        drawBoxOutline(renderer,topLeft.x,topLeft.y,width,height,color,outlineWidth,offset);
+    }
+
+    public static void drawBoxOutline(RenderAPI renderer, float x, float y, int width, int height, Vector4f color,
+                                      float outlineWidth, float offset) {
+        drawLine(renderer,x,y,x+width,y,color,outlineWidth,offset);
+        drawLine(renderer,x+width,y,x+width,y+height,color,outlineWidth,offset);
+        drawLine(renderer,x+width,y+height,x,y+height,color,outlineWidth,offset);
+        drawLine(renderer,x,y+height,x,y,color,outlineWidth,offset);
     }
 
     /**
@@ -74,18 +79,22 @@ public class RenderHelper {
         drawBoxOutline(renderer,topLeft,width,height,outlineColor,outlineWidth,offset);
     }
 
-    public static void drawColoredRing(RenderAPI renderer, Vector2f center, Vector2f radii, Vector4f color, int resolution,
+    public static void drawCircle(RenderAPI renderer, Vector2f center, double radius, Vector4f color, int resolution,
+                                  float offset) {
+        drawCircleSlice(renderer,center,0d,radius,0d,2*Math.PI,color,resolution,offset);
+    }
+
+    public static void drawCircleSlice(RenderAPI renderer, Vector2f center, double minRadius, double maxRadius,
+                                       double startAngle, double endAngle, Vector4f color, int resolution,
                                        float offset) {
-        Vector2f angles = MathHelper.makeAngleVector(0,1);
-        float startAngle = (float) Math.toRadians(angles.x());
-        float angleDif = (float) Math.toRadians(angles.y()-angles.x());
+        double angleDif = endAngle-startAngle;
         for(int i=0;i<resolution;i++) {
-            float angle1 = startAngle+(i/(float)resolution)*angleDif;
-            float angle2 = startAngle+((i+1)/(float)resolution)*angleDif;
-            Vector2f pos1In = MathHelper.getVertex(center, radii.x(),angle1);
-            Vector2f pos2In = MathHelper.getVertex(center, radii.x(),angle2);
-            Vector2f pos1Out = MathHelper.getVertex(center, radii.y(),angle1);
-            Vector2f pos2Out = MathHelper.getVertex(center, radii.y(),angle2);
+            double angle1 = startAngle+(i/(double)resolution)*angleDif;
+            double angle2 = startAngle+((i+1)/(double)resolution)*angleDif;
+            Vector2f pos1In = MathHelper.getVertex(center,minRadius,angle1);
+            Vector2f pos2In = MathHelper.getVertex(center,minRadius,angle2);
+            Vector2f pos1Out = MathHelper.getVertex(center,maxRadius,angle1);
+            Vector2f pos2Out = MathHelper.getVertex(center,maxRadius,angle2);
             setBuffer(renderer,pos1In,pos2In,pos1Out,pos2Out,offset,color);
         }
     }
@@ -119,11 +128,16 @@ public class RenderHelper {
      * The offset should be 0 for GUI screens
      */
     public static void drawLine(RenderAPI renderer, Vector2f start, Vector2f end, Vector4f color, float width, float offset) {
-        double angle = MathHelper.getAngle(start, end);
-        Vector2f start1 = MathHelper.getVertex(start,width/2d,Math.toRadians(angle+90d));
-        Vector2f start2 = MathHelper.getVertex(start,width/2d,Math.toRadians(angle-90d));
-        Vector2f end1 = MathHelper.getVertex(end,width/2d,Math.toRadians(angle-90d));
-        Vector2f end2 = MathHelper.getVertex(end,width/2d,Math.toRadians(angle+90d));
+        drawLine(renderer,start.x,start.y,end.x,end.y,color,width,offset);
+    }
+
+    public static void drawLine(RenderAPI renderer, float startX, float startY, float endX, float endY,
+                                Vector4f color, float width, float offset) {
+        double angle = MathHelper.getAngle(startX,startY,endX,endY);
+        Vector2f start1 = MathHelper.getVertex(startX,startY,width/2d,Math.toRadians(angle+90d));
+        Vector2f start2 = MathHelper.getVertex(startX,startY,width/2d,Math.toRadians(angle-90d));
+        Vector2f end1 = MathHelper.getVertex(endX,endY,width/2d,Math.toRadians(angle-90d));
+        Vector2f end2 = MathHelper.getVertex(endX,endY,width/2d,Math.toRadians(angle+90d));
         setBuffer(renderer,start1,start2,end1,end2,offset,color);
     }
 
@@ -194,7 +208,12 @@ public class RenderHelper {
         renderer.popMatrix();
     }
 
-    public static void drawTexturedRect(RenderAPI renderer, int x, int y, int width, int height, float alpha,
+    public static void drawRing(RenderAPI renderer, Vector2f center, double minRadius, double maxRadius, Vector4f color,
+                                int resolution, float offset) {
+        drawCircleSlice(renderer,center,minRadius,maxRadius,0d,2*Math.PI,color,resolution,offset);
+    }
+
+    public static void drawTexturedRect(RenderAPI renderer, float x, float y, int width, int height, float alpha,
                                         ResourceLocationAPI<?> texture, float uMin, float uMax, float vMin, float vMax) {
         renderer.bindTexture(texture);
         renderer.setColor(1f,1f,1f,alpha);

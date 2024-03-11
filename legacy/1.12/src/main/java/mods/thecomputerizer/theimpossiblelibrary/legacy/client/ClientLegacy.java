@@ -1,12 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.client;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.CommonLegacy;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.MinecraftForge;
 
 public class ClientLegacy extends CommonLegacy implements ClientAPI {
 
