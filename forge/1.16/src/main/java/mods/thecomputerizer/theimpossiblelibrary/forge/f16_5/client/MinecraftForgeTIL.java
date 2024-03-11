@@ -7,12 +7,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.font.FontForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.gui.ScreenForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.render.RenderForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextStringForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextTranslationForge;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class MinecraftForgeTIL implements MinecraftAPI {
@@ -65,6 +67,12 @@ public class MinecraftForgeTIL implements MinecraftAPI {
 
     @Override
     public boolean isCurrentScreen(ScreenAPI<?> screen) {
-        return screen.getScreen()==this.mc.screen;
+        return screen.get()==this.mc.screen;
+    }
+
+    @Override
+    public void setScreen(@Nullable ScreenAPI<?> screen) {
+        if(Objects.nonNull(screen)) this.mc.setScreen(((ScreenForge)screen).get());
+        else this.mc.setScreen(null);
     }
 }

@@ -23,10 +23,16 @@ public abstract class WidgetShape {
         this.outlineThickness = 0f;
     }
 
-    protected WidgetShape(ColorCache outlineColor, int outlineThickness) {
+    protected WidgetShape(ColorCache outlineColor, float outlineThickness) {
         this.texture = new TextureWrapper();
         this.outlineColor = outlineColor;
         this.outlineThickness = outlineThickness;
+    }
+
+    protected WidgetShape(WidgetShape other) {
+        this.texture = other.texture;
+        this.outlineColor = other.outlineColor;
+        this.outlineThickness = other.outlineThickness;
     }
 
     public abstract void draw(RenderAPI renderer, float offset);

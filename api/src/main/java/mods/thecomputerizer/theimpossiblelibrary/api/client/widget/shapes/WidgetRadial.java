@@ -29,12 +29,22 @@ public class WidgetRadial extends WidgetShape {
     }
 
     public WidgetRadial(float centerX, float centerY, double innerRadius, double outerRadius, ColorCache outlineColor,
-                        int outlineThickness) {
+                        float outlineThickness) {
         super(outlineColor,outlineThickness);
         this.center = new Vector2f(centerX,centerY);
         this.innerRadius = innerRadius;
         this.outerRadius = outerRadius;
         this.resolution = 100;
+    }
+
+    public WidgetRadial(WidgetRadial other) {
+        super(other);
+        this.center = other.center;
+        this.innerRadius = other.innerRadius;
+        this.outerRadius = other.outerRadius;
+        this.startAngle = other.startAngle;
+        this.endAngle = other.endAngle;
+        this.resolution = other.resolution;
     }
 
     @Override

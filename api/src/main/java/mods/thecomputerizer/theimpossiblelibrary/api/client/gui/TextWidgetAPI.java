@@ -10,7 +10,7 @@ public abstract class TextWidgetAPI<T> extends ShapedWidget<T> {
     protected int priority;
     protected T text;
 
-    protected TextWidgetAPI(WidgetShape shape, T text) {
+    protected TextWidgetAPI(T text, WidgetShape shape) {
         super(shape);
         this.text = text;
     }

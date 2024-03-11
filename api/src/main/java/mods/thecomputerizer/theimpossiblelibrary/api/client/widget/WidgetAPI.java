@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.widget;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector2f;
@@ -17,18 +18,19 @@ public interface WidgetAPI<W> {
     @Nullable String copy();
     @Nullable String cut();
     void draw(RenderAPI renderer, float offset);
-    MinecraftAPI getMinecraft();
-    @Nullable WidgetAPI<?> getParent();
     W get();
     @Nonnull Vector2f getCenter();
     @Nonnull List<TextAPI<?>> getHoverLines();
+    MinecraftAPI getMinecraft();
+    @Nullable WidgetAPI<?> getParent();
 
     default int getPriority() {
         return 0;
     }
 
+    @Nullable ScreenAPI<?> getScreen();
     boolean isHovering(int x, int y);
-    W make(int id, int x, int y, int width, int height, String locale);
+    W make(int id, int x, int y, int width, int height, String locale, Object ... args);
     boolean overlaps(WidgetAPI<?> widget);
     boolean paste(String value);
     void playClickSound();

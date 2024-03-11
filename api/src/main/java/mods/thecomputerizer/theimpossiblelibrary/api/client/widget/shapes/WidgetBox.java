@@ -37,6 +37,14 @@ public class WidgetBox extends WidgetShape {
         getTexture().setSize(width,height);
     }
 
+    public WidgetBox(WidgetBox other) {
+        super(other);
+        this.height = other.height;
+        this.width = other.width;
+        this.x = other.x;
+        this.y = other.y;
+    }
+
     @Override
     public void draw(RenderAPI renderer, float offset) {
         getTexture().render(renderer,this.x,this.y,offset);

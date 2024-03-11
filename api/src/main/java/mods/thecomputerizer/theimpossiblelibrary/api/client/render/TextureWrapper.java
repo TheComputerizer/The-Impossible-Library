@@ -23,6 +23,18 @@ public class TextureWrapper {
         this.colorMask = new ColorCache(0f,0f,0f,0f);
     }
 
+    public TextureWrapper(TextureWrapper other) {
+        this.texture = other.texture;
+        this.alpha = other.alpha;
+        this.colorMask = other.colorMask;
+        this.minU = other.minU;
+        this.minV = other.minV;
+        this.maxU = other.maxU;
+        this.maxV = other.maxV;
+        this.width = other.width;
+        this.height = other.height;
+    }
+
     public TextureWrapper setTexture(ResourceLocationAPI<?> texture) {
         this.texture = texture;
         return this;

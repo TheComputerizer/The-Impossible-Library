@@ -7,12 +7,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.font.FontLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.RenderLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextStringLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextTranslationLegacy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class MinecraftLegacy implements MinecraftAPI {
@@ -66,5 +68,11 @@ public class MinecraftLegacy implements MinecraftAPI {
     @Override
     public boolean isCurrentScreen(ScreenAPI<?> screen) {
         return screen.get()==this.mc.currentScreen;
+    }
+
+    @Override
+    public void setScreen(@Nullable ScreenAPI<?> screen) {
+        if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((ScreenLegacy)screen).get());
+        else this.mc.displayGuiScreen(null);
     }
 }

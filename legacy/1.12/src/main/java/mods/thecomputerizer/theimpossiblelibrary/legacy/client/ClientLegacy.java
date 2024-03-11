@@ -1,18 +1,20 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenHelperLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.CommonLegacy;
-import net.minecraft.client.gui.GuiScreen;
 
 public class ClientLegacy extends CommonLegacy implements ClientAPI {
 
     private final ClientEventsLegacy events;
+    public final ScreenHelperLegacy screenHelper;
 
     public ClientLegacy() {
         this.events = new ClientEventsLegacy();
+        this.screenHelper = new ScreenHelperLegacy();
     }
 
     @Override
@@ -20,9 +22,13 @@ public class ClientLegacy extends CommonLegacy implements ClientAPI {
         return this.events;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <S> ScreenAPI<S> getScreenAPI(S screen) {
-        return (ScreenAPI<S>)new ScreenLegacy((GuiScreen)screen);
+    public MinecraftAPI getMinecraft() {
+        return MinecraftLegacy.getInstance();
+    }
+
+    @Override
+    public ScreenHelperAPI getScreenHelperAPI() {
+        return this.screenHelper;
     }
 }
