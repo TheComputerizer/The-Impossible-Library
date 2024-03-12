@@ -71,8 +71,8 @@ public class MinecraftForgeTIL implements MinecraftAPI {
     }
 
     @Override
-    public void setScreen(@Nullable ScreenAPI<?> screen) {
-        if(Objects.nonNull(screen)) this.mc.setScreen(((ScreenForge)screen).get());
-        else this.mc.setScreen(null);
+    public void setScreen(@Nullable ScreenAPI<?> screen) { //TODO Fix this
+        //if(Objects.nonNull(screen)) this.mc.setScreen(((ScreenForge)screen).get());
+        //else this.mc.setScreen(null);
     }
 }

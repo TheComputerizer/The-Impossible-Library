@@ -56,7 +56,7 @@ public class ScreenHelper {
 
     public static @Nullable WidgetScrollableAPI<WidgetAPI<?>> getScrollableBoxes(
             WidgetBox reference, WidgetBox scrollBar, int rows, int cols) {
-
+        return null; //TODO implement this
     }
 
     public static SimpleWidget getSimple(WidgetShape shape) {

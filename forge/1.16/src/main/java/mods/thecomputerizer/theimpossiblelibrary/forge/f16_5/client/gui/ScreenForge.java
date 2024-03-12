@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.WidgetAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.MinecraftForgeTIL;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextForge;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,13 +25,8 @@ public class ScreenForge extends ScreenAPI<Screen> {
     }
 
     @Override
-    public Screen get() {
-        return this.screen;
-    }
-
-    @Override
-    public Screen set(Screen widget) {
-        return this.screen;
+    public WidgetAPI<Screen> set(WidgetAPI<Screen> widget) {
+        return null;
     }
 
     @Override

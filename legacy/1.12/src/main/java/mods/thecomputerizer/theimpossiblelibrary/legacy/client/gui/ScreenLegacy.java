@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.WidgetAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.MinecraftLegacy;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -23,13 +24,8 @@ public class ScreenLegacy extends ScreenAPI<GuiScreen> {
     }
 
     @Override
-    public GuiScreen get() {
-        return this.screen;
-    }
-
-    @Override
-    public GuiScreen set(GuiScreen widget) {
-        return this.screen = widget;
+    public WidgetAPI<GuiScreen> set(WidgetAPI<GuiScreen> widget) {
+        return null;
     }
 
     @Override

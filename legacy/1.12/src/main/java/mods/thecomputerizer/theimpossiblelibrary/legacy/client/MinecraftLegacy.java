@@ -71,8 +71,8 @@ public class MinecraftLegacy implements MinecraftAPI {
     }
 
     @Override
-    public void setScreen(@Nullable ScreenAPI<?> screen) {
-        if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((ScreenLegacy)screen).get());
-        else this.mc.displayGuiScreen(null);
+    public void setScreen(@Nullable ScreenAPI<?> screen) { //TODO Fix this
+        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((ScreenLegacy)screen).get());
+        //else this.mc.displayGuiScreen(null);
     }
 }

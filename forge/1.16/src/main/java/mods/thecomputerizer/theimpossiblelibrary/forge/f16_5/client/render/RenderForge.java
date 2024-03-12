@@ -26,6 +26,9 @@ public class RenderForge implements RenderAPI {
 
     private final GLForge gl;
     private MatrixStack matrix;
+    private int mouseX;
+    private int mouseY;
+    private float partialTicks;
 
     public RenderForge() {
         this.gl = new GLForge();
@@ -156,6 +159,21 @@ public class RenderForge implements RenderAPI {
     }
 
     @Override
+    public int getMouseX() {
+        return this.mouseX;
+    }
+
+    @Override
+    public int getMouseY() {
+        return this.mouseY;
+    }
+
+    @Override
+    public float getPartialTicks() {
+        return this.partialTicks;
+    }
+
+    @Override
     public MinecraftWindow getWindow() {
         return MinecraftForgeTIL.getInstance().getWindow();
     }
@@ -199,6 +217,19 @@ public class RenderForge implements RenderAPI {
     @Override
     public void setColor(float r, float g, float b, float a) {
         RenderSystem.color4f(r,g,b,a);
+    }
+
+    @Override
+    public RenderAPI setMouse(int x, int y) {
+        this.mouseX = x;
+        this.mouseY = y;
+        return this;
+    }
+
+    @Override
+    public RenderAPI setPartialTicks(float partialTicks) {
+        this.partialTicks = partialTicks;
+        return this;
     }
 
     @Override
