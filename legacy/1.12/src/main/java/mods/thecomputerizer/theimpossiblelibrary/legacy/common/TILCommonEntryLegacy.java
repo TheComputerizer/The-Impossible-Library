@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.TILLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.TILClientEntryLegacy;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +27,7 @@ public class TILCommonEntryLegacy extends CommonEntryPoint {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         TILRef.logError("COMMON PREINIT");
+        NetworkHandler.load();
         if(Objects.nonNull(this.clientEntry))
             ((TILClientEntryLegacy)this.clientEntry).preInit(event);
         else CommonEventsHelper.getEventsAPI().initDefaultListeners();

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
@@ -18,21 +19,46 @@ import java.util.function.Supplier;
 
 public class NetworkHelper {
 
+    public static <DIR> @Nullable DIR getDirToClient() {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getDirToClient() : null;
+    }
+
+    public static <DIR> @Nullable DIR getDirToClientLogin() {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getDirToClientLogin() : null;
+    }
+
+    public static <DIR> @Nullable DIR getDirToServer() {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getDirToServer() : null;
+    }
+
+    public static <DIR> @Nullable DIR getDirToServerLogin() {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getDirToServerLogin() : null;
+    }
+
     public static <N> @Nullable N getNetwork() {
-        NetworkAPI<N> api = getNetworkAPI();
+        NetworkAPI<N,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.getNetwork() : null;
     }
 
     @SuppressWarnings("unchecked")
-    public static <N> @Nullable NetworkAPI<N> getNetworkAPI() {
-        return (NetworkAPI<N>)TILRef.getCommonSubAPI("NetworkAPI",CommonAPI::getNetworkAPI);
+    public static <N,DIR> @Nullable NetworkAPI<N,DIR> getNetworkAPI() {
+        return (NetworkAPI<N,DIR>)TILRef.getCommonSubAPI("NetworkAPI",CommonAPI::getNetworkAPI);
+    }
+
+    public static <DIR> boolean isDirToClient(DIR d) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) && api.isDirToClient(d);
     }
 
     /**
      * This assumes the object is stored as a string.
      */
     public static Object parseGenericObj(ByteBuf buf) {
-        return parseGenericObj(buf, null);
+        return parseGenericObj(buf,null);
     }
 
     /**
@@ -77,7 +103,7 @@ public class NetworkHelper {
     }
 
     public static @Nullable ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
-        NetworkAPI<?> api = getNetworkAPI();
+        NetworkAPI<?,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.readResourceLocation(buf) : null;
     }
 
@@ -87,36 +113,56 @@ public class NetworkHelper {
     }
 
     public static void registerMessage(Object handler) {
-        NetworkAPI<?> api = getNetworkAPI();
+        NetworkAPI<?,?> api = getNetworkAPI();
         if(Objects.nonNull(api)) api.registerMessage(handler);
     }
 
-    public static <SIDE,M extends MessageImplAPI<?,?>> void registerMessage(int id, Class<M> clazz, SIDE side) {
-        NetworkAPI<?> api = getNetworkAPI();
+    public static <SIDE,M extends MessageWrapperAPI<?,?>> void registerMessage(int id, Class<M> clazz, SIDE side) {
+        NetworkAPI<?,?> api = getNetworkAPI();
         if(Objects.nonNull(api)) api.registerMessage(id,clazz,side);
     }
 
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
+    public static <DIR,CONTEXT,B extends ByteBuf,M extends MessageWrapperAPI<?,?>,MC extends MessageWrapperAPI<?,CONTEXT>> void registerMessage(
+            int id, Class<M> clazz, BiConsumer<M,B> encoder, Function<B,M> decoder,BiConsumer<M,Supplier<?>> handler, Optional<DIR> dir) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        if(Objects.nonNull(api))
+            registerMessageStupidly(api,id,(Class<MC>)clazz,(BiConsumer<MC,B>)encoder,(Function<B,MC>)decoder,
+                    (BiConsumer<MC,Supplier<?>>)handler,dir);
+    }
+
+    /**
+     * Stupid syntax sugar casting stuff
+     */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <CONTEXT,B extends ByteBuf,M extends MessageImplAPI<?,?>> void registerMessage(
-            int id, Class<M> clazz, BiConsumer<M,B> encoder, Function<B,M> decoder,
-            BiConsumer<M,Supplier<CONTEXT>> handler, Optional<?> dir) {
-        NetworkAPI<?> api = getNetworkAPI();
-        if(Objects.nonNull(api)) api.registerMessage(id,clazz,encoder,decoder,handler,dir);
+    private static <DIR,CONTEXT,B extends ByteBuf,M extends MessageWrapperAPI<?,CONTEXT>> void registerMessageStupidly(
+            NetworkAPI<?,DIR> api, int id, Class<M> clazz, BiConsumer<M,B> encoder, Function<B,M> decoder,
+            BiConsumer<M,Supplier<?>> handler, Optional<DIR> dir) {
+        api.registerMessage(id,clazz,encoder,decoder,stupidlyCast(handler),dir);
+    }
+
+    /**
+     * Stupid syntax sugar casting stuff
+     */
+    @SuppressWarnings("unchecked")
+    private static <CONTEXT,M extends MessageWrapperAPI<?,CONTEXT>,S extends Supplier<CONTEXT>> BiConsumer<M,Supplier<CONTEXT>> stupidlyCast(
+            BiConsumer<M,Supplier<?>> handler) {
+        return (BiConsumer<M,Supplier<CONTEXT>>)(BiConsumer<M,S>)handler;
     }
 
     public static @Nullable ResourceLocationAPI<?> registerMessage(ResourceLocationAPI<?> resource, boolean toClient) {
-        NetworkAPI<?> api = getNetworkAPI();
+        NetworkAPI<?,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.registerMessage(resource,toClient) : null;
     }
 
-    public static <P,M extends MessageImplAPI<?,?>> void sendToPlayer(M message, P player) {
-        NetworkAPI<?> api = getNetworkAPI();
+    public static <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
+        NetworkAPI<?,?> api = getNetworkAPI();
         if(Objects.nonNull(api) && Objects.nonNull(message) && Objects.nonNull(player))
             api.sendToPlayer(message,player);
     }
 
-    public static <M extends MessageImplAPI<?,?>> void sendToServer(M message) {
-        NetworkAPI<?> api = getNetworkAPI();
+    public static <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
+        NetworkAPI<?,?> api = getNetworkAPI();
         if(Objects.nonNull(api) && Objects.nonNull(message)) api.sendToServer(message);
     }
 

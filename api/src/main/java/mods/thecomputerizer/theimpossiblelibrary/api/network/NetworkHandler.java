@@ -1,52 +1,141 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.iterator.Mappable;
+import mods.thecomputerizer.theimpossiblelibrary.api.iterator.Wrapperable;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageHandlerDefault;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class NetworkHandler {
 
-    private static final List<PacketQueue<?,? extends MessageImplAPI<?,?>>> PACKET_QUEUES = Collections.synchronizedList(new ArrayList<>());
-    private static final List<Class<? extends MessageImplAPI<?,?>>> REGISTERED_MESSAGES = Collections.synchronizedList(new ArrayList<>());
+    private static final Wrapperable<MessageInfo<?,? extends MessageWrapperAPI<?,?>>> MESSAGE_INFOS =
+            Wrapperable.makeSynchronized(ArrayList::new);
+    private static final Mappable<Class<? extends MessageWrapperAPI<?,?>>,MessageInfo<?,?>> REGISTERED_MESSAGES =
+            Mappable.makeSynchronized(HashMap::new);
 
-    public static void init() {
+    @SuppressWarnings("unchecked")
+    public static <M extends MessageWrapperAPI<?,?>> @Nullable MessageInfo<?,M> getMessageInfo(Class<M> clazz) {
+        MessageInfo<?,?> info = REGISTERED_MESSAGES.get(clazz);
+        return Objects.nonNull(info) ? (MessageInfo<?,M>)info : null;
+    }
+
+    /**
+     * Registers instantiates the network if necessary and registers queued packets.
+     * Ignored if TILRef#CLIENT_ONLY is enabled
+     */
+    public static void load() {
         REGISTERED_MESSAGES.clear();
         int id = 0;
-        for(PacketQueue<?,? extends MessageImplAPI<?,?>> packetQueue : PACKET_QUEUES) {
-            packetQueue.register(NetworkHelper.getNetwork(),id);
-            REGISTERED_MESSAGES.add(packetQueue.type);
+        if(TILRef.CLIENT_ONLY) return;
+        for(MessageInfo<?,? extends MessageWrapperAPI<?,?>> info : MESSAGE_INFOS) {
+            info.register(id);
+            REGISTERED_MESSAGES.put(info.getMsgClass(),info);
             id++;
         }
     }
 
-    private static final class PacketQueue<DIRECTION,M extends MessageImplAPI<?,?>> {
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToClient(
+            Class<M> clazz, Function<ByteBuf,M> decoder) {
+        registerMsg(clazz,decoder,NetworkHelper.getDirToClient());
+    }
 
-        private final Class<M> type;
-        private final Function<ByteBuf,M> decoder;
-        private final DIRECTION dir;
-        private final Supplier<? extends DefaultPacketHandler> customHandler;
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToClient(
+            Class<M> clazz, Supplier<? extends MessageHandlerDefault> customHandler) {
+        registerMsg(clazz,customHandler,NetworkHelper.getDirToClient());
+    }
 
-        private PacketQueue(Class<M> type, Function<ByteBuf,M> decoder, DIRECTION dir) {
-            this.type = type;
-            this.decoder = decoder;
-            this.dir = dir;
-            this.customHandler = null;
-        }
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToClientLogin(
+            Class<M> clazz, Function<ByteBuf,M> decoder) {
+        registerMsg(clazz,decoder,NetworkHelper.getDirToClientLogin());
+    }
 
-        private PacketQueue(Class<M> type, Supplier<? extends DefaultPacketHandler> handler, DIRECTION dir) {
-            this.type = type;
-            this.decoder = null;
-            this.dir = dir;
-            this.customHandler = handler;
-        }
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToClientLogin(
+            Class<M> clazz, Supplier<? extends MessageHandlerDefault> customHandler) {
+        registerMsg(clazz,customHandler,NetworkHelper.getDirToClientLogin());
+    }
 
-        private <N> void register(N network, int globalID) {
-            IPacketHandler handler = Objects.nonNull(this.customHandler) ?
-                    this.customHandler.get() : new DefaultPacketHandler(this.decoder);
-            NetworkHelper.registerMessage(globalID,this.type,handler::encode,handler::decode,handler::handle,
-                    Optional.of(this.dir));
-        }
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToServer(
+            Class<M> clazz, Function<ByteBuf,M> decoder) {
+        registerMsg(clazz,decoder,NetworkHelper.getDirToServer());
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToServer(
+            Class<M> clazz, Supplier<? extends MessageHandlerDefault> customHandler) {
+        registerMsg(clazz,customHandler,NetworkHelper.getDirToServer());
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToServerLogin(
+            Class<M> clazz, Function<ByteBuf,M> decoder) {
+        registerMsg(clazz,decoder,NetworkHelper.getDirToServerLogin());
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <M extends MessageWrapperAPI<?,?>> void registerMsgToServerLogin(
+            Class<M> clazz, Supplier<? extends MessageHandlerDefault> customHandler) {
+        registerMsg(clazz,customHandler,NetworkHelper.getDirToServerLogin());
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    private static <DIR,M extends MessageWrapperAPI<?,?>> void registerMsg(
+            Class<M> clazz, Function<ByteBuf,M> decoder, DIR dir) {
+        MESSAGE_INFOS.add(new MessageInfo<>(clazz,dir,decoder));
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    public static <DIR,M extends MessageWrapperAPI<?,?>> void registerMsg(
+            Class<M> clazz, Supplier<? extends MessageHandlerDefault> customHandler, DIR dir) {
+        MESSAGE_INFOS.add(new MessageInfo<>(clazz,dir,customHandler));
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    public static void registerMsgs(MessageInfo<?,?> ... infos) {
+        registerMsgs(Arrays.asList(infos));
+    }
+
+    /**
+     * Message registration must happen before load is called
+     */
+    public static void registerMsgs(Iterable<MessageInfo<?,?>> infos) {
+
     }
 }

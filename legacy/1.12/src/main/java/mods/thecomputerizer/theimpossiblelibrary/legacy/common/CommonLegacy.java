@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.Reference;
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
@@ -15,14 +14,14 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryHandler
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.resource.ResourceLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.tag.TagLegacy;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonLegacy implements CommonAPI {
 
     private final CommonEventsAPI events;
     private final ModAPI mod;
-    private final NetworkAPI<SimpleNetworkWrapper> network;
+    private final NetworkAPI<SimpleNetworkWrapper,Side> network;
     private final Reference reference;
     private final RegistryHandlerAPI<RegistryLegacy<?>> registry;
     private final ResourceAPI resource;
@@ -50,7 +49,7 @@ public class CommonLegacy implements CommonAPI {
     }
 
     @Override
-    public NetworkAPI<?> getNetworkAPI() {
+    public NetworkAPI<?,?> getNetworkAPI() {
         return this.network;
     }
 

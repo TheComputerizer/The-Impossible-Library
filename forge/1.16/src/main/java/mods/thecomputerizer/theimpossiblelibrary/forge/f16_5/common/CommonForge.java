@@ -14,13 +14,14 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.RegistryFo
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.RegistryHandlerForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.resource.ResourceForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.tag.TagForge;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class CommonForge implements CommonAPI {
 
     private final CommonEventsAPI events;
     private final ModAPI mod;
-    private final NetworkAPI<SimpleChannel> network;
+    private final NetworkAPI<SimpleChannel,NetworkDirection> network;
     private final Reference reference;
     private final RegistryHandlerAPI<RegistryForge<?>> registry;
     private final ResourceAPI resource;
@@ -48,7 +49,7 @@ public class CommonForge implements CommonAPI {
     }
 
     @Override
-    public NetworkAPI<?> getNetworkAPI() {
+    public NetworkAPI<?,?> getNetworkAPI() {
         return this.network;
     }
 

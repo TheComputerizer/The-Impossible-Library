@@ -10,7 +10,7 @@ public interface CommonAPI {
 
     CommonEventsAPI getCommonEventsAPI();
     ModAPI getModAPI();
-    NetworkAPI<?> getNetworkAPI();
+    NetworkAPI<?,?> getNetworkAPI();
     Reference getReference();
     RegistryHandlerAPI<?> getRegistryHandlerAPI();
     ResourceAPI getResourceAPI();

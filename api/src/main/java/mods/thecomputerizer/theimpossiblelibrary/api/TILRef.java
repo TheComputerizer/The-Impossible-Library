@@ -24,6 +24,10 @@ public class TILRef {
     public static final String NAME = "The Impossible Library";
     public static final String VERSION = "0.4.0";
     private static CommonAPI API;
+    /**
+     * Enable to disable server stuff
+     */
+    public static boolean CLIENT_ONLY;
     private static Reference INSTANCE;
 
     /**

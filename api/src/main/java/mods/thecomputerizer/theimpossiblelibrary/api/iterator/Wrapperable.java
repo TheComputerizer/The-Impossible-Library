@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import org.apache.commons.lang3.mutable.MutableInt;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -99,7 +100,7 @@ public class Wrapperable<E> implements Iterable<E> {
     }
 
     /**
-     * This may have weird results if the collection instance does not preserce order
+     * This may have weird results if the collection instance does not preserve order
      */
     public void add(int index, E element) {
         if(this.iterable instanceof List<?>) ((List<E>)this.iterable).add(index,element);
@@ -152,7 +153,7 @@ public class Wrapperable<E> implements Iterable<E> {
     }
 
     /**
-     * Handles checking the instance of iterators that may be wrappable or mappable instances
+     * Handles checking the instance of iterators that may be wrapperable or mappable instances
      * This is done so the instanceof Collection checks do not fail when they should not
      */
     protected Iterable<E> fixInstance(Iterable<E> itr) {
@@ -241,7 +242,7 @@ public class Wrapperable<E> implements Iterable<E> {
     public Class<?> getElementClass() {
         E element = getNonNullElement();
         if(Objects.isNull(element)) {
-            TILRef.logWarn("Unable to get the element class of a wrappable instance! Is the instance empty?");
+            TILRef.logWarn("Unable to get the element class of a wrapperable instance! Is the instance empty?");
             return Object.class;
         }
         return element.getClass();
@@ -315,7 +316,7 @@ public class Wrapperable<E> implements Iterable<E> {
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public @Nonnull Iterator<E> iterator() {
         return this.iterable.iterator();
     }
 
@@ -386,7 +387,7 @@ public class Wrapperable<E> implements Iterable<E> {
     }
 
     /**
-     * This may have weird results if the collection instance does not preserce order or if the elements are integers
+     * This may have weird results if the collection instance does not preserve order or if the elements are integers
      */
     public void removeIndex(int index) {
         if(this.iterable instanceof List<?>) ((List<E>)this.iterable).remove(index);
@@ -404,7 +405,7 @@ public class Wrapperable<E> implements Iterable<E> {
                 count++;
             }
             if(Objects.nonNull(removal)) remove(removal);
-            else TILRef.logDebug("Failed to remove null element of wrappable instance");
+            else TILRef.logDebug("Failed to remove null element of wrapperable instance");
         }
     }
 
