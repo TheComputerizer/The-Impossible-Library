@@ -81,8 +81,8 @@ public class Table extends AbstractType {
         this.level = buf.readInt();
         this.arrIndex = buf.readInt();
         this.tableName = NetworkHelper.readString(buf);
-        this.contents = NetworkHelper.readGenericList(buf, buf1 ->
-                TomlPart.getByID(NetworkHelper.readString(buf1)).decode(buf1,this));
+        this.contents = NetworkHelper.readList(buf,() ->
+                TomlPart.getByID(NetworkHelper.readString(buf)).decode(buf,this));
         this.matchers = new ArrayList<>();
     }
 
@@ -416,11 +416,11 @@ public class Table extends AbstractType {
         buf.writeInt(this.level);
         buf.writeInt(this.arrIndex);
         NetworkHelper.writeString(buf,this.tableName);
-        NetworkHelper.writeGenericList(buf,this.contents.stream().filter(type -> {
+        NetworkHelper.writeList(buf,this.contents.stream().filter(type -> {
             if (type instanceof Variable)
                 return matches((Variable)type);
             return true;
-        }).collect(Collectors.toList()),(buf1, type) -> type.write(buf1));
+        }).collect(Collectors.toList()),type -> type.write(buf));
     }
 
     /**

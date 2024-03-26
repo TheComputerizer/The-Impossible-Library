@@ -4,8 +4,8 @@ import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Stores comments which normally do not get read in when parsing TOML files
@@ -19,7 +19,7 @@ public final class Comment extends AbstractType {
 
     public Comment(ByteBuf buf, @Nullable Table parentTable) {
         super(buf,parentTable);
-        this.comments = NetworkHelper.readGenericList(buf, NetworkHelper::readString);
+        this.comments = NetworkHelper.readList(buf,() -> NetworkHelper.readString(buf));
     }
 
     public Comment(int absoluteIndex, @Nullable Table parentTable, List<String> orderedCommentLines) {
@@ -33,12 +33,14 @@ public final class Comment extends AbstractType {
 
     @Override
     public List<String> toLines() {
-        return this.comments.stream().map(comment -> getSpacing()+"#"+comment).collect(Collectors.toList());
+        List<String> lines = new ArrayList<>(this.comments);
+        lines.replaceAll(line -> getSpacing()+"#"+line);
+        return lines;
     }
 
     @Override
     public void write(ByteBuf buf) {
         super.write(buf);
-        NetworkHelper.writeGenericList(buf,this.comments, NetworkHelper::writeString);
+        NetworkHelper.writeList(buf,this.comments,comment -> NetworkHelper.writeString(buf,comment));
     }
 }

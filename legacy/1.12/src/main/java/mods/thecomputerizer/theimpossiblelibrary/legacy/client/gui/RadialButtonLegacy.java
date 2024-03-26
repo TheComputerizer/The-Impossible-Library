@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.RadialButtonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.WidgetAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.shapes.WidgetRadial;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.shapes.WidgetShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.MinecraftLegacy;
 import net.minecraftforge.fml.client.config.GuiButtonExt;

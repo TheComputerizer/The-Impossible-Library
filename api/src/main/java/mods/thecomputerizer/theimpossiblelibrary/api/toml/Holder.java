@@ -81,8 +81,8 @@ public class Holder {
 
     private Holder(ByteBuf buf) {
         this.backing = null;
-        this.indexedTypes = NetworkHelper.readGenericList(buf, buf1 ->
-                TomlPart.getByID(NetworkHelper.readString(buf1)).decode(buf1,null)).stream()
+        this.indexedTypes = NetworkHelper.readList(buf,() ->
+                TomlPart.getByID(NetworkHelper.readString(buf)).decode(buf,null)).stream()
                 .sorted(Comparator.comparingInt(AbstractType::getAbsoluteIndex)).collect(Collectors.toList());
         this.matchers = new ArrayList<>();
     }
@@ -694,6 +694,6 @@ public class Holder {
                 return runMatcher((Variable) type);
             return true;
         }).collect(Collectors.toList());
-        NetworkHelper.writeGenericList(buf,topLevels,(buf1, type) -> type.write(buf1));
+        NetworkHelper.writeList(buf,topLevels,type -> type.write(buf));
     }
 }

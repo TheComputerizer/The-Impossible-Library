@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -57,42 +58,42 @@ public class NetworkHelper {
     /**
      * This assumes the object is stored as a string.
      */
-    public static Object parseGenericObj(ByteBuf buf) {
-        return parseGenericObj(buf,null);
+    public static Object parseObject(ByteBuf buf) {
+        return parseObject(buf,null);
     }
 
     /**
      * This assumes the object is stored as a string and that the class type has been stored when the function is null
      */
-    public static Object parseGenericObj(ByteBuf buf, @Nullable Function<String, Object> fromString) {
+    public static Object parseObject(ByteBuf buf, @Nullable Function<String, Object> fromString) {
         if (Objects.nonNull(fromString)) return fromString.apply(readString(buf));
-        boolean valid = true;
         Class<?> valType;
         String className = readString(buf);
         try {
             valType = Class.forName(className);
-        } catch (ClassNotFoundException ex) {
+        } catch(ClassNotFoundException ex) {
             TILRef.logError( "Could not find class name {} when parsing a generic object from a packet!",className,ex);
             throw new RuntimeException("Could not find class name when parsing a generic object from a packet!",ex);
         }
-        return List.class.isAssignableFrom(valType) ? readGenericList(buf, NetworkHelper::parseGenericObj) :
+        return Collection.class.isAssignableFrom(valType) ? readCollection(buf,() -> parseObject(buf)) :
                 GenericUtils.parseGenericType(readString(buf),valType);
     }
 
-    public static <V> List<V> readGenericList(ByteBuf buf, Function<ByteBuf, V> valFunc) {
+    public static <V> Collection<V> readCollection(ByteBuf buf, Supplier<V> valFunc) {
+        return readString(buf).equals("list") ? readList(buf,valFunc) : readSet(buf,valFunc);
+    }
+
+    public static <V> List<V> readList(ByteBuf buf, Supplier<V> valFunc) {
         List<V> ret = new ArrayList<>();
         int size = buf.readInt();
-        for(int i=0;i<size;i++)
-            ret.add(valFunc.apply(buf));
+        for(int i=0;i<size;i++) ret.add(valFunc.get());
         return ret;
     }
 
-    public static <K, V> Map<K, V> readGenericMap(ByteBuf buf, Function<ByteBuf, K> keyFunc,
-                                                  Function<ByteBuf, V> valFunc) {
-        Map<K, V> ret = new HashMap<>();
+    public static <K,V> Map<K,V> readMap(ByteBuf buf, Supplier<K> keyFunc, Supplier<V> valFunc) {
+        Map<K,V> ret = new HashMap<>();
         int size = buf.readInt();
-        for(int i=0;i<size;i++)
-            ret.put(keyFunc.apply(buf),valFunc.apply(buf));
+        for(int i=0;i<size;i++) ret.put(keyFunc.get(),valFunc.get());
         return ret;
     }
 
@@ -107,9 +108,16 @@ public class NetworkHelper {
         return Objects.nonNull(api) ? api.readResourceLocation(buf) : null;
     }
 
+    public static <V> Set<V> readSet(ByteBuf buf, Supplier<V> valFunc) {
+        Set<V> ret = new HashSet<>();
+        int size = buf.readInt();
+        for(int i=0;i<size;i++) ret.add(valFunc.get());
+        return ret;
+    }
+
     public static String readString(ByteBuf buf) {
         int strLength = buf.readInt();
-        return (String)buf.readCharSequence(strLength, StandardCharsets.UTF_8);
+        return (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
     }
 
     public static void registerMessage(Object handler) {
@@ -166,35 +174,44 @@ public class NetworkHelper {
         if(Objects.nonNull(api) && Objects.nonNull(message)) api.sendToServer(message);
     }
 
-    public static <V> void writeGenericList(ByteBuf buf, List<V> list, BiConsumer<ByteBuf, V> valFunc) {
-        buf.writeInt(list.size());
-        for(V val : list) valFunc.accept(buf,val);
+    public static <V> void writeCollection(ByteBuf buf, Collection<V> collection, Consumer<V> valFunc) {
+        if(collection instanceof List<?>) {
+            writeString(buf,"list");
+            writeList(buf,(List<V>)collection,valFunc);
+        }
+        else if(collection instanceof Set<?>) {
+            writeString(buf,"set");
+            writeSet(buf,(Set<V>)collection,valFunc);
+        }
     }
 
-    public static <K, V> void writeGenericMap(ByteBuf buf, Map<K, V> map, BiConsumer<ByteBuf, K> keyFunc,
-                                              BiConsumer<ByteBuf, V> valFunc) {
-        buf.writeInt(map.size());
-        for(Map.Entry<K, V> entry : map.entrySet()) {
-            keyFunc.accept(buf,entry.getKey());
-            valFunc.accept(buf,entry.getValue());
-        }
+    public static <V> void writeList(ByteBuf buf, List<V> list, Consumer<V> valFunc) {
+        buf.writeInt(list.size());
+        for(V val : list) valFunc.accept(val);
+    }
+
+    public static <K,V> void writeMap(ByteBuf buf, Map<K,V> map, Consumer<K> keyFunc, Consumer<V> valFunc) {
+        writeSet(buf,map.entrySet(),entry -> {
+            keyFunc.accept(entry.getKey());
+            valFunc.accept(entry.getValue());
+        });
     }
 
     /**
      * Writes a generic object as a string
      */
-    public static void writeGenericObj(ByteBuf buf, Object val) {
-        writeGenericObj(buf, val, null);
+    public static void writeObject(ByteBuf buf, Object val) {
+        writeObject(buf,val,null);
     }
 
     /**
      * Writes a generic object as a string. Can handle lists but not arrays or generic collections
      */
-    public static void writeGenericObj(ByteBuf buf, Object val, @Nullable Function<Object, String> toString) {
+    public static void writeObject(ByteBuf buf, Object val, @Nullable Function<Object,String> toString) {
         if(Objects.nonNull(toString)) writeString(buf,toString.apply(val));
         else {
             writeString(buf,val.getClass().getName());
-            if(val instanceof List<?>) writeGenericList(buf,(List<?>)val,(buf1,element) -> writeGenericObj(buf, element));
+            if(val instanceof Collection<?>) writeCollection(buf,(Collection<?>)val,element -> writeObject(buf,element));
             else writeString(buf,val.toString());
         }
     }
@@ -206,6 +223,11 @@ public class NetworkHelper {
 
     public static void writeResourceLocation(ByteBuf buf, ResourceLocationAPI<?> resource) {
         writeString(buf,resource.toString());
+    }
+
+    public static <V> void writeSet(ByteBuf buf, Set<V> set, Consumer<V> valFunc) {
+        buf.writeInt(set.size());
+        for(V val : set) valFunc.accept(val);
     }
 
     public static void writeString(ByteBuf buf, String string) {

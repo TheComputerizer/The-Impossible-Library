@@ -49,11 +49,11 @@ public class WidgetRadial extends WidgetShape {
 
     @Override
     public void draw(RenderAPI renderer, float offset) {
-        RenderHelper.drawRing(renderer,this.center,this.innerRadius,this.outerRadius,
-                getTexture().getColorMask().getColorVF(),100,offset);
+        RenderHelper.drawCircleSlice(renderer,this.center,this.innerRadius,this.outerRadius,this.startAngle,
+                this.endAngle,getTexture().getColorMask().getColorVF(),100,offset);
         if(getOutlineThickness()>0f)
-            RenderHelper.drawRing(renderer,this.center,this.outerRadius-(double)getOutlineThickness(),
-                    this.outerRadius,getOutlineColor().getColorVF(),100,offset);
+            RenderHelper.drawCircleSlice(renderer,this.center,this.outerRadius-(double)getOutlineThickness(),
+                    this.outerRadius,this.startAngle,this.endAngle,getOutlineColor().getColorVF(),100,offset);
     }
 
     @Override

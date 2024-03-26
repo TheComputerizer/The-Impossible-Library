@@ -45,7 +45,7 @@ public class Variable extends AbstractType {
     public Variable(ByteBuf buf, @Nullable Table parentTable) {
         super(buf, parentTable);
         this.name = NetworkHelper.readString(buf);
-        this.value = NetworkHelper.parseGenericObj(buf);
+        this.value = NetworkHelper.parseObject(buf);
         this.isValid = Objects.nonNull(this.value);
     }
 
@@ -252,7 +252,7 @@ public class Variable extends AbstractType {
     public void write(ByteBuf buf) {
         super.write(buf);
         NetworkHelper.writeString(buf,this.name);
-        NetworkHelper.writeGenericObj(buf,this.value);
+        NetworkHelper.writeObject(buf,this.value);
     }
 
     public CompoundTagAPI writeToTag() {
