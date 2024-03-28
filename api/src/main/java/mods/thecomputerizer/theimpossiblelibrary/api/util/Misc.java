@@ -7,10 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,6 +53,34 @@ public class Misc {
     }
 
     /**
+     * Returns the full name of the class of the object or NULL if the object is null.
+     */
+    public static String className(@Nullable Object obj) {
+        return className(Objects.nonNull(obj) ? obj.getClass() : null,false);
+    }
+
+    /**
+     * Returns the full name of the class or NULL if the class is null.
+     */
+    public static String className(@Nullable Class<?> clazz) {
+        return className(clazz,false);
+    }
+
+    /**
+     * Returns the either the full or simple name of the class of the object or NULL if the object is null.
+     */
+    public static String className(@Nullable Object obj, boolean simple) {
+        return className(Objects.nonNull(obj) ? obj.getClass() : null,simple);
+    }
+
+    /**
+     * Returns the either the full or simple name of the class or NULL if the class is null.
+     */
+    public static String className(@Nullable Class<?> clazz, boolean simple) {
+        return Objects.nonNull(clazz) ? (simple ? clazz.getSimpleName() : clazz.getName()) : "NULL";
+    }
+
+    /**
      * Exceptions need to be handled externally
      */
     public static <K> void consumeNullable(@Nullable K thing, Consumer<K> conumer) {
@@ -91,6 +116,42 @@ public class Misc {
 
     public static List<String> expandFilePaths(String ... filePaths) {
         return expandFilePaths(Arrays.asList(filePaths));
+    }
+
+    /**
+     * Finds a class from the input name.
+     * Returns null if the class does not exist.
+     */
+    public static @Nullable Class<?> findClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch(ClassNotFoundException ex) {
+            TILRef.logError("Unable to find class with name `{}`",name);
+            return null;
+        }
+    }
+
+    /**
+     * Finds a constructor of the given class with the specified args.
+     * Returns null if the input class is null or the constructor does not exist.
+     */
+    public static @Nullable Constructor<?> findConstructor(@Nullable Class<?> clazz, Class<?> ... args) {
+        if(Objects.isNull(clazz)) return null;
+        try {
+            return clazz.getConstructor(args);
+        } catch(NoSuchMethodException ex) {
+            TILRef.logError("Unable to find constructor of class `{}` with args `{}`",clazz,args);
+            return null;
+        }
+    }
+
+    /**
+     * Finds a class from the input name that can be extended from the input superClass.
+     * Returns null if the class does not exist.
+     */
+    public static @Nullable Class<?> findExtensibleClass(String name, Class<?> superClass) {
+        Class<?> clazz = findClass(name);
+        return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
     }
 
     /**

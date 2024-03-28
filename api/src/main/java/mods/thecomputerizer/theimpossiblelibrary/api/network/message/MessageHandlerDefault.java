@@ -3,35 +3,28 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 import io.netty.buffer.ByteBuf;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class MessageHandlerDefault implements MessageHandlerAPI {
 
-    private final Function<ByteBuf,? extends MessageWrapperAPI<?,?>> messageDecoder;
+    private final Function<ByteBuf,? extends MessageAPI<?>> messageDecoder;
 
-    public <M extends MessageWrapperAPI<?,?>> MessageHandlerDefault(Function<ByteBuf,M> messageDecoder) {
+    public <M extends MessageAPI<?>> MessageHandlerDefault(Function<ByteBuf,M> messageDecoder) {
         this.messageDecoder = messageDecoder;
     }
 
     @Override
-    public <B extends ByteBuf,M extends MessageWrapperAPI<?,?>> void encode(M message, B buf) {
-        message.encodeMessages(buf);
+    public <M extends MessageAPI<?>> void encode(M message, ByteBuf buf) {
+        message.encode(buf);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <B extends ByteBuf,M extends MessageWrapperAPI<?,?>> M decode(B buf) {
+    public <M extends MessageAPI<?>> M decode(ByteBuf buf) {
         return (M)this.messageDecoder.apply(buf);
     }
 
     @Override
-    public <M extends MessageWrapperAPI<?,?>> void handle(M message, Supplier<?> ctxSupplier) {
-        handleCasted(message,ctxSupplier);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <CTX,M extends MessageWrapperAPI<?,?>,MC extends MessageWrapperAPI<?,CTX>> void handleCasted(
-            M message, Supplier<CTX> ctxSupplier) {
-        ((MC)message).handleMessages(ctxSupplier.get());
+    public <CTX,M extends MessageAPI<CTX>> MessageAPI<CTX> handle(M message, CTX context) {
+        return message.handle(context);
     }
 }

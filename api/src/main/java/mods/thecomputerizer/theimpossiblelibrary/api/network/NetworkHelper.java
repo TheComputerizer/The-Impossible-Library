@@ -2,23 +2,35 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class NetworkHelper {
+
+    public static <DIR> @Nullable DIR getDirFromName(String name) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getDirFromName(name) : null;
+    }
+
+    public static <DIR> @Nullable String getNameFromDir(DIR dir) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) ? api.getNameFromDir(dir) : null;
+    }
 
     public static <DIR> @Nullable DIR getDirToClient() {
         NetworkAPI<?,DIR> api = getNetworkAPI();
@@ -40,6 +52,12 @@ public class NetworkHelper {
         return Objects.nonNull(api) ? api.getDirToServerLogin() : null;
     }
 
+    public static <DIR> @Nullable DIR getOppositeDir(@Nullable DIR dir) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) && Objects.nonNull(dir) ? api.getOppositeDir(dir) : null;
+    }
+
+
     public static <N> @Nullable N getNetwork() {
         NetworkAPI<N,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.getNetwork() : null;
@@ -51,6 +69,11 @@ public class NetworkHelper {
     }
 
     public static <DIR> boolean isDirToClient(DIR d) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) && api.isDirToClient(d);
+    }
+
+    public static <DIR> boolean isDirLogin(DIR d) {
         NetworkAPI<?,DIR> api = getNetworkAPI();
         return Objects.nonNull(api) && api.isDirToClient(d);
     }
@@ -81,6 +104,10 @@ public class NetworkHelper {
 
     public static <V> Collection<V> readCollection(ByteBuf buf, Supplier<V> valFunc) {
         return readString(buf).equals("list") ? readList(buf,valFunc) : readSet(buf,valFunc);
+    }
+
+    public static <DIR> DIR readDir(ByteBuf buf) {
+        return getDirFromName(readString(buf));
     }
 
     public static <V> List<V> readList(ByteBuf buf, Supplier<V> valFunc) {
@@ -120,47 +147,9 @@ public class NetworkHelper {
         return (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
     }
 
-    public static void registerMessage(Object handler) {
-        NetworkAPI<?,?> api = getNetworkAPI();
-        if(Objects.nonNull(api)) api.registerMessage(handler);
-    }
-
-    public static <SIDE,M extends MessageWrapperAPI<?,?>> void registerMessage(int id, Class<M> clazz, SIDE side) {
-        NetworkAPI<?,?> api = getNetworkAPI();
-        if(Objects.nonNull(api)) api.registerMessage(id,clazz,side);
-    }
-
-    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
-    public static <DIR,CONTEXT,B extends ByteBuf,M extends MessageWrapperAPI<?,?>,MC extends MessageWrapperAPI<?,CONTEXT>> void registerMessage(
-            int id, Class<M> clazz, BiConsumer<M,B> encoder, Function<B,M> decoder,BiConsumer<M,Supplier<?>> handler, Optional<DIR> dir) {
+    public static <DIR> void registerMessage(MessageDirectionInfo<DIR> info, int id) {
         NetworkAPI<?,DIR> api = getNetworkAPI();
-        if(Objects.nonNull(api))
-            registerMessageStupidly(api,id,(Class<MC>)clazz,(BiConsumer<MC,B>)encoder,(Function<B,MC>)decoder,
-                    (BiConsumer<MC,Supplier<?>>)handler,dir);
-    }
-
-    /**
-     * Stupid syntax sugar casting stuff
-     */
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private static <DIR,CONTEXT,B extends ByteBuf,M extends MessageWrapperAPI<?,CONTEXT>> void registerMessageStupidly(
-            NetworkAPI<?,DIR> api, int id, Class<M> clazz, BiConsumer<M,B> encoder, Function<B,M> decoder,
-            BiConsumer<M,Supplier<?>> handler, Optional<DIR> dir) {
-        api.registerMessage(id,clazz,encoder,decoder,stupidlyCast(handler),dir);
-    }
-
-    /**
-     * Stupid syntax sugar casting stuff
-     */
-    @SuppressWarnings("unchecked")
-    private static <CONTEXT,M extends MessageWrapperAPI<?,CONTEXT>,S extends Supplier<CONTEXT>> BiConsumer<M,Supplier<CONTEXT>> stupidlyCast(
-            BiConsumer<M,Supplier<?>> handler) {
-        return (BiConsumer<M,Supplier<CONTEXT>>)(BiConsumer<M,S>)handler;
-    }
-
-    public static @Nullable ResourceLocationAPI<?> registerMessage(ResourceLocationAPI<?> resource, boolean toClient) {
-        NetworkAPI<?,?> api = getNetworkAPI();
-        return Objects.nonNull(api) ? api.registerMessage(resource,toClient) : null;
+        if(Objects.nonNull(api)) api.registerMessage(info,id);
     }
 
     public static <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
@@ -174,6 +163,25 @@ public class NetworkHelper {
         if(Objects.nonNull(api) && Objects.nonNull(message)) api.sendToServer(message);
     }
 
+    public static <CTX,DIR> @Nullable MessageWrapperAPI<?,CTX> wrapMessage(DIR dir, MessageAPI<CTX> message) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) && Objects.nonNull(message) ? api.wrapMessage(dir,message) : null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <CTX,DIR> @Nullable MessageWrapperAPI<?,CTX> wrapMessages(DIR dir, MessageAPI<CTX> ... messages) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        if(Objects.nonNull(api) && Objects.nonNull(messages) && messages.length>0)
+            return messages.length==1 ? wrapMessage(dir,messages[0]) : api.wrapMessages(dir,messages);
+        return null;
+    }
+
+    public static <CTX,DIR> @Nullable MessageWrapperAPI<?,CTX> wrapMessages(DIR dir, Collection<MessageAPI<CTX>> messages) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        return Objects.nonNull(api) && Objects.nonNull(messages) && !messages.isEmpty() ?
+                api.wrapMessages(dir,messages) : null;
+    }
+
     public static <V> void writeCollection(ByteBuf buf, Collection<V> collection, Consumer<V> valFunc) {
         if(collection instanceof List<?>) {
             writeString(buf,"list");
@@ -183,6 +191,11 @@ public class NetworkHelper {
             writeString(buf,"set");
             writeSet(buf,(Set<V>)collection,valFunc);
         }
+    }
+
+    public static <DIR> void writeDir(ByteBuf buf, DIR dir) {
+        String name = getNameFromDir(dir);
+        writeString(buf,Objects.nonNull(name) ? name : "CLIENT");
     }
 
     public static <V> void writeList(ByteBuf buf, List<V> list, Consumer<V> valFunc) {
