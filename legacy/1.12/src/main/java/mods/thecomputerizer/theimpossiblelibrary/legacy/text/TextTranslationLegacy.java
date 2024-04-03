@@ -10,7 +10,7 @@ public class TextTranslationLegacy extends TextLegacy implements TextTranslation
     private final ITextComponent component;
     private final String original;
 
-    public TextTranslationLegacy(String original, Object args) {
+    public TextTranslationLegacy(String original, Object ... args) {
         this.original = original;
         this.component = new TextComponentTranslation(original,args);
     }

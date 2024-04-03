@@ -1,16 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.font.FontForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.gui.ScreenForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.render.RenderForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextStringForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextTranslationForge;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 
@@ -42,18 +38,8 @@ public class MinecraftForgeTIL implements MinecraftAPI {
     }
 
     @Override
-    public TextAPI<?> getLiteralText(String text) {
-        return new TextStringForge(text);
-    }
-
-    @Override
     public RenderAPI getRenderer() {
         return this.render;
-    }
-
-    @Override
-    public TextAPI<?> getTranslatedText(String key, Object... args) {
-        return new TextTranslationForge(key,args);
     }
 
     /**

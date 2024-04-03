@@ -28,7 +28,7 @@ public class NetworkHandler {
 
     @SuppressWarnings("unchecked")
     public static <M extends MessageAPI<?>> @Nullable MessageInfo<M> getMessageInfo(M message) {
-        return (MessageInfo<M>)CLASS_INFO.get(message.getClass());
+        return (MessageInfo<M>)CLASS_INFO.get(message.getClass()); //TODO Make this depend on the direction
     }
 
     /**

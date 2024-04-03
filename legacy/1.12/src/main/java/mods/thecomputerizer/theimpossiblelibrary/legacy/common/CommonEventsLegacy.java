@@ -3,6 +3,15 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper.EventEntry;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.AttachCapabilitiesEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.block.BlockBreakEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.block.BlockPlaceEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.entity.*;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.AttachCapabilitiesEventLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.block.BlockBreakEventLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.block.BlockPlaceEventLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.entity.*;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -27,7 +36,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
-import java.util.Collection;
+import java.util.Set;
 
 @EventBusSubscriber(modid = TILRef.MODID)
 public class CommonEventsLegacy implements CommonEventsAPI {
@@ -48,7 +57,7 @@ public class CommonEventsLegacy implements CommonEventsAPI {
     }
 
     @SubscribeEvent
-    public static void onBlockPlace(BreakEvent event) {
+    public static void onBlockPlace(PlaceEvent event) {
         CommonEventsHelper.invoke(event);
     }
 
@@ -198,39 +207,41 @@ public class CommonEventsLegacy implements CommonEventsAPI {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void defineEventClasses(Collection<Class<?>> classes) {
-        classes.add(AdvancementEvent.class);
-        classes.add(AttachCapabilitiesEvent.class);
-        classes.add(BreakEvent.class);
-        classes.add(PlaceEvent.class);
-        classes.add(LivingAttackEvent.class);
-        classes.add(LivingDamageEvent.class);
-        classes.add(LivingDeathEvent.class);
-        classes.add(EnteringChunk.class);
-        classes.add(LivingFallEvent.class);
-        classes.add(Finish.class);
-        classes.add(LivingHurtEvent.class);
-        classes.add(EntityJoinWorldEvent.class);
-        classes.add(LivingJumpEvent.class);
-        classes.add(LivingKnockBackEvent.class);
-        classes.add(LootingLevelEvent.class);
-        classes.add(LivingSetAttackTargetEvent.class);
-        classes.add(EntityStruckByLightningEvent.class);
-        classes.add(Detonate.class);
-        classes.add(BreakSpeed.class);
-        classes.add(PlayerChangedDimensionEvent.class);
-        classes.add(Clone.class);
-        classes.add(PlayerLoggedInEvent.class);
-        classes.add(PlayerLoggedOutEvent.class);
-        classes.add(PlayerInteractEvent.class);
-        classes.add(ItemPickupEvent.class);
-        classes.add(PlayerPickupXpEvent.class);
-        classes.add(PlayerRespawnEvent.class);
-        classes.add(PlayerSleepInBedEvent.class);
-        classes.add(PlayerTickEvent.class);
-        classes.add(PotentialSpawns.class);
-        classes.add(ServerTickEvent.class);
-        classes.add(WorldTickEvent.class);
+    public void defineEventClasses(Set<EventEntry<?,?,?>> entries) { //TODO finish implementing this
+        entries.add(new EventEntry<>(AdvancementEvent.class,AdvancementEventWrapper.class,AdvancementEventLegacy.class));
+        entries.add(new EventEntry<>(AttachCapabilitiesEvent.class,AttachCapabilitiesEventWrapper.class,AttachCapabilitiesEventLegacy.class));
+        entries.add(new EventEntry<>(BreakEvent.class,BlockBreakEventWrapper.class,BlockBreakEventLegacy.class));
+        entries.add(new EventEntry<>(PlaceEvent.class,BlockPlaceEventWrapper.class,BlockPlaceEventLegacy.class));
+        entries.add(new EventEntry<>(LivingAttackEvent.class,LivingAttackedEventWrapper.class,LivingAttackedEventLegacy.class));
+        entries.add(new EventEntry<>(LivingDamageEvent.class,LivingDamageEventWrapper.class,LivingDamageEventLegacy.class));
+        entries.add(new EventEntry<>(LivingDeathEvent.class,LivingDeathEventWrapper.class,LivingDeathEventLegacy.class));
+        entries.add(new EventEntry<>(EnteringChunk.class,EntityEnteringChunkEventWrapper.class,EntityEnteringChunkEventLegacy.class));
+        entries.add(new EventEntry<>(LivingFallEvent.class,LivingFallEventWrapper.class,LivingFallEventLegacy.class));
+        /*
+        entries.add(new EventEntry<>(Finish.class,null,null));
+        entries.add(new EventEntry<>(LivingHurtEvent.class,null,null));
+        entries.add(new EventEntry<>(EntityJoinWorldEvent.class,null,null));
+        entries.add(new EventEntry<>(LivingJumpEvent.class,null,null));
+        entries.add(new EventEntry<>(LivingKnockBackEvent.class,null,null));
+        entries.add(new EventEntry<>(LootingLevelEvent.class,null,null));
+        entries.add(new EventEntry<>(LivingSetAttackTargetEvent.class,null,null));
+        entries.add(new EventEntry<>(EntityStruckByLightningEvent.class,null,null));
+        entries.add(new EventEntry<>(Detonate.class,null));
+        entries.add(new EventEntry<>(BreakSpeed.class,null));
+        entries.add(new EventEntry<>(PlayerChangedDimensionEvent.class,null,null));
+        entries.add(new EventEntry<>(Clone.class,null,null));
+        entries.add(new EventEntry<>(PlayerLoggedInEvent.class,null,null));
+        entries.add(new EventEntry<>(PlayerLoggedOutEvent.class,null,null));
+        entries.add(new EventEntry<>(PlayerInteractEvent.class,null,null));
+        entries.add(new EventEntry<>(ItemPickupEvent.class,null,null));
+        entries.add(new EventEntry<>(PlayerPickupXpEvent.class,null,null));
+        entries.add(new EventEntry<>(PlayerRespawnEvent.class,null,null));
+        entries.add(new EventEntry<>(PlayerSleepInBedEvent.class,null,null));
+        entries.add(new EventEntry<>(PlayerTickEvent.class,null,null));
+        entries.add(new EventEntry<>(PotentialSpawns.class,null,null));
+        entries.add(new EventEntry<>(ServerTickEvent.class,null,null));
+        entries.add(new EventEntry<>(WorldTickEvent.class,null,null));
+         */
     }
 
     @Override

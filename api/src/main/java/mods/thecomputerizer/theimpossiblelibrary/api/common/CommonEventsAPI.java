@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
-import java.util.Collection;
+import java.util.Set;
 
 public interface CommonEventsAPI {
 
-    void defineEventClasses(Collection<Class<?>> classes);
+    void defineEventClasses(Set<CommonEventsHelper.EventEntry<?,?,?>> map);
     void initDefaultListeners();
 }

@@ -1,55 +1,45 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventAPI;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 public class ClientEventsHelper {
 
-    private static Set<Class<?>> EVENT_CLASSES;
-    private static Map<Class<?>,List<Consumer<?>>> EVENT_SUBSCRIBERS;
+    private static Set<CommonEventsHelper.EventEntry<?,?,?>> EVENT_ENTRIES;
 
-    public static <E> void addListener(Class<E> clazz, Consumer<E> invoker) {
-        if(isRegisteredEventClass(clazz)) {
-            checkEventSubscriberInit(clazz);
-            EVENT_SUBSCRIBERS.get(clazz).add(invoker);
-        } else TILRef.logError("Cannot listen to non event class {}!",clazz);
-    }
-
-    private static void checkEventSubscriberInit(Class<?> clazz) {
-        if(Objects.isNull(EVENT_SUBSCRIBERS)) EVENT_SUBSCRIBERS = new HashMap<>();
-        EVENT_SUBSCRIBERS.putIfAbsent(clazz,new ArrayList<>());
+    public static <E extends EventAPI> void addListener(Class<E> clazz, Consumer<E> invoker) {
+        if(Objects.isNull(EVENT_ENTRIES)) defineEventClasses();
+        for(CommonEventsHelper.EventEntry<?,?,?> entry : EVENT_ENTRIES) {
+            if(entry.isAPIClass(clazz)) {
+                subscribe(entry,invoker);
+                return;
+            }
+        }
+        TILRef.logError("Cannot listen to non event class {}!",clazz);
     }
 
     private static void defineEventClasses() {
-        EVENT_CLASSES = new HashSet<>();
+        EVENT_ENTRIES = new HashSet<>();
         ClientEventsAPI api = getEventsAPI();
-        if(Objects.nonNull(api)) api.defineEventClasses(EVENT_CLASSES);
+        if(Objects.nonNull(api)) api.defineEventClasses(EVENT_ENTRIES);
     }
 
     public static ClientEventsAPI getEventsAPI() {
         return TILRef.getClientSubAPI("ClientEventsAPI",ClientAPI::getClientEventsAPI);
     }
 
+    public static void invoke(Object event) {
+        if(Objects.isNull(EVENT_ENTRIES)) defineEventClasses();
+        for(CommonEventsHelper.EventEntry<?,?,?> entry : EVENT_ENTRIES)
+            if(entry.isValidConnectorObj(event)) entry.invokeFromConnecting(event);
+    }
+
     @SuppressWarnings("unchecked")
-    public static <E> void invoke(E event) {
-        Class<?> clazz = event.getClass();
-        if(isInvokable(clazz))
-            for(Consumer<?> listener : EVENT_SUBSCRIBERS.get(clazz))
-                ((Consumer<E>)listener).accept(event);
-    }
-
-    public static <E> boolean isInvokable(E event) {
-        return isInvokable(event.getClass());
-    }
-
-    public static boolean isInvokable(Class<?> clazz) {
-        return Objects.nonNull(EVENT_SUBSCRIBERS) && EVENT_SUBSCRIBERS.containsKey(clazz);
-    }
-
-    public static boolean isRegisteredEventClass(Class<?> clazz) {
-        if(Objects.isNull(EVENT_CLASSES)) defineEventClasses();
-        return EVENT_CLASSES.contains(clazz);
+    private static <E,A extends EventAPI,I extends A> void subscribe(CommonEventsHelper.EventEntry<E,A,I> entry, Consumer<?> invoker) {
+        entry.subscribe((Consumer<A>)invoker);
     }
 }

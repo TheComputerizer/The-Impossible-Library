@@ -10,7 +10,7 @@ public class TextTranslationForge extends TextForge implements TextTranslationAP
     private final IFormattableTextComponent component;
     private final String original;
 
-    public TextTranslationForge(String original, Object args) {
+    public TextTranslationForge(String original, Object ... args) {
         this.original = original;
         this.component = new TranslationTextComponent(original,args);
     }

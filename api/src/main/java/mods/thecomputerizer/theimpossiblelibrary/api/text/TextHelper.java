@@ -1,12 +1,53 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.text;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class TextHelper {
+
+    public static String arrayToString(Object ... array) {
+        return arrayToString(0,System.lineSeparator(),array);
+    }
+
+    public static String arrayToString(int limit, Object ... array) {
+        return arrayToString(limit,System.lineSeparator(),array);
+    }
+
+    public static String arrayToString(String split, Object ... array) {
+        return arrayToString(0,split,array);
+    }
+
+    public static String arrayToString(int limit, String split, Object ... array) {
+        if(Objects.isNull(array) || array.length==0) return null;
+        limit = limit>0 ? limit : Integer.MAX_VALUE;
+        StringBuilder builder = new StringBuilder();
+        int index = 1;
+        for(Object element : array) {
+            if (Objects.nonNull(element)) {
+                String asString = element.toString();
+                if (!asString.trim().isEmpty())
+                    builder.append(asString);
+            }
+            if(index<array.length && index<limit) {
+                builder.append(split);
+                index++;
+            }
+            else if(index==limit) return builder.toString();
+        }
+        return builder.toString();
+    }
+
+    public static String capitalize(String original) {
+        if(Objects.isNull(original) || original.isEmpty()) return original;
+        return String.valueOf(original.charAt(0)).toUpperCase()+original.substring(1).toLowerCase();
+    }
 
     /**
      * Converts a collection of generic objects into a single string of the format [ "element1" "element2" "element3" ... ]
@@ -31,41 +72,18 @@ public class TextHelper {
         return builder.toString();
     }
 
-    /**
-     * Implementation of String#repeat for the versions that rely on Java 8
-     */
-    public static String repeat(String base, int num) {
-        StringBuilder builder = new StringBuilder();
-        for(int i=0; i<num; i++) builder.append(base);
-        return builder.toString();
+    public static @Nullable TextHelperAPI<?> getHelper() {
+        return TILRef.getCommonSubAPI("TextHelperAPI",CommonAPI::getTextHelperAPI);
     }
 
-    /**
-     * Splits a string into a list of strings based on the input separator
-     */
-    public static List<String> splitToList(String original, String splitBy) {
-        return Arrays.stream(original.split(splitBy)).collect(Collectors.toList());
+    public static @Nullable TextStringAPI<?> getLiteral(String text) {
+        TextHelperAPI<?> helper = getHelper();
+        return Objects.nonNull(helper) ? helper.getLiteral(text) : null;
     }
 
-    /**
-     * Same as the above method with a limit on the maximum number of elements.
-     */
-    public static List<String> splitToList(String original, String splitBy, int limit) {
-        return Arrays.stream(original.split(splitBy, limit)).collect(Collectors.toList());
-    }
-
-    /**
-     * Splits a string into a list of strings based on the system line separator
-     */
-    public static List<String> newLineSplit(String original) {
-        return Arrays.stream(original.split(System.lineSeparator())).collect(Collectors.toList());
-    }
-
-    /**
-     * Same as the above method with a limit on the maximum number of elements.
-     */
-    public static List<String> newLineSplit(String original, int limit) {
-        return Arrays.stream(original.split(System.lineSeparator(), limit)).collect(Collectors.toList());
+    public static @Nullable TextTranslationAPI<?> getTranslated(String key, Object ... args) {
+        TextHelperAPI<?> helper = getHelper();
+        return Objects.nonNull(helper) ? helper.getTranslated(key,args) : null;
     }
 
     /**
@@ -79,24 +97,12 @@ public class TextHelper {
         return arrayToString(0,System.lineSeparator(),list.toArray(new Object[0]));
     }
 
-    public static String arrayToString(Object ... array) {
-        return arrayToString(0,System.lineSeparator(),array);
-    }
-
     public static String listToString(Collection<String> list, int limit) {
         return arrayToString(limit,System.lineSeparator(),list.toArray(new Object[0]));
     }
 
-    public static String arrayToString(int limit, Object ... array) {
-        return arrayToString(limit,System.lineSeparator(),array);
-    }
-
     public static String listToString(Collection<String> list, String split) {
         return arrayToString(0,split,list.toArray(new Object[0]));
-    }
-
-    public static String arrayToString(String split, Object ... array) {
-        return arrayToString(0,split,array);
     }
 
     public static String listToString(Collection<String> list, int limit, String split) {
@@ -104,45 +110,22 @@ public class TextHelper {
         return arrayToString(limit,split,list.toArray(new Object[0]));
     }
 
-    public static String arrayToString(int limit, String split, Object ... array) {
-        if(Objects.isNull(array) || array.length==0) return null;
-        limit = limit>0 ? limit : Integer.MAX_VALUE;
-        StringBuilder builder = new StringBuilder();
-        int index = 1;
-        for(Object element : array) {
-            if (Objects.nonNull(element)) {
-                String asString = element.toString();
-                if (!asString.trim().isEmpty())
-                    builder.append(asString);
-            }
-            if(index<array.length && index<limit) {
-                builder.append(split);
-                index++;
-            }
-            else if(index==limit) return builder.toString();
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Returns the input string with the specified number of leading tabs
-     */
-    public static String withTabs(String original, int tabs) {
-        StringBuilder builder = new StringBuilder();
-        for(int i=0; i <tabs; i++) builder.append("\t");
-        return builder.append(original).toString();
-    }
-
-    public static String capitalize(String original) {
-        if(Objects.isNull(original) || original.isEmpty()) return original;
-        return String.valueOf(original.charAt(0)).toUpperCase()+original.substring(1).toLowerCase();
-    }
-
     /**
      * Assumes the input string is camel case
      */
     public static String makeCaseTypeFromCamel(String original, TextCasing type) {
         String[] words = TextCasing.CAMEL.split(original);
+        if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
+        if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
+        if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
+        return TextCasing.KEBAB.combine(words);
+    }
+
+    /**
+     * Assumes the input string is kebab case
+     */
+    public static String makeCaseTypeFromKebab(String original, TextCasing type) {
+        String[] words = TextCasing.KEBAB.split(original);
         if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
         if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
         if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
@@ -172,14 +155,49 @@ public class TextHelper {
     }
 
     /**
-     * Assumes the input string is kebab case
+     * Splits a string into a list of strings based on the system line separator
      */
-    public static String makeCaseTypeFromKebab(String original, TextCasing type) {
-        String[] words = TextCasing.KEBAB.split(original);
-        if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
-        if(type==TextCasing.PASCAL) return TextCasing.PASCAL.combine(words);
-        if(type==TextCasing.SNAKE) return TextCasing.SNAKE.combine(words);
-        return TextCasing.KEBAB.combine(words);
+    public static List<String> newLineSplit(String original) {
+        return Arrays.stream(original.split(System.lineSeparator())).collect(Collectors.toList());
+    }
+
+    /**
+     * Same as the above method with a limit on the maximum number of elements.
+     */
+    public static List<String> newLineSplit(String original, int limit) {
+        return Arrays.stream(original.split(System.lineSeparator(), limit)).collect(Collectors.toList());
+    }
+
+    /**
+     * Implementation of String#repeat for the versions that rely on Java 8
+     */
+    public static String repeat(String base, int num) {
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i<num; i++) builder.append(base);
+        return builder.toString();
+    }
+
+    /**
+     * Splits a string into a list of strings based on the input separator
+     */
+    public static List<String> splitToList(String original, String splitBy) {
+        return Arrays.stream(original.split(splitBy)).collect(Collectors.toList());
+    }
+
+    /**
+     * Same as the above method with a limit on the maximum number of elements.
+     */
+    public static List<String> splitToList(String original, String splitBy, int limit) {
+        return Arrays.stream(original.split(splitBy, limit)).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the input string with the specified number of leading tabs
+     */
+    public static String withTabs(String original, int tabs) {
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i <tabs; i++) builder.append("\t");
+        return builder.append(original).toString();
     }
 
     public enum TextCasing {

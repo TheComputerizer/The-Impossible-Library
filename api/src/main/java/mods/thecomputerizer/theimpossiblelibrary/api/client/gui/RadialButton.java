@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -28,7 +29,7 @@ public class RadialButton extends AbstractRadialButton {
                         BiConsumer<ScreenAPI<?>,RadialButton> onClick) {
         super(new Vector4f(0,0,0,255));
         this.handlerFunction = onClick;
-        this.tooltipLines = tooltipLines.stream().map(renderer.getMinecraft()::getLiteralText).collect(Collectors.toList());
+        this.tooltipLines = tooltipLines.stream().map(TextHelper::getLiteral).collect(Collectors.toList());
         this.centerIcon = centerIcon;
         this.altCenterIcon = Objects.isNull(altCenterIcon) ? centerIcon : altCenterIcon;
         this.iconHoverSizeIncrease = hoverIncrease;

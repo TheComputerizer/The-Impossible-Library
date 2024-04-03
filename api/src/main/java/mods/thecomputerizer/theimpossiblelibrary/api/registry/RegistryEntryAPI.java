@@ -6,5 +6,6 @@ public interface RegistryEntryAPI<V> {
 
     ResourceLocationAPI<?> getID();
     V getValue();
+    Class<? extends V> getValueClass();
     ResourceLocationAPI<?> getRegistryKey();
 }

@@ -1,19 +1,23 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.TILLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.network.NetworkLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryHandlerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.resource.ResourceLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.server.MinecraftServerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.tag.TagLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextHelperLegacy;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.Style;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -22,19 +26,21 @@ public class CommonLegacy implements CommonAPI {
     private final CommonEventsAPI events;
     private final ModAPI mod;
     private final NetworkAPI<SimpleNetworkWrapper,Side> network;
-    private final Reference reference;
     private final RegistryHandlerAPI<RegistryLegacy<?>> registry;
     private final ResourceAPI resource;
+    private final MinecraftServerAPI<MinecraftServer> server;
     private final TagAPI tag;
+    private final TextHelperAPI<Style> textHelper;
 
     public CommonLegacy() {
         this.events = new CommonEventsLegacy();
         this.mod = new ModLegacy();
         this.network = new NetworkLegacy();
-        this.reference = TILLegacy.LEGACY_REF;
         this.registry = new RegistryHandlerLegacy();
         this.resource = new ResourceLegacy();
+        this.server = new MinecraftServerLegacy();
         this.tag = new TagLegacy();
+        this.textHelper = new TextHelperLegacy();
     }
 
 
@@ -49,17 +55,12 @@ public class CommonLegacy implements CommonAPI {
     }
 
     @Override
-    public NetworkAPI<?,?> getNetworkAPI() {
+    public NetworkAPI<SimpleNetworkWrapper,Side> getNetworkAPI() {
         return this.network;
     }
 
     @Override
-    public Reference getReference() {
-        return this.reference;
-    }
-
-    @Override
-    public RegistryHandlerAPI<?> getRegistryHandlerAPI() {
+    public RegistryHandlerAPI<RegistryLegacy<?>> getRegistryHandlerAPI() {
         return this.registry;
     }
 
@@ -69,7 +70,17 @@ public class CommonLegacy implements CommonAPI {
     }
 
     @Override
+    public MinecraftServerAPI<MinecraftServer> getServerAPI() {
+        return this.server;
+    }
+
+    @Override
     public TagAPI getTagAPI() {
         return this.tag;
+    }
+
+    @Override
+    public TextHelperAPI<Style> getTextHelperAPI() {
+        return this.textHelper;
     }
 }

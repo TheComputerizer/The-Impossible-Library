@@ -4,6 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.geometry.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.WidgetAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextTranslationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.MinecraftForgeTIL;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextForge;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,7 +42,8 @@ public class ScreenForge extends ScreenAPI<Screen> {
 
     @Override
     public Screen make(String locale, Object ... args) {
-        return new ScreenWrapperForge(this,((TextForge)this.mc.getTranslatedText(locale,args)).get());
+        TextTranslationAPI<?> text = TextHelper.getTranslated(locale,args);
+        return new ScreenWrapperForge(this,Objects.nonNull(text) ? ((TextForge)text).get() : null);
     }
 
     @Override

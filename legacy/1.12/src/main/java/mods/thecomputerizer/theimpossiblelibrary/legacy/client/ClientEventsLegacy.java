@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper.EventEntry;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.CommonEventsLegacy;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnection
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Collection;
+import java.util.Set;
 
 @EventBusSubscriber(modid = TILRef.MODID, value = Side.CLIENT)
 public class ClientEventsLegacy extends CommonEventsLegacy implements ClientEventsAPI {
@@ -124,8 +126,9 @@ public class ClientEventsLegacy extends CommonEventsLegacy implements ClientEven
     }
 
     @Override
-    public void defineEventClasses(Collection<Class<?>> classes) {
-        super.defineEventClasses(classes);
+    public void defineEventClasses(Set<EventEntry<?,?,?>> entries) {
+        super.defineEventClasses(entries);
+        /*
         classes.add(ClientConnectedToServerEvent.class);
         classes.add(ClientDisconnectionFromServerEvent.class);
         classes.add(ClientTickEvent.class);
@@ -144,6 +147,7 @@ public class ClientEventsLegacy extends CommonEventsLegacy implements ClientEven
         classes.add(RenderTickEvent.class);
         classes.add(RenderWorldLastEvent.class);
         classes.add(PlaySoundEvent.class);
+         */
     }
 
     @Override

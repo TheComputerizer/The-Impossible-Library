@@ -1,16 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.font.FontLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.render.RenderLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextStringLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextTranslationLegacy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
@@ -42,18 +38,8 @@ public class MinecraftLegacy implements MinecraftAPI {
     }
 
     @Override
-    public TextAPI<?> getLiteralText(String text) {
-        return new TextStringLegacy(text);
-    }
-
-    @Override
     public RenderAPI getRenderer() {
         return this.render;
-    }
-
-    @Override
-    public TextAPI<?> getTranslatedText(String key, Object... args) {
-        return new TextTranslationLegacy(key,args);
     }
 
     /**

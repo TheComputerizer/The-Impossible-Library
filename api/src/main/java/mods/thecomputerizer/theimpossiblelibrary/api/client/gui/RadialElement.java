@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -49,8 +50,7 @@ public class RadialElement {
                          float resolution, float hoverIncrease, List<RadialButton> buttons) {
         this.parentScreen = parent;
         this.buttons = buttons;
-        this.centerTooltips = centerTooltips.stream().map(text -> parent.getMinecraft().getLiteralText(text))
-                .collect(Collectors.toList());
+        this.centerTooltips = centerTooltips.stream().map(TextHelper::getLiteral).collect(Collectors.toList());
         this.centerIcon = center;
         this.altCenterIcon = Objects.isNull(altCenter) ? center : altCenter;
         this.iconRadius = iconRadius;
