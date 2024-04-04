@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.TILForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.TILClientEntryForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,6 +28,7 @@ public class TILCommonEntryForge extends CommonEntryPoint {
 
     public void commonSetup(final FMLCommonSetupEvent event) {
         TILRef.logError("COMMON SETUP");
-        if(Objects.isNull(this.clientEntry)) CommonEventsHelper.getEventsAPI().initDefaultListeners();
+        EventHelper.initTILListeners(false);
+        if(Objects.isNull(this.clientEntry)) EventHelper.initTILListeners(false);
     }
 }

@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenHelperLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.CommonLegacy;
 
@@ -18,7 +18,7 @@ public class ClientLegacy extends CommonLegacy implements ClientAPI {
     }
 
     @Override
-    public ClientEventsAPI getClientEventsAPI() {
+    public EventsAPI getClientEventsAPI() {
         return this.events;
     }
 

@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 
 public interface ClientAPI extends CommonAPI {
 
-    ClientEventsAPI getClientEventsAPI();
+    EventsAPI getClientEventsAPI();
     MinecraftAPI getMinecraft();
     ScreenHelperAPI getScreenHelperAPI();
 }

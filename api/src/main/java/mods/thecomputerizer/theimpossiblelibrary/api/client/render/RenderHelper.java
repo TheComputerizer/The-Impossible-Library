@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -10,6 +12,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
@@ -243,6 +246,12 @@ public class RenderHelper {
         if(Objects.isNull(RANDOM)) RANDOM = new Random();
         return RANDOM;
     }
+
+    public static @Nullable RenderAPI getRenderer() {
+        MinecraftAPI mc = TILRef.getClientSubAPI("MinecraftAPI",ClientAPI::getMinecraft);
+        return Objects.nonNull(mc) ? mc.getRenderer() : null;
+    }
+
     /**
      * Primes the renderer to draw a solid color
      */

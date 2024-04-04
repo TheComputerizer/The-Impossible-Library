@@ -1,13 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
 
-import lombok.Getter;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.ATTACH_CAPABILITIES;
 
-@Getter
-public abstract class AttachCapabilitiesEventWrapper<O> implements EventAPI { //TODO Add API hooks for this
+public abstract class AttachCapabilitiesEventWrapper<E> extends CommonEventWrapper<E> { //TODO Add API hooks for this
 
-    protected final O object;
-
-    public AttachCapabilitiesEventWrapper(O object) {
-        this.object = object;
+    protected AttachCapabilitiesEventWrapper() {
+        super(ATTACH_CAPABILITIES);
     }
 }

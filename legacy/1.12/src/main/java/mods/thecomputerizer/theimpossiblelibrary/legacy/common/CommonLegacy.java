@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonLegacy implements CommonAPI {
 
-    private final CommonEventsAPI events;
+    private final EventsAPI events;
     private final ModAPI mod;
     private final NetworkAPI<SimpleNetworkWrapper,Side> network;
     private final RegistryHandlerAPI<RegistryLegacy<?>> registry;
@@ -33,7 +33,7 @@ public class CommonLegacy implements CommonAPI {
     private final TextHelperAPI<Style> textHelper;
 
     public CommonLegacy() {
-        this.events = new CommonEventsLegacy();
+        this.events = new EventsLegacy();
         this.mod = new ModLegacy();
         this.network = new NetworkLegacy();
         this.registry = new RegistryHandlerLegacy();
@@ -45,7 +45,7 @@ public class CommonLegacy implements CommonAPI {
 
 
     @Override
-    public CommonEventsAPI getCommonEventsAPI() {
+    public EventsAPI getCommonEventsAPI() {
         return this.events;
     }
 

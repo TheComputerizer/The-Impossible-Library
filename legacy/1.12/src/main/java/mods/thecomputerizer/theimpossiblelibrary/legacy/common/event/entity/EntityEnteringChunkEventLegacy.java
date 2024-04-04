@@ -4,15 +4,30 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.entity.EntityE
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.EntityLegacy;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class EntityEnteringChunkEventLegacy extends EntityEnteringChunkEventWrapper<Entity> {
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.ENTITY_ENTERING_CHUNK;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_ADVANCEMENT;
 
-    private final EnteringChunk event;
+public class EntityEnteringChunkEventLegacy extends EntityEnteringChunkEventWrapper<EnteringChunk> {
 
-    public EntityEnteringChunkEventLegacy(EnteringChunk event) {
-        super(new EntityLegacy(event.getEntity()),event.getNewChunkX(),event.getNewChunkZ(),event.getOldChunkX(),
-                event.getOldChunkZ());
+    @SubscribeEvent
+    public static void onEvent(EnteringChunk event) {
+        ENTITY_ENTERING_CHUNK.invoke(event);
+    }
+
+    private EnteringChunk event;
+
+    public EntityEnteringChunkEventLegacy() {}
+
+    public void setEvent(EnteringChunk event) {
         this.event = event;
+        setEntity(new EntityLegacy(event.getEntity()));
+        this.newX = event.getNewChunkX();
+        this.newZ = event.getNewChunkZ();
+        this.oldX = event.getOldChunkX();
+        this.oldZ = event.getOldChunkZ();
     }
 
     @Override

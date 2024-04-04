@@ -3,20 +3,31 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.entity;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.entity.LivingDamageEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.DamageLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.LivingLegacy;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class LivingDamageEventLegacy extends LivingDamageEventWrapper<EntityLivingBase> {
-    private final LivingDamageEvent event;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_DAMAGE;
 
-    public LivingDamageEventLegacy(LivingDamageEvent event) {
-        super(new LivingLegacy(event.getEntityLiving()),new DamageLegacy(event.getSource(),event.getAmount()));
+public class LivingDamageEventLegacy extends LivingDamageEventWrapper<LivingDamageEvent> {
+
+    @SubscribeEvent
+    public static void onEvent(LivingDamageEvent event) {
+        LIVING_DAMAGE.invoke(event);
+    }
+
+    private LivingDamageEvent event;
+
+    public LivingDamageEventLegacy() {}
+
+    public void setEvent(LivingDamageEvent event) {
         this.event = event;
+        setLiving(new LivingLegacy(event.getEntityLiving()));
+        this.damage = new DamageLegacy(event.getSource(),event.getAmount());
     }
 
     @Override
-    protected void setAmountInner(float amount) {
-        this.getDamage().setAmount(amount);
+    public void setAmount(float amount) {
         this.event.setAmount(amount);
+        this.damage.setAmount(amount);
     }
 }

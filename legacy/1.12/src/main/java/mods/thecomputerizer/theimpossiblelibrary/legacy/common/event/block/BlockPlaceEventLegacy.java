@@ -9,14 +9,25 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class BlockPlaceEventLegacy extends BlockPlaceEventWrapper<Block,IBlockState,Entity,World> {
+import java.util.Objects;
 
-    private final EntityPlaceEvent event;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_PLACE;
 
-    public BlockPlaceEventLegacy(EntityPlaceEvent event) {
-        super(new EntityLegacy(event.getEntity()),new BlockStateLegacy(event.getPlacedBlock()),
-                new BlockStateLegacy(event.getPlacedAgainst()),new WorldLegacy(event.getWorld()));
-        this.event = event;
+public class BlockPlaceEventLegacy extends BlockPlaceEventWrapper<EntityPlaceEvent,Block,IBlockState,Entity,World> {
+
+    @SubscribeEvent
+    public static void onEvent(EntityPlaceEvent event) {
+        BLOCK_PLACE.invoke(event);
+    }
+
+    public BlockPlaceEventLegacy() {}
+
+    public void setEvent(EntityPlaceEvent event) {
+        if(Objects.nonNull(event.getEntity())) this.entity = new EntityLegacy(event.getEntity());
+        setPlaced(new BlockStateLegacy(event.getPlacedBlock()));
+        this.placedAgainst = new BlockStateLegacy(event.getPlacedAgainst());
+        this.world = new WorldLegacy(event.getWorld());
     }
 }

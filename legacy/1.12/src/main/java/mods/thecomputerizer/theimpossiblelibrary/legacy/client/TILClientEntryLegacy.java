@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.TILLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.test.ClientTestsLegacy;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -17,7 +17,6 @@ public class TILClientEntryLegacy extends ClientEntryPoint {
 
     public void preInit(FMLPreInitializationEvent event) {
         TILRef.logError("CLIENT PREINIT");
-        ClientEventsHelper.getEventsAPI().initDefaultListeners();
         ClientTestsLegacy.initClientTests();
     }
 

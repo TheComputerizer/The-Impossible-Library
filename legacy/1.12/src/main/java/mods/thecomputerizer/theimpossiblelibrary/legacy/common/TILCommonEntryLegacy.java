@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.TILLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.TILClientEntryLegacy;
@@ -30,7 +30,7 @@ public class TILCommonEntryLegacy extends CommonEntryPoint {
         NetworkHandler.load();
         if(Objects.nonNull(this.clientEntry))
             ((TILClientEntryLegacy)this.clientEntry).preInit(event);
-        else CommonEventsHelper.getEventsAPI().initDefaultListeners();
+        else EventHelper.getEventsAPI().initDefaultListeners();
     }
 
     @EventHandler

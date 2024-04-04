@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -23,7 +23,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class CommonForge implements CommonAPI {
 
-    private final CommonEventsAPI events;
+    private final EventsAPI events;
     private final ModAPI mod;
     private final NetworkAPI<SimpleChannel,NetworkDirection> network;
     private final RegistryHandlerAPI<RegistryForge<?>> registry;
@@ -33,7 +33,7 @@ public class CommonForge implements CommonAPI {
     private final TextHelperAPI<Style> textHelper;
 
     public CommonForge() {
-        this.events = new CommonEventsForge();
+        this.events = new EventsForge();
         this.mod = new ModForge();
         this.network = new NetworkForge();
         this.registry = new RegistryHandlerForge();
@@ -45,7 +45,7 @@ public class CommonForge implements CommonAPI {
 
 
     @Override
-    public CommonEventsAPI getCommonEventsAPI() {
+    public EventsAPI getCommonEventsAPI() {
         return this.events;
     }
 

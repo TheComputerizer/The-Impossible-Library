@@ -1,10 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEventsHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.AttachCapabilitiesEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.block.BlockBreakEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.block.BlockPlaceEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.entity.*;
@@ -40,191 +39,189 @@ import net.minecraftforge.event.world.WorldEvent.PotentialSpawns;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 @EventBusSubscriber(modid = TILRef.MODID)
-public class CommonEventsForge implements CommonEventsAPI {
+public class EventsForge implements EventsAPI {
 
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<?> event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onBlockBreak(BreakEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onBlockPlace(EntityPlaceEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityAttacked(LivingAttackEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityDamage(LivingDamageEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityEnteringChunk(EnteringChunk event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityFall(LivingFallEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     //TODO Implement events below this
 
     @SubscribeEvent
     public static void onEntityFinishUsingItem(Finish event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityHurt(LivingHurtEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityJump(LivingJumpEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityKnockBack(LivingKnockBackEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntityLootingLevel(LootingLevelEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntitySetTarget(LivingSetAttackTargetEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onEntitySmitten(EntityStruckByLightningEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onExplosionDetonate(Detonate event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerBreakSpeed(BreakSpeed event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerChangeDimensions(PlayerChangedDimensionEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerClone(Clone event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerConnected(PlayerLoggedInEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerConnected(PlayerLoggedOutEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerPickUpItem(ItemPickupEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerPickUpXP(PickupXp event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerRespawnEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPlayerSleep(PlayerSleepInBedEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
-    public static void onPlayerSleep(PlayerTickEvent event) {
-        CommonEventsHelper.invoke(event);
+    public static void onPlayerTick(PlayerTickEvent event) {
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onPotentialSpawns(PotentialSpawns event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
     @SubscribeEvent
     public static void onWorldTick(WorldTickEvent event) {
-        CommonEventsHelper.invoke(event);
+        EventHelper.invoke(event);
     }
 
-    public CommonEventsForge() {
+    public EventsForge() {
 
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void defineEventClasses(Set<CommonEventsHelper.EventEntry<?,?,?>> entries) { //TODO finish implementing this
-        entries.add(new CommonEventsHelper.EventEntry<>(AdvancementEvent.class,AdvancementEventWrapper.class,AdvancementEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(AttachCapabilitiesEvent.class,AttachCapabilitiesEventWrapper.class,AttachCapabilitiesEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(BreakEvent.class,BlockBreakEventWrapper.class,BlockBreakEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(EntityPlaceEvent.class,BlockPlaceEventWrapper.class,BlockPlaceEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(LivingAttackEvent.class,LivingAttackedEventWrapper.class,LivingAttackedEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(LivingDamageEvent.class,LivingDamageEventWrapper.class,LivingDamageEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(LivingDeathEvent.class,LivingDeathEventWrapper.class,LivingDeathEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(EnteringChunk.class,EntityEnteringChunkEventWrapper.class,EntityEnteringChunkEventForge.class));
-        entries.add(new CommonEventsHelper.EventEntry<>(LivingFallEvent.class,LivingFallEventWrapper.class,LivingFallEventForge.class));
+    public void defineEventClasses(Set<EventHelper.EventEntry<?,?,?>> entries) { //TODO finish implementing this
+        entries.add(new EventHelper.EventEntry<>(AdvancementEvent.class,AdvancementEventWrapper.class,AdvancementEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(AttachCapabilitiesEvent.class,AttachCapabilitiesEventWrapper.class,AttachCapabilitiesEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(BreakEvent.class,BlockBreakEventWrapper.class,BlockBreakEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(EntityPlaceEvent.class,BlockPlaceEventWrapper.class,BlockPlaceEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(LivingAttackEvent.class,LivingAttackedEventWrapper.class,LivingAttackedEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(LivingDamageEvent.class,LivingDamageEventWrapper.class,LivingDamageEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(LivingDeathEvent.class,LivingDeathEventWrapper.class,LivingDeathEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(EnteringChunk.class,EntityEnteringChunkEventWrapper.class,EntityEnteringChunkEventForge.class));
+        entries.add(new EventHelper.EventEntry<>(LivingFallEvent.class,LivingFallEventWrapper.class,LivingFallEventForge.class));
         /*
         entries.add(new EventEntry<>(Finish.class,null,null));
         entries.add(new EventEntry<>(LivingHurtEvent.class,null,null));

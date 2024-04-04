@@ -9,15 +9,27 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class BlockBreakEventLegacy extends BlockBreakEventWrapper<Block,IBlockState,EntityPlayer,World> {
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_BREAK;
 
-    private final BreakEvent event;
+public class BlockBreakEventLegacy extends BlockBreakEventWrapper<BreakEvent,Block,IBlockState,EntityPlayer,World> {
 
-    public BlockBreakEventLegacy(BreakEvent event) {
-        super(new PlayerLegacy(event.getPlayer()),new BlockStateLegacy(event.getState()),
-                new WorldLegacy(event.getWorld()),event.getExpToDrop());
+    @SubscribeEvent
+    public static void onEvent(BreakEvent event) {
+        BLOCK_BREAK.invoke(event);
+    }
+
+    private BreakEvent event;
+
+    public BlockBreakEventLegacy() {}
+
+    public void setEvent(BreakEvent event) {
         this.event = event;
+        this.player = new PlayerLegacy(event.getPlayer());
+        setState(new BlockStateLegacy(event.getState()));
+        this.world = new WorldLegacy(event.getWorld());
+        this.xp = event.getExpToDrop();
     }
 
     @Override
