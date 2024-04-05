@@ -51,6 +51,10 @@ public interface RenderAPI {
     void rotate(float angle, float x, float y, float z);
     void scale(float x, float y, float z);
     void setColor(float r, float g, float b, float a);
+    /**
+     * Unused in 1.12.2
+     */
+    void setMatrix(Object matrix);
     RenderAPI setMouse(int x, int y);
     RenderAPI setPartialTicks(float partialTicks);
     void setPosColorShader();

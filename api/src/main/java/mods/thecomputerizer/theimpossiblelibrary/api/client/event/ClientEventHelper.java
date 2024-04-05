@@ -9,8 +9,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_POST;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.TICK_CLIENT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.render.RenderOverlayEventWrapper.OverlayType.ALL;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.tick.TickableEventWrapper.TickPhase.END;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.RenderOverlayEventWrapper.OverlayType.ALL;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.TickableEventWrapper.TickPhase.END;
 
 public class ClientEventHelper {
 
@@ -20,7 +20,7 @@ public class ClientEventHelper {
 
     public static void initTILClientListeners() {
         EventHelper.addListener(TICK_CLIENT,wrapper -> {
-            if(wrapper.getPhase()==END) RenderHelper.tickRenderables();
+            if(wrapper.isPhase(END)) RenderHelper.tickRenderables();
         });
         EventHelper.addListener(RENDER_OVERLAY_POST,wrapper -> {
             if(wrapper.isType(ALL)) RenderHelper.renderAllBackgroundStuff(RenderHelper.getRenderer());

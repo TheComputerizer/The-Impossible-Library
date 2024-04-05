@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
@@ -9,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.EventsLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.network.NetworkLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryHandlerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryLegacy;
@@ -31,6 +33,7 @@ public class CommonLegacy implements CommonAPI {
     private final MinecraftServerAPI<MinecraftServer> server;
     private final TagAPI tag;
     private final TextHelperAPI<Style> textHelper;
+    private final WrapperAPI wrapper;
 
     public CommonLegacy() {
         this.events = new EventsLegacy();
@@ -41,6 +44,7 @@ public class CommonLegacy implements CommonAPI {
         this.server = new MinecraftServerLegacy();
         this.tag = new TagLegacy();
         this.textHelper = new TextHelperLegacy();
+        this.wrapper = new WrapperLegacy();
     }
 
 
@@ -82,5 +86,10 @@ public class CommonLegacy implements CommonAPI {
     @Override
     public TextHelperAPI<Style> getTextHelperAPI() {
         return this.textHelper;
+    }
+
+    @Override
+    public WrapperAPI getWrapperAPI() {
+        return this.wrapper;
     }
 }

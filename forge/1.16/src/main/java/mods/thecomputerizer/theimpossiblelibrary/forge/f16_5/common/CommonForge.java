@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
@@ -9,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.event.EventsForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.network.NetworkForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.RegistryForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.RegistryHandlerForge;
@@ -31,6 +33,7 @@ public class CommonForge implements CommonAPI {
     private final MinecraftServerAPI<MinecraftServer> server;
     private final TagAPI tag;
     private final TextHelperAPI<Style> textHelper;
+    private final WrapperAPI wrapper;
 
     public CommonForge() {
         this.events = new EventsForge();
@@ -41,6 +44,7 @@ public class CommonForge implements CommonAPI {
         this.server = new MinecraftServerForge();
         this.tag = new TagForge();
         this.textHelper = new TextHelperForge();
+        this.wrapper = new WrapperForge();
     }
 
 
@@ -82,5 +86,10 @@ public class CommonForge implements CommonAPI {
     @Override
     public TextHelperAPI<Style> getTextHelperAPI() {
         return this.textHelper;
+    }
+
+    @Override
+    public WrapperAPI getWrapperAPI() {
+        return this.wrapper;
     }
 }

@@ -18,4 +18,5 @@ public interface CommonAPI {
     MinecraftServerAPI<?> getServerAPI();
     TagAPI getTagAPI();
     TextHelperAPI<?> getTextHelperAPI();
+    WrapperAPI getWrapperAPI();
 }

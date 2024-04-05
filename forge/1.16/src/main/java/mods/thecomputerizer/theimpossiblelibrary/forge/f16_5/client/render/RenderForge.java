@@ -21,13 +21,13 @@ import org.lwjgl.opengl.GL11;
 import java.util.List;
 import java.util.Objects;
 
-@Getter @Setter
+@Getter
 public class RenderForge implements RenderAPI {
 
     private final GLForge gl;
     private MatrixStack matrix;
-    private int mouseX;
-    private int mouseY;
+    @Setter private int mouseX;
+    @Setter private int mouseY;
     private float partialTicks;
 
     public RenderForge() {
@@ -217,6 +217,11 @@ public class RenderForge implements RenderAPI {
     @Override
     public void setColor(float r, float g, float b, float a) {
         RenderSystem.color4f(r,g,b,a);
+    }
+
+    @Override
+    public void setMatrix(Object matrix) {
+        this.matrix = matrix instanceof MatrixStack ? (MatrixStack)matrix : null;
     }
 
     @Override

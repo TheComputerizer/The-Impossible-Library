@@ -320,6 +320,10 @@ public class Misc {
         });
     }
 
+    public static <N,V> V getNullable(@Nullable N nullable, V notNull, V isNull) {
+        return getEither(Objects.nonNull(nullable),notNull,isNull);
+    }
+
     public static @Nullable Object invokeMethod(@Nullable Method method, Object invoker, Object ... args) {
         return Misc.applyNullable(method,m -> {
             try {
@@ -329,10 +333,6 @@ public class Misc {
                 return null;
             }
         });
-    }
-
-    public static <N,V> V getNullable(@Nullable N nullable, V notNull, V isNull) {
-        return getEither(Objects.nonNull(nullable),notNull,isNull);
     }
 
     public static <T> Object listToArray(List<T> list) {
@@ -397,5 +397,9 @@ public class Misc {
         E[] array = (E[])Array.newInstance(clazz,size);
         for(int i=0; i<array.length; i++) array[i] = (E)func.apply(thing,i);
         return array;
+    }
+
+    public static <V,W> @Nullable W wrap(@Nullable V val, Function<V,W> wrapperFunc) {
+        return applyNullable(val,wrapperFunc);
     }
 }

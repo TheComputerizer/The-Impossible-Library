@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.ClientEventsLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.gui.ScreenHelperLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.CommonLegacy;
 

@@ -202,6 +202,10 @@ public class RenderLegacy implements RenderAPI {
     }
 
     @Override
+    public void setMatrix(Object matrix) {
+    }
+
+    @Override
     public RenderAPI setMouse(int x, int y) {
         this.mouseX = x;
         this.mouseY = y;

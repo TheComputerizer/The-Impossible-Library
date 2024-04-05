@@ -1,8 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry.block;
 
-public interface BlockStateAPI<B,S> {
+public interface BlockStateAPI<S> {
 
-    B getBlock();
-    BlockAPI<B> getBlockAPI();
+    BlockAPI<?> getBlockAPI();
     S getState();
 }
