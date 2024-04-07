@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.advancement.AdvancementForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.world.WorldForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.block.BlockForge;
@@ -19,6 +20,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.entity.Ent
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.entity.LivingForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.entity.PlayerForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.item.ItemForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.item.ItemStackForge;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -26,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.World;
 
@@ -65,6 +68,7 @@ public class WrapperForge implements WrapperAPI {
         if(wrapperClass==BlockEntityAPI.class) return (W)wrapBlockEntity(generic);
         if(wrapperClass==EntityAPI.class) return (W)wrapEntity(generic);
         if(wrapperClass==ItemAPI.class) return (W)wrapItem(generic);
+        if(wrapperClass==ItemStackAPI.class) return (W)wrapItemStack(generic);
         if(wrapperClass==LivingEntityAPI.class) return (W)wrapLivingEntity(generic);
         if(wrapperClass==PlayerAPI.class) return (W)wrapPlayer(generic);
         if(wrapperClass==BlockStateAPI.class) return (W)wrapState(generic);
@@ -75,6 +79,11 @@ public class WrapperForge implements WrapperAPI {
     @Override
     public @Nullable <I> ItemAPI<I> wrapItem(@Nullable I item) {
         return Objects.nonNull(item) ? (ItemAPI<I>)new ItemForge((Item)item) : null;
+    }
+
+    @Override
+    public @Nullable <S> ItemStackAPI<S> wrapItemStack(@Nullable S stack) {
+        return Objects.nonNull(stack) ? (ItemStackAPI<S>)new ItemStackForge((ItemStack)stack) : null;
     }
 
     @Override

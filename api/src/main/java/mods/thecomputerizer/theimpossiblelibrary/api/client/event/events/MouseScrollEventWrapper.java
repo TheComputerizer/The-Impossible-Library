@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWra
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.MOUSE_SCROLL;
 
-public abstract class MouseScrollEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class MouseScrollEventWrapper<E> extends ClientEventWrapper<E> { //TODO
 
     protected MouseScrollEventWrapper() {
         super(MOUSE_SCROLL);

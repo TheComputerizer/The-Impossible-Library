@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerEventWrapper;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.PLAYER_PUNCH_EMPTY;
 
-public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientPlayerEventWrapper<E> {
 
     protected PlayerPunchEmptyEventWrapper() {
         super(PLAYER_PUNCH_EMPTY);
@@ -12,6 +12,6 @@ public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientEventWrapper
 
     @Override
     protected void populate() {
-
+        super.populate();
     }
 }

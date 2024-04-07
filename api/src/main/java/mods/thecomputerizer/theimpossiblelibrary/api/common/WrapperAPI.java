@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 
@@ -20,6 +21,7 @@ public interface WrapperAPI {
     <E> @Nullable EntityAPI<E> wrapEntity(@Nullable E entity);
     <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic);
     <I> @Nullable ItemAPI<I> wrapItem(@Nullable I item);
+    <S> @Nullable ItemStackAPI<S> wrapItemStack(@Nullable S stack);
     <L> @Nullable LivingEntityAPI<L> wrapLivingEntity(@Nullable L living);
     <P> @Nullable PlayerAPI<P> wrapPlayer(@Nullable P player);
     <S> @Nullable BlockStateAPI<S> wrapState(@Nullable S state);

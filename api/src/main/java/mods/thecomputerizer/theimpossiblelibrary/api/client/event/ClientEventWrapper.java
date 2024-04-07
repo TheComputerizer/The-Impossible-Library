@@ -49,6 +49,7 @@ public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
         public static ClientType<PlayerPunchEmptyEventWrapper<?>> PLAYER_PUNCH_EMPTY = new ClientType<>(false,false);
         public static ClientType<PlayerPushOutOfBlocksEventWrapper<?>> PLAYER_PUSH_OUT_OF_BLOCKS = new ClientType<>(true,false);
         public static ClientType<RegisterModelsEventWrapper<?>> REGISTER_MODELS = new ClientType<>(false,false);
+        public static ClientType<RenderOverlayBlockEventWrapper<?>> RENDER_OVERLAY_BLOCK = new ClientType<>(true,false);
         public static ClientType<RenderOverlayBossEventWrapper<?>> RENDER_OVERLAY_BOSS = new ClientType<>(true,false);
         public static ClientType<RenderOverlayChatEventWrapper<?>> RENDER_OVERLAY_CHAT = new ClientType<>(true,false);
         public static ClientType<RenderOverlayPostEventWrapper<?>> RENDER_OVERLAY_POST = new ClientType<>(true,false);

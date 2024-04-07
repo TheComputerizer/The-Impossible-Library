@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry.item;
 
-public interface ItemStackAPI<I,S> {
+public interface ItemStackAPI<S> {
 
-    I getItem();
+    ItemAPI<?> getItemAPI();
     S getStack();
 }

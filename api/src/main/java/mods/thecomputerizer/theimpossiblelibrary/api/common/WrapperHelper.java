@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -48,6 +49,10 @@ public class WrapperHelper {
 
     public static <I> @Nullable ItemAPI<I> wrapItem(@Nullable I item) {
         return wrap(api -> api.wrapItem(item));
+    }
+
+    public static <S> @Nullable ItemStackAPI<S> wrapItemStack(@Nullable S stack) {
+        return wrap(api -> api.wrapItemStack(stack));
     }
 
     public static <L> @Nullable LivingEntityAPI<L> wrapLivingEntity(@Nullable L living) {

@@ -11,7 +11,5 @@ public abstract class ClientRespawnEventWrapper<E> extends ClientEventWrapper<E>
     }
 
     @Override
-    protected void populate() {
-
-    }
+    protected void populate() {}
 }

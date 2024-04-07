@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWra
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.MOUSE_INPUT;
 
-public abstract class InputMouseEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class InputMouseEventWrapper<E> extends ClientEventWrapper<E> { //TODO
 
     protected InputMouseEventWrapper() {
         super(MOUSE_INPUT);

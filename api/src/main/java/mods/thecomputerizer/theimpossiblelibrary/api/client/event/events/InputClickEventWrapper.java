@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWra
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CLICK_INPUT;
 
-public abstract class InputClickEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class InputClickEventWrapper<E> extends ClientEventWrapper<E> { //TODO
 
     protected InputClickEventWrapper() {
         super(CLICK_INPUT);

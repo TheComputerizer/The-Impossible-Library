@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.advancement.AdvancementLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.world.WorldLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.block.BlockLegacy;
@@ -19,6 +20,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.EntityLe
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.LivingLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.PlayerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.item.ItemLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.item.ItemStackLegacy;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -26,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -75,6 +78,11 @@ public class WrapperLegacy implements WrapperAPI {
     @Override
     public @Nullable <I> ItemAPI<I> wrapItem(@Nullable I item) {
         return Objects.nonNull(item) ? (ItemAPI<I>)new ItemLegacy((Item)item) : null;
+    }
+
+    @Override
+    public @Nullable <S> ItemStackAPI<S> wrapItemStack(@Nullable S stack) {
+        return Objects.nonNull(stack) ? (ItemStackAPI<S>)new ItemStackLegacy((ItemStack)stack) : null;
     }
 
     @Override

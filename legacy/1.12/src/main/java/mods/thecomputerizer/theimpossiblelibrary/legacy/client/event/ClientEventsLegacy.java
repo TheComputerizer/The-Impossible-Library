@@ -1,15 +1,28 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.client.event;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.ClientTickEventLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.RenderOverlayPostEventLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.RenderOverlayPreEventLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.ClientTickEventLegacy;
 import net.minecraftforge.common.MinecraftForge;
+
+import javax.annotation.Nullable;
+
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
 
 public class ClientEventsLegacy implements EventsAPI {
+
+    public static @Nullable RenderAPI initRenderer(Supplier<Float> partialTickSupplier) {
+        RenderAPI renderer = RenderHelper.getRenderer();
+        if(Objects.nonNull(renderer)) renderer.setPartialTicks(partialTickSupplier.get());
+        return renderer;
+    }
 
     private boolean defined;
 
