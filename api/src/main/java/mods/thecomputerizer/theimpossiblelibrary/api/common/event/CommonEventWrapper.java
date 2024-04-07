@@ -38,6 +38,7 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
         public static CommonType<TrampleFarmlandEventWrapper<?>> BLOCK_TRAMPLE_FARMLAND = new CommonType<>(true,false);
         public static CommonType<CropGrowPostEventWrapper<?>> CROP_GROW_POST = new CommonType<>(false,false);
         public static CommonType<CropGrowPreEventWrapper<?>> CROP_GROW_PRE = new CommonType<>(false,true);
+        public static CommonType<CustomTickEventWrapper<?>> CUSTOM_TICK = new CommonType<>(false,false);
         public static CommonType<EntityEnteringChunkEventWrapper<?>> ENTITY_ENTERING_CHUNK = new CommonType<>(false,false);
         public static CommonType<EntityJoinWorldEventWrapper<?>> ENTITY_JOIN_WORLD = new CommonType<>(true,false);
         public static CommonType<EntityStruckByLightningEventWrapper<?>> ENTITY_SMITTEN = new CommonType<>(true,false);
@@ -47,6 +48,7 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
         public static CommonType<LivingDamageEventWrapper<?>> LIVING_DAMAGE = new CommonType<>(true,false);
         public static CommonType<LivingDeathEventWrapper<?>> LIVING_DEATH = new CommonType<>(true,false);
         public static CommonType<LivingFallEventWrapper<?>> LIVING_FALL = new CommonType<>(true,false);
+        public static CommonType<LivingHealEventWrapper<?>> LIVING_HEAL = new CommonType<>(true,false);
         public static CommonType<LivingHurtEventWrapper<?>> LIVING_HURT = new CommonType<>(true,false);
         public static CommonType<LivingJumpEventWrapper<?>> LIVING_JUMP = new CommonType<>(false,false);
         public static CommonType<LivingKnockbackEventWrapper<?>> LIVING_KNOCKBACK = new CommonType<>(true,false);

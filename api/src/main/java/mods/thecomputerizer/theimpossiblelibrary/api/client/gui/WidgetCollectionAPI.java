@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.geometry.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.WidgetAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.geometry.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.widget.WidgetAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;

@@ -14,5 +14,5 @@ public interface TickableEventWrapper {
     }
 
     enum TickPhase { START, END, DEFAULT }
-    enum TickType { CLIENT, PLAYER, RENDER, SERVER, WORLD }
+    enum TickType { CLIENT, CUSTOM, PLAYER, RENDER, SERVER, WORLD }
 }

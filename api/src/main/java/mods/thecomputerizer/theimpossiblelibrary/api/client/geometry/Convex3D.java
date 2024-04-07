@@ -5,6 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import org.joml.Vector3d;
 
 import java.util.Objects;

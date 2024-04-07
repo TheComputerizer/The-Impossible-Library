@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
@@ -11,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.EventsLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.world.PosHelperLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.network.NetworkLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryHandlerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryLegacy;
@@ -19,6 +21,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.server.MinecraftServerLe
 import mods.thecomputerizer.theimpossiblelibrary.legacy.tag.TagLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextHelperLegacy;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,6 +31,7 @@ public class CommonLegacy implements CommonAPI {
     private final EventsAPI events;
     private final ModAPI mod;
     private final NetworkAPI<SimpleNetworkWrapper,Side> network;
+    private final PosHelperAPI<BlockPos> posHelper;
     private final RegistryHandlerAPI<RegistryLegacy<?>> registry;
     private final ResourceAPI resource;
     private final MinecraftServerAPI<MinecraftServer> server;
@@ -39,6 +43,7 @@ public class CommonLegacy implements CommonAPI {
         this.events = new EventsLegacy();
         this.mod = new ModLegacy();
         this.network = new NetworkLegacy();
+        this.posHelper = new PosHelperLegacy();
         this.registry = new RegistryHandlerLegacy();
         this.resource = new ResourceLegacy();
         this.server = new MinecraftServerLegacy();
@@ -61,6 +66,11 @@ public class CommonLegacy implements CommonAPI {
     @Override
     public NetworkAPI<SimpleNetworkWrapper,Side> getNetworkAPI() {
         return this.network;
+    }
+
+    @Override
+    public PosHelperAPI<?> getPosHelperAPI() {
+        return this.posHelper;
     }
 
     @Override

@@ -17,7 +17,12 @@ public class WorldLegacy implements WorldAPI<World> {
     }
 
     @Override
-    public boolean isServerWorld() {
+    public boolean isClient() {
+        return this.world.isRemote;
+    }
+
+    @Override
+    public boolean isServer() {
         return !this.world.isRemote;
     }
 }

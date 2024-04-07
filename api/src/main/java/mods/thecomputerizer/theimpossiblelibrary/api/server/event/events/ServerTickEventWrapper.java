@@ -16,4 +16,7 @@ public abstract class ServerTickEventWrapper<E> extends ServerEventWrapper<E> im
     public TickType getTickType() {
         return SERVER;
     }
+
+    @Override
+    protected void populate() {}
 }

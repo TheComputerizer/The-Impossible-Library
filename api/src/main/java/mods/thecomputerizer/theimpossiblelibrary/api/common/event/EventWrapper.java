@@ -5,6 +5,8 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
@@ -115,6 +117,11 @@ public abstract class EventWrapper<E> {
     protected <V> @Nullable PlayerAPI<V> wrapPlayer(@Nullable Function<E,V> playerFunc) {
         return Objects.nonNull(this.event) && Objects.nonNull(playerFunc) ?
                 WrapperHelper.wrapPlayer(playerFunc.apply(this.event)) : null;
+    }
+
+    protected <V> BlockPosAPI<?> wrapPos(@Nullable Function<E,V> posFunc) {
+        return Objects.nonNull(this.event) && Objects.nonNull(posFunc) ?
+                PosHelper.getPos(posFunc.apply(this.event)) : null;
     }
 
     protected <V> @Nullable BlockStateAPI<V> wrapState(@Nullable Function<E,V> stateFunc) {

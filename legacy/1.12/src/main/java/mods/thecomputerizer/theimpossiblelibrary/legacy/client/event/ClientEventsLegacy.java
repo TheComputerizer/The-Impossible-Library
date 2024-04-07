@@ -4,9 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.ClientTickEventLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.RenderOverlayPostEventLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.RenderOverlayPreEventLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events.*;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
@@ -32,37 +30,38 @@ public class ClientEventsLegacy implements EventsAPI {
 
     @Override
     public void defineEvents() {
-        CAMERA_SETUP.setConnector(null);
-        CLICK_INPUT.setConnector(null);
-        CLIENT_CONNECTED.setConnector(null);
-        CLIENT_DISCONNECTED.setConnector(null);
-        CLIENT_RESPAWN.setConnector(null);
-        FOG_COLORS.setConnector(null);
-        FOG_DENSITY.setConnector(null);
-        FOV_MODIFIER.setConnector(null);
-        FOG_RENDER.setConnector(null);
-        FOV_UPDATE.setConnector(null);
-        ITEM_TOOLTIP.setConnector(null);
-        KEY_INPUT.setConnector(null);
-        MOUSE_INPUT.setConnector(null);
-        MOUSE_RAW.setConnector(null);
-        MOUSE_SCROLL.setConnector(null);
-        PLAYER_PUNCH_EMPTY.setConnector(null);
-        PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(null);
-        REGISTER_MODELS.setConnector(null);
-        RENDER_OVERLAY_BOSS.setConnector(null);
-        RENDER_OVERLAY_CHAT.setConnector(null);
+        CAMERA_SETUP.setConnector(new CameraSetupEventLegacy());
+        CLICK_INPUT.setConnector(new InputClickEventLegacy());
+        CLIENT_CONNECTED.setConnector(new ClientConnectedEventLegacy());
+        CLIENT_DISCONNECTED.setConnector(new ClientDisconnectedEventLegacy());
+        CLIENT_RESPAWN.setConnector(new ClientRespawnEventLegacy());
+        FOG_COLORS.setConnector(new FogColorsEventLegacy());
+        FOG_DENSITY.setConnector(new FogDensityEventLegacy());
+        FOG_RENDER.setConnector(new FogRenderEventLegacy());
+        FOV_MODIFIER.setConnector(new FOVModifierEventLegacy());
+        FOV_UPDATE.setConnector(new FOVUpdateEventLegacy());
+        ITEM_TOOLTIP.setConnector(new ItemTooltipEventLegacy());
+        KEY_INPUT.setConnector(new InputKeyEventLegacy());
+        MOUSE_INPUT.setConnector(new InputMouseEventLegacy());
+        MOUSE_RAW.setConnector(new RawMouseEventLegacy());
+        MOUSE_SCROLL.setConnector(new MouseScrollEventLegacy());
+        PLAYER_PUNCH_EMPTY.setConnector(new PlayerPunchEmptyEventLegacy());
+        PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventLegacy());
+        REGISTER_MODELS.setConnector(new RegisterModelsEventLegacy());
+        RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventLegacy());
+        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventLegacy());
+        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventLegacy());
         RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventLegacy());
         RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventLegacy());
-        RENDER_OVERLAY_TEXT.setConnector(null);
-        RENDER_WORLD_LAST.setConnector(null);
-        SOUND_LOAD.setConnector(null);
-        SOUND_PLAY.setConnector(null);
-        SOUND_PLAY_SOURCE.setConnector(null);
-        SOUND_PLAY_STREAMING.setConnector(null);
-        SOUND_SETUP.setConnector(null);
+        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventLegacy());
+        RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventLegacy());
+        SOUND_LOAD.setConnector(new LoadSoundEventLegacy());
+        SOUND_PLAY.setConnector(new PlaySoundEventLegacy());
+        SOUND_PLAY_SOURCE.setConnector(new PlaySoundSourceEventLegacy());
+        SOUND_PLAY_STREAMING.setConnector(new PlayStreamingSoundSourceEventLegacy());
+        SOUND_SETUP.setConnector(new SoundSetupEventLegacy());
         TICK_CLIENT.setConnector(new ClientTickEventLegacy());
-        TICK_RENDER.setConnector(null);
+        TICK_RENDER.setConnector(new RenderTickEventLegacy());
         this.defined = true;
     }
 
