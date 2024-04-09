@@ -27,26 +27,26 @@ public class CameraSetupEventLegacy extends CameraSetupEventWrapper<CameraSetup>
 
     @Override
     protected EventFieldWrapper<CameraSetup,Float> wrapPitchField() {
-        return getFieldWrapperGetter(CameraSetup::getPitch,0f);
+        return wrapGenericGetter(CameraSetup::getPitch,0f);
     }
 
     @Override
     protected EventFieldWrapper<CameraSetup,Float> wrapRollField() {
-        return getFieldWrapperGetter(CameraSetup::getRoll,0f);
+        return wrapGenericGetter(CameraSetup::getRoll,0f);
     }
 
     @Override
     protected EventFieldWrapper<CameraSetup,Float> wrapYawField() {
-        return getFieldWrapperGetter(CameraSetup::getYaw,0f);
+        return wrapGenericGetter(CameraSetup::getYaw,0f);
     }
 
     @Override
     protected EventFieldWrapper<CameraSetup,EntityAPI<?>> wrapEntityField() {
-        return getFieldWrapperGetter(event -> wrapEntity(CameraSetup::getEntity),null);
+        return wrapEntityGetter(CameraSetup::getEntity);
     }
 
     @Override
     protected EventFieldWrapper<CameraSetup,BlockStateAPI<?>> wrapStateField() {
-        return getFieldWrapperGetter(event -> wrapState(CameraSetup::getState),null);
+        return wrapStateGetter(CameraSetup::getState);
     }
 }

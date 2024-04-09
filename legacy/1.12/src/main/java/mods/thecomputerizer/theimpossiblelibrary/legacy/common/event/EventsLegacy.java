@@ -2,8 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events.*;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -13,6 +15,17 @@ public class EventsLegacy implements EventsAPI {
 
     public static Box getBox(AxisAlignedBB aabb) {
         return new Box(aabb.minX,aabb.minY,aabb.minZ,aabb.maxX,aabb.maxY,aabb.maxZ);
+    }
+
+    public static Facing getFacing(EnumFacing facing) {
+        switch(facing) {
+            case DOWN: return Facing.DOWN;
+            case EAST: return Facing.EAST;
+            case NORTH: return Facing.NORTH;
+            case SOUTH: return Facing.SOUTH;
+            case UP: return Facing.UP;
+            default: return Facing.WEST;
+        }
     }
 
     private boolean defined;

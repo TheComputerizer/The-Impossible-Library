@@ -1,32 +1,42 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
-import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
-
-import java.util.function.Function;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonLivingEventType;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_FALL;
 
-@Getter
-public abstract class LivingFallEventWrapper<E> extends CommonEventWrapper<E> {
+public abstract class LivingFallEventWrapper<E> extends CommonLivingEventType<E> {
 
-    protected LivingEntityAPI<?> living;
-    protected float damageMultiplier;
-    protected float distance;
+    protected EventFieldWrapper<E,Float> damageMultiplier;
+    protected EventFieldWrapper<E,Float> distance;
 
     protected LivingFallEventWrapper() {
         super(LIVING_FALL);
     }
 
-    protected abstract Function<E,?> getLivingFunc();
+    public float getDamageMultiplier() {
+        return this.damageMultiplier.get(this.event);
+    }
+
+    public float getDistance() {
+        return this.distance.get(this.event);
+    }
 
     @Override
     public void populate() {
-        this.living = WrapperHelper.wrapLivingEntity(getLivingFunc().apply(this.event));
+        super.populate();
+        this.damageMultiplier = wrapDamageMultiplierField();
+        this.distance = wrapDistanceField();
     }
 
-    public abstract void setDamageMultiplier(float damageMultiplier);
-    public abstract void setDistance(float distance);
+    public void setDamageMultiplier(float multiplier) {
+        this.damageMultiplier.set(this.event,multiplier);
+    }
+
+    public void setDistance(float distance) {
+        this.distance.set(this.event,distance);
+    }
+
+    protected abstract EventFieldWrapper<E,Float> wrapDamageMultiplierField();
+    protected abstract EventFieldWrapper<E,Float> wrapDistanceField();
 }

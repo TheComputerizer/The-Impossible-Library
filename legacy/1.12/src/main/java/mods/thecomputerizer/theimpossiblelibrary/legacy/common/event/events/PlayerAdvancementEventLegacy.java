@@ -1,12 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerAdvancementEventWrapper;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.entity.player.EntityPlayer;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_ADVANCEMENT;
 
@@ -18,12 +17,12 @@ public class PlayerAdvancementEventLegacy extends PlayerAdvancementEventWrapper<
     }
 
     @Override
-    protected Function<AdvancementEvent,Advancement> getAdvancementFunc() {
-        return AdvancementEvent::getAdvancement;
+    protected EventFieldWrapper<AdvancementEvent,AdvancementAPI<?>> wrapAdvancementField() {
+        return wrapAdvancementGetter(AdvancementEvent::getAdvancement);
     }
 
     @Override
-    protected Function<AdvancementEvent,EntityPlayer> getPlayerFunc() {
-        return AdvancementEvent::getEntityPlayer;
+    protected EventFieldWrapper<AdvancementEvent,PlayerAPI<?>> wrapPlayerField() {
+        return wrapPlayerGetter(AdvancementEvent::getEntityPlayer);
     }
 }

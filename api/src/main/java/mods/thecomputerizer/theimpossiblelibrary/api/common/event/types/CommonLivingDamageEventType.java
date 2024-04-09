@@ -3,6 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.DamageAPI;
 
+import javax.annotation.Nullable;
+
 public abstract class CommonLivingDamageEventType<E> extends CommonLivingEventType<E> {
 
     protected EventFieldWrapper<E,DamageAPI> damage;
@@ -11,8 +13,12 @@ public abstract class CommonLivingDamageEventType<E> extends CommonLivingEventTy
         super(type);
     }
 
+    public @Nullable DamageAPI getDamageAPI() {
+        return this.damage.get(this.event);
+    }
+
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
         this.damage = wrapDamageField();
     }

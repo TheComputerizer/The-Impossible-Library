@@ -27,21 +27,21 @@ public class FogRenderEventLegacy extends FogRenderEventWrapper<RenderFogEvent> 
 
     @Override
     protected EventFieldWrapper<RenderFogEvent,EntityAPI<?>> wrapEntityField() {
-        return getFieldWrapperGetter(event -> wrapEntity(RenderFogEvent::getEntity),null);
+        return wrapEntityGetter(RenderFogEvent::getEntity);
     }
 
     @Override
     protected EventFieldWrapper<RenderFogEvent,BlockStateAPI<?>> wrapStateField() {
-        return getFieldWrapperGetter(event -> wrapState(RenderFogEvent::getState),null);
+        return wrapStateGetter(RenderFogEvent::getState);
     }
 
     @Override
     protected EventFieldWrapper<RenderFogEvent,Float> wrapFarplaneField() {
-        return getFieldWrapperGetter(RenderFogEvent::getFarPlaneDistance,0f);
+        return wrapGenericGetter(RenderFogEvent::getFarPlaneDistance,0f);
     }
 
     @Override
     protected EventFieldWrapper<RenderFogEvent,Integer> wrapFogModeField() {
-        return getFieldWrapperGetter(RenderFogEvent::getFogMode,0);
+        return wrapGenericGetter(RenderFogEvent::getFogMode,0);
     }
 }

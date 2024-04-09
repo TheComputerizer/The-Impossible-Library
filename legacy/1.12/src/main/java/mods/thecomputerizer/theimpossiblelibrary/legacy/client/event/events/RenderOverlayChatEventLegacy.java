@@ -56,11 +56,11 @@ public class RenderOverlayChatEventLegacy extends RenderOverlayChatEventWrapper<
 
     @Override
     protected EventFieldWrapper<Chat,Integer> wrapPosXField() {
-        return getFieldWrapperBoth(Chat::getPosX,Chat::setPosX,0);
+        return wrapGenericBoth(Chat::getPosX,Chat::setPosX,0);
     }
 
     @Override
     protected EventFieldWrapper<Chat,Integer> wrapPosYField() {
-        return getFieldWrapperBoth(Chat::getPosY,Chat::setPosY,0);
+        return wrapGenericBoth(Chat::getPosY,Chat::setPosY,0);
     }
 }

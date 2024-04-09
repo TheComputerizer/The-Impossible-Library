@@ -1,31 +1,28 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
-import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
-
-import java.util.function.Function;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerEventType;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_ADVANCEMENT;
 
-@Getter
-public abstract class PlayerAdvancementEventWrapper<E> extends CommonEventWrapper<E> {
+public abstract class PlayerAdvancementEventWrapper<E> extends CommonPlayerEventType<E> {
 
-    protected AdvancementAPI<?> advancement;
-    protected PlayerAPI<?> player;
+    protected EventFieldWrapper<E,AdvancementAPI<?>> advancement;
 
     protected PlayerAdvancementEventWrapper() {
         super(PLAYER_ADVANCEMENT);
     }
 
-    protected abstract Function<E,?> getAdvancementFunc();
-    protected abstract Function<E,?> getPlayerFunc();
+    public AdvancementAPI<?> getAdvancement() {
+        return this.advancement.get(this.event);
+    }
 
     @Override
     protected void populate() {
-        this.advancement = WrapperHelper.wrapAdvancement(getAdvancementFunc().apply(this.event));
-        this.player = WrapperHelper.wrapPlayer(getPlayerFunc().apply(this.event));
+        super.populate();
+        this.advancement = wrapAdvancementField();
     }
+
+    protected abstract EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementField();
 }

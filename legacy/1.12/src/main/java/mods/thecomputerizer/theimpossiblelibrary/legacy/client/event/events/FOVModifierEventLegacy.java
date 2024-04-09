@@ -22,17 +22,17 @@ public class FOVModifierEventLegacy extends FOVModifierEventWrapper<FOVModifier>
 
     @Override
     protected EventFieldWrapper<FOVModifier,Float> wrapFOVField() {
-        return getFieldWrapperBoth(FOVModifier::getFOV,FOVModifier::setFOV,0f);
+        return wrapGenericBoth(FOVModifier::getFOV,FOVModifier::setFOV,0f);
     }
 
     @Override
     protected EventFieldWrapper<FOVModifier,EntityAPI<?>> wrapEntityField() {
-        return getFieldWrapperGetter(event -> wrapEntity(FOVModifier::getEntity),null);
+        return wrapEntityGetter(FOVModifier::getEntity);
     }
 
     @Override
     protected EventFieldWrapper<FOVModifier,BlockStateAPI<?>> wrapStateField() {
-        return getFieldWrapperGetter(event -> wrapState(FOVModifier::getState),null);
+        return wrapStateGetter(FOVModifier::getState);
     }
 
     @Override

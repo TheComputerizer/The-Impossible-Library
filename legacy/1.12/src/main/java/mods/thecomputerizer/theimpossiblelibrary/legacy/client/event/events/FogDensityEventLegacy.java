@@ -27,16 +27,16 @@ public class FogDensityEventLegacy extends FogDensityEventWrapper<FogDensity> {
 
     @Override
     protected EventFieldWrapper<FogDensity,Float> wrapDensityField() {
-        return getFieldWrapperGetter(FogDensity::getDensity,0f);
+        return wrapGenericGetter(FogDensity::getDensity,0f);
     }
 
     @Override
     protected EventFieldWrapper<FogDensity,EntityAPI<?>> wrapEntityField() {
-        return getFieldWrapperGetter(event -> wrapEntity(FogDensity::getEntity),null);
+        return wrapEntityGetter(FogDensity::getEntity);
     }
 
     @Override
     protected EventFieldWrapper<FogDensity,BlockStateAPI<?>> wrapStateField() {
-        return getFieldWrapperGetter(event -> wrapState(FogDensity::getState),null);
+        return wrapStateGetter(FogDensity::getState);
     }
 }

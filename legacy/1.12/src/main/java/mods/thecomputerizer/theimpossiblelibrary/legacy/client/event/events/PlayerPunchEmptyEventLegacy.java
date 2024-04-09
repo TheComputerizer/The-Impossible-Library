@@ -24,12 +24,12 @@ public class PlayerPunchEmptyEventLegacy extends PlayerPunchEmptyEventWrapper<Le
 
     @Override
     protected EventFieldWrapper<LeftClickEmpty,PlayerAPI<?>> wrapPlayerField() {
-        return getFieldWrapperGetter(event -> wrapPlayer(LeftClickEmpty::getEntityPlayer),null);
+        return wrapPlayerGetter(LeftClickEmpty::getEntityPlayer);
     }
 
     @Override
     protected EventFieldWrapper<LeftClickEmpty,BlockPosAPI<?>> wrapPosField() {
-        return getFieldWrapperGetter(event -> wrapPos(LeftClickEmpty::getPos),null);
+        return wrapPosGetter(LeftClickEmpty::getPos);
     }
 
     @Override

@@ -16,11 +16,11 @@ public class ClientConnectedEventLegacy extends ClientConnectedEventWrapper<Clie
 
     @Override
     protected EventFieldWrapper<ClientConnectedToServerEvent,Boolean> wrapLocalField() {
-        return getFieldWrapperGetter(ClientConnectedToServerEvent::isLocal,false);
+        return wrapGenericGetter(ClientConnectedToServerEvent::isLocal,false);
     }
 
     @Override
     protected EventFieldWrapper<ClientConnectedToServerEvent,String> wrapConnectionTypeField() {
-        return getFieldWrapperGetter(ClientConnectedToServerEvent::getConnectionType,"");
+        return wrapGenericGetter(ClientConnectedToServerEvent::getConnectionType,"");
     }
 }

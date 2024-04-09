@@ -20,16 +20,16 @@ public class PlayStreamingSoundSourceEventLegacy extends PlayStreamingSoundSourc
 
     @Override
     protected EventFieldWrapper<PlayStreamingSourceEvent,String> wrapNameField() {
-        return getFieldWrapperGetter(PlayStreamingSourceEvent::getName,"");
+        return wrapGenericGetter(PlayStreamingSourceEvent::getName,"");
     }
 
     @Override
     protected EventFieldWrapper<PlayStreamingSourceEvent,SoundAPI<ISound>> wrapSoundField() {
-        return getFieldWrapperGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
+        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
     }
 
     @Override
     protected EventFieldWrapper<PlayStreamingSourceEvent,String> wrapUUIDField() {
-        return getFieldWrapperGetter(PlayStreamingSourceEvent::getUuid,"");
+        return wrapGenericGetter(PlayStreamingSourceEvent::getUuid,"");
     }
 }

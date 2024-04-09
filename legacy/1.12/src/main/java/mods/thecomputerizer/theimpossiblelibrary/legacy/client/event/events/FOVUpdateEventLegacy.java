@@ -17,16 +17,16 @@ public class FOVUpdateEventLegacy extends FOVUpdateEventWrapper<FOVUpdateEvent> 
 
     @Override
     protected EventFieldWrapper<FOVUpdateEvent,Float> wrapFOVField() {
-        return getFieldWrapperGetter(FOVUpdateEvent::getFov,0f);
+        return wrapGenericGetter(FOVUpdateEvent::getFov,0f);
     }
 
     @Override
     protected EventFieldWrapper<FOVUpdateEvent,Float> wrapNewFOVField() {
-        return getFieldWrapperBoth(FOVUpdateEvent::getNewfov,FOVUpdateEvent::setNewfov,0f);
+        return wrapGenericBoth(FOVUpdateEvent::getNewfov,FOVUpdateEvent::setNewfov,0f);
     }
 
     @Override
     protected EventFieldWrapper<FOVUpdateEvent,PlayerAPI<?>> wrapPlayerField() {
-        return getFieldWrapperGetter(event -> wrapPlayer(FOVUpdateEvent::getEntity),null);
+        return wrapPlayerGetter(FOVUpdateEvent::getEntity);
     }
 }

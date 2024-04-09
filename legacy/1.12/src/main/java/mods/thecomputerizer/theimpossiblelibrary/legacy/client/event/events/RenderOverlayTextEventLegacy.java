@@ -58,11 +58,11 @@ public class RenderOverlayTextEventLegacy extends RenderOverlayTextEventWrapper<
 
     @Override
     protected EventFieldWrapper<Text,List<String>> wrapLeftField() {
-        return getFieldWrapperGetter(Text::getLeft,new ArrayList<>());
+        return wrapGenericGetter(Text::getLeft,new ArrayList<>());
     }
 
     @Override
     protected EventFieldWrapper<Text,List<String>> wrapRightField() {
-        return getFieldWrapperGetter(Text::getRight,new ArrayList<>());
+        return wrapGenericGetter(Text::getRight,new ArrayList<>());
     }
 }

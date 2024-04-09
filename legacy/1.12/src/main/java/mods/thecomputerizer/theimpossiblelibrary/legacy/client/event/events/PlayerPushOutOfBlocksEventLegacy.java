@@ -26,6 +26,6 @@ public class PlayerPushOutOfBlocksEventLegacy extends PlayerPushOutOfBlocksEvent
 
     @Override
     protected EventFieldWrapper<PlayerSPPushOutOfBlocksEvent,PlayerAPI<?>> wrapPlayerField() {
-        return getFieldWrapperGetter(event -> wrapPlayer(PlayerSPPushOutOfBlocksEvent::getEntityPlayer),null);
+        return wrapPlayerGetter(PlayerSPPushOutOfBlocksEvent::getEntityPlayer);
     }
 }

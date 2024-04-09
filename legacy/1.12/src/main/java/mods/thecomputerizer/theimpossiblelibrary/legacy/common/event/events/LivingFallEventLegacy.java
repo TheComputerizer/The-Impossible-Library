@@ -1,11 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingFallEventWrapper;
-import net.minecraft.entity.EntityLivingBase;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_FALL;
 
@@ -17,26 +16,17 @@ public class LivingFallEventLegacy extends LivingFallEventWrapper<LivingFallEven
     }
 
     @Override
-    protected Function<LivingFallEvent,EntityLivingBase> getLivingFunc() {
-        return LivingFallEvent::getEntityLiving;
+    protected EventFieldWrapper<LivingFallEvent,Float> wrapDamageMultiplierField() {
+        return wrapGenericBoth(LivingFallEvent::getDamageMultiplier,LivingFallEvent::setDamageMultiplier,0f);
     }
 
     @Override
-    public void populate() {
-        super.populate();
-        this.damageMultiplier = event.getDamageMultiplier();
-        this.distance = event.getDistance();
+    protected EventFieldWrapper<LivingFallEvent,Float> wrapDistanceField() {
+        return wrapGenericBoth(LivingFallEvent::getDistance,LivingFallEvent::setDistance,0f);
     }
 
     @Override
-    public void setDamageMultiplier(float damageMultiplier) {
-        this.damageMultiplier = damageMultiplier;
-        this.event.setDamageMultiplier(damageMultiplier);
-    }
-
-    @Override
-    public void setDistance(float distance) {
-        this.distance = distance;
-        this.event.setDistance(distance);
+    protected EventFieldWrapper<LivingFallEvent,LivingEntityAPI<?>> wrapLivingField() {
+        return wrapLivingGetter(LivingFallEvent::getEntityLiving);
     }
 }

@@ -21,16 +21,16 @@ public class ItemTooltipEventLegacy extends ItemTooltipEventWrapper<ItemTooltipE
 
     @Override
     protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?>> wrapPlayerField() {
-        return getFieldWrapperGetter(event -> wrapPlayer(ItemTooltipEvent::getEntityPlayer),null);
+        return wrapPlayerGetter(ItemTooltipEvent::getEntityPlayer);
     }
 
     @Override
     protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
-        return getFieldWrapperGetter(event -> wrapItemStack(ItemTooltipEvent::getItemStack),null);
+        return wrapItemStackGetter(ItemTooltipEvent::getItemStack);
     }
 
     @Override
     protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() {
-        return getFieldWrapperGetter(ItemTooltipEvent::getToolTip,new ArrayList<>());
+        return wrapGenericGetter(ItemTooltipEvent::getToolTip,new ArrayList<>());
     }
 }

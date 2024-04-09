@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.Facing;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractionEventType.Hand.MAINHAND;
 
@@ -13,6 +14,7 @@ public abstract class CommonPlayerInteractionEventType<E> extends CommonPlayerEv
         super(type);
     }
 
+    public abstract Facing getFacing();
     public abstract Hand getHand();
 
     public BlockPosAPI<?> getPos() {

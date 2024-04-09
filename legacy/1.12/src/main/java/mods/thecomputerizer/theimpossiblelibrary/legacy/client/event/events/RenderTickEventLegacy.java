@@ -26,6 +26,6 @@ public class RenderTickEventLegacy extends RenderTickEventWrapper<RenderTickEven
 
     @Override
     protected EventFieldWrapper<RenderTickEvent,Float> wrapTickTimeField() {
-        return getFieldWrapperGetter(ev -> ev.renderTickTime,0f);
+        return wrapGenericGetter(ev -> ev.renderTickTime,0f);
     }
 }

@@ -2,8 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockSnapshotAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
@@ -12,8 +14,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.advancement.AdvancementForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.world.ExplosionForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.world.WorldForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.block.BlockForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.block.BlockSnapShotForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.block.BlockStateForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.blockentity.BlockEntityForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.entity.EntityForge;
@@ -30,7 +34,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.BlockSnapshot;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -56,6 +62,11 @@ public class WrapperForge implements WrapperAPI {
     @Override
     public @Nullable <E> EntityAPI<E> wrapEntity(@Nullable E entity) {
         return Objects.nonNull(entity) ? (EntityAPI<E>)new EntityForge((Entity)entity) : null;
+    }
+
+    @Override
+    public @Nullable <E> ExplosionAPI<E> wrapExplosion(@Nullable E explosion) {
+        return Objects.nonNull(explosion) ? (ExplosionAPI<E>)new ExplosionForge((Explosion)explosion) : null;
     }
 
     /**
@@ -94,6 +105,11 @@ public class WrapperForge implements WrapperAPI {
     @Override
     public @Nullable <P> PlayerAPI<P> wrapPlayer(@Nullable P player) {
         return Objects.nonNull(player) ? (PlayerAPI<P>)new PlayerForge((PlayerEntity)player) : null;
+    }
+
+    @Override
+    public @Nullable <S> BlockSnapshotAPI<S> wrapSnapshot(@Nullable S snapshot) {
+        return Objects.nonNull(snapshot) ? (BlockSnapshotAPI<S>)new BlockSnapShotForge((BlockSnapshot)snapshot) : null;
     }
 
     @Override

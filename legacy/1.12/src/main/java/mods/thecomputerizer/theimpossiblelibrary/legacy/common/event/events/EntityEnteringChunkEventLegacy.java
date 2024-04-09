@@ -1,11 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.EntityEnteringChunkEventWrapper;
-import net.minecraft.entity.Entity;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.ENTITY_ENTERING_CHUNK;
 
@@ -17,40 +16,27 @@ public class EntityEnteringChunkEventLegacy extends EntityEnteringChunkEventWrap
     }
 
     @Override
-    protected Function<EnteringChunk,Entity> getEntityFunc() {
-        return EnteringChunk::getEntity;
+    protected EventFieldWrapper<EnteringChunk,EntityAPI<?>> wrapEntityField() {
+        return wrapEntityGetter(EnteringChunk::getEntity);
     }
 
     @Override
-    public void populate() {
-        super.populate();
-        this.newX = this.event.getNewChunkX();
-        this.newZ = this.event.getNewChunkZ();
-        this.oldX = this.event.getOldChunkX();
-        this.oldZ = this.event.getOldChunkZ();
+    protected EventFieldWrapper<EnteringChunk,Integer> wrapNewXField() {
+        return wrapGenericBoth(EnteringChunk::getNewChunkX,EnteringChunk::setNewChunkX,0);
     }
 
     @Override
-    public void setNewX(int x) {
-        this.newX = x;
-        this.event.setNewChunkX(x);
+    protected EventFieldWrapper<EnteringChunk,Integer> wrapNewZField() {
+        return wrapGenericBoth(EnteringChunk::getNewChunkZ,EnteringChunk::setNewChunkZ,0);
     }
 
     @Override
-    public void setNewZ(int z) {
-        this.newZ = z;
-        this.event.setNewChunkZ(z);
+    protected EventFieldWrapper<EnteringChunk,Integer> wrapOldXField() {
+        return wrapGenericBoth(EnteringChunk::getOldChunkX,EnteringChunk::setOldChunkX,0);
     }
 
     @Override
-    public void setOldX(int x) {
-        this.oldX = x;
-        this.event.setOldChunkX(x);
-    }
-
-    @Override
-    public void setOldZ(int z) {
-        this.oldZ = z;
-        this.event.setOldChunkZ(z);
+    protected EventFieldWrapper<EnteringChunk,Integer> wrapOldZField() {
+        return wrapGenericBoth(EnteringChunk::getOldChunkZ,EnteringChunk::setOldChunkZ,0);
     }
 }

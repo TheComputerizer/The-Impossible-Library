@@ -55,16 +55,16 @@ public class RenderOverlayBossEventLegacy extends RenderOverlayBossEventWrapper<
 
     @Override
     protected EventFieldWrapper<BossInfo,Integer> wrapIncrementField() {
-        return getFieldWrapperBoth(BossInfo::getIncrement,BossInfo::setIncrement,0);
+        return wrapGenericBoth(BossInfo::getIncrement,BossInfo::setIncrement,0);
     }
 
     @Override
     protected EventFieldWrapper<BossInfo,Integer> wrapXField() {
-        return getFieldWrapperGetter(BossInfo::getX,0);
+        return wrapGenericGetter(BossInfo::getX,0);
     }
 
     @Override
     protected EventFieldWrapper<BossInfo,Integer> wrapYField() {
-        return getFieldWrapperGetter(BossInfo::getY,0);
+        return wrapGenericGetter(BossInfo::getY,0);
     }
 }

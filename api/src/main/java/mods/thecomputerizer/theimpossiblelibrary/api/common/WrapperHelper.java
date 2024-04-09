@@ -2,8 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockSnapshotAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
@@ -43,6 +45,10 @@ public class WrapperHelper {
         return wrap(api -> api.wrapEntity(entity));
     }
 
+    public static <E> @Nullable ExplosionAPI<E> wrapExplosion(@Nullable E explosion) {
+        return wrap(api -> api.wrapExplosion(explosion));
+    }
+
     public static <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic) {
         return wrap(api -> api.wrapGeneric(wrapperClass,generic));
     }
@@ -61,6 +67,10 @@ public class WrapperHelper {
 
     public static <P> @Nullable PlayerAPI<P> wrapPlayer(@Nullable P player) {
         return wrap(api -> api.wrapPlayer(player));
+    }
+
+    public static <S> @Nullable BlockSnapshotAPI<S> wrapSnapshot(@Nullable S state) {
+        return wrap(api -> api.wrapSnapshot(state));
     }
 
     public static <S> @Nullable BlockStateAPI<S> wrapState(@Nullable S state) {

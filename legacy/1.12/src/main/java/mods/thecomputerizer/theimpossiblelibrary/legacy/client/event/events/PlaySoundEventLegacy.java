@@ -20,16 +20,16 @@ public class PlaySoundEventLegacy extends PlaySoundEventWrapper<PlaySoundEvent,I
 
     @Override
     protected EventFieldWrapper<PlaySoundEvent,String> wrapNameField() {
-        return getFieldWrapperGetter(PlaySoundEvent::getName,"");
+        return wrapGenericGetter(PlaySoundEvent::getName,"");
     }
 
     @Override
     protected EventFieldWrapper<PlaySoundEvent,SoundAPI<ISound>> wrapSoundField() {
-        return getFieldWrapperGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
+        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
     }
 
     @Override
     protected EventFieldWrapper<PlaySoundEvent,SoundAPI<ISound>> wrapResultField() {
-        return getFieldWrapperGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getResultSound()) : null,null);
+        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getResultSound()) : null,null);
     }
 }

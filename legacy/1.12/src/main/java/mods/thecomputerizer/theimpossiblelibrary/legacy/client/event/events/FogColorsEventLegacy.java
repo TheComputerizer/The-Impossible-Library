@@ -27,26 +27,26 @@ public class FogColorsEventLegacy extends FogColorsEventWrapper<FogColors> {
 
     @Override
     protected EventFieldWrapper<FogColors,Float> wrapBlue() {
-        return getFieldWrapperBoth(FogColors::getBlue,FogColors::setBlue,0f);
+        return wrapGenericBoth(FogColors::getBlue,FogColors::setBlue,0f);
     }
 
     @Override
     protected EventFieldWrapper<FogColors,Float> wrapGreen() {
-        return getFieldWrapperBoth(FogColors::getGreen,FogColors::setGreen,0f);
+        return wrapGenericBoth(FogColors::getGreen,FogColors::setGreen,0f);
     }
 
     @Override
     protected EventFieldWrapper<FogColors,Float> wrapRed() {
-        return getFieldWrapperBoth(FogColors::getRed,FogColors::setRed,0f);
+        return wrapGenericBoth(FogColors::getRed,FogColors::setRed,0f);
     }
 
     @Override
     protected EventFieldWrapper<FogColors,EntityAPI<?>> wrapEntityField() {
-        return getFieldWrapperGetter(event -> wrapEntity(FogColors::getEntity),null);
+        return wrapEntityGetter(FogColors::getEntity);
     }
 
     @Override
     protected EventFieldWrapper<FogColors,BlockStateAPI<?>> wrapStateField() {
-        return getFieldWrapperGetter(event -> wrapState(FogColors::getState),null);
+        return wrapStateGetter(FogColors::getState);
     }
 }

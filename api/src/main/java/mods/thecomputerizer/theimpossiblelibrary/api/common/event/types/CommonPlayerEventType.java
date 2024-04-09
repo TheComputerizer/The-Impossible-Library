@@ -4,8 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWra
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 
-import javax.annotation.Nullable;
-
 public abstract class CommonPlayerEventType<E> extends CommonEventWrapper<E> {
 
     protected EventFieldWrapper<E,PlayerAPI<?>> player;
@@ -14,7 +12,7 @@ public abstract class CommonPlayerEventType<E> extends CommonEventWrapper<E> {
         super(type);
     }
 
-    public @Nullable PlayerAPI<?> getPlayer() {
+    public PlayerAPI<?> getPlayer() {
         return this.player.get(this.event);
     }
 

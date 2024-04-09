@@ -1,13 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockPlaceEventWrapper;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_PLACE;
 
@@ -19,22 +20,37 @@ public class BlockPlaceEventLegacy extends BlockPlaceEventWrapper<EntityPlaceEve
     }
 
     @Override
-    protected Function<EntityPlaceEvent,Entity> getEntityFunc() {
-        return EntityPlaceEvent::getEntity;
+    protected EventFieldWrapper<EntityPlaceEvent,EntityAPI<?>> wrapEntityField() {
+        return wrapEntityGetter(EntityPlaceEvent::getEntity);
     }
 
     @Override
-    protected Function<EntityPlaceEvent,IBlockState> getPlacedFunc() {
-        return EntityPlaceEvent::getPlacedBlock;
+    protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapPlacedAgainstField() {
+        return wrapStateGetter(EntityPlaceEvent::getPlacedAgainst);
     }
 
     @Override
-    protected Function<EntityPlaceEvent,IBlockState> getPlacedAgainstFunc() {
-        return EntityPlaceEvent::getPlacedAgainst;
+    protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapPlacedField() {
+        return wrapStateGetter(EntityPlaceEvent::getPlacedBlock);
     }
 
     @Override
-    protected Function<EntityPlaceEvent,World> getWorldFunc() {
-        return EntityPlaceEvent::getWorld;
+    protected EventFieldWrapper<EntityPlaceEvent,BlockSnapshotAPI<?>> wrapSnapshotField() {
+        return wrapSnapshotGetter(EntityPlaceEvent::getBlockSnapshot);
+    }
+
+    @Override
+    protected EventFieldWrapper<EntityPlaceEvent,BlockPosAPI<?>> wrapPosField() {
+        return wrapPosGetter(EntityPlaceEvent::getPos);
+    }
+
+    @Override
+    protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapStateField() {
+        return wrapStateGetter(EntityPlaceEvent::getState);
+    }
+
+    @Override
+    protected EventFieldWrapper<EntityPlaceEvent,WorldAPI<?>> wrapWorldField() {
+        return wrapWorldGetter(EntityPlaceEvent::getWorld);
     }
 }
