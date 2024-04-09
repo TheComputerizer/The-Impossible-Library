@@ -7,10 +7,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.ClientEventsLegacy;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CAMERA_SETUP;
+
 public class CameraSetupEventLegacy extends CameraSetupEventWrapper<CameraSetup> {
+
+    @SubscribeEvent
+    public static void onEvent(CameraSetup event) {
+        CAMERA_SETUP.invoke(event);
+    }
 
     @Override
     protected RenderAPI initRenderer(@Nonnull CameraSetup event) {

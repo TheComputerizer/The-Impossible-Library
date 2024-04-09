@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.RenderEntityViewEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientEntityViewEventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_RENDER;
 
-public abstract class FogRenderEventWrapper<E> extends RenderEntityViewEventWrapper<E> {
+public abstract class FogRenderEventWrapper<E> extends ClientEntityViewEventType<E> {
 
     protected EventFieldWrapper<E,Float> farplane;
     protected EventFieldWrapper<E,Integer> fogMode;

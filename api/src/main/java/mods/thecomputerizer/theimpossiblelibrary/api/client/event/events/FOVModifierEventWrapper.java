@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.RenderEntityViewEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientEntityViewEventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOV_MODIFIER;
 
-public abstract class FOVModifierEventWrapper<E> extends RenderEntityViewEventWrapper<E> {
+public abstract class FOVModifierEventWrapper<E> extends ClientEntityViewEventType<E> {
 
     protected EventFieldWrapper<E,Float> fov;
 

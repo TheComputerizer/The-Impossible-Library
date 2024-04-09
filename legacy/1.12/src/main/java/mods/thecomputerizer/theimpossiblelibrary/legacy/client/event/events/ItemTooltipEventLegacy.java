@@ -5,11 +5,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.ITEM_TOOLTIP;
+
 public class ItemTooltipEventLegacy extends ItemTooltipEventWrapper<ItemTooltipEvent> {
+
+    @SubscribeEvent
+    public static void onEvent(ItemTooltipEvent event) {
+        ITEM_TOOLTIP.invoke(event);
+    }
 
     @Override
     protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?>> wrapPlayerField() {

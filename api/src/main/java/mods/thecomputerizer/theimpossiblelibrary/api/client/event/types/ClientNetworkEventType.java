@@ -4,11 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWra
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 
-public abstract class ClientNetworkEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class ClientNetworkEventType<E> extends ClientEventWrapper<E> {
 
     protected NetworkAPI<?,?> network;
 
-    protected ClientNetworkEventWrapper(ClientType<?> type) {
+    protected ClientNetworkEventType(ClientType<?> type) {
         super(type);
     }
 

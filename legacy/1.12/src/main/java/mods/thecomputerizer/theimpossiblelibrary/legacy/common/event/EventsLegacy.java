@@ -1,15 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.*;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events.AttachCapabilitiesEventLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events.BlockBreakEventLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events.BlockPlaceEventLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
 
 public class EventsLegacy implements EventsAPI {
+
+    public static Box getBox(AxisAlignedBB aabb) {
+        return new Box(aabb.minX,aabb.minY,aabb.minZ,aabb.maxX,aabb.maxY,aabb.maxZ);
+    }
 
     private boolean defined;
 

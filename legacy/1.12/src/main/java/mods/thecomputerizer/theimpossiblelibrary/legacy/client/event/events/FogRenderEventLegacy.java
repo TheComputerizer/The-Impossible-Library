@@ -7,10 +7,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.ClientEventsLegacy;
 import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_RENDER;
+
 public class FogRenderEventLegacy extends FogRenderEventWrapper<RenderFogEvent> {
+
+    @SubscribeEvent
+    public static void onEvent(RenderFogEvent event) {
+        FOG_RENDER.invoke(event);
+    }
 
     @Override
     protected RenderAPI initRenderer(@Nonnull RenderFogEvent event) {

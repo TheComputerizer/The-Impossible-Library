@@ -8,11 +8,11 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @Getter
-public abstract class RenderEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class ClientRenderEventType<E> extends ClientEventWrapper<E> {
 
     protected RenderAPI renderer;
 
-    protected RenderEventWrapper(ClientType<?> type) {
+    protected ClientRenderEventType(ClientType<?> type) {
         super(type);
     }
 

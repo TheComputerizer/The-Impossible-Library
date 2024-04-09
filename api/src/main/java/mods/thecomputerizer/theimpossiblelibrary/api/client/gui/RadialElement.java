@@ -89,8 +89,8 @@ public class RadialElement {
         renderer.disableTexture();
         renderer.setColor(1f,1f,1f,1f);
         Vector2f mouse = new Vector2f(mouseX,mouseY);
-        double mouseAngleDeg = MathHelper.getAngle(mouse,this.center);
-        double mouseRelativeRadius = MathHelper.distance(mouse,this.center);
+        double mouseAngleDeg = this.center.angle(mouse);
+        double mouseRelativeRadius = this.center.distance(mouse);
         float numButtons = this.buttons.size();
         if(mouseAngleDeg<((-0.5f/numButtons)+0.25f)*360d) mouseAngleDeg+=360d;
         boolean currentScreen = renderer.getMinecraft().isCurrentScreen(this.parentScreen);
@@ -120,8 +120,8 @@ public class RadialElement {
     private void drawEmpty(RenderAPI renderer, float offset, Vector2f mouse) {
         float startAngle = (float)Math.toRadians(-0.25f*360);
         for(int i=0; i<this.resolution; i++) {
-            float angle1 = (float)Math.toRadians(startAngle+(i/this.resolution)*MathHelper.CIRCLE_RADIANS);
-            float angle2 = (float)Math.toRadians(startAngle+((i+1)/this.resolution)*MathHelper.CIRCLE_RADIANS);
+            float angle1 = (float)Math.toRadians(startAngle+(i/this.resolution)*MathHelper.RADIANS_360);
+            float angle2 = (float)Math.toRadians(startAngle+((i+1)/this.resolution)*MathHelper.RADIANS_360);
             Vector2f pos1In = MathHelper.getVertex(this.center,this.radius.x,angle1);
             Vector2f pos2In = MathHelper.getVertex(this.center,this.radius.x,angle2);
             Vector2f pos1Out = MathHelper.getVertex(this.center,this.radius.y,angle1);

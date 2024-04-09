@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryEntryLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryLegacy;
 import net.minecraft.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -35,6 +37,15 @@ public class EntityLegacy extends RegistryEntryLegacy<EntityEntry> implements En
         super(entry);
         this.entity = entity;
         this.entry = entry;
+    }
+
+    @Override
+    public Box getBoundingBox() {
+        return Objects.nonNull(this.entity) ? getBoundingBox(this.entity.getEntityBoundingBox()) : Box.ZERO;
+    }
+
+    public Box getBoundingBox(AxisAlignedBB aabb) {
+        return new Box(aabb.minX,aabb.minY,aabb.minZ,aabb.maxX,aabb.maxY,aabb.maxZ);
     }
 
     @Override

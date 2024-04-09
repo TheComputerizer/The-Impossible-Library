@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerEventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
 
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.ITEM_TOOLTIP;
 
-public abstract class ItemTooltipEventWrapper<E> extends ClientPlayerEventWrapper<E> {
+public abstract class ItemTooltipEventWrapper<E> extends ClientPlayerEventType<E> {
 
     protected EventFieldWrapper<E,ItemStackAPI<?>> stack;
 

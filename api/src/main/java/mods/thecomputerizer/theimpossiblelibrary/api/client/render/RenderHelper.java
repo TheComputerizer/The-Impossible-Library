@@ -136,11 +136,12 @@ public class RenderHelper {
 
     public static void drawLine(RenderAPI renderer, float startX, float startY, float endX, float endY,
                                 Vector4f color, float width, float offset) {
-        double angle = MathHelper.getAngle(startX,startY,endX,endY);
-        Vector2f start1 = MathHelper.getVertex(startX,startY,width/2d,Math.toRadians(angle+90d));
-        Vector2f start2 = MathHelper.getVertex(startX,startY,width/2d,Math.toRadians(angle-90d));
-        Vector2f end1 = MathHelper.getVertex(endX,endY,width/2d,Math.toRadians(angle-90d));
-        Vector2f end2 = MathHelper.getVertex(endX,endY,width/2d,Math.toRadians(angle+90d));
+        double angle1 = new Vector2f(startX,startY).angle(new Vector2f(endX,endY))-MathHelper.RADIANS_90;
+        double angle2 = angle1+MathHelper.RADIANS_180;
+        Vector2f start1 = MathHelper.getVertex(startX,startY,width/2d,angle2);
+        Vector2f start2 = MathHelper.getVertex(startX,startY,width/2d,angle1);
+        Vector2f end1 = MathHelper.getVertex(endX,endY,width/2d,angle1);
+        Vector2f end2 = MathHelper.getVertex(endX,endY,width/2d,angle2);
         setBuffer(renderer,start1,start2,end1,end2,offset,color);
     }
 

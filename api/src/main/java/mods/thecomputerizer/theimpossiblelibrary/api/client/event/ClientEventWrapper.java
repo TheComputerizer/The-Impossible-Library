@@ -56,11 +56,11 @@ public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
         public static ClientType<RenderOverlayPreEventWrapper<?>> RENDER_OVERLAY_PRE = new ClientType<>(true,false);
         public static ClientType<RenderOverlayTextEventWrapper<?>> RENDER_OVERLAY_TEXT = new ClientType<>(true,false);
         public static ClientType<RenderWorldLastEventWrapper<?>> RENDER_WORLD_LAST = new ClientType<>(false,false);
-        public static ClientType<LoadSoundEventWrapper<?>> SOUND_LOAD = new ClientType<>(false,false);
-        public static ClientType<PlaySoundEventWrapper<?>> SOUND_PLAY = new ClientType<>(false,false);
-        public static ClientType<PlaySoundSourceEventWrapper<?>> SOUND_PLAY_SOURCE = new ClientType<>(false,false);
-        public static ClientType<PlayStreamingSoundSourceEventWrapper<?>> SOUND_PLAY_STREAMING = new ClientType<>(false,false);
-        public static ClientType<SoundSetupEventWrapper<?>> SOUND_SETUP = new ClientType<>(false,false);
+        public static ClientType<LoadSoundEventWrapper<?,?>> SOUND_LOAD = new ClientType<>(false,false);
+        public static ClientType<PlaySoundEventWrapper<?,?>> SOUND_PLAY = new ClientType<>(false,false);
+        public static ClientType<PlaySoundSourceEventWrapper<?,?>> SOUND_PLAY_SOURCE = new ClientType<>(false,false);
+        public static ClientType<PlayStreamingSoundSourceEventWrapper<?,?>> SOUND_PLAY_STREAMING = new ClientType<>(false,false);
+        public static ClientType<SoundSetupEventWrapper<?,?>> SOUND_SETUP = new ClientType<>(false,false);
         public static ClientType<ClientTickEventWrapper<?>> TICK_CLIENT = new ClientType<>(false,false);
         public static ClientType<RenderTickEventWrapper<?>> TICK_RENDER = new ClientType<>(false,false);
 

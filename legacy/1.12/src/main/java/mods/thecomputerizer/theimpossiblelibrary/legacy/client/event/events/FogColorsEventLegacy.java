@@ -7,10 +7,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.ClientEventsLegacy;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_COLORS;
+
 public class FogColorsEventLegacy extends FogColorsEventWrapper<FogColors> {
+
+    @SubscribeEvent
+    public static void onEvent(FogColors event) {
+        FOG_COLORS.invoke(event);
+    }
 
     @Override
     protected RenderAPI initRenderer(@Nonnull FogColors event) {

@@ -1,22 +1,18 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.TickableEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.TICK_PLAYER;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.TickableEventWrapper.TickType.PLAYER;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickType.PLAYER;
 
-public abstract class PlayerTickEventWrapper<E> extends CommonEventWrapper<E> implements TickableEventWrapper {
+public abstract class PlayerTickEventWrapper<E> extends CommonTickableEventType<E> {
 
     protected PlayerTickEventWrapper() {
         super(TICK_PLAYER);
     }
 
     @Override
-    public TickType getTickType() {
+    protected TickType wrapTickType() {
         return PLAYER;
     }
-
-    @Override
-    protected void populate() {}
 }

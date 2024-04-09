@@ -1,28 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerHandedEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerInteractionEventType;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractionEventType.Hand;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.PLAYER_PUNCH_EMPTY;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractionEventType.Hand.MAINHAND;
 
-public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientPlayerHandedEventWrapper<E> {
-
-    protected EventFieldWrapper<E,BlockPosAPI<?>> pos;
+public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientPlayerInteractionEventType<E> {
 
     protected PlayerPunchEmptyEventWrapper() {
         super(PLAYER_PUNCH_EMPTY);
     }
 
-    public BlockPosAPI<?> getPos() {
-        return this.pos.get(this.event);
-    }
-
     @Override
-    protected void populate() {
-        super.populate();
-        this.pos = wrapPosField();
+    public Hand getHand() {
+        return MAINHAND;
     }
-
-    protected abstract EventFieldWrapper<E,BlockPosAPI<?>> wrapPosField();
 }

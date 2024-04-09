@@ -6,12 +6,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
 
 import javax.annotation.Nullable;
 
-public abstract class RenderEntityViewEventWrapper<E> extends RenderEventWrapper<E> {
+public abstract class ClientEntityViewEventType<E> extends ClientRenderEventType<E> {
 
     protected EventFieldWrapper<E,EntityAPI<?>> entity;
     protected EventFieldWrapper<E,BlockStateAPI<?>> state;
 
-    protected RenderEntityViewEventWrapper(ClientType<?> type) {
+    protected ClientEntityViewEventType(ClientType<?> type) {
         super(type);
     }
 

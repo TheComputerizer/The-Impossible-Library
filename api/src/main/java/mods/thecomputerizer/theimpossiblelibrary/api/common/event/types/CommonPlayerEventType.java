@@ -1,16 +1,16 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
+package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
 
 import javax.annotation.Nullable;
 
-public abstract class ClientPlayerEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class CommonPlayerEventType<E> extends CommonEventWrapper<E> {
 
     protected EventFieldWrapper<E,PlayerAPI<?>> player;
 
-    protected ClientPlayerEventWrapper(ClientType<?> type) {
+    protected CommonPlayerEventType(CommonType<?> type) {
         super(type);
     }
 

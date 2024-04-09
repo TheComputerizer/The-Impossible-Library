@@ -1,17 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientSoundEventType;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_SETUP;
 
-public abstract class SoundSetupEventWrapper<E> extends ClientEventWrapper<E> {
+public abstract class SoundSetupEventWrapper<E,S> extends ClientSoundEventType<E,S> {
 
     protected SoundSetupEventWrapper() {
         super(SOUND_SETUP);
-    }
-
-    @Override
-    protected void populate() {
-
     }
 }

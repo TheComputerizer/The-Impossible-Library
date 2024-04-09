@@ -2,11 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayPreEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.ClientEventsLegacy;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Pre;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_PRE;
@@ -18,8 +19,14 @@ public class RenderOverlayPreEventLegacy extends RenderOverlayPreEventWrapper<Pr
         RENDER_OVERLAY_PRE.invoke(event);
     }
 
-    private OverlayType getRenderType(ElementType element) {
-        switch(element) {
+    @Override
+    protected RenderAPI initRenderer(@Nonnull Pre event) {
+        return ClientEventsLegacy.initRenderer(event::getPartialTicks);
+    }
+
+    @Override
+    protected OverlayType wrapOverlayType() {
+        switch(Objects.isNull(this.event) ? ElementType.ALL : this.event.getType()) {
             case AIR: return OverlayType.AIR;
             case ARMOR: return OverlayType.ARMOR;
             case BOSSHEALTH: return OverlayType.BOSSHEALTH;
@@ -43,13 +50,5 @@ public class RenderOverlayPreEventLegacy extends RenderOverlayPreEventWrapper<Pr
             case VIGNETTE: return OverlayType.VIGNETTE;
             default: return OverlayType.ALL;
         }
-    }
-
-    @Override
-    public void populate() {
-        super.populate();
-        this.overlayType = getRenderType(this.event.getType());
-        RenderAPI render = RenderHelper.getRenderer();
-        if(Objects.nonNull(render)) render.setPartialTicks(this.event.getPartialTicks());
     }
 }

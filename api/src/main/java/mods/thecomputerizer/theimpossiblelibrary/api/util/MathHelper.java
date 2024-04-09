@@ -3,47 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.api.util;
 import org.joml.Vector2f;
 
 public class MathHelper {
-    public static final double CIRCLE_RADIANS = Math.toRadians(360);
-    public static final double HALF_CIRCLE_RADIANS = Math.toRadians(180);
 
-    /**
-        Gets the distance between 2D coordinate points
-     */
-    public static double distance(Vector2f vec1, Vector2f vec2) {
-        return Math.sqrt(Math.pow(vec1.x()-vec2.x(),2)+Math.pow(vec1.y()-vec2.y(),2));
-    }
-
-    /**
-        Helper math for radial gui buttons
-        Checks whether a given screen position is within an outer radius but not within an inner radius of a circle
-        The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius
-     */
-    public static boolean isInCircle(Vector2f center, double distance, Vector2f radius) {
-        return distance>radius.x() && distance<=radius.y();
-    }
-
-    /**
-        Helper math for radial gui buttons
-        Checks whether a given screen position is within the bounds of a circle
-     */
-    public static boolean isInCircle(Vector2f center, double distance, float outerRadius) {
-        return distance<=outerRadius;
-    }
-
-    /**
-        Returns the angle between 2 coordinate points in degrees
-     */
-    public static double getAngle(Vector2f start, Vector2f end) {
-        return getAngle(start.x,start.y,end.x,end.y);
-    }
-
-    /**
-     Returns the angle between 2 coordinate points in degrees
-     */
-    public static double getAngle(float startX, float startY, float endX, float endY) {
-        return Math.toDegrees(Math.atan2(startY-endY,startX-endX));
-    }
-
+    public static final double RADIANS_360 = Math.toRadians(360d);
+    public static final double RADIANS_180 = Math.toRadians(180d);
+    public static final double RADIANS_90 = Math.toRadians(90d);
+    public static final double RADIANS_60 = Math.toRadians(60d);
+    public static final double RADIANS_45 = Math.toRadians(45d);
+    public static final double RADIANS_30 = Math.toRadians(30d);
 
     /**
         Helper math for radial gui elements
@@ -64,8 +30,26 @@ public class MathHelper {
     public static Vector2f getVertex(Vector2f center, double radius, double angle) {
         return getVertex(center.x,center.y,radius,angle);
     }
+
     public static Vector2f getVertex(float centerX, float centerY, double radius, double angle) {
         return new Vector2f((float)((double)centerX+(radius*Math.cos(angle))),(float)((double)centerY+(radius*Math.sin(angle))));
+    }
+
+    /**
+     Helper math for radial gui buttons
+     Checks whether a given screen position is within an outer radius but not within an inner radius of a circle
+     The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius
+     */
+    public static boolean isInCircle(Vector2f center, double distance, Vector2f radius) {
+        return distance>radius.x() && distance<=radius.y();
+    }
+
+    /**
+     Helper math for radial gui buttons
+     Checks whether a given screen position is within the bounds of a circle
+     */
+    public static boolean isInCircle(Vector2f center, double distance, float outerRadius) {
+        return distance<=outerRadius;
     }
 
     /**

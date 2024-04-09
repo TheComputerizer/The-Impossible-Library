@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.RenderEntityViewEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientEntityViewEventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CAMERA_SETUP;
 
-public abstract class CameraSetupEventWrapper<E> extends RenderEntityViewEventWrapper<E> {
+public abstract class CameraSetupEventWrapper<E> extends ClientEntityViewEventType<E> {
 
     protected EventFieldWrapper<E,Float> pitch;
     protected EventFieldWrapper<E,Float> roll;

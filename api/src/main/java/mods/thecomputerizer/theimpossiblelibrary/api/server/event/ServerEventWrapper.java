@@ -10,7 +10,7 @@ public abstract class ServerEventWrapper<E> extends EventWrapper<E> {
 
     private MinecraftServerAPI<?> serverAPI;
 
-    protected ServerEventWrapper(EventType<?> type) {
+    protected ServerEventWrapper(ServerType<?> type) {
         super(type);
     }
 
