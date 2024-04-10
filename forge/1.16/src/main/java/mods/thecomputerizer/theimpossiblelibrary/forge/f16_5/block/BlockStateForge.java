@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 
-public class BlockStateForge extends BlockForge implements BlockStateAPI<Block,BlockState> {
+public class BlockStateForge extends BlockForge implements BlockStateAPI<BlockState> {
 
     private final BlockState state;
 

@@ -15,20 +15,17 @@ import java.util.Objects;
 @Mod(TILRef.MODID)
 public class TILCommonEntryForge extends CommonEntryPoint {
 
-    private final CommonEntryPoint clientEntry;
-
     public TILCommonEntryForge() {
         TILForge.init();
         TILRef.logError("COMMON CONSTRUCT");
-        this.clientEntry = TILForge.FORGE_REF.isClient() ? new TILClientEntryForge() : null;
+        CommonEntryPoint clientEntry = TILForge.FORGE_REF.isClient() ? new TILClientEntryForge() : null;
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::commonSetup);
-        if(Objects.nonNull(this.clientEntry)) bus.addListener(((TILClientEntryForge)this.clientEntry)::clientSetup);
+        if(Objects.nonNull(clientEntry)) bus.addListener(((TILClientEntryForge) clientEntry)::clientSetup);
     }
 
     public void commonSetup(final FMLCommonSetupEvent event) {
         TILRef.logError("COMMON SETUP");
-        EventHelper.initTILListeners(false);
-        if(Objects.isNull(this.clientEntry)) EventHelper.initTILListeners(false);
+        EventHelper.initTILListeners(false,true);
     }
 }

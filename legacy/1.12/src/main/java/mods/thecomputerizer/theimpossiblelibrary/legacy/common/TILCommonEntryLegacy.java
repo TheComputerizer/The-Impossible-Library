@@ -28,9 +28,8 @@ public class TILCommonEntryLegacy extends CommonEntryPoint {
     public void preInit(FMLPreInitializationEvent event) {
         TILRef.logError("COMMON PREINIT");
         NetworkHandler.load();
-        if(Objects.nonNull(this.clientEntry))
-            ((TILClientEntryLegacy)this.clientEntry).preInit(event);
-        else EventHelper.getEventsAPI().initDefaultListeners();
+        if(Objects.nonNull(this.clientEntry)) ((TILClientEntryLegacy)this.clientEntry).preInit(event);
+        else EventHelper.initTILListeners(false,true);
     }
 
     @EventHandler

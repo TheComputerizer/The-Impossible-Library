@@ -19,7 +19,7 @@ public abstract class PlayerAdvancementEventWrapper<E> extends CommonPlayerEvent
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
         this.advancement = wrapAdvancementField();
     }

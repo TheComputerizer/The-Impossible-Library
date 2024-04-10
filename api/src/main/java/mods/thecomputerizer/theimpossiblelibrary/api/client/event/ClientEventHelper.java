@@ -18,7 +18,7 @@ public class ClientEventHelper {
         return TILRef.getClientSubAPI("EventsAPI",ClientAPI::getClientEventsAPI);
     }
 
-    public static void initTILClientListeners() {
+    public static void initTILClientListeners(boolean test) { //TODO See if test event initialization can be hooked here
         EventHelper.addListener(TICK_CLIENT,wrapper -> {
             if(wrapper.isPhase(END)) RenderHelper.tickRenderables();
         });

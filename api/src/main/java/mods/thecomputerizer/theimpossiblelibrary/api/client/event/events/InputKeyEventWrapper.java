@@ -11,7 +11,7 @@ public abstract class InputKeyEventWrapper<E> extends ClientEventWrapper<E> { //
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
 
     }
 }

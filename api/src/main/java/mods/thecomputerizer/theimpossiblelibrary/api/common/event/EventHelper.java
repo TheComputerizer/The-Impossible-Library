@@ -26,8 +26,8 @@ public class EventHelper {
         return client ? ClientEventHelper.getEventsAPI() : getCommonEventsAPI();
     }
 
-    public static void initTILListeners(boolean client) {
-        if(client) ClientEventHelper.initTILClientListeners();
+    public static void initTILListeners(boolean client, boolean test) {
+        if(client) ClientEventHelper.initTILClientListeners(test);
     }
 
     public static <E extends EventWrapper<?>> void registerWrapperImpl(E wrapper) {
