@@ -17,7 +17,7 @@ public class LivingItemUseTickEventLegacy extends LivingItemUseTickEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Tick,Integer> wrapDuration() {
+    protected EventFieldWrapper<Tick,Integer> wrapDurationField() {
         return wrapGenericBoth(Tick::getDuration, Tick::setDuration,0);
     }
 
@@ -27,7 +27,7 @@ public class LivingItemUseTickEventLegacy extends LivingItemUseTickEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Tick,ItemStackAPI<?>> wrapStack() {
+    protected EventFieldWrapper<Tick,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Tick::getItem);
     }
 }

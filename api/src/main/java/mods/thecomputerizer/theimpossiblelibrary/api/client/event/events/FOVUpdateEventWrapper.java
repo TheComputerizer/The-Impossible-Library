@@ -23,7 +23,7 @@ public abstract class FOVUpdateEventWrapper<E> extends ClientPlayerEventType<E> 
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
         this.fov = wrapFOVField();
         this.newFOV = wrapNewFOVField();

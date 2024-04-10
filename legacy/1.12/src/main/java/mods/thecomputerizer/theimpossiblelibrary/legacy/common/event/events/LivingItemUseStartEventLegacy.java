@@ -17,7 +17,7 @@ public class LivingItemUseStartEventLegacy extends LivingItemUseStartEventWrappe
     }
 
     @Override
-    protected EventFieldWrapper<Start,Integer> wrapDuration() {
+    protected EventFieldWrapper<Start,Integer> wrapDurationField() {
         return wrapGenericBoth(Start::getDuration, Start::setDuration,0);
     }
 
@@ -27,7 +27,7 @@ public class LivingItemUseStartEventLegacy extends LivingItemUseStartEventWrappe
     }
 
     @Override
-    protected EventFieldWrapper<Start,ItemStackAPI<?>> wrapStack() {
+    protected EventFieldWrapper<Start,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Start::getItem);
     }
 }

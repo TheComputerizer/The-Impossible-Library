@@ -22,26 +22,26 @@ public class PlayerPunchItemEventLegacy extends PlayerPunchItemEventWrapper<Obje
 
     @Override
     protected EventFieldWrapper<Object,ActionResult> wrapCancelResultField() {
-        return null;
+        return wrapGenericBoth(event -> null,(event,result) -> {},null);
     }
 
     @Override
     protected EventFieldWrapper<Object,Facing> wrapFacingField() {
-        return null;
+        return wrapGenericGetter(event -> null,null);
     }
 
     @Override
     protected EventFieldWrapper<Object,Hand> wrapHandField() {
-        return null;
+        return wrapGenericGetter(event -> null,null);
     }
 
     @Override
     protected EventFieldWrapper<Object,PlayerAPI<?>> wrapPlayerField() {
-        return null;
+        return wrapPlayerGetter(event -> null);
     }
 
     @Override
     protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
-        return null;
+        return wrapPosGetter(event -> null);
     }
 }

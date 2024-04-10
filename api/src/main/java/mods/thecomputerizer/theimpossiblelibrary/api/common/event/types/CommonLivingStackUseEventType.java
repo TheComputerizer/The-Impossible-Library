@@ -17,12 +17,12 @@ public abstract class CommonLivingStackUseEventType<E> extends CommonLivingStack
     @Override
     public void populate() {
         super.populate();
-        this.duration = wrapDuration();
+        this.duration = wrapDurationField();
     }
 
     public void setDuration(int duration) {
         this.duration.set(this.event,duration);
     }
 
-    protected abstract EventFieldWrapper<E,Integer> wrapDuration();
+    protected abstract EventFieldWrapper<E,Integer> wrapDurationField();
 }

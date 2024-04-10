@@ -19,7 +19,7 @@ public abstract class ClientPlayerEventType<E> extends ClientEventWrapper<E> {
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         this.player = wrapPlayerField();
     }
 

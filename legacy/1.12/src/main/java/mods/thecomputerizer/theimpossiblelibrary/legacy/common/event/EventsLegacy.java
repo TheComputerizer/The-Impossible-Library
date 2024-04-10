@@ -164,7 +164,7 @@ public class EventsLegacy implements EventsAPI {
         PLAYER_VISIBILITY.setConnector(new PlayerVisibilityEventLegacy());
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEventLegacy());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEventLegacy());
-        PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelUpEventLegacy());
+        PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventLegacy());
         REGISTER_GENERIC.setConnector(new RegistryEventLegacy());
         TICK_PLAYER.setConnector(new PlayerTickEventLegacy());
         TICK_WORLD.setConnector(new WorldTickEventLegacy());

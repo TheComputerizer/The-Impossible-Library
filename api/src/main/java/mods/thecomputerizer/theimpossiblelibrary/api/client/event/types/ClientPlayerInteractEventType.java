@@ -46,7 +46,7 @@ public abstract class ClientPlayerInteractEventType<E> extends ClientPlayerEvent
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
         this.cancelResult = wrapCancelResultField();
         this.facing = wrapFacingField();

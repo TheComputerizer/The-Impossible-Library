@@ -18,8 +18,8 @@ public abstract class CommonLivingStackEventType<E> extends CommonLivingEventTyp
     @Override
     public void populate() {
         super.populate();
-        this.stack = wrapStack();
+        this.stack = wrapStackField();
     }
 
-    protected abstract EventFieldWrapper<E,ItemStackAPI<?>> wrapStack();
+    protected abstract EventFieldWrapper<E,ItemStackAPI<?>> wrapStackField();
 }

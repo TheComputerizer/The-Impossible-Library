@@ -89,7 +89,7 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
         public static CommonType<PlayerVisibilityEventWrapper<?>> PLAYER_VISIBILITY = new CommonType<>(false,false);
         public static CommonType<PlayerChangeXPEventWrapper<?>> PLAYER_XP_CHANGE = new CommonType<>(true,false);
         public static CommonType<PlayerPickupXPEventWrapper<?>> PLAYER_XP_PICKUP = new CommonType<>(true,false);
-        public static CommonType<PlayerLevelUpEventWrapper<?>> PLAYER_XP_LEVEL_CHANGE = new CommonType<>(true,false);
+        public static CommonType<PlayerLevelChangeEventWrapper<?>> PLAYER_XP_LEVEL_CHANGE = new CommonType<>(true,false);
         public static CommonType<RegistryEventWrapper<?>> REGISTER_GENERIC = new CommonType<>(false,false);
         public static CommonType<PlayerTickEventWrapper<?>> TICK_PLAYER = new CommonType<>(false,false);
         public static CommonType<WorldTickEventWrapper<?>> TICK_WORLD = new CommonType<>(false,false);

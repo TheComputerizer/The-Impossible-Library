@@ -8,25 +8,25 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 
 public abstract class LivingItemUseFinishEventWrapper<E> extends CommonLivingStackUseEventType<E> {
 
-    protected EventFieldWrapper<E,ItemStackAPI<?>> result;
+    protected EventFieldWrapper<E,ItemStackAPI<?>> stackResult;
 
     protected LivingItemUseFinishEventWrapper() {
         super(LIVING_ITEM_USE_FINISH);
     }
 
-    public ItemStackAPI<?> getResult() {
-        return this.result.get(this.event);
+    public ItemStackAPI<?> getStackResult() {
+        return this.stackResult.get(this.event);
     }
 
     @Override
     public void populate() {
         super.populate();
-        this.result = wrapResult();
+        this.stackResult = wrapStackResultField();
     }
 
     public void setResult(ItemStackAPI<?> result) {
-        this.result.set(this.event,result);
+        this.stackResult.set(this.event,result);
     }
 
-    protected abstract EventFieldWrapper<E,ItemStackAPI<?>> wrapResult();
+    protected abstract EventFieldWrapper<E,ItemStackAPI<?>> wrapStackResultField();
 }

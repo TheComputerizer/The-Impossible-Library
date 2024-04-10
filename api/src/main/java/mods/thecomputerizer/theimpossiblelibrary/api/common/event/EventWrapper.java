@@ -272,7 +272,7 @@ public abstract class EventWrapper<E> {
         return new EventFieldWrapper<>(event -> wrapWorld(getter),null);
     }
 
-    public enum ActionResult { FAIL, PASS, SUCCESS }
+    public enum ActionResult { CONSUME, FAIL, PASS, SUCCESS }
 
     public enum Result { ALLOW, DEFAULT, DENY }
 

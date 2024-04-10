@@ -16,7 +16,7 @@ public abstract class PlayerPushOutOfBlocksEventWrapper<E> extends ClientPlayerE
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
         this.entityBB = wrapEntityBB();
     }

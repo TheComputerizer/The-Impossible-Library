@@ -29,7 +29,7 @@ public class PlaySoundEventLegacy extends PlaySoundEventWrapper<PlaySoundEvent,I
     }
 
     @Override
-    protected EventFieldWrapper<PlaySoundEvent,SoundAPI<ISound>> wrapResultField() {
+    protected EventFieldWrapper<PlaySoundEvent,SoundAPI<ISound>> wrapSoundResultField() {
         return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getResultSound()) : null,null);
     }
 }

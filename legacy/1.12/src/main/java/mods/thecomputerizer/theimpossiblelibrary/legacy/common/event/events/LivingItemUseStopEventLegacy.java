@@ -17,7 +17,7 @@ public class LivingItemUseStopEventLegacy extends LivingItemUseStopEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Stop,Integer> wrapDuration() {
+    protected EventFieldWrapper<Stop,Integer> wrapDurationField() {
         return wrapGenericBoth(Stop::getDuration, Stop::setDuration,0);
     }
 
@@ -27,7 +27,7 @@ public class LivingItemUseStopEventLegacy extends LivingItemUseStopEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Stop,ItemStackAPI<?>> wrapStack() {
+    protected EventFieldWrapper<Stop,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Stop::getItem);
     }
 }

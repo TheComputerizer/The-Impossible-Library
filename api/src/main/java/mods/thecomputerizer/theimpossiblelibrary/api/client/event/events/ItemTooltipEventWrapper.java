@@ -28,7 +28,7 @@ public abstract class ItemTooltipEventWrapper<E> extends ClientPlayerEventType<E
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         super.populate();
         this.stack = wrapStackField();
         this.tooltip = wrapTooltipField();

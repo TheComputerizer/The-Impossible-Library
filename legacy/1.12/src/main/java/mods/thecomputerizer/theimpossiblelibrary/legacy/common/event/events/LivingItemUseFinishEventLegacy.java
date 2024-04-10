@@ -17,7 +17,7 @@ public class LivingItemUseFinishEventLegacy extends LivingItemUseFinishEventWrap
     }
 
     @Override
-    protected EventFieldWrapper<Finish,Integer> wrapDuration() {
+    protected EventFieldWrapper<Finish,Integer> wrapDurationField() {
         return wrapGenericBoth(Finish::getDuration,Finish::setDuration,0);
     }
 
@@ -27,12 +27,12 @@ public class LivingItemUseFinishEventLegacy extends LivingItemUseFinishEventWrap
     }
 
     @Override
-    protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapResult() {
+    protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackResultField() {
         return wrapItemStackBoth(Finish::getResultStack,Finish::setResultStack);
     }
 
     @Override
-    protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStack() {
+    protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Finish::getItem);
     }
 }
