@@ -1,18 +1,21 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 
-@Getter
 public abstract class ClientOverlayEventType<E> extends ClientRenderEventType<E> {
 
-    protected OverlayType overlayType;
+    protected EventFieldWrapper<E,OverlayType> overlayType;
 
     protected ClientOverlayEventType(ClientType<?> type) {
         super(type);
     }
 
+    public OverlayType getOverlayType() {
+        return this.overlayType.get(this.event);
+    }
+
     public boolean isType(OverlayType type) {
-        return this.overlayType==type;
+        return getOverlayType()==type;
     }
 
     @Override
@@ -21,7 +24,7 @@ public abstract class ClientOverlayEventType<E> extends ClientRenderEventType<E>
         this.overlayType = wrapOverlayType();
     }
 
-    protected abstract OverlayType wrapOverlayType();
+    protected abstract EventFieldWrapper<E,OverlayType> wrapOverlayType();
 
     public enum OverlayType {
         AIR, ALL, ARMOR, BOSSHEALTH, BOSSINFO,

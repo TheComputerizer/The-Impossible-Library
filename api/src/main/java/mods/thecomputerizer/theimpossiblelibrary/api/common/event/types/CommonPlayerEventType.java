@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 
 public abstract class CommonPlayerEventType<E> extends CommonEventWrapper<E> {
 
@@ -17,7 +17,7 @@ public abstract class CommonPlayerEventType<E> extends CommonEventWrapper<E> {
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         this.player = wrapPlayerField();
     }
 

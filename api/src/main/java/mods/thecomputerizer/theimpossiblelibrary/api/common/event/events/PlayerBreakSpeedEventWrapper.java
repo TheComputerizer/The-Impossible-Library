@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerStateEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_BREAK_SPEED;
 

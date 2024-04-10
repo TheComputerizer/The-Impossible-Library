@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
 
 public abstract class CommonLivingStackEventType<E> extends CommonLivingEventType<E> {
 

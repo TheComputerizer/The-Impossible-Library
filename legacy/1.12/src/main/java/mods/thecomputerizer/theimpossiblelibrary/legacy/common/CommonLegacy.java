@@ -4,7 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.PosHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
@@ -12,7 +13,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.EventsLegacy;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.common.world.PosHelperLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.spawn.SpawnHelperLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.world.PosHelperLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.network.NetworkLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryHandlerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.RegistryLegacy;
@@ -20,6 +22,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.resource.ResourceLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.server.MinecraftServerLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.tag.TagLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.text.TextHelperLegacy;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
@@ -35,6 +38,7 @@ public class CommonLegacy implements CommonAPI {
     private final RegistryHandlerAPI<RegistryLegacy<?>> registry;
     private final ResourceAPI resource;
     private final MinecraftServerAPI<MinecraftServer> server;
+    private final SpawnHelperAPI<EntityLiving> spawnHelper;
     private final TagAPI tag;
     private final TextHelperAPI<Style> textHelper;
     private final WrapperAPI wrapper;
@@ -47,6 +51,7 @@ public class CommonLegacy implements CommonAPI {
         this.registry = new RegistryHandlerLegacy();
         this.resource = new ResourceLegacy();
         this.server = new MinecraftServerLegacy();
+        this.spawnHelper = new SpawnHelperLegacy();
         this.tag = new TagLegacy();
         this.textHelper = new TextHelperLegacy();
         this.wrapper = new WrapperLegacy();
@@ -86,6 +91,11 @@ public class CommonLegacy implements CommonAPI {
     @Override
     public MinecraftServerAPI<MinecraftServer> getServerAPI() {
         return this.server;
+    }
+
+    @Override
+    public SpawnHelperAPI<EntityLiving> getSpawnHelperAPI() {
+        return this.spawnHelper;
     }
 
     @Override

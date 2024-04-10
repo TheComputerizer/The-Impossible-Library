@@ -4,7 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.PosHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
@@ -12,7 +13,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.event.EventsForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.common.world.PosHelperForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.spawn.SpawnHelperForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.world.PosHelperForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.network.NetworkForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.RegistryForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.registry.RegistryHandlerForge;
@@ -20,6 +22,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.resource.ResourceFo
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.server.MinecraftServerForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.tag.TagForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextHelperForge;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
@@ -35,6 +38,7 @@ public class CommonForge implements CommonAPI {
     private final RegistryHandlerAPI<RegistryForge<?>> registry;
     private final ResourceAPI resource;
     private final MinecraftServerAPI<MinecraftServer> server;
+    private final SpawnHelperAPI<LivingEntity> spawnHelper;
     private final TagAPI tag;
     private final TextHelperAPI<Style> textHelper;
     private final WrapperAPI wrapper;
@@ -47,6 +51,7 @@ public class CommonForge implements CommonAPI {
         this.registry = new RegistryHandlerForge();
         this.resource = new ResourceForge();
         this.server = new MinecraftServerForge();
+        this.spawnHelper = new SpawnHelperForge();
         this.tag = new TagForge();
         this.textHelper = new TextHelperForge();
         this.wrapper = new WrapperForge();
@@ -86,6 +91,11 @@ public class CommonForge implements CommonAPI {
     @Override
     public MinecraftServerAPI<MinecraftServer> getServerAPI() {
         return this.server;
+    }
+
+    @Override
+    public SpawnHelperAPI<LivingEntity> getSpawnHelperAPI() {
+        return this.spawnHelper;
     }
 
     @Override

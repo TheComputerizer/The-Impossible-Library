@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 
 import javax.annotation.Nullable;
 

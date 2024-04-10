@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
 
 public abstract class CommonLivingEventType<E> extends CommonEventWrapper<E> {
 

@@ -2,10 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockBreakEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

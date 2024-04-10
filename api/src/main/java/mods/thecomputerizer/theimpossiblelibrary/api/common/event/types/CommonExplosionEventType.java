@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.ExplosionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 
 public abstract class CommonExplosionEventType<E> extends CommonWorldEventType<E> {
 

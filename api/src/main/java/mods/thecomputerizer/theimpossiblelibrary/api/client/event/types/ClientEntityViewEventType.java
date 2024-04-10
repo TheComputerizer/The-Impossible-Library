@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
 
 import javax.annotation.Nullable;
 

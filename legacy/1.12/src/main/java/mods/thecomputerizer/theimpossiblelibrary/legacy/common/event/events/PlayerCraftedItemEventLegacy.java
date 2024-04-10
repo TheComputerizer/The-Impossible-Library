@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerCraftedItemEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 
@@ -17,12 +17,12 @@ public class PlayerCraftedItemEventLegacy extends PlayerCraftedItemEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<ItemCraftedEvent,ItemStackAPI<?>> wrapCraftingField() {
-        return wrapItemStackGetter(event -> event.crafting);
+    protected EventFieldWrapper<ItemCraftedEvent,PlayerAPI<?>> wrapPlayerField() {
+        return wrapPlayerGetter(event -> event.player);
     }
 
     @Override
-    protected EventFieldWrapper<ItemCraftedEvent,PlayerAPI<?>> wrapPlayerField() {
-        return wrapPlayerGetter(event -> event.player);
+    protected EventFieldWrapper<ItemCraftedEvent,ItemStackAPI<?>> wrapStackField() {
+        return wrapItemStackGetter(event -> event.crafting);
     }
 }

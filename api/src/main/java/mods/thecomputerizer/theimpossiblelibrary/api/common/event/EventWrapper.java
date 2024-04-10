@@ -4,20 +4,20 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.ExplosionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.PosHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -33,9 +33,10 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventPr
 public abstract class EventWrapper<E> {
 
     private final EventType<?> type;
-    protected E event;
+    @Setter private boolean canceled;
     @Setter private EventPriority priority; //TODO dynamic priority?
-    private boolean canceled;
+    @Setter private Result result;
+    protected E event;
 
     protected EventWrapper(EventType<?> type) {
         this.type = type;
@@ -44,6 +45,10 @@ public abstract class EventWrapper<E> {
 
     public boolean hasInvokers() {
         return this.type.hasInvokers();
+    }
+
+    public boolean hasResult() {
+        return this.type.hasResult;
     }
 
     public <V> V initPrimitive(@Nullable Function<E,V> func, V defVal) {
@@ -57,12 +62,7 @@ public abstract class EventWrapper<E> {
     public abstract boolean isClient();
     public abstract boolean isCommon();
     public abstract boolean isServer();
-
     protected abstract void populate();
-
-    public void setCanceled(boolean canceled) {
-        if(this.type.cancelable) this.canceled = canceled;
-    }
 
     public void setEvent(E event) {
         this.event = event;
@@ -271,6 +271,8 @@ public abstract class EventWrapper<E> {
     protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldGetter(Function<E,V> getter) {
         return new EventFieldWrapper<>(event -> wrapWorld(getter),null);
     }
+
+    public enum ActionResult { FAIL, PASS, SUCCESS }
 
     public enum Result { ALLOW, DEFAULT, DENY }
 

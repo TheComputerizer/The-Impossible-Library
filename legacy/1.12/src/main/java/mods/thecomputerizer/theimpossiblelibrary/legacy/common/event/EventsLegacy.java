@@ -1,23 +1,43 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events.*;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import org.joml.Vector3d;
+
+import javax.annotation.Nullable;
+
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.*;
 
 public class EventsLegacy implements EventsAPI {
+
+    public static ActionResult getActionResult(EnumActionResult result) {
+        return result==EnumActionResult.PASS ? PASS : (result==EnumActionResult.FAIL ? FAIL : SUCCESS);
+    }
 
     public static Box getBox(AxisAlignedBB aabb) {
         return new Box(aabb.minX,aabb.minY,aabb.minZ,aabb.maxX,aabb.maxY,aabb.maxZ);
     }
 
-    public static Facing getFacing(EnumFacing facing) {
+    public static @Nullable Facing getFacing(@Nullable EnumFacing facing) {
+        if(Objects.isNull(facing)) return null;
         switch(facing) {
             case DOWN: return Facing.DOWN;
             case EAST: return Facing.EAST;
@@ -26,6 +46,50 @@ public class EventsLegacy implements EventsAPI {
             case UP: return Facing.UP;
             default: return Facing.WEST;
         }
+    }
+
+    public static Hand getHand(EnumHand hand) {
+        return hand==EnumHand.MAIN_HAND ? MAINHAND : OFFHAND;
+    }
+
+    public static Result getResult(Event.Result result) {
+        return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
+    }
+
+    public static Vector3d getVec3d(Vec3d vec) {
+        return new Vector3d(vec.x,vec.y,vec.z);
+    }
+
+    public static EnumActionResult setActionResult(ActionResult result) {
+        return result==PASS ? EnumActionResult.PASS : (result==FAIL ? EnumActionResult.FAIL : EnumActionResult.SUCCESS);
+    }
+
+    public static AxisAlignedBB setBox(Box box) {
+        return new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z);
+    }
+
+    public static @Nullable EnumFacing setFacing(@Nullable Facing facing) {
+        if(Objects.isNull(facing)) return null;
+        switch(facing) {
+            case DOWN: return EnumFacing.DOWN;
+            case EAST: return EnumFacing.EAST;
+            case NORTH: return EnumFacing.NORTH;
+            case SOUTH: return EnumFacing.SOUTH;
+            case UP: return EnumFacing.UP;
+            default: return EnumFacing.WEST;
+        }
+    }
+
+    public static EnumHand setHand(Hand hand) {
+        return hand==MAINHAND ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+    }
+
+    public static Event.Result setResult(Result result) {
+        return result==DEFAULT ? Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW);
+    }
+
+    public static Vec3d setVec3d(Vector3d vec) {
+        return new Vec3d(vec.x,vec.y,vec.z);
     }
 
     private boolean defined;

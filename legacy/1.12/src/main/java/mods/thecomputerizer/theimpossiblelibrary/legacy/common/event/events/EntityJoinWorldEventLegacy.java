@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.EntityJoinWorldEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

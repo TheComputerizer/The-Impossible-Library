@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingKnockbackEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

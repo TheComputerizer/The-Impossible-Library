@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerBreakSpeedEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

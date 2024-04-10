@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonBlockStatePlayerEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
 
 import java.util.List;
 

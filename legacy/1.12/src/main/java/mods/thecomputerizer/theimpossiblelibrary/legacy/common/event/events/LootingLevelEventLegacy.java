@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LootingLevelEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.DamageAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.registry.entity.DamageLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.entity.DamageLegacy;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

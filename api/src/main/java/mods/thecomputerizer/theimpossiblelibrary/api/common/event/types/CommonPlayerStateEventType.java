@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
 
 public abstract class CommonPlayerStateEventType<E> extends CommonPlayerEventType<E> {
 

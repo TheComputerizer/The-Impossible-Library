@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlayerPushOutOfBlocksEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.common.event.EventsLegacy;
 import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;

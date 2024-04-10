@@ -1,19 +1,20 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerInteractionEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractionEventType.Hand;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerInteractEventType;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.PLAYER_PUNCH_EMPTY;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractionEventType.Hand.MAINHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
 
-public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientPlayerInteractionEventType<E> {
+public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientPlayerInteractEventType<E> {
 
     protected PlayerPunchEmptyEventWrapper() {
         super(PLAYER_PUNCH_EMPTY);
     }
 
     @Override
-    public Hand getHand() {
-        return MAINHAND;
+    protected EventFieldWrapper<E,Hand> wrapHandField() {
+        return wrapGenericGetter(e -> MAINHAND,MAINHAND);
     }
 }

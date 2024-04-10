@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.PosHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
@@ -18,6 +19,7 @@ public interface CommonAPI {
     RegistryHandlerAPI<?> getRegistryHandlerAPI();
     ResourceAPI getResourceAPI();
     MinecraftServerAPI<?> getServerAPI();
+    SpawnHelperAPI<?> getSpawnHelperAPI();
     TagAPI getTagAPI();
     TextHelperAPI<?> getTextHelperAPI();
     WrapperAPI getWrapperAPI();

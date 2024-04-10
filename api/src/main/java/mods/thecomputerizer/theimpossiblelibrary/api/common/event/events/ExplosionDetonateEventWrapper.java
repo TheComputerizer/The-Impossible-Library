@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonExplosionEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
 
 import java.util.List;
 

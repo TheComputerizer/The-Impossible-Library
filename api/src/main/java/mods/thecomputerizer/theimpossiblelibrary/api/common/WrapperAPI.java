@@ -1,17 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.ExplosionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 

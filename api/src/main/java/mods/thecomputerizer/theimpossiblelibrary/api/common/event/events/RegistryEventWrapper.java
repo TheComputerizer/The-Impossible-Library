@@ -11,7 +11,7 @@ public abstract class RegistryEventWrapper<E> extends CommonEventWrapper<E> { //
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
 
     }
 }

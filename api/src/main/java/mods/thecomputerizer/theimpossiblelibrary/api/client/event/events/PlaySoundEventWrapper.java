@@ -8,25 +8,25 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientE
 
 public abstract class PlaySoundEventWrapper<E,S> extends ClientSoundSourceEventType<E,S> {
 
-    protected EventFieldWrapper<E,SoundAPI<S>> result;
+    protected EventFieldWrapper<E,SoundAPI<S>> soundResult;
 
     protected PlaySoundEventWrapper() {
         super(SOUND_PLAY);
     }
 
-    public SoundAPI<S> getResult() {
-        return this.result.get(this.event);
+    public SoundAPI<S> getSoundResult() {
+        return this.soundResult.get(this.event);
     }
 
     @Override
     public void populate() {
         super.populate();
-        this.result = wrapResultField();
+        this.soundResult = wrapSoundResultField();
     }
 
     public void setResult(SoundAPI<S> sound) {
-        this.result.set(this.event,sound);
+        this.soundResult.set(this.event,sound);
     }
 
-    protected abstract EventFieldWrapper<E,SoundAPI<S>> wrapResultField();
+    protected abstract EventFieldWrapper<E,SoundAPI<S>> wrapSoundResultField();
 }
