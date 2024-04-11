@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.mixin",
+  "package": "mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "theimpossiblelibrary.refmap.json",
   "mixins": [],

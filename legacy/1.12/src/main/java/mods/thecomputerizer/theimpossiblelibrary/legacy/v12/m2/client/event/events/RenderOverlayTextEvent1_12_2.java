@@ -1,0 +1,42 @@
+package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.events;
+
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayTextEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.Text;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_TEXT;
+
+public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<Text> {
+
+    @SubscribeEvent
+    public static void onEvent(Text event) {
+        RENDER_OVERLAY_TEXT.invoke(event);
+    }
+
+    @Override
+    protected RenderAPI initRenderer(@Nonnull Text event) {
+        return ClientEvents1_12_2.initRenderer(event::getPartialTicks);
+    }
+
+    @Override
+    protected EventFieldWrapper<Text,OverlayType> wrapOverlayType() {
+        return wrapGenericGetter(event -> ClientEvents1_12_2.getOverlayElementType(event.getType()),OverlayType.ALL);
+    }
+
+    @Override
+    protected EventFieldWrapper<Text,List<String>> wrapLeftField() {
+        return wrapGenericGetter(Text::getLeft,new ArrayList<>());
+    }
+
+    @Override
+    protected EventFieldWrapper<Text,List<String>> wrapRightField() {
+        return wrapGenericGetter(Text::getRight,new ArrayList<>());
+    }
+}

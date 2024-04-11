@@ -22,7 +22,7 @@ public abstract class CommonTickableEventType<E> extends CommonEventWrapper<E> {
     }
 
     @Override
-    protected void populate() {
+    public void populate() {
         this.tickPhase = wrapTickPhase();
         this.tickType = wrapTickType();
     }
