@@ -1,38 +1,50 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 @Getter
-public abstract class CustomTick {
+public class CustomTick {
 
-    private static final List<Long> registeredTickEvents = new ArrayList<>();
+    private static final List<CustomTick> registeredTickEvents = new ArrayList<>();
 
-    private static void addCustomTickMillis(long millis, Function<Long,CustomTick> tickSupplier) {
-        CustomTick ticker = tickSupplier.apply(millis);
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(ticker::tick,0,millis,TimeUnit.MILLISECONDS);
-        registeredTickEvents.add(millis);
+    private static void addCustomTick(final CustomTick ticker) {
+        EventsAPI api = EventHelper.getEventsAPI(false);
+        if(Objects.isNull(api) || isRegistered(ticker)) return;
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() ->
+                api.postCustomTick(ticker),0,ticker.millis,TimeUnit.MILLISECONDS);
+        registeredTickEvents.add(ticker);
     }
 
-    public static void addCustomTickTPS(int ticksPerSecond, Function<Long,CustomTick> tickSupplier) {
-        if(ticksPerSecond<=0) ticksPerSecond = 1;
-        if(ticksPerSecond>1000) ticksPerSecond = 1000;
-        addCustomTickMillis((long)(1000f/ticksPerSecond),tickSupplier);
+    public static void addCustomTickMillis(long millis) {
+        if(millis<=0) millis = 1;
+        if(millis>1000) millis = 1000;
+        addCustomTick(new CustomTick(millis));
+    }
+
+    public static void addCustomTickTPS(int tps) {
+        if(tps<=0) tps = 1;
+        if(tps>1000) tps = 1000;
+        addCustomTick(new CustomTick(tps));
+    }
+
+    public static boolean isRegistered(CustomTick ticker) {
+        return registeredTickEvents.contains(ticker);
     }
 
     public static boolean isRegistered(long millis) {
-        return registeredTickEvents.contains(millis);
+        return isRegistered(new CustomTick(millis));
     }
 
     public static boolean isRegistered(int ticks) {
-        return registeredTickEvents.contains((long)(1000f/ticks));
+        return isRegistered(new CustomTick(ticks));
     }
 
     private final long millis;
@@ -51,6 +63,13 @@ public abstract class CustomTick {
         this.tps = tps;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof CustomTick) return this.millis==((CustomTick)obj).millis;
+        return obj instanceof Number && (obj instanceof Long ? this.millis == (Long) obj :
+                this.tps==((Number)obj).intValue());
+    }
+
     public boolean isEquivalentMillis(long millis) {
         return this.millis==millis;
     }
@@ -58,6 +77,4 @@ public abstract class CustomTick {
     public boolean isEquivalentTPS(int tps) {
         return this.tps==tps;
     }
-
-    protected abstract void tick();
 }
