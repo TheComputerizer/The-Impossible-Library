@@ -11,7 +11,7 @@ public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<Nam
     @Override
     protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> event.getDisplayname().getString(),
-                (event,name) -> event.setDisplayname(new TextStringForge(name).get()),"");
+                (event,name) -> event.setDisplayname(new TextStringForge(null,name).getComponent()),"");
     }
 
     @Override

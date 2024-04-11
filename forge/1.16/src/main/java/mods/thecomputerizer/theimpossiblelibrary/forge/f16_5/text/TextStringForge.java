@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextStringAPI;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -7,17 +8,14 @@ import net.minecraft.util.text.Style;
 
 public class TextStringForge extends TextForge implements TextStringAPI<Style> {
 
+    private final TextHelperAPI<Style> helper;
     private final IFormattableTextComponent component;
     private final String original;
 
-    public TextStringForge(String original) {
+    public TextStringForge(TextHelperAPI<Style> helper, String original) {
+        this.helper = helper;
         this.original = original;
         this.component = new StringTextComponent(original);
-    }
-
-    @Override
-    public void applyStyle(Style style) {
-        this.component.setStyle(style);
     }
 
     @Override
@@ -26,12 +24,29 @@ public class TextStringForge extends TextForge implements TextStringAPI<Style> {
     }
 
     @Override
+    public TextHelperAPI<Style> getHelper() {
+        return this.helper;
+    }
+
+    @Override
     public String getOriginal() {
         return this.original;
     }
 
     @Override
-    public IFormattableTextComponent get() {
+    public IFormattableTextComponent getComponent() {
         return this.component;
+    }
+
+    @Override
+    public TextStringAPI<Style> setStyle(Style style) {
+        this.component.setStyle(style);
+        return this;
+    }
+
+    @Override
+    public TextStringAPI<Style> withStyle(Style style) {
+        this.component.withStyle(style);
+        return this;
     }
 }

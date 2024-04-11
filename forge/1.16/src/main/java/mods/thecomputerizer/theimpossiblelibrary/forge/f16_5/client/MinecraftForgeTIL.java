@@ -5,10 +5,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.font.FontForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.gui.ScreenForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.render.RenderForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.entity.PlayerForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.world.WorldForge;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -38,8 +46,18 @@ public class MinecraftForgeTIL implements MinecraftAPI {
     }
 
     @Override
+    public @Nullable PlayerAPI<PlayerEntity> getPlayer() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new PlayerForge(this.mc.player) : null;
+    }
+
+    @Override
     public RenderAPI getRenderer() {
         return this.render;
+    }
+
+    @Override
+    public @Nullable ScreenAPI<Screen> getScreen() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.screen) ? new ScreenForge(this.mc.screen) : null;
     }
 
     /**
@@ -52,13 +70,54 @@ public class MinecraftForgeTIL implements MinecraftAPI {
     }
 
     @Override
-    public boolean isCurrentScreen(ScreenAPI<?> screen) {
+    public @Nullable WorldAPI<IWorld> getWorld() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.level) ? new WorldForge(this.mc.level) : null;
+    }
+
+    @Override
+    public <S> boolean isCurrentScreen(S screen) {
+        return screen==this.mc.screen;
+    }
+
+    @Override
+    public boolean isCurrentScreenAPI(ScreenAPI<?> screen) {
         return screen.get()==this.mc.screen;
     }
 
     @Override
-    public void setScreen(@Nullable ScreenAPI<?> screen) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.setScreen(((ScreenForge)screen).get());
-        //else this.mc.setScreen(null);
+    public boolean isDisplayFocused() {
+        return Objects.nonNull(this.mc) && this.mc.isWindowActive();
+    }
+
+    @Override
+    public boolean isFinishedLoading() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        return Objects.nonNull(this.mc) && this.mc.getWindow().isFullscreen();
+    }
+
+    @Override
+    public boolean isLoading() {
+        return false;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return Objects.nonNull(this.mc) && this.mc.isPaused();
+    }
+
+    @Override
+    public <S> void setScreen(@Nullable S screen) { //TODO Fix this
+        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((ScreenLegacy)screen).get());
+        //else this.mc.displayGuiScreen(null);
+    }
+
+    @Override
+    public void setScreenAPI(@Nullable ScreenAPI<?> screen) { //TODO Fix this
+        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((ScreenLegacy)screen).get());
+        //else this.mc.displayGuiScreen(null);
     }
 }

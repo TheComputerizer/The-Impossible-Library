@@ -13,7 +13,7 @@ public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapp
     @Override
     protected EventFieldWrapper<TabListNameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> Objects.nonNull(event.getDisplayName()) ? event.getDisplayName().getString() : null,
-                (event,name) -> event.setDisplayName(Objects.nonNull(name) ? new TextStringForge(name).get() : null),null);
+                (event,name) -> event.setDisplayName(Objects.nonNull(name) ? new TextStringForge(null,name).getComponent() : null),null);
     }
 
     @Override

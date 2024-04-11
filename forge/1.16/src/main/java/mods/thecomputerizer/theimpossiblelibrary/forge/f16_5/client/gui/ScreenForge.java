@@ -43,7 +43,7 @@ public class ScreenForge extends ScreenAPI<Screen> {
     @Override
     public Screen make(String locale, Object ... args) {
         TextTranslationAPI<?> text = TextHelper.getTranslated(locale,args);
-        return new ScreenWrapperForge(this,Objects.nonNull(text) ? ((TextForge)text).get() : null);
+        return new ScreenWrapperForge(this,Objects.nonNull(text) ? ((TextForge)text).getComponent() : null);
     }
 
     @Override

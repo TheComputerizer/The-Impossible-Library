@@ -1,5 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.text;
 
-public interface TextStringAPI<STYLE> extends TextAPI<STYLE> {
+public interface TextStringAPI<S> extends TextAPI<S> {
 
 }

@@ -35,6 +35,11 @@ public class ColorCache {
         this.colorI = ColorHelper.makeRGBAInt(this.colorVI);
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ColorCache && this.colorI==((ColorCache)other).colorI;
+    }
+
     public int getIntWithAlpha(float alpha) {
         return ColorHelper.makeRGBAInt(this.colorVF.x,this.colorVF.y,this.colorVF.z,alpha);
     }

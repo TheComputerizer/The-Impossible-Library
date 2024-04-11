@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.text;
 
-public interface TextHelperAPI<STYLE> {
+public interface TextHelperAPI<S> {
 
-    TextStringAPI<STYLE> getLiteral(String text);
-
-    TextTranslationAPI<STYLE> getTranslated(String key, Object ... args);
+    TextStringAPI<S> getLiteral(String text);
+    TextStyleAPI<S> getStyleAPI();
+    TextTranslationAPI<S> getTranslated(String key, Object ... args);
 }

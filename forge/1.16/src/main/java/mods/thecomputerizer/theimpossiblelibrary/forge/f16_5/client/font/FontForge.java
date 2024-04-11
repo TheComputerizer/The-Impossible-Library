@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.client.render.Rende
 import mods.thecomputerizer.theimpossiblelibrary.forge.f16_5.text.TextForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.ArrayList;
@@ -55,8 +55,8 @@ public class FontForge implements FontAPI {
 
     @Override
     public void renderToolTip(RenderAPI renderer, List<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
-        List<IFormattableTextComponent> components = new ArrayList<>();
-        for(TextAPI<?> text : lines) components.add(((TextForge)text).get());
+        List<ITextComponent> components = new ArrayList<>();
+        for(TextAPI<?> text : lines) components.add(((TextForge)text).getComponent());
         GuiUtils.drawHoveringText(getMatrix(renderer),components,x,y,width,height,maxWidth,getFont());
     }
 }

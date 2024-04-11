@@ -190,6 +190,6 @@ public class EventsForge implements EventsAPI {
 
     @Override
     public <E extends EventWrapper<?>> void register(E wrapper) {
-        MinecraftForge.EVENT_BUS.register(wrapper.getClass());
+        MinecraftForge.EVENT_BUS.addListener(event -> wrapper.getType().invoke(event));
     }
 }
