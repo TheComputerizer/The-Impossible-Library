@@ -10,6 +10,7 @@ import net.minecraft.world.DimensionType;
 public class Dimension1_16_5 extends DimensionAPI<DimensionType> {
 
     private final DynamicRegistries registries;
+    private final String name;
 
     public Dimension1_16_5(World1_16_5 world) {
         this(world,world.getWorld().dimensionType());
@@ -18,6 +19,12 @@ public class Dimension1_16_5 extends DimensionAPI<DimensionType> {
     public Dimension1_16_5(World1_16_5 world, DimensionType dimension) {
         super(world,dimension);
         this.registries = world.getWorld().registryAccess();
+        this.name = getRegistryName().getPath();
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     @Override
