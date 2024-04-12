@@ -18,11 +18,11 @@ public interface ResourceLocationAPI<R> {
     /**
      * Specifically made for 1.12.2 integer dimension IDs so everything else doesn't have work around them
      */
-    final class Psuedo<V> implements ResourceLocationAPI<V> {
+    final class Pseudo<V> implements ResourceLocationAPI<V> {
 
         private final V value;
 
-        public Psuedo(V value) {
+        public Pseudo(V value) {
             this.value = value;
         }
 

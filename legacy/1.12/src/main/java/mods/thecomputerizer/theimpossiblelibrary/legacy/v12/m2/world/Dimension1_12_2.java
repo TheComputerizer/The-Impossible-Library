@@ -14,7 +14,7 @@ public class Dimension1_12_2 extends DimensionAPI<DimensionType> {
 
     public Dimension1_12_2(World1_12_2 world, DimensionType type) {
         super(world,type);
-        this.res = new ResourceLocationAPI.Psuedo<>(type.getId());
+        this.res = new ResourceLocationAPI.Pseudo<>(type.getId());
     }
 
     @Override
