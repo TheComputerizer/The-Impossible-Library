@@ -1,21 +1,21 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 
 import javax.annotation.Nullable;
 
 public abstract class ClientEntityViewEventType<E> extends ClientRenderEventType<E> {
 
-    protected EventFieldWrapper<E,EntityAPI<?>> entity;
+    protected EventFieldWrapper<E,EntityAPI<?,?>> entity;
     protected EventFieldWrapper<E,BlockStateAPI<?>> state;
 
     protected ClientEntityViewEventType(ClientType<?> type) {
         super(type);
     }
 
-    public @Nullable EntityAPI<?> getEntity() {
+    public @Nullable EntityAPI<?,?> getEntity() {
         return this.entity.get(this.event);
     }
 
@@ -30,6 +30,6 @@ public abstract class ClientEntityViewEventType<E> extends ClientRenderEventType
         this.state = wrapStateField();
     }
 
-    protected abstract EventFieldWrapper<E,EntityAPI<?>> wrapEntityField();
+    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityField();
     protected abstract EventFieldWrapper<E,BlockStateAPI<?>> wrapStateField();
 }

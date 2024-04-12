@@ -2,13 +2,13 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.EntityEnteringChunkEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
 
 public class EntityEnteringChunkEvent1_16_5 extends EntityEnteringChunkEventWrapper<EnteringChunk> {
 
     @Override
-    protected EventFieldWrapper<EnteringChunk,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<EnteringChunk,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EnteringChunk::getEntity);
     }
 

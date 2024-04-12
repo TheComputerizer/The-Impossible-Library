@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerNameFormatEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.TextString1_16_5;
 import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
 
@@ -15,7 +15,7 @@ public class PlayerNameFormatEvent1_16_5 extends PlayerNameFormatEventWrapper<Na
     }
 
     @Override
-    protected EventFieldWrapper<NameFormat,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(NameFormat::getPlayer);
     }
 

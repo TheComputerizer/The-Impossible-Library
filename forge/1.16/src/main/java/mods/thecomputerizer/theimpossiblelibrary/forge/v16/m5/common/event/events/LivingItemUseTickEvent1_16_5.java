@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingItemUseTickEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Tick;
 
 public class LivingItemUseTickEvent1_16_5 extends LivingItemUseTickEventWrapper<Tick> {
@@ -14,7 +14,7 @@ public class LivingItemUseTickEvent1_16_5 extends LivingItemUseTickEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Tick,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<Tick,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(Tick::getEntityLiving);
     }
 

@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerSaveToFileEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.SaveToFile;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class PlayerSaveToFileEvent1_16_5 extends PlayerSaveToFileEventWrapper<Sa
     }
 
     @Override
-    protected EventFieldWrapper<SaveToFile,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<SaveToFile,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(SaveToFile::getPlayer);
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.nbt.NumberNBT;
 
 public class PrimitiveTag1_16_5 extends BaseTag1_16_5<NumberNBT> implements PrimitiveTagAPI {
 
-    protected PrimitiveTag1_16_5(NumberNBT tag) {
+    public PrimitiveTag1_16_5(NumberNBT tag) {
         super(tag);
     }
 

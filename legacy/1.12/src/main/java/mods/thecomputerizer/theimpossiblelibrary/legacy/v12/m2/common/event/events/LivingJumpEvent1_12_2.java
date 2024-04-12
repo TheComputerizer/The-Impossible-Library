@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingJumpEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -16,7 +16,7 @@ public class LivingJumpEvent1_12_2 extends LivingJumpEventWrapper<LivingJumpEven
     }
 
     @Override
-    protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingJumpEvent::getEntityLiving);
     }
 }

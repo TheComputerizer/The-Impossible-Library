@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingHurtEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.DamageAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.entity.Damage1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Damage1_16_5;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class LivingHurtEvent1_16_5 extends LivingHurtEventWrapper<LivingHurtEvent> {
@@ -21,7 +21,7 @@ public class LivingHurtEvent1_16_5 extends LivingHurtEventWrapper<LivingHurtEven
     }
 
     @Override
-    protected EventFieldWrapper<LivingHurtEvent,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<LivingHurtEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingHurtEvent::getEntityLiving);
     }
 }

@@ -5,7 +5,7 @@ import net.minecraft.nbt.StringNBT;
 
 public class StringTag1_16_5 extends BaseTag1_16_5<StringNBT> implements StringTagAPI {
 
-    protected StringTag1_16_5(StringNBT tag) {
+    public StringTag1_16_5(StringNBT tag) {
         super(tag);
     }
 

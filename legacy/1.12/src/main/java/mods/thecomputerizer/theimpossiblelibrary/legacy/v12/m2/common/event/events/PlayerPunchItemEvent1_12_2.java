@@ -4,9 +4,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerPunchItemEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 
 public class PlayerPunchItemEvent1_12_2 extends PlayerPunchItemEventWrapper<Object> { //TODO
 
@@ -36,7 +36,7 @@ public class PlayerPunchItemEvent1_12_2 extends PlayerPunchItemEventWrapper<Obje
     }
 
     @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 

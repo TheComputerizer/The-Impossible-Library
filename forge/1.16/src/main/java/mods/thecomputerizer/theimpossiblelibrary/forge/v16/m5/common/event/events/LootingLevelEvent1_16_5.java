@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LootingLevelEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.DamageAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.entity.Damage1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Damage1_16_5;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 
 public class LootingLevelEvent1_16_5 extends LootingLevelEventWrapper<LootingLevelEvent> {
@@ -20,7 +20,7 @@ public class LootingLevelEvent1_16_5 extends LootingLevelEventWrapper<LootingLev
     }
 
     @Override
-    protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LootingLevelEvent::getEntityLiving);
     }
 }

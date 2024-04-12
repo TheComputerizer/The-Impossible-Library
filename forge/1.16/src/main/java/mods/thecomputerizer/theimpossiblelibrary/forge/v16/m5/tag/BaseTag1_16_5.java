@@ -11,7 +11,7 @@ public class BaseTag1_16_5<N extends INBT> implements BaseTagAPI {
 
     protected final N tag;
 
-    protected BaseTag1_16_5(N tag) {
+    public BaseTag1_16_5(N tag) {
         this.tag = tag;
     }
 

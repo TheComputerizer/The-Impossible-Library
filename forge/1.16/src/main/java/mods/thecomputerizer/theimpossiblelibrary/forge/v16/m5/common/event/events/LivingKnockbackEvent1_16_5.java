@@ -2,24 +2,24 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingKnockbackEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 
 public class LivingKnockbackEvent1_16_5 extends LivingKnockbackEventWrapper<LivingKnockBackEvent> {
 
     @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?>> wrapAttackerField() {
+    protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapAttackerField() {
         return wrapEntityBoth(event -> null,(event,attacker) -> {});
     }
 
     @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<LivingKnockBackEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingKnockBackEvent::getEntityLiving);
     }
 
     @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?>> wrapOriginalAttackerField() {
+    protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapOriginalAttackerField() {
         return wrapEntityGetter(event -> null);
     }
 

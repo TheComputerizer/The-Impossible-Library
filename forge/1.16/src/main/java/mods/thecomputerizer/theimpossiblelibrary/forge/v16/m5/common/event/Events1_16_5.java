@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;

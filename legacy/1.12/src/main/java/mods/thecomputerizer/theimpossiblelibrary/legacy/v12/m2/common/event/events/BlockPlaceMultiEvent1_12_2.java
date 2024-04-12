@@ -5,9 +5,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockPlaceMultiEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -26,7 +26,7 @@ public class BlockPlaceMultiEvent1_12_2 extends BlockPlaceMultiEventWrapper<Enti
     }
 
     @Override
-    protected EventFieldWrapper<EntityMultiPlaceEvent,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<EntityMultiPlaceEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityMultiPlaceEvent::getEntity);
     }
 

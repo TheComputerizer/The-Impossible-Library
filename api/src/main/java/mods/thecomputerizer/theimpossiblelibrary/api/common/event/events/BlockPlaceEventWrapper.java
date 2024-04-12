@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonBlockStateEntityEventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_PLACE;
 

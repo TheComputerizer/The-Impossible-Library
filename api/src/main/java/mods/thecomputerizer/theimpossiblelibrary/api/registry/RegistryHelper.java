@@ -30,7 +30,7 @@ public class RegistryHelper {
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getEntityRegistry() : null;
     }
 
-    public static @Nullable RegistryEntryAPI<?> getEntryIfPresent(
+    public static <E extends RegistryEntryAPI<?>> @Nullable E getEntryIfPresent(
             ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
         RegistryHandlerAPI<?> api = getHandler();
         return Objects.nonNull(api) ? api.getEntryIfPresent(registryKey,entryKey) : null;
@@ -43,6 +43,16 @@ public class RegistryHelper {
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getItemRegistry() {
         RegistryHandlerAPI<?> handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getItemRegistry() : null;
+    }
+
+    public static @Nullable RegistryAPI<?> getRegistry(ResourceLocationAPI<?> key) {
+        RegistryHandlerAPI<?> handler = getHandler();
+        return Objects.nonNull(handler) ? handler.getRegistry(key) : null;
+    }
+
+    public static @Nullable RegistryAPI<?> getRegistry(Class<?> type) {
+        RegistryHandlerAPI<?> handler = getHandler();
+        return Objects.nonNull(handler) ? handler.getRegistry(type) : null;
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getSoundRegistry() {

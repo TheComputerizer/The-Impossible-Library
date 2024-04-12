@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWra
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 
 public abstract class CommonBlockStateEventType<E> extends CommonEventWrapper<E> {
 

@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
@@ -16,9 +15,13 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<?>> {
 
+    private final Set<Registry1_12_2<?>> registries;
     private final Registry1_12_2<Biome> biome;
     private final Registry1_12_2<Block> block;
     private final Registry1_12_2<EntityEntry> entity;
@@ -26,21 +29,27 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<
     private final Registry1_12_2<SoundEvent> sound;
 
     public RegistryHandler1_12_2() {
-        this.biome = getRegistry(ForgeRegistries.BIOMES,"biome");
-        this.block = getRegistry(ForgeRegistries.BLOCKS,"block");
-        this.entity = getRegistry(ForgeRegistries.ENTITIES,"entity");
-        this.item = getRegistry(ForgeRegistries.ITEMS,"item");
-        this.sound = getRegistry(ForgeRegistries.SOUND_EVENTS,"sound");
+        Set<Registry1_12_2<?>> registries = new HashSet<>();
+        this.biome = getRegistry(registries,ForgeRegistries.BIOMES,"biome",Biome.class);
+        this.block = getRegistry(registries,ForgeRegistries.BLOCKS,"block",Block.class);
+        this.entity = getRegistry(registries,ForgeRegistries.ENTITIES,"entity",EntityEntry.class);
+        this.item = getRegistry(registries,ForgeRegistries.ITEMS,"item",Item.class);
+        this.sound = getRegistry(registries,ForgeRegistries.SOUND_EVENTS,"sound",SoundEvent.class);
+        this.registries = Collections.unmodifiableSet(registries);
     }
 
-    private <V extends IForgeRegistryEntry<V>> Registry1_12_2<V> getRegistry(IForgeRegistry<V> registry, String name) {
+    private <V extends IForgeRegistryEntry<V>> Registry1_12_2<V> getRegistry(
+            Set<Registry1_12_2<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<V> type) {
         ResourceLocation1_12_2 key = new ResourceLocation1_12_2(new ResourceLocation(name));
-        return new Registry1_12_2<>(registry,key);
+        Registry1_12_2<V> registry = new Registry1_12_2<>(forgeRegistry,type,key);
+        registries.add(registry);
+        return registry;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public @Nullable RegistryEntryAPI<?> getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
-        RegistryAPI<?> reg = getRegistry(registryKey);
+    public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
+        RegistryAPI<V> reg = (RegistryAPI<V>)getRegistry(registryKey);
         return reg.hasKey(entryKey) ? reg.getValue(entryKey) : null;
     }
 
@@ -78,6 +87,13 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<
             case "item": return this.item;
             default: return null;
         }
+    }
+
+    @Override
+    public Registry1_12_2<?> getRegistry(Class<?> type) {
+        for(Registry1_12_2<?> registry : this.registries)
+            if(registry.getType().isAssignableFrom(type)) return registry;
+        return null;
     }
 
     @Override

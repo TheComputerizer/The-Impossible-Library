@@ -1,17 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 
 public abstract class CommonPlayerInteractEntityEventType<E> extends CommonPlayerInteractEventType<E> {
 
-    protected EventFieldWrapper<E,EntityAPI<?>> target;
+    protected EventFieldWrapper<E,EntityAPI<?,?>> target;
 
     protected CommonPlayerInteractEntityEventType(CommonType<?> type) {
         super(type);
     }
 
-    public EntityAPI<?> getTarget() {
+    public EntityAPI<?,?> getTarget() {
         return this.target.get(this.event);
     }
 
@@ -21,5 +21,5 @@ public abstract class CommonPlayerInteractEntityEventType<E> extends CommonPlaye
         this.target = wrapTargetField();
     }
 
-    protected abstract EventFieldWrapper<E,EntityAPI<?>> wrapTargetField();
+    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapTargetField();
 }

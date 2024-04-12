@@ -4,8 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockBreakEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,7 +24,7 @@ public class BlockBreakEvent1_12_2 extends BlockBreakEventWrapper<BreakEvent> {
     }
 
     @Override
-    protected EventFieldWrapper<BreakEvent,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<BreakEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BreakEvent::getPlayer);
     }
 

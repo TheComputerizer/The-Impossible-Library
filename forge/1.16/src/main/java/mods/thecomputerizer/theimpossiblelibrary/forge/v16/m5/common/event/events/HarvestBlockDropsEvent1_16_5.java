@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.HarvestBlockDropsEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -34,7 +34,7 @@ public class HarvestBlockDropsEvent1_16_5 extends HarvestBlockDropsEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 

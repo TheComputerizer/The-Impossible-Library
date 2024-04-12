@@ -1,38 +1,89 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 
 import java.util.List;
+import java.util.Objects;
 
-public interface WorldAPI<W> {
+@Getter
+public abstract class WorldAPI<W> {
 
-    int getDayNumber();
-    List<EntityAPI<?>> getEntitiesInBox(Box box);
-    int getLightBlock(BlockPosAPI<?> pos);
-    int getLightSky(BlockPosAPI<?> pos);
-    int getLightTotal(BlockPosAPI<?> pos);
-    List<LivingEntityAPI<?>> getLivingInBox(Box box);
-    int getMoonPhase();
-    WorldSettingsAPI<?> getSettings();
-    long getTimeDay();
-    long getTimeTotal();
-    W getWorld();
-    boolean isClient();
-    boolean isDaytime();
-    boolean isDifficultyEasy();
-    boolean isDifficultyHard();
-    boolean isDifficultyHardcore();
-    boolean isDifficultyNormal();
-    boolean isDifficultyPeaceful();
-    boolean isNighttime();
-    boolean isRaining();
-    boolean isServer();
-    boolean isSkyVisible(BlockPosAPI<?> pos);
-    boolean isSnowing(BlockPosAPI<?> pos);
-    boolean isStorming();
-    boolean isSunrise();
-    boolean isSunset();
-    boolean isUnderwater(BlockPosAPI<?> pos);
+    protected final W world;
+    
+    protected WorldAPI(W world) {
+        this.world = world;
+    }
+    
+    public abstract boolean canSnowAt(BlockPosAPI<?> pos);
+    public abstract BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos);
+    public abstract int getDayNumber();
+    public abstract int getDifficultyOrdinal();
+    public abstract DimensionAPI<?> getDimension();
+    public abstract List<EntityAPI<?,?>> getEntitiesInBox(Box box);
+    public abstract int getLightBlock(BlockPosAPI<?> pos);
+    public abstract int getLightSky(BlockPosAPI<?> pos);
+    public abstract int getLightTotal(BlockPosAPI<?> pos);
+    public abstract List<LivingEntityAPI<?,?>> getLivingInBox(Box box);
+
+    public MaterialAPI<?> getMaterialAt(BlockPosAPI<?> pos) {
+        return getStateAt(pos).getMaterial();
+    }
+
+    public abstract int getMoonPhase();
+    public abstract BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos);
+    public abstract long getTimeDay();
+    public abstract long getTimeTotal();
+    public abstract boolean isClient();
+    public abstract boolean isDaytime();
+    
+    public boolean isDifficultyEasy() {
+        return getDifficultyOrdinal()==1;
+    }
+    
+    public boolean isDifficultyHard() {
+        return getDifficultyOrdinal()>=3;
+    }
+    
+    public boolean isDifficultyHardcore() {
+        return getDifficultyOrdinal()==4;
+    }
+    
+    public boolean isDifficultyNormal() {
+        return getDifficultyOrdinal()==2;
+    }
+    
+    public boolean isDifficultyPeaceful() {
+        return getDifficultyOrdinal()==0;
+    }
+    
+    public boolean isNighttime() {
+        return !isDaytime();
+    }
+    
+    public abstract boolean isRaining();
+
+    public boolean isServer() {
+        return !isClient();
+    }
+
+    public abstract boolean isSkyVisible(BlockPosAPI<?> pos);
+    
+    public boolean isSnowingAt(BlockPosAPI<?> pos) {
+        return isRaining() && canSnowAt(pos);
+    }
+    
+    public abstract boolean isStorming();
+    public abstract boolean isSunrise();
+    public abstract boolean isSunset();
+
+    public boolean isUnderwater(BlockPosAPI<?> pos) {
+        MaterialAPI<?> material = getMaterialAt(pos);
+        return Objects.nonNull(material) && material.isUnderwater();
+    }
 }

@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.ExplosionDetonateEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,7 +24,7 @@ public class ExplosionDetonateEvent1_12_2 extends ExplosionDetonateEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Detonate,List<EntityAPI<?>>> wrapAffectedEntitiesField() {
+    protected EventFieldWrapper<Detonate,List<EntityAPI<?,?>>> wrapAffectedEntitiesField() {
         return wrapGenericGetter(event -> event.getAffectedEntities().stream()
                 .map(WrapperHelper::wrapEntity)
                 .filter(Objects::nonNull)

@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.TrampleFarmlandEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
@@ -11,7 +11,7 @@ import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
 public class TrampleFarmlandEvent1_16_5 extends TrampleFarmlandEventWrapper<FarmlandTrampleEvent> {
 
     @Override
-    protected EventFieldWrapper<FarmlandTrampleEvent,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<FarmlandTrampleEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(FarmlandTrampleEvent::getEntity);
     }
 

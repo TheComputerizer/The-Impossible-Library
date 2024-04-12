@@ -5,13 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.entity.ClientPlayer1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.font.Font1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui.Screen1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render.Render1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Player1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,6 +19,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.registry.EntityEntry;
 import org.lwjgl.opengl.Display;
 
 import javax.annotation.Nullable;
@@ -50,8 +51,8 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     }
 
     @Override
-    public @Nullable PlayerAPI<EntityPlayer> getPlayer() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new Player1_12_2(this.mc.player) : null;
+    public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_12_2(this.mc.player) : null;
     }
 
     @Override

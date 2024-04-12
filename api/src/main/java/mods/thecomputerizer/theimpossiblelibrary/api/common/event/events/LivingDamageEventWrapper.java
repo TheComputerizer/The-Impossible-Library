@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonLivingDamageEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 
 import java.util.Objects;
 

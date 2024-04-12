@@ -4,20 +4,20 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.blockentity.BlockEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -99,33 +99,33 @@ public abstract class EventWrapper<E> {
         return new EventFieldWrapper<>(event -> wrapBlock(getter),null);
     }
 
-    protected <V> @Nullable BlockEntityAPI<V> wrapBlockEntity(@Nullable Function<E,V> blockEntityFunc) {
+    protected <V> @Nullable BlockEntityAPI<V,?> wrapBlockEntity(@Nullable Function<E,V> blockEntityFunc) {
         return Objects.nonNull(this.event) && Objects.nonNull(blockEntityFunc) ?
                 WrapperHelper.wrapBlockEntity(blockEntityFunc.apply(this.event)) : null;
     }
 
     @SuppressWarnings("unchecked")
-    protected <V> EventFieldWrapper<E,BlockEntityAPI<?>> wrapBlockEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
+    protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapBlockEntity(getter),
-                (event,api) -> setter.accept(event,((BlockEntityAPI<V>)api).getBlockEntity()),null);
+                (event,api) -> setter.accept(event,((BlockEntityAPI<V,?>)api).getEntity()),null);
     }
 
-    protected <V> EventFieldWrapper<E,BlockEntityAPI<?>> wrapBlockEntityGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityGetter(Function<E,V> getter) {
         return new EventFieldWrapper<>(event -> wrapBlockEntity(getter),null);
     }
 
-    protected <V> @Nullable EntityAPI<V> wrapEntity(@Nullable Function<E,V> entityFunc) {
+    protected <V> @Nullable EntityAPI<V,?> wrapEntity(@Nullable Function<E,V> entityFunc) {
         return Objects.nonNull(this.event) && Objects.nonNull(entityFunc) ?
                 WrapperHelper.wrapEntity(entityFunc.apply(this.event)) : null;
     }
 
     @SuppressWarnings("unchecked")
-    protected <V> EventFieldWrapper<E,EntityAPI<?>> wrapEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
+    protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapEntity(getter),
-                (event,api) -> setter.accept(event,((EntityAPI<V>)api).getEntity()),null);
+                (event,api) -> setter.accept(event,((EntityAPI<V,?>)api).getEntity()),null);
     }
 
-    protected <V> EventFieldWrapper<E,EntityAPI<?>> wrapEntityGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityGetter(Function<E,V> getter) {
         return new EventFieldWrapper<>(event -> wrapEntity(getter),null);
     }
 
@@ -174,33 +174,33 @@ public abstract class EventWrapper<E> {
         return new EventFieldWrapper<>(event -> wrapItemStack(getter),null);
     }
 
-    protected <V> @Nullable LivingEntityAPI<V> wrapLiving(@Nullable Function<E,V> livingFunc) {
+    protected <V> @Nullable LivingEntityAPI<V,?> wrapLiving(@Nullable Function<E,V> livingFunc) {
         return Objects.nonNull(this.event) && Objects.nonNull(livingFunc) ?
                 WrapperHelper.wrapLivingEntity(livingFunc.apply(this.event)) : null;
     }
 
     @SuppressWarnings("unchecked")
-    protected <V> EventFieldWrapper<E,LivingEntityAPI<?>> wrapLivingBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
+    protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapLiving(getter),
-                (event,api) -> setter.accept(event,((LivingEntityAPI<V>)api).getLiving()),null);
+                (event,api) -> setter.accept(event,((LivingEntityAPI<V,?>)api).getEntity()),null);
     }
 
-    protected <V> EventFieldWrapper<E,LivingEntityAPI<?>> wrapLivingGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingGetter(Function<E,V> getter) {
         return new EventFieldWrapper<>(event -> wrapLiving(getter),null);
     }
 
-    protected <V> @Nullable PlayerAPI<V> wrapPlayer(@Nullable Function<E,V> playerFunc) {
+    protected <V> @Nullable PlayerAPI<V,?> wrapPlayer(@Nullable Function<E,V> playerFunc) {
         return Objects.nonNull(this.event) && Objects.nonNull(playerFunc) ?
                 WrapperHelper.wrapPlayer(playerFunc.apply(this.event)) : null;
     }
 
     @SuppressWarnings("unchecked")
-    protected <V> EventFieldWrapper<E,PlayerAPI<?>> wrapPlayerBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
+    protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapPlayer(getter),
-                (event,api) -> setter.accept(event,((PlayerAPI<V>)api).getPlayer()),null);
+                (event,api) -> setter.accept(event,((PlayerAPI<V,?>)api).getEntity()),null);
     }
 
-    protected <V> EventFieldWrapper<E,PlayerAPI<?>> wrapPlayerGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerGetter(Function<E,V> getter) {
         return new EventFieldWrapper<>(event -> wrapPlayer(getter),null);
     }
 

@@ -5,17 +5,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.entity.ClientPlayer1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.font.Font1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.gui.Screen1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.render.Render1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.entity.Player1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
@@ -46,8 +47,8 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     }
 
     @Override
-    public @Nullable PlayerAPI<PlayerEntity> getPlayer() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new Player1_16_5(this.mc.player) : null;
+    public @Nullable PlayerAPI<ClientPlayerEntity,EntityType<?>> getPlayer() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_16_5(this.mc.player) : null;
     }
 
     @Override

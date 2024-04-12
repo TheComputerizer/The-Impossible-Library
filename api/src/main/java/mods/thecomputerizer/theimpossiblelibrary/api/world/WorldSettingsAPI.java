@@ -1,8 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
-public interface WorldSettingsAPI<S> {
+import lombok.Getter;
 
-    long getSeed();
-    S getWorldSettings();
-    boolean isHardcore();
+@Getter
+public abstract class WorldSettingsAPI<S> {
+
+    protected final S settings;
+
+    protected WorldSettingsAPI(S settings) {
+        this.settings = settings;
+    }
+
+    public abstract long getSeed();
 }

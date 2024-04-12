@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerLevelChangeEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 
 public class PlayerLevelChangeEvent1_12_2 extends PlayerLevelChangeEventWrapper<Object> { //TODO This is wrong
 
@@ -12,7 +12,7 @@ public class PlayerLevelChangeEvent1_12_2 extends PlayerLevelChangeEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 }

@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface MinecraftAPI {
 
     FontAPI getFont();
-    @Nullable PlayerAPI<?> getPlayer();
+    @Nullable PlayerAPI<?,?> getPlayer();
     RenderAPI getRenderer();
     @Nullable ScreenAPI<?> getScreen();
     MinecraftWindow getWindow();
@@ -54,12 +54,12 @@ public interface MinecraftAPI {
     }
 
     default void sendMessageToPlayer(TextAPI<?> text, @Nullable UUID uuid) {
-        PlayerAPI<?> player = getPlayer();
+        PlayerAPI<?,?> player = getPlayer();
         if(Objects.nonNull(player)) player.sendMessage(text,uuid);
     }
 
     default void sendStatusMessageToPlayer(TextAPI<?> text, boolean actionBar) {
-        PlayerAPI<?> player = getPlayer();
+        PlayerAPI<?,?> player = getPlayer();
         if(Objects.nonNull(player)) player.sendStatusMessage(text,actionBar);
     }
 

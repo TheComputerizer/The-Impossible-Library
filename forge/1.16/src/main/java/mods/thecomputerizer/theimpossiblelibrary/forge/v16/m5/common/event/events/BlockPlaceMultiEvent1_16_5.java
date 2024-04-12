@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockPlaceMultiEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class BlockPlaceMultiEvent1_16_5 extends BlockPlaceMultiEventWrapper<EntityMultiPlaceEvent> {
 
     @Override
-    protected EventFieldWrapper<EntityMultiPlaceEvent,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<EntityMultiPlaceEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityMultiPlaceEvent::getEntity);
     }
 

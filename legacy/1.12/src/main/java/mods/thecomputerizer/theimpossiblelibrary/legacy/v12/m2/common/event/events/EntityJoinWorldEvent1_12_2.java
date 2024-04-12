@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.EntityJoinWorldEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -22,7 +22,7 @@ public class EntityJoinWorldEvent1_12_2 extends EntityJoinWorldEventWrapper<Enti
     }
 
     @Override
-    protected EventFieldWrapper<EntityJoinWorldEvent,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<EntityJoinWorldEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityJoinWorldEvent::getEntity);
     }
 }

@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FOVUpdateEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 
 public class FOVUpdateEvent1_16_5 extends FOVUpdateEventWrapper<FOVUpdateEvent> {
@@ -18,7 +18,7 @@ public class FOVUpdateEvent1_16_5 extends FOVUpdateEventWrapper<FOVUpdateEvent> 
     }
 
     @Override
-    protected EventFieldWrapper<FOVUpdateEvent,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<FOVUpdateEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(FOVUpdateEvent::getEntity);
     }
 }

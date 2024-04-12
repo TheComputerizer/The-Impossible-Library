@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockNotifyNeighborEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
@@ -12,7 +12,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.block.Facing.UP;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 
 public class BlockNotifyNeighborEvent1_16_5 extends BlockNotifyNeighborEventWrapper<NeighborNotifyEvent> {
 

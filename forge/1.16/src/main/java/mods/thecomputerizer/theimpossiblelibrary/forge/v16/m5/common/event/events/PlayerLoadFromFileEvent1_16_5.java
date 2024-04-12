@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerLoadFromFileEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.LoadFromFile;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class PlayerLoadFromFileEvent1_16_5 extends PlayerLoadFromFileEventWrappe
     }
 
     @Override
-    protected EventFieldWrapper<LoadFromFile,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<LoadFromFile,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(LoadFromFile::getPlayer);
     }
 }

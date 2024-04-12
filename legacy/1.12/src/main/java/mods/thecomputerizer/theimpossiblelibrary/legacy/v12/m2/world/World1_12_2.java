@@ -1,27 +1,41 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldSettingsAPI;
-import net.minecraft.block.material.Material;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumDifficulty;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome.Biome1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSettings;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-public class World1_12_2 implements WorldAPI<World> {
+public class World1_12_2 extends WorldAPI<World> {
 
-    private final World world;
 
     public World1_12_2(World world) {
-        this.world = world;
+        super(world);
+    }
+
+    @Override
+    public boolean canSnowAt(BlockPosAPI<?> pos) {
+        return this.world.canSnowAt(((BlockPos1_12_2)pos).getPos(),false);
+    }
+
+    @Override
+    public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
+        return new Biome1_12_2(this.world.getBiome(((BlockPos1_12_2)pos).getPos()));
     }
 
     @Override
@@ -30,8 +44,31 @@ public class World1_12_2 implements WorldAPI<World> {
     }
 
     @Override
-    public List<EntityAPI<?>> getEntitiesInBox(Box box) { //TODO
-        return Collections.emptyList();
+    public int getDifficultyOrdinal() {
+        if(this.world.getWorldInfo().isHardcoreModeEnabled()) return 4;
+        switch(this.world.getDifficulty()) {
+            case PEACEFUL: return 0;
+            case EASY: return 1;
+            case NORMAL: return 2;
+            case HARD: return 3;
+            default: return -1; //unreachable
+        }
+    }
+
+    @Override
+    public DimensionAPI<?> getDimension() {
+        return new Dimension1_12_2(this);
+    }
+
+    @Override
+    public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
+        return getEntitiesInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
+    }
+
+    public List<EntityAPI<?,?>> getEntitiesInBox(AxisAlignedBB box) {
+        List<EntityAPI<?,?>> entities = new ArrayList<>();
+        for(Entity entity : this.world.getEntitiesWithinAABB(Entity.class,box)) entities.add(new Entity1_12_2(entity));
+        return entities;
     }
 
     @Override
@@ -50,8 +87,15 @@ public class World1_12_2 implements WorldAPI<World> {
     }
 
     @Override
-    public List<LivingEntityAPI<?>> getLivingInBox(Box box) { //TODO
-        return Collections.emptyList();
+    public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
+        return getLivingInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
+    }
+
+    public List<LivingEntityAPI<?,?>> getLivingInBox(AxisAlignedBB box) {
+        List<LivingEntityAPI<?,?>> entities = new ArrayList<>();
+        for(EntityLivingBase entity : this.world.getEntitiesWithinAABB(EntityLivingBase.class,box))
+            entities.add(new Living1_12_2(entity));
+        return entities;
     }
 
     @Override
@@ -60,8 +104,8 @@ public class World1_12_2 implements WorldAPI<World> {
     }
 
     @Override
-    public WorldSettingsAPI<WorldSettings> getSettings() { //TODO
-        return null;
+    public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
+        return new BlockState1_12_2(this.world.getBlockState(((BlockPos1_12_2)pos).getPos()));
     }
 
     @Override
@@ -75,11 +119,6 @@ public class World1_12_2 implements WorldAPI<World> {
     }
 
     @Override
-    public World getWorld() {
-        return this.world;
-    }
-
-    @Override
     public boolean isClient() {
         return this.world.isRemote;
     }
@@ -90,53 +129,13 @@ public class World1_12_2 implements WorldAPI<World> {
     }
 
     @Override
-    public boolean isDifficultyEasy() {
-        return this.world.getDifficulty()==EnumDifficulty.EASY;
-    }
-
-    @Override
-    public boolean isDifficultyHard() {
-        return this.world.getDifficulty()==EnumDifficulty.HARD;
-    }
-
-    @Override
-    public boolean isDifficultyHardcore() {
-        return this.world.getWorldInfo().isHardcoreModeEnabled();
-    }
-
-    @Override
-    public boolean isDifficultyNormal() {
-        return this.world.getDifficulty()==EnumDifficulty.NORMAL;
-    }
-
-    @Override
-    public boolean isDifficultyPeaceful() {
-        return this.world.getDifficulty()==EnumDifficulty.PEACEFUL;
-    }
-
-    @Override
-    public boolean isNighttime() {
-        return !isDaytime();
-    }
-
-    @Override
     public boolean isRaining() {
         return this.world.isRaining();
     }
 
     @Override
-    public boolean isServer() {
-        return !this.world.isRemote;
-    }
-
-    @Override
     public boolean isSkyVisible(BlockPosAPI<?> pos) {
         return this.world.canBlockSeeSky(((BlockPos1_12_2)pos).getPos());
-    }
-
-    @Override
-    public boolean isSnowing(BlockPosAPI<?> pos) {
-        return isRaining() && this.world.canSnowAt(((BlockPos1_12_2)pos).getPos(),false);
     }
 
     @Override
@@ -153,12 +152,5 @@ public class World1_12_2 implements WorldAPI<World> {
     public boolean isSunset() {
         long time = getTimeDay();
         return time>=12000L && time<13000L;
-    }
-
-    @Override
-    public boolean isUnderwater(BlockPosAPI<?> api) {
-        BlockPos pos = ((BlockPos1_12_2)api).getPos();
-        return this.world.getBlockState(pos).getMaterial()==Material.WATER &&
-                this.world.getBlockState(pos.up()).getMaterial()==Material.WATER;
     }
 }

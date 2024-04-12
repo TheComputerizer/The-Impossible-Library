@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonExplosionEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 
 import java.util.List;
 
@@ -10,13 +10,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 
 public abstract class ExplosionDetonateEventWrapper<E> extends CommonExplosionEventType<E> {
 
-    protected EventFieldWrapper<E,List<EntityAPI<?>>> affectedEntities;
+    protected EventFieldWrapper<E,List<EntityAPI<?,?>>> affectedEntities;
 
     protected ExplosionDetonateEventWrapper() {
         super(EXPLOSION_DETONATE);
     }
 
-    public List<EntityAPI<?>> getAffectedEntities() {
+    public List<EntityAPI<?,?>> getAffectedEntities() {
         return this.affectedEntities.get(this.event);
     }
 
@@ -26,5 +26,5 @@ public abstract class ExplosionDetonateEventWrapper<E> extends CommonExplosionEv
         this.affectedEntities = wrapAffectedEntitiesField();
     }
 
-    protected abstract EventFieldWrapper<E,List<EntityAPI<?>>> wrapAffectedEntitiesField();
+    protected abstract EventFieldWrapper<E,List<EntityAPI<?,?>>> wrapAffectedEntitiesField();
 }

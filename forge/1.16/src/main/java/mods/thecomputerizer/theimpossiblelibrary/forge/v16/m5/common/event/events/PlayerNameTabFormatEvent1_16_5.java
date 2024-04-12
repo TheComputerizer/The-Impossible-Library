@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerNameTabFormatEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.TextString1_16_5;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
 
@@ -17,7 +17,7 @@ public class PlayerNameTabFormatEvent1_16_5 extends PlayerNameTabFormatEventWrap
     }
 
     @Override
-    protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(TabListNameFormat::getPlayer);
     }
 }

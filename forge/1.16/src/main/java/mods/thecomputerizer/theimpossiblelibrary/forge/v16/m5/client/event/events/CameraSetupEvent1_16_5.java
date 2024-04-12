@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.CameraSetupEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.ClientEvents1_16_5;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 
@@ -33,7 +33,7 @@ public class CameraSetupEvent1_16_5 extends CameraSetupEventWrapper<CameraSetup>
     }
 
     @Override
-    protected EventFieldWrapper<CameraSetup,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<CameraSetup,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 

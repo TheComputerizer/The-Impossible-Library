@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerChangeXPEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange;
 
 public class PlayerChangeXPEvent1_16_5 extends PlayerChangeXPEventWrapper<XpChange> {
@@ -13,7 +13,7 @@ public class PlayerChangeXPEvent1_16_5 extends PlayerChangeXPEventWrapper<XpChan
     }
 
     @Override
-    protected EventFieldWrapper<XpChange,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<XpChange,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(XpChange::getPlayer);
     }
 }

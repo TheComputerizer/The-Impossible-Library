@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FogDensityEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.ClientEvents1_16_5;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity;
 
@@ -23,7 +23,7 @@ public class FogDensityEvent1_16_5 extends FogDensityEventWrapper<FogDensity> {
     }
 
     @Override
-    protected EventFieldWrapper<FogDensity,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<FogDensity,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 

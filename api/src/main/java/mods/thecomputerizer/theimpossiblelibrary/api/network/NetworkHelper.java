@@ -1,13 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 
@@ -124,12 +122,6 @@ public class NetworkHelper {
         return ret;
     }
 
-    public static @Nullable RegistryEntryAPI<?> readRegistryEntry(ByteBuf buf) {
-        ResourceLocationAPI<?> registryKey = readResourceLocation(buf);
-        ResourceLocationAPI<?> entryID = readResourceLocation(buf);
-        return RegistryHelper.getEntryIfPresent(registryKey,entryID);
-    }
-
     public static @Nullable ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
         NetworkAPI<?,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.readResourceLocation(buf) : null;
@@ -227,11 +219,6 @@ public class NetworkHelper {
             if(val instanceof Collection<?>) writeCollection(buf,(Collection<?>)val,element -> writeObject(buf,element));
             else writeString(buf,val.toString());
         }
-    }
-
-    public static void writeRegistryEntry(ByteBuf buf, RegistryEntryAPI<?> entry) {
-        writeResourceLocation(buf,entry.getRegistryKey());
-        writeResourceLocation(buf,entry.getID());
     }
 
     public static void writeResourceLocation(ByteBuf buf, ResourceLocationAPI<?> resource) {

@@ -1,38 +1,44 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.blockentity.BlockEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.advancement.Advancement1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.advancement.Advancement1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Block1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockSnapShot1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Material1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockentity.BlockEntity1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.entity.ClientPlayer1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.entity.ServerPlayer1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Dimension1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Explosion1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.block.Block1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.block.BlockSnapShot1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.block.BlockState1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.blockentity.BlockEntity1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Entity1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Living1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Player1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.item.Item1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.item.ItemStack1_12_2;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -58,40 +64,24 @@ public class Wrapper1_12_2 implements WrapperAPI {
     }
 
     @Override
-    public @Nullable <BE> BlockEntityAPI<BE> wrapBlockEntity(@Nullable BE blockentity) {
-        return Objects.nonNull(blockentity) ? (BlockEntityAPI<BE>)new BlockEntity1_12_2((TileEntity)blockentity) : null;
+    public @Nullable <BE> BlockEntityAPI<BE,?> wrapBlockEntity(@Nullable BE blockentity) {
+        return Objects.nonNull(blockentity) ? (BlockEntityAPI<BE,?>)new BlockEntity1_12_2((TileEntity)blockentity) : null;
     }
 
     @Override
-    public @Nullable <D> DimensionAPI<D> wrapDimension(@Nullable D dimension) {
-        return Objects.nonNull(dimension) ? (DimensionAPI<D>)new Dimension1_12_2((DimensionType)dimension) : null;
+    public @Nullable <D> DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable D dimension) {
+        return Objects.nonNull(dimension) ?
+                (DimensionAPI<D>)new Dimension1_12_2((World1_12_2)world,(DimensionType)dimension) : null;
     }
 
     @Override
-    public @Nullable <E> EntityAPI<E> wrapEntity(@Nullable E entity) {
-        return Objects.nonNull(entity) ? (EntityAPI<E>)new Entity1_12_2((Entity)entity) : null;
+    public @Nullable <E> EntityAPI<E,?> wrapEntity(@Nullable E entity) {
+        return Objects.nonNull(entity) ? (EntityAPI<E,?>)new Entity1_12_2((Entity)entity) : null;
     }
 
     @Override
     public @Nullable <E> ExplosionAPI<E> wrapExplosion(@Nullable E explosion) {
         return Objects.nonNull(explosion) ? (ExplosionAPI<E>)new Explosion1_12_2((Explosion)explosion) : null;
-    }
-
-    /**
-     * Would probably benefit from a switch statement
-     */
-    @Override
-    public <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic) {
-        if(wrapperClass==AdvancementAPI.class) return (W)wrapAdvancement(generic);
-        if(wrapperClass==BlockAPI.class) return (W)wrapBlock(generic);
-        if(wrapperClass==BlockEntityAPI.class) return (W)wrapBlockEntity(generic);
-        if(wrapperClass==EntityAPI.class) return (W)wrapEntity(generic);
-        if(wrapperClass==ItemAPI.class) return (W)wrapItem(generic);
-        if(wrapperClass==LivingEntityAPI.class) return (W)wrapLivingEntity(generic);
-        if(wrapperClass==PlayerAPI.class) return (W)wrapPlayer(generic);
-        if(wrapperClass==BlockStateAPI.class) return (W)wrapState(generic);
-        if(wrapperClass==WorldAPI.class) return (W)wrapWorld(generic);
-        return null;
     }
 
     @Override
@@ -105,13 +95,28 @@ public class Wrapper1_12_2 implements WrapperAPI {
     }
 
     @Override
-    public @Nullable <L> LivingEntityAPI<L> wrapLivingEntity(@Nullable L living) {
-        return Objects.nonNull(living) ? (LivingEntityAPI<L>)new Living1_12_2((EntityLivingBase)living) : null;
+    public @Nullable <L> LivingEntityAPI<L,?> wrapLivingEntity(@Nullable L living) {
+        return Objects.nonNull(living) ? (LivingEntityAPI<L,?>)new Living1_12_2((EntityLivingBase)living) : null;
     }
 
     @Override
-    public @Nullable <P> PlayerAPI<P> wrapPlayer(@Nullable P player) {
-        return Objects.nonNull(player) ? (PlayerAPI<P>)new Player1_12_2((EntityPlayer)player) : null;
+    public <M> @Nullable MaterialAPI<M> wrapMaterial(@Nullable M material) {
+        return Objects.nonNull(material) ? (MaterialAPI<M>)new Material1_12_2((Material)material) : null;
+    }
+
+    @Override
+    public @Nullable <P> PlayerAPI<P,?> wrapPlayer(@Nullable P p) {
+        if(!(p instanceof EntityPlayer)) return null;
+        EntityPlayer player = (EntityPlayer)p;
+        return (PlayerAPI<P,?>)(player instanceof EntityPlayerMP ? wrapPlayerServer(player) : wrapPlayerClient(player));
+    }
+
+    private <E extends EntityPlayer> PlayerAPI<E,?> wrapPlayerClient(E player) {
+        return (PlayerAPI<E,?>)new ClientPlayer1_12_2((EntityPlayerSP)player);
+    }
+
+    private <E extends EntityPlayer> PlayerAPI<E,?> wrapPlayerServer(E player) {
+        return (PlayerAPI<E,?>)new ServerPlayer1_12_2((EntityPlayerMP)player);
     }
 
     @Override

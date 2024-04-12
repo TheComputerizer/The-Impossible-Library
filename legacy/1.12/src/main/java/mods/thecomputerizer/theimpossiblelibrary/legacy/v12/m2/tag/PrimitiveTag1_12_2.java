@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTPrimitive;
 
 public class PrimitiveTag1_12_2 extends BaseTag1_12_2<NBTPrimitive> implements PrimitiveTagAPI {
 
-    protected PrimitiveTag1_12_2(NBTPrimitive tag) {
+    public PrimitiveTag1_12_2(NBTPrimitive tag) {
         super(tag);
     }
 

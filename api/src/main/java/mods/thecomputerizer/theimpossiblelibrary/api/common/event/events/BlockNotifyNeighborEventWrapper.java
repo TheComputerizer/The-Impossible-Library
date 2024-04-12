@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 
 import java.util.EnumSet;
 

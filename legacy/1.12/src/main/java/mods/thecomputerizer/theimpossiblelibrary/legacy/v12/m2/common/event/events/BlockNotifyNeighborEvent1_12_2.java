@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockNotifyNeighborEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_NOTIFY_NEIGHBOR;
-import static mods.thecomputerizer.theimpossiblelibrary.api.block.Facing.UP;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 
 public class BlockNotifyNeighborEvent1_12_2 extends BlockNotifyNeighborEventWrapper<NeighborNotifyEvent> {
 

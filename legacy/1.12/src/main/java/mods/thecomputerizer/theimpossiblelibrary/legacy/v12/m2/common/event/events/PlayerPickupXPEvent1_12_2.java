@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerPickupXPEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -17,12 +17,12 @@ public class PlayerPickupXPEvent1_12_2 extends PlayerPickupXPEventWrapper<Player
     }
 
     @Override
-    protected EventFieldWrapper<PlayerPickupXpEvent,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<PlayerPickupXpEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(PlayerPickupXpEvent::getEntityPlayer);
     }
 
     @Override
-    protected EventFieldWrapper<PlayerPickupXpEvent,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<PlayerPickupXpEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(PlayerPickupXpEvent::getOrb);
     }
 }

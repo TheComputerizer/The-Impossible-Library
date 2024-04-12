@@ -1,19 +1,20 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.blockentity.BlockEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -38,15 +39,15 @@ public class WrapperHelper {
         return wrap(api -> api.wrapBlock(block));
     }
 
-    public static <BE> @Nullable BlockEntityAPI<BE> wrapBlockEntity(@Nullable BE blockentity) {
+    public static <BE> @Nullable BlockEntityAPI<BE,?> wrapBlockEntity(@Nullable BE blockentity) {
         return wrap(api -> api.wrapBlockEntity(blockentity));
     }
 
-    public static <D> @Nullable DimensionAPI<D> wrapDimension(@Nullable D dimension) {
-        return wrap(api -> api.wrapDimension(dimension));
+    public static <D> @Nullable DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable D dimension) {
+        return wrap(api -> api.wrapDimension(world,dimension));
     }
 
-    public static <E> @Nullable EntityAPI<E> wrapEntity(@Nullable E entity) {
+    public static <E> @Nullable EntityAPI<E,?> wrapEntity(@Nullable E entity) {
         return wrap(api -> api.wrapEntity(entity));
     }
 
@@ -66,11 +67,15 @@ public class WrapperHelper {
         return wrap(api -> api.wrapItemStack(stack));
     }
 
-    public static <L> @Nullable LivingEntityAPI<L> wrapLivingEntity(@Nullable L living) {
+    public static <L> @Nullable LivingEntityAPI<L,?> wrapLivingEntity(@Nullable L living) {
         return wrap(api -> api.wrapLivingEntity(living));
     }
 
-    public static <P> @Nullable PlayerAPI<P> wrapPlayer(@Nullable P player) {
+    public static <M> @Nullable MaterialAPI<M> wrapMaterial(@Nullable M material) {
+        return wrap(api -> api.wrapMaterial(material));
+    }
+
+    public static <P> @Nullable PlayerAPI<P,?> wrapPlayer(@Nullable P player) {
         return wrap(api -> api.wrapPlayer(player));
     }
 

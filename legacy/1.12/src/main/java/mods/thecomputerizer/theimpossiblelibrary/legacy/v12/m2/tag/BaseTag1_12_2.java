@@ -11,7 +11,7 @@ public class BaseTag1_12_2<N extends NBTBase> implements BaseTagAPI {
 
     protected final N tag;
 
-    protected BaseTag1_12_2(N tag) {
+    public BaseTag1_12_2(N tag) {
         this.tag = tag;
     }
 

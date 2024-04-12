@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingItemUseStartEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Start;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -22,7 +22,7 @@ public class LivingItemUseStartEvent1_12_2 extends LivingItemUseStartEventWrappe
     }
 
     @Override
-    protected EventFieldWrapper<Start,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<Start,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(Start::getEntityLiving);
     }
 

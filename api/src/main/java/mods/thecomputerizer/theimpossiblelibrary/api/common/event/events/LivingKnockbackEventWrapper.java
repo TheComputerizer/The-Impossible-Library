@@ -2,14 +2,14 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonLivingEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_KNOCKBACK;
 
 public abstract class LivingKnockbackEventWrapper<E> extends CommonLivingEventType<E> {
 
-    protected EventFieldWrapper<E,EntityAPI<?>> attacker;
-    protected EventFieldWrapper<E,EntityAPI<?>> originalAttacker;
+    protected EventFieldWrapper<E,EntityAPI<?,?>> attacker;
+    protected EventFieldWrapper<E,EntityAPI<?,?>> originalAttacker;
     protected EventFieldWrapper<E,Double> originalRatioX;
     protected EventFieldWrapper<E,Double> originalRatioZ;
     protected EventFieldWrapper<E,Float> originalStrength;
@@ -21,11 +21,11 @@ public abstract class LivingKnockbackEventWrapper<E> extends CommonLivingEventTy
         super(LIVING_KNOCKBACK);
     }
 
-    public EntityAPI<?> getAttacker() {
+    public EntityAPI<?,?> getAttacker() {
         return this.attacker.get(this.event);
     }
 
-    public EntityAPI<?> getOriginalAttacker() {
+    public EntityAPI<?,?> getOriginalAttacker() {
         return this.originalAttacker.get(this.event);
     }
 
@@ -66,7 +66,7 @@ public abstract class LivingKnockbackEventWrapper<E> extends CommonLivingEventTy
         this.strength = wrapStrengthField();
     }
 
-    public void setAttacker(EntityAPI<?> attacker) {
+    public void setAttacker(EntityAPI<?,?> attacker) {
         this.attacker.set(this.event,attacker);
     }
 
@@ -82,8 +82,8 @@ public abstract class LivingKnockbackEventWrapper<E> extends CommonLivingEventTy
         this.strength.set(this.event,strength);
     }
 
-    protected abstract EventFieldWrapper<E,EntityAPI<?>> wrapAttackerField();
-    protected abstract EventFieldWrapper<E,EntityAPI<?>> wrapOriginalAttackerField();
+    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapAttackerField();
+    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapOriginalAttackerField();
     protected abstract EventFieldWrapper<E,Double> wrapOriginalRatioXField();
     protected abstract EventFieldWrapper<E,Double> wrapOriginalRatioZField();
     protected abstract EventFieldWrapper<E,Float> wrapOriginalStrengthField();

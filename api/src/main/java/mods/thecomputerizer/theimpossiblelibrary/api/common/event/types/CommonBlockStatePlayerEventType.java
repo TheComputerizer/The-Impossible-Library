@@ -1,17 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 
 public abstract class CommonBlockStatePlayerEventType<E> extends CommonBlockStateEventType<E> {
 
-    protected EventFieldWrapper<E,PlayerAPI<?>> player;
+    protected EventFieldWrapper<E,PlayerAPI<?,?>> player;
 
     protected CommonBlockStatePlayerEventType(CommonType<?> type) {
         super(type);
     }
 
-    public PlayerAPI<?> getPlayer() {
+    public PlayerAPI<?,?> getPlayer() {
         return this.player.get(this.event);
     }
 
@@ -21,5 +21,5 @@ public abstract class CommonBlockStatePlayerEventType<E> extends CommonBlockStat
         this.player = wrapPlayerField();
     }
 
-    protected abstract EventFieldWrapper<E,PlayerAPI<?>> wrapPlayerField();
+    protected abstract EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerField();
 }

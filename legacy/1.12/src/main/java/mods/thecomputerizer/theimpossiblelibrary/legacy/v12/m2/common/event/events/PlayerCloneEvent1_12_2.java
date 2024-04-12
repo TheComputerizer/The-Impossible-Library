@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerCloneEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -21,12 +21,12 @@ public class PlayerCloneEvent1_12_2 extends PlayerCloneEventWrapper<Clone> {
     }
 
     @Override
-    protected EventFieldWrapper<Clone,PlayerAPI<?>> wrapOriginalField() {
+    protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapOriginalField() {
         return wrapPlayerGetter(Clone::getOriginal);
     }
 
     @Override
-    protected EventFieldWrapper<Clone,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(Clone::getEntityPlayer);
     }
 }

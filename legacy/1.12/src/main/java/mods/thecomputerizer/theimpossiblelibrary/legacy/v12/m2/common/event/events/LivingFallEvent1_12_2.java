@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingFallEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -26,7 +26,7 @@ public class LivingFallEvent1_12_2 extends LivingFallEventWrapper<LivingFallEven
     }
 
     @Override
-    protected EventFieldWrapper<LivingFallEvent,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<LivingFallEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingFallEvent::getEntityLiving);
     }
 }

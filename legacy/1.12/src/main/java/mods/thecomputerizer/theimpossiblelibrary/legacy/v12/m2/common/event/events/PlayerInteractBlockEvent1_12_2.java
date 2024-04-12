@@ -4,9 +4,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractBlockEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
@@ -69,7 +69,7 @@ public class PlayerInteractBlockEvent1_12_2 extends PlayerInteractBlockEventWrap
     }
 
     @Override
-    protected EventFieldWrapper<RightClickBlock,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<RightClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(RightClickBlock::getEntityPlayer);
     }
 

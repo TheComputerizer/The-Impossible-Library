@@ -8,7 +8,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 
 public class CompoundTag1_16_5 extends BaseTag1_16_5<CompoundNBT> implements CompoundTagAPI {
-    protected CompoundTag1_16_5(CompoundNBT tag) {
+
+    public CompoundTag1_16_5(CompoundNBT tag) {
         super(tag);
     }
 

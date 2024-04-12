@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerNameFormatEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -21,7 +21,7 @@ public class PlayerNameFormatEvent1_12_2 extends PlayerNameFormatEventWrapper<Na
     }
 
     @Override
-    protected EventFieldWrapper<NameFormat,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(NameFormat::getEntityPlayer);
     }
 

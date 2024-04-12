@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerBreakSpeedEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 
@@ -15,7 +15,7 @@ public class PlayerBreakSpeedEvent1_16_5 extends PlayerBreakSpeedEventWrapper<Br
     }
 
     @Override
-    protected EventFieldWrapper<BreakSpeed,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<BreakSpeed,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BreakSpeed::getPlayer);
     }
 

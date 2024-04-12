@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerLoadFromFileEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.LoadFromFile;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -28,7 +28,7 @@ public class PlayerLoadFromFileEvent1_12_2 extends PlayerLoadFromFileEventWrappe
     }
 
     @Override
-    protected EventFieldWrapper<LoadFromFile,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<LoadFromFile,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(LoadFromFile::getEntityPlayer);
     }
 }

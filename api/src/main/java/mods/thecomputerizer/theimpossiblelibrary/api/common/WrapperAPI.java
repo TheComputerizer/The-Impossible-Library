@@ -1,18 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.blockentity.BlockEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 
 import javax.annotation.Nullable;
 
@@ -20,15 +21,34 @@ public interface WrapperAPI {
 
     <A> @Nullable AdvancementAPI<A> wrapAdvancement(@Nullable A advancement);
     <B> @Nullable BlockAPI<B> wrapBlock(@Nullable B block);
-    <BE> @Nullable BlockEntityAPI<BE> wrapBlockEntity(@Nullable BE blockentity);
-    <D> @Nullable DimensionAPI<D> wrapDimension(@Nullable D dimension);
-    <E> @Nullable EntityAPI<E> wrapEntity(@Nullable E entity);
+    <BE> @Nullable BlockEntityAPI<BE,?> wrapBlockEntity(@Nullable BE blockentity);
+    <D> @Nullable DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable D dimension);
+    <E> @Nullable EntityAPI<E,?> wrapEntity(@Nullable E entity);
     <E> @Nullable ExplosionAPI<E> wrapExplosion(@Nullable E explosion);
-    <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic);
+
+    @SuppressWarnings("unchecked")
+    default <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic) {
+        if(AdvancementAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapAdvancement(generic);
+        if(BlockAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBlock(generic);
+        if(BlockEntityAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBlockEntity(generic);
+        if(PlayerAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapPlayer(generic);
+        if(LivingEntityAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapLivingEntity(generic);
+        if(EntityAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapEntity(generic);
+        if(ExplosionAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapExplosion(generic);
+        if(ItemAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapItem(generic);
+        if(ItemStackAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapItemStack(generic);
+        if(MaterialAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapMaterial(generic);
+        if(BlockSnapshotAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapSnapshot(generic);
+        if(BlockStateAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapState(generic);
+        if(WorldAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapWorld(generic);
+        return null;
+    }
+
     <I> @Nullable ItemAPI<I> wrapItem(@Nullable I item);
     <S> @Nullable ItemStackAPI<S> wrapItemStack(@Nullable S stack);
-    <L> @Nullable LivingEntityAPI<L> wrapLivingEntity(@Nullable L living);
-    <P> @Nullable PlayerAPI<P> wrapPlayer(@Nullable P player);
+    <L> @Nullable LivingEntityAPI<L,?> wrapLivingEntity(@Nullable L living);
+    <M> @Nullable MaterialAPI<M> wrapMaterial(@Nullable M material);
+    <P> @Nullable PlayerAPI<P,?> wrapPlayer(@Nullable P player);
     <S> @Nullable BlockSnapshotAPI<S> wrapSnapshot(@Nullable S snapshot);
     <S> @Nullable BlockStateAPI<S> wrapState(@Nullable S state);
     <W> @Nullable WorldAPI<W> wrapWorld(@Nullable W world);

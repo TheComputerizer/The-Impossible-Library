@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerStopTrackingEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.StopTracking;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -17,12 +17,12 @@ public class PlayerStopTrackingEvent1_12_2 extends PlayerStopTrackingEventWrappe
     }
 
     @Override
-    protected EventFieldWrapper<StopTracking,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<StopTracking,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(StopTracking::getTarget);
     }
 
     @Override
-    protected EventFieldWrapper<StopTracking,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<StopTracking,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(StopTracking::getEntityPlayer);
     }
 }

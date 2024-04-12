@@ -4,8 +4,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 
 public interface RegistryEntryAPI<V> {
 
-    ResourceLocationAPI<?> getID();
+    default RegistryAPI<?> getRegistry() {
+        return RegistryHelper.getRegistry(getValueClass());
+    }
+    ResourceLocationAPI<?> getRegistryName();
     V getValue();
     Class<? extends V> getValueClass();
-    ResourceLocationAPI<?> getRegistryKey();
 }

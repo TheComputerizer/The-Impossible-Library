@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.EntityEnteringChunkEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -16,7 +16,7 @@ public class EntityEnteringChunkEvent1_12_2 extends EntityEnteringChunkEventWrap
     }
 
     @Override
-    protected EventFieldWrapper<EnteringChunk,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<EnteringChunk,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EnteringChunk::getEntity);
     }
 

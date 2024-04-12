@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockInteractEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
@@ -12,7 +12,7 @@ public class BlockInteractEvent1_16_5 extends BlockInteractEventWrapper<BlockToo
 
 
     @Override
-    protected EventFieldWrapper<BlockToolInteractEvent,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<BlockToolInteractEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BlockToolInteractEvent::getPlayer);
     }
 

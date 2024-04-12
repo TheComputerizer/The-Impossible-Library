@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FogColorsEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.ClientEvents1_16_5;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
 
@@ -33,7 +33,7 @@ public class FogColorsEvent1_16_5 extends FogColorsEventWrapper<FogColors> {
     }
 
     @Override
-    protected EventFieldWrapper<FogColors,EntityAPI<?>> wrapEntityField() {
+    protected EventFieldWrapper<FogColors,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 

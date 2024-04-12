@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingDeathEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.DamageAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Damage1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Damage1_12_2;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -23,7 +23,7 @@ public class LivingDeathEvent1_12_2 extends LivingDeathEventWrapper<LivingDeathE
     }
 
     @Override
-    protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?>> wrapLivingField() {
+    protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingDeathEvent::getEntityLiving);
     }
 }

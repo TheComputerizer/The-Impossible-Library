@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractEntityEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
@@ -43,7 +43,7 @@ public class PlayerInteractEntityEvent1_16_5 extends PlayerInteractEntityEventWr
     }
 
     @Override
-    protected EventFieldWrapper<EntityInteract,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<EntityInteract,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(EntityInteract::getPlayer);
     }
 
@@ -53,7 +53,7 @@ public class PlayerInteractEntityEvent1_16_5 extends PlayerInteractEntityEventWr
     }
 
     @Override
-    protected EventFieldWrapper<EntityInteract,EntityAPI<?>> wrapTargetField() {
+    protected EventFieldWrapper<EntityInteract,EntityAPI<?,?>> wrapTargetField() {
         return wrapEntityGetter(EntityInteract::getTarget);
     }
 }

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListTag1_16_5 extends BaseTag1_16_5<ListNBT> implements ListTagAPI {
-    protected ListTag1_16_5(ListNBT tag) {
+
+    public ListTag1_16_5(ListNBT tag) {
         super(tag);
     }
 

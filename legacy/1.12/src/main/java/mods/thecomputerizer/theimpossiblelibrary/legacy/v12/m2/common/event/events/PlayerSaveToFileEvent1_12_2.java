@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerSaveToFileEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.SaveToFile;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -28,7 +28,7 @@ public class PlayerSaveToFileEvent1_12_2 extends PlayerSaveToFileEventWrapper<Sa
     }
 
     @Override
-    protected EventFieldWrapper<SaveToFile,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<SaveToFile,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(SaveToFile::getEntityPlayer);
     }
 }

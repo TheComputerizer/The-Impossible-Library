@@ -4,10 +4,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerPunchEntityEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.block.Facing;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 
 
 public class PlayerPunchEntityEvent1_16_5 extends PlayerPunchEntityEventWrapper<Object> { //TODO
@@ -38,7 +38,7 @@ public class PlayerPunchEntityEvent1_16_5 extends PlayerPunchEntityEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?>> wrapPlayerField() {
+    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 
@@ -48,7 +48,7 @@ public class PlayerPunchEntityEvent1_16_5 extends PlayerPunchEntityEventWrapper<
     }
 
     @Override
-    protected EventFieldWrapper<Object,EntityAPI<?>> wrapTargetField() {
+    protected EventFieldWrapper<Object,EntityAPI<?,?>> wrapTargetField() {
         return wrapEntityGetter(event -> null);
     }
 }
