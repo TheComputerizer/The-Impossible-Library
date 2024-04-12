@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import org.joml.Vector3d;
+import org.joml.Vector3i;
 
 import java.util.Objects;
 
@@ -82,6 +84,22 @@ public class Box {
 
     private boolean isFiniteAndNotMaxed(double x, double y, double z) {
         return isFiniteAndNotMaxed(x) && isFiniteAndNotMaxed(y) && isFiniteAndNotMaxed(z);
+    }
+
+    public boolean isInside(BlockPosAPI<?> pos) {
+        return isInside(pos.x(),pos.y(),pos.z());
+    }
+
+    public boolean isInside(Vector3d pos) {
+        return isInside(pos.x,pos.y,pos.z);
+    }
+
+    public boolean isInside(Vector3i pos) {
+        return isInside(pos.x,pos.y,pos.z);
+    }
+
+    public boolean isInside(double x, double y, double z) {
+        return x>=this.min.x && x<=this.max.x && y>=this.min.y && y<=this.max.y && z>=this.min.z && z<=this.max.z;
     }
 
     public double lengthX() {

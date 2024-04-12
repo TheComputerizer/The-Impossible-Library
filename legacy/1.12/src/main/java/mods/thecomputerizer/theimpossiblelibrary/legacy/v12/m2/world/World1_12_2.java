@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
@@ -12,14 +13,18 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome.Biom
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.Structure1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.StructureRef;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class World1_12_2 extends WorldAPI<World> {
 
@@ -106,6 +111,15 @@ public class World1_12_2 extends WorldAPI<World> {
     @Override
     public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
         return new BlockState1_12_2(this.world.getBlockState(((BlockPos1_12_2)pos).getPos()));
+    }
+
+    @Override
+    public StructureAPI<?> getStructureAt(BlockPosAPI<?> pos) {
+        if(this.world instanceof WorldServer) {
+            StructureRef ref = StructureRef.getStructureAt((WorldServer)this.world,((BlockPos1_12_2)pos).getPos());
+            return Objects.nonNull(ref) ? new Structure1_12_2(ref) : null;
+        }
+        return null;
     }
 
     @Override

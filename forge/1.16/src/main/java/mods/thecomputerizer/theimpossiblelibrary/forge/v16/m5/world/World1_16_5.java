@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
@@ -12,12 +13,17 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.biome.Biome
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.BlockState1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Entity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Living1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.structure.Structure1_16_5;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.feature.structure.StructureManager;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +116,18 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     @Override
     public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
         return new BlockState1_16_5(this.world.getBlockState(((BlockPos1_16_5)pos).getPos()));
+    }
+
+    @Override
+    public StructureAPI<?> getStructureAt(BlockPosAPI<?> api) {
+        if(this.world instanceof ServerWorld) {
+            StructureManager manager = ((ServerWorld)this.world).structureFeatureManager();
+            BlockPos pos = ((BlockPos1_16_5)api).getPos();
+            for(Structure<?> structure : ForgeRegistries.STRUCTURE_FEATURES.getValues())
+                if(manager.getStructureAt(pos,false,structure).isValid())
+                    return new Structure1_16_5(structure);
+        }
+        return null;
     }
 
     @Override

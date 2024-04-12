@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public abstract class WorldAPI<W> {
 
     public abstract int getMoonPhase();
     public abstract BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos);
+    public abstract StructureAPI<?> getStructureAt(BlockPosAPI<?> pos);
     public abstract long getTimeDay();
     public abstract long getTimeTotal();
     public abstract boolean isClient();

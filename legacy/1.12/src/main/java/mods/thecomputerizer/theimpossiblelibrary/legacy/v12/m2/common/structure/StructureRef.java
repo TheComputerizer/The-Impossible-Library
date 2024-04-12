@@ -57,8 +57,7 @@ public class StructureRef {
         REFS.add(new StructureRef(id,name,posCheck));
     }
 
-    @Getter
-    private final ResourceLocation id;
+    @Getter private final ResourceLocation id;
     @Getter private final String name;
     private final BiFunction<WorldServer,BlockPos,Boolean> posCheck;
 
