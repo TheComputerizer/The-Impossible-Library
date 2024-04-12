@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;

@@ -6,8 +6,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 
-public class Living1_12_2 extends Entity1_12_2 implements LivingEntityAPI<EntityLivingBase> {
+import static mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Entity1_12_2.getEntry;
 
+public class Living1_12_2 implements LivingEntityAPI<EntityLivingBase> {
+
+    private final EntityAPI<Entity> entity;
     private final EntityLivingBase living;
 
     public Living1_12_2(EntityLivingBase living) {
@@ -15,13 +18,13 @@ public class Living1_12_2 extends Entity1_12_2 implements LivingEntityAPI<Entity
     }
 
     public Living1_12_2(EntityLivingBase living, EntityEntry entry) {
-        super(living,entry);
+        this.entity = new Entity1_12_2(living,entry);
         this.living = living;
     }
 
     @Override
     public EntityAPI<Entity> getEntityAPI() {
-        return this;
+        return this.entity;
     }
 
     @Override

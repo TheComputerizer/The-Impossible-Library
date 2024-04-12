@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
 import java.io.IOException;

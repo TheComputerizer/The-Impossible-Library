@@ -7,10 +7,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.TIL1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.font.Font1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui.Screen1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render.Render1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.entity.Player1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.client.Minecraft;
@@ -96,7 +96,7 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         try {
             return this.mc.addScheduledTask(() -> Display.isCreated() && Display.isActive()).get();
         } catch(ExecutionException | InterruptedException ex) {
-            TIL1_12_2.LEGACY_REF.logWarn("Unable to determine display focus state",ex);
+            TILCore1_12_2.LEGACY_REF.logWarn("Unable to determine display focus state",ex);
             return false;
         }
     }

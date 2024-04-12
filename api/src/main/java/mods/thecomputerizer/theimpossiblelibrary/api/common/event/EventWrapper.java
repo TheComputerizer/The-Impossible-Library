@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
 
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;

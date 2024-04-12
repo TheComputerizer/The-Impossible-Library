@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.text;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 
 import javax.annotation.Nullable;

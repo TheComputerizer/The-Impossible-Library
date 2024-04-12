@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import javax.annotation.Nonnull;

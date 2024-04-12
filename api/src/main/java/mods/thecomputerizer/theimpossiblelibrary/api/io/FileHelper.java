@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.io;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.io.BufferedWriter;
 import java.io.File;

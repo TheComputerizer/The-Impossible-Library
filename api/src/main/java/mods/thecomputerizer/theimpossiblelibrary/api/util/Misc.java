@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.DynamicArray;
 import org.apache.commons.lang3.StringUtils;
 

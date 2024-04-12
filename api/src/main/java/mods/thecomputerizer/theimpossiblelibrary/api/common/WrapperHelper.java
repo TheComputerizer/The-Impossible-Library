@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
@@ -39,6 +40,10 @@ public class WrapperHelper {
 
     public static <BE> @Nullable BlockEntityAPI<BE> wrapBlockEntity(@Nullable BE blockentity) {
         return wrap(api -> api.wrapBlockEntity(blockentity));
+    }
+
+    public static <D> @Nullable DimensionAPI<D> wrapDimension(@Nullable D dimension) {
+        return wrap(api -> api.wrapDimension(dimension));
     }
 
     public static <E> @Nullable EntityAPI<E> wrapEntity(@Nullable E entity) {

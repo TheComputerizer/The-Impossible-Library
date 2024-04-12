@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
@@ -20,6 +21,7 @@ public interface WrapperAPI {
     <A> @Nullable AdvancementAPI<A> wrapAdvancement(@Nullable A advancement);
     <B> @Nullable BlockAPI<B> wrapBlock(@Nullable B block);
     <BE> @Nullable BlockEntityAPI<BE> wrapBlockEntity(@Nullable BE blockentity);
+    <D> @Nullable DimensionAPI<D> wrapDimension(@Nullable D dimension);
     <E> @Nullable EntityAPI<E> wrapEntity(@Nullable E entity);
     <E> @Nullable ExplosionAPI<E> wrapExplosion(@Nullable E explosion);
     <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic);

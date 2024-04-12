@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 import com.moandjiezana.toml.Toml;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;

@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api;
+package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

@@ -28,6 +28,14 @@ public abstract class BlockPosAPI<P> {
     public abstract BlockPosAPI<?> add(P pos);
     public abstract BlockPosAPI<?> add(int x, int y, int z);
 
+    public double distanceTo(BlockPosAPI<?> pos) {
+        return distanceTo(pos.posVec);
+    }
+
+    public double distanceTo(Vector3i vec) {
+        return this.posVec.distance(vec);
+    }
+
     public BlockPosAPI<?> down() {
         return add(0,-1,0);
     }

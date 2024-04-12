@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import com.moandjiezana.toml.Toml;
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.apache.commons.lang3.mutable.MutableInt;
 

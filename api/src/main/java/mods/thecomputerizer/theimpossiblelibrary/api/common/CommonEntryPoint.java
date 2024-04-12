@@ -1,15 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 /**
- * Common entrypoint API. This covers events for multiple loaders and versions, so some
+ * Common entrypoint API
  */
-public abstract class CommonEntryPoint {
+public interface CommonEntryPoint { //TODO Implement actual entrypoint stuff
 
-    protected CommonEntryPoint() {
-
-    }
-
-    public void registerEventListener(Object listener) {
-
-    }
 }

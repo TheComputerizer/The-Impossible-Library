@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api;
+package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;

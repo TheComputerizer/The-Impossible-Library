@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.HashMap;
 import java.util.Map;

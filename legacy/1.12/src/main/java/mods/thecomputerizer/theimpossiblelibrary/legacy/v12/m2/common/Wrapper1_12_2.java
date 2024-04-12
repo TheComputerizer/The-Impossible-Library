@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.block.BlockAPI;
@@ -14,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.advancement.Advancement1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Dimension1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Explosion1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.block.Block1_12_2;
@@ -34,6 +36,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -57,6 +60,11 @@ public class Wrapper1_12_2 implements WrapperAPI {
     @Override
     public @Nullable <BE> BlockEntityAPI<BE> wrapBlockEntity(@Nullable BE blockentity) {
         return Objects.nonNull(blockentity) ? (BlockEntityAPI<BE>)new BlockEntity1_12_2((TileEntity)blockentity) : null;
+    }
+
+    @Override
+    public @Nullable <D> DimensionAPI<D> wrapDimension(@Nullable D dimension) {
+        return Objects.nonNull(dimension) ? (DimensionAPI<D>)new Dimension1_12_2((DimensionType)dimension) : null;
     }
 
     @Override

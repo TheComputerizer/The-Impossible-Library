@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api;
+package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
