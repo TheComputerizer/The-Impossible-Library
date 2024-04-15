@@ -9,7 +9,7 @@ import java.util.Objects;
 public class SpawnHelper {
 
     public static @Nullable SpawnHelperAPI<?> getAPI() {
-        return TILRef.getCommonSubAPI("SpawnHelperAPI",CommonAPI::getSpawnHelperAPI);
+        return TILRef.getCommonSubAPI("SpawnHelperAPI",CommonAPI::getSpawnHelper);
     }
 
     @SuppressWarnings("unchecked")

@@ -23,7 +23,7 @@ import java.util.function.Function;
 public class WrapperHelper {
 
     public static @Nullable WrapperAPI getAPI() {
-        return TILRef.getCommonSubAPI("WrapperAPI",CommonAPI::getWrapperAPI);
+        return TILRef.getCommonSubAPI("WrapperAPI",CommonAPI::getWrapper);
     }
 
     private static <W> @Nullable W wrap(Function<WrapperAPI,W> wrapperFunc) {

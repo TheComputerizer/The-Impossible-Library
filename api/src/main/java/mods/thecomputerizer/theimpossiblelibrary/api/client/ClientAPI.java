@@ -7,8 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 
 public interface ClientAPI extends CommonAPI {
 
-    EventsAPI getClientEventsAPI();
+    EventsAPI getClientEvents();
     MinecraftAPI getMinecraft();
-    ScreenHelperAPI getScreenHelperAPI();
-    SoundHelperAPI<?> getSoundHelperAPI();
+    ScreenHelperAPI getScreenHelper();
+    SoundHelperAPI<?> getSoundHelper();
 }

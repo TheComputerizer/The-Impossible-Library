@@ -14,6 +14,13 @@ minecraft {
         def args = [
                 '-DtilDev=true'
         ]
+        configureEach {
+            def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
+            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', srgToMcpFile
+        }
+
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -35,7 +42,41 @@ configurations {
     shadow.extendsFrom(shade)
 }
 
+repositories {
+    maven {
+        name = 'CurseMaven'
+        url = uri('https://www.cursemaven.com')
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven {
+        name = 'BlameJared'
+        url = uri('https://maven.blamejared.com')
+        content {
+            includeGroup 'net.darkhax.bookshelf'
+            includeGroup 'net.darkhax.gamestages'
+        }
+    }
+    maven {
+        name = 'Modding Legacy'
+        url = uri('https://maven.moddinglegacy.com/maven')
+        content {
+            includeGroup 'com.legacy'
+        }
+    }
+
+    maven {
+        name = 'Progwml6 Maven'
+        url = uri('https://dvs1.progwml6.com/files/maven/')
+        content {
+            includeGroup 'mezz.jei'
+        }
+    }
+}
+
 dependencies {
+    //noinspection VulnerableLibrariesLocal
     minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
 
     annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
@@ -43,8 +84,22 @@ dependencies {
 
     compileOnly("org.projectlombok:lombok:${project.lombok_version}")
 
-    //noinspection DependencyNotationArgument
     implementation project(':api')
+    //mod support dependencies
+    implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
+    implementation(fg.deobf("curse.maven:blueskies-312918:${blueskies_version}"))
+    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_version}:${bookshelf_version}"))
+    implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
+    implementation(fg.deobf("curse.maven:configured-457570:${configured_version}"))
+    implementation(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
+    implementation(fg.deobf("curse.maven:enhancedcelestials-438447:${enhancedcelestials_version}"))
+    implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"))
+    implementation(fg.deobf("curse.maven:sereneseasons-291874:${seasons_version}"))
+    implementation(fg.deobf("com.legacy:structure-gel:${minecraft_version}-${structuregel_version}"))
+
+
+    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}"))
+
     shade("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
     shade("org.joml:joml:${project.joml_version}")
 }

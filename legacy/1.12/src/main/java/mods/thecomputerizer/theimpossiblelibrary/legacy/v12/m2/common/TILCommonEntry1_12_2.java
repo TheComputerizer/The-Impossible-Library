@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.TIL1_12_2;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2.LEGACY_REF;
+
 @Mod(modid = TILRef.MODID,name = TILRef.NAME,version = TILRef.VERSION)
 public class TILCommonEntry1_12_2 implements CommonEntryPoint {
 
@@ -27,10 +30,10 @@ public class TILCommonEntry1_12_2 implements CommonEntryPoint {
     private final List<MultiversionModContainer<?>> containers;
 
     public TILCommonEntry1_12_2() {
-        TIL1_12_2.init();
+        TIL1_12_2.init(CoreAPI.getInstance());
         TILRef.logError("COMMON CONSTRUCTOR");
         this.containers = new ArrayList<>();
-        this.clientEntry = TILCore1_12_2.LEGACY_REF.isClient() ? new TILClientEntry1_12_2() : null;
+        this.clientEntry = LEGACY_REF.isClient() ? new TILClientEntry1_12_2() : null;
     }
 
     private <F extends FMLEvent> void redistributeFMLEvent(F event, BiConsumer<F,MultiversionModContainer<?>> consumer) {

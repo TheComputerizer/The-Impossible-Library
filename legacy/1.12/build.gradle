@@ -43,20 +43,54 @@ configurations {
     shadow.extendsFrom(shade)
 }
 
+repositories {
+    maven {
+        name = 'CurseMaven'
+        url = uri('https://www.cursemaven.com')
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven {
+        name = 'BlameJared'
+        url = uri('https://maven.blamejared.com')
+        content {
+            includeGroup 'net.darkhax.bookshelf'
+            includeGroup 'net.darkhax.gamestages'
+        }
+    }
+}
+
 dependencies {
-    minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
+    //noinspection VulnerableLibrariesLocal
+    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
-    annotationProcessor("com.google.code.gson:gson:${project.gson_annotation}")
-    annotationProcessor("com.google.guava:guava:${project.guava_annotation}")
-    annotationProcessor("org.ow2.asm:asm-debug-all:${project.asm_debug_annotation}")
-    annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
+    annotationProcessor("com.google.code.gson:gson:${gson_annotation}")
+    annotationProcessor("com.google.guava:guava:${guava_annotation}")
+    annotationProcessor("org.ow2.asm:asm-debug-all:${asm_debug_annotation}")
+    annotationProcessor("org.projectlombok:lombok:${lombok_version}")
 
-    compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+    compileOnly("org.projectlombok:lombok:${lombok_version}")
+    //TODO Figure out if this works in dev
+    compileOnly(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
+    compileOnly(fg.deobf("curse.maven:orelib-307806:${orelib_version}"))
 
-    //noinspection DependencyNotationArgument
     implementation project(':legacy')
-    shade("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
-    shade("org.joml:joml:${project.joml_version}")
+    //mod support dependencies
+    implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))
+    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_version}:${bookshelf_version}"))
+    implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
+    implementation(fg.deobf("curse.maven:coroutil-237749:${coroutil_version}"))
+    implementation(fg.deobf("net.darkhax.gamestages:GameStages-${minecraft_version}:${gamestages_version}"))
+    implementation(fg.deobf("curse.maven:infernalmobs-227875:${infernal_version}"))
+    implementation(fg.deobf("curse.maven:nyx-349214:${nyx_version}"))
+    implementation(fg.deobf("curse.maven:sereneseasons-291874:$seasons_version}"))
+    implementation(fg.deobf("curse.maven:weather2-695602:${weather_version}"))
+
+    runtimeOnly(fg.deobf("curse.maven:hei-557549:${hei_version}"))
+
+    shade("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
+    shade("org.joml:joml:${joml_version}")
 }
 
 shadowJar {

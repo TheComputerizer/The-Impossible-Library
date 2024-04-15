@@ -3,7 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
@@ -13,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.integration.ModHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.spawn.SpawnHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.PosHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network.Network1_16_5;
@@ -29,10 +31,15 @@ import net.minecraft.util.text.Style;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_BOTH;
+
 public class Common1_16_5 implements CommonAPI {
 
     private final EventsAPI events;
-    private final ModAPI mod;
+    private final ModHelperAPI modHelper;
     private final NetworkAPI<SimpleChannel,NetworkDirection> network;
     private final PosHelperAPI<BlockPos> posHelper;
     private final RegistryHandlerAPI<Registry1_16_5<?>> registry;
@@ -43,9 +50,9 @@ public class Common1_16_5 implements CommonAPI {
     private final TextHelperAPI<Style> textHelper;
     private final WrapperAPI wrapper;
 
-    public Common1_16_5() {
+    public Common1_16_5(@Nullable CoreAPI core) {
         this.events = new Events1_16_5();
-        this.mod = new Mod1_16_5();
+        this.modHelper = new ModHelper1_16_5(Objects.nonNull(core) ? core.getSide() : DEDICATED_BOTH);
         this.network = new Network1_16_5();
         this.posHelper = new PosHelper1_16_5();
         this.registry = new RegistryHandler1_16_5();
@@ -59,57 +66,57 @@ public class Common1_16_5 implements CommonAPI {
 
 
     @Override
-    public EventsAPI getCommonEventsAPI() {
+    public EventsAPI getCommonEvents() {
         return this.events;
     }
 
     @Override
-    public ModAPI getModAPI() {
-        return this.mod;
+    public ModHelperAPI getModHelper() {
+        return this.modHelper;
     }
 
     @Override
-    public NetworkAPI<SimpleChannel,NetworkDirection> getNetworkAPI() {
+    public NetworkAPI<SimpleChannel,NetworkDirection> getNetwork() {
         return this.network;
     }
 
     @Override
-    public PosHelperAPI<BlockPos> getPosHelperAPI() {
+    public PosHelperAPI<BlockPos> getPosHelper() {
         return this.posHelper;
     }
 
     @Override
-    public RegistryHandlerAPI<Registry1_16_5<?>> getRegistryHandlerAPI() {
+    public RegistryHandlerAPI<Registry1_16_5<?>> getRegistryHandler() {
         return this.registry;
     }
 
     @Override
-    public ResourceAPI getResourceAPI() {
+    public ResourceAPI getResource() {
         return this.resource;
     }
 
     @Override
-    public MinecraftServerAPI<MinecraftServer> getServerAPI() {
+    public MinecraftServerAPI<MinecraftServer> getServer() {
         return this.server;
     }
 
     @Override
-    public SpawnHelperAPI<LivingEntity> getSpawnHelperAPI() {
+    public SpawnHelperAPI<LivingEntity> getSpawnHelper() {
         return this.spawnHelper;
     }
 
     @Override
-    public TagAPI getTagAPI() {
+    public TagAPI getTag() {
         return this.tag;
     }
 
     @Override
-    public TextHelperAPI<Style> getTextHelperAPI() {
+    public TextHelperAPI<Style> getTextHelper() {
         return this.textHelper;
     }
 
     @Override
-    public WrapperAPI getWrapperAPI() {
+    public WrapperAPI getWrapper() {
         return this.wrapper;
     }
 }

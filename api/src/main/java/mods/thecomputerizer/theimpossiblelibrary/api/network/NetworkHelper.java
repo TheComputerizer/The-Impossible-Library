@@ -63,7 +63,7 @@ public class NetworkHelper {
 
     @SuppressWarnings("unchecked")
     public static <N,DIR> @Nullable NetworkAPI<N,DIR> getNetworkAPI() {
-        return (NetworkAPI<N,DIR>)TILRef.getCommonSubAPI("NetworkAPI",CommonAPI::getNetworkAPI);
+        return (NetworkAPI<N,DIR>)TILRef.getCommonSubAPI("NetworkAPI",CommonAPI::getNetwork);
     }
 
     public static <DIR> boolean isDirToClient(DIR d) {

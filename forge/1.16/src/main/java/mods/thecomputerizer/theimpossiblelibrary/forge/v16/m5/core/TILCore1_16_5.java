@@ -8,6 +8,8 @@ import net.minecraftforge.fml.loading.FMLLoader;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V16;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_CLIENT;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_SERVER;
 
 public class TILCore1_16_5 extends CoreAPI {
 
@@ -15,8 +17,8 @@ public class TILCore1_16_5 extends CoreAPI {
     private final MultiLoader1_16_5 loader;
 
     public TILCore1_16_5() {
-        super(V16,FORGE);
-        this.loader = new MultiLoader1_16_5(FORGE_REF.isClient());
+        super(V16,FORGE,FORGE_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
+        this.loader = new MultiLoader1_16_5(getSide());
     }
 
     @Override

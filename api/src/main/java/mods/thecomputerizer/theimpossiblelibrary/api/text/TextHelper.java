@@ -73,7 +73,7 @@ public class TextHelper {
     }
 
     public static @Nullable TextHelperAPI<?> getHelper() {
-        return TILRef.getCommonSubAPI("TextHelperAPI",CommonAPI::getTextHelperAPI);
+        return TILRef.getCommonSubAPI("TextHelperAPI",CommonAPI::getTextHelper);
     }
 
     public static @Nullable TextStringAPI<?> getLiteral(String text) {

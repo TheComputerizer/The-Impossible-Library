@@ -14,7 +14,7 @@ import java.util.Objects;
 public class ScreenHelper {
 
     public static @Nullable ScreenHelperAPI getAPI() {
-        return TILRef.getClientSubAPI("ScreenHelperAPI",ClientAPI::getScreenHelperAPI);
+        return TILRef.getClientSubAPI("ScreenHelperAPI",ClientAPI::getScreenHelper);
     }
 
     public static @Nullable ButtonAPI<?> getButton(WidgetShape shape) {

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -11,12 +12,12 @@ public abstract class MultiLoaderAPI {
 
     protected final GameVersion version;
     protected final ModLoader loader;
-    protected final boolean client;
+    protected final Side side;
 
-    protected MultiLoaderAPI(GameVersion version, ModLoader loader, boolean client) {
+    protected MultiLoaderAPI(GameVersion version, ModLoader loader, Side side) {
         this.version = version;
         this.loader = loader;
-        this.client = client;
+        this.side = side;
     }
 
     public boolean canBeLoaded(@Nullable Class<?> clazz) {
@@ -39,7 +40,7 @@ public abstract class MultiLoaderAPI {
     }
 
     private boolean isValidSide(MultiversionMod mod) {
-        return this.client ? mod.client() : mod.server();
+        return this.side.isClient()==mod.client() || this.side.isServer()==mod.server();
     }
 
     private boolean isValidVersion(MultiversionMod mod) {

@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.io;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.ModAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -93,7 +93,7 @@ public class LogHelper {
          */
         private String getModName(String modid) {
             CommonAPI api = TILRef.getCommonAPI();
-            ModAPI mod = Objects.nonNull(api) ? api.getModAPI() : null;
+            ModHelperAPI mod = Objects.nonNull(api) ? api.getModHelper() : null;
             String name = Objects.nonNull(mod) ? mod.getModName(modid) : null;
             return StringUtils.isNotBlank(name) ? name : modid;
         }

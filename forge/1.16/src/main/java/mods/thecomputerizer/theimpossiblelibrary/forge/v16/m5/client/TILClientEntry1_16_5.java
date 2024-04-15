@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class TILClientEntry1_16_5 implements ClientEntryPoint {
 
     public TILClientEntry1_16_5() {
-        TIL1_16_5.init();
+        TIL1_16_5.init(CoreAPI.getInstance());
         TILRef.logError("CLIENT CONSTRUCT");
     }
 

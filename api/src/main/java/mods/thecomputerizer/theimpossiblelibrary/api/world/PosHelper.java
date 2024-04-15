@@ -10,7 +10,7 @@ import java.util.Objects;
 public class PosHelper {
 
     public static @Nullable PosHelperAPI<?> getAPI() {
-        return TILRef.getCommonSubAPI("PosHelperAPI",CommonAPI::getPosHelperAPI);
+        return TILRef.getCommonSubAPI("PosHelperAPI",CommonAPI::getPosHelper);
     }
 
     /**

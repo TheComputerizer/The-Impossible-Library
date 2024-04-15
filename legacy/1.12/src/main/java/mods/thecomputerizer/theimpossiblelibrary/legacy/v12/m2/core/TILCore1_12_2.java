@@ -22,6 +22,8 @@ import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_CLIENT;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_SERVER;
 
 public class TILCore1_12_2 extends CoreAPI {
 
@@ -100,8 +102,8 @@ public class TILCore1_12_2 extends CoreAPI {
     private final MultiLoader1_12_2 loader;
 
     public TILCore1_12_2() {
-        super(V12,LEGACY);
-        this.loader = new MultiLoader1_12_2(LEGACY_REF.isClient());
+        super(V12,LEGACY,LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
+        this.loader = new MultiLoader1_12_2(getSide());
     }
 
     @Override

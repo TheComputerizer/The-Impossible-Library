@@ -19,7 +19,7 @@ public class EventHelper {
     }
 
     public static EventsAPI getCommonEventsAPI() {
-        return TILRef.getCommonSubAPI("EventsAPI",CommonAPI::getCommonEventsAPI);
+        return TILRef.getCommonSubAPI("EventsAPI",CommonAPI::getCommonEvents);
     }
 
     public static EventsAPI getEventsAPI(boolean client) {

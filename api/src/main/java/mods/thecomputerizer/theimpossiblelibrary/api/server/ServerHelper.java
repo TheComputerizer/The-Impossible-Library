@@ -9,7 +9,7 @@ import java.util.Objects;
 public class ServerHelper {
 
     public static @Nullable MinecraftServerAPI<?> getAPI() {
-        return TILRef.getCommonSubAPI("MinecraftServerAPI",CommonAPI::getServerAPI);
+        return TILRef.getCommonSubAPI("MinecraftServerAPI",CommonAPI::getServer);
     }
 
     @SuppressWarnings("unchecked")

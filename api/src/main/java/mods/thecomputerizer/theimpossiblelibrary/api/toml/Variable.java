@@ -256,7 +256,7 @@ public class Variable extends AbstractType {
     }
 
     public CompoundTagAPI writeToTag() {
-        CompoundTagAPI tag = TILRef.getCommonAPI().getTagAPI().makeCompoundTag();
+        CompoundTagAPI tag = TILRef.getCommonAPI().getTag().makeCompoundTag();
         tag.putInt("absoluteIndex",this.getAbsoluteIndex());
         tag.putString("name",this.name);
         GenericUtils.writeGenericToTag(tag,this.value);

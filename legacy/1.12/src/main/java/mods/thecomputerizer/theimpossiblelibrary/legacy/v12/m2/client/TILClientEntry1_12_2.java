@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
@@ -20,7 +21,7 @@ public class TILClientEntry1_12_2 implements ClientEntryPoint {
     private final List<MultiversionModContainer<?>> containers;
 
     public TILClientEntry1_12_2() {
-        TIL1_12_2.init();
+        TIL1_12_2.init(CoreAPI.getInstance());
         TILRef.logError("CLIENT CONSTRUCT");
         this.containers = new ArrayList<>();
     }
