@@ -8,9 +8,9 @@ import java.util.Objects;
 
 import static java.lang.Double.MIN_VALUE;
 
-public class Box {
+public class Box { //TODO Finish edge cases for weird doubles
 
-    public static final Box INFINITE = new Box(MIN_VALUE, MIN_VALUE, MIN_VALUE,
+    public static final Box INFINITE = new Box(MIN_VALUE,MIN_VALUE,MIN_VALUE,
             Double.MAX_VALUE,Double.MAX_VALUE,Double.MAX_VALUE);
     public static final Box ZERO = new Box(0d,0d,0d,0d,0d,0d);
 

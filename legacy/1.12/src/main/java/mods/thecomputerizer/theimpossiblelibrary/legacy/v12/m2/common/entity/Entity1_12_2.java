@@ -58,6 +58,10 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
         return Objects.nonNull(this.entity) ? getBoundingBox(this.entity.getEntityBoundingBox()) : Box.ZERO;
     }
 
+    public Box getBoundingBox(AxisAlignedBB aabb) {
+        return new Box(aabb.minX,aabb.minY,aabb.minZ,aabb.maxX,aabb.maxY,aabb.maxZ);
+    }
+
     @Override
     public DimensionAPI<?> getDimension() {
         return new Dimension1_12_2((World1_12_2)getWorld(),DimensionManager.getProviderType(this.entity.dimension));
@@ -66,10 +70,6 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     @Override
     public String getName() {
         return this.entity.getName();
-    }
-
-    public Box getBoundingBox(AxisAlignedBB aabb) {
-        return new Box(aabb.minX,aabb.minY,aabb.minZ,aabb.maxX,aabb.maxY,aabb.maxZ);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
@@ -12,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.EffectInstance1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Dimension1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -54,12 +54,7 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
 
     @Override
     public DimensionAPI<?> getDimension() {
-        return WrapperHelper.wrapDimension(getWorld(), DimensionManager.getProviderType(this.entity.dimension));
-    }
-
-    @Override
-    public String getName() {
-        return this.entity.getName();
+        return new Dimension1_12_2((World1_12_2)getWorld(),DimensionManager.getProviderType(this.entity.dimension));
     }
 
     @Override
@@ -70,6 +65,11 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
     @Override
     public float getMaxHealth() {
         return this.entity.getMaxHealth();
+    }
+
+    @Override
+    public String getName() {
+        return this.entity.getName();
     }
 
     @Override

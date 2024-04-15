@@ -1,8 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
@@ -10,7 +12,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.container.PlayerInventory1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.effect.EffectInstance1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.ItemStack1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.Text1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.Dimension1_16_5;
@@ -63,18 +67,33 @@ public abstract class Player1_16_5<P extends PlayerEntity> extends PlayerAPI<P,E
     }
 
     @Override
-    public String getName() {
-        return this.entity.getName().getString();
-    }
-
-    @Override
     public float getHealth() {
         return this.entity.getHealth();
     }
 
     @Override
+    public PlayerInventoryAPI<?> getInventory() {
+        return new PlayerInventory1_16_5(this.entity.inventory);
+    }
+
+    @Override
+    public ItemStackAPI<?> getMainHandStack() {
+        return new ItemStack1_16_5(this.entity.getMainHandItem());
+    }
+
+    @Override
     public float getMaxHealth() {
         return this.entity.getMaxHealth();
+    }
+
+    @Override
+    public String getName() {
+        return this.entity.getName().getString();
+    }
+
+    @Override
+    public ItemStackAPI<?> getOffHandStack() {
+        return new ItemStack1_16_5(this.entity.getOffhandItem());
     }
 
     @Override

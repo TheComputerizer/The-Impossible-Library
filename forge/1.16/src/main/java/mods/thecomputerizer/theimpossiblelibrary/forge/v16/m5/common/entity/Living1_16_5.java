@@ -53,11 +53,6 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     }
 
     @Override
-    public String getName() {
-        return this.entity.getName().getString();
-    }
-
-    @Override
     public float getHealth() {
         return this.entity.getHealth();
     }
@@ -65,6 +60,11 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     @Override
     public float getMaxHealth() {
         return this.entity.getMaxHealth();
+    }
+
+    @Override
+    public String getName() {
+        return this.entity.getName().getString();
     }
 
     @Override

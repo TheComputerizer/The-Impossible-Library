@@ -1,11 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
 
 public abstract class PlayerAPI<P,V> extends LivingEntityAPI<P,V> {
 
@@ -16,6 +21,14 @@ public abstract class PlayerAPI<P,V> extends LivingEntityAPI<P,V> {
     public abstract int getAir();
     public abstract BlockPosAPI<?> getBedPos(DimensionAPI<?> dimension);
     public abstract int getGamemodeOrdinal();
+    public abstract PlayerInventoryAPI<?> getInventory();
+    public abstract ItemStackAPI<?> getMainHandStack();
+    public abstract ItemStackAPI<?> getOffHandStack();
+
+    public ItemStackAPI<?> getStackInHand(Hand hand) {
+        return hand==MAINHAND ? getMainHandStack() : getOffHandStack();
+    }
+
     public abstract UUID getUUID();
     public abstract boolean isClientPlayer();
     public abstract boolean isFishing();
