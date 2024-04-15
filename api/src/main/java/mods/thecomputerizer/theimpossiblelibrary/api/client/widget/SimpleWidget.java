@@ -17,7 +17,7 @@ public class SimpleWidget extends ShapedWidget<Object> {
 
     public SimpleWidget(WidgetShape shape) {
         super(shape);
-        this.mc = TILRef.getClientSubAPI("MinecraftAPI", ClientAPI::getMinecraft);
+        this.mc = TILRef.getClientSubAPI( ClientAPI::getMinecraft);
     }
 
     @Override

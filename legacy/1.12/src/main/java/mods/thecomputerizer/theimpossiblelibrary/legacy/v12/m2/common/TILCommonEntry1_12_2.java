@@ -1,70 +1,62 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPointDistributor;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPointDistributor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.TIL1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntry1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.MultiversionModContainer;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiConsumer;
-
-import static mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2.LEGACY_REF;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPointDistributor.INSTANCE;
 
 @Mod(modid = TILRef.MODID,name = TILRef.NAME,version = TILRef.VERSION)
-public class TILCommonEntry1_12_2 implements CommonEntryPoint {
-
-    private final CommonEntryPoint clientEntry;
-    private final List<MultiversionModContainer<?>> containers;
+public class TILCommonEntry1_12_2 {
 
     public TILCommonEntry1_12_2() {
-        TIL1_12_2.init(CoreAPI.getInstance());
-        TILRef.logError("COMMON CONSTRUCTOR");
-        this.containers = new ArrayList<>();
-        this.clientEntry = LEGACY_REF.isClient() ? new TILClientEntry1_12_2() : null;
-    }
-
-    private <F extends FMLEvent> void redistributeFMLEvent(F event, BiConsumer<F,MultiversionModContainer<?>> consumer) {
-        for(MultiversionModContainer<?> container : this.containers) consumer.accept(event,container);
-    }
-
-    @EventHandler
-    public void construct(FMLConstructionEvent event) {
-        TILRef.logError("COMMON CONSTRUCT");
-        TILCore1_12_2.getRegisteredMods(this.containers,false);
+        new CommonEntryPointDistributor();
+        INSTANCE.onConstructed();
     }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        TILRef.logError("COMMON PREINIT");
-        NetworkHandler.load();
-        if(Objects.nonNull(this.clientEntry)) ((TILClientEntry1_12_2)this.clientEntry).preInit(event);
-        else EventHelper.initTILListeners(false,true);
+        INSTANCE.onPreRegistration();
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        TILRef.logError("COMMON INIT");
-        if(Objects.nonNull(this.clientEntry))
-            ((TILClientEntry1_12_2)this.clientEntry).init(event);
+        INSTANCE.onCommonSetup();
+        INSTANCE.onDedicatedServerSetup();
+        ClientEntryPointDistributor.init();
     }
 
     @EventHandler
     public void postInit(FMLPreInitializationEvent event) {
-        TILRef.logError("COMMON POSTINIT");
-        if(Objects.nonNull(this.clientEntry))
-            ((TILClientEntry1_12_2)this.clientEntry).postInit(event);
+        INSTANCE.onInterModEnqueue();
+        INSTANCE.onInterModProcess();
+    }
+
+    @EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        INSTANCE.onServerAboutToStart();
+    }
+
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        INSTANCE.onServerStarting();
+    }
+
+    @EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        INSTANCE.onServerStarted();
+    }
+
+    @EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        INSTANCE.onServerStopping();
+    }
+
+    @EventHandler
+    public void serverStopped(FMLServerStoppedEvent event) {
+        INSTANCE.onServerStopped();
     }
 }

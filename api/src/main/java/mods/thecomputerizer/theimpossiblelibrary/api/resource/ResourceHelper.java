@@ -10,7 +10,7 @@ import java.util.Objects;
 public class ResourceHelper {
 
     public static @Nullable ResourceAPI getResourceAPI() {
-        return TILRef.getCommonSubAPI("ResourceAPI",CommonAPI::getResource);
+        return TILRef.getCommonSubAPI(CommonAPI::getResource);
     }
 
     public static @Nullable ResourceLocationAPI<?> getResource(String path) {

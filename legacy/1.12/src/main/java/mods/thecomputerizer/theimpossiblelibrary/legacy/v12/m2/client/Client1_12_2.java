@@ -5,14 +5,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui.ScreenHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.sound.SoundHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
 import net.minecraft.client.audio.ISound;
-
-import javax.annotation.Nullable;
 
 public class Client1_12_2 extends Common1_12_2 implements ClientAPI {
 
@@ -20,8 +17,8 @@ public class Client1_12_2 extends Common1_12_2 implements ClientAPI {
     private final ScreenHelper1_12_2 screenHelper;
     private final SoundHelperAPI<ISound> soundHelper;
 
-    public Client1_12_2(@Nullable CoreAPI core) {
-        super(core);
+    public Client1_12_2() {
+        super();
         this.events = new ClientEvents1_12_2();
         this.screenHelper = new ScreenHelper1_12_2();
         this.soundHelper = new SoundHelper1_12_2();

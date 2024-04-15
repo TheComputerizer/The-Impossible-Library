@@ -1,34 +1,86 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPointDistributor;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPointDistributor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.TIL1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.TILClientEntry1_16_5;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.fml.event.server.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.Objects;
-
-import static mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.TILCore1_16_5.FORGE_REF;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPointDistributor.INSTANCE;
 
 @Mod(TILRef.MODID)
-public class TILCommonEntry1_16_5 implements CommonEntryPoint {
+public class TILCommonEntry1_16_5 extends CommonEntryPoint {
 
     public TILCommonEntry1_16_5() {
-        TIL1_16_5.init(CoreAPI.getInstance());
-        TILRef.logError("COMMON CONSTRUCT");
-        CommonEntryPoint clientEntry = FORGE_REF.isClient() ? new TILClientEntry1_16_5() : null;
+        new CommonEntryPointDistributor();
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        Side side = CoreAPI.INSTANCE.getSide();
         bus.addListener(this::commonSetup);
-        if(Objects.nonNull(clientEntry)) bus.addListener(((TILClientEntry1_16_5) clientEntry)::clientSetup);
+        if(side.isServer()) bus.addListener(this::dedicatedServerSetup);
+        if(side.isClient()) bus.addListener(this::clientSetup);
+        bus.addListener(this::interModEnqueue);
+        bus.addListener(this::interModProcess);
+        bus.addListener(this::loadComplete);
+        bus.addListener(this::serverAboutToStart);
+        bus.addListener(this::serverStarting);
+        bus.addListener(this::serverStarted);
+        bus.addListener(this::serverStopping);
+        bus.addListener(this::serverStopped);
+        INSTANCE.onConstructed();
+        INSTANCE.onPreRegistration();
     }
 
     public void commonSetup(final FMLCommonSetupEvent event) {
-        TILRef.logError("COMMON SETUP");
-        EventHelper.initTILListeners(false,true);
+        INSTANCE.onCommonSetup();
+    }
+
+    @OnlyIn(Dist.DEDICATED_SERVER)
+    public void dedicatedServerSetup(final FMLDedicatedServerSetupEvent event) {
+        INSTANCE.onDedicatedServerSetup();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void clientSetup(final FMLDedicatedServerSetupEvent event) {
+        ClientEntryPointDistributor.init();
+    }
+
+    public void interModEnqueue(final InterModEnqueueEvent event) {
+        INSTANCE.onInterModEnqueue();
+    }
+
+    public void interModProcess(final InterModProcessEvent event) {
+        INSTANCE.onInterModProcess();
+    }
+
+    public void loadComplete(final FMLLoadCompleteEvent event) {
+        INSTANCE.onLoadComplete();
+    }
+
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        INSTANCE.onServerAboutToStart();
+    }
+
+    public void serverStarting(FMLServerStartingEvent event) {
+        INSTANCE.onServerStarting();
+    }
+
+    public void serverStarted(FMLServerStartedEvent event) {
+        INSTANCE.onServerStarted();
+    }
+
+    public void serverStopping(FMLServerStoppingEvent event) {
+        INSTANCE.onServerStopping();
+    }
+
+    public void serverStopped(FMLServerStoppedEvent event) {
+        INSTANCE.onServerStopped();
     }
 }

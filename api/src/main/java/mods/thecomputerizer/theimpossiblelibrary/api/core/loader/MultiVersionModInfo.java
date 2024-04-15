@@ -1,7 +1,10 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.core;
+package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+
+import javax.annotation.Nullable;
 
 @Getter
 public class MultiVersionModInfo {
@@ -25,5 +28,14 @@ public class MultiVersionModInfo {
         this.version = version;
         this.client = client;
         this.server = server;
+    }
+
+    public @Nullable CommonEntryPoint getInstance() {
+        try {
+            return this.modClass.newInstance();
+        } catch(Exception ex) {
+            TILRef.logError("Failed to instantiate coremod `{}`!",this.modClass,ex);
+        }
+        return null;
     }
 }

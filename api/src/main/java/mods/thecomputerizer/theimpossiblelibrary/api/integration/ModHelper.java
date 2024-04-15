@@ -39,7 +39,7 @@ public class ModHelper {
     }
 
     public static @Nullable ModHelperAPI getModHelperAPI() {
-        return TILRef.getCommonSubAPI("ModHelperAPI",CommonAPI::getModHelper);
+        return TILRef.getCommonSubAPI(CommonAPI::getModHelper);
     }
 
     public static @Nullable String getModName(String modid) {

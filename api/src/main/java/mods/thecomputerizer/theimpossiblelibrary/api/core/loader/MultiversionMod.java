@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.core;
+package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

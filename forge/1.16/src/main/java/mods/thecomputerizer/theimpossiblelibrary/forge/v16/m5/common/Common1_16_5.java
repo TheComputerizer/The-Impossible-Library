@@ -30,11 +30,6 @@ import net.minecraft.util.text.Style;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
-import javax.annotation.Nullable;
-import java.util.Objects;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_BOTH;
-
 public class Common1_16_5 implements CommonAPI {
 
     private final EventsAPI events;
@@ -49,9 +44,9 @@ public class Common1_16_5 implements CommonAPI {
     private final TextHelperAPI<Style> textHelper;
     private final WrapperAPI wrapper;
 
-    public Common1_16_5(@Nullable CoreAPI core) {
+    public Common1_16_5() {
         this.events = new Events1_16_5();
-        this.modHelper = new ModHelper1_16_5(Objects.nonNull(core) ? core.getSide() : DEDICATED_BOTH);
+        this.modHelper = new ModHelper1_16_5(CoreAPI.INSTANCE.getSide());
         this.network = new Network1_16_5();
         this.posHelper = new PosHelper1_16_5();
         this.registry = new RegistryHandler1_16_5();

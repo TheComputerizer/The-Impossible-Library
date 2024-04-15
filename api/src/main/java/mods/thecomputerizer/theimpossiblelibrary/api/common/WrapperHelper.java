@@ -1,39 +1,37 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.InventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 import java.util.function.Function;
 
 public class WrapperHelper {
 
     public static @Nullable WrapperAPI getAPI() {
-        return TILRef.getCommonSubAPI("WrapperAPI",CommonAPI::getWrapper);
+        return TILRef.getCommonSubAPI(CommonAPI::getWrapper);
     }
 
     private static <W> @Nullable W wrap(Function<WrapperAPI,W> wrapperFunc) {
-        WrapperAPI api = getAPI();
-        return Objects.nonNull(api) ? wrapperFunc.apply(api) : null;
+        return wrapperFunc.apply(getAPI());
     }
 
     public static <A> @Nullable AdvancementAPI<A> wrapAdvancement(@Nullable A advancement) {

@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
@@ -23,7 +24,7 @@ public class TILRef {
     public static final String MODID = "theimpossiblelibrary";
     public static final String NAME = "The Impossible Library";
     public static final String VERSION = "0.4.0";
-    private static CommonAPI API;
+    @Setter private static CommonAPI API;
     /**
      * Enable to disable server stuff
      */
@@ -34,44 +35,35 @@ public class TILRef {
      * Should only exist on the client
      */
     public static @Nullable ClientAPI getClientAPI() {
-        if(Objects.nonNull(INSTANCE)) {
-            if(INSTANCE.isClient()) return (ClientAPI)API;
-            logError("The client API can only be retrieved from the client side!");
-            return null;
+        CoreAPI core = CoreAPI.INSTANCE;
+        if(core.side.isClient()) {
+            if(Objects.isNull(API)) core.initAPI();
+            return (ClientAPI)API;
         }
-        logError("Cannot get the client API until the reference API has been initialized!");
+        logError("The client API can only be retrieved from the client side!");
         return null;
     }
 
-    public static <A> @Nullable A getClientSubAPI(String name, Function<ClientAPI,A> getter) {
-        if(Objects.isNull(INSTANCE) || !INSTANCE.isClient()) {
-            logError("Cannot get client sub API {} since this is not the client side!");
-            return null;
-        }
-        if(Objects.nonNull(API)) return getter.apply((ClientAPI)API);
-        logError("Cannot get client sub API {} since the client API is null!",name);
+    public static <A> @Nullable A getClientSubAPI(Function<ClientAPI,A> getter) {
+        if(CoreAPI.INSTANCE.side.isClient()) return getter.apply(getClientAPI());
+        else logError("Cannot get client sub API {} since this is not the client side!");
         return null;
     }
 
-    public static @Nullable CommonAPI getCommonAPI() {
-        if(Objects.nonNull(INSTANCE)) return API;
-        logError("Cannot get the common API until the reference API has been initialized!");
-        return null;
+    public static CommonAPI getCommonAPI() { //TODO Since this isn't @Nullable anymore a lot null checks can be consolidated
+        if(Objects.isNull(API)) CoreAPI.INSTANCE.initAPI();
+        return API;
     }
 
-    public static <A> @Nullable A getCommonSubAPI(String name, Function<CommonAPI,A> getter) {
-        if(Objects.nonNull(API)) return getter.apply(API);
-        logError("Cannot get common sub API {} since the common API is null!",name);
-        return null;
+    public static <A> A getCommonSubAPI(Function<CommonAPI,A> getter) {
+        return getter.apply(getCommonAPI());
     }
 
     /**
      * Initializes the base reference API
      */
     public static Reference instance(Supplier<Boolean> isClient, String dependencies) {
-        if(Objects.isNull(INSTANCE)) {
-            INSTANCE = new Reference(isClient.get(),dependencies,MODID,NAME,VERSION);
-        }
+        if(Objects.isNull(INSTANCE)) INSTANCE = new Reference(isClient.get(),dependencies,MODID,NAME,VERSION);
         return INSTANCE;
     }
 
@@ -120,11 +112,5 @@ public class TILRef {
         if(Objects.nonNull(INSTANCE)) return INSTANCE.getResource(path);
         logError("Cannot get a ResourceLocation until the reference API has been initialized!");
         return null;
-    }
-
-    public static void setAPI(CommonAPI api) {
-        if(Objects.isNull(INSTANCE))
-            logError("Cannot set the API until the reference API has been initialized!");
-        else API = api;
     }
 }

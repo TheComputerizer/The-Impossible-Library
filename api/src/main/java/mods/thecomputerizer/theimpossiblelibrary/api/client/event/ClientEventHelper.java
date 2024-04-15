@@ -15,7 +15,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 public class ClientEventHelper {
 
     public static EventsAPI getEventsAPI() {
-        return TILRef.getClientSubAPI("EventsAPI",ClientAPI::getClientEvents);
+        return TILRef.getClientSubAPI(ClientAPI::getClientEvents);
     }
 
     public static void initTILClientListeners(boolean test) { //TODO See if test event initialization can be hooked here

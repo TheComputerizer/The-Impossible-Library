@@ -5,12 +5,12 @@ import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 
-public class MultiversionModContainer<E extends CommonEntryPoint> extends DummyModContainer {
+public class MultiversionModContainer1_12_2<E extends CommonEntryPoint> extends DummyModContainer {
 
     private final Class<E> modClass;
     private E instance;
 
-    public MultiversionModContainer(ModMetadata meta, Class<E> modClass) {
+    public MultiversionModContainer1_12_2(ModMetadata meta, Class<E> modClass) {
         super(meta);
         this.modClass = modClass;
     }

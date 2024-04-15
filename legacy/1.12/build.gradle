@@ -130,8 +130,11 @@ processResources {
 jar {
     manifest {
         attributes([
-                "Implementation-Title": project.name,
-                'FMLAT': mod_accesstransformer
+                'FMLAT': mod_accesstransformer,
+                'FMLCorePlugin': "${module_package}.${mod_plugin}1_12_2",
+                'FMLCorePluginContainsFMLMod': true,
+                'ForceLoadAsMod': true,
+                "Implementation-Title": project.name
         ])
     }
 }

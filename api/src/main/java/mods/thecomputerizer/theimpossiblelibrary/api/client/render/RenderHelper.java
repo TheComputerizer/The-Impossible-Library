@@ -249,7 +249,7 @@ public class RenderHelper {
     }
 
     public static @Nullable RenderAPI getRenderer() {
-        MinecraftAPI mc = TILRef.getClientSubAPI("MinecraftAPI",ClientAPI::getMinecraft);
+        MinecraftAPI mc = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
         return Objects.nonNull(mc) ? mc.getRenderer() : null;
     }
 

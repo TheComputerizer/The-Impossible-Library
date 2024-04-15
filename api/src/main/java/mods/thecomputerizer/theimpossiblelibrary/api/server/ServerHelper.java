@@ -14,7 +14,7 @@ public class ServerHelper {
     }
 
     public static @Nullable MinecraftServerAPI<?> getAPI() {
-        return TILRef.getCommonSubAPI("MinecraftServerAPI",CommonAPI::getServer);
+        return TILRef.getCommonSubAPI(CommonAPI::getServer);
     }
 
     @SuppressWarnings("unchecked")

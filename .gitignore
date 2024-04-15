@@ -22,6 +22,8 @@ eclipse
 run
 run_client
 run_server
+*.csv
+/mcp/
 
 # Files from Forge MDK
 forge*changelog.txt

@@ -78,7 +78,7 @@ public class TagHelper {
     }
 
     public static @Nullable TagAPI getTagAPI() {
-        return TILRef.getCommonSubAPI("TagAPI",CommonAPI::getTag);
+        return TILRef.getCommonSubAPI(CommonAPI::getTag);
     }
 
     public static CompoundTagAPI getWorldData(String modid, @Nonnull String worldName) {

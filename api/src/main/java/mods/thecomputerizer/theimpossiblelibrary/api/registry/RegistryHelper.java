@@ -42,7 +42,7 @@ public class RegistryHelper {
     }
 
     public static @Nullable RegistryHandlerAPI getHandler() {
-        return TILRef.getCommonSubAPI("RegistryHandlerAPI",CommonAPI::getRegistryHandler);
+        return TILRef.getCommonSubAPI(CommonAPI::getRegistryHandler);
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getItemRegistry() {
