@@ -2,8 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.io;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -92,9 +91,7 @@ public class LogHelper {
             Gets the name of a mod from a given modid or returns the modid if it cannot be found
          */
         private String getModName(String modid) {
-            CommonAPI api = TILRef.getCommonAPI();
-            ModHelperAPI mod = Objects.nonNull(api) ? api.getModHelper() : null;
-            String name = Objects.nonNull(mod) ? mod.getModName(modid) : null;
+            String name = ModHelper.getModName(modid);
             return StringUtils.isNotBlank(name) ? name : modid;
         }
 

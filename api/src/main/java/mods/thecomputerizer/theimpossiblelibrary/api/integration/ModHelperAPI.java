@@ -38,7 +38,7 @@ public abstract class ModHelperAPI {
         return isModLoaded(modid) ? this.supportedMods.get(modid) : null;
     }
 
-    public String getModName(String modid) {
+    public String getModName(String modid) { //TODO This probably shouldn't be in the API unless the names are dynamically generated
         ModAPI mod = getMod(modid);
         return Objects.nonNull(mod) ? mod.getName() : modid;
     }
