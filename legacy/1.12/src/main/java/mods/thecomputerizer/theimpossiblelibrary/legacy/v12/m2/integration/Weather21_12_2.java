@@ -50,7 +50,7 @@ public class Weather21_12_2 extends Weather2API {
 
     public @Nullable WeatherData getClosestData(WorldAPI<?> world, BlockPosAPI<?> pos, double distance, WeatherType type) {
         WeatherObject weather = getClosestWeatherType(world,pos,distance,type);
-        return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos)) : null;
+        return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos),weather.getStage()) : null;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Weather21_12_2 extends Weather2API {
         WeatherManager manager = getManager(world);
         if(Objects.nonNull(manager)) {
             SandstormObject storm = manager.getClosestSandstorm(toVec(pos),distance);
-            return Objects.nonNull(storm) ? new WeatherData(convertType(storm.type),toJomlVec(storm.pos)) : null;
+            return Objects.nonNull(storm) ? new WeatherData(convertType(storm.type),toJomlVec(storm.pos),storm.getStage()) : null;
         }
         return null;
     }
@@ -73,7 +73,7 @@ public class Weather21_12_2 extends Weather2API {
         WeatherManager manager = getManager(world);
         if(Objects.nonNull(manager)) {
             WeatherObject weather = manager.getClosestWeather(toVec(pos),distance);
-            return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos)) : null;
+            return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos),weather.getStage()) : null;
         }
         return null;
     }

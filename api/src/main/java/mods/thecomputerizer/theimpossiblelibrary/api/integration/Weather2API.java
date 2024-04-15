@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.integration;
 
 import lombok.Getter;
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
@@ -48,8 +49,9 @@ public abstract class Weather2API implements ModAPI {
 
         private final WeatherType type;
         private final Vector3d pos;
+        @Setter private int level;
 
-        public WeatherData(@Nullable WeatherType type, Vector3d pos) {
+        public WeatherData(@Nullable WeatherType type, Vector3d pos, int level) {
             this.type = type;
             this.pos = pos;
         }
