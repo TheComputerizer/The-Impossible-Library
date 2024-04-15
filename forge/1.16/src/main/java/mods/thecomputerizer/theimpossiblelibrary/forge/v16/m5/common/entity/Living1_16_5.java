@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -8,9 +9,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.effect.EffectInstance1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.Dimension1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -19,12 +22,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
 
     public Living1_16_5(LivingEntity living) {
         super(living,living.getType());
+    }
+
+    @Override
+    public Collection<EffectInstanceAPI<?>> getActiveEffects() {
+        return this.entity.getActiveEffects().stream().map(EffectInstance1_16_5::new).collect(Collectors.toList());
     }
 
     @Override
@@ -70,6 +81,17 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     @Override
     public ResourceLocationAPI<?> getRegistryName() {
         return new ResourceLocation1_16_5(this.type.getRegistryName());
+    }
+
+    @Override
+    public EntityAPI<?,?> getRootVehicle() {
+        return new Entity1_16_5(this.entity.getRootVehicle());
+    }
+
+    @Override
+    public @Nullable EntityAPI<?,?> getVehicle() {
+        Entity entity = this.entity.getVehicle();
+        return Objects.nonNull(entity) ? new Entity1_16_5(entity) : null;
     }
 
     @Override

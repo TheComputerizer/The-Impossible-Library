@@ -7,6 +7,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.container.InventoryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
@@ -22,6 +27,11 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.Block
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.Material1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.blockentity.BlockEntity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.entity.ClientPlayer1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.container.Inventory1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.container.PlayerInventory1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.effect.Effect1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.effect.EffectInstance1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.effect.Potion1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Entity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Living1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.Item1_16_5;
@@ -38,9 +48,14 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.Explosion;
@@ -75,6 +90,16 @@ public class Wrapper1_16_5 implements WrapperAPI {
     }
 
     @Override
+    public @Nullable <E> EffectAPI<E> wrapEffect(@Nullable E effect) {
+        return Objects.nonNull(effect) ? (EffectAPI<E>)new Effect1_16_5((Effect)effect) : null;
+    }
+
+    @Override
+    public @Nullable <I> EffectInstanceAPI<I> wrapEffectInstance(@Nullable I instance) {
+        return Objects.nonNull(instance) ? (EffectInstanceAPI<I>)new EffectInstance1_16_5((EffectInstance)instance) : null;
+    }
+
+    @Override
     public @Nullable <E> EntityAPI<E,?> wrapEntity(@Nullable E entity) {
         return Objects.nonNull(entity) ? (EntityAPI<E,?>)new Entity1_16_5((Entity)entity) : null;
     }
@@ -82,6 +107,11 @@ public class Wrapper1_16_5 implements WrapperAPI {
     @Override
     public @Nullable <E> ExplosionAPI<E> wrapExplosion(@Nullable E explosion) {
         return Objects.nonNull(explosion) ? (ExplosionAPI<E>)new Explosion1_16_5((Explosion)explosion) : null;
+    }
+
+    @Override
+    public @Nullable <I> InventoryAPI<I> wrapInventory(@Nullable I inventory) {
+        return Objects.nonNull(inventory) ? (InventoryAPI<I>)new Inventory1_16_5((IInventory)inventory) : null;
     }
 
     @Override
@@ -109,6 +139,16 @@ public class Wrapper1_16_5 implements WrapperAPI {
         if(!(p instanceof PlayerEntity)) return null;
         PlayerEntity player = (PlayerEntity)p;
         return (PlayerAPI<P,?>)(player instanceof ServerPlayerEntity ? wrapPlayerServer(player) : wrapPlayerClient(player));
+    }
+
+    @Override
+    public @Nullable <I> PlayerInventoryAPI<I> wrapPlayerInventory(@Nullable I inventory) {
+        return Objects.nonNull(inventory) ? (PlayerInventoryAPI<I>)new PlayerInventory1_16_5((PlayerInventory)inventory) : null;
+    }
+
+    @Override
+    public @Nullable <P> PotionAPI<P> wrapPotion(@Nullable P potion) {
+        return Objects.nonNull(potion) ? (PotionAPI<P>)new Potion1_16_5((Potion)potion) : null;
     }
 
     private <E extends PlayerEntity> PlayerAPI<E,?> wrapPlayerClient(E player) {

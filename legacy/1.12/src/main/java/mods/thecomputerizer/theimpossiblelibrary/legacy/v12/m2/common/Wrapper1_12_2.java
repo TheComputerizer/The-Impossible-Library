@@ -7,6 +7,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.container.InventoryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
@@ -22,6 +27,11 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Bloc
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Material1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockentity.BlockEntity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.entity.ClientPlayer1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container.Inventory1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container.PlayerInventory1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.Effect1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.EffectInstance1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.Potion1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
@@ -39,8 +49,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.Explosion;
@@ -75,6 +90,16 @@ public class Wrapper1_12_2 implements WrapperAPI {
     }
 
     @Override
+    public @Nullable <E> EffectAPI<E> wrapEffect(@Nullable E effect) {
+        return Objects.nonNull(effect) ? (EffectAPI<E>)new Effect1_12_2((Potion)effect) : null;
+    }
+
+    @Override
+    public @Nullable <I> EffectInstanceAPI<I> wrapEffectInstance(@Nullable I instance) {
+        return Objects.nonNull(instance) ? (EffectInstanceAPI<I>)new EffectInstance1_12_2((PotionEffect)instance) : null;
+    }
+
+    @Override
     public @Nullable <E> EntityAPI<E,?> wrapEntity(@Nullable E entity) {
         return Objects.nonNull(entity) ? (EntityAPI<E,?>)new Entity1_12_2((Entity)entity) : null;
     }
@@ -82,6 +107,11 @@ public class Wrapper1_12_2 implements WrapperAPI {
     @Override
     public @Nullable <E> ExplosionAPI<E> wrapExplosion(@Nullable E explosion) {
         return Objects.nonNull(explosion) ? (ExplosionAPI<E>)new Explosion1_12_2((Explosion)explosion) : null;
+    }
+
+    @Override
+    public @Nullable <I> InventoryAPI<I> wrapInventory(@Nullable I inventory) {
+        return Objects.nonNull(inventory) ? (InventoryAPI<I>)new Inventory1_12_2((IInventory)inventory) : null;
     }
 
     @Override
@@ -109,6 +139,16 @@ public class Wrapper1_12_2 implements WrapperAPI {
         if(!(p instanceof EntityPlayer)) return null;
         EntityPlayer player = (EntityPlayer)p;
         return (PlayerAPI<P,?>)(player instanceof EntityPlayerMP ? wrapPlayerServer(player) : wrapPlayerClient(player));
+    }
+
+    @Override
+    public @Nullable <I> PlayerInventoryAPI<I> wrapPlayerInventory(@Nullable I inventory) {
+        return Objects.nonNull(inventory) ? (PlayerInventoryAPI<I>)new PlayerInventory1_12_2((InventoryPlayer)inventory) : null;
+    }
+
+    @Override
+    public @Nullable <P> PotionAPI<P> wrapPotion(@Nullable P potion) {
+        return Objects.nonNull(potion) ? (PotionAPI<P>)new Potion1_12_2((PotionType)potion) : null;
     }
 
     private <E extends EntityPlayer> PlayerAPI<E,?> wrapPlayerClient(E player) {

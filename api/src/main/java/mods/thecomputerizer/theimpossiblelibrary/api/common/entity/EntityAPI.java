@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -9,6 +10,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Objects;
 
 @Getter
@@ -22,6 +25,7 @@ public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
         this.type = type;
     }
 
+    public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
     public abstract Box getBoundingBox();
     public abstract DimensionAPI<?> getDimension();
 
@@ -45,6 +49,7 @@ public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
     }
 
     public abstract BlockPosAPI<?> getPosRounded();
+    public abstract EntityAPI<?,?> getRootVehicle();
 
     @Override
     public V getValue() {
@@ -57,6 +62,7 @@ public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
         return (Class<? extends V>)this.type.getClass();
     }
 
+    public abstract @Nullable EntityAPI<?,?> getVehicle();
     public abstract WorldAPI<?> getWorld();
 
     public abstract boolean isAlive();

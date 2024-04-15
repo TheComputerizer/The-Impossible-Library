@@ -17,6 +17,11 @@ public class ItemStack1_16_5 extends ItemStackAPI<ItemStack> {
     }
 
     @Override
+    public int getCount() {
+        return this.stack.getCount();
+    }
+
+    @Override
     public ItemAPI<?> getItem() {
         return new Item1_16_5(this.stack.getItem());
     }
@@ -30,6 +35,16 @@ public class ItemStack1_16_5 extends ItemStackAPI<ItemStack> {
     public @Nullable CompoundTagAPI getTag() {
         CompoundNBT tag = this.stack.getTag();
         return Objects.nonNull(tag) ? new CompoundTag1_16_5(tag) : null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.stack.isEmpty();
+    }
+
+    @Override
+    public void setCount(int count) {
+        this.stack.setCount(count);
     }
 
     @Override

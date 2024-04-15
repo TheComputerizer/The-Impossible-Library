@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
@@ -7,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.EffectInstance1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Dimension1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
@@ -24,7 +26,10 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
 
@@ -39,6 +44,13 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
 
     public Entity1_12_2(Entity entity, EntityEntry entry) {
         super(entity,entry);
+    }
+
+    @Override
+    public Collection<EffectInstanceAPI<?>> getActiveEffects() {
+        return this.entity instanceof EntityLivingBase ?
+                ((EntityLivingBase)this.entity).getActivePotionEffects().stream().map(EffectInstance1_12_2::new)
+                        .collect(Collectors.toList()) : Collections.emptyList();
     }
 
     @Override
@@ -74,6 +86,17 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     @Override
     public ResourceLocationAPI<?> getRegistryName() {
         return new ResourceLocation1_12_2(this.type.getRegistryName());
+    }
+
+    @Override
+    public EntityAPI<?,?> getRootVehicle() {
+        return new Entity1_12_2(this.entity.getLowestRidingEntity());
+    }
+
+    @Override
+    public @Nullable EntityAPI<?,?> getVehicle() {
+        Entity entity = this.entity.getRidingEntity();
+        return Objects.nonNull(entity) ? new Entity1_12_2(entity) : null;
     }
 
     @Override

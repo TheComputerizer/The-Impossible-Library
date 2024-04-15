@@ -25,6 +25,11 @@ public class RegistryHelper {
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getBlockEntityRegistry() : null;
     }
 
+    public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getEffectRegistry() {
+        RegistryHandlerAPI handler = getHandler();
+        return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getEffectRegistry() : null;
+    }
+
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getEntityRegistry() {
         RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getEntityRegistry() : null;
@@ -43,6 +48,11 @@ public class RegistryHelper {
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getItemRegistry() {
         RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getItemRegistry() : null;
+    }
+
+    public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getPotionRegistry() {
+        RegistryHandlerAPI handler = getHandler();
+        return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getPotionRegistry() : null;
     }
 
     public static @Nullable RegistryAPI<?> getRegistry(ResourceLocationAPI<?> key) {

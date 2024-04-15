@@ -16,6 +16,12 @@ public abstract class ItemStackAPI<S> {
         this.stack = stack;
     }
 
+    public void decrement() {
+        int count = getCount();
+        if(count>0) setCount(count-1);
+    }
+
+    public abstract int getCount();
     public abstract ItemAPI<?> getItem();
 
     public CompoundTagAPI getOrCreateTag() {
@@ -28,5 +34,17 @@ public abstract class ItemStackAPI<S> {
     }
 
     public abstract @Nullable CompoundTagAPI getTag();
+
+    public void increment() {
+        setCount(getCount()+1);
+    }
+
+    public abstract boolean isEmpty();
+
+    public boolean isNotEmpty() {
+        return !isEmpty();
+    }
+
+    public abstract void setCount(int count);
     public abstract void setTag(@Nullable CompoundTagAPI tag);
 }

@@ -8,8 +8,10 @@ public interface RegistryHandlerAPI {
     RegistryAPI<?> getBiomeRegistry();
     RegistryAPI<?> getBlockRegistry();
     RegistryAPI<?> getBlockEntityRegistry();
+    RegistryAPI<?> getEffectRegistry();
     RegistryAPI<?> getEntityRegistry();
     RegistryAPI<?> getItemRegistry();
+    RegistryAPI<?> getPotionRegistry();
     RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey);
     RegistryAPI<?> getRegistry(Class<?> type);
     RegistryAPI<?> getSoundRegistry();

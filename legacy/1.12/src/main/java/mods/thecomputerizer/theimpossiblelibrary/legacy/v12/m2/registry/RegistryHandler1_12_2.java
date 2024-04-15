@@ -6,6 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -26,16 +28,20 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     private final Registry1_12_2<Biome> biome;
     private final Registry1_12_2<Block> block;
     private final TileEntityRegistry1_12_2 blockEntity;
+    private final Registry1_12_2<Potion> effect;
     private final Registry1_12_2<EntityEntry> entity;
     private final Registry1_12_2<Item> item;
+    private final Registry1_12_2<PotionType> potion;
     private final Registry1_12_2<SoundEvent> sound;
 
     public RegistryHandler1_12_2() {
         Set<Registry1_12_2<?>> registries = new HashSet<>();
         this.biome = getRegistry(registries,ForgeRegistries.BIOMES,"biome",Biome.class);
         this.block = getRegistry(registries,ForgeRegistries.BLOCKS,"block",Block.class);
+        this.effect = getRegistry(registries,ForgeRegistries.POTIONS,"effect",Potion.class);
         this.entity = getRegistry(registries,ForgeRegistries.ENTITIES,"entity",EntityEntry.class);
         this.item = getRegistry(registries,ForgeRegistries.ITEMS,"item",Item.class);
+        this.potion = getRegistry(registries,ForgeRegistries.POTION_TYPES,"potion",PotionType.class);
         this.sound = getRegistry(registries,ForgeRegistries.SOUND_EVENTS,"sound",SoundEvent.class);
         this.registries = Collections.unmodifiableSet(registries);
         this.blockEntity = new TileEntityRegistry1_12_2();
@@ -72,6 +78,11 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     }
 
     @Override
+    public Registry1_12_2<Potion> getEffectRegistry() {
+        return this.effect;
+    }
+
+    @Override
     public Registry1_12_2<EntityEntry> getEntityRegistry() {
         return this.entity;
     }
@@ -82,6 +93,11 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     }
 
     @Override
+    public Registry1_12_2<PotionType> getPotionRegistry() {
+        return this.potion;
+    }
+
+    @Override
     public RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey) {
         switch(registryKey.getPath()) {
             case "biome": return this.biome;
@@ -89,6 +105,8 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
             case "block_entity": return this.blockEntity;
             case "entity": return this.entity;
             case "item": return this.item;
+            case "potion": return this.potion;
+            case "sound": return this.sound;
             default: return null;
         }
     }
