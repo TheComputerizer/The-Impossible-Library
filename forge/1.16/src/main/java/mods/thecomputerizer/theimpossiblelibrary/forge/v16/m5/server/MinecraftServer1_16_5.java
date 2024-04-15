@@ -4,10 +4,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-public class MinecraftServer1_16_5 implements MinecraftServerAPI<MinecraftServer> {
+import java.util.Objects;
+
+public class MinecraftServer1_16_5 extends MinecraftServerAPI<MinecraftServer> {
 
     @Override
-    public MinecraftServer getServer() {
+    protected void executeCommandLiteral(String command) {
+        MinecraftServer server = getServer();
+        if(Objects.nonNull(server)) server.getCommands().performCommand(server.createCommandSourceStack(),command);
+    }
+
+    @Override
+    protected MinecraftServer getServer() {
         return ServerLifecycleHooks.getCurrentServer();
     }
 }

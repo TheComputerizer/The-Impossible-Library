@@ -4,11 +4,14 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,6 +26,8 @@ public abstract class WorldAPI<W> {
     
     public abstract boolean canSnowAt(BlockPosAPI<?> pos);
     public abstract BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos);
+    public abstract Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box);
+    public abstract @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos);
     public abstract int getDayNumber();
     public abstract int getDifficultyOrdinal();
     public abstract DimensionAPI<?> getDimension();

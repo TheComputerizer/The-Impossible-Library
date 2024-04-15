@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
@@ -11,11 +12,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.biome.Biome1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.BlockState1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.blockentity.BlockEntity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Entity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Living1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.structure.Structure1_16_5;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -25,8 +28,11 @@ import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static net.minecraft.world.LightType.BLOCK;
 import static net.minecraft.world.LightType.SKY;
@@ -46,6 +52,24 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     @Override
     public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
         return new Biome1_16_5(this.world.getBiome(((BlockPos1_16_5)pos).getPos()));
+    }
+
+    @Override
+    public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
+        List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
+        if(this.world instanceof World) {
+            for(TileEntity tile : ((World)this.world).blockEntityList) {
+                BlockPos pos = tile.getBlockPos();
+                if(box.isInside(pos.getX(),pos.getY(),pos.getZ())) entities.add(new BlockEntity1_16_5(tile));
+            }
+        }
+        return entities;
+    }
+
+    @Override
+    public @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos) {
+        TileEntity tile = this.world.getBlockEntity(((BlockPos1_16_5)pos).getPos());
+        return Objects.nonNull(tile) ? new BlockEntity1_16_5(tile) : null;
     }
 
     @Override

@@ -5,25 +5,24 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.integration.ModHelper1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn.SpawnHelper1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.PosHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.network.Network1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.RegistryHandler1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.Registry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.Resource1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.MinecraftServer1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn.SpawnHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.Tag1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.text.TextHelper1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.PosHelper1_12_2;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -42,7 +41,7 @@ public class Common1_12_2 implements CommonAPI {
     private final ModHelperAPI modHelper;
     private final NetworkAPI<SimpleNetworkWrapper,Side> network;
     private final PosHelperAPI<BlockPos> posHelper;
-    private final RegistryHandlerAPI<Registry1_12_2<?>> registry;
+    private final RegistryHandlerAPI registry;
     private final ResourceAPI resource;
     private final MinecraftServerAPI<MinecraftServer> server;
     private final SpawnHelperAPI<EntityLiving> spawnHelper;
@@ -86,7 +85,7 @@ public class Common1_12_2 implements CommonAPI {
     }
 
     @Override
-    public RegistryHandlerAPI<Registry1_12_2<?>> getRegistryHandler() {
+    public RegistryHandlerAPI getRegistryHandler() {
         return this.registry;
     }
 

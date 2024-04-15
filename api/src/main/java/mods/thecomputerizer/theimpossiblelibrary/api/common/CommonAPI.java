@@ -17,7 +17,7 @@ public interface CommonAPI {
     ModHelperAPI getModHelper();
     NetworkAPI<?,?> getNetwork();
     PosHelperAPI<?> getPosHelper();
-    RegistryHandlerAPI<?> getRegistryHandler();
+    RegistryHandlerAPI getRegistryHandler();
     ResourceAPI getResource();
     MinecraftServerAPI<?> getServer();
     SpawnHelperAPI<?> getSpawnHelper();

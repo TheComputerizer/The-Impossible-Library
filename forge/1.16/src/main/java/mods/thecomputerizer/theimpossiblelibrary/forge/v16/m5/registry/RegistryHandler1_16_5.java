@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RegistryHandler1_16_5 implements RegistryHandlerAPI<Registry1_16_5<?>> {
+public class RegistryHandler1_16_5 implements RegistryHandlerAPI {
 
     private final Set<Registry1_16_5<?>> registries;
     private final Registry1_16_5<Biome> biome;

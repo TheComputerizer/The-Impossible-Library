@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
@@ -19,11 +20,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<?>> {
+public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
 
     private final Set<Registry1_12_2<?>> registries;
     private final Registry1_12_2<Biome> biome;
     private final Registry1_12_2<Block> block;
+    private final TileEntityRegistry1_12_2 blockEntity;
     private final Registry1_12_2<EntityEntry> entity;
     private final Registry1_12_2<Item> item;
     private final Registry1_12_2<SoundEvent> sound;
@@ -36,6 +38,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<
         this.item = getRegistry(registries,ForgeRegistries.ITEMS,"item",Item.class);
         this.sound = getRegistry(registries,ForgeRegistries.SOUND_EVENTS,"sound",SoundEvent.class);
         this.registries = Collections.unmodifiableSet(registries);
+        this.blockEntity = new TileEntityRegistry1_12_2();
     }
 
     private <V extends IForgeRegistryEntry<V>> Registry1_12_2<V> getRegistry(
@@ -64,8 +67,8 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<
     }
 
     @Override
-    public Registry1_12_2<?> getBlockEntityRegistry() {
-        return null;
+    public TileEntityRegistry1_12_2 getBlockEntityRegistry() {
+        return this.blockEntity;
     }
 
     @Override
@@ -79,10 +82,11 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<
     }
 
     @Override
-    public Registry1_12_2<?> getRegistry(ResourceLocationAPI<?> registryKey) {
+    public RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey) {
         switch(registryKey.getPath()) {
             case "biome": return this.biome;
             case "block": return this.block;
+            case "block_entity": return this.blockEntity;
             case "entity": return this.entity;
             case "item": return this.item;
             default: return null;
@@ -90,7 +94,8 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI<Registry1_12_2<
     }
 
     @Override
-    public Registry1_12_2<?> getRegistry(Class<?> type) {
+    public RegistryAPI<?> getRegistry(Class<?> type) {
+        if(type==TileEntity.class) return getBlockEntityRegistry();
         for(Registry1_12_2<?> registry : this.registries)
             if(registry.getType().isAssignableFrom(type)) return registry;
         return null;

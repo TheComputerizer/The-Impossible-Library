@@ -2,15 +2,15 @@ package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
-public interface RegistryHandlerAPI<R extends RegistryAPI<?>> {
+public interface RegistryHandlerAPI {
 
     <V> V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey);
-    R getBiomeRegistry();
-    R getBlockRegistry();
-    R getBlockEntityRegistry();
-    R getEntityRegistry();
-    R getItemRegistry();
-    R getRegistry(ResourceLocationAPI<?> registryKey);
-    R getRegistry(Class<?> type);
-    R getSoundRegistry();
+    RegistryAPI<?> getBiomeRegistry();
+    RegistryAPI<?> getBlockRegistry();
+    RegistryAPI<?> getBlockEntityRegistry();
+    RegistryAPI<?> getEntityRegistry();
+    RegistryAPI<?> getItemRegistry();
+    RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey);
+    RegistryAPI<?> getRegistry(Class<?> type);
+    RegistryAPI<?> getSoundRegistry();
 }

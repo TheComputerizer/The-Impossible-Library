@@ -2,25 +2,42 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockenti
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 
-/**
- * Tile Entities aren't actually stored in registries in 1.12.2 so this is just a placeholder class
- */
-public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,TileEntity> {
+import java.util.Objects;
+
+public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends TileEntity>> {
 
     public BlockEntity1_12_2(TileEntity tile) {
-        super(tile,tile);
+        super(tile,tile.getClass());
     }
 
     @Override
     public RegistryAPI<?> getRegistry() {
-        return null;
+        return RegistryHelper.getBlockEntityRegistry();
     }
 
     @Override
     public ResourceLocationAPI<?> getRegistryName() {
-        return null;
+        ResourceLocation name = TileEntity.getKey(this.type);
+        return Objects.nonNull(name) ? new ResourceLocation1_12_2(name) : null;
+    }
+
+    @Override
+    public BlockPosAPI<?> getPos() {
+        return new BlockPos1_12_2(this.entity.getPos());
+    }
+
+    @Override
+    public WorldAPI<?> getWorld() {
+        return new World1_12_2(this.entity.getWorld());
     }
 }

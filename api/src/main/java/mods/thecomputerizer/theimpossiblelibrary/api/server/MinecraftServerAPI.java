@@ -1,6 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.server;
 
-public interface MinecraftServerAPI<S> {
+public abstract class MinecraftServerAPI<S> {
 
-    S getServer();
+
+    protected MinecraftServerAPI() {}
+
+    protected abstract void executeCommandLiteral(String command);
+    protected abstract S getServer();
 }

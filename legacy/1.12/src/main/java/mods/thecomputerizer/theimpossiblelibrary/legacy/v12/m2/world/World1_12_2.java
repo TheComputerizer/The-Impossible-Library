@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
@@ -11,23 +12,24 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome.Biome1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockentity.BlockEntity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.Structure1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.StructureRef;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class World1_12_2 extends WorldAPI<World> {
-
 
     public World1_12_2(World world) {
         super(world);
@@ -41,6 +43,24 @@ public class World1_12_2 extends WorldAPI<World> {
     @Override
     public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
         return new Biome1_12_2(this.world.getBiome(((BlockPos1_12_2)pos).getPos()));
+    }
+
+    @Override
+    public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
+        List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
+        if(this.world instanceof World) {
+            for(TileEntity tile : this.world.loadedTileEntityList) {
+                BlockPos pos = tile.getPos();
+                if(box.isInside(pos.getX(),pos.getY(),pos.getZ())) entities.add(new BlockEntity1_12_2(tile));
+            }
+        }
+        return entities;
+    }
+
+    @Override
+    public @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos) {
+        TileEntity tile = this.world.getTileEntity(((BlockPos1_12_2)pos).getPos());
+        return Objects.nonNull(tile) ? new BlockEntity1_12_2(tile) : null;
     }
 
     @Override

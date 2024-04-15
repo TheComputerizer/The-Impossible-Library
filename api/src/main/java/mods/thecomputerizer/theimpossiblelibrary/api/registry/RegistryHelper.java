@@ -11,52 +11,52 @@ import java.util.Objects;
 public class RegistryHelper {
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getBiomeRegistry() {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getBiomeRegistry() : null;
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getBlockRegistry() {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getBlockRegistry() : null;
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getBlockEntityRegistry() {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getBlockEntityRegistry() : null;
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getEntityRegistry() {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getEntityRegistry() : null;
     }
 
     public static <E extends RegistryEntryAPI<?>> @Nullable E getEntryIfPresent(
             ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
-        RegistryHandlerAPI<?> api = getHandler();
+        RegistryHandlerAPI api = getHandler();
         return Objects.nonNull(api) ? api.getEntryIfPresent(registryKey,entryKey) : null;
     }
 
-    public static @Nullable RegistryHandlerAPI<?> getHandler() {
+    public static @Nullable RegistryHandlerAPI getHandler() {
         return TILRef.getCommonSubAPI("RegistryHandlerAPI",CommonAPI::getRegistryHandler);
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getItemRegistry() {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getItemRegistry() : null;
     }
 
     public static @Nullable RegistryAPI<?> getRegistry(ResourceLocationAPI<?> key) {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? handler.getRegistry(key) : null;
     }
 
     public static @Nullable RegistryAPI<?> getRegistry(Class<?> type) {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? handler.getRegistry(type) : null;
     }
 
     public static <R extends RegistryEntryAPI<?>> @Nullable RegistryAPI<R> getSoundRegistry() {
-        RegistryHandlerAPI<?> handler = getHandler();
+        RegistryHandlerAPI handler = getHandler();
         return Objects.nonNull(handler) ? (RegistryAPI<R>)handler.getSoundRegistry() : null;
     }
 }

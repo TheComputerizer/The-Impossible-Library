@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 @Getter
 public abstract class BlockEntityAPI<E,T> implements RegistryEntryAPI<T> {
@@ -14,6 +16,8 @@ public abstract class BlockEntityAPI<E,T> implements RegistryEntryAPI<T> {
         this.type = type;
     }
 
+    public abstract BlockPosAPI<?> getPos();
+
     @Override
     public T getValue() {
         return this.type;
@@ -23,4 +27,6 @@ public abstract class BlockEntityAPI<E,T> implements RegistryEntryAPI<T> {
     public Class<? extends T> getValueClass() {
         return (Class<? extends T>)this.type.getClass();
     }
+
+    public abstract WorldAPI<?> getWorld();
 }

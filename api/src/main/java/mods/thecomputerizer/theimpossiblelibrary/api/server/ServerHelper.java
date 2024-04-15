@@ -8,6 +8,11 @@ import java.util.Objects;
 
 public class ServerHelper {
 
+    public static void executeCommandLiteral(String command) {
+        MinecraftServerAPI<?> server = getAPI();
+        if(Objects.nonNull(server)) server.executeCommandLiteral(command);
+    }
+
     public static @Nullable MinecraftServerAPI<?> getAPI() {
         return TILRef.getCommonSubAPI("MinecraftServerAPI",CommonAPI::getServer);
     }
