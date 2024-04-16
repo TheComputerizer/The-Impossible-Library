@@ -16,7 +16,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPointDistributor.INSTANCE;
 
-@Mod(TILRef.MODID)
 public class TILCommonEntry1_16_5 extends CommonEntryPoint {
 
     public TILCommonEntry1_16_5() {
