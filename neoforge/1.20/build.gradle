@@ -1,3 +1,4 @@
+/*
 plugins {
     id 'net.neoforged.gradle.userdev' version '7.+'
 }
@@ -56,8 +57,9 @@ dependencies {
     //noinspection DependencyNotationArgument
     implementation project(':neoforge')
 }
+*/
 
-tasks.withType(ProcessResources).configureEach {
+/*tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
             minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
             neo_version         : neoforge_version, neo_version_range: neoforge_version_range,
@@ -67,6 +69,6 @@ tasks.withType(ProcessResources).configureEach {
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml']) {
-        expand replaceProperties+[project: project]
+        expand replaceProperties + [project: project]
     }
-}
+}*/

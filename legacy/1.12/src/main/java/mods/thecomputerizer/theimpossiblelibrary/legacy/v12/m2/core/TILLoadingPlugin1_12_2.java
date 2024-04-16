@@ -26,21 +26,19 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        return "";
+        return null;
     }
 
     @Override
     public @Nullable String getSetupClass() {
-        return "";
+        return null;
     }
 
     @Override
-    public void injectData(Map<String,Object> data) {
-
-    }
+    public void injectData(Map<String,Object> data) {}
 
     @Override
     public String getAccessTransformerClass() {
-        return "";
+        return null;
     }
 }

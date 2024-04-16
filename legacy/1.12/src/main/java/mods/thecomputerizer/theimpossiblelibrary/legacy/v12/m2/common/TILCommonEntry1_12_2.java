@@ -2,7 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPointDistributor;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPointDistributor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.test.ClientTests1_12_2;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
@@ -20,6 +23,7 @@ public class TILCommonEntry1_12_2 {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         INSTANCE.onPreRegistration();
+        if(CoreAPI.INSTANCE.getSide().isClient()) ClientTests1_12_2.initClientTests();
     }
 
     @EventHandler
@@ -27,12 +31,18 @@ public class TILCommonEntry1_12_2 {
         INSTANCE.onCommonSetup();
         INSTANCE.onDedicatedServerSetup();
         ClientEntryPointDistributor.init();
+        if(event.getSide().isClient()) ClientRegistry.registerKeyBinding(ClientTests1_12_2.TEST_KEYBIND);
     }
 
     @EventHandler
     public void postInit(FMLPreInitializationEvent event) {
         INSTANCE.onInterModEnqueue();
         INSTANCE.onInterModProcess();
+    }
+
+    @EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        INSTANCE.onLoadComplete();
     }
 
     @EventHandler

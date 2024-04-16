@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.test.ClientTests;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
@@ -13,6 +14,7 @@ public class ClientTests1_12_2 {
 
     public static void initClientTests() {
         EventHelper.addListener(KEY_INPUT, wrapper -> {
+            TILRef.logInfo("AAAAAA");
             if(TEST_KEYBIND.isKeyDown()) ClientTests.runTests();
         });
     }
