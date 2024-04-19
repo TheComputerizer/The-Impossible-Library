@@ -1,4 +1,3 @@
-//file:noinspection DependencyNotationArgument
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'idea'
@@ -6,13 +5,13 @@ plugins {
     id 'java-library'
 }
 
-java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(17))
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(21))
 
 dependencies {
     shadow(project(':legacy:legacy.1_12')) { transitive = false }
     shadow(project(':forge:forge.1_16')) { transitive = false }
-    shadow("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
-    shadow("org.joml:joml:${project.joml_version}") { transitive = false }
+    shadow("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
+    shadow("org.joml:joml:${joml_version}") { transitive = false }
 }
 
 shadowJar {
@@ -22,6 +21,18 @@ shadowJar {
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
     exclude '**/*.java'
+}
+
+jar {
+    manifest {
+        attributes([
+                'FMLAT': 'theimpossiblelibrary_at.cfg',
+                'FMLCorePlugin': "mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.${mod_plugin}1_12_2",
+                'FMLCorePluginContainsFMLMod': true,
+                'ForceLoadAsMod': true,
+                "Implementation-Title": project.name
+        ])
+    }
 }
 
 tasks.assemble.dependsOn('shadowJar')
@@ -49,11 +60,11 @@ subprojects {
     plugins.apply('java-library')
 
     dependencies {
-        annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
+        annotationProcessor("org.projectlombok:lombok:${lombok_version}")
 
-        compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+        compileOnly("org.projectlombok:lombok:${lombok_version}")
 
-        implementation("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
-        implementation("org.joml:joml:${project.joml_version}")
+        implementation("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
+        implementation("org.joml:joml:${joml_version}")
     }
 }

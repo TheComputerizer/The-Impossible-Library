@@ -60,6 +60,11 @@ public class Common1_12_2 implements CommonAPI {
 
 
     @Override
+    public void setUpBackendEntryPoint() {
+
+    }
+
+    @Override
     public EventsAPI getCommonEvents() {
         return this.events;
     }

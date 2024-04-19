@@ -8,19 +8,27 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import java.util.Objects;
 
 /**
- * For internal use only. Used to distribute client side entrypoint states.
+ * For internal use only
  */
-public final class ClientEntryPointDistributor extends ClientEntryPoint {
+public final class TILClientEntryPoint extends ClientEntryPoint {
 
-    private static ClientEntryPointDistributor INSTANCE;
+    private static TILClientEntryPoint INSTANCE;
+
+    public static TILClientEntryPoint getInstance() {
+        if(Objects.isNull(INSTANCE)) INSTANCE = new TILClientEntryPoint();
+        return INSTANCE;
+    }
 
     public static void init() {
         if(Objects.nonNull(INSTANCE)) INSTANCE.onClientSetup();
     }
 
-    public ClientEntryPointDistributor() {
+    private final ClientEntryPoint versionHandler;
+
+    public TILClientEntryPoint() {
         TILRef.logInfo("TIL CLIENT CONSTRUCTOR");
-        INSTANCE = this;
+        CommonEntryPoint versionHandler = CoreAPI.INSTANCE.getClientVersionHandler();
+        this.versionHandler = versionHandler instanceof ClientEntryPoint ? (ClientEntryPoint)versionHandler : null;
     }
 
     @Override
@@ -29,7 +37,6 @@ public final class ClientEntryPointDistributor extends ClientEntryPoint {
         EventHelper.initTILListeners(true,true);
         //ClientTests1_12_2.initClientTests();
         //ClientRegistry.registerKeyBinding(ClientTests1_12_2.TEST_KEYBIND);
-        for(CommonEntryPoint entryPoint : CoreAPI.INSTANCE.getModInstances())
-            if(entryPoint instanceof ClientEntryPoint) ((ClientEntryPoint)entryPoint).onClientSetup();
+        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }
 }

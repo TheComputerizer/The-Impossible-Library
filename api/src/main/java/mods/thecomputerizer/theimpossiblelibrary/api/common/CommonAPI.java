@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 
 public interface CommonAPI {
 
+    void setUpBackendEntryPoint();
     EventsAPI getCommonEvents();
     ModHelperAPI getModHelper();
     NetworkAPI<?,?> getNetwork();

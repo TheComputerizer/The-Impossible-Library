@@ -1,13 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 
 @Getter
@@ -63,8 +64,8 @@ public class DynamicArray {
         if(this.bracketCount==0) return clazz;
         int[] dimensions = new int[this.bracketCount];
         Arrays.fill(dimensions,1);
-        Object ref = Misc.makeArray(clazz,dimensions);
-        return ref.getClass();
+        Object ref = ArrayHelper.createMulti(clazz,dimensions);
+        return Objects.nonNull(ref) ? ref.getClass() : Object.class;
     }
 
     @Override

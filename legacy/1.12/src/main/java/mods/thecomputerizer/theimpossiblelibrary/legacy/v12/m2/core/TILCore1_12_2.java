@@ -5,9 +5,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiLoaderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntry1_12_2;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -16,11 +18,8 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
@@ -58,11 +57,11 @@ public class TILCore1_12_2 extends CoreAPI {
         return new MultiversionModContainer1_12_2<>(meta,modClass);
     }
 
-    private final MultiLoader1_12_2 loader;
+    private final MultiVersionLoader1_12_2 loader;
 
-    public TILCore1_12_2(File root) {
+    public TILCore1_12_2(Collection<File> mods) {
         super(V12,LEGACY,LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
-        this.loader = new MultiLoader1_12_2(this,root);
+        this.loader = new MultiVersionLoader1_12_2(this,mods);
     }
 
     @Override
@@ -71,7 +70,17 @@ public class TILCore1_12_2 extends CoreAPI {
     }
 
     @Override
-    public MultiLoaderAPI getLoader() {
+    public MultiVersionLoaderAPI getLoader() {
         return this.loader;
+    }
+
+    @Override
+    public CommonEntryPoint getClientVersionHandler() {
+        return this.side.isClient() ? new TILClientEntry1_12_2() : null;
+    }
+
+    @Override
+    public CommonEntryPoint getCommonVersionHandler() {
+        return new TILCommonEntry1_12_2();
     }
 }

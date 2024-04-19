@@ -77,12 +77,12 @@ repositories {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
+    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
-    annotationProcessor("org.projectlombok:lombok:${project.lombok_version}")
-    annotationProcessor("org.spongepowered:mixin:${project.mixin_version}:processor")
+    annotationProcessor("org.projectlombok:lombok:${lombok_version}")
+    annotationProcessor("org.spongepowered:mixin:${mixin_version}:processor")
 
-    compileOnly("org.projectlombok:lombok:${project.lombok_version}")
+    compileOnly("org.projectlombok:lombok:${lombok_version}")
 
     implementation project(':api')
     //mod support dependencies
@@ -100,8 +100,8 @@ dependencies {
 
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}"))
 
-    shade("com.moandjiezana.toml:toml4j:${project.toml4j_version}") { transitive = false }
-    shade("org.joml:joml:${project.joml_version}")
+    shade("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
+    shade("org.joml:joml:${joml_version}")
 }
 
 shadowJar {

@@ -15,13 +15,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class MultiversionModCandidate {
+public class MultiVersionModCandidate {
 
     private final File file;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
 
-    protected MultiversionModCandidate(File file) {
+    protected MultiVersionModCandidate(File file) {
         this.file = file;
         this.coreClassNames = new HashSet<>();
         this.modClassNames = new HashSet<>();
@@ -65,18 +65,20 @@ public class MultiversionModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findCoreClasses(Set<Class<? extends CoreEntryPoint>> classes, Consumer<URL> sourceConsumer) {
+        TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(sourceConsumer,name);
-            if(canBeLoaded(clazz,CoreEntryPoint.class,MultiversionCoreMod.class))
+            if(canBeLoaded(clazz,CoreEntryPoint.class, MultiVersionCoreMod.class))
                 classes.add((Class<? extends CoreEntryPoint>)clazz);
         }
     }
 
     @SuppressWarnings("unchecked")
     public void findModClasses(Set<Class<? extends CommonEntryPoint>> classes, Consumer<URL> sourceConsumer) {
+        TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(sourceConsumer,name);
-            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiversionMod.class))
+            if(canBeLoaded(clazz,CommonEntryPoint.class, MultiVersionMod.class))
                 classes.add((Class<? extends CommonEntryPoint>)clazz);
         }
     }

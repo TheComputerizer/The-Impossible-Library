@@ -2,9 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiLoaderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionCoreModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModWriter;
 
 import java.net.URL;
 import java.util.HashSet;
@@ -34,40 +35,33 @@ public abstract class CoreAPI {
         this.modInfo = new HashSet<>();
         this.modInstances = new HashSet<>();
         INSTANCE = this;
+        TILRef.logInfo("Instantiated Core API");
     }
 
-    public Iterable<CoreEntryPoint> coreInstances() {
-        return this.coreInstances;
-    }
-
-    public abstract MultiLoaderAPI getLoader();
-
+    public abstract MultiVersionLoaderAPI getLoader();
+    public abstract CommonEntryPoint getClientVersionHandler();
+    public abstract CommonEntryPoint getCommonVersionHandler();
     public abstract void initAPI();
 
     public void instantiateCoreMods() {
+        TILRef.logInfo("Instantiating {} coremods",this.coreInfo.size());
         for(MultiVersionCoreModInfo info : this.coreInfo) {
             CoreEntryPoint core = info.getInstance();
-            if(Objects.nonNull(core)) this.coreInstances.add(core);
+            if(Objects.nonNull(core)) {
+                this.coreInstances.add(core);
+                TILRef.logInfo("Successfully instantiated coremod `{}`",info.getName());
+            }
         }
     }
 
-    public void instantiateMods() {
-        for(MultiVersionModInfo info : this.modInfo) {
-            CommonEntryPoint mod = info.getInstance();
-            if(Objects.nonNull(mod)) this.modInstances.add(mod);
-        }
+    public void writeMods(ClassLoader loader, int javaVer) {
+        this.modInfo.add(MultiVersionModInfo.API_INFO);
+        TILRef.logInfo("Writing {} mods",this.modInfo.size());
+        for(MultiVersionModInfo info : this.modInfo) MultiVersionModWriter.writeMod(loader,javaVer,this.modLoader,info);
     }
 
     public void loadCoreModInfo(Consumer<URL> sourceConsumer) {
         getLoader().loadCoreMods(this.coreInfo,sourceConsumer);
-    }
-
-    public void loadModInfo(Consumer<URL> sourceConsumer) {
-        getLoader().loadMods(this.modInfo,sourceConsumer);
-    }
-
-    public Iterable<CommonEntryPoint> modInstances() {
-        return this.modInstances;
     }
 
     public enum GameVersion { V12, V16, V18, V19, V20, V21 }

@@ -3,14 +3,18 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 
 import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public class ReflectionHelper
-{
+public class ReflectionHelper {
+
+    public static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
     /**
      * Finds a class from the input name.
      * Returns null if the class does not exist.
@@ -45,6 +49,17 @@ public class ReflectionHelper
     public static @Nullable Class<?> findExtensibleClass(String name, Class<?> superClass) {
         Class<?> clazz = findClass(name);
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
+    }
+
+    public static MethodHandle findMethodHandle(Class<?> clazz, String name, Class<?> ... args) {
+        try {
+            Method method = clazz.getDeclaredMethod(name,args);
+            method.setAccessible(true);
+            return LOOKUP.unreflect(method);
+        } catch (IllegalAccessException | NoSuchMethodException ex) {
+            TILRef.logError("Unable to find method handle of name `{}` in class `{}` with args `{}`",name,clazz,args,ex);
+            return null;
+        }
     }
 
     public static @Nullable Field getField(@Nullable Class<?> clazz, String fieldName) {

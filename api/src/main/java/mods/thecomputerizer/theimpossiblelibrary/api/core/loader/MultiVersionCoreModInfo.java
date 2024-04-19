@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 @Getter
 public class MultiVersionCoreModInfo {
 
-    public static MultiVersionCoreModInfo get(Class<? extends CoreEntryPoint> clazz, MultiversionCoreMod mod) {
+    public static MultiVersionCoreModInfo get(Class<? extends CoreEntryPoint> clazz, MultiVersionCoreMod mod) {
         return new MultiVersionCoreModInfo(clazz,mod.modid(),mod.modName(),mod.modVersion(),mod.client(),mod.server());
     }
 
