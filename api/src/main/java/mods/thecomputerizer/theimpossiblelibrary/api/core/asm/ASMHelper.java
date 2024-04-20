@@ -1,56 +1,34 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 
-import lombok.SneakyThrows;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.invoke.MethodHandle;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 
 public class ASMHelper {
-
-    private static final MethodHandle CLASS_DEFINER = ReflectionHelper.findMethodHandle(ClassLoader.class,
-            "defineClass",String.class,byte[].class,int.class,int.class);
-    private static final MethodHandle URL_LOADER = ReflectionHelper.findMethodHandle(URLClassLoader.class,
-            "addURL",URL.class);
 
     public static void addField(ClassVisitor visitor, int access, String name, Type type, String signature, Object value) {
         visitor.visitField(access,name,type.getDescriptor(),signature,value).visitEnd();
     }
 
     public static String buildSignature(Type base, Type ... innerTypes) {
-        StringBuilder builder = new StringBuilder();
-        for(Type inner : innerTypes) builder.append(inner.getDescriptor());
-        return buildSignature(base,builder.toString());
+        return ClassHelper.signatureDesc(base.getDescriptor(),ArrayHelper.mapTo(innerTypes,String.class,Type::getDescriptor));
     }
 
     public static String buildSignature(Type base, String ... innerSignatures) {
-        StringBuilder builder = new StringBuilder();
-        for(String inner : innerSignatures) builder.append(inner);
-        return buildSignature(base,builder.toString());
+        return ClassHelper.signatureDesc(base.getDescriptor(),innerSignatures);
     }
 
     public static String buildSignature(Type base, String inner) {
-        String desc = base.getDescriptor();
-        return desc.substring(0,desc.length()-1)+"<"+inner+">;";
-    }
-
-    @SneakyThrows
-    @SuppressWarnings("DataFlowIssue")
-    public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
-        return (Class<?>)CLASS_DEFINER.invokeExact(classLoader,classpath,bytes,0,bytes.length);
+        return ClassHelper.signatureDesc(base.getDescriptor(),inner);
     }
 
     public static void finishMethod(MethodVisitor visitor) {
@@ -67,10 +45,6 @@ public class ASMHelper {
         byte[] bytes = writer.toByteArray();
         if(debugOutput) writeDebugByteCode(name,bytes);
         return bytes;
-    }
-
-    public static String fixClassName(String name) {
-        return Objects.nonNull(name) ? name.replace('.','/') : null;
     }
 
     public static AnnotationVisitor getAnnotation(ClassVisitor visitor, Class<?> clazz) {
@@ -205,31 +179,6 @@ public class ASMHelper {
         ClassWriter writer = new ClassWriter(COMPUTE_FRAMES);
         writer.visit(javaVer,access,type.getInternalName(),signature,superType.getInternalName(),interfaces);
         return writer;
-    }
-
-    public static void loadClass(String classpath, byte[] bytes) {
-        loadClass(ClassLoader.getSystemClassLoader(),classpath,bytes);
-    }
-
-    public static void loadClass(ClassLoader classLoader, String classpath, byte[] bytes) {
-        if(Objects.nonNull(CLASS_DEFINER)) loadClass(classLoader,defineClass(classLoader,classpath,bytes));
-        else TILRef.logError("Cannot load class `{}` since the CLASS_DEFINER handle failed to intialize",classpath);
-    }
-
-    public static void loadClass(Class<?> clazz) {
-        loadClass(ClassLoader.getSystemClassLoader(),clazz);
-    }
-
-    @SneakyThrows
-    public static void loadClass(ClassLoader classLoader, Class<?> clazz) {
-        classLoader.loadClass(clazz.getName());
-    }
-
-    @SneakyThrows
-    public static void loadURL(URLClassLoader classLoader, URL url) {
-        TILRef.logTrace("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
-        if(Objects.nonNull(URL_LOADER)) URL_LOADER.invokeExact(classLoader,url);
-        else TILRef.logError("Cannot load URL `{}` since the URL_LOADER handle failed to intialize",url);
     }
 
     public static void writeDebugByteCode(String classpath, byte[] bytes) {

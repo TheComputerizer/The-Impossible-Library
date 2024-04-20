@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
@@ -14,7 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.R;
+
 public class ClientTests {
+
+    public static KeyAPI<?> TEST_KEY = KeyHelper.create("key.test","key.categories.theimpossiblelibrary",R);
 
     public static void runTests() {
         TILRef.logWarn("Running client tests");

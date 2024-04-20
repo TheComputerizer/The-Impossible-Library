@@ -26,7 +26,6 @@ public class Misc {
         return !anyNull(objects);
     }
 
-
     public static boolean allNull(Object ... objects) {
         return !anyNonNull(objects);
     }
@@ -48,34 +47,6 @@ public class Misc {
      */
     public static <K,V> @Nullable V applyNullable(@Nullable K thing, Function<K,V> function) {
         return Objects.isNull(thing) ? null : function.apply(thing);
-    }
-
-    /**
-     * Returns the full name of the class of the object or NULL if the object is null.
-     */
-    public static String className(@Nullable Object obj) {
-        return className(Objects.nonNull(obj) ? obj.getClass() : null,false);
-    }
-
-    /**
-     * Returns the full name of the class or NULL if the class is null.
-     */
-    public static String className(@Nullable Class<?> clazz) {
-        return className(clazz,false);
-    }
-
-    /**
-     * Returns the either the full or simple name of the class of the object or NULL if the object is null.
-     */
-    public static String className(@Nullable Object obj, boolean simple) {
-        return className(Objects.nonNull(obj) ? obj.getClass() : null,simple);
-    }
-
-    /**
-     * Returns the either the full or simple name of the class or NULL if the class is null.
-     */
-    public static String className(@Nullable Class<?> clazz, boolean simple) {
-        return Objects.nonNull(clazz) ? (simple ? clazz.getSimpleName() : clazz.getName()) : "NULL";
     }
 
     /**

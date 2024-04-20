@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;

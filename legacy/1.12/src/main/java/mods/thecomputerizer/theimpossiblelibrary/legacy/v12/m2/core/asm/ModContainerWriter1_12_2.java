@@ -1,16 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import java.net.URLClassLoader;
 import java.util.Map;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
@@ -25,6 +28,11 @@ public class ModContainerWriter1_12_2 {
     @SuppressWarnings({"unchecked", "DataFlowIssue"})
     public static void cacheClass(LaunchClassLoader launchLoader, String name, Class<?> clazz) {
         ((Map<String,Class<?>>)ReflectionHelper.getFieldInstance(launchLoader,LaunchClassLoader.class,"cachedClasses")).put(name,clazz);
+    }
+
+    public static ASMDataTable findASMTable(Loader loader) {
+        Object discoverer = ReflectionHelper.getFieldInstance(loader,Loader.class,"discoverer");
+        return discoverer instanceof ModDiscoverer ? ((ModDiscoverer)discoverer).getASMTable() : null;
     }
 
     private static void writeClinit(ClassVisitor visitor, String modid) {
@@ -54,7 +62,7 @@ public class ModContainerWriter1_12_2 {
         writeConstructor(writer,type);
         byte[] bytes = ASMHelper.finishWriting(writer,type,true);
         TILRef.logInfo("Successfully wrote bytecode for `{}`",classpath);
-        Class<?> clazz = ASMHelper.defineClass(launchLoader,classpath,bytes);
+        Class<?> clazz = ClassHelper.defineClass(launchLoader,classpath,bytes);
         cacheClass(launchLoader,clazz.getName(),clazz);
         return clazz.getName();
     }

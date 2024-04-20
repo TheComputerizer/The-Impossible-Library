@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ClassPrinter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.net.URLClassLoader;
@@ -23,7 +24,7 @@ public abstract class CoreAPI {
     private final Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> coreInfo;
     private final Set<CoreEntryPoint> coreInstances;
     private final Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> modInfo;
-    private final Set<CommonEntryPoint> modInstances;
+    private final Set<String> injectedMods;
 
     protected CoreAPI(GameVersion version, ModLoader loader, Side side) {
         this.version = version;
@@ -32,7 +33,7 @@ public abstract class CoreAPI {
         this.coreInfo = new HashMap<>();
         this.coreInstances = new HashSet<>();
         this.modInfo = new HashMap<>();
-        this.modInstances = new HashSet<>();
+        this.injectedMods = new HashSet<>();
         INSTANCE = this;
         TILRef.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
@@ -75,11 +76,21 @@ public abstract class CoreAPI {
     }
 
     @SneakyThrows
-    public void modConstructed(Package pkg, String name, String entryType) {
-        Class<?> clazz = Class.forName(pkg.getName()+name.replace(" ","")+"Generated"+entryType+"Mod");
+    public void modConstructed(Package pkg, String modid, String name, String entryType) {
+        if(StringUtils.isBlank(modid) || StringUtils.isBlank(name)) {
+            TILRef.logFatal("Found CommonEntryPoint instance in package `{}` with a blank modid or name! "+
+                    "Things may break or crash very soon.",pkg);
+            return;
+        }
+        if(this.injectedMods.contains(modid)) TILRef.logInfo("Skipping extra entrypoint for `{}` in `{}`",modid,pkg);
+        else if(modConstructed(modid,ClassHelper.findClassFrom(pkg,name+"Generated"+entryType+"Mod")))
+            this.injectedMods.add(modid);
     }
 
-    protected abstract void modConstructed(String modid, Class<?> clazz);
+    /**
+     * Mod class
+     */
+    protected abstract boolean modConstructed(String modid, Class<?> clazz);
 
     public void writeModContainers(URLClassLoader classLoader) {
         this.modInfo.put(TIL_CANDIDATE,Collections.singleton(MultiVersionModInfo.API_INFO));

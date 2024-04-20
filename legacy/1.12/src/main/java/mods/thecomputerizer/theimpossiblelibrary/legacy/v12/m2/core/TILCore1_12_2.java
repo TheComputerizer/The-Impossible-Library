@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntry1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.relauncher.libraries.ModList;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
@@ -70,7 +72,19 @@ public class TILCore1_12_2 extends CoreAPI {
     }
 
     @Override
-    protected void modConstructed(String modid, Class<?> clazz) { //TODO Finish this
-        ModDiscoverer discoverer = (ModDiscoverer) ReflectionHelper.getFieldInstance(Loader.instance(),Loader.class,"discoverer");
+    protected boolean modConstructed(String modid, Class<?> clazz) {
+        TILRef.logInfo("Attempting to inject `{}` for `{}` into the ASMDataTable",clazz,modid);
+        ASMDataTable table = ModContainerWriter1_12_2.findASMTable(Loader.instance());
+        if(Objects.nonNull(table)) {
+            for(ModContainer container : Loader.instance().getActiveModList()) {
+                if(container.getModId().equals(modid)) {
+                    while(container instanceof InjectedModContainer) container = ((InjectedModContainer)container).wrappedContainer;
+                    TILRef.logInfo("Found container `{}` for injecting",container.getClass());
+                    return InjectedModCandidate1_12_2.injectIntoTable(container,container.getClass().getPackage().getName(),table);
+                }
+            }
+            TILRef.logFatal("Unable to find ModContainer instance to inject! The game will likely crash very soon.");
+        } else TILRef.logFatal("ASMDataTable instance was not found! The game will likely crash very soon.");
+        return false;
     }
 }

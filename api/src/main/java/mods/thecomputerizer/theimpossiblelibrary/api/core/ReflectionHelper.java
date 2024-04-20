@@ -17,19 +17,6 @@ public class ReflectionHelper {
     public static final Lookup LOOKUP = MethodHandles.lookup();
 
     /**
-     * Finds a class from the input name.
-     * Returns null if the class does not exist.
-     */
-    public static @Nullable Class<?> findClass(String name) {
-        try {
-            return Class.forName(name);
-        } catch(ClassNotFoundException ex) {
-            TILRef.logError("Unable to find class with name `{}`",name);
-            return null;
-        }
-    }
-
-    /**
      * Finds a constructor of the given class with the specified args.
      * Returns null if the input class is null or the constructor does not exist.
      */
@@ -48,7 +35,7 @@ public class ReflectionHelper {
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findExtensibleClass(String name, Class<?> superClass) {
-        Class<?> clazz = findClass(name);
+        Class<?> clazz = ClassHelper.findClass(name);
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
     }
 
@@ -128,5 +115,17 @@ public class ReflectionHelper {
                 return null;
             }
         });
+    }
+
+    public static void setFieldValue(@Nullable Object parent, @Nullable Field field, @Nullable Object value) {
+        if(Objects.isNull(field)) return;
+        try {
+            if(!field.isAccessible()) field.setAccessible(true);
+            field.set(parent,value);
+        } catch(IllegalAccessException ex) {
+            boolean hasParent = Objects.nonNull(parent);
+            Object[] args = hasParent ? new Object[]{field,parent,value,ex} : new Object[]{field,value,ex};
+            TILRef.logError("Unable to set value of field {} "+(hasParent ? "in parent object {}}" : "")+" to {}",args);
+        }
     }
 }

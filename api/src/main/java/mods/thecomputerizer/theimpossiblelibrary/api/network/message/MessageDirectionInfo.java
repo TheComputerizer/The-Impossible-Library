@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class MessageDirectionInfo<DIR> {
             MessageInfo<M> info = (MessageInfo<M>)getMessageInfo(message);
             if(Objects.nonNull(info)) info.encode(message,buf);
         } catch(ClassCastException ex) {
-            TILRef.logError("Unable to encode message of class `{}`",Misc.className(message));
+            TILRef.logError("Unable to encode message of class `{}`", ClassHelper.className(message));
         }
     }
 
@@ -50,7 +50,7 @@ public class MessageDirectionInfo<DIR> {
             MessageInfo<M> info = (MessageInfo<M>)getMessageInfo(message);
             return Objects.nonNull(info) ? info.handle(message,context) : null;
         } catch(ClassCastException ex) {
-            TILRef.logError("Unable to handle message of class `{}`",Misc.className(message));
+            TILRef.logError("Unable to handle message of class `{}`", ClassHelper.className(message));
             return null;
         }
     }

@@ -1,11 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.Objects;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.test.ClientTests.TEST_KEY;
 
 /**
  * For internal use only
@@ -32,11 +35,21 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     }
 
     @Override
+    protected String getModID() {
+        return TILRef.MODID;
+    }
+
+    @Override
+    protected String getModName() {
+        return TILRef.NAME;
+    }
+
+    @Override
     public void onClientSetup() { //TODO Abstract tests and keybind registration
         TILRef.logInfo("TIL CLIENT SETUP");
         EventHelper.initTILListeners(true,true);
         //ClientTests1_12_2.initClientTests();
-        //ClientRegistry.registerKeyBinding(ClientTests1_12_2.TEST_KEYBIND);
+        KeyHelper.register(TEST_KEY);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }
 }
