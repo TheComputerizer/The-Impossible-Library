@@ -1,12 +1,20 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 
+import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
+import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.*;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandle;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
@@ -15,9 +23,11 @@ public class ASMHelper {
 
     private static final MethodHandle CLASS_DEFINER = ReflectionHelper.findMethodHandle(ClassLoader.class,
             "defineClass",String.class,byte[].class,int.class,int.class);
+    private static final MethodHandle URL_LOADER = ReflectionHelper.findMethodHandle(URLClassLoader.class,
+            "addURL",URL.class);
 
-    public static void addField(ClassWriter writer, int access, String name, Type type, String signature, Object value) {
-        writer.visitField(access,name,type.getDescriptor(),signature,value).visitEnd();
+    public static void addField(ClassVisitor visitor, int access, String name, Type type, String signature, Object value) {
+        visitor.visitField(access,name,type.getDescriptor(),signature,value).visitEnd();
     }
 
     public static String buildSignature(Type base, Type ... innerTypes) {
@@ -37,6 +47,12 @@ public class ASMHelper {
         return desc.substring(0,desc.length()-1)+"<"+inner+">;";
     }
 
+    @SneakyThrows
+    @SuppressWarnings("DataFlowIssue")
+    public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
+        return (Class<?>)CLASS_DEFINER.invokeExact(classLoader,classpath,bytes,0,bytes.length);
+    }
+
     public static void finishMethod(MethodVisitor visitor) {
         visitor.visitMaxs(0,0);
         visitor.visitEnd();
@@ -45,16 +61,12 @@ public class ASMHelper {
     /**
      * Do not call ClassWriter#visitEnd before this
      */
-    public static Class<?> finishWriting(ClassLoader loader, ClassWriter writer, Type type) throws Throwable {
+    public static byte[] finishWriting(ClassWriter writer, Type type, boolean debugOutput) {
         writer.visitEnd();
         String name = type.getInternalName().replace('/','.');
         byte[] bytes = writer.toByteArray();
-        ClassReader reader = new ClassReader(bytes);
-        ClassPrinter printer = new ClassPrinter(ASM5);
-        reader.accept(printer,0);
-        if(Objects.isNull(CLASS_DEFINER))
-            throw new NullPointerException("Cannot write class `"+name+"` since the method handle failed to initialize");
-        return (Class<?>)CLASS_DEFINER.invokeExact(loader,name,bytes,0,bytes.length);
+        if(debugOutput) writeDebugByteCode(name,bytes);
+        return bytes;
     }
 
     public static String fixClassName(String name) {
@@ -193,5 +205,45 @@ public class ASMHelper {
         ClassWriter writer = new ClassWriter(COMPUTE_FRAMES);
         writer.visit(javaVer,access,type.getInternalName(),signature,superType.getInternalName(),interfaces);
         return writer;
+    }
+
+    public static void loadClass(String classpath, byte[] bytes) {
+        loadClass(ClassLoader.getSystemClassLoader(),classpath,bytes);
+    }
+
+    public static void loadClass(ClassLoader classLoader, String classpath, byte[] bytes) {
+        if(Objects.nonNull(CLASS_DEFINER)) loadClass(classLoader,defineClass(classLoader,classpath,bytes));
+        else TILRef.logError("Cannot load class `{}` since the CLASS_DEFINER handle failed to intialize",classpath);
+    }
+
+    public static void loadClass(Class<?> clazz) {
+        loadClass(ClassLoader.getSystemClassLoader(),clazz);
+    }
+
+    @SneakyThrows
+    public static void loadClass(ClassLoader classLoader, Class<?> clazz) {
+        classLoader.loadClass(clazz.getName());
+    }
+
+    @SneakyThrows
+    public static void loadURL(URLClassLoader classLoader, URL url) {
+        TILRef.logTrace("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
+        if(Objects.nonNull(URL_LOADER)) URL_LOADER.invokeExact(classLoader,url);
+        else TILRef.logError("Cannot load URL `{}` since the URL_LOADER handle failed to intialize",url);
+    }
+
+    public static void writeDebugByteCode(String classpath, byte[] bytes) {
+        File debugDir = new File(TILRef.DATA_DIRECTORY,"asm_debug");
+        String filepath = classpath.replace('.',File.separatorChar)+".class";
+        writeByteCodeToFile(FileHelper.get(new File(debugDir,filepath),false),bytes);
+    }
+
+    public static void writeByteCodeToFile(File file, byte[] bytes) {
+        try(FileOutputStream stream = new FileOutputStream(file)) {
+            stream.write(bytes);
+            TILRef.logError("Successfully dumped class bytes to `{}`",file);
+        } catch(IOException ex) {
+            TILRef.logError("Failed to print class file to `{}`",file);
+        }
     }
 }

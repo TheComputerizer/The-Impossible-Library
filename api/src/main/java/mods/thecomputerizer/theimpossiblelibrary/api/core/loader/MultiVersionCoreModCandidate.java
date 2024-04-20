@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -10,29 +9,29 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
-@Getter
-public class MultiVersionModCandidate {
+public class MultiVersionCoreModCandidate {
 
     private final File file;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
 
-    public MultiVersionModCandidate(File file) {
-        this.file = Objects.nonNull(file) ? file : new File(TILRef.MODID+"-"+TILRef.VERSION+".jar");
+    protected MultiVersionCoreModCandidate(File file) {
+        this.file = file;
         this.coreClassNames = new HashSet<>();
         this.modClassNames = new HashSet<>();
     }
 
     public void addCoreClasses(String ... classes) {
-        TILRef.logDebug("Registering {} coremod classes for file `{}` -> `{}`",classes.length,this.file,classes);
         this.coreClassNames.addAll(Arrays.asList(classes));
     }
 
     public void addModClasses(String ... classes) {
-        TILRef.logDebug("Registering {} mod classes for file `{}` -> `{}`",classes.length,this.file,classes);
         this.modClassNames.addAll(Arrays.asList(classes));
     }
 
@@ -65,28 +64,22 @@ public class MultiVersionModCandidate {
     }
 
     @SuppressWarnings("unchecked")
-    public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,
-                                MultiVersionModCandidate candidate, Consumer<URL> sourceConsumer) {
+    public void findCoreClasses(Set<Class<? extends CoreEntryPoint>> classes, Consumer<URL> sourceConsumer) {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(sourceConsumer,name);
-            if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class)) {
-                classes.putIfAbsent(candidate,new ArrayList<>());
-                classes.get(candidate).add((Class<? extends CoreEntryPoint>)clazz);
-            }
+            if(canBeLoaded(clazz,CoreEntryPoint.class, MultiVersionCoreMod.class))
+                classes.add((Class<? extends CoreEntryPoint>)clazz);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
-                               MultiVersionModCandidate candidate, Consumer<URL> sourceConsumer) {
+    public void findModClasses(Set<Class<? extends CommonEntryPoint>> classes, Consumer<URL> sourceConsumer) {
         TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(sourceConsumer,name);
-            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class)) {
-                classes.putIfAbsent(candidate,new ArrayList<>());
-                classes.get(candidate).add((Class<? extends CommonEntryPoint>)clazz);
-            }
+            if(canBeLoaded(clazz,CommonEntryPoint.class, MultiVersionMod.class))
+                classes.add((Class<? extends CommonEntryPoint>)clazz);
         }
     }
 

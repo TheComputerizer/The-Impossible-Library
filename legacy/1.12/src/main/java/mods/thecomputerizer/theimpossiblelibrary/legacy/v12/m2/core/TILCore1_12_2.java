@@ -10,16 +10,15 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntry1_12_2;
-import net.minecraftforge.fml.common.LoadController;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ModDiscoverer;
+import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.relauncher.libraries.ModList;
 
-import javax.annotation.Nullable;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.*;
-import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
@@ -29,44 +28,20 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DE
 public class TILCore1_12_2 extends CoreAPI {
 
     public static final Reference LEGACY_REF = TILRef.instance(FMLLaunchHandler.side()::isClient,"");
-    private static final Map<ModMetadata,Class<? extends CommonEntryPoint>> CLIENT_MODS = new HashMap<>();
-    private static final Map<ModMetadata,Class<? extends CommonEntryPoint>> SERVER_MODS = new HashMap<>();
 
-    @SuppressWarnings("unchecked")
-    private static @Nullable List<ModContainer> getActiveModContainers() {
-        LoadController controller = (LoadController)ReflectionHelper.getFieldInstance(Loader.instance(),Loader.class,"modController");
-        if(Objects.isNull(controller)) {
-            TILRef.logError("Could not retrieve LoadController instance!");
-            return null;
-        }
-        return (List<ModContainer>)ReflectionHelper.getFieldInstance(controller,LoadController.class,"activeModList");
+    public static ModContainer getFMLModContainer(String modid) {
+        return InjectedModCandidate1_12_2.findModContainer(modid);
     }
 
-    public static void getRegisteredMods(List<MultiversionModContainer1_12_2<?>> containers, boolean client) {
-        List<ModContainer> activeMods = getActiveModContainers();
-        if(Objects.nonNull(activeMods)) {
-            for(Entry<ModMetadata,Class<? extends CommonEntryPoint>> entry : (client ? CLIENT_MODS : SERVER_MODS).entrySet()) {
-                MultiversionModContainer1_12_2<?> container = setContainer(entry.getKey(),entry.getValue());
-                activeMods.add(container);
-                containers.add(container);
-            }
-        } else TILRef.logError("Could not retrieve ModContainer list!");
-    }
-
-    private static <E extends CommonEntryPoint> MultiversionModContainer1_12_2<E> setContainer(ModMetadata meta, Class<E> modClass) {
-        return new MultiversionModContainer1_12_2<>(meta,modClass);
+    public static File getModSource(String modid) {
+        return InjectedModCandidate1_12_2.findSource(modid);
     }
 
     private final MultiVersionLoader1_12_2 loader;
 
-    public TILCore1_12_2(Collection<File> mods) {
+    public TILCore1_12_2() {
         super(V12,LEGACY,LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
-        this.loader = new MultiVersionLoader1_12_2(this,mods);
-    }
-
-    @Override
-    public void initAPI() {
-        TILRef.setAPI(getSide().isClient() ? new Client1_12_2() : new Common1_12_2());
+        this.loader = new MultiVersionLoader1_12_2(this);
     }
 
     @Override
@@ -82,5 +57,20 @@ public class TILCore1_12_2 extends CoreAPI {
     @Override
     public CommonEntryPoint getCommonVersionHandler() {
         return new TILCommonEntry1_12_2();
+    }
+
+    @Override
+    public void initAPI() {
+        TILRef.setAPI(getSide().isClient() ? new Client1_12_2() : new Common1_12_2());
+    }
+
+    @Override
+    public void injectWrittenMod(Class<?> containerClass, String modid) {
+
+    }
+
+    @Override
+    protected void modConstructed(String modid, Class<?> clazz) { //TODO Finish this
+        ModDiscoverer discoverer = (ModDiscoverer) ReflectionHelper.getFieldInstance(Loader.instance(),Loader.class,"discoverer");
     }
 }

@@ -1,39 +1,29 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import net.minecraftforge.fml.relauncher.libraries.Artifact;
-import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
-import net.minecraftforge.fml.relauncher.libraries.Repository;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.List;
+import java.net.URLClassLoader;
 import java.util.Map;
-import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
-import static net.minecraft.launchwrapper.Launch.classLoader;
-import static net.minecraft.launchwrapper.Launch.minecraftHome;
-
+@MCVersion("1.12.2")
+@Name(TILRef.NAME+" Core")
+@SortingIndex(Integer.MIN_VALUE+1) // Allow the injection sorter to be run first
 public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
 
     static {
-        List<Artifact> mavenCandidates = LibraryManager.flattenLists(minecraftHome);
-        List<File> fileCandidates = LibraryManager.gatherLegacyCanidates(minecraftHome);
-        for(Artifact artifact : mavenCandidates) {
-            artifact = Repository.resolveAll(artifact);
-            if(Objects.nonNull(artifact)) {
-                File target = artifact.getFile();
-                if(!fileCandidates.contains(target)) fileCandidates.add(target);
-            }
-        }
-        new TILCore1_12_2(fileCandidates).loadCoreModInfo(classLoader::addURL);
+        new TILCore1_12_2();
     }
 
     public TILLoadingPlugin1_12_2() {
-        CoreAPI.INSTANCE.instantiateCoreMods();
-        CoreAPI.INSTANCE.writeMods(classLoader,JAVA8);
     }
 
     @Override
@@ -53,6 +43,15 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String,Object> data) {
+        TILRef.logInfo("Beginnig core injection with `{}`",data);
+        File modFile = (File)data.get("coremodLocation");
+        TILRef.logInfo("Found internal mod file `{}`",modFile);
+        CoreAPI.TIL_CANDIDATE = new MultiVersionModCandidate(modFile);
+        URLClassLoader loader = Launch.classLoader;
+        CoreAPI core = CoreAPI.INSTANCE;
+        core.loadCoreModInfo(loader);
+        core.instantiateCoreMods();
+        core.writeModContainers(loader);
     }
 
     @Override

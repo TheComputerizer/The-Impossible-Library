@@ -4,25 +4,29 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.Map.Entry;
 
 public abstract class MultiVersionLoaderAPI {
 
-    protected final MultiVersionModFinder finder;
     protected final CoreAPI parent;
+    protected Collection<MultiVersionModCandidate> candidates;
 
-    protected MultiVersionLoaderAPI(CoreAPI parent, Collection<File> mods) {
-        this.finder = new MultiVersionModFinder(mods);
+    protected MultiVersionLoaderAPI(CoreAPI parent) {
         this.parent = parent;
     }
+
+    protected abstract File findCoreModRoot();
+    protected abstract File findModRoot();
+    protected abstract List<File> gatherCandidateModFiles(File root);
+    protected abstract @Nullable Attributes getFileAttributes(File file);
 
     private boolean isValidContext(MultiVersionCoreMod mod) {
         return isValidSide(mod.client(),mod.server()) &&
@@ -62,17 +66,24 @@ public abstract class MultiVersionLoaderAPI {
         }
     }
 
-    public void loadCoreMods(Set<MultiVersionCoreModInfo> infoSet, Consumer<URL> sourceConsumer) {
-        TILRef.logInfo("Finding multiversion coremods");
-        Set<Class<? extends CoreEntryPoint>> classes = new HashSet<>();
-        for(MultiVersionModCandidate candidate : this.finder.getCoreCandidates())
-            candidate.findCoreClasses(classes,sourceConsumer);
+    public void loadCoreMods(
+            Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap, URLClassLoader loader) {
+        File root = findCoreModRoot();
+        TILRef.logInfo("Finding multiversion coremods from root `{}`",root);
+        Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes = new HashMap<>();
+        this.candidates = MultiVersionModFinder.discover(this,root,true);
+        for(MultiVersionModCandidate candidate : this.candidates)
+            candidate.findCoreClasses(classes,candidate,url -> ASMHelper.loadURL(loader,url));
         TILRef.logInfo("{} coremods will attempt to be loaded",classes.size());
-        for(Class<? extends CoreEntryPoint> clazz : classes) {
-            MultiVersionCoreModInfo info = loadCoreMod(clazz);
-            if(Objects.nonNull(info)) {
-                infoSet.add(info);
-                TILRef.logInfo("Successfully loaded coremod `{}` using class `{}`",info.getName(),info.getModClass());
+        for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
+            MultiVersionModCandidate candidate = entry.getKey();
+            if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
+            for(Class<? extends CoreEntryPoint> clazz : entry.getValue()) {
+                MultiVersionCoreModInfo info = loadCoreMod(clazz);
+                if(Objects.nonNull(info)) {
+                    infoMap.get(candidate).add(info);
+                    TILRef.logInfo("Successfully loaded coremod `{}` using class `{}`",info.getName(),info.getEntryClass());
+                }
             }
         }
     }
@@ -88,17 +99,24 @@ public abstract class MultiVersionLoaderAPI {
         return isValidContext(mod) ? MultiVersionCoreModInfo.get(clazz,mod) : null;
     }
 
-    public void loadMods(Set<MultiVersionModInfo> infoSet, Consumer<URL> sourceConsumer) {
-        TILRef.logInfo("Finding multiversion mods");
-        Set<Class<? extends CommonEntryPoint>> classes = new HashSet<>();
-        for(MultiVersionModCandidate candidate : this.finder.getModCandidates())
-            candidate.findModClasses(classes,sourceConsumer);
-        TILRef.logInfo("{} mods will attempt to be loaded",classes.size());
-        for(Class<? extends CommonEntryPoint> clazz : classes) {
-            MultiVersionModInfo info = loadMod(clazz);
-            if(Objects.nonNull(info)) {
-                infoSet.add(info);
-                TILRef.logInfo("Successfully loaded mod `{}` using class `{}`",info.getName(),info.getModClass());
+    public void loadMods(
+            Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap,URLClassLoader loader) {
+        File root = findModRoot();
+        TILRef.logInfo("Finding multiversion mods from root `{}`",root);
+        Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes = new HashMap<>();
+        this.candidates = MultiVersionModFinder.discover(this,root,false);
+        for(MultiVersionModCandidate candidate : this.candidates)
+            candidate.findModClasses(classes,candidate,url -> ASMHelper.loadURL(loader,url));
+        TILRef.logInfo("{} mods will attempt to be preloaded",classes.size());
+        for(Entry<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> entry : classes.entrySet()) {
+            MultiVersionModCandidate candidate = entry.getKey();
+            if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
+            for(Class<? extends CommonEntryPoint> clazz : entry.getValue()) {
+                MultiVersionModInfo info = loadMod(loader,root,clazz);
+                if(Objects.nonNull(info)) {
+                    infoMap.get(candidate).add(info);
+                    TILRef.logInfo("Successfully preloaded mod `{}` using class `{}`",info.getName(),info.getEntryClass());
+                }
             }
         }
     }
@@ -106,13 +124,13 @@ public abstract class MultiVersionLoaderAPI {
     /**
      * Assumes canBeLoaded has already passed for the input class by this point
      */
-    private @Nullable MultiVersionModInfo loadMod(Class<? extends CommonEntryPoint> clazz) {
-        return loadMod(clazz,clazz.getAnnotation(MultiVersionMod.class));
+    private @Nullable MultiVersionModInfo loadMod(URLClassLoader classLoader, File root, Class<? extends CommonEntryPoint> clazz) {
+        return loadMod(classLoader,root,clazz,clazz.getAnnotation(MultiVersionMod.class));
     }
 
-    private @Nullable MultiVersionModInfo loadMod(Class<? extends CommonEntryPoint> clazz, MultiVersionMod mod) {
-        return isValidContext(mod) ? loadModInfo(MultiVersionModInfo.get(clazz,mod)) : null;
+    private @Nullable MultiVersionModInfo loadMod(URLClassLoader classLoader, File root, Class<? extends CommonEntryPoint> clazz, MultiVersionMod mod) {
+        return isValidContext(mod) ? loadModInfo(classLoader,root,MultiVersionModInfo.get(clazz,mod)) : null;
     }
 
-    protected abstract MultiVersionModInfo loadModInfo(MultiVersionModInfo info);
+    protected abstract MultiVersionModInfo loadModInfo(ClassLoader classLoader, File root, MultiVersionModInfo info);
 }

@@ -2,13 +2,15 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ClassPrinter;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.objectweb.asm.*;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,25 +26,26 @@ public class MultiVersionModWriter {
     private static final Type FORGE_MOD = Type.getType("Lnet/minecraftforge/fml/common/Mod;");
     private static final Type LEGACY_EVENT_HANDLER = Type.getType("Lnet/minecraftforge/fml/common/Mod$EventHandler;");
 
-    private static Type generateClassType(String pkgName, String entryType, String name) {
-        return Type.getType(pkgName.replace('.','/')+"/"+
-                name.replace(" ","")+"Generated"+entryType+"EntryPoint");
-    }
-
     private static void addEntryHooks(MethodVisitor visitor, Type type, Type apiType, String ... apiMethods) {
         for(String method : apiMethods) {
             visitor.visitVarInsn(ALOAD,0);
             visitor.visitFieldInsn(GETFIELD,type.getInternalName(),"entryPoint",apiType.getDescriptor());
-            visitor.visitMethodInsn(INVOKEVIRTUAL,COMMON_ENTRYPOINT.getInternalName(),method,VOID_EMPTY_METHOD.getDescriptor(),false);
+            visitor.visitMethodInsn(INVOKEVIRTUAL,apiType.getInternalName(),method,VOID_EMPTY_METHOD.getDescriptor(),false);
         }
+        visitor.visitInsn(RETURN);
+    }
+
+    private static Type generateClassType(String pkgName, String entryType, String name) {
+        return Type.getType(pkgName.replace('.','/')+"/"+
+                name.replace(" ","")+"Generated"+entryType+"Mod");
     }
 
     private static String getEntryType(boolean client, boolean server) {
         return client ? (server ? "Common" : "Client") : "";
     }
 
-    private static MethodVisitor getEventHandler(ClassWriter writer, String name, Type eventType) {
-        return ASMHelper.getMethod(writer,PUBLIC,name,eventType);
+    private static MethodVisitor getEventHandler(ClassVisitor visitor, String name, Type eventType) {
+        return ASMHelper.getMethod(visitor,PUBLIC,name,eventType);
     }
 
     private static Type getEventType(ModLoader loader, String methodName) {
@@ -125,23 +128,15 @@ public class MultiVersionModWriter {
         return new HashMap<>();
     }
 
-    private static Type writeClassInit(ClassWriter writer, Type type, Class<?> entryRef) {
+    private static Type writeClassInit(ClassVisitor visitor, Class<?> entryRef) {
         Type apiType = Type.getType(entryRef);
-        String signature = ASMHelper.buildSignature(CLASS_TYPE,apiType);
-        ASMHelper.addField(writer,PRIVATE_STATIC_FINAL,"ENTRYPOINT_CLASS",CLASS_TYPE,signature,null);
-        MethodVisitor clinit = ASMHelper.getClassConstructor(writer);
-        clinit.visitCode();
-        clinit.visitLdcInsn(apiType);
-        clinit.visitFieldInsn(PUTSTATIC,type.getDescriptor(),"ENTRYPOINT_CLASS",CLASS_TYPE.getDescriptor());
-        clinit.visitInsn(RETURN);
-        ASMHelper.finishMethod(clinit);
-        ASMHelper.addField(writer,PRIVATE_FINAL,"entryPoint",apiType,null,null);
+        ASMHelper.addField(visitor,PRIVATE_FINAL,"entryPoint",apiType,null,null);
         return apiType;
     }
 
-    private static void writeConstructor(ClassWriter writer, Type type, Type apiType, String ... apiMethods) {
+    private static void writeConstructor(ClassVisitor visitor, Type type, Type apiType, String ... apiMethods) {
         String name = apiType.getInternalName();
-        MethodVisitor constructor = ASMHelper.getConstructor(writer,PUBLIC);
+        MethodVisitor constructor = ASMHelper.getConstructor(visitor,PUBLIC);
         constructor.visitCode();
         constructor.visitVarInsn(ALOAD,0);
         constructor.visitMethodInsn(INVOKESPECIAL,OBJECT_TYPE.getInternalName(),"<init>",VOID_EMPTY_METHOD.getDescriptor(),false);
@@ -154,54 +149,54 @@ public class MultiVersionModWriter {
         ASMHelper.finishMethod(constructor);
     }
 
-    private static void writeFabricMod(ClassWriter writer, Type type, MultiVersionModInfo info) {
+    private static void writeFabricMod(ClassVisitor visitor, Type type, MultiVersionModInfo info) {
         Map<String,String[]> entryPoints = mapFabricEntryPoints();
-        Type apiType = writeClassInit(writer,type,info.getModClass());
-        writeConstructor(writer,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
+        Type apiType = writeClassInit(visitor,info.getEntryClass());
+        writeConstructor(visitor,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
     }
 
-    private static void writeForgeMod(ClassWriter writer, Type type, MultiVersionModInfo info) {
+    private static void writeForgeMod(ClassVisitor visitor, Type type, MultiVersionModInfo info) {
         Map<String,String[]> entryPoints = mapForgeEntryPoints();
-        AnnotationVisitor mod = ASMHelper.getAnnotation(writer,FORGE_MOD); //add @Mod annotation
+        AnnotationVisitor mod = ASMHelper.getAnnotation(visitor,FORGE_MOD); //add @Mod annotation
         mod.visit("value",info.getModID());
         mod.visitEnd();
-        Type apiType = writeClassInit(writer,type,info.getModClass());
-        writeConstructor(writer,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
+        Type apiType = writeClassInit(visitor,info.getEntryClass());
+        writeConstructor(visitor,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
         for(Entry<String,String[]> entryPoint : entryPoints.entrySet()) {
             String method = entryPoint.getKey();
             if(method.equals("<init>")) continue;
             Type eventType = getEventType(FORGE,method);
-            MethodVisitor visitor = getEventHandler(writer,method,eventType);
-            visitor.visitCode();
-            addEntryHooks(visitor,type,apiType,entryPoint.getValue());
-            ASMHelper.finishMethod(visitor);
+            MethodVisitor mv = getEventHandler(visitor,method,eventType);
+            mv.visitCode();
+            addEntryHooks(mv,type,apiType,entryPoint.getValue());
+            ASMHelper.finishMethod(mv);
         }
     }
 
-    private static void writeLegacyMod(ClassWriter writer, Type type, MultiVersionModInfo info) {
+    private static void writeLegacyMod(ClassVisitor visitor, Type type, MultiVersionModInfo info) {
         Map<String,String[]> entryPoints = mapLegacyEntryPoints();
-        AnnotationVisitor mod = ASMHelper.getAnnotation(writer,FORGE_MOD); //add @Mod annotation
+        AnnotationVisitor mod = ASMHelper.getAnnotation(visitor,FORGE_MOD); //add @Mod annotation
         mod.visit("modid",info.getModID());
         mod.visit("name",info.getName());
         mod.visit("version",info.getVersion());
         mod.visitEnd();
-        Type apiType = writeClassInit(writer,type,info.getModClass());
-        writeConstructor(writer,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
+        Type apiType = writeClassInit(visitor,info.getEntryClass());
+        writeConstructor(visitor,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
         for(Entry<String,String[]> entryPoint : entryPoints.entrySet()) {
             String method = entryPoint.getKey();
             if(method.equals("<init>")) continue;
             Type eventType = getEventType(LEGACY,method);
-            MethodVisitor visitor = getEventHandler(writer,method,eventType);
-            AnnotationVisitor eventHandler = ASMHelper.getAnnotation(visitor,LEGACY_EVENT_HANDLER);
+            MethodVisitor mv = getEventHandler(visitor,method,eventType);
+            AnnotationVisitor eventHandler = ASMHelper.getAnnotation(mv,LEGACY_EVENT_HANDLER);
             eventHandler.visitEnd();
-            visitor.visitCode();
-            addEntryHooks(visitor,type,apiType,entryPoint.getValue());
-            ASMHelper.finishMethod(visitor);
+            mv.visitCode();
+            addEntryHooks(mv,type,apiType,entryPoint.getValue());
+            ASMHelper.finishMethod(mv);
         }
     }
 
-    public static void writeMod(ClassLoader classLoader, int javaVer, ModLoader modLoader, MultiVersionModInfo info) {
-        String pkgName = info.getModClass().getPackage().getName();
+    public static @Nullable Pair<String,byte[]> buildModClass(int javaVer, ModLoader modLoader, MultiVersionModInfo info) {
+        String pkgName = info.getEntryClass().getPackage().getName();
         Type type = generateClassType(pkgName,getEntryType(info.isClient(),info.isServer()),info.getName());
         ClassWriter writer = ASMHelper.getWriter(javaVer,PUBLIC,type);
         switch(modLoader) {
@@ -223,17 +218,20 @@ public class MultiVersionModWriter {
             }
         }
         try {
-            Class<?> modClass = ASMHelper.finishWriting(classLoader,writer,type);
-            TILRef.logInfo("Successfully wrote mod entrypoint for `{}` to `{}`",info.getModID(),modClass);
+            byte[] bytes = ASMHelper.finishWriting(writer,type,TILDev.DEV);
+            String classpath = ClassPrinter.getClassPath(type.getInternalName());
+            TILRef.logInfo("Successfully wrote mod entrypoint bytecode for `{}` to `{}`",info.getModID(),classpath);
+            return new ImmutablePair<>(classpath,bytes);
 
         } catch(Throwable ex) {
             TILRef.logFatal("Failed to write class",ex);
+            return null;
         }
     }
 
-    private static void writeNeoForgeMod(ClassWriter writer, Type type, MultiVersionModInfo info) {
+    private static void writeNeoForgeMod(ClassVisitor visitor, Type type, MultiVersionModInfo info) {
         Map<String,String[]> entryPoints = mapNeoForgeEntryPoints();
-        Type apiType = writeClassInit(writer,type,info.getModClass());
-        writeConstructor(writer,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
+        Type apiType = writeClassInit(visitor,info.getEntryClass());
+        writeConstructor(visitor,type,apiType,entryPoints.getOrDefault("<init>",new String[]{}));
     }
 }

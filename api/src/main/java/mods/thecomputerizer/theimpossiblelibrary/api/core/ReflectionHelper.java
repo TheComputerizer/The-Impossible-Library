@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 public class ReflectionHelper {
 
-    public static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+    public static final Lookup LOOKUP = MethodHandles.lookup();
 
     /**
      * Finds a class from the input name.

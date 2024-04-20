@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -13,6 +14,13 @@ public class TILDev {
 
     public static final boolean DEV = Boolean.parseBoolean(System.getProperty("tilDev")); //`-DtilDev=true`
     private static final Logger LOGGER = DEV ? LogManager.getLogger("TIL DEV") : null;
+    public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(System.getProperty("tilClassPathCoreMods"));
+    public static final Set<String> CLASSPATH_MODS = parseClasspathMods(System.getProperty("tilClassPathMods"));
+
+    private static Set<String> parseClasspathMods(String mods) {
+        String[] split = Objects.nonNull(mods) ? mods.split(";") : null;
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(Objects.nonNull(split) ? split : new String[0])));
+    }
 
     public static void log(Level level, String msg, Object ... args) {
         if(DEV) LOGGER.log(level,msg,args);

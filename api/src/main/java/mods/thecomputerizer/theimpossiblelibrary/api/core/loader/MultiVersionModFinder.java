@@ -1,67 +1,64 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.*;
-import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
-@Getter
 public class MultiVersionModFinder {
 
     private static final Name MULTIVERSION_COREMODS = new Name("TILMultiversionCoreMods");
     private static final Name MULTIVERSION_MODS = new Name("TILMultiversionMods");
 
-    private final Set<MultiVersionModCandidate> coreCandidates;
-    private final Set<MultiVersionModCandidate> modCandidates;
-
-    protected MultiVersionModFinder(Collection<File> files) {
-        Set<MultiVersionModCandidate> candidates = discover(files);
-        this.coreCandidates = addSet(candidates, MultiVersionModCandidate::hasCoreMods);
-        this.modCandidates = addSet(candidates, MultiVersionModCandidate::hasMods);
-    }
-
-    private <M extends MultiVersionModCandidate> Set<M> addSet(Set<M> candidates, Function<M,Boolean> filter) {
-        Set<M> set = new HashSet<>();
-        for(M candidate : candidates)
-            if(filter.apply(candidate)) set.add(candidate);
-        return Collections.unmodifiableSet(set);
-    }
-
-    private Set<MultiVersionModCandidate> discover(Collection<File> files) {
-        TILRef.logDebug("Attempting to find multiversion mod candidates with {} files",files.size());
+    public static Set<MultiVersionModCandidate> discover(MultiVersionLoaderAPI loader, File root, boolean isCore) {
+        TILRef.logDebug("Attempting to find multiversion mod candidates from root `{}`",root);
         Set<MultiVersionModCandidate> candidates = new HashSet<>();
-        for(File file : files) {
-            MultiVersionModCandidate candidate = getCandidate(file);
-            if(candidate.hasMods()) candidates.add(candidate);
+        addClasspathMods(candidates,isCore);
+        for(File file : loader.gatherCandidateModFiles(root)) {
+            MultiVersionModCandidate candidate = getCandidate(loader,file,isCore);
+            if(Objects.nonNull(candidate) && candidate.hasMods()) candidates.add(candidate);
         }
         return candidates;
     }
 
-    private MultiVersionModCandidate getCandidate(File file) {
-        TILRef.logDebug("Examining candidate `{}`",file);
-        MultiVersionModCandidate candidate = new MultiVersionModCandidate(file);
-        try(JarFile jar = new JarFile(file)) {
-            Manifest manifest = jar.getManifest();
-            if(Objects.nonNull(manifest)) {
-                Attributes attributes =  manifest.getMainAttributes();
-                if(Objects.nonNull(attributes)) {
-                    candidate.addCoreClasses(parseClasses(attributes,MULTIVERSION_COREMODS));
-                    candidate.addModClasses(parseClasses(attributes,MULTIVERSION_MODS));
-                }
-            }
-        } catch(Exception ex) {
-            TILRef.logError("Failed to read jar for multiversion mod candidate at `{}`!",file.getPath(),ex);
-        }
-        return candidate;
+    private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file, boolean isCore) {
+        TILRef.logDebug("Examining candidate file`{}`",file);
+        Attributes attributes = loader.getFileAttributes(file);
+        if(Objects.nonNull(attributes)) {
+            MultiVersionModCandidate candidate = new MultiVersionModCandidate(file);
+            if(isCore) candidate.addCoreClasses(parseClasses(attributes,MULTIVERSION_COREMODS));
+            else candidate.addModClasses(parseClasses(attributes,MULTIVERSION_MODS));
+            return candidate;
+        } else TILRef.logDebug("File did not contain any attributes to check");
+        return null;
     }
 
-    private String[] parseClasses(Attributes attributes, Name name) {
+    private static void addClasspathMods(Set<MultiVersionModCandidate> candidates, boolean isCore) {
+        if(isCore) {
+            TILRef.logDebug("Adding {} classpath coremods", TILDev.CLASSPATH_COREMODS.size());
+            for (String core : TILDev.CLASSPATH_COREMODS) {
+                MultiVersionModCandidate candidate = new MultiVersionModCandidate(null);
+                TILRef.logDebug("Adding classpath coremod `{}`", core);
+                candidate.addCoreClasses(core);
+                candidates.add(candidate);
+            }
+        }
+        else {
+            TILRef.logDebug("Adding {} classpath mods", TILDev.CLASSPATH_MODS.size());
+            for (String mod : TILDev.CLASSPATH_MODS) {
+                MultiVersionModCandidate candidate = new MultiVersionModCandidate(null);
+                TILRef.logDebug("Adding classpath mod `{}`", mod);
+                candidate.addModClasses(mod);
+                candidates.add(candidate);
+            }
+        }
+    }
+
+    private static String[] parseClasses(Attributes attributes, Name name) {
         TILRef.logDebug("Found attribute `{}`",name);
         String unparsed = attributes.getValue(name);
         String[] split = Objects.nonNull(unparsed) ? unparsed.split(";") : null;

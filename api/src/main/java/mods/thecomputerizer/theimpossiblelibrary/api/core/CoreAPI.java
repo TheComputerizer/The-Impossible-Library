@@ -1,71 +1,129 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionCoreModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModWriter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ClassPrinter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
+import java.io.File;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Getter
 public abstract class CoreAPI {
 
     public static CoreAPI INSTANCE;
+    public static MultiVersionModCandidate TIL_CANDIDATE;
 
     protected final GameVersion version;
     protected final ModLoader modLoader;
     protected final Side side;
-    private final Set<MultiVersionCoreModInfo> coreInfo;
+    private final Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> coreInfo;
     private final Set<CoreEntryPoint> coreInstances;
-    private final Set<MultiVersionModInfo> modInfo;
+    private final Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> modInfo;
     private final Set<CommonEntryPoint> modInstances;
 
     protected CoreAPI(GameVersion version, ModLoader loader, Side side) {
         this.version = version;
         this.modLoader = loader;
         this.side = side;
-        this.coreInfo = new HashSet<>();
+        this.coreInfo = new HashMap<>();
         this.coreInstances = new HashSet<>();
-        this.modInfo = new HashSet<>();
+        this.modInfo = new HashMap<>();
         this.modInstances = new HashSet<>();
         INSTANCE = this;
-        TILRef.logInfo("Instantiated Core API");
+        TILRef.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
+                this.version,this.side);
     }
 
-    public abstract MultiVersionLoaderAPI getLoader();
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
+    public abstract MultiVersionLoaderAPI getLoader();
+
+    public Map<String,MultiVersionModData> getModData(File root) {
+        Map<String,MultiVersionModData> map = new HashMap<>();
+        TILRef.logInfo("Parsing data for {} mod candidate(s)",this.modInfo.size());
+        for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> entry : this.modInfo.entrySet()) {
+            TILRef.logInfo("Parsing data for {} mod(s) in candidate", entry.getValue().size());
+            for(MultiVersionModInfo info : entry.getValue())
+                map.putIfAbsent(info.getModID(),new MultiVersionModData(root,entry.getKey(),info));
+        }
+        return map;
+    }
+
     public abstract void initAPI();
+    public abstract void injectWrittenMod(Class<?> containerClass, String modid);
 
     public void instantiateCoreMods() {
-        TILRef.logInfo("Instantiating {} coremods",this.coreInfo.size());
-        for(MultiVersionCoreModInfo info : this.coreInfo) {
-            CoreEntryPoint core = info.getInstance();
-            if(Objects.nonNull(core)) {
-                this.coreInstances.add(core);
-                TILRef.logInfo("Successfully instantiated coremod `{}`",info.getName());
+        TILRef.logInfo("Instantiating {} coremod candidate(s)",this.coreInfo.size());
+        for(Collection<MultiVersionCoreModInfo> infos : this.coreInfo.values()) {
+            TILRef.logInfo("Instantiating {} coremod(s) in candidate",infos.size());
+            for(MultiVersionCoreModInfo info : infos) {
+                CoreEntryPoint core = info.getInstance();
+                if(Objects.nonNull(core)) {
+                    this.coreInstances.add(core);
+                    TILRef.logInfo("Successfully instantiated coremod `{}`!",info.getName());
+                }
             }
         }
     }
 
-    public void writeMods(ClassLoader loader, int javaVer) {
-        this.modInfo.add(MultiVersionModInfo.API_INFO);
-        TILRef.logInfo("Writing {} mods",this.modInfo.size());
-        for(MultiVersionModInfo info : this.modInfo) MultiVersionModWriter.writeMod(loader,javaVer,this.modLoader,info);
+    public void loadCoreModInfo(URLClassLoader classLoader) {
+        getLoader().loadCoreMods(this.coreInfo,classLoader);
     }
 
-    public void loadCoreModInfo(Consumer<URL> sourceConsumer) {
-        getLoader().loadCoreMods(this.coreInfo,sourceConsumer);
+    @SneakyThrows
+    public void modConstructed(Package pkg, String name, String entryType) {
+        Class<?> clazz = Class.forName(pkg.getName()+name.replace(" ","")+"Generated"+entryType+"Mod");
     }
 
-    public enum GameVersion { V12, V16, V18, V19, V20, V21 }
-    public enum ModLoader { FABRIC, FORGE, LEGACY, NEOFORGE }
+    protected abstract void modConstructed(String modid, Class<?> clazz);
+
+    public void writeModContainers(URLClassLoader classLoader) {
+        this.modInfo.put(TIL_CANDIDATE,Collections.singleton(MultiVersionModInfo.API_INFO));
+        getLoader().loadMods(this.modInfo,classLoader);
+    }
+
+    @Getter
+    public enum GameVersion {
+        V12("1.12"),
+        V16("1.16"),
+        V18("1.18"),
+        V19("1.19"),
+        V20("1.20"),
+        V21("1.21");
+
+        private final String name;
+
+        GameVersion(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
+    }
+
+    public enum ModLoader {
+        FABRIC("Fabric"),
+        FORGE("Forge"),
+        LEGACY("Forge"),
+        NEOFORGE("NeoForge");
+
+        private final String name;
+
+        ModLoader(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
+    }
 
     @Getter
     public enum Side {
@@ -87,6 +145,11 @@ public abstract class CoreAPI {
             this.server = server;
             this.dedicated = dedicated;
             this.logical = logical;
+        }
+
+        @Override
+        public String toString() {
+            return isClient() ? (isServer() ? "Both" : "Client") : "Server";
         }
     }
 }

@@ -30,7 +30,8 @@ jar {
                 'FMLCorePlugin': "mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.${mod_plugin}1_12_2",
                 'FMLCorePluginContainsFMLMod': true,
                 'ForceLoadAsMod': true,
-                "Implementation-Title": project.name
+                'Implementation-Title': project.name,
+                'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
         ])
     }
 }

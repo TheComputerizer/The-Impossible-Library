@@ -24,14 +24,9 @@ public class TILCore1_16_5 extends CoreAPI {
     public static final Reference FORGE_REF = TILRef.instance(FMLLoader.getDist()::isClient,"");
     private final MultiVersionLoader1_16_5 loader;
 
-    public TILCore1_16_5(Collection<File> mods) {
+    public TILCore1_16_5() {
         super(V16,FORGE,FORGE_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
-        this.loader = new MultiVersionLoader1_16_5(this,mods);
-    }
-
-    @Override
-    public MultiVersionLoaderAPI getLoader() {
-        return this.loader;
+        this.loader = new MultiVersionLoader1_16_5(this);
     }
 
     @Override
@@ -45,7 +40,22 @@ public class TILCore1_16_5 extends CoreAPI {
     }
 
     @Override
+    public MultiVersionLoaderAPI getLoader() {
+        return this.loader;
+    }
+
+    @Override
     public void initAPI() {
         TILRef.setAPI(this.side.isClient() ? new Client1_16_5() : new Common1_16_5());
+    }
+
+    @Override
+    public void injectWrittenMod(Class<?> containerClass, String modid) {
+
+    }
+
+    @Override
+    protected void modConstructed(String modid, Class<?> clazz) {
+
     }
 }

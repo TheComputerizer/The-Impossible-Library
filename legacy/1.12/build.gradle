@@ -20,7 +20,8 @@ minecraft {
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
         def args = [
-                '-DtilDev=true'
+                '-DtilDev=true',
+                '-DtilClassPathMods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
         ]
         client {
             workingDirectory file('run_client')
@@ -134,7 +135,8 @@ jar {
                 'FMLCorePlugin': "${module_package}.${mod_plugin}1_12_2",
                 'FMLCorePluginContainsFMLMod': true,
                 'ForceLoadAsMod': true,
-                "Implementation-Title": project.name
+                "Implementation-Title": project.name,
+                'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
         ])
     }
 }

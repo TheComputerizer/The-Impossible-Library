@@ -13,7 +13,7 @@ public class MultiVersionCoreModInfo {
         return new MultiVersionCoreModInfo(clazz,mod.modid(),mod.modName(),mod.modVersion(),mod.client(),mod.server());
     }
 
-    private final Class<? extends CoreEntryPoint> modClass;
+    private final Class<? extends CoreEntryPoint> entryClass;
     private final String modid;
     private final String name;
     private final String version;
@@ -22,7 +22,7 @@ public class MultiVersionCoreModInfo {
 
     private MultiVersionCoreModInfo(Class<? extends CoreEntryPoint> clazz, String modid, String name, String version,
                                     boolean client, boolean server) {
-        this.modClass = clazz;
+        this.entryClass = clazz;
         this.modid = modid;
         this.name = name;
         this.version = version;
@@ -32,9 +32,9 @@ public class MultiVersionCoreModInfo {
 
     public @Nullable CoreEntryPoint getInstance() {
         try {
-            return this.modClass.newInstance();
+            return this.entryClass.newInstance();
         } catch(Exception ex) {
-            TILRef.logError("Failed to instantiate coremod `{}`!",this.modClass,ex);
+            TILRef.logError("Failed to instantiate coremod `{}`!",this.entryClass,ex);
         }
         return null;
     }

@@ -27,6 +27,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
         TILRef.logInfo("TIL COMMON CONSTRUCTOR");
         this.versionHandler = CoreAPI.INSTANCE.getCommonVersionHandler();
         if(CoreAPI.INSTANCE.getSide().isClient()) TILClientEntryPoint.getInstance();
+        CoreAPI.INSTANCE.modConstructed(getClass().getPackage(),TILRef.NAME,"Common");
     }
 
     @Override
