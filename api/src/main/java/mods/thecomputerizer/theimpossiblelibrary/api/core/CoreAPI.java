@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ClassPrinter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,7 +46,7 @@ public abstract class CoreAPI {
         Map<String,MultiVersionModData> map = new HashMap<>();
         TILRef.logInfo("Parsing data for {} mod candidate(s)",this.modInfo.size());
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> entry : this.modInfo.entrySet()) {
-            TILRef.logInfo("Parsing data for {} mod(s) in candidate", entry.getValue().size());
+            TILDev.logInfo("Parsing data for {} mod(s) in candidate", entry.getValue().size());
             for(MultiVersionModInfo info : entry.getValue())
                 map.putIfAbsent(info.getModID(),new MultiVersionModData(root,entry.getKey(),info));
         }
@@ -60,7 +59,7 @@ public abstract class CoreAPI {
     public void instantiateCoreMods() {
         TILRef.logInfo("Instantiating {} coremod candidate(s)",this.coreInfo.size());
         for(Collection<MultiVersionCoreModInfo> infos : this.coreInfo.values()) {
-            TILRef.logInfo("Instantiating {} coremod(s) in candidate",infos.size());
+            TILDev.logInfo("Instantiating {} coremod(s) in candidate",infos.size());
             for(MultiVersionCoreModInfo info : infos) {
                 CoreEntryPoint core = info.getInstance();
                 if(Objects.nonNull(core)) {

@@ -1,10 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntry1_12_2;
@@ -79,7 +76,7 @@ public class TILCore1_12_2 extends CoreAPI {
             for(ModContainer container : Loader.instance().getActiveModList()) {
                 if(container.getModId().equals(modid)) {
                     while(container instanceof InjectedModContainer) container = ((InjectedModContainer)container).wrappedContainer;
-                    TILRef.logInfo("Found container `{}` for injecting",container.getClass());
+                    TILDev.logDebug("Found container `{}` for injecting",container.getClass());
                     return InjectedModCandidate1_12_2.injectIntoTable(container,container.getClass().getPackage().getName(),table);
                 }
             }

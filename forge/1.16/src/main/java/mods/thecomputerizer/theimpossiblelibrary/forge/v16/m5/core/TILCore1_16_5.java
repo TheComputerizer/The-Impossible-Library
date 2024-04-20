@@ -55,7 +55,7 @@ public class TILCore1_16_5 extends CoreAPI {
     }
 
     @Override
-    protected void modConstructed(String modid, Class<?> clazz) {
-
+    protected boolean modConstructed(String modid, Class<?> clazz) {
+        return false;
     }
 }
