@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
@@ -10,7 +9,6 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.net.URLClassLoader;
 import java.util.Map;
 
@@ -44,9 +42,6 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String,Object> data) {
         TILRef.logInfo("Beginnig core injection with `{}`",data);
-        File modFile = (File)data.get("coremodLocation");
-        TILRef.logInfo("Found internal mod file `{}`",modFile);
-        CoreAPI.TIL_CANDIDATE = new MultiVersionModCandidate(modFile);
         URLClassLoader loader = Launch.classLoader;
         CoreAPI core = CoreAPI.INSTANCE;
         core.loadCoreModInfo(loader);

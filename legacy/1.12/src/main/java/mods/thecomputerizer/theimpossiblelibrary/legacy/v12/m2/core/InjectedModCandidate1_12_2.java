@@ -128,6 +128,9 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
                 data.parser.sendToTable(table,this);
                 table.addContainer(container);
                 table.registerPackage(this,pkgName);
+                Field dataField = ReflectionHelper.getField(ASMDataTable.class,"containerAnnotationData");
+                if(Objects.nonNull(ReflectionHelper.getFieldInstance(table,dataField)))
+                    ReflectionHelper.setFieldValue(table,dataField,null); // Fixes @SidedProxy checks breaking
                 return true;
             }
         }

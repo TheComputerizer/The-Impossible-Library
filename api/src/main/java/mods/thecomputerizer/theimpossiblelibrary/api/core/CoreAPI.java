@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 public abstract class CoreAPI {
 
     public static CoreAPI INSTANCE;
-    public static MultiVersionModCandidate TIL_CANDIDATE;
 
     protected final GameVersion version;
     protected final ModLoader modLoader;
@@ -92,7 +91,6 @@ public abstract class CoreAPI {
     protected abstract boolean modConstructed(String modid, Class<?> clazz);
 
     public void writeModContainers(URLClassLoader classLoader) {
-        this.modInfo.put(TIL_CANDIDATE,Collections.singleton(MultiVersionModInfo.API_INFO));
         getLoader().loadMods(this.modInfo,classLoader);
     }
 

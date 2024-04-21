@@ -13,7 +13,7 @@ fancyGradle {
     }
 }
 
-java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(8))
+java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(21))
 
 minecraft {
     mappings channel: 'stable', version: mappings_version
@@ -42,6 +42,14 @@ configurations {
     shade
     implementation.extendsFrom(shade)
     shadow.extendsFrom(shade)
+    shade.getIncoming().afterResolve {
+        files.collect { it.isDirectory() ? it : zipTree(it) } { exclude 'module-info.class' }
+    }
+    //shade.resolutionStrategy.dependencySubstitution {}
+    //shade.getIncoming().getFiles().forEach { it.isDirectory() ? it : zipTree(it) }
+    //shade.getIncoming().getFiles().asCollection().forEach { it.isDirectory() ? it : zipTree(it) } {
+        //exclude 'module-info.class'
+    //}
 }
 
 repositories {
@@ -100,6 +108,7 @@ shadowJar {
     relocate 'org.joml', "${shadow_package}.org.joml"
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
+    exclude 'module-info.class'
 }
 
 reobf {
@@ -125,6 +134,7 @@ processResources {
         include 'mcmod.info'
         expand replacements
     }
+    from(sourceSets.main.resources) exclude 'mcmod.info'
     //exclude '**/theimpossiblelibrary/test/**'
 }
 
@@ -141,11 +151,29 @@ jar {
     }
 }
 
-tasks.named("compileJava", JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.withType(JavaExec).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.withType(Test).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.named('compileJava',JavaCompile) {
     source(project(":api").sourceSets.main.allSource)
 }
 
-tasks.named("compileTestJava", JavaCompile) {
+tasks.named('compileTestJava',JavaCompile) {
     source(project(":api").sourceSets.test.allJava)
 }
 

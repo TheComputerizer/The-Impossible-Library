@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.TILClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
@@ -7,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -27,7 +29,11 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     public TILCommonEntryPoint() {
         TILDev.logInfo("TIL COMMON CONSTRUCTOR");
         this.versionHandler = CoreAPI.INSTANCE.getCommonVersionHandler();
-        if(CoreAPI.INSTANCE.getSide().isClient()) TILClientEntryPoint.getInstance();
+    }
+
+    @Override
+    public @Nullable ClientEntryPoint delegatedClientEntry() {
+        return TILClientEntryPoint.getInstance();
     }
 
     @Override
@@ -50,6 +56,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     public void onPreRegistration() {
         TILDev.logInfo("TIL COMMON PRE REGISTRATION");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
+        if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onPreRegistration();
     }
 
     @Override

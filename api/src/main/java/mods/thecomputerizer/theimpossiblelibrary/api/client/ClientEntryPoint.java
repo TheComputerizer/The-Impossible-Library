@@ -7,5 +7,5 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
  */
 public abstract class ClientEntryPoint extends CommonEntryPoint {
 
-    public void onClientSetup() {}
+    public abstract void onClientSetup();
 }

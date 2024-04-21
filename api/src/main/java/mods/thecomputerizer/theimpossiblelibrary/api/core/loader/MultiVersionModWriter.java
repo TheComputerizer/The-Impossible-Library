@@ -97,7 +97,8 @@ public class MultiVersionModWriter {
         Map<String,String[]> map = new HashMap<>();
         map.put("<init>",new String[]{"onConstructed","onPreRegistration"});
         map.put("commonSetup",new String[]{"onCommonSetup"});
-        map.put("dedicatedServerSetup",new String[]{"onDedicatedServerSetup"});
+        map.put("clientSetup",new String[]{"checkClientSetup"});
+        map.put("dedicatedServerSetup",new String[]{"checkDedicatedServerSetup"});
         map.put("interModEnqueue",new String[]{"onInterModEnqueue"});
         map.put("interModProcess",new String[]{"onInterModProcess"});
         map.put("loadComplete",new String[]{"onLoadComplete"});
@@ -113,7 +114,7 @@ public class MultiVersionModWriter {
         Map<String,String[]> map = new HashMap<>();
         map.put("<init>",new String[]{"onConstructed"});
         map.put("preInit",new String[]{"onPreRegistration"});
-        map.put("init",new String[]{"onCommonSetup"});
+        map.put("init",new String[]{"onCommonSetup","checkClientSetup","checkDedicatedServerSetup"});
         map.put("postInit",new String[]{"onInterModEnqueue","onInterModProcess"});
         map.put("loadComplete",new String[]{"onLoadComplete"});
         map.put("serverAboutToStart",new String[]{"onServerAboutToStart"});

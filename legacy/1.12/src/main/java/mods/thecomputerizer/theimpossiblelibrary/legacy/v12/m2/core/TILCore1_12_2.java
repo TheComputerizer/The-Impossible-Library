@@ -4,18 +4,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ModDiscoverer;
-import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.libraries.ModList;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Objects;
 
@@ -50,12 +44,12 @@ public class TILCore1_12_2 extends CoreAPI {
 
     @Override
     public CommonEntryPoint getClientVersionHandler() {
-        return this.side.isClient() ? new TILClientEntry1_12_2() : null;
+        return null;
     }
 
     @Override
     public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntry1_12_2();
+        return null;
     }
 
     @Override
@@ -77,7 +71,7 @@ public class TILCore1_12_2 extends CoreAPI {
                 if(container.getModId().equals(modid)) {
                     while(container instanceof InjectedModContainer) container = ((InjectedModContainer)container).wrappedContainer;
                     TILDev.logDebug("Found container `{}` for injecting",container.getClass());
-                    return InjectedModCandidate1_12_2.injectIntoTable(container,container.getClass().getPackage().getName(),table);
+                    return InjectedModCandidate1_12_2.injectIntoTable(container,clazz.getPackage().getName(),table);
                 }
             }
             TILRef.logFatal("Unable to find ModContainer instance to inject! The game will likely crash very soon.");

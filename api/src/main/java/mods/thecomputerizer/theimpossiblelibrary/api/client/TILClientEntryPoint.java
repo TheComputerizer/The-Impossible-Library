@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.Objects;
@@ -29,9 +30,14 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     private final ClientEntryPoint versionHandler;
 
     public TILClientEntryPoint() {
-        TILRef.logInfo("TIL CLIENT CONSTRUCTOR");
+        TILDev.logInfo("TIL CLIENT CONSTRUCTOR");
         CommonEntryPoint versionHandler = CoreAPI.INSTANCE.getClientVersionHandler();
         this.versionHandler = versionHandler instanceof ClientEntryPoint ? (ClientEntryPoint)versionHandler : null;
+    }
+
+    @Override
+    public ClientEntryPoint delegatedClientEntry() {
+        return this;
     }
 
     @Override
@@ -45,10 +51,15 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     }
 
     @Override
-    public void onClientSetup() { //TODO Abstract tests and keybind registration
-        TILRef.logInfo("TIL CLIENT SETUP");
-        EventHelper.initTILListeners(true,true);
-        //ClientTests1_12_2.initClientTests();
+    public void onPreRegistration() {
+        TILDev.logInfo("TIL CLIENT PRE REGISTRATION");
+        EventHelper.initTILListeners(true,TILDev.DEV);
+        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
+    }
+
+    @Override
+    public void onClientSetup() {
+        TILDev.logInfo("TIL CLIENT SETUP");
         KeyHelper.register(TEST_KEY);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }

@@ -40,8 +40,8 @@ public class MultiVersionModFinder {
     private static void addClasspathMods(Set<MultiVersionModCandidate> candidates, boolean isCore) {
         if(isCore) {
             TILRef.logDebug("Adding {} classpath coremods", TILDev.CLASSPATH_COREMODS.size());
-            for (String core : TILDev.CLASSPATH_COREMODS) {
-                MultiVersionModCandidate candidate = new MultiVersionModCandidate(null);
+            for(String core : TILDev.CLASSPATH_COREMODS) {
+                MultiVersionModCandidate candidate = new MultiVersionModCandidate(core);
                 TILRef.logDebug("Adding classpath coremod `{}`", core);
                 candidate.addCoreClasses(core);
                 candidates.add(candidate);
@@ -49,8 +49,8 @@ public class MultiVersionModFinder {
         }
         else {
             TILRef.logDebug("Adding {} classpath mods", TILDev.CLASSPATH_MODS.size());
-            for (String mod : TILDev.CLASSPATH_MODS) {
-                MultiVersionModCandidate candidate = new MultiVersionModCandidate(null);
+            for(String mod : TILDev.CLASSPATH_MODS) {
+                MultiVersionModCandidate candidate = new MultiVersionModCandidate(mod);
                 TILRef.logDebug("Adding classpath mod `{}`", mod);
                 candidate.addModClasses(mod);
                 candidates.add(candidate);

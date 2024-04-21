@@ -4,6 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -19,6 +20,10 @@ public class MultiVersionModCandidate {
     private final File file;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
+
+    public MultiVersionModCandidate(String classpath) {
+        this(new File(Misc.getLastSplit(classpath,'.')+".class"));
+    }
 
     public MultiVersionModCandidate(File file) {
         this.file = Objects.nonNull(file) ? file : new File(TILRef.MODID+"-"+TILRef.VERSION+".jar");

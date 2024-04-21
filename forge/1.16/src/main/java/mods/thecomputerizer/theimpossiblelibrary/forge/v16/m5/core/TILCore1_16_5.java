@@ -6,13 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoa
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.Client1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.TILClientEntry1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.Common1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.TILCommonEntry1_16_5;
 import net.minecraftforge.fml.loading.FMLLoader;
-
-import java.io.File;
-import java.util.Collection;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V16;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
@@ -31,12 +26,12 @@ public class TILCore1_16_5 extends CoreAPI {
 
     @Override
     public CommonEntryPoint getClientVersionHandler() {
-        return this.side.isClient() ? new TILClientEntry1_16_5() : null;
+        return null;
     }
 
     @Override
     public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntry1_16_5();
+        return null;
     }
 
     @Override
