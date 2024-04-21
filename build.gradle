@@ -16,11 +16,10 @@ dependencies {
 
 shadowJar {
     //relocate shaded dependencies to the shadow package to prevent library conflicts
-    relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
-    relocate 'org.joml', "${shadow_package}.org.joml"
+    [ 'com.moandjiezana.toml', 'org.joml' ].forEach { pkg -> { relocate pkg, "${shadow_package}.${pkg}" } }
     configurations = [project.configurations.shadow]
     setArchiveClassifier('')
-    exclude '**/*.java'
+    exclude 'module-info.*'
 }
 
 jar {
@@ -66,6 +65,6 @@ subprojects {
         compileOnly("org.projectlombok:lombok:${lombok_version}")
 
         implementation("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
-        implementation("org.joml:joml:${joml_version}")
+        implementation("org.joml:joml:${joml_version}") { transitive = false }
     }
 }

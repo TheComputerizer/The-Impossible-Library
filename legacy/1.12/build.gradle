@@ -1,5 +1,4 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'net.minecraftforge.gradle' version '6.+'
     id 'wtf.gofancy.fancygradle' version '1.1.+'
 }
@@ -38,20 +37,6 @@ minecraft {
     }
 }
 
-configurations {
-    shade
-    implementation.extendsFrom(shade)
-    shadow.extendsFrom(shade)
-    shade.getIncoming().afterResolve {
-        files.collect { it.isDirectory() ? it : zipTree(it) } { exclude 'module-info.class' }
-    }
-    //shade.resolutionStrategy.dependencySubstitution {}
-    //shade.getIncoming().getFiles().forEach { it.isDirectory() ? it : zipTree(it) }
-    //shade.getIncoming().getFiles().asCollection().forEach { it.isDirectory() ? it : zipTree(it) } {
-        //exclude 'module-info.class'
-    //}
-}
-
 repositories {
     maven {
         name = 'CurseMaven'
@@ -84,7 +69,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
     compileOnly(fg.deobf("curse.maven:orelib-307806:${orelib_version}"))
 
-    implementation project(':legacy')
+    implementation(project(':legacy'))
     //mod support dependencies
     implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))
     implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_version}:${bookshelf_version}"))
@@ -97,25 +82,6 @@ dependencies {
     implementation(fg.deobf("curse.maven:weather2-695602:${weather_version}"))
 
     runtimeOnly(fg.deobf("curse.maven:hei-557549:${hei_version}"))
-
-    shade("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
-    shade("org.joml:joml:${joml_version}")
-}
-
-shadowJar {
-    //relocate shaded dependencies to the shadow package to prevent library conflicts
-    relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
-    relocate 'org.joml', "${shadow_package}.org.joml"
-    configurations = [project.configurations.shadow]
-    setArchiveClassifier('')
-    exclude 'module-info.class'
-}
-
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
 }
 
 processResources {
@@ -189,7 +155,3 @@ tasks.withType(Jar).configureEach {
 tasks.withType(ProcessResources).configureEach {
     from(project(":api").sourceSets.main.resources)
 }
-
-tasks.assemble.dependsOn('shadowJar')
-tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')

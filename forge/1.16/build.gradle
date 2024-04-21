@@ -1,5 +1,4 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.+'
     id 'net.minecraftforge.gradle' version '6.+'
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
@@ -12,7 +11,8 @@ minecraft {
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
         def args = [
-                '-DtilDev=true'
+                '-DtilDev=true',
+                '-DtilClassPathMods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
         ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
@@ -34,12 +34,6 @@ minecraft {
             jvmArgs args
         }
     }
-}
-
-configurations {
-    shade
-    implementation.extendsFrom(shade)
-    shadow.extendsFrom(shade)
 }
 
 repositories {
@@ -84,7 +78,7 @@ dependencies {
 
     compileOnly("org.projectlombok:lombok:${lombok_version}")
 
-    implementation project(':api')
+    implementation(project(':api'))
     //mod support dependencies
     implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
     implementation(fg.deobf("curse.maven:blueskies-312918:${blueskies_version}"))
@@ -97,26 +91,7 @@ dependencies {
     implementation(fg.deobf("curse.maven:sereneseasons-291874:${seasons_version}"))
     implementation(fg.deobf("com.legacy:structure-gel:${minecraft_version}-${structuregel_version}"))
 
-
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}"))
-
-    shade("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
-    shade("org.joml:joml:${joml_version}")
-}
-
-shadowJar {
-    //relocate shaded dependencies to the shadow package to prevent library conflicts
-    relocate 'com.moandjiezana.toml', "${shadow_package}.com.moandjiezana.toml"
-    relocate 'org.joml', "${shadow_package}.org.joml"
-    configurations = [project.configurations.shadow]
-    setArchiveClassifier('')
-}
-
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
 }
 
 mixin {
@@ -175,7 +150,3 @@ tasks.withType(Jar).configureEach {
 tasks.withType(ProcessResources).configureEach {
     from(project(":api").sourceSets.main.resources)
 }
-
-tasks.assemble.dependsOn('shadowJar')
-tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')
