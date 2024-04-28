@@ -33,7 +33,7 @@ public abstract class CoreAPI {
         this.modInfo = new HashMap<>();
         this.injectedMods = new HashSet<>();
         INSTANCE = this;
-        TILRef.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
+        TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
     }
 

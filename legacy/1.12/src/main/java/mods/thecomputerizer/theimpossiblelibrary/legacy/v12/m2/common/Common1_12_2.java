@@ -30,33 +30,21 @@ import net.minecraft.util.text.Style;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.Objects;
+
 public class Common1_12_2 implements CommonAPI {
 
-    private final EventsAPI events;
-    private final ModHelperAPI modHelper;
-    private final NetworkAPI<SimpleNetworkWrapper,Side> network;
-    private final PosHelperAPI<BlockPos> posHelper;
-    private final RegistryHandlerAPI registry;
-    private final ResourceAPI resource;
-    private final MinecraftServerAPI<MinecraftServer> server;
-    private final SpawnHelperAPI<EntityLiving> spawnHelper;
-    private final TagAPI tag;
-    private final TextHelperAPI<Style> textHelper;
-    private final WrapperAPI wrapper;
-
-    public Common1_12_2() {
-        this.events = new Events1_12_2();
-        this.modHelper = new ModHelper1_12_2(CoreAPI.INSTANCE.getSide());
-        this.network = new Network1_12_2();
-        this.posHelper = new PosHelper1_12_2();
-        this.registry = new RegistryHandler1_12_2();
-        this.resource = new Resource1_12_2();
-        this.server = new MinecraftServer1_12_2();
-        this.spawnHelper = new SpawnHelper1_12_2();
-        this.tag = new Tag1_12_2();
-        this.textHelper = new TextHelper1_12_2();
-        this.wrapper = new Wrapper1_12_2();
-    }
+    private EventsAPI events;
+    private ModHelperAPI modHelper;
+    private NetworkAPI<SimpleNetworkWrapper,Side> network;
+    private PosHelperAPI<BlockPos> posHelper;
+    private RegistryHandlerAPI registry;
+    private ResourceAPI resource;
+    private MinecraftServerAPI<MinecraftServer> server;
+    private SpawnHelperAPI<EntityLiving> spawnHelper;
+    private TagAPI tag;
+    private TextHelperAPI<Style> textHelper;
+    private WrapperAPI wrapper;
 
 
     @Override
@@ -66,56 +54,67 @@ public class Common1_12_2 implements CommonAPI {
 
     @Override
     public EventsAPI getCommonEvents() {
+        if(Objects.isNull(this.events)) this.events = new Events1_12_2();
         return this.events;
     }
 
     @Override
     public ModHelperAPI getModHelper() {
+        if(Objects.isNull(this.modHelper)) this.modHelper = new ModHelper1_12_2(CoreAPI.INSTANCE.getSide());
         return this.modHelper;
     }
 
     @Override
     public NetworkAPI<SimpleNetworkWrapper,Side> getNetwork() {
+        if(Objects.isNull(this.network)) this.network = new Network1_12_2();
         return this.network;
     }
 
     @Override
-    public PosHelperAPI<?> getPosHelper() {
+    public PosHelperAPI<BlockPos> getPosHelper() {
+        if(Objects.isNull(this.posHelper)) this.posHelper = new PosHelper1_12_2();
         return this.posHelper;
     }
 
     @Override
     public RegistryHandlerAPI getRegistryHandler() {
+        if(Objects.isNull(this.registry)) this.registry = new RegistryHandler1_12_2();
         return this.registry;
     }
 
     @Override
     public ResourceAPI getResource() {
+        if(Objects.isNull(this.resource)) this.resource = new Resource1_12_2();
         return this.resource;
     }
 
     @Override
     public MinecraftServerAPI<MinecraftServer> getServer() {
+        if(Objects.isNull(this.server)) this.server = new MinecraftServer1_12_2();
         return this.server;
     }
 
     @Override
     public SpawnHelperAPI<EntityLiving> getSpawnHelper() {
+        if(Objects.isNull(this.spawnHelper)) this.spawnHelper = new SpawnHelper1_12_2();
         return this.spawnHelper;
     }
 
     @Override
     public TagAPI getTag() {
+        if(Objects.isNull(this.tag)) this.tag = new Tag1_12_2();
         return this.tag;
     }
 
     @Override
     public TextHelperAPI<Style> getTextHelper() {
+        if(Objects.isNull(this.textHelper)) this.textHelper = new TextHelper1_12_2();
         return this.textHelper;
     }
 
     @Override
     public WrapperAPI getWrapper() {
+        if(Objects.isNull(this.wrapper)) this.wrapper = new Wrapper1_12_2();
         return this.wrapper;
     }
 }

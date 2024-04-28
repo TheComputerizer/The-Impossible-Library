@@ -47,7 +47,7 @@ public class ClassHelper {
     @SneakyThrows
     @SuppressWarnings("DataFlowIssue")
     public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
-        return (Class<?>)CLASS_DEFINER.invokeExact(classLoader,classpath,bytes,0,bytes.length);
+        return (Class<?>)CLASS_DEFINER.invoke(classLoader,classpath,bytes,0,bytes.length);
     }
 
     public static String descriptor(Class<?> clazz) {
@@ -165,7 +165,7 @@ public class ClassHelper {
     @SneakyThrows
     public static void loadURL(URLClassLoader classLoader, URL url) {
         TILRef.logTrace("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
-        if(Objects.nonNull(URL_LOADER)) URL_LOADER.invokeExact(classLoader,url);
+        if(Objects.nonNull(URL_LOADER)) URL_LOADER.invoke(classLoader,url);
         else TILRef.logError("Cannot load URL `{}` since the URL_LOADER handle failed to intialize",url);
     }
 

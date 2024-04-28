@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -45,36 +47,29 @@ public class MultiVersionModCandidate {
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) && clazz.isAnnotationPresent(annotation);
     }
 
-    private @Nullable Class<?> findClass(Consumer<URL> sourceConsumer, String name) {
-        TILRef.logInfo("Attempting to retrieve loader class `{}`",name);
+    private @Nullable Class<?> findClass(URLClassLoader classLoader, String name) {
+        TILRef.logInfo("Attempting to add source for loader class `{}`",name);
         try {
-            return Class.forName(name);
-        } catch(ClassNotFoundException ex) {
-            TILRef.logDebug("Debug stacktrace",ex);
-        }
-        TILRef.logInfo("Attempting to add source `{}` for class `{}` that was not previously loaded",
-                this.file.getPath(),name);
-        try {
-            sourceConsumer.accept(this.file.toURI().toURL());
+            ClassHelper.loadURL(classLoader,this.file.toURI().toURL());
         } catch(MalformedURLException ex) {
             TILRef.logError("Error getting URL for source file `{}`!",this.file.getPath(),ex);
             return null;
         }
-        TILRef.logInfo("Successfully added source! Reattempting to retrieve loader class");
+        TILRef.logInfo("Successfully added source! Attempting to retrieve loader class");
         try {
-            return Class.forName(name);
-        } catch(Exception ex) {
-            TILRef.logError("Failed to find retrieve class `{}`",name,ex);
+            return Class.forName(name,true,classLoader);
+        } catch(ClassNotFoundException ex) {
+            TILRef.logDebug("Debug stacktrace",ex);
         }
         return null;
     }
 
     @SuppressWarnings("unchecked")
     public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,
-                                MultiVersionModCandidate candidate, Consumer<URL> sourceConsumer) {
+                                MultiVersionModCandidate candidate, URLClassLoader classLoader) {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
-            Class<?> clazz = findClass(sourceConsumer,name);
+            Class<?> clazz = findClass(classLoader,name);
             if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CoreEntryPoint>)clazz);
@@ -84,10 +79,10 @@ public class MultiVersionModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
-                               MultiVersionModCandidate candidate, Consumer<URL> sourceConsumer) {
+                               MultiVersionModCandidate candidate, URLClassLoader classLoader) {
         TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
         for(String name : this.modClassNames) {
-            Class<?> clazz = findClass(sourceConsumer,name);
+            Class<?> clazz = findClass(classLoader,name);
             if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CommonEntryPoint>)clazz);

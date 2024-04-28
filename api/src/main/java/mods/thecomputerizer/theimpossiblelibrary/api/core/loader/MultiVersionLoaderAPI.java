@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -72,7 +71,7 @@ public abstract class MultiVersionLoaderAPI {
         Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,true);
         for(MultiVersionModCandidate candidate : this.candidates)
-            candidate.findCoreClasses(classes,candidate,url -> ClassHelper.loadURL(loader,url));
+            candidate.findCoreClasses(classes,candidate,loader);
         TILRef.logInfo("{} coremods will attempt to be loaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
@@ -105,7 +104,7 @@ public abstract class MultiVersionLoaderAPI {
         Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,false);
         for(MultiVersionModCandidate candidate : this.candidates)
-            candidate.findModClasses(classes,candidate,url -> ClassHelper.loadURL(loader,url));
+            candidate.findModClasses(classes,candidate,loader);
         TILRef.logInfo("{} mods will attempt to be preloaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
