@@ -1,33 +1,20 @@
-plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.+'
-    id 'idea'
-    id 'java'
-    id 'java-library'
-}
+/**
+ * Build workflow guidelines
+ * api -> (fabric, forge, legacy, neoforge) -> (1.12, 1.16, 1.18, 1.19, 1.20, 1.21) -> (minor versions) -> main
+ * Shading and relocation must happen within each module to properly respect reobfuscation.
+ * Any necessary reobfuscations must happen in the version the deobfuscations happened in.
+ */
 
-java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(21))
-
-dependencies {
-    shadow(project(':legacy:legacy.1_12')) { transitive = false }
-    shadow(project(':forge:forge.1_16')) { transitive = false }
-    shadow("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
-    shadow("org.joml:joml:${joml_version}") { transitive = false }
-}
-
-shadowJar {
-    //relocate shaded dependencies to the shadow package to prevent library conflicts
-    [ 'com.moandjiezana.toml', 'org.joml' ].forEach { pkg -> { relocate pkg, "${shadow_package}.${pkg}" } }
-    configurations = [project.configurations.shadow]
-    setArchiveClassifier('')
-    exclude 'module-info.*'
-}
+apply from: rootProject.file('buildSrc\\shared.gradle')
+java.toolchain.languageVersion = JavaLanguageVersion.of(22)
 
 jar {
+    project(':legacy:legacy.1_12').afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
+    project(':forge:forge.1_16').afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
     manifest {
         attributes([
                 'FMLAT': 'theimpossiblelibrary_at.cfg',
                 'FMLCorePlugin': "mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.${mod_plugin}1_12_2",
-                'FMLCorePluginContainsFMLMod': true,
                 'ForceLoadAsMod': true,
                 'Implementation-Title': project.name,
                 'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
@@ -35,36 +22,5 @@ jar {
     }
 }
 
-tasks.assemble.dependsOn('shadowJar')
-
-allprojects {
-    group = project.base_package
-    version = project.mod_version
-
-    java {
-        archivesBaseName = project.mod_id
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8'
-    }
-}
-
-subprojects {
-    plugins.apply('idea')
-    plugins.apply('java')
-    plugins.apply('java-library')
-
-    dependencies {
-        annotationProcessor("org.projectlombok:lombok:${lombok_version}")
-
-        compileOnly("org.projectlombok:lombok:${lombok_version}")
-
-        implementation("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
-        implementation("org.joml:joml:${joml_version}") { transitive = false }
-    }
-}
+tasks.jar.dependsOn(':legacy:legacy.1_12:build')
+tasks.jar.dependsOn(':forge:forge.1_16:build')

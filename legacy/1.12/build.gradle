@@ -1,7 +1,43 @@
-plugins {
-    id 'net.minecraftforge.gradle' version '6.+'
-    id 'wtf.gofancy.fancygradle' version '1.1.+'
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                [ 'com.github.johnrengelman', 'com.google.code.findbugs', 'com.google.code.gson',
+                  'com.google.errorprone', 'com.google.guava', 'com.google.j2objc', 'com.machinezoo',
+                  'com.machinezoo.noexception', 'commons-codec', 'commons-io', 'commons-logging', 'de.siegmar',
+                  'it.unimi.dsi', 'net.sf.jopt-simple', 'org.apache.ant', 'org.apache.commons',
+                  'org.apache.httpcomponents', 'org.apache.logging.log4j', 'org.apache.maven', 'org.checkerframework',
+                  'org.codehaus.plexus', 'org.jdom', 'org.jetbrains', 'org.jetbrains.kotlin', 'org.ow2.asm',
+                  'org.slf4j', 'org.tukaani', 'org.vafer' ].forEach { includeGroup it }
+            }
+        }
+        maven {
+            name = 'Forge'
+            url = uri('https://maven.minecraftforge.net/')
+            content {
+                [ 'net.minecraftforge', 'net.minecraftforge.gradle' ].forEach{ includeGroup it }
+            }
+        }
+        maven {
+            name = 'Garden of Fancy'
+            url = uri('https://maven.gofancy.wtf/releases')
+            content {
+                includeGroup 'wtf.gofancy.fancygradle'
+            }
+        }
+    }
+    dependencies {
+        classpath('com.github.johnrengelman:shadow:8.+')
+        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
+        classpath('wtf.gofancy.fancygradle:wtf.gofancy.fancygradle.gradle.plugin:1.+')
+    }
 }
+
+apply from: rootProject.file('gradle\\java8-module.gradle')
+apply from: rootProject.file('gradle\\shadow-relocate.gradle')
+
+plugins.apply('net.minecraftforge.gradle')
+plugins.apply('wtf.gofancy.fancygradle')
 
 fancyGradle {
     patches {
@@ -11,8 +47,6 @@ fancyGradle {
         mergetool
     }
 }
-
-java.toolchain.getLanguageVersion().set(JavaLanguageVersion.of(21))
 
 minecraft {
     mappings channel: 'stable', version: mappings_version
@@ -61,15 +95,13 @@ dependencies {
 
     annotationProcessor("com.google.code.gson:gson:${gson_annotation}")
     annotationProcessor("com.google.guava:guava:${guava_annotation}")
-    annotationProcessor("org.ow2.asm:asm-debug-all:${asm_debug_annotation}")
-    annotationProcessor("org.projectlombok:lombok:${lombok_version}")
 
-    compileOnly("org.projectlombok:lombok:${lombok_version}")
     //TODO Figure out if this works in dev
     compileOnly(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
     compileOnly(fg.deobf("curse.maven:orelib-307806:${orelib_version}"))
 
-    implementation(project(':legacy'))
+    runtimeOnly(project(':api'))
+
     //mod support dependencies
     implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))
     implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_version}:${bookshelf_version}"))
@@ -84,24 +116,27 @@ dependencies {
     runtimeOnly(fg.deobf("curse.maven:hei-557549:${hei_version}"))
 }
 
-processResources {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    var replacements = [
-            'minecraft_version': minecraft_version,
-            'mod_author': mod_authors,
-            'mod_description': mod_description,
-            'mod_license': mod_license,
-            'mod_id': mod_id,
-            'mod_name': mod_name,
-            'mod_version': version
-    ]
-    inputs.properties replacements
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand replacements
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
     }
-    from(sourceSets.main.resources) exclude 'mcmod.info'
-    //exclude '**/theimpossiblelibrary/test/**'
+}
+
+processResources {
+    from(project(':legacy').processResources.outputs)
+}
+
+processTestResources {
+    from(project(':legacy').processTestResources.outputs)
+}
+
+compileJava {
+    source(project(':api').sourceSets.main.allJava)
+}
+
+compileTestJava {
+    source(project(':api').sourceSets.test.allJava)
 }
 
 jar {
@@ -117,41 +152,11 @@ jar {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
+shadowJar {
+    from(project(':legacy').jar.archiveFile.collect { zipTree(it) })
 }
 
-tasks.withType(JavaExec).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
-
-tasks.withType(Test).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
-
-tasks.named('compileJava',JavaCompile) {
-    source(project(":api").sourceSets.main.allSource)
-}
-
-tasks.named('compileTestJava',JavaCompile) {
-    source(project(":api").sourceSets.test.allJava)
-}
-
-tasks.withType(Javadoc).configureEach {
-    source(project(":api").sourceSets.main.allJava)
-}
-
-tasks.withType(Jar).configureEach {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(project(":api").sourceSets.main.allSource)
-}
-
-tasks.withType(ProcessResources).configureEach {
-    from(project(":api").sourceSets.main.resources)
-}
+tasks.assemble.dependsOn('shadowJar')
+tasks.shadowJar.dependsOn('reobfJar')
+tasks.jar.finalizedBy('reobfJar')
+tasks.jar.dependsOn(':legacy:build')

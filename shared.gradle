@@ -1,0 +1,37 @@
+plugins.apply('idea')
+plugins.apply('java')
+plugins.apply('java-base')
+plugins.apply('java-library')
+
+group = base_package
+version = mod_version
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor("org.projectlombok:lombok:${lombok_version}")
+
+    compileOnly("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
+    compileOnly("org.joml:joml:${joml_version}") { transitive = false }
+    compileOnly("org.projectlombok:lombok:${lombok_version}")
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    setArchiveBaseName(mod_id)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

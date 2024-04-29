@@ -29,11 +29,8 @@ import java.util.concurrent.ExecutionException;
 
 public class Minecraft1_12_2 implements MinecraftAPI {
 
-    private static Minecraft1_12_2 INSTANCE;
-
     public static Minecraft1_12_2 getInstance() {
-        if(Objects.isNull(INSTANCE)) INSTANCE = new Minecraft1_12_2(Minecraft.getMinecraft());
-        return INSTANCE;
+        return new Minecraft1_12_2(Minecraft.getMinecraft());
     }
 
     private final Minecraft mc;
