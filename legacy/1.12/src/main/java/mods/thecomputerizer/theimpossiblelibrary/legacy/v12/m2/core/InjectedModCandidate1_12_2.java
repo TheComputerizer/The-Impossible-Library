@@ -170,6 +170,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
             meta.modId = this.info.getModID();
             meta.name = this.info.getName();
             meta.version = this.info.getVersion();
+            meta.logoFile = "logo.png";
             return meta;
         }
     }
