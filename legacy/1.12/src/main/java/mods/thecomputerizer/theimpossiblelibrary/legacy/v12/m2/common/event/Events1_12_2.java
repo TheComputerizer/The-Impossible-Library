@@ -167,6 +167,7 @@ public class Events1_12_2 implements EventsAPI {
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEvent1_12_2());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEvent1_12_2());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEvent1_12_2());
+        REGISTER_COMMANDS.setConnector(new RegisterCommandsEvent1_12_2());
         REGISTER_GENERIC.setConnector(new RegistryEvent1_12_2());
         TICK_PLAYER.setConnector(new PlayerTickEvent1_12_2());
         TICK_WORLD.setConnector(new WorldTickEvent1_12_2());

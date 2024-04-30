@@ -156,7 +156,7 @@ shadowJar {
     from(project(':legacy').jar.archiveFile.collect { zipTree(it) })
 }
 
-tasks.assemble.dependsOn('shadowJar')
+tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
 tasks.jar.finalizedBy('reobfJar')
 tasks.jar.dependsOn(':legacy:build')

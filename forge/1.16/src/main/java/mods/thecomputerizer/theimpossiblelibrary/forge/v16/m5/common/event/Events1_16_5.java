@@ -174,6 +174,7 @@ public class Events1_16_5 implements EventsAPI {
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEvent1_16_5());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEvent1_16_5());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEvent1_16_5());
+        REGISTER_COMMANDS.setConnector(new RegisterCommandsEvent1_16_5());
         REGISTER_GENERIC.setConnector(new RegistryEvent1_16_5());
         TICK_PLAYER.setConnector(new PlayerTickEvent1_16_5());
         TICK_WORLD.setConnector(new WorldTickEvent1_16_5());

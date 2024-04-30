@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
@@ -18,6 +19,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.integration.ModHe
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.network.Network1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.RegistryHandler1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.Resource1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.CommandHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.MinecraftServer1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn.SpawnHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.Tag1_12_2;
@@ -34,6 +36,7 @@ import java.util.Objects;
 
 public class Common1_12_2 implements CommonAPI {
 
+    private CommandHelperAPI commands;
     private EventsAPI events;
     private ModHelperAPI modHelper;
     private NetworkAPI<SimpleNetworkWrapper,Side> network;
@@ -46,10 +49,10 @@ public class Common1_12_2 implements CommonAPI {
     private TextHelperAPI<Style> textHelper;
     private WrapperAPI wrapper;
 
-
     @Override
-    public void setUpBackendEntryPoint() {
-
+    public CommandHelperAPI getCommandHelper() {
+        if(Objects.isNull(this.commands)) this.commands = new CommandHelper1_12_2();
+        return this.commands;
     }
 
     @Override

@@ -11,10 +11,8 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.function.Consumer;
 
 @Getter
 public class MultiVersionModCandidate {

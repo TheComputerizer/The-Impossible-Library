@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
@@ -49,7 +50,7 @@ public class TILCore1_12_2 extends CoreAPI {
 
     @Override
     public CommonEntryPoint getCommonVersionHandler() {
-        return null;
+        return new TILCommonEntryPoint1_12_2();
     }
 
     @Override
@@ -70,7 +71,6 @@ public class TILCore1_12_2 extends CoreAPI {
             for(ModContainer container : Loader.instance().getActiveModList()) {
                 if(container.getModId().equals(modid)) {
                     while(container instanceof InjectedModContainer) container = ((InjectedModContainer)container).wrappedContainer;
-                    TILDev.logDebug("Found container `{}` for injecting",container.getClass());
                     return InjectedModCandidate1_12_2.injectIntoTable(container,clazz.getPackage().getName(),table);
                 }
             }

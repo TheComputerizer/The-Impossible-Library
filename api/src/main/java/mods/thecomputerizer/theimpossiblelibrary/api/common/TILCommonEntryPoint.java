@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.TILClientEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -55,6 +56,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     @Override
     public void onPreRegistration() {
         TILDev.logInfo("TIL COMMON PRE REGISTRATION");
+        EventHelper.initTILListeners(false,TILDev.DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
         if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onPreRegistration();
     }

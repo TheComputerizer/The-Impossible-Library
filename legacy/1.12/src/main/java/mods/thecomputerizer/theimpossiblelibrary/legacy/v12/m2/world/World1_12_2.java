@@ -159,7 +159,7 @@ public class World1_12_2 extends WorldAPI<World> {
 
     @Override
     public boolean isDaytime() {
-        return this.world.isDaytime();
+        return getTimeDay()<13000L;
     }
 
     @Override

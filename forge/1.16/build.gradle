@@ -111,7 +111,7 @@ dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
-    runtimeOnly(project(':api'))
+    implementation(project(':api'))
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
@@ -158,7 +158,7 @@ compileTestJava {
 jar {
     manifest {
         attributes([
-                'FMLAT': project.mod_accesstransformer,
+                'FMLAT': mod_accesstransformer,
                 'Implementation-Title': project.name,
                 'MixinConfigs': project.mod_mixin,
                 'TweakClass': project.mod_tweakclass,

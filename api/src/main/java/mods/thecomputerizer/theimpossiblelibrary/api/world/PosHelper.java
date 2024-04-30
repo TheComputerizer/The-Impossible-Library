@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import org.joml.Vector3d;
 import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
@@ -9,24 +10,29 @@ import java.util.Objects;
 
 public class PosHelper {
 
-    public static @Nullable PosHelperAPI<?> getAPI() {
+    public static PosHelperAPI<?> getAPI() {
         return TILRef.getCommonSubAPI(CommonAPI::getPosHelper);
     }
 
-    /**
-     * Returns BlockPosAPI#ZERO if there is an issue getting the api
-     */
     @SuppressWarnings("unchecked")
     public static <P> BlockPosAPI<?> getPos(P pos) {
-        PosHelperAPI<?> api = getAPI();
-        return Objects.nonNull(api) ? ((PosHelperAPI<P>)api).getPos(pos) : BlockPosAPI.ZERO;
+        return ((PosHelperAPI<P>)getAPI()).getPos(pos);
     }
 
-    /**
-     * Returns BlockPosAPI#ZERO if there is an issue getting the api
-     */
     public static BlockPosAPI<?> getPos(Vector3i vec) {
-        PosHelperAPI<?> api = getAPI();
-        return Objects.nonNull(api) ? api.getPos(vec) : BlockPosAPI.ZERO;
+        return getAPI().getPos(vec);
     }
+
+    public static BlockPosAPI<?> getPos(Vector3d vec) {
+        return getAPI().getPos(vec);
+    }
+
+    public static BlockPosAPI<?> getPos(double x, double y, double z) {
+        return getAPI().getPos(x,y,z);
+    }
+
+    public static BlockPosAPI<?> getPos(int x, int y, int z) {
+        return getAPI().getPos(x,y,z);
+    }
+
 }
