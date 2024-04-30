@@ -56,6 +56,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     @Override
     public void onPreRegistration() {
         TILDev.logInfo("TIL COMMON PRE REGISTRATION");
+        NetworkHandler.load();
         EventHelper.initTILListeners(false,TILDev.DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
         if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onPreRegistration();
@@ -64,7 +65,6 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     @Override
     public void onCommonSetup() {
         TILDev.logInfo("TIL COMMON SETUP");
-        NetworkHandler.load();
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onCommonSetup();
     }
 

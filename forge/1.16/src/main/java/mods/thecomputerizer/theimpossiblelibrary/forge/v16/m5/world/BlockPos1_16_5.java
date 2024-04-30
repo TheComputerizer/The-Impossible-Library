@@ -14,6 +14,14 @@ public class BlockPos1_16_5 extends BlockPosAPI<BlockPos> {
         this(new BlockPos(posVec.x,posVec.y,posVec.z),posVec);
     }
 
+    public BlockPos1_16_5(double x, double y, double z) {
+        this((int)x,(int)y,(int)z);
+    }
+
+    public BlockPos1_16_5(int x, int y, int z) {
+        this(new BlockPos(x,y,z),new Vector3i(x,y,z));
+    }
+
     private BlockPos1_16_5(BlockPos pos, Vector3i posVec) {
         super(pos,posVec);
     }

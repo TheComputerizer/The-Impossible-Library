@@ -111,7 +111,7 @@ dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
 
-    implementation(project(':api'))
+    runtimeOnly(project(':api'))
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
