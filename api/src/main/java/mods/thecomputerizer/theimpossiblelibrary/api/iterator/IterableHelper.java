@@ -1,10 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.Map.Entry;
 
+/**
+ * Helper methods, for instances of iterators, iterables, and maps
+ */
 public class IterableHelper {
 
     public static <E> int count(Iterable<E> itr) {
@@ -125,5 +131,13 @@ public class IterableHelper {
         }
         lengths[index] = Math.max(lengths[index],size);
         return lengths;
+    }
+    
+    public static <K,V> Entry<K,V> getMapEntry(K key, V val) {
+        return getMapEntry(key,val,false);
+    }
+
+    public static <K,V> Entry<K,V> getMapEntry(K key, V val, boolean mutable) {
+        return mutable ? new MutablePair<>(key,val) : new ImmutablePair<>(key,val);
     }
 }

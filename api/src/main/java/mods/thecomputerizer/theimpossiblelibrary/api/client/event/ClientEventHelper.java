@@ -30,7 +30,6 @@ public class ClientEventHelper {
         if(test) {
             TILDev.logInfo("Registering keybind test");
             EventHelper.addListener(KEY_INPUT,wrapper -> {
-                TILDev.logInfo("AAAAAA");
                 if(TEST_KEY.isDown()) ClientTests.runTests();
             });
         }

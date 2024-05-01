@@ -24,12 +24,12 @@ public class TileEntityRegistry1_12_2 extends RegistryAPI<Class<? extends TileEn
 
     @Override
     public Class<? extends TileEntity> getValue(ResourceLocationAPI<?> key) {
-        return TileEntity.REGISTRY.getObject(((ResourceLocation1_12_2)key).get());
+        return TileEntity.REGISTRY.getObject(((ResourceLocation1_12_2)key).getInstance());
     }
 
     @Override
     public boolean hasKey(ResourceLocationAPI<?> key) {
-        return TileEntity.REGISTRY.containsKey(((ResourceLocation1_12_2)key).get());
+        return TileEntity.REGISTRY.containsKey(((ResourceLocation1_12_2)key).getInstance());
     }
 
     @Override

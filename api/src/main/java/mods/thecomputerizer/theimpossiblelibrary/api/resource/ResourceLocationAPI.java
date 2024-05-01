@@ -1,29 +1,40 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.resource;
 
+import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
-public interface ResourceLocationAPI<R> {
+@Getter
+public abstract class ResourceLocationAPI<R> {
+    
+    protected final R instance;
+    
+    protected ResourceLocationAPI(R instance) {
+        this.instance = instance;
+    }
 
-    void bind(MinecraftAPI mc);
+    public abstract void bind(MinecraftAPI mc);
     /**
      * Returns the number of frames in a sprite sheet if a mcmeta file is detected
      */
-    int getSpriteFrames();
-    R get();
-    String getNamespace();
-    String getPath();
+    public abstract int getSpriteFrames();
+    public abstract String getNamespace();
+    public abstract String getPath();
+    
+    @Override
+    public String toString() {
+        return Objects.nonNull(this.instance) ? this.instance.toString() : null;
+    }
 
     /**
      * Specifically made for 1.12.2 integer dimension IDs so everything else doesn't have work around them
      */
-    final class Pseudo<V> implements ResourceLocationAPI<V> {
-
-        private final V value;
-
+    public static final class Pseudo<V> extends ResourceLocationAPI<V> {
+        
         public Pseudo(V value) {
-            this.value = value;
+            super(value);
         }
 
         @Override
@@ -35,11 +46,6 @@ public interface ResourceLocationAPI<R> {
         }
 
         @Override
-        public V get() {
-            return this.value;
-        }
-
-        @Override
         public String getNamespace() {
             return "";
         }
@@ -47,11 +53,6 @@ public interface ResourceLocationAPI<R> {
         @Override
         public String getPath() {
             return toString();
-        }
-
-        @Override
-        public String toString() {
-            return Objects.nonNull(this.value) ? this.value.toString() : null;
         }
     }
 }

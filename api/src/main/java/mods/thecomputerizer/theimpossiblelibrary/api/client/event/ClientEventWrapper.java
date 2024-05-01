@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.event;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 @Getter
 public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
@@ -27,6 +29,12 @@ public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
     @Override
     public boolean isServer() {
         return false;
+    }
+    
+    @Override
+    public void setEvent(E event) {
+        super.setEvent(event);
+        this.minecraft = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
     }
 
     public static final class ClientType<E extends ClientEventWrapper<?>> extends EventType<E> { //TODO Finish implementing these

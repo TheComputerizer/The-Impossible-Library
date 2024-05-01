@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import org.objectweb.asm.*;
@@ -190,7 +191,7 @@ public class ASMHelper {
     public static void writeByteCodeToFile(File file, byte[] bytes) {
         try(FileOutputStream stream = new FileOutputStream(file)) {
             stream.write(bytes);
-            TILRef.logError("Successfully dumped class bytes to `{}`",file);
+            TILDev.logTrace("Successfully dumped class bytes to `{}`", file);
         } catch(IOException ex) {
             TILRef.logError("Failed to print class file to `{}`",file);
         }

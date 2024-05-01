@@ -55,7 +55,7 @@ public class Render1_16_5 implements RenderAPI {
 
     @Override
     public void bindTexture(ResourceLocationAPI<?> location) {
-        Minecraft.getInstance().getTextureManager().bind((ResourceLocation)location.get());
+        Minecraft.getInstance().getTextureManager().bind((ResourceLocation)location.getInstance());
     }
 
     @Override
@@ -180,7 +180,7 @@ public class Render1_16_5 implements RenderAPI {
 
     @Override
     public RenderAPI init(Object context) {
-        setMatrix((MatrixStack)context);
+        setMatrix(context);
         return this;
     }
 

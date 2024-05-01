@@ -512,8 +512,8 @@ public class Holder {
      * Returns a list of all top-level table names.
      */
     public List<String> getTableNames() {
-        return this.indexedTypes.stream().filter(type -> type instanceof Table)
-                .map(type -> (Table)type).filter(Table::isTopLevel).map(Table::getName)
+        return this.indexedTypes.stream().filter(Table.class::isInstance)
+                .map(Table.class::cast).filter(Table::isTopLevel).map(Table::getName)
                 .distinct().collect(Collectors.toList());
     }
 
@@ -528,8 +528,8 @@ public class Holder {
      * Returns a list of top-level tables whose name matches the input.
      */
     public List<Table> getTablesByName(String name) {
-        return this.indexedTypes.stream().filter(type -> type instanceof Table)
-                .map(type -> (Table)type).filter(Table::isTopLevel).filter(table -> table.getName().matches(name))
+        return this.indexedTypes.stream().filter(Table.class::isInstance)
+                .map(Table.class::cast).filter(Table::isTopLevel).filter(table -> table.getName().matches(name))
                 .collect(Collectors.toList());
     }
 
@@ -614,7 +614,7 @@ public class Holder {
      */
     public List<Variable> getVars() {
         return this.indexedTypes.stream().filter(type -> type instanceof Variable && type.isTopLevel())
-                .map(type -> (Variable)type).collect(Collectors.toList());
+                .map(Variable.class::cast).collect(Collectors.toList());
     }
 
     /**

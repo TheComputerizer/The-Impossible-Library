@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import javax.annotation.Nullable;
@@ -67,12 +68,12 @@ public abstract class MultiVersionLoaderAPI {
     public void loadCoreMods(
             Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap, URLClassLoader loader) {
         File root = findCoreModRoot();
-        TILRef.logInfo("Finding multiversion coremods from root `{}`",root);
+        TILDev.logInfo("Finding multiversion coremods from root `{}`", root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,true);
         for(MultiVersionModCandidate candidate : this.candidates)
             candidate.findCoreClasses(classes,candidate,loader);
-        TILRef.logInfo("{} coremods will attempt to be loaded",classes.size());
+        TILRef.logDebug("{} coremods will attempt to be loaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
             if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
@@ -80,7 +81,7 @@ public abstract class MultiVersionLoaderAPI {
                 MultiVersionCoreModInfo info = loadCoreMod(clazz);
                 if(Objects.nonNull(info)) {
                     infoMap.get(candidate).add(info);
-                    TILRef.logInfo("Successfully loaded coremod `{}` using class `{}`",info.getName(),info.getEntryClass());
+                    TILDev.logInfo("Successfully loaded coremod `{}` using class `{}`",info.getName(),info.getEntryClass());
                 }
             }
         }
@@ -100,12 +101,12 @@ public abstract class MultiVersionLoaderAPI {
     public void loadMods(
             Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap,URLClassLoader loader) {
         File root = findModRoot();
-        TILRef.logInfo("Finding multiversion mods from root `{}`",root);
+        TILDev.logInfo("Finding multiversion mods from root `{}`",root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,false);
         for(MultiVersionModCandidate candidate : this.candidates)
             candidate.findModClasses(classes,candidate,loader);
-        TILRef.logInfo("{} mods will attempt to be preloaded",classes.size());
+        TILRef.logDebug("{} mods will attempt to be preloaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
             if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
@@ -113,7 +114,7 @@ public abstract class MultiVersionLoaderAPI {
                 MultiVersionModInfo info = loadMod(loader,root,clazz);
                 if(Objects.nonNull(info)) {
                     infoMap.get(candidate).add(info);
-                    TILRef.logInfo("Successfully preloaded mod `{}` using class `{}`",info.getName(),info.getEntryClass());
+                    TILDev.logInfo("Successfully preloaded mod `{}` using class `{}`",info.getName(),info.getEntryClass());
                 }
             }
         }

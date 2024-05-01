@@ -22,7 +22,7 @@ public class Resource1_12_2 implements ResourceAPI {
 
     @Override
     public InputStream stream(ResourceLocationAPI<?> location) {
-        ResourceLocation res = (ResourceLocation)location.get();
+        ResourceLocation res = (ResourceLocation)location.getInstance();
         try {
             return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
         } catch(Exception ex) {

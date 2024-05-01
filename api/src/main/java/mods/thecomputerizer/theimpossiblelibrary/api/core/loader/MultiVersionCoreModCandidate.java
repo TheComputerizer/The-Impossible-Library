@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import javax.annotation.Nullable;
@@ -40,13 +41,13 @@ public class MultiVersionCoreModCandidate {
     }
 
     private @Nullable Class<?> findClass(Consumer<URL> sourceConsumer, String name) {
-        TILRef.logInfo("Attempting to retrieve loader class `{}`",name);
+        TILDev.logInfo("Attempting to retrieve loader class `{}`", name);
         try {
             return Class.forName(name);
         } catch(ClassNotFoundException ex) {
-            TILRef.logDebug("Debug stacktrace",ex);
+            TILDev.logDebug("Debug stacktrace",ex);
         }
-        TILRef.logInfo("Attempting to add source `{}` for class `{}` that was not previously loaded",
+        TILDev.logInfo("Attempting to add source `{}` for class `{}` that was not previously loaded",
                 this.file.getPath(),name);
         try {
             sourceConsumer.accept(this.file.toURI().toURL());
@@ -54,7 +55,7 @@ public class MultiVersionCoreModCandidate {
             TILRef.logError("Error getting URL for source file `{}`!",this.file.getPath(),ex);
             return null;
         }
-        TILRef.logInfo("Successfully added source! Reattempting to retrieve loader class");
+        TILDev.logInfo("Successfully added source! Reattempting to retrieve loader class");
         try {
             return Class.forName(name);
         } catch(Exception ex) {
@@ -65,7 +66,7 @@ public class MultiVersionCoreModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findCoreClasses(Set<Class<? extends CoreEntryPoint>> classes, Consumer<URL> sourceConsumer) {
-        TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
+        TILRef.logDebug("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(sourceConsumer,name);
             if(canBeLoaded(clazz,CoreEntryPoint.class, MultiVersionCoreMod.class))
@@ -75,7 +76,7 @@ public class MultiVersionCoreModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findModClasses(Set<Class<? extends CommonEntryPoint>> classes, Consumer<URL> sourceConsumer) {
-        TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
+        TILRef.logDebug("Finding mod loader classes in file `{}`", this.file);
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(sourceConsumer,name);
             if(canBeLoaded(clazz,CommonEntryPoint.class, MultiVersionMod.class))

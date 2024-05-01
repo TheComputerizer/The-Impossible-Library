@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
@@ -63,14 +64,19 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         return this;
     }
 
-    public void decode(ByteBuf buf) {
+    public <DIR> void decode(ByteBuf buf) {
+        TILDev.logInfo("Decoding message API");
         this.messages = NetworkHelper.readCollection(buf,() -> {
-            Class<?> clazz = ReflectionHelper.findExtensibleClass(NetworkHelper.readString(buf),MessageAPI.class);
+            String name = NetworkHelper.readString(buf);
+            TILDev.logInfo("Finding MessageAPI extension of class {}",name);
+            Class<?> clazz = ReflectionHelper.findExtensibleClass(name,MessageAPI.class);
+            TILDev.logInfo("Found {}",clazz);
             return Objects.nonNull(clazz) ? this.info.decode(clazz,buf) : null;
         });
     }
 
     public void encode(ByteBuf buf) {
+        TILDev.logInfo("Encoding message API");
         if(Objects.isNull(this.messages)) this.messages = Collections.emptyList();
         NetworkHelper.writeDir(buf,this.info.getDirection());
         NetworkHelper.writeCollection(buf,this.messages,message -> {
@@ -81,6 +87,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
 
     @SuppressWarnings("unchecked")
     public @Nullable MessageWrapperAPI<PLAYER,CTX> handle(CTX context) {
+        TILDev.logInfo("Handling {} messages with context {}",this.messages.size(),context);
         List<MessageAPI<CTX>> replies = new ArrayList<>();
         for(MessageAPI<CTX> message : this.messages) {
             MessageAPI<CTX> reply = this.info.handle(message,context);

@@ -19,6 +19,10 @@ import java.util.Objects;
 public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     private static TILCommonEntryPoint INSTANCE;
+    
+    private static void devTrace(String msg, Object ... args) {
+        TILDev.logTrace("[TILCommonEntryPoint Trace]: "+msg,args);
+    }
 
     public static TILCommonEntryPoint getInstance() {
         if(Objects.isNull(INSTANCE)) INSTANCE = new TILCommonEntryPoint();
@@ -28,7 +32,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     private final CommonEntryPoint versionHandler;
 
     public TILCommonEntryPoint() {
-        TILDev.logInfo("TIL COMMON CONSTRUCTOR");
+        devTrace("constructor");
         this.versionHandler = CoreAPI.INSTANCE.getCommonVersionHandler();
     }
 
@@ -49,13 +53,13 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     @Override
     public void onConstructed() {
-        TILDev.logInfo("TIL COMMON CONSTRUCTED");
+        devTrace("onConstructed");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onConstructed();
     }
 
     @Override
     public void onPreRegistration() {
-        TILDev.logInfo("TIL COMMON PRE REGISTRATION");
+        devTrace("onPreRegistration");
         NetworkHandler.load();
         EventHelper.initTILListeners(false,TILDev.DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
@@ -64,61 +68,61 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     @Override
     public void onCommonSetup() {
-        TILDev.logInfo("TIL COMMON SETUP");
+        devTrace("onCommonSetup");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onCommonSetup();
     }
 
     @Override
     public void onDedicatedServerSetup() {
-        TILDev.logInfo("TIL DEDICATED SERVER SETUP");
+        devTrace("onDedicatedServerSetup");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onDedicatedServerSetup();
     }
 
     @Override
     public void onInterModEnqueue() {
-        TILDev.logInfo("TIL INTER MOD ENQUEUE");
+        devTrace("onInterModEnqueue");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onInterModEnqueue();
     }
 
     @Override
     public void onInterModProcess() {
-        TILDev.logInfo("TIL INTER MOD PROCESS");
+        devTrace("onInterModProcess");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onInterModProcess();
     }
 
     @Override
     public void onLoadComplete() {
-        TILDev.logInfo("TIL LOAD COMPLETE");
+        devTrace("onLoadComplete");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onLoadComplete();
     }
 
     @Override
     public void onServerAboutToStart() {
-        TILDev.logInfo("TIL SERVER ABOUT TO START");
+        devTrace("onServerAboutToStart");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerAboutToStart();
     }
 
     @Override
     public void onServerStarting() {
-        TILDev.logInfo("TIL SERVER STARTING");
+        devTrace("onServerStarting");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStarting();
     }
 
     @Override
     public void onServerStarted() {
-        TILDev.logInfo("TIL SERVER STARTED");
+        devTrace("onServerStarted");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStarted();
     }
 
     @Override
     public void onServerStopping() {
-        TILDev.logInfo("TIL SERVER STOPPING");
+        devTrace("onServerStopping");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStopping();
     }
 
     @Override
     public void onServerStopped() {
-        TILDev.logInfo("TIL SERVER STOPPED");
+        devTrace("onServerStopped");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStopped();
     }
 }

@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.network;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -13,6 +15,7 @@ public class MessageWrapper1_12_2 extends MessageWrapperAPI<EntityPlayerMP,Messa
 
     @Override
     public void fromBytes(ByteBuf buf) {
+        this.info = NetworkHandler.getDirectionInfo(NetworkHelper.readDir(buf));
         decode(buf);
     }
 

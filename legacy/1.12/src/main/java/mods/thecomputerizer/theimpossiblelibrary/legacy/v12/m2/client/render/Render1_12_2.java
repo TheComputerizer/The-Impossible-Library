@@ -45,7 +45,7 @@ public class Render1_12_2 implements RenderAPI {
 
     @Override
     public void bindTexture(ResourceLocationAPI<?> location) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture((ResourceLocation)location.get());
+        Minecraft.getMinecraft().getTextureManager().bindTexture((ResourceLocation)location.getInstance());
     }
 
     @Override

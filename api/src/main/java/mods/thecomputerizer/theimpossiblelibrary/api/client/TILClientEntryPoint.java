@@ -17,6 +17,10 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.client.test.ClientTe
 public final class TILClientEntryPoint extends ClientEntryPoint {
 
     private static TILClientEntryPoint INSTANCE;
+    
+    private static void devTrace(String msg, Object ... args) {
+        TILDev.logTrace("[TILClientEntryPoint Trace]: "+msg,args);
+    }
 
     public static TILClientEntryPoint getInstance() {
         if(Objects.isNull(INSTANCE)) INSTANCE = new TILClientEntryPoint();
@@ -24,13 +28,14 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     }
 
     public static void init() {
+        devTrace("init");
         if(Objects.nonNull(INSTANCE)) INSTANCE.onClientSetup();
     }
 
     private final ClientEntryPoint versionHandler;
 
     public TILClientEntryPoint() {
-        TILDev.logInfo("TIL CLIENT CONSTRUCTOR");
+        devTrace("constructor");
         CommonEntryPoint versionHandler = CoreAPI.INSTANCE.getClientVersionHandler();
         this.versionHandler = versionHandler instanceof ClientEntryPoint ? (ClientEntryPoint)versionHandler : null;
     }
@@ -52,14 +57,14 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
 
     @Override
     public void onPreRegistration() {
-        TILDev.logInfo("TIL CLIENT PRE REGISTRATION");
+        devTrace("onPreRegistration");
         EventHelper.initTILListeners(true,TILDev.DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
     }
 
     @Override
     public void onClientSetup() {
-        TILDev.logInfo("TIL CLIENT SETUP");
+        devTrace("onClientSetup");
         KeyHelper.register(TEST_KEY);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }

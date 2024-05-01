@@ -102,7 +102,7 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @Override
     public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network))
-            this.network = NetworkRegistry.ChannelBuilder.named((ResourceLocation)TILRef.res("main_network").get())
+            this.network = NetworkRegistry.ChannelBuilder.named((ResourceLocation)TILRef.res("main_network").getInstance())
                 .clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
                 .networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
         return this.network;

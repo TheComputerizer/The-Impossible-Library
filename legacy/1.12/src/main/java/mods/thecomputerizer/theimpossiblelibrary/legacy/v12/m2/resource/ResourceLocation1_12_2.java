@@ -5,17 +5,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
-public class ResourceLocation1_12_2 implements ResourceLocationAPI<ResourceLocation> {
+public class ResourceLocation1_12_2 extends ResourceLocationAPI<ResourceLocation> {
 
-    private final ResourceLocation resource;
-
-    public ResourceLocation1_12_2(ResourceLocation resource) {
-        this.resource = resource;
+    public ResourceLocation1_12_2(ResourceLocation instance) {
+        super(instance);
     }
 
     @Override
     public void bind(MinecraftAPI mc) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(this.resource);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(this.instance);
     }
 
     @Override
@@ -24,17 +22,12 @@ public class ResourceLocation1_12_2 implements ResourceLocationAPI<ResourceLocat
     }
 
     @Override
-    public ResourceLocation get() {
-        return this.resource;
-    }
-
-    @Override
     public String getNamespace() {
-        return this.resource.getNamespace();
+        return this.instance.getNamespace();
     }
 
     @Override
     public String getPath() {
-        return this.resource.getPath();
+        return this.instance.getPath();
     }
 }

@@ -112,13 +112,13 @@ public class Minecraft1_16_5 implements MinecraftAPI {
 
     @Override
     public <S> void setScreen(@Nullable S screen) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).get());
+        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).getInstance());
         //else this.mc.displayGuiScreen(null);
     }
 
     @Override
     public void setScreenAPI(@Nullable ScreenAPI<?> screen) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).get());
+        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).getInstance());
         //else this.mc.displayGuiScreen(null);
     }
 }

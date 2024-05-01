@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
@@ -41,7 +42,7 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String,Object> data) {
-        TILRef.logInfo("Beginnig core injection with `{}`",data);
+        TILDev.logDebug("Beginning core injection with coremod data: {}", data);
         URLClassLoader loader = Launch.classLoader;
         CoreAPI core = CoreAPI.INSTANCE;
         core.loadCoreModInfo(loader);

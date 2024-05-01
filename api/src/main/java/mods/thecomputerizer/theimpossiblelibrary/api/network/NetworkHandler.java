@@ -8,13 +8,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class NetworkHandler {
 
     private static final Mappable<?,MessageDirectionInfo<?>> DIRECTION_INFO = Mappable.makeSynchronized(HashMap::new);
-    private static final Mappable<Class<? extends MessageAPI<?>>,MessageInfo<?>> CLASS_INFO = Mappable.makeSynchronized(HashMap::new);
 
     @SuppressWarnings("unchecked")
     public static <DIR> @Nullable MessageDirectionInfo<DIR> getDirectionInfo(DIR dir) {
@@ -23,12 +23,9 @@ public class NetworkHandler {
 
     @SuppressWarnings("unchecked")
     private static <DIR> MessageDirectionInfo<?> getOrInitDirectionInfo(DIR dir) {
-        return ((Mappable<DIR,MessageDirectionInfo<?>>)DIRECTION_INFO).putIfAbsent(dir,new MessageDirectionInfo<>(dir));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <M extends MessageAPI<?>> @Nullable MessageInfo<M> getMessageInfo(M message) {
-        return (MessageInfo<M>)CLASS_INFO.get(message.getClass()); //TODO Make this depend on the direction
+        Mappable<DIR,MessageDirectionInfo<?>> map = (Mappable<DIR,MessageDirectionInfo<?>>)DIRECTION_INFO;
+        map.putIfAbsent(dir,new MessageDirectionInfo<>(dir));
+        return map.get(dir);
     }
 
     /**
@@ -106,7 +103,7 @@ public class NetworkHandler {
      */
     private static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, Function<ByteBuf,M> decoder, DIR dir) {
         MessageDirectionInfo<?> dirInfo = getOrInitDirectionInfo(dir);
-        CLASS_INFO.put(clazz,new MessageInfo<>(clazz,dirInfo,decoder));
+        dirInfo.getInfoSet().add(new MessageInfo<>(clazz,dirInfo,decoder));
     }
 
     /**
@@ -114,7 +111,7 @@ public class NetworkHandler {
      */
     public static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, MessageHandlerAPI handler, DIR dir) {
         MessageDirectionInfo<?> dirInfo = getOrInitDirectionInfo(dir);
-        CLASS_INFO.put(clazz,new MessageInfo<>(clazz,dirInfo,handler));
+        dirInfo.getInfoSet().add(new MessageInfo<>(clazz,dirInfo,handler));
     }
 
     /**

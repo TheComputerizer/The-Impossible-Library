@@ -22,12 +22,12 @@ public class Registry1_16_5<V extends IForgeRegistryEntry<V>> extends RegistryAP
 
     @Override
     public V getValue(ResourceLocationAPI<?> key) {
-        return this.forgeRegistry.getValue(((ResourceLocation1_16_5)key).get());
+        return this.forgeRegistry.getValue(((ResourceLocation1_16_5)key).getInstance());
     }
 
     @Override
     public boolean hasKey(ResourceLocationAPI<?> key) {
-        return this.forgeRegistry.containsKey(((ResourceLocation1_16_5)key).get());
+        return this.forgeRegistry.containsKey(((ResourceLocation1_16_5)key).getInstance());
     }
 
     @Override

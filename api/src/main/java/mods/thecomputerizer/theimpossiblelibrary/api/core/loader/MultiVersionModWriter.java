@@ -221,7 +221,7 @@ public class MultiVersionModWriter {
         try {
             byte[] bytes = ASMHelper.finishWriting(writer,type,TILDev.DEV);
             String classpath = ClassPrinter.getClassPath(type.getInternalName());
-            TILRef.logInfo("Successfully wrote mod entrypoint bytecode for `{}` to `{}`",info.getModID(),classpath);
+            TILRef.logDebug("Wrote bytecode for `{}` entrypoint to `{}`",info.getModID(),classpath);
             return new ImmutablePair<>(classpath,bytes);
 
         } catch(Throwable ex) {
