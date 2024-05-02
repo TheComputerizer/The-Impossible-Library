@@ -23,7 +23,7 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
         return false;
     }
 
-    public static final class CommonType<E extends CommonEventWrapper<?>> extends EventType<E> { //TODO Finish implementing these
+    public static final class CommonType<E extends CommonEventWrapper<?>> extends EventType<E> {
 
         public static CommonType<AttachCapabilitiesEventWrapper<?>> ATTACH_CAPABILITIES = new CommonType<>(false,false);
         public static CommonType<BlockBreakEventWrapper<?>> BLOCK_BREAK = new CommonType<>(true,false);

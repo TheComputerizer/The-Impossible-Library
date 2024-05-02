@@ -55,6 +55,12 @@ public class Misc {
     public static <K> void consumeNullable(@Nullable K thing, Consumer<K> conumer) {
         if(Objects.nonNull(thing)) conumer.accept(thing);
     }
+    
+    public static <T> boolean equalsAny(T thing, T ... others) {
+        for(T other : others)
+            if(thing.equals(other)) return true;
+        return false;
+    }
 
     /**
      * Replaces file paths in a list that point to folders with a list of all files in that folder. File paths that

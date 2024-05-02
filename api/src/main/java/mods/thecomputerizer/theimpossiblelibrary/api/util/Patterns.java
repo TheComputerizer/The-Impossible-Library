@@ -17,6 +17,14 @@ public class Patterns {
     public static Matcher getMatcher(CharSequence str, String regex, int patternFlags) {
         return Pattern.compile(regex,patternFlags).matcher(str);
     }
+    
+    public static boolean isEncapsulatedBy(String str, char c) {
+        return StringUtils.isNotEmpty(str) && str.charAt(0)==c && str.charAt(str.length()-1)==c;
+    }
+    
+    public static boolean isEncapsulatedBy(String str, String cap) {
+        return StringUtils.isNotEmpty(str) && str.startsWith(cap) && str.endsWith(cap);
+    }
 
     public static boolean matchesAny(String original, String ... matches) {
         return matchesAny(original,false, Arrays.asList(matches));

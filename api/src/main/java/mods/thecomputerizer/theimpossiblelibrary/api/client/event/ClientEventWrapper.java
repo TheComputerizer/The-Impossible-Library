@@ -37,7 +37,7 @@ public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
         this.minecraft = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
     }
 
-    public static final class ClientType<E extends ClientEventWrapper<?>> extends EventType<E> { //TODO Finish implementing these
+    public static final class ClientType<E extends ClientEventWrapper<?>> extends EventType<E> {
 
         public static ClientType<CameraSetupEventWrapper<?>> CAMERA_SETUP = new ClientType<>(false,false);
         public static ClientType<InputClickEventWrapper<?>> CLICK_INPUT = new ClientType<>(true,false);
