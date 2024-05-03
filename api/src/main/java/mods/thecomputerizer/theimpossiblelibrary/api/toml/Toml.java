@@ -20,8 +20,10 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +160,16 @@ import java.util.Objects;
         return toml;
     }
     
+    public Collection<TomlEntry<?>> getAllEntries() {
+        return this.entries.values();
+    }
+    
+    public List<Toml> getAllTables() {
+        List<Toml> tables = new ArrayList<>();
+        for(Toml[] tomls : this.tables.values()) tables.addAll(Arrays.asList(tomls));
+        return Collections.unmodifiableList(tables);
+    }
+    
     public TomlEntry<?> getEntry(String name) {
         return this.entries.getOrDefault(name,null);
     }
@@ -196,6 +208,10 @@ import java.util.Objects;
         Map<String,Object> map =  new LinkedHashMap<>(); //Preserve insertion order
         for(TomlEntry<?> entry : this.entries.values()) map.put(entry.key,entry.value);
         return map;
+    }
+    
+    public <V> V getOrSetValue(String key, V def) {
+        return hasEntry(key) ? getValue(key) : addEntry(key,def).value;
     }
     
     public Toml getTable(String name) {
@@ -237,7 +253,7 @@ import java.util.Objects;
         return Objects.nonNull(entry) ? entry.value : defVal;
     }
     
-    public float getValueInt(String name, int defVal) {
+    public int getValueInt(String name, int defVal) {
         TomlEntry<Integer> entry = getEntryInt(name);
         return Objects.nonNull(entry) ? entry.value : defVal;
     }
@@ -260,6 +276,14 @@ import java.util.Objects;
     public String getValueString(String name) {
         TomlEntry<String> entry = getEntryString(name);
         return Objects.nonNull(entry) ? entry.value : null;
+    }
+    
+    public boolean hasEntry(String name) {
+        return this.entries.containsKey(name);
+    }
+    
+    public boolean hasTable(String name) {
+        return this.tables.containsKey(name);
     }
     
     /**
