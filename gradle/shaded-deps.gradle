@@ -5,12 +5,11 @@ configurations {
 repositories {
     mavenCentral() {
         content {
-            [ 'com.moandjiezana.toml', 'org.joml' ].forEach { includeGroup it }
+            includeGroup 'org.joml'
         }
     }
 }
 
 dependencies {
-    shaded("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
     shaded("org.joml:joml:${joml_version}") { transitive = false }
 }

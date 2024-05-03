@@ -28,7 +28,7 @@ public class AnnotationPrinter extends AnnotationVisitor implements BytecodePrin
         if(value instanceof BytecodePrinter) {
             List<String> lines = new ArrayList<>();
             ((BytecodePrinter)value).toLines(lines,tabs);
-            return TextHelper.listToString(lines,"");
+            return TextHelper.fromIterable(lines, "");
         }
         return value instanceof String ? "\""+value+"\"" : value.toString();
     }

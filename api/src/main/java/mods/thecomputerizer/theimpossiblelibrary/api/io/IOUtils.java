@@ -9,7 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -113,5 +117,12 @@ public class IOUtils {
                 for(int k=0; k<indices[i][j].length; k++)
                     mapped[i][j][k] = instances[indices[i][j][k]];
         return mapped;
+    }
+    
+    public static String streamToString(InputStream stream) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        for(int length;(length = stream.read(buffer))!=-1;) output.write(buffer,0,length);
+        return output.toString(StandardCharsets.UTF_8.name());
     }
 }

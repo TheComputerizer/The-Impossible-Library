@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.bettertoml;
+package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;

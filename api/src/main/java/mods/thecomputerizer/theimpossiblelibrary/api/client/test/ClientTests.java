@@ -11,11 +11,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.*;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.P;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.R;
 
 public class ClientTests {
@@ -32,7 +33,7 @@ public class ClientTests {
     private static void renderableTest() {
         try {
             TILDev.logWarn("RENDERABLE TEST");
-            Holder transitions = TomlHelper.readFully(ResourceHelper.getResourceStream(TILRef.res("test/transitions.toml")));
+            Toml transitions = Toml.readStream(ResourceHelper.getResourceStream(TILRef.res("test/transitions.toml")));
             renderableTitleTest(transitions);
             renderableImageTest(transitions);
         } catch(Exception ex) {
@@ -40,16 +41,15 @@ public class ClientTests {
         }
     }
 
-    private static void renderableTitleTest(Holder transitions) {
+    private static void renderableTitleTest(Toml transitions) {
         TILDev.logWarn("TITLE TEST");
-        RenderHelper.addRenderable(new RenderableText(transitions.getTableByName("title").getVarMap()));
+        RenderHelper.addRenderable(new RenderableText(transitions.getTable("title").getEntryValuesAsMap()));
     }
 
-    private static void renderableImageTest(Holder transitions) {
+    private static void renderableImageTest(Toml transitions) {
         TILDev.logWarn("IMAGE TEST");
-        Table image = transitions.getTableByName("image");
-        RenderHelper.addRenderable(RenderHelper.initPNG(TILRef.res(image.getValOrDefault("name","missing")),
-                image.getVarMap()));
+        Toml image = transitions.getTable("image");
+        RenderHelper.addRenderable(RenderHelper.initPNG(TILRef.res(image.getValueString("name")),image.getEntryValuesAsMap()));
     }
 
     private static void guiTest() {
@@ -60,28 +60,28 @@ public class ClientTests {
     private static void tomlTest() {
         //test smart toml reading and printing
         try {
-            Holder testHolder = TomlHelper.readFully(ResourceHelper.getResourceStream(
-                    TILRef.res("test/thing.toml")));
-            testHolder.removeTable(testHolder.getTableByName("hello").getTableByName("next"),"furtherbeyond",-1);
-            testTableCreationAndOrdering(testHolder,testHolder.getTableByName("hello"),testHolder.getTableByName("hello").getTableByName("next"));
-            testHolder.addVariable(testHolder.getTableByName("hello").getTableByName("next"),"lol",3.7);
-            FileHelper.writeLines(new File(TILRef.DATA_DIRECTORY, "test2.toml"),
-                    testHolder.toLines(),false);
+            Toml testHolder = Toml.readStream(ResourceHelper.getResourceStream(TILRef.res("test/thing.toml")));
+            testHolder.getTable("hello").getTable("next").removeTables("furtherbeyond");
+            testTableCreationAndOrdering(testHolder,testHolder.getTable("hello"),testHolder.getTable("hello").getTable("next"));
+            testHolder.getTable("hello").getTable("next").addEntry("lol",3.7);
+            List<String> lines = new ArrayList<>();
+            testHolder.write(lines,0);
+            FileHelper.writeLines(new File(TILRef.DATA_DIRECTORY,"test2.toml"),lines,false);
         } catch(Exception ex) {
             TILRef.logError("Toml test failed!",ex);
         }
     }
 
-    private static void testTableCreationAndOrdering(Holder testHolder, Table testTable, Table referenceTable) {
-        Table song = testHolder.addTable(testTable,"song");
+    private static void testTableCreationAndOrdering(Toml testHolder, Toml testTable, Toml referenceTable)
+            throws TomlWritingException {
+        Toml song = testHolder.addTable("song",true);
         Map<String,String> testMap = new HashMap<>();
-        testMap.put("first","test1");
-        testMap.put("second","test2");
-        testMap.put("third","test3");
-        testMap.put("fifth","test5");
-        List<Variable> vars = testHolder.addVariableMap(song,testMap);
-        testHolder.addComment(song,Arrays.asList("c1","c2","c3"),new IndexFinder(song,vars.get(3)));
-        testHolder.addVariable(song,"fourth","test44",new IndexFinder(song,vars.get(3)));
+        testHolder.addEntry("first","test1");
+        testHolder.addEntry("second","test2");
+        testHolder.addEntry("third","test3");
+        testHolder.addEntry("fifth","test5");
+        //testHolder.addComment(song,Arrays.asList("c1","c2","c3"),new IndexFinder(song,vars.get(3)));
+        //testHolder.addEntry(song,"fourth","test44",new IndexFinder(song,vars.get(3)));
     }
 
     private static class GuiTests {

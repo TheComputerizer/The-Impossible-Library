@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.text;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -87,27 +88,37 @@ public class TextHelper {
     }
 
     /**
-     * Converts a list or array of strings to a single string with newline characters with an optional limiter. The limit
+     * Converts an iterable of strings to a single string with newline characters with an optional limiter. The limit
      * input determines the maximum number of elements that can be read in before it gets cut off. Setting the limit to 0
      * or below will disable it. Returns null if the input list is empty or null. If an element in the input list is
      * empty, null, or has only whitespace it will be replaced with a newline character or be removed if it is the final
      * element.
      */
-    public static String listToString(Collection<String> list) {
-        return arrayToString(0,System.lineSeparator(),list.toArray(new Object[0]));
+    public static String fromIterable(Iterable<String> itr) {
+        return fromIterable(itr,0,System.lineSeparator());
     }
 
-    public static String listToString(Collection<String> list, int limit) {
-        return arrayToString(limit,System.lineSeparator(),list.toArray(new Object[0]));
+    public static String fromIterable(Iterable<String> itr, int limit) {
+        return fromIterable(itr,limit,System.lineSeparator());
     }
 
-    public static String listToString(Collection<String> list, String split) {
-        return arrayToString(0,split,list.toArray(new Object[0]));
+    public static String fromIterable(Iterable<String> itr, String split) {
+        return fromIterable(itr,0,split);
     }
 
-    public static String listToString(Collection<String> list, int limit, String split) {
-        if(Objects.isNull(list) || list.isEmpty()) return null;
-        return arrayToString(limit,split,list.toArray(new Object[0]));
+    public static String fromIterable(Iterable<String> itr, int limit, String split) {
+        if(Objects.isNull(itr)) return null;
+        int count = 0;
+        StringJoiner joiner = new StringJoiner(split);
+        for(String str : itr) {
+            joiner.add(str);
+            if(limit>0) {
+                count++;
+                if(count>=limit) break;
+            }
+        }
+        String val = joiner.toString();
+        return StringUtils.isNotEmpty(val) ? val : null;
     }
 
     /**

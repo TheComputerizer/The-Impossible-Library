@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.bettertoml;
+package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 
@@ -71,7 +71,7 @@ public class TomlToken {
         }
         
         @Override void step(char c, int index) {
-        
+            this.builder.append(c);
         }
     }
     
@@ -142,8 +142,13 @@ public class TomlToken {
         char encapculated = '\0';
         boolean built;
         
-        @Override boolean isEndingCharacter(char c, int index) {
-            return this.encapculated=='\0' && c=='=';
+        @Override boolean isEndingCharacter(char c, int index) throws TomlParsingException {
+            if(this.encapculated=='\0' && c=='=') {
+                TomlToken.this.reader.endKey(this.builder.toString(),index);
+                this.builder = new StringBuilder();
+                return true;
+            }
+            return false;
         }
         
         @Override boolean isStartingCharacter(char c, int index) {
@@ -158,10 +163,6 @@ public class TomlToken {
             if(Misc.equalsAny(c,' ','\t')) return;
             if(c=='\n') throw new TomlParsingException("Unassigned key -> "+TomlToken.this.lineBuilder.toString(),index);
             if(c==this.encapculated) this.encapculated = '\0';
-            if(isEndingCharacter(c,index)) {
-                TomlToken.this.reader.endKey(this.builder.toString(),index);
-                this.builder = new StringBuilder();
-            }
         }
     }
     
@@ -196,6 +197,9 @@ public class TomlToken {
                 }
             }
             if(end) {
+                TomlParser.parseValue(TomlToken.this.reader,this.builder.toString(),
+                                      TomlToken.this.lineBuilder.toString(),index);
+                this.builder = new StringBuilder();
                 if(this.type==ValueType.ARRAY) TomlToken.this.reader.endArray(index);
                 this.type = null;
             }
@@ -234,7 +238,7 @@ public class TomlToken {
         }
         
         @Override void step(char c, int index) throws TomlParsingException {
-            if(isEndingCharacter(c,index) || (this.type==ValueType.ARRAY && c==',')) {
+            if(this.type==ValueType.ARRAY && c==',') {
                 TomlParser.parseValue(TomlToken.this.reader,this.builder.toString(),
                                       TomlToken.this.lineBuilder.toString(),index);
                 this.builder = new StringBuilder();
@@ -245,10 +249,9 @@ public class TomlToken {
                     throw new TomlParsingException("Unterminated value -> "+TomlToken.this.lineBuilder.toString(),index);
                 if(this.type==ValueType.NUMBER && this.previous==c && c=='_')
                     throw new TomlParsingException("Bad number format -> "+TomlToken.this.lineBuilder.toString(),index);
-                if(c!='_') this.builder.append(c);
-                if(c!='+' || this.builder.length()>0) this.builder.append('+');
-                this.previous = c;
+                if(c!='_' && (c!='+' || this.builder.length()>0)) this.builder.append(c);
             }
+            this.previous = c;
         }
     }
     
