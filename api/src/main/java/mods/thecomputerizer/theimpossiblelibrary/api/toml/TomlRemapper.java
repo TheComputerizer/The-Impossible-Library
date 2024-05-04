@@ -42,15 +42,15 @@ public abstract class TomlRemapper {
     /**
      This is applied after remapTable, so the new name should be checked for if applicable.
      */
-    abstract @Nullable TomlRemapper getNextRemapper(String name);
+    public abstract @Nullable TomlRemapper getNextRemapper(String name);
     
     /**
      Return null to remove
      */
-    abstract String remapTable(String name);
+    public abstract String remapTable(String name);
     
     /**
      Return null to remove
      */
-    abstract TomlEntry<?> remapEntry(TomlEntry<?> entry);
+    public abstract TomlEntry<?> remapEntry(TomlEntry<?> entry);
 }

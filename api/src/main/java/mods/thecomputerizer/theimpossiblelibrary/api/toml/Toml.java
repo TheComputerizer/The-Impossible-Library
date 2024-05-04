@@ -38,6 +38,10 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unused","UnusedReturnValue"}) public class Toml {
     
+    public static Toml getEmpty() {
+        return new Toml("root");
+    }
+    
     public static Toml readBuf(ByteBuf buf) {
         return new Toml(buf);
     }
@@ -199,6 +203,14 @@ import java.util.Objects;
             else throw new TomlWritingException("Cannot add table ["+name+"] that already exists");
         } else this.tables.put(name,new Toml[]{toml});
         return toml;
+    }
+    
+    /**
+     Renames the input table and adds it
+     */
+    public void addTable(String name, Toml table) {
+        table.name = name;
+        this.tables.put(name,ArrayHelper.append(this.tables.get(name),table,true));
     }
     
     public void clearAllComments() {
