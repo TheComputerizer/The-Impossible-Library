@@ -117,7 +117,7 @@ import java.util.Objects;
         }
     }
     
-    @Getter private final String name;
+    @Getter private String name;
     private final Map<String,Toml[]> tables;
     private final Map<String,TomlEntry<?>> entries;
     private String[] comments; //Table comments only - entry comments are under the TableEntry class
@@ -380,6 +380,26 @@ import java.util.Objects;
             if(Objects.isNull(tomls)) return;
             if(tomls.length==0) this.tables.remove(name);
             else this.tables.put(name,tomls);
+        }
+    }
+    
+    public void removeEntry(String name) {
+        this.entries.remove(name);
+    }
+    
+    public void remapTables(String original, String remapped) {
+        remapTable(original,remapped,-1);
+    }
+    
+    /**
+     Set the index to -1 to remap all tables with the original name
+     */
+    public void remapTable(String original, String remapped, int index) {
+        Toml[] tables = this.tables.get(original);
+        if(Objects.nonNull(tables)) {
+            this.tables.remove(original);
+            for(Toml table : tables) table.name = remapped;
+            this.tables.put(remapped,tables);
         }
     }
     

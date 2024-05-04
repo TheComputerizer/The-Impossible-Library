@@ -62,13 +62,13 @@ public class TomlReader {
     
     public void endTable(List<String> names, String line, int lineNumber, int index) throws TomlParsingException {
         if(Objects.isNull(names) || names.isEmpty())
-            throw new TomlParsingException("Tried to push empty table path",index);
+            TomlParser.doThrow("Tried to push empty table path",line,lineNumber,index);
         this.rootBuilder.pushTable(names,false,line,lineNumber,index);
     }
     
     public void endTableArray(List<String> names, String line, int lineNumber, int index) throws TomlParsingException {
         if(Objects.isNull(names) || names.isEmpty())
-            throw new TomlParsingException("Tried to push empty table path",index);
+            TomlParser.doThrow("Tried to push empty table array path",line,lineNumber,index);
         this.rootBuilder.pushTable(names,true,line,lineNumber,index);
     }
     
