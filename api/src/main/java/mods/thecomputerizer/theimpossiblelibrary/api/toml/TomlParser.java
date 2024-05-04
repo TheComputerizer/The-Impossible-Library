@@ -1,20 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlToken.NumberType;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
-import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class TomlParser {
     
-    public static boolean isBinary(String binary) {
-        return isSpecialInt(binary,'b',TomlParser::isCharBinary);
-    }
-    
-    public static boolean isBool(String bool) {
-        return "false".equals(bool) || "true".equals(bool);
+    static void doThrow(String msg, String line, int lineNumber, int index) throws TomlParsingException {
+        throw new TomlParsingException(msg+" -> ["+lineNumber+"] "+line,index);
     }
     
     public static boolean isCharBinary(char c) {
@@ -57,110 +56,86 @@ public class TomlParser {
         return isCharKey(c) || Misc.equalsAny(c,'.');
     }
     
-    public static boolean isHex(String hex) {
-        return isSpecialInt(hex,'x',TomlParser::isCharHex);
-    }
-    
-    public static boolean isInt(String intStr) {
-        if(StringUtils.isBlank(intStr)) return false;
-        if(isBinary(intStr) || isHex(intStr) || isOctal(intStr)) return true;
-        for(int i=0;i<intStr.length();i++)
-            if(!isCharInt(intStr.charAt(i))) return false;
-        return true;
-    }
-    
-    public static boolean isFloat(String floatStr) {
-        if(StringUtils.isBlank(floatStr)) return false;
-        String special = Misc.equalsAny(floatStr.charAt(0),'+','-') ? floatStr.substring(1) : floatStr;
-        if(Misc.equalsAny(special,"inf","nan")) return true;
-        for(int i=0;i<floatStr.length();i++)
-            if(!isCharFloat(floatStr.charAt(i))) return false;
-        return true;
-    }
-    
-    public static boolean isKey(String key) {
-        if(StringUtils.isBlank(key)) return false;
-        if(key.length()==1) return isCharKey(key.charAt(0));
-        if(Misc.equalsAny(key.charAt(0),'"','\'')) return isString(key);
-        for(int i=0;i<key.length();i++)
-            if(!isCharKey(key.charAt(i))) return false;
-        return true;
-    }
-    
-    public static boolean isMultilineString(String str) {
-        return StringUtils.isNotBlank(str) && Patterns.isEncapsulatedBy(str,"'''");
-    }
-    
-    public static boolean isNumber(String numStr) {
-        return isFloat(numStr) || isInt(numStr);
-    }
-    
-    public static boolean isOctal(String octal) {
-        return isSpecialInt(octal, 'o', TomlParser::isCharOctal);
-    }
-    
-    public static boolean isSpecialInt(String intStr, char c, Function<Character,Boolean> charChecker) {
-        if(Objects.isNull(intStr) || intStr.length()<3 || intStr.charAt(0)!='0' || intStr.charAt(1)!=c) return false;
-        for(int i=2;i<intStr.length();i++)
-            if(!charChecker.apply(intStr.charAt(i))) return false;
-        return true;
-    }
-    
-    public static boolean isString(String str) {
-        return Patterns.isEncapsulatedBy(str,'"') || Patterns.isEncapsulatedBy(str,'\n');
-    }
-    
-    public static boolean isTable(String tableStr) {
-        if(Objects.isNull(tableStr)) return false;
-        int length = tableStr.length();
-        if(length<3 || tableStr.charAt(0)!='[' || tableStr.charAt(length-1)!=']') return false;
-        for(int i=1;i<length-1;i++)
-            if(!isCharTable(tableStr.charAt(i))) return false;
-        return true;
-    }
-    
-    public static boolean isTableArray(String tableStr) {
-        if(Objects.isNull(tableStr) || tableStr.length()<5) return false;
-        return isTable(tableStr) && tableStr.charAt(1)=='[' && tableStr.charAt(tableStr.length()-2)==']';
-    }
-    
-    public static int parseBinary(String unparsed, String line, int index) throws TomlParsingException {
+    public static int parseBinary(String unparsed, String line, int lineNumber, int index) throws TomlParsingException {
         try {
             return Integer.parseInt(unparsed.substring(2), 2);
         } catch(NumberFormatException ex) {
-            throw new TomlParsingException("Failed to parse binary value `"+ex.getMessage()+" -> "+line,index);
+            doThrow("Failed to parse binary value `"+ex.getMessage()+"`",line,lineNumber,index);
+            return 0; //unreachable
         }
     }
     
-    public static int parseHex(String unparsed, String line, int index) throws TomlParsingException {
+    public static int parseHex(String unparsed, String line, int lineNumber, int index) throws TomlParsingException {
         try {
             return (int)Long.parseLong(unparsed.substring(2), 16);
         } catch(NumberFormatException ex) {
-            throw new TomlParsingException("Failed to parse hex value `"+ex.getMessage()+" -> "+line,index);
+            doThrow("Failed to parse hex value `"+ex.getMessage()+"`",line,lineNumber,index);
+            return 0; //unreachable
         }
     }
     
-    public static int parseOctal(String unparsed, String line, int index) throws TomlParsingException {
+    public static void parseKey(TomlReader reader, Collection<StringBuilder> builders, String line, int lineNumber,
+            int index) throws TomlParsingException {
+        String name = null;
+        List<String> path = new ArrayList<>();
+        int i = 0;
+        for(StringBuilder builder : builders) {
+            String built = builder.toString();
+            if(Patterns.isEncapsulatedBy(built,'\'') || Patterns.isEncapsulatedBy(built,'"'))
+                built = built.substring(1,built.length()-1);
+            if(i<builders.size()-1) path.add(built);
+            else name = built;
+        }
+        if(Objects.isNull(name)) doThrow("Failed to parse key",line,lineNumber,index);
+        Collections.reverse(path);
+        reader.endKey(path,name,line,lineNumber,index);
+    }
+    
+    public static void parseNumber(TomlReader reader, String unparsed, NumberType type, String line, int lineNumber,
+            int index) throws TomlParsingException {
+        switch(type) {
+            case BINARY: {
+                reader.endInt(parseBinary(unparsed,line,lineNumber,index),line,lineNumber,index);
+                break;
+            }
+            case FLOAT: {
+                reader.endFloat(unparsed,line,lineNumber,index);
+                break;
+            }
+            case HEXADECIMAL: {
+                reader.endInt(parseHex(unparsed,line,lineNumber,index),line,lineNumber,index);
+                break;
+            }
+            case OCTAL: {
+                reader.endInt(parseOctal(unparsed,line,lineNumber,index),line,lineNumber,index);
+                break;
+            }
+            default: {
+                reader.endInt(unparsed,line,lineNumber,index);
+                break;
+            }
+        }
+    }
+    
+    public static int parseOctal(String unparsed, String line, int lineNumber, int index) throws TomlParsingException {
         try {
             return Integer.parseInt(unparsed.substring(2), 8);
         } catch(NumberFormatException ex) {
-            throw new TomlParsingException("Failed to parse octal value `"+ex.getMessage()+" -> "+line,index);
+            doThrow("Failed to parse octal value `"+ex.getMessage()+"`",line,lineNumber,index);
+            return 0; //unreachable
         }
     }
     
-    public static void parseValue(TomlReader reader, String unparsed, String line, int index) throws TomlParsingException {
-        if(isBool(unparsed)) reader.endBoolean(unparsed,index);
-        else if(isString(unparsed)) reader.endString(unparsed,index);
-        else if(isMultilineString(unparsed)) reader.endString(unparsed,index);
-        else if(isNumber(unparsed)) {
-            if(isInt(unparsed)) {
-                if(isBinary(unparsed)) reader.endInt(parseBinary(unparsed,line,index),index);
-                else if(isHex(unparsed)) reader.endInt(parseHex(unparsed,line,index),index);
-                else if(isOctal(unparsed)) reader.endInt(parseOctal(unparsed,line,index),index);
-                else reader.endInt(unparsed,index);
-            }
-            else if(isFloat(unparsed)) reader.endFloat(unparsed,index);
-            else throw new TomlParsingException("Unknown number type -> "+line,index);
-        } else throw new TomlParsingException("Unknown value type -> "+line,index);
+    public static void parseTable(TomlReader reader, boolean array,
+            Collection<StringBuilder> builders, String line, int lineNumber, int index) throws TomlParsingException {
+        List<String> names = new ArrayList<>();
+        for(StringBuilder builder : builders) {
+            String built = builder.toString();
+            if(Patterns.isEncapsulatedBy(built,'\'') || Patterns.isEncapsulatedBy(built,'"'))
+                built = built.substring(1,built.length()-1);
+            names.add(built);
+        }
+        if(array) reader.endTableArray(names,line,lineNumber,index);
+        else reader.endTable(names,line,lineNumber,index);
     }
 }

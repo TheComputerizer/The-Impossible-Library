@@ -2,12 +2,15 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlReader.TableBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Matching;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -33,7 +36,7 @@ import java.util.Objects;
 /**
  Represents a TOML table. The root is considered a table.
  */
-@SuppressWarnings({"unused","UnusedReturnValue"}) public class Toml { //TODO Comments
+@SuppressWarnings({"unused","UnusedReturnValue"}) public class Toml {
     
     public static Toml readBuf(ByteBuf buf) {
         return new Toml(buf);
@@ -117,6 +120,7 @@ import java.util.Objects;
     @Getter private final String name;
     private final Map<String,Toml[]> tables;
     private final Map<String,TomlEntry<?>> entries;
+    private String[] comments; //Table comments only - entry comments are under the TableEntry class
     
     Toml(String name) {
         this(null,name);
@@ -126,28 +130,65 @@ import java.util.Objects;
         this.name = name;
         this.entries = new LinkedHashMap<>();
         this.tables = new LinkedHashMap<>();
+        this.comments = new String[]{};
         if(Objects.nonNull(builder)) {
             setRootEntries(builder.entries);
             setTables(builder.tables);
+            setComments(builder.tableComments,builder.entryComments);
         }
     }
     
     Toml(ByteBuf buf) {
         this.name = NetworkHelper.readString(buf);
+        boolean comments = buf.readBoolean();
         this.tables = NetworkHelper.readMapEntries(buf,() -> {
             String name = NetworkHelper.readString(buf);
             return IterableHelper.getMapEntry(name,NetworkHelper.readList(buf,() -> new Toml(buf)).toArray(new Toml[0]));
         });
         this.entries = NetworkHelper.readMapEntries(buf,() -> {
             String key = NetworkHelper.readString(buf);
-            return IterableHelper.getMapEntry(key,new TomlEntry<>(key,buf));
+            return IterableHelper.getMapEntry(key,new TomlEntry<>(key,buf,comments));
         });
+        this.comments = comments ? NetworkHelper.readList(buf,() ->
+                NetworkHelper.readString(buf)).toArray(new String[0]) : new String[]{};
+    }
+    
+    public void addComment(String comment) {
+        if(StringUtils.isNotEmpty(comment)) this.comments = ArrayHelper.append(this.comments,comment,true);
+    }
+    
+    public void addComments(Iterable<String> comments) {
+        for(String comment : comments) addComment(comment);
+    }
+    
+    public void addComments(String ... comments) {
+        for(String comment : comments) addComment(comment);
     }
     
     public <V> TomlEntry<V> addEntry(String key, V value) {
         TomlEntry<V> entry = new TomlEntry<>(key,value);
         this.entries.put(key,entry);
         return entry;
+    }
+    
+    public void addEntryComment(String key, String comment) {
+        TomlEntry<?> entry = getEntry(key);
+        if(Objects.nonNull(entry)) entry.addComment(comment);
+        else TILRef.logWarn("Tried to add comment to non existant entry {} (comment -> `{}`)",key,comment);
+    }
+    
+    public void addEntryComments(String key, Iterable<String> comments) {
+        TomlEntry<?> entry = getEntry(key);
+        if(Objects.nonNull(entry)) {
+            for(String comment : comments) entry.addComment(comment);
+        } else TILRef.logWarn("Tried to add {} comments to non existant entry {}",IterableHelper.count(comments),key);
+    }
+    
+    public void addEntryComments(String key, String ... comments) {
+        TomlEntry<?> entry = getEntry(key);
+        if(Objects.nonNull(entry)) {
+            for(String comment : comments) entry.addComment(comment);
+        } else TILRef.logWarn("Tried to add {} comments to non existant entry {}",comments.length,key);
     }
     
     public Toml addTable(String name, boolean array) throws TomlWritingException {
@@ -158,6 +199,42 @@ import java.util.Objects;
             else throw new TomlWritingException("Cannot add table ["+name+"] that already exists");
         } else this.tables.put(name,new Toml[]{toml});
         return toml;
+    }
+    
+    public void clearAllComments() {
+        clearComments();
+        clearAllEntryComments();
+    }
+    
+    public void clearAllEntryComments() {
+        for(TomlEntry<?> entry : this.entries.values()) entry.clearComments();
+    }
+    
+    public void clearAnyCommentsMatching(String toMatch, Matching ... matchers) {
+        clearCommentsMatching(toMatch,matchers);
+        for(TomlEntry<?> entry : this.entries.values()) entry.clearCommentsMatching(toMatch,matchers);
+    }
+    
+    public void clearComments() {
+        this.comments = new String[]{};
+    }
+    
+    public void clearCommentsMatching(String toMatch, Matching ... matchers) {
+        this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment -> {
+            for(Matching matcher : matchers)
+                if(matcher.matches(comment,toMatch)) return true;
+            return false;
+        });
+    }
+    
+    public void clearEntryCommentsMatching(String key, String toMatch, Matching ... matchers) {
+        TomlEntry<?> entry = getEntry(key);
+        if(Objects.nonNull(entry)) entry.clearCommentsMatching(toMatch,matchers);
+    }
+    
+    public void clearEntryComments(String key) {
+        TomlEntry<?> entry = getEntry(key);
+        if(Objects.nonNull(entry)) entry.clearComments();
     }
     
     public Collection<TomlEntry<?>> getAllEntries() {
@@ -306,6 +383,14 @@ import java.util.Objects;
         }
     }
     
+    void setComments(List<String> comments, Map<String,List<String>> entryComments) {
+        this.comments = ArrayHelper.fromIterable(comments,String.class);
+        for(Entry<String,List<String>> entryComment : entryComments.entrySet()) {
+            TomlEntry<?> entry = this.entries.get(entryComment.getKey());
+            if(Objects.nonNull(entry)) entry.setComments(entryComment.getValue());
+        }
+    }
+    
     void setRootEntries(Map<String,Object> entries) {
         for(Entry<String,Object> entry : entries.entrySet()) {
             String key = entry.getKey();
@@ -324,9 +409,21 @@ import java.util.Objects;
     }
     
     /**
-     Set tabs to -1 to disable formatting entirely
+     Write this table to a StringBuilder with optional formatting and comments enabled.
+     * @param builder A StringBuilder output of the written table
+     * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
      */
     public void write(StringBuilder builder, int tabs) {
+        write(builder,tabs,true);
+    }
+    
+    /**
+     Write this table to a StringBuilder with optional formatting.
+     * @param builder A StringBuilder output of the written table
+     * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
+     * @param comments Enables the writing of comments
+     */
+    public void write(StringBuilder builder, int tabs, boolean comments) {
         for(TomlEntry<?> entry : this.entries.values()) {
             String entryLine = entry.key+" = "+entry.value.toString();
             builder.append(tabs==-1 ? entryLine : TextHelper.withTabs(entryLine,tabs)).append("\n");
@@ -339,7 +436,7 @@ import java.util.Objects;
                 for(Toml toml : tomls) {
                     String tableName = (array ? "[[" : "[")+toml.name+(array ? "]]" : "]");
                     builder.append(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs)).append("\n");
-                    toml.write(builder,tabs==-1 ? -1 : tabs+1);
+                    toml.write(builder,tabs==-1 ? -1 : tabs+1,comments);
                     if(tabs!=-1) builder.append("\n");
                 }
             }
@@ -347,9 +444,21 @@ import java.util.Objects;
     }
     
     /**
-     Set tabs to -1 to disable formatting entirely
+     Write this table to a collection of strings with optional formatting and comments enabled.
+     * @param lines A collections of strings where each entry is assumed to be a separate line
+     * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
      */
     public void write(Collection<String> lines, int tabs) {
+        write(lines,tabs,true);
+    }
+    
+    /**
+     Write this table to a collection of strings with optional formatting.
+     * @param lines A collections of strings where each entry is assumed to be a separate line
+     * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
+     * @param comments Enables the writing of comments
+     */
+    public void write(Collection<String> lines, int tabs, boolean comments) {
         for(TomlEntry<?> entry : this.entries.values()) {
             String entryLine = entry.key+" = "+entry.value.toString();
             lines.add(tabs==-1 ? entryLine : TextHelper.withTabs(entryLine,tabs));
@@ -362,18 +471,34 @@ import java.util.Objects;
                 for(Toml toml : tomls) {
                     String tableName = (array ? "[[" : "[")+toml.name+(array ? "]]" : "]");
                     lines.add(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs));
-                    toml.write(lines,tabs==-1 ? -1 : tabs+1);
+                    toml.write(lines,tabs==-1 ? -1 : tabs+1,comments);
                     if(tabs!=-1) lines.add("");
                 }
             }
         }
     }
     
+    /**
+     Write this table to a ByteBuf with comments disabled.
+     * @param buf The buffer to be written
+     */
     public void write(ByteBuf buf) {
+        write(buf,false);
+    }
+    
+    /**
+     Write this table to a ByteBuf with the option of enabling comments to be written.
+     * @param buf The buffer to be written
+     * @param comments Enables the writing of comments
+     */
+    public void write(ByteBuf buf, boolean comments) {
         NetworkHelper.writeString(buf,this.name);
+        buf.writeBoolean(comments);
         NetworkHelper.writeMap(buf,this.tables,key -> NetworkHelper.writeString(buf,key),tomls ->
                 NetworkHelper.writeList(buf,Arrays.asList(tomls),toml -> toml.write(buf)));
-        NetworkHelper.writeMap(buf,this.entries,key -> NetworkHelper.writeString(buf,key),entry -> entry.write(buf));
+        NetworkHelper.writeMap(buf,this.entries,key -> NetworkHelper.writeString(buf,key),
+                               entry -> entry.write(buf,comments));
+        if(comments) NetworkHelper.writeList(buf,Arrays.asList(this.comments),c -> NetworkHelper.writeString(buf,c));
     }
     
     @Getter
@@ -381,13 +506,15 @@ import java.util.Objects;
         
         private final String key;
         private final V value;
+        private String[] comments;
         
         private TomlEntry(String key, V value) {
             this.key = key;
             this.value = value;
+            this.comments = new String[]{};
         }
         
-        @SuppressWarnings("unchecked") private TomlEntry(String key, ByteBuf buf) {
+        @SuppressWarnings("unchecked") private TomlEntry(String key, ByteBuf buf, boolean comments) {
             this.key = key;
             String type = NetworkHelper.readString(buf);
             switch(type) {
@@ -408,9 +535,31 @@ import java.util.Objects;
                     break;
                 }
             }
+            this.comments = comments ? NetworkHelper.readList(buf,() ->
+                    NetworkHelper.readString(buf)).toArray(new String[0]) : new String[]{};
         }
         
-        void write(ByteBuf buf) {
+        public void addComment(String comment) {
+            if(StringUtils.isNotEmpty(comment)) this.comments = ArrayHelper.append(this.comments,comment,true);
+        }
+        
+        public void clearComments() {
+            this.comments = new String[]{};
+        }
+        
+        public void clearCommentsMatching(String toMatch, Matching ... matchers) {
+            this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment -> {
+                for(Matching matcher : matchers)
+                    if(matcher.matches(comment,toMatch)) return true;
+                return false;
+            });
+        }
+        
+        void setComments(List<String> comments) {
+            this.comments = ArrayHelper.fromIterable(comments,String.class);
+        }
+        
+        void write(ByteBuf buf, boolean comments) {
             if(this.value.getClass().isPrimitive()) {
                 if(this.value instanceof Boolean) {
                     NetworkHelper.writeString(buf,"bool");
@@ -426,6 +575,8 @@ import java.util.Objects;
                 NetworkHelper.writeString(buf,"string");
                 NetworkHelper.writeString(buf,this.value.toString());
             }
+            if(comments)
+                NetworkHelper.writeList(buf,Arrays.asList(this.comments),c -> NetworkHelper.writeString(buf,c));
         }
     }
 }

@@ -6,7 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -61,14 +63,15 @@ public class ArrayHelper {
     /**
      * Removes all duplicate values from the input array.
      */
-    @SafeVarargs
+    @SuppressWarnings("UnusedReturnValue") @SafeVarargs
     public static <T> T[] deduplicate(T[] array, T ... valuesToIgnore) {
         return deduplicate(array,false,null,valuesToIgnore);
     }
 
     /**
-     * Removes all duplicate values from the input array. If replaceValues is enabled any duplicate values after the
-     * first instance will be replaced with the input replacement.
+     * Removes all duplicate values from the input array.
+     * If replaceValues is enabled,
+     * any duplicate values after the first instance will be replaced with the input replacement.
      */
     @SafeVarargs
     public static <T> T[] deduplicate(T[] array, boolean replaceValues, T replacement, T ... valuesToIgnore) {
@@ -96,7 +99,7 @@ public class ArrayHelper {
 
     /**
      * Increases the size of the array by 1. The new element will be null or the default value for primitives.
-     * Calling this with an original that is null or has a length of 0 will still return an array with 1 element.
+     * Calling this with an original that is null or has a length of 0 will still return an array with one element.
      */
     public static <T> T[] expand(T[] original, Class<T> clazz) {
         int length = Objects.nonNull(original) ? original.length : 0;
@@ -209,14 +212,14 @@ public class ArrayHelper {
         return array;
     }
 
-    public static <T> Object[] fromIterable(Iterable<?> itr, Class<T> clazz) {
+    @SuppressWarnings("unchecked") public static <T> T[] fromIterable(Iterable<?> itr, Class<T> clazz) {
         int[] lengths = IterableHelper.getLengths(itr);
-        return fromIterator(itr.iterator(),clazz,createMulti(clazz,lengths));
+        return (T[])fromIterator(itr.iterator(),clazz,createMulti(clazz,lengths));
     }
 
-    public static <T> Object[] fromIterator(Iterator<?> itr, Class<T> clazz) {
+    @SuppressWarnings("unchecked") public static <T> T[] fromIterator(Iterator<?> itr, Class<T> clazz) {
         int[] lengths = IterableHelper.getLengths(itr);
-        return fromIterator(itr,clazz,createMulti(clazz,lengths));
+        return (T[])fromIterator(itr,clazz,createMulti(clazz,lengths));
     }
 
     private static <T> Object[] fromIterator(Iterator<?> itr, Class<T> clazz, Object[] array) {
@@ -290,6 +293,16 @@ public class ArrayHelper {
             E[] removed = create((Class<E>)array.getClass().getComponentType(),length-1);
             System.arraycopy(array,0,removed,0,length-1);
             array = removed;
+        }
+        return array;
+    }
+    
+    @SuppressWarnings("unchecked") public static <E> E[] removeMatching(E[] array, E toMatch, Function<E,Boolean> matcher) {
+        if(isNotEmpty(array)) {
+            List<E> copy = new ArrayList<>();
+            for(E element : array)
+                if(!matcher.apply(element)) copy.add(element);
+            if(copy.size()<array.length) array = (E[])fromIterable(copy,toMatch.getClass());
         }
         return array;
     }
