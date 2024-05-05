@@ -11,32 +11,57 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public abstract class TomlRemapper {
     
-    public void remap(Toml toml) {
-        remapTables(toml);
-        remapEntries(toml);
-        remapChildren(toml);
+    /**
+     Returns true if anything is remapped
+     */
+    public boolean remap(Toml toml) {
+        boolean remapped = remapTables(toml);
+        remapped = remapEntries(toml) || remapped;
+        remapped = remapChildren(toml) || remapped;
+        return remapped;
     }
     
-    public void remapChildren(Toml toml) {
+    /**
+     Returns true if any children are remapped
+     */
+    public boolean remapChildren(Toml toml) {
+        boolean remapped = false;
         for(Toml table : toml.getAllTables()) {
             TomlRemapper next = getNextRemapper(table.getName());
-            if(Objects.nonNull(next)) next.remap(table);
+            if(Objects.nonNull(next) && next.remap(table)) remapped = true;
         }
+        return remapped;
     }
     
-    public void remapEntries(Toml toml) {
+    /**
+     Returns true if any entries are remapped
+     */
+    public boolean remapEntries(Toml toml) {
+        boolean remapped = false;
         Map<TomlEntry<?>,TomlEntry<?>> mappedEntries = new HashMap<>();
-        for(TomlEntry<?> entry : toml.getAllEntries()) mappedEntries.put(entry,remapEntry(entry));
+        for(TomlEntry<?> entry : toml.getAllEntries()) mappedEntries.put(entry,remapEntry(toml,entry));
         for(Entry<TomlEntry<?>,TomlEntry<?>> entry : mappedEntries.entrySet()) {
+            if(entry.getKey()==entry.getValue()) continue;
+            remapped = true;
             toml.removeEntry(entry.getKey().getKey());
-            toml.addEntry(entry.getValue().getKey(),entry.getValue().getValue());
+            toml.addEntry(entry.getValue());
         }
+        return remapped;
     }
     
-    public void remapTables(Toml toml) {
+    /**
+     Returns true if any tables are remapped
+     */
+    public boolean remapTables(Toml toml) {
+        boolean remapped = false;
         Map<String,String> mappedNames = new HashMap<>();
         for(Toml table : toml.getAllTables()) mappedNames.put(table.getName(),remapTable(table.getName()));
-        for(Entry<String,String> table : mappedNames.entrySet()) toml.remapTables(table.getKey(),table.getValue());
+        for(Entry<String,String> table : mappedNames.entrySet()) {
+            if(table.getKey().equals(table.getValue())) continue;
+            remapped = true;
+            toml.remapTables(table.getKey(),table.getValue());
+        }
+        return remapped;
     }
     
     /**
@@ -52,5 +77,5 @@ public abstract class TomlRemapper {
     /**
      Return null to remove
      */
-    public abstract TomlEntry<?> remapEntry(TomlEntry<?> entry);
+    public abstract TomlEntry<?> remapEntry(Toml parent, TomlEntry<?> entry);
 }

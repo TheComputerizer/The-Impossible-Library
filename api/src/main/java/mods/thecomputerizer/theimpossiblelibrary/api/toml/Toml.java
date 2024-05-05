@@ -171,8 +171,12 @@ import java.util.Objects;
     
     public <V> TomlEntry<V> addEntry(String key, V value) {
         TomlEntry<V> entry = new TomlEntry<>(key,value);
-        this.entries.put(key,entry);
+        addEntry(entry);
         return entry;
+    }
+    
+    public <V> void addEntry(@Nullable TomlEntry<V> entry) {
+        if(Objects.nonNull(entry)) this.entries.put(entry.getKey(),entry);
     }
     
     public void addEntryComment(String key, String comment) {
@@ -407,6 +411,10 @@ import java.util.Objects;
      Set the index to -1 to remap all tables with the original name
      */
     public void remapTable(String original, String remapped, int index) {
+        if(Objects.isNull(remapped)) {
+            this.tables.remove(original);
+            return;
+        }
         Toml[] tables = this.tables.get(original);
         if(Objects.nonNull(tables)) {
             this.tables.remove(original);
@@ -540,7 +548,7 @@ import java.util.Objects;
         private final V value;
         private String[] comments;
         
-        private TomlEntry(String key, V value) {
+        public TomlEntry(String key, V value) {
             this.key = key;
             this.value = value;
             this.comments = new String[]{};
