@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlToken.NumberType;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
@@ -37,7 +38,11 @@ public class TomlParser {
     }
     
     public static boolean isCharKey(char c) {
-        return Character.isDigit(c) || Character.isAlphabetic(c) || Misc.equalsAny(c,'_','-');
+        return !Character.isWhitespace(c) && (Character.isDigit(c) || Character.isAlphabetic(c) || Misc.equalsAny(c,'_','-'));
+    }
+    
+    public static boolean isCharNewLine(char c) {
+        return !String.valueOf(c).matches("."); //Windows moment
     }
     
     public static boolean isCharNumber(char c) {
@@ -93,6 +98,10 @@ public class TomlParser {
     
     public static void parseNumber(TomlReader reader, String unparsed, NumberType type, String line, int lineNumber,
             int index) throws TomlParsingException {
+        if(Objects.isNull(type)) {
+            reader.endInt(unparsed,line,lineNumber,index); //Null type is assumed to be an int
+            return;
+        }
         switch(type) {
             case BINARY: {
                 reader.endInt(parseBinary(unparsed,line,lineNumber,index),line,lineNumber,index);
@@ -110,10 +119,7 @@ public class TomlParser {
                 reader.endInt(parseOctal(unparsed,line,lineNumber,index),line,lineNumber,index);
                 break;
             }
-            default: {
-                reader.endInt(unparsed,line,lineNumber,index);
-                break;
-            }
+            default: doThrow("Unknown number type "+type,line,lineNumber,index); //Unreachable?
         }
     }
     

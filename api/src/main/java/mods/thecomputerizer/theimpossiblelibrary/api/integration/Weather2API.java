@@ -54,6 +54,7 @@ public abstract class Weather2API implements ModAPI {
         public WeatherData(@Nullable WeatherType type, Vector3d pos, int level) {
             this.type = type;
             this.pos = pos;
+            this.level = level;
         }
 
         public boolean isBlizzard() {

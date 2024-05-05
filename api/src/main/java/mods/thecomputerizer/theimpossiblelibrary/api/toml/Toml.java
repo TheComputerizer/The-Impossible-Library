@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlReader.TableBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
@@ -125,6 +126,7 @@ import java.util.Objects;
     private final Map<String,Toml[]> tables;
     private final Map<String,TomlEntry<?>> entries;
     private String[] comments; //Table comments only - entry comments are under the TableEntry class
+    @Getter private Toml parent;
     
     Toml(String name) {
         this(null,name);
@@ -147,7 +149,11 @@ import java.util.Objects;
         boolean comments = buf.readBoolean();
         this.tables = NetworkHelper.readMapEntries(buf,() -> {
             String name = NetworkHelper.readString(buf);
-            return IterableHelper.getMapEntry(name,NetworkHelper.readList(buf,() -> new Toml(buf)).toArray(new Toml[0]));
+            return IterableHelper.getMapEntry(name,NetworkHelper.readList(buf,() -> {
+                Toml table = new Toml(buf);
+                table.parent = this;
+                return table;
+            }).toArray(new Toml[0]));
         });
         this.entries = NetworkHelper.readMapEntries(buf,() -> {
             String key = NetworkHelper.readString(buf);
@@ -206,6 +212,7 @@ import java.util.Objects;
             if(array) ArrayHelper.append(tomls,toml,true);
             else throw new TomlWritingException("Cannot add table ["+name+"] that already exists");
         } else this.tables.put(name,new Toml[]{toml});
+        toml.parent = this;
         return toml;
     }
     
@@ -215,6 +222,7 @@ import java.util.Objects;
     public void addTable(String name, Toml table) {
         table.name = name;
         this.tables.put(name,ArrayHelper.append(this.tables.get(name),table,true));
+        table.parent = this;
     }
     
     public void clearAllComments() {
@@ -305,6 +313,15 @@ import java.util.Objects;
     
     public <V> V getOrSetValue(String key, V def) {
         return hasEntry(key) ? getValue(key) : addEntry(key,def).value;
+    }
+    
+    /**
+     Returns the fully qualified path of this table including all non-root parent tables.
+     */
+    public String getPath() {
+        if("root".equals(this.name)) return "";
+        String path = Objects.nonNull(this.parent) ? this.parent.getPath() : "";
+        return path.isEmpty() ? this.name : path+"."+this.name;
     }
     
     public Toml getTable(String name) {
@@ -443,7 +460,11 @@ import java.util.Objects;
             String name = entry.getKey();
             List<TableBuilder> tables = entry.getValue();
             Toml[] tomls = new Toml[tables.size()];
-            for(int i=0;i<tomls.length;i++) tomls[i] = new Toml(tables.get(i),name);
+            for(int i=0;i<tomls.length;i++) {
+                Toml table = new Toml(tables.get(i),name);
+                table.parent = this;
+                tomls[i] = table;
+            }
             this.tables.put(name,tomls);
         }
     }
@@ -464,17 +485,20 @@ import java.util.Objects;
      * @param comments Enables the writing of comments
      */
     public void write(StringBuilder builder, int tabs, boolean comments) {
+        for(String comment : this.comments)
+            builder.append(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs)).append("\n");
         for(TomlEntry<?> entry : this.entries.values()) {
-            String entryLine = entry.key+" = "+entry.value.toString();
+            String entryLine = entry.key+" = "+entry.writeValue();
+            for(String comment : entry.comments)
+                builder.append(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs)).append("\n");
             builder.append(tabs==-1 ? entryLine : TextHelper.withTabs(entryLine,tabs)).append("\n");
         }
         if(tabs!=-1) builder.append("\n");
         for(Toml[] tomls : this.tables.values()) {
             if(ArrayHelper.isNotEmpty(tomls)) {
                 boolean array = tomls.length>1;
-                String name = tomls[0].name;
                 for(Toml toml : tomls) {
-                    String tableName = (array ? "[[" : "[")+toml.name+(array ? "]]" : "]");
+                    String tableName = (array ? "[[" : "[")+toml.getPath()+(array ? "]]" : "]");
                     builder.append(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs)).append("\n");
                     toml.write(builder,tabs==-1 ? -1 : tabs+1,comments);
                     if(tabs!=-1) builder.append("\n");
@@ -499,17 +523,20 @@ import java.util.Objects;
      * @param comments Enables the writing of comments
      */
     public void write(Collection<String> lines, int tabs, boolean comments) {
+        for(String comment : this.comments)
+            lines.add(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs));
         for(TomlEntry<?> entry : this.entries.values()) {
-            String entryLine = entry.key+" = "+entry.value.toString();
+            String entryLine = entry.key+" = "+entry.writeValue();
+            for(String comment : entry.comments)
+                lines.add(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs));
             lines.add(tabs==-1 ? entryLine : TextHelper.withTabs(entryLine,tabs));
         }
         if(tabs!=-1) lines.add("");
         for(Toml[] tomls : this.tables.values()) {
             if(ArrayHelper.isNotEmpty(tomls)) {
                 boolean array = tomls.length>1;
-                String name = tomls[0].name;
                 for(Toml toml : tomls) {
-                    String tableName = (array ? "[[" : "[")+toml.name+(array ? "]]" : "]");
+                    String tableName = (array ? "[[" : "[")+toml.getPath()+(array ? "]]" : "]");
                     lines.add(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs));
                     toml.write(lines,tabs==-1 ? -1 : tabs+1,comments);
                     if(tabs!=-1) lines.add("");
@@ -617,6 +644,19 @@ import java.util.Objects;
             }
             if(comments)
                 NetworkHelper.writeList(buf,Arrays.asList(this.comments),c -> NetworkHelper.writeString(buf,c));
+        }
+        
+        String writeValue() {
+            return writeValue(this.value);
+        }
+        
+        String writeValue(Object value) {
+            if(this.value instanceof List<?>) {
+                StringBuilder builder = new StringBuilder("[");
+                for(Object element : (List<?>)this.value) builder.append(" ").append(writeValue(element));
+                return builder.append(" ]").toString();
+            }
+            return this.value instanceof String ? "\""+this.value+"\"" : this.value.toString();
         }
     }
 }

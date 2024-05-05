@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +51,7 @@ public class TomlReader {
      Special integer types are parsed before being passed in here
      */
     public void endInt(int i, String line, int lineNumber, int index) throws TomlParsingException {
+        TILDev.logInfo("READING INT {}",i);
         this.rootBuilder.pushValue(i,line,lineNumber,index);
     }
     
@@ -117,6 +120,7 @@ public class TomlReader {
         }
         
         void addComments(@Nullable String key) {
+            if(Objects.isNull(this.currentComments)) this.currentComments = new ArrayList<>();
             if(Objects.isNull(key)) this.tableComments.addAll(this.currentComments);
             else {
                 if(this.entryComments.containsKey(key)) this.entryComments.get(key).addAll(this.currentComments);
@@ -165,13 +169,17 @@ public class TomlReader {
             if(Objects.nonNull(this.currentTable)) this.currentTable.pushArrayStart(line,lineNumber,index);
             else {
                 if(Objects.isNull(this.key)) TomlParser.doThrow("Undefined array",line,lineNumber,index);
+                if(Objects.isNull(this.arrayBuilder)) this.arrayBuilder = new ArrayList<>();
                 this.arrayBuilder.add(new ArrayList<>());
             }
         }
         
         void pushComment(String comment) {
             if(Objects.nonNull(this.currentTable)) this.currentTable.pushComment(comment);
-            else this.currentComments.add(comment);
+            else {
+                if(Objects.isNull(this.currentComments)) this.currentComments = new ArrayList<>();
+                this.currentComments.add(comment);
+            }
         }
         
         void pushInlineTable(String line, int lineNumber, int index) throws TomlParsingException {
@@ -238,8 +246,11 @@ public class TomlReader {
         }
         
         void setCurrentTable(TableBuilder table) {
-            table.currentComments.addAll(this.currentComments);
-            this.currentComments.clear();
+            if(Objects.nonNull(this.currentComments)) {
+                if(Objects.isNull(table.currentComments)) table.currentComments = new ArrayList<>();
+                table.currentComments.addAll(this.currentComments);
+                this.currentComments.clear();
+            }
             this.currentTable = table;
         }
         
