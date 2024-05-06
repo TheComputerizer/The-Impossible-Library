@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +63,8 @@ public class TomlToken {
             this.comment.step(c,index);
         }
         if(c=='\n') {
+            if(!this.comment.building && !this.entry.building && !this.table.building && StringUtils.isEmpty(this.lineBuilder.toString()))
+                this.reader.emptyLine();
             this.lineBuilder = new StringBuilder();
             this.lineNumber++;
         }
@@ -87,7 +89,6 @@ public class TomlToken {
             if(TomlParser.isCharNewLine(c)) return; //Don't let newline characters get parsed
             getLastBuilder().append(c);
             pushLast(c);
-            for(StringBuilder builder : this.builders) TILDev.logDebug("Builder=`{}`",builder);
         }
         
         abstract void checkEnd(char c, int index) throws TomlParsingException;
@@ -162,7 +163,7 @@ public class TomlToken {
         boolean array;
         
         @Override void checkEnd(char c, int index) throws TomlParsingException {
-            if(c==']' && (!this.array || this.last==']')) end(getLine(),getLineNumber(),index);
+            if(!isQuoting() && c==']' && (!this.array || this.last==']')) end(getLine(),getLineNumber(),index);
         }
         
         @Override boolean checkStart(char c, int index) {
@@ -171,16 +172,19 @@ public class TomlToken {
         
         @Override void end(String line, int lineNumber, int index) throws TomlParsingException {
             TomlParser.parseTable(getReader(),this.array,this.builders,line,lineNumber,index);
+            this.array = false;
             reset();
         }
         
         @Override void step(char c, int index) throws TomlParsingException {
             switch(c) {
                 case '[': {
-                    if(this.last=='\0') return;
-                    if(this.beforeLast=='[') TomlParser.doThrow("Illegal table character",getLine(),getLineNumber(),index);
-                    if(this.last=='[') this.array = true;
-                    break;
+                    if(this.last=='\0') break;
+                    if(this.last=='[' && this.beforeLast!='[') {
+                        this.array = true;
+                        break;
+                    }
+                    TomlParser.doThrow("Illegal table character",getLine(),getLineNumber(),index);
                 }
                 case ']': break;
                 case '"':
@@ -358,6 +362,7 @@ public class TomlToken {
                 if(this.metaValue.isQuoting()) return this.metaValue.checkValueEnd(value,c,index);
                 if(c==' ' || TomlParser.isCharNewLine(c)) {
                     this.metaValue.end(getLine(),getLineNumber(),index);
+                    this.metaValue = null;
                     return false;
                 }
             }
@@ -457,10 +462,10 @@ public class TomlToken {
             if(TomlParser.isCharNewLine(c))
                 TomlParser.doThrow("Inline tables do not support line breaks",getLine(),getLineNumber(),index);
             if(!this.metaKey.built) {
-                if(!this.metaKey.building) this.metaKey.checkStart(c,index);
+                if(!this.metaKey.building && this.metaKey.checkStart(c,index)) this.metaKey.building = true;
                 if(this.metaKey.building) this.metaKey.step(c,index);
             } else {
-                if(!this.metaValue.building) this.metaValue.checkStart(c,index);
+                if(!this.metaValue.building && this.metaValue.checkStart(c,index)) this.metaValue.building = true;
                 if(this.metaValue.building) this.metaValue.step(c,index);
             }
             switch(c) {
@@ -517,7 +522,7 @@ public class TomlToken {
         }
         
         @Override boolean checkStart(char c, int index) {
-            return TomlParser.isCharNumber(c);
+            return Character.isDigit(c) || Misc.equalsAny(c,'+','-','i','n'); //Numbers are the only value type can start with i or n directly
         }
         
         @Override void step(char c, int index) throws TomlParsingException {
@@ -639,16 +644,20 @@ public class TomlToken {
         }
         
         @Override boolean checkStart(char c, int index) {
-            if(c=='\'' || c=='"') {
-                this.quoting = c;
-                return true;
-            }
-            return false;
+            return c=='\'' || c=='"';
         }
         
         @Override void step(char c, int index) {
-            if(c=='\'') this.multiline = this.last=='\'' && this.beforeLast=='\'' && !this.multiline;
-            if(c!=this.quoting) append(c);
+            if(this.last=='\0' && (c=='\'' || c=='"')) {
+                this.quoting = c;
+                pushLast(c);
+            } else {
+                if(c=='\'' && this.last=='\'' && this.beforeLast=='\'') this.multiline = true;
+                if(isQuoting()) {
+                    if(c==this.quoting) this.quoting = '\0';
+                    else append(c);
+                }
+            }
         }
     }
 }

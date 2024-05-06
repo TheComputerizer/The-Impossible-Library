@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.Toml.TomlEntry;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,10 +42,14 @@ public abstract class TomlRemapper {
         Map<TomlEntry<?>,TomlEntry<?>> mappedEntries = new HashMap<>();
         for(TomlEntry<?> entry : toml.getAllEntries()) mappedEntries.put(entry,remapEntry(toml,entry));
         for(Entry<TomlEntry<?>,TomlEntry<?>> entry : mappedEntries.entrySet()) {
-            if(entry.getKey()==entry.getValue()) continue;
+            TomlEntry<?> original = entry.getKey();
+            TomlEntry<?> mapped = entry.getValue();
+            if(original==mapped) continue;
             remapped = true;
-            toml.removeEntry(entry.getKey().getKey());
-            toml.addEntry(entry.getValue());
+            toml.removeEntry(original.getKey());
+            if(Objects.nonNull(original.getComments()) && Objects.nonNull(mapped))
+                mapped.setComments(Arrays.asList(original.getComments()));
+            toml.addEntry(mapped);
         }
         return remapped;
     }

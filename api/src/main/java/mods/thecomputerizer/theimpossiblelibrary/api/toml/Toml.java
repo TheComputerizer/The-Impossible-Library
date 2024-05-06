@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlReader.TableBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
@@ -11,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Matching;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Sorting;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -24,15 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 /**
  Represents a TOML table. The root is considered a table.
@@ -63,6 +58,7 @@ import java.util.Objects;
     
     public static Toml readFile(String filePath, TomlReader reader) throws TomlParsingException, IOException {
         try(FileInputStream stream = new FileInputStream(filePath)) { //Close the stream without catching the exception
+            TILDev.logInfo("Reading toml from file path {}",filePath);
             return readStream(stream,reader);
         }
     }
@@ -91,6 +87,7 @@ import java.util.Objects;
     }
     
     public static Toml readStream(InputStream stream, TomlReader reader) throws IOException, TomlParsingException {
+        TILDev.logInfo("Reading toml from input stream of type {}",stream.getClass());
         return readString(IOUtils.streamToString(stream),reader);
     }
     
@@ -99,6 +96,7 @@ import java.util.Objects;
     }
     
     public static Toml readString(String tomlString, TomlReader reader) throws TomlParsingException {
+        TILDev.logInfo("Reading toml from input string\n{}",tomlString);
         reader.read(tomlString);
         return new Toml(reader.rootBuilder,"root");
     }
@@ -127,6 +125,7 @@ import java.util.Objects;
     private final Map<String,TomlEntry<?>> entries;
     private String[] comments; //Table comments only - entry comments are under the TableEntry class
     @Getter private Toml parent;
+    @Setter @Getter private Sorting[] sorters; //TODO Make this functional
     
     Toml(String name) {
         this(null,name);
@@ -244,11 +243,8 @@ import java.util.Objects;
     }
     
     public void clearCommentsMatching(String toMatch, Matching ... matchers) {
-        this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment -> {
-            for(Matching matcher : matchers)
-                if(matcher.matches(comment,toMatch)) return true;
-            return false;
-        });
+        this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment ->
+                Matching.matchesAny(comment,toMatch,matchers));
     }
     
     public void clearEntryCommentsMatching(String key, String toMatch, Matching ... matchers) {
@@ -486,22 +482,29 @@ import java.util.Objects;
      */
     public void write(StringBuilder builder, int tabs, boolean comments) {
         for(String comment : this.comments)
-            builder.append(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs)).append("\n");
-        for(TomlEntry<?> entry : this.entries.values()) {
-            String entryLine = entry.key+" = "+entry.writeValue();
+            builder.append(tabs==-1 ? "#"+comment : TextHelper.withTabs("# "+comment,tabs)).append("\n");
+        if(this.comments.length!=0) builder.append("\n");
+        List<String> sorted = new ArrayList<>(this.entries.keySet());
+        Collections.sort(sorted);
+        for(String key : sorted) {
+            TomlEntry<?> entry = this.entries.get(key);
+            String entryLine = key+" = "+entry.writeValue();
             for(String comment : entry.comments)
-                builder.append(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs)).append("\n");
+                builder.append(tabs==-1 ? "#"+comment : TextHelper.withTabs("# "+comment,tabs)).append("\n");
             builder.append(tabs==-1 ? entryLine : TextHelper.withTabs(entryLine,tabs)).append("\n");
         }
-        if(tabs!=-1) builder.append("\n");
-        for(Toml[] tomls : this.tables.values()) {
+        if("root".equals(this.name) && tabs!=-1 && !sorted.isEmpty()) builder.append("\n");
+        sorted = new ArrayList<>(this.tables.keySet());
+        Collections.sort(sorted);
+        for(String key : sorted) {
+            Toml[] tomls = this.tables.get(key);
             if(ArrayHelper.isNotEmpty(tomls)) {
                 boolean array = tomls.length>1;
                 for(Toml toml : tomls) {
                     String tableName = (array ? "[[" : "[")+toml.getPath()+(array ? "]]" : "]");
                     builder.append(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs)).append("\n");
                     toml.write(builder,tabs==-1 ? -1 : tabs+1,comments);
-                    if(tabs!=-1) builder.append("\n");
+                    if("root".equals(this.name) && tabs!=-1) builder.append("\n");
                 }
             }
         }
@@ -524,22 +527,29 @@ import java.util.Objects;
      */
     public void write(Collection<String> lines, int tabs, boolean comments) {
         for(String comment : this.comments)
-            lines.add(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs));
-        for(TomlEntry<?> entry : this.entries.values()) {
-            String entryLine = entry.key+" = "+entry.writeValue();
+            lines.add(tabs==-1 ? "#"+comment : TextHelper.withTabs("# "+comment,tabs));
+        if(this.comments.length!=0 && tabs!=-1) lines.add("");
+        List<String> sorted = new ArrayList<>(this.entries.keySet());
+        Collections.sort(sorted);
+        for(String key : sorted) {
+            TomlEntry<?> entry = getEntry(key);
+            String entryLine = key+" = "+entry.writeValue();
             for(String comment : entry.comments)
-                lines.add(tabs==-1 ? "# "+comment : TextHelper.withTabs("# "+comment,tabs));
+                lines.add(tabs==-1 ? "#"+comment : TextHelper.withTabs("# "+comment,tabs));
             lines.add(tabs==-1 ? entryLine : TextHelper.withTabs(entryLine,tabs));
         }
-        if(tabs!=-1) lines.add("");
-        for(Toml[] tomls : this.tables.values()) {
+        if("root".equals(this.name) && tabs!=-1 && !sorted.isEmpty()) lines.add("");
+        sorted = new ArrayList<>(this.tables.keySet());
+        Collections.sort(sorted);
+        for(String key : sorted) {
+            Toml[] tomls = this.tables.get(key);
             if(ArrayHelper.isNotEmpty(tomls)) {
                 boolean array = tomls.length>1;
                 for(Toml toml : tomls) {
                     String tableName = (array ? "[[" : "[")+toml.getPath()+(array ? "]]" : "]");
-                    lines.add(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs));
+                    lines.add(tabs==-1 ? tableName : TextHelper.withTabs(tableName,tabs));
                     toml.write(lines,tabs==-1 ? -1 : tabs+1,comments);
-                    if(tabs!=-1) lines.add("");
+                    if("root".equals(this.name) && tabs!=-1) lines.add("");
                 }
             }
         }
@@ -615,15 +625,17 @@ import java.util.Objects;
         }
         
         public void clearCommentsMatching(String toMatch, Matching ... matchers) {
-            this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment -> {
-                for(Matching matcher : matchers)
-                    if(matcher.matches(comment,toMatch)) return true;
-                return false;
-            });
+            this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment ->
+                    Matching.matchesAny(comment,toMatch,matchers));
         }
         
         void setComments(List<String> comments) {
             this.comments = ArrayHelper.fromIterable(comments,String.class);
+        }
+        
+        @Override
+        public String toString() {
+            return "<"+this.key+" = "+writeValue()+">";
         }
         
         void write(ByteBuf buf, boolean comments) {
@@ -650,13 +662,13 @@ import java.util.Objects;
             return writeValue(this.value);
         }
         
-        String writeValue(Object value) {
-            if(this.value instanceof List<?>) {
-                StringBuilder builder = new StringBuilder("[");
-                for(Object element : (List<?>)this.value) builder.append(" ").append(writeValue(element));
-                return builder.append(" ]").toString();
+        String writeValue(Object value) { //TODO Split long arrays to multiple lines?
+            if(value instanceof List<?>) {
+                StringJoiner joiner = new StringJoiner(",");
+                for(Object element : (List<?>)value) joiner.add(" "+writeValue(element));
+                return "["+joiner+" ]";
             }
-            return this.value instanceof String ? "\""+this.value+"\"" : this.value.toString();
+            return value instanceof String ? "\""+value+"\"" : (Objects.nonNull(value) ? value.toString() : "null");
         }
     }
 }

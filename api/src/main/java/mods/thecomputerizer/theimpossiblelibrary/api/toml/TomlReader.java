@@ -21,6 +21,10 @@ public class TomlReader {
         this.rootBuilder = new TableBuilder("root",false);
     }
     
+    public void emptyLine() {
+        this.rootBuilder.pushEmptyLine();
+    }
+    
     public void endArray(String line, int lineNumber, int index) throws TomlParsingException {
         this.rootBuilder.pushArrayEnd(line,lineNumber,index);
     }
@@ -51,7 +55,6 @@ public class TomlReader {
      Special integer types are parsed before being passed in here
      */
     public void endInt(int i, String line, int lineNumber, int index) throws TomlParsingException {
-        TILDev.logInfo("READING INT {}",i);
         this.rootBuilder.pushValue(i,line,lineNumber,index);
     }
     
@@ -77,6 +80,7 @@ public class TomlReader {
     
     public void read(String tomlString) throws TomlParsingException {
         if(Objects.isNull(tomlString)) throw new TomlParsingException("Tried to read null TOML string",-1);
+        TILDev.logInfo("Tokenizing toml string with length of {}",tomlString.length());
         for(int i=0;i<tomlString.length();i++) this.tokenizer.step(tomlString.charAt(i),i);
         this.tokenizer.finish();
     }
@@ -152,7 +156,7 @@ public class TomlReader {
                 if(Objects.isNull(this.arrayBuilder) || Objects.isNull(this.key))
                     TomlParser.doThrow("Undefined array",line,lineNumber,index);
                 if(this.arrayBuilder.size()==1) {
-                    this.entries.put(this.key, new ArrayList<>(this.arrayBuilder));
+                    this.entries.put(this.key,new ArrayList<>(this.arrayBuilder.get(0)));
                     addComments(this.key);
                     this.arrayBuilder = null;
                     this.key = null;
@@ -179,6 +183,13 @@ public class TomlReader {
             else {
                 if(Objects.isNull(this.currentComments)) this.currentComments = new ArrayList<>();
                 this.currentComments.add(comment);
+            }
+        }
+        
+        public void pushEmptyLine() {
+            if(Objects.nonNull(this.currentComments)) {
+                this.tableComments.addAll(this.currentComments);
+                this.currentComments.clear();
             }
         }
         
@@ -216,19 +227,26 @@ public class TomlReader {
         void pushTable(List<String> names, boolean array, String line, int lineNumber, int index)
                 throws TomlParsingException {
             String name = names.get(0);
-            if(!this.tables.containsKey(name)) this.tables.put(name,new ArrayList<>());
-            else if(!array || !this.tables.get(name).get(this.tables.get(name).size()-1).array)
-                throwTable(name,array,line,lineNumber,index);
-            TableBuilder table = new TableBuilder(this,name,false);
+            TableBuilder table;
             if(names.size()==1) {
-                setCurrentTable(table);
+                if(!this.tables.containsKey(name)) this.tables.put(name,new ArrayList<>());
+                else if(!array || !this.tables.get(name).get(this.tables.get(name).size()-1).array)
+                    throwTable(name,array,line,lineNumber,index);
+                table = new TableBuilder(this,name,array);
                 table.addComments(null);
                 this.tables.get(name).add(table);
-            } else {
+            }
+            else {
+                this.tables.putIfAbsent(name,new ArrayList<>());
+                List<TableBuilder> builders = this.tables.get(name);
+                if(builders.isEmpty()) {
+                    table = new TableBuilder(this,name,array);
+                    builders.add(table);
+                } else table = builders.get(builders.size()-1);
                 names.remove(name);
-                setCurrentTable(table);
                 table.pushTable(names,array,line,lineNumber,index);
             }
+            setCurrentTable(table);
         }
         
         void pushValue(Object value, String line, int lineNumber, int index) throws TomlParsingException {

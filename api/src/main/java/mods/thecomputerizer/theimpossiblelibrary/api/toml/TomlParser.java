@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlToken.NumberType;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
