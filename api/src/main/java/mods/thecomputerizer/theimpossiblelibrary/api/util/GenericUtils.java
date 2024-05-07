@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
@@ -9,10 +11,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-public class GenericUtils {
+@SuppressWarnings("unused") public class GenericUtils {
 
 
 
@@ -63,6 +68,61 @@ public class GenericUtils {
      */
     public static boolean isPrimitiveInstance(Object obj) {
         return isPrimitive(obj.getClass());
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If both elements are equal, they are considered matching.
+     If the value is a string, and it equals the string value of the other, they are considered matching.
+     If the value is a number, and it equals the numerical value of the other, they are considered matching.
+     If the value is a boolean, it will match parsed booleans from strings or numbers (0=false,1=true)
+     If the value is an array, iterable, or iterator further matching rules will be applied.
+     If the type is unknown, the toString values of both inputs will be checked for equality.
+     */
+    public static boolean matches(@Nullable Object value, @Nullable Object other) {
+        if(Objects.isNull(value)) return Objects.isNull(other);
+        if(Objects.isNull(other)) return false;
+        if(value.equals(other)) return true;
+        if(value instanceof String) return value.equals(other.toString());
+        if(value instanceof Number) return numberMatches((Number)value,other);
+        if(value instanceof Boolean) {
+            boolean bool = (Boolean)value;
+            if(other instanceof Number) {
+                int num = ((Number)other).intValue();
+                return (bool && num==1) || (!bool && num==0); //Don't allow other numbers
+            }
+        } //The boolean check isn't guaranteed to return anything
+        else if(value instanceof Object[]) return ArrayHelper.matches((Object[])value,other);
+        else if(value instanceof Iterable<?>) return IterableHelper.matches((Iterable<?>)value,other);
+        else if(value instanceof Iterator<?>) return IterableHelper.matches((Iterator<?>)value,other);
+        return value.toString().equals(other.toString());
+    }
+    
+    public static boolean numberMatches(Number number, Object other) {
+        if(number instanceof Byte)
+            return numberMatches((Byte)number,other,obj -> Byte.parseByte((String)other),(n1,n2) -> n1==n2.byteValue());
+        if(number instanceof Double)
+            return numberMatches((Double)number,other,obj -> Double.parseDouble((String)other),(n1,n2) -> n1==n2.doubleValue());
+        if(number instanceof Float)
+            return numberMatches((Float)number,other,obj -> Float.parseFloat((String)other),(n1,n2) -> n1==n2.floatValue());
+        if(number instanceof Integer)
+            return numberMatches((Integer)number,other,obj -> Integer.parseInt((String)other),(n1,n2) -> n1==n2.intValue());
+        if(number instanceof Long)
+            return numberMatches((Long)number,other,obj -> Long.parseLong((String)other),(n1,n2) -> n1==n2.longValue());
+        if(number instanceof Short)
+            return numberMatches((Short)number,other,obj -> Short.parseShort((String)other),(n1,n2) -> n1==n2.shortValue());
+        return number.toString().equals(other.toString());
+    }
+    
+    private static <N extends Number> boolean numberMatches(
+            N number, Object other, Function<Object,N> fromString, BiFunction<N,Number,Boolean> numberEquals) {
+        if(other instanceof String) return number.equals(fromString.apply(other));
+        if(other instanceof Number) return numberEquals.apply(number,(Number)other);
+        if(other instanceof Object[]) return ArrayHelper.matches((Object[])other,number);
+        if(other instanceof Iterable<?>) return IterableHelper.matches((Iterable<?>)other,number);
+        if(other instanceof Iterator<?>) return IterableHelper.matches((Iterator<?>)other,number);
+        return number.toString().equals(other.toString());
     }
 
     /**

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -11,7 +12,7 @@ import java.util.Map.Entry;
 /**
  * Helper methods, for instances of iterators, iterables, and maps
  */
-public class IterableHelper {
+@SuppressWarnings("unused") public class IterableHelper {
 
     public static <E> int count(Iterable<E> itr) {
         if(itr instanceof Collection<?>) return ((Collection<?>)itr).size();
@@ -19,7 +20,10 @@ public class IterableHelper {
         if(itr instanceof Mappable<?,?>) return ((Mappable<?,?>)itr).size();
         return count(itr.iterator());
     }
-
+    
+    /**
+     This will consume the iterator, so use it with caution!
+     */
     public static <E> int count(Iterator<E> itr) {
         int count = 0;
         while(itr.hasNext()) {
@@ -139,5 +143,107 @@ public class IterableHelper {
 
     public static <K,V> Entry<K,V> getMapEntry(K key, V val, boolean mutable) {
         return mutable ? new MutablePair<>(key,val) : new ImmutablePair<>(key,val);
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the value is an instance of an array, iterable, or iterator, further matching rules are applied.
+     If the iterable only has one element that matches the value, they are considered matching
+     */
+    public static boolean matches(@Nullable Iterable<?> itr, @Nullable Object value) {
+        return Objects.isNull(itr) ? Objects.isNull(value) : matches(itr.iterator(),value);
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the value is an instance of an array, iterable, or iterator, further matching rules are applied.
+     If the iterator only has one element that matches the value, they are considered matching
+     */
+    public static boolean matches(@Nullable Iterator<?> itr, @Nullable Object value) {
+        if(value instanceof Object[]) return matchesArray(itr,(Object[])value);
+        if(value instanceof Iterable<?>) return matchesItr((Iterable<?>)value,itr);
+        if(value instanceof Iterator<?>) return matchesItr(itr,(Iterator<?>)value);
+        if(Objects.isNull(itr)) return Objects.isNull(value);
+        if(Objects.isNull(value)) return false;
+        boolean potential = false;
+        int count = 0;
+        while(itr.hasNext()) {
+            Object next = itr.next();
+            potential = count==0 && GenericUtils.matches(next,value);
+            count++;
+        }
+        return potential;
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the iterable has the same number of elements as the array, matching rules are run for each element.
+     Ordering of the iterable instance is not guaranteed.
+     */
+    public static boolean matchesArray(@Nullable Iterable<?> itr, @Nullable Object[] array) {
+        return Objects.isNull(itr) ? Objects.isNull(array) : matchesArray(itr.iterator(),array);
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the iterable only has one element that matches the value, they are considered matching
+     If the value is an instance of an array or other iterable further matching rules are applied.
+     */
+    public static boolean matchesArray(@Nullable Iterator<?> itr, @Nullable Object[] array) {
+        if(Objects.isNull(itr)) return Objects.isNull(array);
+        if(Objects.isNull(array)) return false;
+        boolean potential = true;
+        int count = 0;
+        while(itr.hasNext()) {
+            Object next = itr.next();
+            if(array.length<=count) return false;
+            if(!GenericUtils.matches(next,array[count])) {
+                potential = false;
+                break;
+            }
+            count++;
+        }
+        return potential && count==array.length;
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the iterable only has one element that matches the value, they are considered matching
+     If the value is an instance of an array or other iterable further matching rules are applied.
+     */
+    public static boolean matchesItr(@Nullable Iterable<?> itr, @Nullable Iterable<?> other) {
+        return Objects.isNull(itr) ? Objects.isNull(other) : matchesItr(other,itr.iterator());
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the iterable only has one element that matches the value, they are considered matching
+     If the value is an instance of an array or other iterable further matching rules are applied.
+     */
+    public static boolean matchesItr(@Nullable Iterable<?> itr, @Nullable Iterator<?> other) {
+        return Objects.isNull(itr) ? Objects.isNull(other) : matchesItr(itr.iterator(),other);
+        
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the iterable only has one element that matches the value, they are considered matching
+     If the value is an instance of an array or other iterable further matching rules are applied.
+     */
+    public static boolean matchesItr(@Nullable Iterator<?> itr, @Nullable Iterator<?> other) {
+        if(Objects.isNull(itr)) return Objects.isNull(other);
+        if(Objects.isNull(other)) return false;
+        while(itr.hasNext()) {
+            Object next = itr.next();
+            if(!other.hasNext() || !GenericUtils.matches(next,other.next())) return false;
+        }
+        return !other.hasNext();
     }
 }

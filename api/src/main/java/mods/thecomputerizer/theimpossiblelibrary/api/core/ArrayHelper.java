@@ -2,9 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.DynamicArray;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -268,6 +270,29 @@ public class ArrayHelper {
         T[] remapped = create(clazz,length);
         for(int i=0;i<length;i++) remapped[i] = remapper.apply(array[i]);
         return remapped;
+    }
+    
+    /**
+     Runs non-strict equality rules.
+     If both inputs are null, they are considered matching.
+     If the value is an instance of an array, iterable, or iterator, further matching rules are applied.
+     If the array only has one element that matches the value, they are considered matching
+     */
+    public static boolean matches(@Nullable Object[] array, @Nullable Object other) {
+        if(other instanceof Object[]) return matchesArray(array,(Object[])other);
+        if(other instanceof Iterable<?>) return IterableHelper.matchesArray((Iterable<?>)other,array);
+        if(other instanceof Iterator<?>) return IterableHelper.matchesArray((Iterator<?>)other,array);
+        if(Objects.isNull(array)) return Objects.isNull(other);
+        if(Objects.isNull(other)) return false;
+        return array.length==1 && GenericUtils.matches(array[0],other);
+    }
+    
+    public static boolean matchesArray(@Nullable Object[] array, @Nullable Object[] other) {
+        if(Objects.isNull(array)) return Objects.isNull(other);
+        if(Objects.isNull(other) || array.length!=other.length) return false;
+        for(int i=0;i<array.length;i++)
+            if(!GenericUtils.matches(array[i],other[i])) return false;
+        return true;
     }
 
     public static <E> E[] removeAllOccurancesAfter(E[] array, E element, int after) {
