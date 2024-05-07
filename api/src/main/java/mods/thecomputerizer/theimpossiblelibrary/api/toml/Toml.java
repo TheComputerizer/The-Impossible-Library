@@ -648,7 +648,7 @@ import java.util.Map.Entry;
                     buf.writeFloat((Float)this.value);
                 } else {
                     NetworkHelper.writeString(buf,"int");
-                    buf.writeFloat((Integer)this.value);
+                    buf.writeInt((Integer)this.value);
                 }
             } else {
                 NetworkHelper.writeString(buf,"string");

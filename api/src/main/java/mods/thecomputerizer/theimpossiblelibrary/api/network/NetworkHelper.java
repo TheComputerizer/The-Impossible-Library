@@ -164,7 +164,7 @@ public class NetworkHelper {
     public static String readString(ByteBuf buf) {
         int strLength = buf.readInt();
         TILDev.logInfo("Reading string of length {}",strLength);
-        return (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
+        return strLength==0 ? "" : (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
     }
 
     public static <DIR> void registerMessage(MessageDirectionInfo<DIR> info, int id) {
@@ -211,6 +211,10 @@ public class NetworkHelper {
         else if(collection instanceof Set<?>) {
             writeString(buf,"set");
             writeSet(buf,(Set<V>)collection,valFunc);
+        } else {
+            writeString(buf,"list"); //Assume a list for unknown types
+            buf.writeInt(collection.size());
+            collection.forEach(valFunc);
         }
     }
 
@@ -223,7 +227,7 @@ public class NetworkHelper {
     public static <V> void writeList(ByteBuf buf, List<V> list, Consumer<V> valFunc) {
         TILDev.logInfo("Writing list of size {}",list.size());
         buf.writeInt(list.size());
-        for(V val : list) valFunc.accept(val);
+        list.forEach(valFunc);
     }
 
     public static <K,V> void writeMap(ByteBuf buf, Map<K,V> map, Consumer<K> keyFunc, Consumer<V> valFunc) {
@@ -262,13 +266,13 @@ public class NetworkHelper {
     public static <V> void writeSet(ByteBuf buf, Set<V> set, Consumer<V> valFunc) {
         TILDev.logInfo("Writing set of size {}",set.size());
         buf.writeInt(set.size());
-        for(V val : set) valFunc.accept(val);
+        set.forEach(valFunc);
     }
 
     public static void writeString(ByteBuf buf, String string) {
-        if(Objects.isNull(string)) {
-            TILRef.logError("Tried to write a null string to a packet! Replacing with an empty instance");
-            string = "";
+        if(Objects.isNull(string) || string.isEmpty()) {
+            TILRef.logError("Tried to write a null or empty string to a packet!");
+            buf.writeInt(0);
         }
         if(StringUtils.isNotBlank(string)) {
             ByteBuffer buffer = StandardCharsets.UTF_8.encode(string);
