@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
@@ -68,13 +67,11 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         this.messages = NetworkHelper.readCollection(buf,() -> {
             String name = NetworkHelper.readString(buf);
             Class<?> clazz = ReflectionHelper.findExtensibleClass(name,MessageAPI.class);
-            TILDev.logInfo("Decoding message of {}",clazz);
             return Objects.nonNull(clazz) ? this.info.decode(clazz,buf) : null;
         });
     }
 
     public void encode(ByteBuf buf) {
-        TILDev.logInfo("Encoding message");
         if(Objects.isNull(this.messages)) this.messages = Collections.emptyList();
         NetworkHelper.writeDir(buf,this.info.getDirection());
         NetworkHelper.writeCollection(buf,this.messages,message -> {

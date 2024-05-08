@@ -57,7 +57,6 @@ public class MessageDirectionInfo<DIR> {
     }
 
     public <M extends MessageAPI<?>> @Nullable MessageInfo<?> getMessageInfo(M message) {
-        TILDev.logInfo("Obtaining message info for {}",message);
         return getMessageInfo(message.getClass());
     }
 

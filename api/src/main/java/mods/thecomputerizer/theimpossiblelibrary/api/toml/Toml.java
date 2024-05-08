@@ -38,11 +38,8 @@ import java.util.Map.Entry;
         return new Toml("root");
     }
     
-    public static Toml readBuf(ByteBuf buf) {
-        String name = NetworkHelper.readString(buf);
-        Toml toml = new Toml(NetworkHelper.readString(buf));
-        toml.name = name;
-        return toml;
+    public static Toml readBuf(ByteBuf buf) throws TomlParsingException {
+        return readString(NetworkHelper.readString(buf));
     }
     
     public static Toml readFile(File file) throws TomlParsingException, IOException {
@@ -466,6 +463,12 @@ import java.util.Map.Entry;
         }
     }
     
+    public String toString() {
+        StringBuilder builder = new StringBuilder("\n");
+        write(builder,0);
+        return builder.toString();
+    }
+    
     /**
      Write this table to a StringBuilder with optional formatting and comments enabled.
      * @param builder A StringBuilder output of the written table
@@ -570,10 +573,7 @@ import java.util.Map.Entry;
      * @param comments Enables the writing of comments
      */
     public void write(ByteBuf buf, boolean comments) {
-        NetworkHelper.writeString(buf,this.name);
-        StringBuilder builder = new StringBuilder();
-        write(builder,-1,comments);
-        NetworkHelper.writeString(buf,builder.toString());
+        NetworkHelper.writeString(buf,toString());
     }
     
     @Getter

@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
@@ -105,7 +104,6 @@ public class NetworkHelper {
     }
 
     public static <V> Collection<V> readCollection(ByteBuf buf, Supplier<V> valFunc) {
-        TILDev.logInfo("Reading collection");
         String type = readString(buf).toLowerCase();
         switch(type) {
             case "list": return readList(buf,valFunc);
