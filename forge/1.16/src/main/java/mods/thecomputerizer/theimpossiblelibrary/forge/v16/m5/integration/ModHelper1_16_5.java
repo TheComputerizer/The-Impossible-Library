@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.util.Collections;
 import java.util.Map;
@@ -26,6 +27,21 @@ public class ModHelper1_16_5 extends ModHelperAPI {
         addMod(map,new GameStages1_16_5());
         addMod(map,new SereneSeasons1_16_5());
         return Collections.unmodifiableMap(map);
+    }
+    
+    @Override
+    public String getModName(String modid) {
+        String name = super.getModName(modid);
+        ModList list = ModList.get();
+        if(name.equals(modid) && list.isLoaded(modid)) {
+            for(ModInfo info : list.getMods()) {
+                if(modid.equals(info.getModId())) {
+                    name = info.getDisplayName();
+                    break;
+                }
+            }
+        }
+        return name;
     }
 
     @Override

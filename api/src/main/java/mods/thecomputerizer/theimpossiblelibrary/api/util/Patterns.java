@@ -6,9 +6,15 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class Patterns {
 
     public static final Pattern ARRAY_DEF = Pattern.compile("(\\[*]*)");
+    public static final String BRACKETS_LITERAL = Pattern.quote("{}");
+    
+    public static boolean matchesLiterally(String original, String literal) {
+        return original.matches(Pattern.quote(literal));
+    }
 
     public static Matcher getMatcher(CharSequence str, String regex) {
         return getMatcher(str,regex,0);

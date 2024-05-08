@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,6 +29,20 @@ public class ModHelper1_12_2 extends ModHelperAPI {
         addMod(map,new SereneSeasons1_12_2());
         addMod(map,new Weather21_12_2());
         return Collections.unmodifiableMap(map);
+    }
+    
+    @Override
+    public String getModName(String modid) {
+        String name = super.getModName(modid);
+        if(name.equals(modid) && isModLoaded(modid)) {
+            for(ModContainer container : Loader.instance().getActiveModList()) {
+                if(modid.equals(container.getModId())) {
+                    name = container.getName();
+                    break;
+                }
+            }
+        }
+        return name;
     }
 
     @Override
