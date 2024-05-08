@@ -39,7 +39,10 @@ import java.util.Map.Entry;
     }
     
     public static Toml readBuf(ByteBuf buf) {
-        return new Toml(buf);
+        String name = NetworkHelper.readString(buf);
+        Toml toml = new Toml(NetworkHelper.readString(buf));
+        toml.name = name;
+        return toml;
     }
     
     public static Toml readFile(File file) throws TomlParsingException, IOException {
@@ -568,12 +571,9 @@ import java.util.Map.Entry;
      */
     public void write(ByteBuf buf, boolean comments) {
         NetworkHelper.writeString(buf,this.name);
-        buf.writeBoolean(comments);
-        NetworkHelper.writeMap(buf,this.tables,key -> NetworkHelper.writeString(buf,key),tomls ->
-                NetworkHelper.writeList(buf,Arrays.asList(tomls),toml -> toml.write(buf)));
-        NetworkHelper.writeMap(buf,this.entries,key -> NetworkHelper.writeString(buf,key),
-                               entry -> entry.write(buf,comments));
-        if(comments) NetworkHelper.writeList(buf,Arrays.asList(this.comments),c -> NetworkHelper.writeString(buf,c));
+        StringBuilder builder = new StringBuilder();
+        write(builder,-1,comments);
+        NetworkHelper.writeString(buf,builder.toString());
     }
     
     @Getter
@@ -634,26 +634,6 @@ import java.util.Map.Entry;
         @Override
         public String toString() {
             return "<"+this.key+" = "+writeValue()+">";
-        }
-        
-        void write(ByteBuf buf, boolean comments) {
-            if(this.value.getClass().isPrimitive()) {
-                if(this.value instanceof Boolean) {
-                    NetworkHelper.writeString(buf,"bool");
-                    buf.writeBoolean((Boolean)this.value);
-                } else if(this.value instanceof Float) {
-                    NetworkHelper.writeString(buf,"float");
-                    buf.writeFloat((Float)this.value);
-                } else {
-                    NetworkHelper.writeString(buf,"int");
-                    buf.writeInt((Integer)this.value);
-                }
-            } else {
-                NetworkHelper.writeString(buf,"string");
-                NetworkHelper.writeString(buf,this.value.toString());
-            }
-            if(comments)
-                NetworkHelper.writeList(buf,Arrays.asList(this.comments),c -> NetworkHelper.writeString(buf,c));
         }
         
         String writeValue() {
