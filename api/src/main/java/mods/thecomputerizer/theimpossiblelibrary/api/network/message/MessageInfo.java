@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 
 import java.util.function.Function;
 
@@ -29,7 +28,6 @@ public final class MessageInfo<M extends MessageAPI<?>> {
     }
 
     public void encode(M message, ByteBuf buf) {
-        TILDev.logInfo("Encoding message info for {}",message);
         this.handler.encode(message,buf);
     }
 

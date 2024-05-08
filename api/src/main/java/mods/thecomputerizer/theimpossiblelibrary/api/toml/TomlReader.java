@@ -80,7 +80,7 @@ public class TomlReader {
     
     public void read(String tomlString) throws TomlParsingException {
         if(Objects.isNull(tomlString)) throw new TomlParsingException("Tried to read null TOML string",-1);
-        TILDev.logInfo("Tokenizing toml string with length of {}",tomlString.length());
+        TILDev.logDebug("Tokenizing toml string with length of {}",tomlString.length());
         for(int i=0;i<tomlString.length();i++) this.tokenizer.step(tomlString.charAt(i),i);
         this.tokenizer.finish();
     }

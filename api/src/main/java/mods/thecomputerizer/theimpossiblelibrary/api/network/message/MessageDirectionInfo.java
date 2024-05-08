@@ -26,7 +26,6 @@ public class MessageDirectionInfo<DIR> {
 
     @SuppressWarnings("unchecked")
     public <M extends MessageAPI<?>> @Nullable M decode(Class<?> clazz, ByteBuf buf) {
-        TILDev.logInfo("Decoding message from {}",clazz);
         try {
             MessageInfo<M> info = (MessageInfo<M>)getMessageInfo((Class<M>)clazz);
             return Objects.nonNull(info) ? info.decode(buf) : null;
@@ -38,7 +37,6 @@ public class MessageDirectionInfo<DIR> {
 
     @SuppressWarnings("unchecked")
     public <M extends MessageAPI<?>> void encode(M message, ByteBuf buf) {
-        TILDev.logInfo("Encoding message direction info for {}",message);
         try {
             MessageInfo<M> info = (MessageInfo<M>)getMessageInfo(message);
             if(Objects.nonNull(info)) info.encode(message,buf);
@@ -49,7 +47,6 @@ public class MessageDirectionInfo<DIR> {
 
     @SuppressWarnings("unchecked")
     public <CTX,M extends MessageAPI<CTX>> @Nullable MessageAPI<CTX> handle(M message, CTX context) {
-        TILDev.logInfo("Handling message direction info for {}",message);
         try {
             MessageInfo<M> info = (MessageInfo<M>)getMessageInfo(message);
             return Objects.nonNull(info) ? info.handle(message,context) : null;
@@ -65,11 +62,8 @@ public class MessageDirectionInfo<DIR> {
     }
 
     public <M extends MessageAPI<?>> @Nullable MessageInfo<?> getMessageInfo(Class<M> msgClass) {
-        TILDev.logInfo("Checking {} against {} registered message classes",msgClass,this.infoSet.size());
-        for(MessageInfo<?> info : this.infoSet) {
-            TILDev.logInfo("Checking class against {}",info.getClass());
+        for(MessageInfo<?> info : this.infoSet)
             if(msgClass==info.getMsgClass()) return info;
-        }
         TILDev.logInfo("Unable to find registered message for {}!",msgClass);
         return null;
     }

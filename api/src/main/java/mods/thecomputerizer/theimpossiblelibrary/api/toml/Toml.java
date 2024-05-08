@@ -87,7 +87,6 @@ import java.util.Map.Entry;
     }
     
     public static Toml readStream(InputStream stream, TomlReader reader) throws IOException, TomlParsingException {
-        TILDev.logInfo("Reading toml from input stream of type {}",stream.getClass());
         return readString(IOUtils.streamToString(stream),reader);
     }
     
@@ -96,7 +95,6 @@ import java.util.Map.Entry;
     }
     
     public static Toml readString(String tomlString, TomlReader reader) throws TomlParsingException {
-        TILDev.logInfo("Reading toml from input string\n{}",tomlString);
         reader.read(tomlString);
         return new Toml(reader.rootBuilder,"root");
     }

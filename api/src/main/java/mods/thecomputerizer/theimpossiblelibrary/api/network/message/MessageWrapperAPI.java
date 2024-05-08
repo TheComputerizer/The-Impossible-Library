@@ -65,18 +65,16 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
     }
 
     public <DIR> void decode(ByteBuf buf) {
-        TILDev.logInfo("Decoding message API");
         this.messages = NetworkHelper.readCollection(buf,() -> {
             String name = NetworkHelper.readString(buf);
-            TILDev.logInfo("Finding MessageAPI extension of class {}",name);
             Class<?> clazz = ReflectionHelper.findExtensibleClass(name,MessageAPI.class);
-            TILDev.logInfo("Found {}",clazz);
+            TILDev.logInfo("Decoding message of {}",clazz);
             return Objects.nonNull(clazz) ? this.info.decode(clazz,buf) : null;
         });
     }
 
     public void encode(ByteBuf buf) {
-        TILDev.logInfo("Encoding message API");
+        TILDev.logInfo("Encoding message");
         if(Objects.isNull(this.messages)) this.messages = Collections.emptyList();
         NetworkHelper.writeDir(buf,this.info.getDirection());
         NetworkHelper.writeCollection(buf,this.messages,message -> {
@@ -87,7 +85,6 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
 
     @SuppressWarnings("unchecked")
     public @Nullable MessageWrapperAPI<PLAYER,CTX> handle(CTX context) {
-        TILDev.logInfo("Handling {} messages with context {}",this.messages.size(),context);
         List<MessageAPI<CTX>> replies = new ArrayList<>();
         for(MessageAPI<CTX> message : this.messages) {
             MessageAPI<CTX> reply = this.info.handle(message,context);

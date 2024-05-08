@@ -91,7 +91,6 @@ public class NetworkHelper {
      * This assumes the object is stored as a string and that the class type has been stored when the function is null
      */
     public static Object parseObject(ByteBuf buf, @Nullable Function<String, Object> fromString) {
-        TILDev.logInfo("Attempting to decode object");
         if(Objects.nonNull(fromString)) return fromString.apply(readString(buf));
         Class<?> valType;
         String className = readString(buf);
@@ -119,14 +118,12 @@ public class NetworkHelper {
     }
 
     public static <DIR> DIR readDir(ByteBuf buf) {
-        TILDev.logInfo("Reading directon");
         return getDirFromName(readString(buf));
     }
 
     public static <V> List<V> readList(ByteBuf buf, Supplier<V> valFunc) {
         List<V> ret = new ArrayList<>();
         int size = buf.readInt();
-        TILDev.logInfo("Reading list of size {}",size);
         for(int i=0;i<size;i++) ret.add(valFunc.get());
         return ret;
     }
@@ -134,7 +131,6 @@ public class NetworkHelper {
     public static <K,V> Map<K,V> readMapEntries(ByteBuf buf, Supplier<Entry<K,V>> entryFunc) {
         Map<K,V> ret = new HashMap<>();
         int size = buf.readInt();
-        TILDev.logInfo("Reading map of size {}",size);
         for(int i=0;i<size;i++) {
             Entry<K,V> entry = entryFunc.get();
             ret.put(entry.getKey(),entry.getValue());
@@ -143,12 +139,10 @@ public class NetworkHelper {
     }
 
     public static <K,V> Map<K,V> readMap(ByteBuf buf, Supplier<K> keyFunc, Supplier<V> valFunc) {
-        TILDev.logInfo("Reading map from (key,value) suppliers");
         return readMapEntries(buf,() -> IterableHelper.getMapEntry(keyFunc.get(),valFunc.get()));
     }
 
     public static @Nullable ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
-        TILDev.logInfo("Reading resource location");
         NetworkAPI<?,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.readResourceLocation(buf) : null;
     }
@@ -156,14 +150,12 @@ public class NetworkHelper {
     public static <V> Set<V> readSet(ByteBuf buf, Supplier<V> valFunc) {
         Set<V> ret = new HashSet<>();
         int size = buf.readInt();
-        TILDev.logInfo("Reading set of size {}",size);
         for(int i=0;i<size;i++) ret.add(valFunc.get());
         return ret;
     }
 
     public static String readString(ByteBuf buf) {
         int strLength = buf.readInt();
-        TILDev.logInfo("Reading string of length {}",strLength);
         return strLength==0 ? "" : (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
     }
 
@@ -203,7 +195,6 @@ public class NetworkHelper {
     }
 
     public static <V> void writeCollection(ByteBuf buf, Collection<V> collection, Consumer<V> valFunc) {
-        TILDev.logInfo("Writing collection");
         if(collection instanceof List<?>) {
             writeString(buf,"list");
             writeList(buf,(List<V>)collection,valFunc);
@@ -220,18 +211,15 @@ public class NetworkHelper {
 
     public static <DIR> void writeDir(ByteBuf buf, DIR dir) {
         String name = getNameFromDir(dir);
-        TILDev.logInfo("Writing direction {}",name);
         writeString(buf,Objects.nonNull(name) ? name : "CLIENT");
     }
 
     public static <V> void writeList(ByteBuf buf, List<V> list, Consumer<V> valFunc) {
-        TILDev.logInfo("Writing list of size {}",list.size());
         buf.writeInt(list.size());
         list.forEach(valFunc);
     }
 
     public static <K,V> void writeMap(ByteBuf buf, Map<K,V> map, Consumer<K> keyFunc, Consumer<V> valFunc) {
-        TILDev.logInfo("Writing map");
         writeSet(buf,map.entrySet(),entry -> {
             keyFunc.accept(entry.getKey());
             valFunc.accept(entry.getValue());
@@ -249,7 +237,6 @@ public class NetworkHelper {
      * Writes a generic object as a string. Can handle lists but not arrays or generic collections
      */
     public static void writeObject(ByteBuf buf, Object val, @Nullable Function<Object,String> toString) {
-        TILDev.logInfo("Attempting to write generic object");
         if(Objects.nonNull(toString)) writeString(buf,toString.apply(val));
         else {
             writeString(buf,val.getClass().getName());
@@ -259,12 +246,10 @@ public class NetworkHelper {
     }
 
     public static void writeResourceLocation(ByteBuf buf, ResourceLocationAPI<?> resource) {
-        TILDev.logInfo("Writing resource location");
         writeString(buf,resource.toString());
     }
 
     public static <V> void writeSet(ByteBuf buf, Set<V> set, Consumer<V> valFunc) {
-        TILDev.logInfo("Writing set of size {}",set.size());
         buf.writeInt(set.size());
         set.forEach(valFunc);
     }
@@ -278,7 +263,6 @@ public class NetworkHelper {
             ByteBuffer buffer = StandardCharsets.UTF_8.encode(string);
             string = StandardCharsets.UTF_8.decode(buffer).toString();
         }
-        TILDev.logInfo("Writing string of length {}",string.length());
         buf.writeInt(string.length());
         buf.writeCharSequence(string,StandardCharsets.UTF_8);
     }
