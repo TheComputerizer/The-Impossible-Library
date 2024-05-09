@@ -39,6 +39,21 @@ import java.util.function.Function;
         }
     }
     
+    public static byte randomByte(byte range) {
+        return randomByte((byte)0,range);
+    }
+    
+    /**
+     Automatically determines min/max
+     */
+    public static byte randomByte(byte b1, byte b2) {
+        return (byte)randomInt(b1,b2); //Is this really how it should be done?
+    }
+    
+    public static byte randomByte(String name, String unparsed, byte fallback) {
+        return randomNum(name,unparsed,fallback,Byte::parseByte,RandomHelper::randomByte);
+    }
+    
     public static double randomDouble(double range) {
         return randomDouble(0,range);
     }
@@ -119,6 +134,21 @@ import java.util.function.Function;
         N min = parse(name,unparsed.substring(0,index-1),fallback,fromString);
         N max = parse(name,unparsed.substring(0,index-1),fallback,fromString);
         return fromRand.apply(min,max);
+    }
+    
+    public static short randomShort(short range) {
+        return randomShort((short)0,range);
+    }
+    
+    /**
+     Automatically determines min/max
+     */
+    public static short randomShort(short s1, short s2) {
+        return (short)randomInt(s1,s2); //Is this really how it should be done?
+    }
+    
+    public static short randomShort(String name, String unparsed, short fallback) {
+        return randomNum(name,unparsed,fallback,Short::parseShort,RandomHelper::randomShort);
     }
     
     
