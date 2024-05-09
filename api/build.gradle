@@ -4,7 +4,7 @@ repositories {
     mavenCentral() {
         content {
             [ 'com.google.code.findbugs', 'commons-io', 'io.netty', 'org.apache.commons', 'org.apache.logging.log4j',
-              'org.ow2.asm' ].forEach { includeGroup it }
+              'org.ow2', 'org.ow2.asm' ].forEach { includeGroup it }
         }
     }
     maven {
