@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class RenderHelper {
 
     private static final List<Renderable> RENDERABLES = Collections.synchronizedList(new ArrayList<>());
@@ -274,14 +275,14 @@ public class RenderHelper {
     }
 
     public static void removeRenderable(Renderable renderable) {
-        synchronized (RENDERABLES) {
+        synchronized(RENDERABLES) {
             RENDERABLES.remove(renderable);
         }
     }
 
 
     public static void renderAllBackgroundStuff(RenderAPI renderer) {
-        synchronized (RENDERABLES) {
+        synchronized(RENDERABLES) {
             for(Renderable type : RENDERABLES) type.render(renderer);
         }
     }

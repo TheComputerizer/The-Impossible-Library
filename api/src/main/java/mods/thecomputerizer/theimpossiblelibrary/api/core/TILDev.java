@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class TILDev {
+@SuppressWarnings("unused") public class TILDev {
 
     public static final boolean DEV = Boolean.parseBoolean(System.getProperty("tilDev")); //`-DtilDev=true`
     private static final Logger LOGGER = DEV ? LogManager.getLogger("TIL DEV") : null;
@@ -24,10 +24,6 @@ public class TILDev {
 
     public static void log(Level level, String msg, Object ... args) {
         if(DEV) LOGGER.log(level,msg,args);
-    }
-
-    public static void logAll(String msg, Object ... args) {
-        log(Level.ALL,msg,args);
     }
 
     public static void logDebug(String msg, Object ... args) {
@@ -44,10 +40,6 @@ public class TILDev {
 
     public static void logInfo(String msg, Object ... args) {
         log(Level.INFO,msg,args);
-    }
-
-    public static void logOff(String msg, Object ... args) {
-        log(Level.OFF,msg,args);
     }
 
     public static void logTrace(String msg, Object ... args) {

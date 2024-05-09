@@ -71,10 +71,6 @@ public class TILRef {
         logNullable(level,msg,args);
     }
 
-    public static void logAll(String msg, Object ... args) {
-        logNullable(Level.ALL,msg,args);
-    }
-
     public static void logDebug(String msg, Object ... args) {
         logNullable(Level.DEBUG,msg,args);
     }
@@ -94,10 +90,6 @@ public class TILRef {
     private static void logNullable(Level level, String msg, Object ... args) {
         if(Objects.nonNull(INSTANCE)) INSTANCE.log(level,msg,args);
         else LOGGER.log(level,msg,args);
-    }
-
-    public static void logOff(String msg, Object ... args) {
-        logNullable(Level.OFF,msg,args);
     }
 
     public static void logTrace(String msg, Object ... args) {
