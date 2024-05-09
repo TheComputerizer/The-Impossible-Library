@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class LogHelper {
@@ -68,15 +67,17 @@ public class LogHelper {
         }
         return StringUtils.isNotEmpty(msg) ? msg+" "+joiner : joiner.toString();
     }
+    
+    private static String fixRegex(@Nullable Object value) {
+        return String.valueOf(value).replace("$","\\$");
+    }
 
     public static String injectParameters(String message, Object ... parameters) {
         if(Objects.isNull(message)) return "null";
         if(ArrayHelper.isNotEmpty(parameters)) {
             for(Object parameter : parameters) {
-                if(message.contains("{}")) {
-                    String replacement = Objects.nonNull(parameter) ? Pattern.quote(parameter.toString()) : "null";
-                    message = message.replaceFirst(Patterns.BRACKETS_LITERAL,replacement);
-                } else break;
+                if(message.contains("{}")) message = message.replaceFirst(Patterns.BRACKETS_LITERAL,fixRegex(parameter));
+                else break;
             }
         }
         return message;
