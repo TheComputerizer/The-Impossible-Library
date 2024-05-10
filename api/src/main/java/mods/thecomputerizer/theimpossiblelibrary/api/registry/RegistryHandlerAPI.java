@@ -15,4 +15,9 @@ public interface RegistryHandlerAPI {
     RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey);
     RegistryAPI<?> getRegistry(Class<?> type);
     RegistryAPI<?> getSoundRegistry();
+    BlockBuilderAPI makeBlockBuilder();
+    CreativeTabBuilderAPI makeCreativeTabBuilder();
+    EntityBuilderAPI makeEntityBuilder();
+    ItemBuilderAPI makeItemBuilder();
+    SoundBuilderAPI makeSoundBuilder();
 }

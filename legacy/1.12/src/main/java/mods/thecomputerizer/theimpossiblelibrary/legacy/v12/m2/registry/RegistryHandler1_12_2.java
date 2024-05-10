@@ -1,7 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.BlockBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.CreativeTabBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.EntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import net.minecraft.block.Block;
@@ -62,43 +67,35 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         return reg.hasKey(entryKey) ? reg.getValue(entryKey) : null;
     }
 
-    @Override
-    public Registry1_12_2<Biome> getBiomeRegistry() {
+    @Override public Registry1_12_2<Biome> getBiomeRegistry() {
         return this.biome;
     }
 
-    @Override
-    public Registry1_12_2<Block> getBlockRegistry() {
+    @Override public Registry1_12_2<Block> getBlockRegistry() {
         return this.block;
     }
 
-    @Override
-    public TileEntityRegistry1_12_2 getBlockEntityRegistry() {
+    @Override public TileEntityRegistry1_12_2 getBlockEntityRegistry() {
         return this.blockEntity;
     }
 
-    @Override
-    public Registry1_12_2<Potion> getEffectRegistry() {
+    @Override public Registry1_12_2<Potion> getEffectRegistry() {
         return this.effect;
     }
 
-    @Override
-    public Registry1_12_2<EntityEntry> getEntityRegistry() {
+    @Override public Registry1_12_2<EntityEntry> getEntityRegistry() {
         return this.entity;
     }
 
-    @Override
-    public Registry1_12_2<Item> getItemRegistry() {
+    @Override public Registry1_12_2<Item> getItemRegistry() {
         return this.item;
     }
 
-    @Override
-    public Registry1_12_2<PotionType> getPotionRegistry() {
+    @Override public Registry1_12_2<PotionType> getPotionRegistry() {
         return this.potion;
     }
 
-    @Override
-    public RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey) {
+    @Override public RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey) {
         switch(registryKey.getPath()) {
             case "biome": return this.biome;
             case "block": return this.block;
@@ -111,16 +108,34 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         }
     }
 
-    @Override
-    public RegistryAPI<?> getRegistry(Class<?> type) {
+    @Override public RegistryAPI<?> getRegistry(Class<?> type) {
         if(type==TileEntity.class) return getBlockEntityRegistry();
         for(Registry1_12_2<?> registry : this.registries)
             if(registry.getType().isAssignableFrom(type)) return registry;
         return null;
     }
 
-    @Override
-    public Registry1_12_2<SoundEvent> getSoundRegistry() {
+    @Override public Registry1_12_2<SoundEvent> getSoundRegistry() {
         return this.sound;
+    }
+    
+    @Override public BlockBuilderAPI makeBlockBuilder() {
+        return new BlockBuilder1_12_2();
+    }
+    
+    @Override public CreativeTabBuilderAPI makeCreativeTabBuilder() {
+        return new CreativeTabBuilder1_12_2();
+    }
+    
+    @Override public EntityBuilderAPI makeEntityBuilder() {
+        return new EntityBuilder1_12_2();
+    }
+    
+    @Override public ItemBuilderAPI makeItemBuilder() {
+        return new ItemBuilder1_12_2();
+    }
+    
+    @Override public SoundBuilderAPI makeSoundBuilder() {
+        return new SoundBuilder1_12_2();
     }
 }
