@@ -2,10 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.events.*;
@@ -23,10 +23,10 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.*;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.OFFHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.OFFHAND;
 
 public class Events1_12_2 implements EventsAPI {
 
@@ -167,8 +167,12 @@ public class Events1_12_2 implements EventsAPI {
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEvent1_12_2());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEvent1_12_2());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEvent1_12_2());
+        REGISTER_BLOCKS.setConnector(new RegisterBlocksEvent1_12_2());
+        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEvent1_12_2());
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEvent1_12_2());
-        REGISTER_GENERIC.setConnector(new RegistryEvent1_12_2());
+        REGISTER_ENTITIES.setConnector(new RegisterEntitiesEvent1_12_2());
+        REGISTER_ITEMS.setConnector(new RegisterItemsEvent1_12_2());
+        REGISTER_SOUNDS.setConnector(new RegisterSoundsEvent1_12_2());
         TICK_PLAYER.setConnector(new PlayerTickEvent1_12_2());
         TICK_WORLD.setConnector(new WorldTickEvent1_12_2());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEvent1_12_2());

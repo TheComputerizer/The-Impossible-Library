@@ -2,7 +2,21 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ToolType;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.block.BlockBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.blockentity.BlockEntityBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.entity.EntityBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.DiscBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.ItemBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.ToolBulder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.sound.SoundBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.tab.CreativeTabBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
@@ -123,5 +137,37 @@ public class RegistryHandler1_16_5 implements RegistryHandlerAPI {
     @Override
     public Registry1_16_5<SoundEvent> getSoundRegistry() {
         return this.sound;
+    }
+    
+    @Override public BlockBuilder1_16_5 makeBlockBuilder(@Nullable BlockBuilderAPI parent) {
+        return new BlockBuilder1_16_5(parent);
+    }
+    
+    @Override public BlockEntityBuilder1_16_5 makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
+        return new BlockEntityBuilder1_16_5(parent);
+    }
+    
+    @Override public CreativeTabBuilder1_16_5 makeCreativeTabBuilder() {
+        return new CreativeTabBuilder1_16_5();
+    }
+    
+    @Override public DiscBuilder1_16_5 makeDiscBuilder(@Nullable ItemBuilderAPI parent) {
+        return new DiscBuilder1_16_5(parent);
+    }
+    
+    @Override public EntityBuilder1_16_5 makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
+        return new EntityBuilder1_16_5(parent);
+    }
+    
+    @Override public ItemBuilder1_16_5 makeItemBuilder(@Nullable ItemBuilderAPI parent) {
+        return new ItemBuilder1_16_5(parent);
+    }
+    
+    @Override public SoundBuilder1_16_5 makeSoundBuilder(@Nullable SoundBuilderAPI parent) {
+        return new SoundBuilder1_16_5(parent);
+    }
+    
+    @Override public ToolBulder1_16_5 makeToolBuilder(@Nullable ItemBuilderAPI parent, ToolType tool) {
+        return new ToolBulder1_16_5(parent,tool);
     }
 }

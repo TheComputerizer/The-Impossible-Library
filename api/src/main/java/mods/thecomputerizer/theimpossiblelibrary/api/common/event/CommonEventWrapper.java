@@ -90,8 +90,12 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
         public static CommonType<PlayerChangeXPEventWrapper<?>> PLAYER_XP_CHANGE = new CommonType<>(true,false);
         public static CommonType<PlayerPickupXPEventWrapper<?>> PLAYER_XP_PICKUP = new CommonType<>(true,false);
         public static CommonType<PlayerLevelChangeEventWrapper<?>> PLAYER_XP_LEVEL_CHANGE = new CommonType<>(true,false);
+        public static CommonType<RegisterBlocksEventWrapper<?>> REGISTER_BLOCKS = new CommonType<>(false, false);
+        public static CommonType<RegisterBlockEntitiesEventWrapper<?>> REGISTER_BLOCK_ENTITIES = new CommonType<>(false, false);
         public static CommonType<RegisterCommandsEventWrapper<?>> REGISTER_COMMANDS = new CommonType<>(false,false);
-        public static CommonType<RegistryEventWrapper<?>> REGISTER_GENERIC = new CommonType<>(false,false);
+        public static CommonType<RegisterEntitiesEventWrapper<?>> REGISTER_ENTITIES = new CommonType<>(false, false);
+        public static CommonType<RegisterItemsEventWrapper<?>> REGISTER_ITEMS = new CommonType<>(false, false);
+        public static CommonType<RegisterSoundsEventWrapper<?>> REGISTER_SOUNDS = new CommonType<>(false, false);
         public static CommonType<PlayerTickEventWrapper<?>> TICK_PLAYER = new CommonType<>(false,false);
         public static CommonType<WorldTickEventWrapper<?>> TICK_WORLD = new CommonType<>(false,false);
         public static CommonType<WorldCreateSpawnPosEventWrapper<?>> WORLD_CREATE_SPAWN_POS = new CommonType<>(true,false);

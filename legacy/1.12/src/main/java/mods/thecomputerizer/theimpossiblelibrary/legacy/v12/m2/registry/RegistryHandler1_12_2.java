@@ -1,13 +1,23 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.BlockBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.CreativeTabBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.EntityBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.ItemBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ToolType;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.SoundBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.block.BlockBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity.BlockEntityBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity.BlockEntityRegistry1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.entity.EntityBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.DiscBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ItemBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ToolBulder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.sound.SoundBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.tab.CreativeTabBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -32,7 +42,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     private final Set<Registry1_12_2<?>> registries;
     private final Registry1_12_2<Biome> biome;
     private final Registry1_12_2<Block> block;
-    private final TileEntityRegistry1_12_2 blockEntity;
+    private final BlockEntityRegistry1_12_2 blockEntity;
     private final Registry1_12_2<Potion> effect;
     private final Registry1_12_2<EntityEntry> entity;
     private final Registry1_12_2<Item> item;
@@ -49,7 +59,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         this.potion = getRegistry(registries,ForgeRegistries.POTION_TYPES,"potion",PotionType.class);
         this.sound = getRegistry(registries,ForgeRegistries.SOUND_EVENTS,"sound",SoundEvent.class);
         this.registries = Collections.unmodifiableSet(registries);
-        this.blockEntity = new TileEntityRegistry1_12_2();
+        this.blockEntity = new BlockEntityRegistry1_12_2();
     }
 
     private <V extends IForgeRegistryEntry<V>> Registry1_12_2<V> getRegistry(
@@ -75,7 +85,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         return this.block;
     }
 
-    @Override public TileEntityRegistry1_12_2 getBlockEntityRegistry() {
+    @Override public BlockEntityRegistry1_12_2 getBlockEntityRegistry() {
         return this.blockEntity;
     }
 
@@ -119,23 +129,35 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         return this.sound;
     }
     
-    @Override public BlockBuilderAPI makeBlockBuilder() {
-        return new BlockBuilder1_12_2();
+    @Override public BlockBuilder1_12_2 makeBlockBuilder(@Nullable BlockBuilderAPI parent) {
+        return new BlockBuilder1_12_2(parent);
     }
     
-    @Override public CreativeTabBuilderAPI makeCreativeTabBuilder() {
+    @Override public BlockEntityBuilder1_12_2 makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
+        return new BlockEntityBuilder1_12_2(parent);
+    }
+    
+    @Override public CreativeTabBuilder1_12_2 makeCreativeTabBuilder() {
         return new CreativeTabBuilder1_12_2();
     }
     
-    @Override public EntityBuilderAPI makeEntityBuilder() {
-        return new EntityBuilder1_12_2();
+    @Override public DiscBuilder1_12_2 makeDiscBuilder(@Nullable ItemBuilderAPI parent) {
+        return new DiscBuilder1_12_2(parent);
     }
     
-    @Override public ItemBuilderAPI makeItemBuilder() {
-        return new ItemBuilder1_12_2();
+    @Override public EntityBuilder1_12_2 makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
+        return new EntityBuilder1_12_2(parent);
     }
     
-    @Override public SoundBuilderAPI makeSoundBuilder() {
-        return new SoundBuilder1_12_2();
+    @Override public ItemBuilder1_12_2 makeItemBuilder(@Nullable ItemBuilderAPI parent) {
+        return new ItemBuilder1_12_2(parent);
+    }
+    
+    @Override public SoundBuilder1_12_2 makeSoundBuilder(@Nullable SoundBuilderAPI parent) {
+        return new SoundBuilder1_12_2(parent);
+    }
+    
+    @Override public ToolBulder1_12_2 makeToolBuilder(@Nullable ItemBuilderAPI parent, ToolType tool) {
+        return new ToolBulder1_12_2(parent,tool);
     }
 }

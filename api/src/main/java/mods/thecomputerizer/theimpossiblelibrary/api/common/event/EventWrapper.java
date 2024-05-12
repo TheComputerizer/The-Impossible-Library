@@ -271,9 +271,7 @@ public abstract class EventWrapper<E> {
     protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldGetter(Function<E,V> getter) {
         return new EventFieldWrapper<>(event -> wrapWorld(getter),null);
     }
-
-    public enum ActionResult { CONSUME, FAIL, PASS, SUCCESS }
-
+    
     public enum Result { ALLOW, DEFAULT, DENY }
 
     public static abstract class EventType<E extends EventWrapper<?>> {

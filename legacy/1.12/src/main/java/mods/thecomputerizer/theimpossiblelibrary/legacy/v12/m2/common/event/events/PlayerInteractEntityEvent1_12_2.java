@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractEntityEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
@@ -13,8 +15,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult.PASS;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractEntityEvent1_12_2 extends PlayerInteractEntityEventWrapper<EntityInteract> {
 

@@ -4,14 +4,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractItemEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult.PASS;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractItemEvent1_16_5 extends PlayerInteractItemEventWrapper<RightClickItem> {
 

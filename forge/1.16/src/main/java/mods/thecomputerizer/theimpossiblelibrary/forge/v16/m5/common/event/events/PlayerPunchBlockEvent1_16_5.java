@@ -4,6 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerPunchBlockEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -12,9 +14,9 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Event
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerPunchBlockEvent1_16_5 extends PlayerPunchBlockEventWrapper<LeftClickBlock> {
 

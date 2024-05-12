@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractEntitySpecificEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -13,8 +15,8 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Event
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.ActionResult.PASS;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonPlayerInteractEventType.Hand.MAINHAND;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractEntitySpecificEvent1_16_5 extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific> {
 

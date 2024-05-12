@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event.types;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
@@ -61,6 +63,5 @@ public abstract class CommonPlayerInteractEventType<E> extends CommonPlayerEvent
     protected abstract EventFieldWrapper<E,Facing> wrapFacingField();
     protected abstract EventFieldWrapper<E,Hand> wrapHandField();
     protected abstract EventFieldWrapper<E,BlockPosAPI<?>> wrapPosField();
-
-    public enum Hand { MAINHAND, OFFHAND }
+    
 }
