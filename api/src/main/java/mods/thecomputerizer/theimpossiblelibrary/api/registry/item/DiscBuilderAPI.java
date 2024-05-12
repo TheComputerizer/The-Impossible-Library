@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -13,7 +14,7 @@ import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public abstract class DiscBuilderAPI extends ItemBuilderAPI {
+@SuppressWarnings("unused") public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     protected String name;
     protected SoundEventAPI<?> sound;
@@ -30,6 +31,12 @@ public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     public DiscBuilderAPI setItemType(ItemType type) {
         this.itemType = type;
+        return this;
+    }
+    
+    @Override
+    public DiscBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+        this.registryName = name;
         return this;
     }
     

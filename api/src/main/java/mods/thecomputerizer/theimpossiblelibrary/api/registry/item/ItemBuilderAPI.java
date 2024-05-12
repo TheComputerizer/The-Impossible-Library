@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseConte
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -18,7 +19,7 @@ import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ItemType.BASIC;
 
-public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
+@SuppressWarnings("unused") public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
     
     protected CreativeTabAPI creativeTab;
     protected BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc;
@@ -42,7 +43,7 @@ public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
     }
     
     public ItemProperties buildProperties() {
-        return new ItemProperties(this.creativeTab,this.stackSize,this.descFunc,this.useFunc);
+        return new ItemProperties(this.creativeTab,this.stackSize,this.registryName,this.descFunc,this.useFunc);
     }
     
     public ItemBuilderAPI setCreativeTab(CreativeTabAPI tab) {
@@ -52,6 +53,12 @@ public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
     
     public ItemBuilderAPI setItemType(ItemType type) {
         this.itemType = type;
+        return this;
+    }
+    
+    @Override
+    public ItemBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+        this.registryName = name;
         return this;
     }
     

@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemPrope
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.client.util.ITooltipFlag;
@@ -37,6 +38,7 @@ public class TILBasicItem1_12_2 extends Item implements WithItemProperties { //T
     public TILBasicItem1_12_2(ItemProperties properties) {
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
+        setRegistryName(((ResourceLocation1_12_2)properties.getRegistryName()).getInstance());
     }
     
     @Override

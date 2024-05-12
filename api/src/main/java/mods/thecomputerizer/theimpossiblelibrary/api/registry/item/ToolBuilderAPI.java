@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -32,6 +33,12 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
     
     public ToolBuilderAPI setItemType(ItemType type) {
         this.itemType = type;
+        return this;
+    }
+    
+    @Override
+    public ToolBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+        this.registryName = name;
         return this;
     }
     

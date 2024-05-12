@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.ItemStack1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.Text1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.BlockPos1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
@@ -37,6 +38,7 @@ public class TILItemHoe1_16_5 extends HoeItem implements WithItemProperties {
             ItemProperties otherProperties) {
         super(tier,damage,speed,properties);
         this.properties = otherProperties;
+        setRegistryName(((ResourceLocation1_16_5)otherProperties.getRegistryName()).getInstance());
     }
     
     @Override

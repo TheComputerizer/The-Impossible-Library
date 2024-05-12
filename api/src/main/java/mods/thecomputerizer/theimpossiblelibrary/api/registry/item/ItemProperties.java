@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -21,14 +22,16 @@ public class ItemProperties {
     
     @Getter private final CreativeTabAPI creativeTab;
     private final BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc;
+    @Getter private final ResourceLocationAPI<?> registryName;
     @Getter private final int stackSize;
     private final Function<TILItemUseContext,ActionResult> useFunc;
     
-    public ItemProperties(CreativeTabAPI creativeTab, int stackSize,
+    public ItemProperties(CreativeTabAPI creativeTab, int stackSize, ResourceLocationAPI<?> registryName,
             @Nullable BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc,
             @Nullable Function<TILItemUseContext,ActionResult> useFunc) {
         this.creativeTab = creativeTab;
         this.descFunc = descFunc;
+        this.registryName = registryName;
         this.stackSize = Math.max(1,stackSize);
         this.useFunc = useFunc;
     }

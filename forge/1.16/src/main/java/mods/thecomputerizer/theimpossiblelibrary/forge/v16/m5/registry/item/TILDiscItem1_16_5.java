@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.ItemStack1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.Text1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.BlockPos1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
@@ -36,6 +37,7 @@ public class TILDiscItem1_16_5 extends MusicDiscItem implements WithItemProperti
     public TILDiscItem1_16_5(Properties properties, SoundEvent sound, ItemProperties otherProperties) {
         super(0,() -> sound,properties);
         this.properties = otherProperties;
+        setRegistryName(((ResourceLocation1_16_5)otherProperties.getRegistryName()).getInstance());
     }
     
     @Override
