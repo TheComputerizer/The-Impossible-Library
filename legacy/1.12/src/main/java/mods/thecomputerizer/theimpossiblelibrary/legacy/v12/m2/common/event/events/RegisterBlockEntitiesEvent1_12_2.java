@@ -21,6 +21,6 @@ public class RegisterBlockEntitiesEvent1_12_2 extends RegisterBlockEntitiesEvent
     
     @Override public void register(BlockEntityAPI<?,?> entry) {
         Class<? extends TileEntity> clazz = ((BlockEntity1_12_2)entry).getType();
-        GameRegistry.registerTileEntity(clazz,((ResourceLocation1_12_2)entry.getRegistryName()).getInstance()); //TODO The registry name won't exist yet here
+        GameRegistry.registerTileEntity(clazz,((ResourceLocation1_12_2)entry.getRegistryName()).getInstance());
     }
 }

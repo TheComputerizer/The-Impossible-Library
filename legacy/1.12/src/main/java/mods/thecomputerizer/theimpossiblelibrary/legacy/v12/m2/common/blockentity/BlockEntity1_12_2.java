@@ -15,9 +15,17 @@ import net.minecraft.util.ResourceLocation;
 import java.util.Objects;
 
 public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends TileEntity>> {
-
+    
+    private ResourceLocation registryName;
+    
     public BlockEntity1_12_2(TileEntity tile) {
         super(tile,tile.getClass());
+        this.registryName = TileEntity.getKey(this.type);
+    }
+    
+    public BlockEntity1_12_2(Class<? extends TileEntity> tileClass) {
+        super(null,tileClass);
+        this.registryName = TileEntity.getKey(this.type);
     }
 
     @Override
@@ -27,10 +35,9 @@ public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends
 
     @Override
     public ResourceLocationAPI<?> getRegistryName() {
-        ResourceLocation name = TileEntity.getKey(this.type);
-        return Objects.nonNull(name) ? new ResourceLocation1_12_2(name) : null;
+        return Objects.nonNull(this.registryName) ? new ResourceLocation1_12_2(this.registryName) : null;
     }
-
+    
     @Override
     public BlockPosAPI<?> getPos() {
         return new BlockPos1_12_2(this.entity.getPos());
@@ -39,5 +46,9 @@ public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends
     @Override
     public WorldAPI<?> getWorld() {
         return new World1_12_2(this.entity.getWorld());
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        this.registryName = ((ResourceLocation1_12_2)registryName).getInstance();
     }
 }

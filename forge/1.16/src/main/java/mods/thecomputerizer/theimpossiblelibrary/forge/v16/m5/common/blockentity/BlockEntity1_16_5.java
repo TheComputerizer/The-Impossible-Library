@@ -15,6 +15,10 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<TileEntity,TileEntityType<
     public BlockEntity1_16_5(TileEntity tile) {
         super(tile,tile.getType());
     }
+    
+    public BlockEntity1_16_5(TileEntityType<?> type) {
+        super(null,type);
+    }
 
     @Override
     public BlockPosAPI<?> getPos() {
@@ -29,5 +33,9 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<TileEntity,TileEntityType<
     @Override
     public WorldAPI<?> getWorld() {
         return new World1_16_5(this.entity.getLevel());
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        this.type.setRegistryName(((ResourceLocation1_16_5)registryName).getInstance());
     }
 }

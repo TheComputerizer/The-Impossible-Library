@@ -4,6 +4,20 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 
 @SuppressWarnings("unused")
 public class MaterialHelper {
+    
+    /**
+     Returns air if nothing is found
+     */
+    public static MaterialAPI<?> getByName(String name) {
+        return BlockHelper.getAPI().getMaterialByName(name);
+    }
+    
+    /**
+     Returns grass if nothing is found
+     */
+    public static MaterialColorAPI<?> getColorByName(String name) {
+        return BlockHelper.getAPI().getMaterialColorByName(name);
+    }
 
     public static <M> boolean hasCollider(M material) {
         return WrapperHelper.wrapMaterial(material).hasCollider();
