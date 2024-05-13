@@ -54,9 +54,10 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
     public @Nullable Function<BlockStateAPI<?>,BlockStateAPI<?>> defaultStateBuilder() {
         if(this.defaultProperties.isEmpty()) return null;
         return state -> {
+            BlockStateAPI<?> next = state;
             for(Entry<BlockPropertyAPI<?,?>,Comparable<?>> entry : this.defaultProperties.entrySet())
-                state = buildDefaultProperty(state,entry.getKey(),entry.getValue());
-            return state;
+                next = buildDefaultProperty(next,entry.getKey(),entry.getValue());
+            return next;
         };
     }
     

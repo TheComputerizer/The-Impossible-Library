@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.DiscBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ToolType;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAPI;
@@ -86,12 +88,28 @@ public class RegistryHelper {
         return getHandler().makeCreativeTabBuilder();
     }
     
+    public static DiscBuilderAPI makeDiscBuilder() {
+        return makeDiscBuilder(null);
+    }
+    
+    public static DiscBuilderAPI makeDiscBuilder(@Nullable ItemBuilderAPI parent) {
+        return getHandler().makeDiscBuilder(parent);
+    }
+    
     public static EntityBuilderAPI makeEntityBuilder() {
         return makeEntityBuilder(null);
     }
     
     public static EntityBuilderAPI makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
         return getHandler().makeEntityBuilder(parent);
+    }
+    
+    public static ItemBlockBuilderAPI makeItemBlockBuilder() {
+        return makeItemBlockBuilder(null);
+    }
+    
+    public static ItemBlockBuilderAPI makeItemBlockBuilder(@Nullable ItemBuilderAPI parent) {
+        return getHandler().makeItemBlockBuilder(parent);
     }
     
     public static ItemBuilderAPI makeItemBuilder() {

@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockent
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity.BlockEntityRegistry1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.entity.EntityBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.DiscBuilder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ItemBlockBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ItemBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ToolBulder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.sound.SoundBuilder1_12_2;
@@ -147,6 +148,10 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     
     @Override public EntityBuilder1_12_2 makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
         return new EntityBuilder1_12_2(parent);
+    }
+    
+    @Override public ItemBlockBuilder1_12_2 makeItemBlockBuilder(@Nullable ItemBuilderAPI parent) {
+        return new ItemBlockBuilder1_12_2(parent);
     }
     
     @Override public ItemBuilder1_12_2 makeItemBuilder(@Nullable ItemBuilderAPI parent) {

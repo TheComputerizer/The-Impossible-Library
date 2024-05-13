@@ -11,7 +11,7 @@ public class Block1_12_2 extends BlockAPI<Block> {
     public Block1_12_2(Block block) {
         super(block);
     }
-
+    
     @Override
     public BlockStateAPI<?> getDefaultState() {
         return new BlockState1_12_2(this.block.getDefaultState());

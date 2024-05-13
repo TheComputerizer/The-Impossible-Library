@@ -91,6 +91,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
         return this;
     }
     
-    public enum ItemType{ BASIC, BOW, DISC, FISHING_ROD, TOOL }
+    public enum ItemType{ BASIC, BLOCK, BOW, DISC, FISHING_ROD, TOOL }
     public enum ToolType { AXE, CUSTOM, HOE, PICKAXE, SHOVEL, SWORD }
 }

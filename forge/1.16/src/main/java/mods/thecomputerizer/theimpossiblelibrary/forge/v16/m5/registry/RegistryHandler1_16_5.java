@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.block.Blo
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.blockentity.BlockEntityBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.entity.EntityBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.DiscBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.ItemBlockBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.ItemBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.item.ToolBulder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.sound.SoundBuilder1_16_5;
@@ -157,6 +158,10 @@ public class RegistryHandler1_16_5 implements RegistryHandlerAPI {
     
     @Override public EntityBuilder1_16_5 makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
         return new EntityBuilder1_16_5(parent);
+    }
+    
+    @Override public ItemBlockBuilder1_16_5 makeItemBlockBuilder(@Nullable ItemBuilderAPI parent) {
+        return new ItemBlockBuilder1_16_5(parent);
     }
     
     @Override public ItemBuilder1_16_5 makeItemBuilder(@Nullable ItemBuilderAPI parent) {
