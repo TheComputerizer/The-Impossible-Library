@@ -2,10 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterItemsEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_ITEMS;
 
@@ -17,6 +23,14 @@ public class RegisterItemsEvent1_12_2 extends RegisterItemsEventWrapper<Register
     }
     
     @Override public void register(ItemAPI<?> entry) {
-        this.event.getRegistry().register(((Item1_12_2)entry).getValue());
+        Item item = ((Item1_12_2)entry).getValue();
+        this.event.getRegistry().register(item);
+        if(CoreAPI.INSTANCE.getSide().isClient()) {
+            ResourceLocation registryName = item.getRegistryName();
+            if(Objects.nonNull(registryName)) {
+                ModelResourceLocation model = new ModelResourceLocation(registryName,"inventory");
+                ModelLoader.setCustomModelResourceLocation(item,0,model);
+            }
+        }
     }
 }

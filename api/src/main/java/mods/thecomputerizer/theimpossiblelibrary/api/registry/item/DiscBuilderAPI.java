@@ -16,11 +16,17 @@ import java.util.function.Function;
 
 @SuppressWarnings("unused") public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
-    protected String name;
+    protected Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier;
     protected SoundEventAPI<?> sound;
     
     protected DiscBuilderAPI(@Nullable ItemBuilderAPI parent) {
         super(parent);
+    }
+    
+    @Override
+    public DiscBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
+        this.propertyMap.put(key,properyGetter);
+        return this;
     }
     
     @Override
@@ -45,8 +51,8 @@ import java.util.function.Function;
         return this;
     }
     
-    public DiscBuilderAPI setSoundName(String name) {
-        this.name = name;
+    public DiscBuilderAPI setSoundNameSupplier(Function<ItemStackAPI<?>,TextAPI<?>> name) {
+        this.nameSupplier = name;
         return this;
     }
     

@@ -2,9 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
@@ -20,6 +22,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
@@ -27,6 +30,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 
@@ -35,12 +39,16 @@ import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 public class TILDiscItem1_12_2 extends ItemRecord implements WithItemProperties {
     
     protected final ItemProperties properties;
+    private final Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier;
     
-    public TILDiscItem1_12_2(String name, SoundEvent sound, ItemProperties properties) {
-        super(name,sound);
+    public TILDiscItem1_12_2(Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier, SoundEvent sound, ItemProperties properties) {
+        super("name",sound);
+        this.nameSupplier = nameSupplier;
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        setRegistryName(((ResourceLocation1_12_2)properties.getRegistryName()).getInstance());
+        ResourceLocation1_12_2 registryName = (ResourceLocation1_12_2)properties.getRegistryName();
+        setRegistryName(registryName.getInstance());
+        setTranslationKey(registryName.getNamespace()+"."+registryName.getPath());
     }
     
     @Override
@@ -48,6 +56,12 @@ public class TILDiscItem1_12_2 extends ItemRecord implements WithItemProperties 
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         getTooltipLines(() -> new ItemStack1_12_2(stack),() -> Objects.nonNull(world) ? new World1_12_2(world) : null)
                 .forEach(text -> tooltip.add(text.getApplied()));
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getRecordNameLocal() {
+        return Objects.nonNull(this.nameSupplier) ? this.nameSupplier.apply(null).getApplied() : "";
     }
     
     @Override

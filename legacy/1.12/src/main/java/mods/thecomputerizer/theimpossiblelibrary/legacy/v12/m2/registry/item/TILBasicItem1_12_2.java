@@ -38,7 +38,9 @@ public class TILBasicItem1_12_2 extends Item implements WithItemProperties { //T
     public TILBasicItem1_12_2(ItemProperties properties) {
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        setRegistryName(((ResourceLocation1_12_2)properties.getRegistryName()).getInstance());
+        ResourceLocation1_12_2 registryName = (ResourceLocation1_12_2)properties.getRegistryName();
+        setRegistryName(registryName.getInstance());
+        setTranslationKey(registryName.getNamespace()+"."+registryName.getPath());
     }
     
     @Override

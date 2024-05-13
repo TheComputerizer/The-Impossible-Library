@@ -39,7 +39,9 @@ public class TILItemShovel1_12_2 extends ItemSpade implements WithItemProperties
         super(material);
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        setRegistryName(((ResourceLocation1_12_2)properties.getRegistryName()).getInstance());
+        ResourceLocation1_12_2 registryName = (ResourceLocation1_12_2)properties.getRegistryName();
+        setRegistryName(registryName.getInstance());
+        setTranslationKey(registryName.getNamespace()+"."+registryName.getPath());
     }
     
     @Override

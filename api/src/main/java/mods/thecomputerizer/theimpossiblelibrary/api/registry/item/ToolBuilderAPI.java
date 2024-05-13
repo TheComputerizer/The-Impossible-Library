@@ -26,6 +26,12 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
     }
     
     @Override
+    public ToolBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
+        this.propertyMap.put(key,properyGetter);
+        return this;
+    }
+    
+    @Override
     public ToolBuilderAPI setCreativeTab(CreativeTabAPI tab) {
         this.creativeTab = tab;
         return this;

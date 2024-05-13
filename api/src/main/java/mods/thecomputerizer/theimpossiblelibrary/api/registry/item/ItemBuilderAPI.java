@@ -13,6 +13,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -24,15 +26,18 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
     protected CreativeTabAPI creativeTab;
     protected BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc;
     protected ItemType itemType;
+    protected Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> propertyMap;
     protected int stackSize;
     protected Function<TILItemUseContext,ActionResult> useFunc;
     
     protected ItemBuilderAPI(@Nullable ItemBuilderAPI parent) {
+        this.propertyMap = new HashMap<>();
         if(Objects.nonNull(parent)) {
             this.creativeTab = parent.creativeTab;
             this.descFunc = parent.descFunc;
             this.stackSize = parent.stackSize;
             this.useFunc = parent.useFunc;
+            this.propertyMap.putAll(parent.propertyMap);
         } else {
             this.creativeTab = null;
             this.descFunc = null;
@@ -40,6 +45,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
             this.useFunc = null;
         }
         this.itemType = BASIC;
+    }
+    
+    public ItemBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
+        this.propertyMap.put(key,properyGetter);
+        return this;
     }
     
     public ItemProperties buildProperties() {

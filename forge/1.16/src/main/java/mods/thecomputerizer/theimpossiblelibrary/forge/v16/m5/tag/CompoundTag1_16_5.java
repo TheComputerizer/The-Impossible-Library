@@ -35,7 +35,7 @@ public class CompoundTag1_16_5 extends BaseTag1_16_5<CompoundNBT> implements Com
 
     @Override
     public String getString(String key) {
-        return null;
+        return this.tag.getString(key);
     }
 
     @Override
