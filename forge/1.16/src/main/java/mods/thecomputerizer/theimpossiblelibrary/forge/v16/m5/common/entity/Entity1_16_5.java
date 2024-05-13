@@ -115,6 +115,11 @@ public class Entity1_16_5 extends EntityAPI<Entity,EntityType<?>> {
     public boolean isOwnedBy(EntityAPI<?,?> owner) {
         return this.entity instanceof TameableEntity && ((TameableEntity)this.entity).getOwner()==this.entity;
     }
+    
+    @Override
+    public void setPosition(double x, double y, double z) {
+        this.entity.setPos(x,y,z);
+    }
 
     @Override
     public double x() {

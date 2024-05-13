@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
 
     protected E entity;
@@ -70,6 +70,24 @@ public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
     public abstract boolean isLiving();
     public abstract boolean isPlayer();
     public abstract boolean isOwnedBy(EntityAPI<?,?> owner);
+    
+    public void setPosition(BlockPosAPI<?> pos) {
+        setPosition(pos.x(),pos.y(),pos.z());
+    }
+    
+    public void setPosition(Vector3i vec) {
+        setPosition(vec.x,vec.y,vec.z);
+    }
+    
+    public void setPosition(Vector3d vec) {
+        setPosition(vec.x,vec.y,vec.z);
+    }
+    
+    public void setPosition(int x, int y, int z) {
+        setPosition((double)x,y,z);
+    }
+    
+    public abstract void setPosition(double x, double y, double z);
     public abstract double x();
     public abstract double y();
     public abstract double z();

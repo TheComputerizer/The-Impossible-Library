@@ -179,6 +179,11 @@ public abstract class Player1_16_5<P extends PlayerEntity> extends PlayerAPI<P,E
         if(Objects.nonNull(this.entity) && text instanceof Text1_16_5)
             this.entity.displayClientMessage(((Text1_16_5)text).getComponent(),actionBar);
     }
+    
+    @Override
+    public void setPosition(double x, double y, double z) {
+        this.entity.setPos(x,y,z);
+    }
 
     @Override
     public double x() {

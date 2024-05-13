@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -15,9 +17,13 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.Block
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.blockentity.BlockEntity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Entity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Living1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.Item1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.ItemStack1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.structure.Structure1_16_5;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -33,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static net.minecraft.world.LightType.BLOCK;
 import static net.minecraft.world.LightType.SKY;
@@ -203,5 +210,31 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     public boolean isSunset() {
         long time = getTimeDay();
         return time>=12000L && time<13000L;
+    }
+    
+    @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+        if(!this.world.isClientSide()) {
+            this.world.addFreshEntity(((Entity1_16_5)entity).getEntity());
+            if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
+        }
+    }
+    
+    @Override public void spawnItem(ItemStackAPI<?> api, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+        if(this.world instanceof World && !this.world.isClientSide()) {
+            ItemStack stack = ((ItemStack1_16_5)api).getStack();
+            ItemEntity item = new ItemEntity((World)this.world,0d,0d,0d,stack);
+            spawnEntity(new Entity1_16_5(item),onSpawn);
+        }
+    }
+    
+    @Override public void spawnItem(
+            ItemAPI<?> api, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+            @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+        if(!this.world.isClientSide()) {
+            ItemStack stack = new ItemStack(((Item1_16_5)api).getValue());
+            ItemStack1_16_5 stackAPI = new ItemStack1_16_5(stack);
+            if(Objects.nonNull(beforeSpawn)) beforeSpawn.accept(stackAPI);
+            spawnItem(stackAPI,onSpawn);
+        }
     }
 }

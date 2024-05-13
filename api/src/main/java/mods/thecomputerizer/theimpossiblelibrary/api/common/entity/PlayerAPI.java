@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerAPI<P,V> extends LivingEntityAPI<P,V> {
+@SuppressWarnings("unused") public abstract class PlayerAPI<P,V> extends LivingEntityAPI<P,V> {
 
     protected PlayerAPI(P entity, V type) {
         super(entity,type);

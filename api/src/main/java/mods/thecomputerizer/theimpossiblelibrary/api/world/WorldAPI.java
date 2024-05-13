@@ -7,6 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 
@@ -14,8 +16,9 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class WorldAPI<W> {
 
     protected final W world;
@@ -93,4 +96,27 @@ public abstract class WorldAPI<W> {
         MaterialAPI<?> material = getMaterialAt(pos);
         return Objects.nonNull(material) && material.isUnderwater();
     }
+    
+    public void spawnEntity(EntityAPI<?,?> entity) {
+        spawnEntity(entity,null);
+    }
+    
+    public abstract void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn);
+    
+    public void spawnItem(ItemStackAPI<?> stack) {
+        spawnItem(stack,null);
+    }
+    
+    public abstract void spawnItem(ItemStackAPI<?> stack, @Nullable Consumer<EntityAPI<?,?>> onSpawn);
+    
+    public void spawnItem(ItemAPI<?> item) {
+        spawnItem(item,null,null);
+    }
+    
+    public void spawnItem(ItemAPI<?> item, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn) {
+        spawnItem(item,beforeSpawn,null);
+    }
+    
+    public abstract void spawnItem(ItemAPI<?> stack, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+            @Nullable Consumer<EntityAPI<?,?>> onSpawn);
 }

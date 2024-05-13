@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.annotation.Nullable;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class DamageAPI {
 
     private final EntityAPI<?,?> entity;

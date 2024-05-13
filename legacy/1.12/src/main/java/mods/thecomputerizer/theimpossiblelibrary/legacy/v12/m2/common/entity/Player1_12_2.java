@@ -185,6 +185,11 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
         if(Objects.nonNull(this.entity) && text instanceof Text1_12_2)
             this.entity.sendStatusMessage(((Text1_12_2)text).getComponent(),actionBar);
     }
+    
+    @Override
+    public void setPosition(double x, double y, double z) {
+        this.entity.setPosition(x,y,z);
+    }
 
     @Override
     public double x() {

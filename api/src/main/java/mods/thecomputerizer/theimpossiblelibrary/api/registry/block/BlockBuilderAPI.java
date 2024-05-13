@@ -60,6 +60,11 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
         };
     }
     
+    public BlockBuilderAPI setBlockEntityCreator(BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> creator) {
+        this.blockEntityCreator = creator;
+        return this;
+    }
+    
     public BlockBuilderAPI setMaterial(MaterialAPI<?> material) {
         this.material = material;
         return this;

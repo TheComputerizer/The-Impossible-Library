@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
-public abstract class LivingEntityAPI<L,V> extends EntityAPI<L,V> {
+@SuppressWarnings("unused") public abstract class LivingEntityAPI<L,V> extends EntityAPI<L,V> {
 
     protected LivingEntityAPI(L entity, V type) {
         super(entity,type);

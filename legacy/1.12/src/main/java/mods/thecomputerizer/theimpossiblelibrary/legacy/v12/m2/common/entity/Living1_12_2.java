@@ -128,6 +128,11 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
     public boolean isOwnedBy(EntityAPI<?,?> owner) {
         return this.entity instanceof EntityTameable && ((EntityTameable)this.entity).getOwner()==owner.getEntity();
     }
+    
+    @Override
+    public void setPosition(double x, double y, double z) {
+        this.entity.setPosition(x,y,z);
+    }
 
     @Override
     public double x() {

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -29,6 +30,11 @@ public abstract class BlockEntityAPI<E,T> implements RegistryEntryAPI<T> {
     }
     
     public abstract BlockPosAPI<?> getPos();
+    
+    public BlockStateAPI<?> getState() {
+        WorldAPI<?> world = getWorld();
+        return Objects.nonNull(world) ? world.getStateAt(getPos()) : null;
+    }
 
     @Override
     public T getValue() {

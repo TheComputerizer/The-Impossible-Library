@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -15,10 +17,14 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Bloc
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockentity.BlockEntity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.Structure1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.StructureRef;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -28,6 +34,7 @@ import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class World1_12_2 extends WorldAPI<World> {
 
@@ -186,5 +193,31 @@ public class World1_12_2 extends WorldAPI<World> {
     public boolean isSunset() {
         long time = getTimeDay();
         return time>=12000L && time<13000L;
+    }
+    
+    @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+        if(!this.world.isRemote) {
+            this.world.spawnEntity(((Entity1_12_2)entity).getEntity());
+            if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
+        }
+    }
+    
+    @Override public void spawnItem(ItemStackAPI<?> api, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+        if(!this.world.isRemote) {
+            ItemStack stack = ((ItemStack1_12_2)api).getStack();
+            EntityItem item = new EntityItem(this.world);
+            item.setItem(stack);
+            spawnEntity(new Entity1_12_2(item),onSpawn);
+        }
+    }
+    
+    @Override public void spawnItem(ItemAPI<?> api, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+            @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+        if(!this.world.isRemote) {
+            ItemStack stack = new ItemStack(((Item1_12_2)api).getValue());
+            ItemStack1_12_2 stackAPI = new ItemStack1_12_2(stack);
+            if(Objects.nonNull(beforeSpawn)) beforeSpawn.accept(stackAPI);
+            spawnItem(stackAPI,onSpawn);
+        }
     }
 }
