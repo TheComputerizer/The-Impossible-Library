@@ -13,6 +13,7 @@ public class TILBasicBlock1_16_5 extends Block {
     public TILBasicBlock1_16_5(Properties properties, @Nullable Function<BlockStateAPI<?>,BlockStateAPI<?>> stateTransformer) {
         super(properties);
         if(Objects.nonNull(stateTransformer))
-            registerDefaultState(((BlockState1_16_5)stateTransformer.apply(new BlockState1_16_5(defaultBlockState()))).getState());
+            registerDefaultState(((BlockState1_16_5)stateTransformer.apply(
+                    new BlockState1_16_5(this.stateDefinition.any()))).getState());
     }
 }

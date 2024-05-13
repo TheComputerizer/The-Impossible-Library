@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -77,7 +76,7 @@ public class TagHelper {
         return list;
     }
 
-    public static @Nullable TagAPI getTagAPI() {
+    public static TagAPI getTagAPI() {
         return TILRef.getCommonSubAPI(CommonAPI::getTag);
     }
 
@@ -101,19 +100,16 @@ public class TagHelper {
         }
     }
 
-    public static @Nullable CompoundTagAPI makeCompoundTag() {
-        TagAPI api = getTagAPI();
-        return Objects.nonNull(api) ? api.makeCompoundTag() : null;
+    public static CompoundTagAPI makeCompoundTag() {
+        return getTagAPI().makeCompoundTag();
     }
 
-    public static @Nullable ListTagAPI makeListTag() {
-        TagAPI api = getTagAPI();
-        return Objects.nonNull(api) ? api.makeListTag() : null;
+    public static ListTagAPI makeListTag() {
+        return getTagAPI().makeListTag();
     }
 
     public static CompoundTagAPI readFromFile(File file) throws IOException {
-        TagAPI api = getTagAPI();
-        return Objects.nonNull(api) ? api.readFromFile(file) : null;
+        return getTagAPI().readFromFile(file);
     }
 
     private static void writeDataFile(CompoundTagAPI data, File directory, String modid) throws IOException {

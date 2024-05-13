@@ -16,6 +16,7 @@ public class TILBasicBlock1_12_2 extends Block {
             @Nullable Function<BlockStateAPI<?>,BlockStateAPI<?>> stateTransformer) {
         super(material,color);
         if(Objects.nonNull(stateTransformer))
-            setDefaultState(((BlockState1_12_2)stateTransformer.apply(new BlockState1_12_2(getDefaultState()))).getState());
+            setDefaultState(((BlockState1_12_2)stateTransformer.apply(
+                    new BlockState1_12_2(this.blockState.getBaseState()))).getState());
     }
 }

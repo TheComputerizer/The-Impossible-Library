@@ -205,8 +205,7 @@ public class World1_12_2 extends WorldAPI<World> {
     @Override public void spawnItem(ItemStackAPI<?> api, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isRemote) {
             ItemStack stack = ((ItemStack1_12_2)api).getStack();
-            EntityItem item = new EntityItem(this.world);
-            item.setItem(stack);
+            EntityItem item = new EntityItem(this.world,0d,0d,0d,stack);
             spawnEntity(new Entity1_12_2(item),onSpawn);
         }
     }

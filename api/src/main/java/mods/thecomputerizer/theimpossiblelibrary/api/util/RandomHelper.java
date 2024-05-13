@@ -5,12 +5,26 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @SuppressWarnings("unused") public class RandomHelper {
+    
+    public static <E> E getBasicRandomEntry(Collection<E> entries) {
+        int index = entries.size();
+        if(index==0) throw new IllegalArgumentException("Cannot get random entry of empty collection");
+        if(index==1) return new ArrayList<>(entries).get(0);
+        index = randomInt(index);
+        for(E element : entries) {
+            if(index==0) return element;
+            index--;
+        }
+        return null; //Should be unreachable
+    }
 
     public static <E extends WeightedEntry> @Nullable E getEntryAt(Iterable<E> entries, int weight) {
         for(E entry : entries) {
