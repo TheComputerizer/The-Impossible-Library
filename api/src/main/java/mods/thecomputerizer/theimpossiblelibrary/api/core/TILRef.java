@@ -50,7 +50,7 @@ public class TILRef {
         return null;
     }
 
-    public static CommonAPI getCommonAPI() { //TODO Since this isn't @Nullable anymore a lot null checks can be consolidated
+    public static CommonAPI getCommonAPI() {
         if(Objects.isNull(API)) CoreAPI.INSTANCE.initAPI();
         return API;
     }

@@ -120,8 +120,8 @@ public class Wrapper1_16_5 implements WrapperAPI {
     }
 
     @Override
-    public @Nullable <S> ItemStackAPI<S> wrapItemStack(@Nullable S stack) {
-        return Objects.nonNull(stack) ? (ItemStackAPI<S>)new ItemStack1_16_5((ItemStack)stack) : null;
+    public <S> ItemStackAPI<S> wrapItemStack(@Nullable S stack) {
+        return (ItemStackAPI<S>)new ItemStack1_16_5(Objects.nonNull(stack) ? (ItemStack)stack : ItemStack.EMPTY);
     }
 
     @Override

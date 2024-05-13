@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
@@ -14,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.BlockHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.integration.ModHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network.Network1_16_5;
@@ -36,6 +38,7 @@ import java.util.Objects;
 
 public class Common1_16_5 implements CommonAPI {
 
+    private BlockHelperAPI blockHelper;
     private CommandHelperAPI commands;
     private EventsAPI events;
     private ModHelperAPI modHelper;
@@ -48,7 +51,12 @@ public class Common1_16_5 implements CommonAPI {
     private TagAPI tag;
     private TextHelperAPI<Style> textHelper;
     private WrapperAPI wrapper;
-
+    
+    @Override public BlockHelperAPI getBlockHelper() {
+        if(Objects.isNull(this.blockHelper)) this.blockHelper = new BlockHelper1_16_5();
+        return this.blockHelper;
+    }
+    
     @Override
     public CommandHelperAPI getCommandHelper() {
         if(Objects.isNull(this.commands)) this.commands = new CommandHelper1_16_5();

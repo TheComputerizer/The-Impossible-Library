@@ -58,7 +58,7 @@ public interface WrapperAPI {
 
     <I> @Nullable InventoryAPI<I> wrapInventory(@Nullable I inventory);
     <I> @Nullable ItemAPI<I> wrapItem(@Nullable I item);
-    <S> @Nullable ItemStackAPI<S> wrapItemStack(@Nullable S stack);
+    <S> ItemStackAPI<S> wrapItemStack(@Nullable S stack);
     <L> @Nullable LivingEntityAPI<L,?> wrapLivingEntity(@Nullable L living);
     <M> @Nullable MaterialAPI<M> wrapMaterial(@Nullable M material);
     <P> @Nullable PlayerAPI<P,?> wrapPlayer(@Nullable P player);
