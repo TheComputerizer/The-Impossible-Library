@@ -33,6 +33,7 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -223,22 +224,22 @@ public class World1_16_5 extends WorldAPI<IWorld> {
         }
     }
     
-    @Override public void spawnItem(ItemStackAPI<?> api, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+    @Override public void spawnItem(ItemStackAPI<?> api, Vector3d pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(this.world instanceof World && !this.world.isClientSide()) {
             ItemStack stack = ((ItemStack1_16_5)api).getStack();
-            ItemEntity item = new ItemEntity((World)this.world,0d,0d,0d,stack);
+            ItemEntity item = new ItemEntity((World)this.world,pos.x,pos.y,pos.z,stack);
+            item.setDefaultPickUpDelay();
             spawnEntity(new Entity1_16_5(item),onSpawn);
         }
     }
     
-    @Override public void spawnItem(
-            ItemAPI<?> api, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+    @Override public void spawnItem(ItemAPI<?> api, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isClientSide()) {
             ItemStack stack = new ItemStack(((Item1_16_5)api).getValue());
             ItemStack1_16_5 stackAPI = new ItemStack1_16_5(stack);
             if(Objects.nonNull(beforeSpawn)) beforeSpawn.accept(stackAPI);
-            spawnItem(stackAPI,onSpawn);
+            spawnItem(stackAPI,pos,onSpawn);
         }
     }
 }

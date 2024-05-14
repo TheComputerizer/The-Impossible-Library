@@ -4,7 +4,6 @@ import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
@@ -27,14 +26,12 @@ public class TILItemBlock1_12_2 extends ItemBlock implements WithItemProperties 
     
     protected final ItemProperties properties;
     
+    @SuppressWarnings("DataFlowIssue")
     public TILItemBlock1_12_2(Block block, ItemProperties properties) {
         super(block);
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        ResourceLocation1_12_2 name = (ResourceLocation1_12_2)properties.getRegistryName();
-        if(Objects.isNull(name)) name = new ResourceLocation1_12_2(block.getRegistryName());
-        setRegistryName(name.getInstance());
-        setTranslationKey(name.getNamespace()+"."+name.getPath());
+        setRegistryName(block.getRegistryName());
     }
     
     @Override

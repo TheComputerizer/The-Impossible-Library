@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
@@ -31,6 +32,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -201,26 +203,36 @@ public class World1_12_2 extends WorldAPI<World> {
     
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isRemote) {
+            TILDev.logInfo("Spawning entity {} of type {}",entity.getEntity(),entity.getType());
             this.world.spawnEntity(((Entity1_12_2)entity).getEntity());
-            if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
+            if(Objects.nonNull(onSpawn)) {
+                TILDev.logInfo("Accepting onSpawn consumer");
+                onSpawn.accept(entity);
+            }
         }
     }
     
-    @Override public void spawnItem(ItemStackAPI<?> api, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+    @Override public void spawnItem(ItemStackAPI<?> api, Vector3d pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isRemote) {
             ItemStack stack = ((ItemStack1_12_2)api).getStack();
-            EntityItem item = new EntityItem(this.world,0d,0d,0d,stack);
+            TILDev.logInfo("Spawning ItemStack at {} from {} with count {} and tag {}",pos,stack.getItem().getRegistryName(),stack.getCount(),stack.getTagCompound());
+            EntityItem item = new EntityItem(this.world,pos.x,pos.y,pos.z,stack);
+            item.setDefaultPickupDelay();
             spawnEntity(new Entity1_12_2(item),onSpawn);
         }
     }
     
-    @Override public void spawnItem(ItemAPI<?> api, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+    @Override public void spawnItem(ItemAPI<?> api, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isRemote) {
+            TILDev.logInfo("Spawning item {}",api.getRegistryName());
             ItemStack stack = new ItemStack(((Item1_12_2)api).getValue());
             ItemStack1_12_2 stackAPI = new ItemStack1_12_2(stack);
-            if(Objects.nonNull(beforeSpawn)) beforeSpawn.accept(stackAPI);
-            spawnItem(stackAPI,onSpawn);
+            if(Objects.nonNull(beforeSpawn)) {
+                TILDev.logInfo("Accepting beforeSpawn consumer");
+                beforeSpawn.accept(stackAPI);
+            }
+            spawnItem(stackAPI,pos,onSpawn);
         }
     }
 }

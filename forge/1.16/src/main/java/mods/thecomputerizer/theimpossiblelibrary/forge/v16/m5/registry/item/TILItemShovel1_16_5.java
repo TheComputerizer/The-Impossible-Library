@@ -7,17 +7,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.ItemStack1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.Text1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.BlockPos1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item.Properties;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,11 +34,10 @@ public class TILItemShovel1_16_5 extends ShovelItem implements WithItemPropertie
     
     protected final ItemProperties properties;
     
-    public TILItemShovel1_16_5(IItemTier tier, float damage, float speed, Properties properties,
-            ItemProperties otherProperties) {
-        super(tier,damage,speed,properties);
-        this.properties = otherProperties;
-        setRegistryName(((ResourceLocation1_16_5)otherProperties.getRegistryName()).getInstance());
+    public TILItemShovel1_16_5(IItemTier tier, float damage, float speed, ItemProperties properties) {
+        super(tier,damage,speed,new Properties().stacksTo(properties.getStackSize()));
+        this.properties = properties;
+        setRegistryName((ResourceLocation)properties.getRegistryName().getInstance());
     }
     
     @Override

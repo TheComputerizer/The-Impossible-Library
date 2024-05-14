@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry.block;
 
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
@@ -26,21 +27,26 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
     
     protected BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> blockEntityCreator;
     protected Map<BlockPropertyAPI<?,?>,Comparable<?>> defaultProperties;
+    protected Map<String,Integer> effectiveTools;
     protected MaterialAPI<?> material;
     protected MaterialColorAPI<?> materialColor;
     protected Function<TILItemUseContext,ActionResult> useFunc;
     
     protected BlockBuilderAPI(@Nullable BlockBuilderAPI parent) {
         this.defaultProperties = new HashMap<>();
+        this.effectiveTools = new Object2IntOpenHashMap<>();
         if(Objects.nonNull(parent)) {
             this.blockEntityCreator = parent.blockEntityCreator;
             this.defaultProperties.putAll(parent.defaultProperties);
+            this.effectiveTools.putAll(parent.effectiveTools);
             this.material = parent.material;
             this.materialColor = parent.materialColor;
+            this.useFunc = parent.useFunc;
         } else {
             this.blockEntityCreator = null;
             this.material = MaterialHelper.getByName("AIR");
             this.materialColor = MaterialHelper.getColorByName("GRASS");
+            this.useFunc = null;
         }
     }
     
@@ -49,9 +55,19 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
         return this;
     }
     
+    public BlockBuilderAPI addEffectiveTool(String tool, int tier) {
+        this.effectiveTools.put(tool,tier);
+        return this;
+    }
+    
     @SuppressWarnings("unchecked") public <V extends Comparable<V>> BlockStateAPI<?> buildDefaultProperty(
             BlockStateAPI<?> state, BlockPropertyAPI<?,V> property, Comparable<?> value) {
         return state.withProperty(property,(V)value);
+    }
+    
+    public BlockProperties buildProperties() {
+        return new BlockProperties(this.material,this.materialColor,this.effectiveTools,this.registryName,
+                                   defaultStateBuilder(),this.useFunc,this.blockEntityCreator);
     }
     
     public @Nullable Function<BlockStateAPI<?>,BlockStateAPI<?>> defaultStateBuilder() {

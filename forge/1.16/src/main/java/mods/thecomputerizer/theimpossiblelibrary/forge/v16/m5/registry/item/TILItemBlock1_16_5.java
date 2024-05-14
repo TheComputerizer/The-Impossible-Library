@@ -29,9 +29,9 @@ public class TILItemBlock1_16_5 extends BlockItem implements WithItemProperties 
     protected final ItemProperties properties;
     
     @SuppressWarnings("DataFlowIssue")
-    public TILItemBlock1_16_5(Block block, Properties properties, ItemProperties otherProperties) {
-        super(block,properties);
-        this.properties = otherProperties;
+    public TILItemBlock1_16_5(Block block, ItemProperties properties) {
+        super(block,new Properties().stacksTo(properties.getStackSize()));
+        this.properties = properties;
         setRegistryName(block.getRegistryName());
     }
     

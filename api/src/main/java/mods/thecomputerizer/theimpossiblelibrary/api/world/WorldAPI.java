@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
+import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -105,20 +106,20 @@ public abstract class WorldAPI<W> {
     
     public abstract void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn);
     
-    public void spawnItem(ItemStackAPI<?> stack) {
-        spawnItem(stack,null);
+    public void spawnItem(ItemStackAPI<?> stack, Vector3d pos) {
+        spawnItem(stack,pos,null);
     }
     
-    public abstract void spawnItem(ItemStackAPI<?> stack, @Nullable Consumer<EntityAPI<?,?>> onSpawn);
+    public abstract void spawnItem(ItemStackAPI<?> stack, Vector3d pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn);
     
-    public void spawnItem(ItemAPI<?> item) {
-        spawnItem(item,null,null);
+    public void spawnItem(ItemAPI<?> item, Vector3d pos) {
+        spawnItem(item,pos,null,null);
     }
     
-    public void spawnItem(ItemAPI<?> item, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn) {
-        spawnItem(item,beforeSpawn,null);
+    public void spawnItem(ItemAPI<?> item, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn) {
+        spawnItem(item,pos,beforeSpawn,null);
     }
     
-    public abstract void spawnItem(ItemAPI<?> stack, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+    public abstract void spawnItem(ItemAPI<?> stack, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn);
 }

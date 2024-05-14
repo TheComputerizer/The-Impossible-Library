@@ -34,10 +34,10 @@ public class TILBasicItem1_16_5 extends Item implements WithItemProperties { //T
     
     protected final ItemProperties properties;
     
-    public TILBasicItem1_16_5(Properties properties, ItemProperties otherProperties) {
-        super(properties);
-        this.properties = otherProperties;
-        setRegistryName(((ResourceLocation1_16_5)otherProperties.getRegistryName()).getInstance());
+    public TILBasicItem1_16_5(ItemProperties properties) {
+        super(new Properties().stacksTo(properties.getStackSize()));
+        this.properties = properties;
+        setRegistryName(((ResourceLocation1_16_5)properties.getRegistryName()).getInstance());
     }
     
     @Override

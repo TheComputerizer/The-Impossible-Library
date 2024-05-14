@@ -9,7 +9,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.client.util.ITooltipFlag;
@@ -19,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -46,9 +46,9 @@ public class TILDiscItem1_12_2 extends ItemRecord implements WithItemProperties 
         this.nameSupplier = nameSupplier;
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        ResourceLocation1_12_2 registryName = (ResourceLocation1_12_2)properties.getRegistryName();
-        setRegistryName(registryName.getInstance());
-        setTranslationKey(registryName.getNamespace()+"."+registryName.getPath());
+        ResourceLocation name = (ResourceLocation)properties.getRegistryName().getInstance();
+        setRegistryName(name);
+        setTranslationKey(name.getNamespace()+"."+name.getPath());
     }
     
     @Override

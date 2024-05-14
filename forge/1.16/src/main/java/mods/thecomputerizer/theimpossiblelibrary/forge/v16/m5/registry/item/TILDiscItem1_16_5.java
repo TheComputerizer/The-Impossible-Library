@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item.ItemStack1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.Text1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.BlockPos1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
@@ -16,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -34,16 +34,16 @@ public class TILDiscItem1_16_5 extends MusicDiscItem implements WithItemProperti
     
     protected final ItemProperties properties;
     
-    public TILDiscItem1_16_5(Properties properties, SoundEvent sound, ItemProperties otherProperties) {
-        super(0,() -> sound,properties);
-        this.properties = otherProperties;
-        setRegistryName(((ResourceLocation1_16_5)otherProperties.getRegistryName()).getInstance());
+    public TILDiscItem1_16_5(SoundEvent sound, ItemProperties properties) {
+        super(0,() -> sound,new Properties().stacksTo(properties.getStackSize()));
+        this.properties = properties;
+        setRegistryName((ResourceLocation)properties.getRegistryName().getInstance());
     }
     
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> components, ITooltipFlag flag) {
-        getTooltipLines(() -> new ItemStack1_16_5(stack), () -> Objects.nonNull(world) ? new World1_16_5(world) : null)
+        getTooltipLines(() -> new ItemStack1_16_5(stack),() -> Objects.nonNull(world) ? new World1_16_5(world) : null)
                 .forEach(text -> components.add(((Text1_16_5)text).getComponent()));
     }
     

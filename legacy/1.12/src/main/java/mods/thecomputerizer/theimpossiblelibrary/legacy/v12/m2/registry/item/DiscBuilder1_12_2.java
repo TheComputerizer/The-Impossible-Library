@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.sound.SoundEvent1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.IItemPropertyGetter;
@@ -31,7 +30,7 @@ public class DiscBuilder1_12_2 extends DiscBuilderAPI {
         SoundEvent sound = Objects.nonNull(this.sound) ? ((SoundEvent1_12_2)this.sound).getSound() : SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP; //TODO Replace with empty sound event
         Item item = new TILDiscItem1_12_2(this.nameSupplier,sound,buildProperties());
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = ((ResourceLocation1_12_2)property.getKey()).getInstance();
+            ResourceLocation location = (ResourceLocation)property.getKey().getInstance();
             IItemPropertyGetter getter = (stack,world,entity) ->
                     property.getValue().apply(new ItemStack1_12_2(stack), new World1_12_2(world));
             item.addPropertyOverride(location,getter);
