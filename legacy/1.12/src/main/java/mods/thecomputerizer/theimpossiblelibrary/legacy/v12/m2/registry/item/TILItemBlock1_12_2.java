@@ -1,24 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,11 +31,10 @@ public class TILItemBlock1_12_2 extends ItemBlock implements WithItemProperties 
         super(block);
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        ResourceLocation blockName = block.getRegistryName();
-        if(Objects.nonNull(blockName)) {
-            setRegistryName(blockName);
-            setTranslationKey(blockName.getNamespace()+"."+blockName.getPath());
-        }
+        ResourceLocation1_12_2 name = (ResourceLocation1_12_2)properties.getRegistryName();
+        if(Objects.isNull(name)) name = new ResourceLocation1_12_2(block.getRegistryName());
+        setRegistryName(name.getInstance());
+        setTranslationKey(name.getNamespace()+"."+name.getPath());
     }
     
     @Override
@@ -56,18 +46,5 @@ public class TILItemBlock1_12_2 extends ItemBlock implements WithItemProperties 
     
     @Nonnull @Override public ItemProperties getProperties() {
         return this.properties;
-    }
-    
-    @Override
-    public EnumActionResult onItemUse(
-            EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
-            float hitX, float hitY, float hitZ) {
-        return Events1_12_2.setActionResult(getUseResult(() -> {
-            TILItemUseContext ctx = new TILItemUseContext(
-                    WrapperHelper.wrapPlayer(player), new World1_12_2(world), new BlockPos1_12_2(pos), null,
-                    Events1_12_2.getHand(hand), Events1_12_2.getFacing(facing));
-            ctx.setSuperResult(Events1_12_2.getActionResult(super.onItemUse(player,world,pos,hand,facing,hitX,hitY,hitZ)));
-            return ctx;
-        }));
     }
 }

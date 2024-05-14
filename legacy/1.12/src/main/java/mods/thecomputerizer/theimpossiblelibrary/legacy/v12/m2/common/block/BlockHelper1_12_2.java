@@ -13,11 +13,10 @@ import net.minecraft.util.IStringSerializable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 import static net.minecraft.block.material.MapColor.GRASS;
-import static net.minecraft.block.material.Material.AIR;
+import static net.minecraft.block.material.Material.WOOD;
 
 public class BlockHelper1_12_2 implements BlockHelperAPI {
     
@@ -42,20 +41,16 @@ public class BlockHelper1_12_2 implements BlockHelperAPI {
     }
     
     @Override public Material1_12_2 getMaterialByName(String name) {
-        if(StringUtils.isBlank(name)) return new Material1_12_2(AIR);
-        Object material = null;
+        if(StringUtils.isBlank(name)) return new Material1_12_2(WOOD);
         Field field = ReflectionHelper.getField(Material.class,name.toUpperCase());
-        if(Objects.nonNull(field) && field.isAccessible() && Modifier.isStatic(field.getModifiers()))
-            material = ReflectionHelper.getFieldInstance(null,field); //Only Material instance fields are public & static
-        return new Material1_12_2(material instanceof Material ? (Material)material : AIR);
+        if(Objects.nonNull(field)) new Material1_12_2((Material)ReflectionHelper.getFieldInstance(null,field));
+        return new Material1_12_2(WOOD);
     }
     
     @Override public MaterialColor1_12_2 getMaterialColorByName(String name) {
         if(StringUtils.isBlank(name)) return new MaterialColor1_12_2(GRASS);
-        Object color = null;
         Field field = ReflectionHelper.getField(MapColor.class, name.toUpperCase());
-        if(Objects.nonNull(field) && field.isAccessible() && Modifier.isStatic(field.getModifiers()))
-            color = ReflectionHelper.getFieldInstance(null,field); //Only Material instance fields are public & static
-        return new MaterialColor1_12_2(color instanceof MapColor ? (MapColor)color : GRASS);
+        if(Objects.nonNull(field)) return new MaterialColor1_12_2((MapColor)ReflectionHelper.getFieldInstance(null,field));
+        return new MaterialColor1_12_2(GRASS);
     }
 }

@@ -31,8 +31,8 @@ public class BlockBuilder1_16_5 extends BlockBuilderAPI {
             stateProperties.add(((BlockProperty1_16_5<?>)property).getProperty());
         TILBasicBlock1_16_5.stateProperties = stateProperties;
         Block block = Objects.nonNull(this.blockEntityCreator) ?
-                new TILBlockEntityProvider1_16_5(properties,defaultStateBuilder(),this.blockEntityCreator) :
-                new TILBasicBlock1_16_5(properties,defaultStateBuilder());
+                new TILBlockEntityProvider1_16_5(properties,defaultStateBuilder(),this.useFunc,this.blockEntityCreator) :
+                new TILBasicBlock1_16_5(properties,defaultStateBuilder(),this.useFunc);
         TILBasicBlock1_16_5.stateProperties = Collections.emptyList();
         block.setRegistryName(((ResourceLocation1_16_5)this.registryName).getInstance());
         return new Block1_16_5(block);

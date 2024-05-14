@@ -14,10 +14,10 @@ import net.minecraft.util.IStringSerializable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 import static net.minecraft.block.material.Material.AIR;
+import static net.minecraft.block.material.Material.WOOD;
 import static net.minecraft.block.material.MaterialColor.GRASS;
 
 @SuppressWarnings("unused")
@@ -44,20 +44,17 @@ public class BlockHelper1_16_5 implements BlockHelperAPI {
     }
     
     @Override public Material1_16_5 getMaterialByName(String name) {
-        if(StringUtils.isBlank(name)) return new Material1_16_5(AIR);
-        Object material = null;
+        if(StringUtils.isBlank(name)) return new Material1_16_5(WOOD);
         Field field = ReflectionHelper.getField(Material.class, name.toUpperCase());
-        if(Objects.nonNull(field) && field.isAccessible() && Modifier.isStatic(field.getModifiers()))
-            material = ReflectionHelper.getFieldInstance(null,field); //Only Material instance fields are public & static
-        return new Material1_16_5(material instanceof Material ? (Material)material : AIR);
+        if(Objects.nonNull(field)) return new Material1_16_5((Material)ReflectionHelper.getFieldInstance(null,field));
+        return new Material1_16_5(AIR);
     }
     
     @Override public MaterialColor1_16_5 getMaterialColorByName(String name) {
         if(StringUtils.isBlank(name)) return new MaterialColor1_16_5(GRASS);
-        Object color = null;
         Field field = ReflectionHelper.getField(MaterialColor.class,name.toUpperCase());
-        if(Objects.nonNull(field) && field.isAccessible() && Modifier.isStatic(field.getModifiers()))
-            color = ReflectionHelper.getFieldInstance(null,field); //Only Material instance fields are public & static
-        return new MaterialColor1_16_5(color instanceof MaterialColor ? (MaterialColor)color : GRASS);
+        if(Objects.nonNull(field))
+            return new MaterialColor1_16_5((MaterialColor)ReflectionHelper.getFieldInstance(null,field));
+        return new MaterialColor1_16_5(GRASS);
     }
 }

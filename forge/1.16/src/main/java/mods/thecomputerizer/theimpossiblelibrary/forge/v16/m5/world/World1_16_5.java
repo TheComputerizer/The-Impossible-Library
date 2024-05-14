@@ -212,6 +212,10 @@ public class World1_16_5 extends WorldAPI<IWorld> {
         return time>=12000L && time<13000L;
     }
     
+    @Override public void setState(BlockPosAPI<?> pos, BlockStateAPI<?> state) {
+        this.world.setBlock(((BlockPos1_16_5)pos).getPos(),((BlockState1_16_5)state).getState(),2);
+    }
+    
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isClientSide()) {
             this.world.addFreshEntity(((Entity1_16_5)entity).getEntity());

@@ -7,6 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialColorAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -26,6 +28,7 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
     protected Map<BlockPropertyAPI<?,?>,Comparable<?>> defaultProperties;
     protected MaterialAPI<?> material;
     protected MaterialColorAPI<?> materialColor;
+    protected Function<TILItemUseContext,ActionResult> useFunc;
     
     protected BlockBuilderAPI(@Nullable BlockBuilderAPI parent) {
         this.defaultProperties = new HashMap<>();
@@ -79,6 +82,11 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
     @Override
     public BlockBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
+        return this;
+    }
+    
+    public BlockBuilderAPI setUseFunc(Function<TILItemUseContext,ActionResult> func) {
+        this.useFunc = func;
         return this;
     }
 }

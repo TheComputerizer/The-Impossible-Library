@@ -32,8 +32,8 @@ public class BlockBuilder1_12_2 extends BlockBuilderAPI {
             properties.add(((BlockProperty1_12_2<?>)property).getProperty());
         TILBasicBlock1_12_2.properties = ArrayHelper.fromIterable(properties,IProperty.class); //Kind of a gross implementation
         Block block = Objects.nonNull(this.blockEntityCreator) ?
-                new TILBlockEntityProvider1_12_2(material,materialColor,defaultStateBuilder(),this.blockEntityCreator) :
-                new TILBasicBlock1_12_2(material,materialColor,defaultStateBuilder());
+                new TILBlockEntityProvider1_12_2(material,materialColor,defaultStateBuilder(),this.useFunc,this.blockEntityCreator) :
+                new TILBasicBlock1_12_2(material,materialColor,defaultStateBuilder(),this.useFunc);
         TILBasicBlock1_12_2.properties = null;
         block.setRegistryName(((ResourceLocation1_12_2)this.registryName).getInstance());
         return new Block1_12_2(block);

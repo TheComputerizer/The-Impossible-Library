@@ -195,6 +195,10 @@ public class World1_12_2 extends WorldAPI<World> {
         return time>=12000L && time<13000L;
     }
     
+    @Override public void setState(BlockPosAPI<?> pos, BlockStateAPI<?> state) {
+        this.world.setBlockState(((BlockPos1_12_2)pos).getPos(),((BlockState1_12_2)state).getState());
+    }
+    
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.world.isRemote) {
             this.world.spawnEntity(((Entity1_12_2)entity).getEntity());

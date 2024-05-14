@@ -97,6 +97,8 @@ public abstract class WorldAPI<W> {
         return Objects.nonNull(material) && material.isUnderwater();
     }
     
+    public abstract void setState(BlockPosAPI<?> pos, BlockStateAPI<?> state);
+    
     public void spawnEntity(EntityAPI<?,?> entity) {
         spawnEntity(entity,null);
     }

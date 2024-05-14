@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.resource;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -16,6 +15,13 @@ public abstract class ResourceLocationAPI<R> {
     }
 
     public abstract void bind(MinecraftAPI mc);
+    
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ResourceLocationAPI<?> &&
+               String.valueOf(this.instance).equals(String.valueOf(((ResourceLocationAPI<?>)other).getInstance()));
+    }
+    
     /**
      * Returns the number of frames in a sprite sheet if a mcmeta file is detected
      */

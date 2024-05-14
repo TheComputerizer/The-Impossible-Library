@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.block.BlockState1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.blockentity.BlockEntity1_16_5;
@@ -23,8 +25,9 @@ public class TILBlockEntityProvider1_16_5 extends TILBasicBlock1_16_5 {
     
     public TILBlockEntityProvider1_16_5(Properties properties,
             @Nullable Function<BlockStateAPI<?>,BlockStateAPI<?>> stateTransformer,
+            @Nullable Function<TILItemUseContext,ActionResult> useFunc,
             BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> blockEntityCreator) {
-        super(properties,stateTransformer);
+        super(properties,stateTransformer,useFunc);
         this.blockEntityCreator = blockEntityCreator;
     }
     
