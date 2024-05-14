@@ -5,6 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -47,5 +48,7 @@ public abstract class BlockEntityAPI<E,T> implements RegistryEntryAPI<T> {
     }
 
     public abstract WorldAPI<?> getWorld();
+    public abstract CompoundTagAPI readTagFrom();
     public abstract void setRegistryName(ResourceLocationAPI<?> registryName); //1.12.2 doesnt have proper tile entity types
+    public abstract void writeTagTo(CompoundTagAPI tag);
 }

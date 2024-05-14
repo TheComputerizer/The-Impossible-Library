@@ -4,11 +4,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEnt
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.CompoundTag1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -34,21 +35,29 @@ public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends
     }
 
     @Override
-    public ResourceLocationAPI<?> getRegistryName() {
+    public ResourceLocation1_12_2 getRegistryName() {
         return Objects.nonNull(this.registryName) ? new ResourceLocation1_12_2(this.registryName) : null;
     }
     
     @Override
-    public BlockPosAPI<?> getPos() {
+    public BlockPos1_12_2 getPos() {
         return new BlockPos1_12_2(this.entity.getPos());
     }
 
     @Override
-    public WorldAPI<?> getWorld() {
+    public World1_12_2 getWorld() {
         return new World1_12_2(this.entity.getWorld());
+    }
+    
+    @Override public CompoundTag1_12_2 readTagFrom() {
+        return new CompoundTag1_12_2(Objects.nonNull(this.entity) ? this.entity.serializeNBT() : new NBTTagCompound());
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         this.registryName = ((ResourceLocation1_12_2)registryName).getInstance();
+    }
+    
+    @Override public void writeTagTo(CompoundTagAPI tag) {
+        if(Objects.nonNull(this.entity)) this.entity.writeToNBT(((CompoundTag1_12_2)tag).getTag());
     }
 }

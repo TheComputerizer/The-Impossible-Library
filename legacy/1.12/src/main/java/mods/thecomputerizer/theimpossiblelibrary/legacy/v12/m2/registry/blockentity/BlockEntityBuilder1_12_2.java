@@ -16,7 +16,7 @@ public class BlockEntityBuilder1_12_2 extends BlockEntityBuilderAPI {
         BlockEntity1_12_2 entity = new BlockEntity1_12_2(
                 Objects.nonNull(this.onTick) ? TILTickableBlockEntity1_12_2.class : TILBasicBlockEntity1_12_2.class);
         entity.setCreator(clazz -> new BlockEntity1_12_2(Objects.nonNull(this.onTick) ?
-                        new TILTickableBlockEntity1_12_2(this.onTick) : new TILBasicBlockEntity1_12_2()));
+                        new TILTickableBlockEntity1_12_2(this.registryName,this.onTick) : new TILBasicBlockEntity1_12_2()));
         entity.setRegistryName(this.registryName);
         return entity;
     }
