@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
@@ -17,6 +18,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ToolHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.integration.ModHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.network.Network1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.RegistryHandler1_12_2;
@@ -36,7 +38,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Objects;
 
-public class Common1_12_2 implements CommonAPI {
+public class Common1_12_2 implements CommonAPI { //TODO Move the fields to the API
 
     private BlockHelperAPI blockHelper;
     private CommandHelperAPI commands;
@@ -50,6 +52,7 @@ public class Common1_12_2 implements CommonAPI {
     private SpawnHelperAPI<EntityLiving> spawnHelper;
     private TagAPI tag;
     private TextHelperAPI<Style> textHelper;
+    private ToolHelperAPI toolHelper;
     private WrapperAPI wrapper;
     
     @Override public BlockHelperAPI getBlockHelper() {
@@ -122,7 +125,12 @@ public class Common1_12_2 implements CommonAPI {
         if(Objects.isNull(this.textHelper)) this.textHelper = new TextHelper1_12_2();
         return this.textHelper;
     }
-
+    
+    @Override public ToolHelperAPI getToolHelper() {
+        if(Objects.isNull(this.toolHelper)) this.toolHelper = new ToolHelper1_12_2();
+        return this.toolHelper;
+    }
+    
     @Override
     public WrapperAPI getWrapper() {
         if(Objects.isNull(this.wrapper)) this.wrapper = new Wrapper1_12_2();

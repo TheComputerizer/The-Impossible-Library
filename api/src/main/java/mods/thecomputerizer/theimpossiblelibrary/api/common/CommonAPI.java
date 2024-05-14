@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -27,5 +28,6 @@ public interface CommonAPI {
     SpawnHelperAPI<?> getSpawnHelper();
     TagAPI getTag();
     TextHelperAPI<?> getTextHelper();
+    ToolHelperAPI getToolHelper();
     WrapperAPI getWrapper();
 }

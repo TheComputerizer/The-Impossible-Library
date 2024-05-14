@@ -35,8 +35,8 @@ public class TILItemAxe1_12_2 extends ItemAxe implements WithItemProperties {
     
     protected final ItemProperties properties;
     
-    public TILItemAxe1_12_2(ToolMaterial material, ItemProperties properties) {
-        super(material);
+    public TILItemAxe1_12_2(ToolMaterial material, float damage, float speed, ItemProperties properties) {
+        super(material,damage,speed);
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
         ResourceLocation name = (ResourceLocation)properties.getRegistryName().getInstance();
