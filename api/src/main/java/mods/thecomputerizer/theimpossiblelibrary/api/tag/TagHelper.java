@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("SameParameterValue")
+@SuppressWarnings({"SameParameterValue", "unused"})
 public class TagHelper {
     private static boolean GLOBAL_LOAD_FAILED = false;
     private static boolean WORLD_LOAD_FAILED = false;
@@ -30,7 +30,7 @@ public class TagHelper {
             "For players:",
             "You probably do not have to worry about this folder, but if a specific mod is breaking that appears here, " +
                     "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!");
-    private static CompoundTagAPI getFileData(File directory, String modid, boolean createIfAbsent) throws IOException {
+    private static CompoundTagAPI<?> getFileData(File directory, String modid, boolean createIfAbsent) throws IOException {
         File dataFile = new File(directory,modid+".dat");
         if(dataFile.exists()) return readFromFile(dataFile);
         if(createIfAbsent) {
@@ -41,11 +41,11 @@ public class TagHelper {
     }
 
     /**
-     * Gets global data stored in a dat file for the modid input
-     * Returns null if the file does not exist and is not set to be created
+     * Gets global data stored in a dat file for the modid input.
+     * Returns null if the file does not exist and is not set to be created.
      * Will also return null if the data folder failed to initialize or the data module is turned off.
      */
-    public static CompoundTagAPI getGlobalData(String modid, boolean createIfAbsent) throws IOException {
+    public static CompoundTagAPI<?> getGlobalData(String modid, boolean createIfAbsent) throws IOException {
         if(!GLOBAL_LOAD_FAILED) return getFileData(TILRef.DATA_DIRECTORY,modid,createIfAbsent);
         TILRef.logWarn("There was a problem when initializing global data for {} so data for {} could not be "+
                 "retrieved!",TILRef.NAME,modid);
@@ -55,13 +55,13 @@ public class TagHelper {
     /**
      * Throws an IOException if the key already exists as and is not of the type CompoundTag
      */
-    public static CompoundTagAPI getOrCreateCompound(CompoundTagAPI tag, String key) throws IOException {
+    public static CompoundTagAPI<?> getOrCreateCompound(CompoundTagAPI<?> tag, String key) throws IOException {
         if(tag.contains(key)) {
-            BaseTagAPI baseTag = tag.getTag(key);
+            BaseTagAPI<?> baseTag = tag.getTag(key);
             if(!baseTag.isCompound()) throw new IOException("Tried to get existing tag of the wrong type!");
             return baseTag.asCompoundTag();
         }
-        CompoundTagAPI compound = makeCompoundTag();
+        CompoundTagAPI<?> compound = makeCompoundTag();
         tag.putTag(key,compound);
         return compound;
     }
@@ -69,9 +69,9 @@ public class TagHelper {
     /**
      * Throws an IOException if the key already exists as and is not of the type NBTTagList
      */
-    public static ListTagAPI getOrCreateList(CompoundTagAPI tag, String key) {
+    public static ListTagAPI<?> getOrCreateList(CompoundTagAPI<?> tag, String key) {
         if(tag.contains(key)) return tag.getListTag(key);
-        ListTagAPI list = makeListTag();
+        ListTagAPI<?> list = makeListTag();
         tag.putTag(key,list);
         return list;
     }
@@ -80,9 +80,9 @@ public class TagHelper {
         return TILRef.getCommonSubAPI(CommonAPI::getTag);
     }
 
-    public static CompoundTagAPI getWorldData(String modid, @Nonnull String worldName) {
+    public static CompoundTagAPI<?> getWorldData(String modid, @Nonnull String worldName) {
         try {
-            CompoundTagAPI globalTag = getGlobalData(modid,true);
+            CompoundTagAPI<?> globalTag = getGlobalData(modid,true);
             if(Objects.nonNull(globalTag))
                 return getOrCreateCompound(getOrCreateCompound(globalTag,"world_data"),worldName);
         } catch(IOException ex) {
@@ -100,19 +100,52 @@ public class TagHelper {
         }
     }
 
-    public static CompoundTagAPI makeCompoundTag() {
+    public static CompoundTagAPI<?> makeCompoundTag() {
         return getTagAPI().makeCompoundTag();
     }
 
-    public static ListTagAPI makeListTag() {
+    public static ListTagAPI<?> makeListTag() {
         return getTagAPI().makeListTag();
     }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(boolean b) {
+        return getTagAPI().makePrimitiveTag(b);
+    }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(byte b) {
+        return getTagAPI().makePrimitiveTag(b);
+    }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(double d) {
+        return getTagAPI().makePrimitiveTag(d);
+    }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(float f) {
+        return getTagAPI().makePrimitiveTag(f);
+    }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(int i) {
+        return getTagAPI().makePrimitiveTag(i);
+    }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(long l) {
+        return getTagAPI().makePrimitiveTag(l);
+    }
+    
+    public static PrimitiveTagAPI<?> makePrimitiveTag(short s) {
+        return getTagAPI().makePrimitiveTag(s);
+    }
+    
+    public static StringTagAPI<?> makeStringTag(String value) {
+        return getTagAPI().makeStringTag(value);
+    }
+    
 
-    public static CompoundTagAPI readFromFile(File file) throws IOException {
+    public static CompoundTagAPI<?> readFromFile(File file) throws IOException {
         return getTagAPI().readFromFile(file);
     }
 
-    private static void writeDataFile(CompoundTagAPI data, File directory, String modid) throws IOException {
+    private static void writeDataFile(CompoundTagAPI<?> data, File directory, String modid) throws IOException {
         File dataFile = new File(directory,modid+".dat");
         dataFile = FileHelper.get(dataFile,true);
         if(Objects.nonNull(dataFile)) writeToFile(data,dataFile);
@@ -128,19 +161,19 @@ public class TagHelper {
      * Writes global nbt data to a dat file for a given modid
      * Will fail if the data folder failed to initialize or the data module is turned off
      */
-    public static void writeGlobalData(CompoundTagAPI data, String modid) throws IOException {
+    public static void writeGlobalData(CompoundTagAPI<?> data, String modid) throws IOException {
         if(!GLOBAL_LOAD_FAILED) writeDataFile(data,TILRef.DATA_DIRECTORY,modid);
         else TILRef.logWarn("There was a problem when initializing global data for {} so data for {} could not "+
                 "be written!",TILRef.NAME,modid);
     }
 
-    public static void writeToFile(CompoundTagAPI data, File file) throws IOException {
+    public static void writeToFile(CompoundTagAPI<?> data, File file) throws IOException {
         TagAPI api = getTagAPI();
         if(Objects.nonNull(api)) api.writeToFile(data,file);
     }
 
-    public static void writeWorldData(CompoundTagAPI data, String modid, @Nonnull String worldName) throws IOException {
-        CompoundTagAPI globalTag = getGlobalData(modid,true);
+    public static void writeWorldData(CompoundTagAPI<?> data, String modid, @Nonnull String worldName) throws IOException {
+        CompoundTagAPI<?> globalTag = getGlobalData(modid,true);
         if(Objects.nonNull(globalTag)) {
             getOrCreateCompound(globalTag,"world_data").putTag(worldName,data);
             writeGlobalData(data, modid);

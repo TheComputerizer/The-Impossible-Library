@@ -46,7 +46,7 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<TileEntity,TileEntityType<
         this.type.setRegistryName(((ResourceLocation1_16_5)registryName).getInstance());
     }
     
-    @Override public void writeTagTo(CompoundTagAPI tag) {
-        if(Objects.nonNull(this.entity)) this.entity.save(((CompoundTag1_16_5)tag).getTag());
+    @Override public void writeTagTo(CompoundTagAPI<?> tag) {
+        if(Objects.nonNull(this.entity)) this.entity.save((CompoundNBT)tag.getWrapped());
     }
 }

@@ -48,7 +48,7 @@ public abstract class BlockEntityAPI<E,T> implements RegistryEntryAPI<T> {
     }
 
     public abstract WorldAPI<?> getWorld();
-    public abstract CompoundTagAPI readTagFrom();
+    public abstract CompoundTagAPI<?> readTagFrom();
     public abstract void setRegistryName(ResourceLocationAPI<?> registryName); //1.12.2 doesnt have proper tile entity types
-    public abstract void writeTagTo(CompoundTagAPI tag);
+    public abstract void writeTagTo(CompoundTagAPI<?> tag);
 }

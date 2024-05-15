@@ -17,13 +17,12 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("unused") public class GenericUtils {
-
-
+@SuppressWarnings("unused")
+public class GenericUtils {
 
     /**
-     * This attempts to cast a value stored as object to a generic type.
-     * If the object is a primitive type a stronger cast is performed by getting the string value and reparsing it
+     * This attempts to cast a value stored as an object to a generic type.
+     * If the object is a primitive type, a stronger cast is performed by getting the string value and reparsing it
      */
     @SuppressWarnings("unchecked")
     public static <T> T castGenericType(@Nullable Object obj, Class<T> valType) {
@@ -128,7 +127,7 @@ import java.util.function.Function;
     /**
      * Assumes the value is stored as a string
      */
-    public static Object parseGenericFromTag(CompoundTagAPI tag) {
+    public static Object parseGenericFromTag(CompoundTagAPI<?> tag) {
         String className = tag.getString("type");
         if(className.isEmpty()) return null;
         try {
@@ -161,27 +160,27 @@ import java.util.function.Function;
         }
     }
 
-    private static List<?> readFromList(ListTagAPI list) {
+    private static List<?> readFromList(ListTagAPI<?> list) {
         List<Object> ret = new ArrayList<>();
-        for(BaseTagAPI based : list.iterable()) {
+        for(BaseTagAPI<?> based : list.iterable()) {
             if(based.isCompound()) ret.add(parseGenericFromTag(based.asCompoundTag()));
             else return null;
         }
         return ret;
     }
 
-    public static void writeGenericToTag(CompoundTagAPI tag, Object obj) {
+    public static void writeGenericToTag(CompoundTagAPI<?> tag, Object obj) {
         tag.putString("type",obj.getClass().getName());
         if(obj instanceof List<?>) tag.putTag("value",writeList(obj));
         else tag.putString("value",obj.toString());
     }
 
-    private static ListTagAPI writeList(Object obj) {
-        ListTagAPI list = TagHelper.makeListTag();
+    private static ListTagAPI<?> writeList(Object obj) {
+        ListTagAPI<?> list = TagHelper.makeListTag();
         if(Objects.nonNull(list)) {
             List<?> val = (List<?>) obj;
             for(Object element : val) {
-                CompoundTagAPI tag = TagHelper.makeCompoundTag();
+                CompoundTagAPI<?> tag = TagHelper.makeCompoundTag();
                 if(Objects.nonNull(tag)) {
                     tag.putString("type", element.getClass().getName());
                     if(element instanceof List<?>) tag.putTag("value",writeList(element));

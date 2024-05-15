@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.tag.CompoundTag1_16_5;
@@ -22,17 +21,17 @@ public class ItemStack1_16_5 extends ItemStackAPI<ItemStack> {
     }
 
     @Override
-    public ItemAPI<?> getItem() {
+    public Item1_16_5 getItem() {
         return new Item1_16_5(this.stack.getItem());
     }
 
     @Override
-    public CompoundTagAPI getOrCreateTag() {
+    public CompoundTag1_16_5 getOrCreateTag() {
         return new CompoundTag1_16_5(this.stack.getOrCreateTag());
     }
 
     @Override
-    public @Nullable CompoundTagAPI getTag() {
+    public @Nullable CompoundTag1_16_5 getTag() {
         CompoundNBT tag = this.stack.getTag();
         return Objects.nonNull(tag) ? new CompoundTag1_16_5(tag) : null;
     }
@@ -48,7 +47,7 @@ public class ItemStack1_16_5 extends ItemStackAPI<ItemStack> {
     }
 
     @Override
-    public void setTag(@Nullable CompoundTagAPI tag) {
-        this.stack.setTag(Objects.nonNull(tag) ? ((CompoundTag1_16_5)tag).getTag() : null);
+    public void setTag(@Nullable CompoundTagAPI<?> tag) {
+        this.stack.setTag(Objects.nonNull(tag) ? (CompoundNBT)tag.getWrapped() : null);
     }
 }

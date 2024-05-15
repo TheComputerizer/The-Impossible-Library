@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.CompoundTag1_12_2;
@@ -22,12 +21,12 @@ public class ItemStack1_12_2 extends ItemStackAPI<ItemStack> {
     }
 
     @Override
-    public ItemAPI<?> getItem() {
+    public Item1_12_2 getItem() {
         return new Item1_12_2(this.stack.getItem());
     }
 
     @Override
-    public @Nullable CompoundTagAPI getTag() {
+    public @Nullable CompoundTag1_12_2 getTag() {
         NBTTagCompound tag = this.stack.getTagCompound();
         return Objects.nonNull(tag) ? new CompoundTag1_12_2(tag) : null;
     }
@@ -43,7 +42,7 @@ public class ItemStack1_12_2 extends ItemStackAPI<ItemStack> {
     }
 
     @Override
-    public void setTag(@Nullable CompoundTagAPI tag) {
-        this.stack.setTagCompound(Objects.nonNull(tag) ? ((CompoundTag1_12_2)tag).getTag() : null);
+    public void setTag(@Nullable CompoundTagAPI<?> tag) {
+        this.stack.setTagCompound(Objects.nonNull(tag) ? (NBTTagCompound)tag.getWrapped() : null);
     }
 }

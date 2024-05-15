@@ -1,6 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.tag;
 
-public interface PrimitiveTagAPI {
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
+
+@SuppressWarnings("unused")
+public interface PrimitiveTagAPI<T> extends Wrapped<T> {
 
     boolean asBoolean();
     byte asByte();

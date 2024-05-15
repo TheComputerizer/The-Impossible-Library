@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.tag;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
 import net.minecraft.nbt.NumberNBT;
 
-public class PrimitiveTag1_16_5 extends BaseTag1_16_5<NumberNBT> implements PrimitiveTagAPI {
+public class PrimitiveTag1_16_5 extends BaseTag1_16_5<NumberNBT> implements PrimitiveTagAPI<NumberNBT> {
 
     public PrimitiveTag1_16_5(NumberNBT tag) {
         super(tag);
@@ -11,36 +11,36 @@ public class PrimitiveTag1_16_5 extends BaseTag1_16_5<NumberNBT> implements Prim
 
     @Override
     public boolean asBoolean() {
-        return this.tag.getAsByte()==1;
+        return this.wrapped.getAsByte()==(byte)1;
     }
 
     @Override
     public byte asByte() {
-        return this.tag.getAsByte();
+        return this.wrapped.getAsByte();
     }
 
     @Override
     public double asDouble() {
-        return this.tag.getAsDouble();
+        return this.wrapped.getAsDouble();
     }
 
     @Override
     public float asFloat() {
-        return this.tag.getAsFloat();
+        return this.wrapped.getAsFloat();
     }
 
     @Override
     public int asInt() {
-        return this.tag.getAsInt();
+        return this.wrapped.getAsInt();
     }
 
     @Override
     public long asLong() {
-        return this.tag.getAsLong();
+        return this.wrapped.getAsLong();
     }
 
     @Override
     public short asShort() {
-        return this.tag.getAsShort();
+        return this.wrapped.getAsShort();
     }
 }

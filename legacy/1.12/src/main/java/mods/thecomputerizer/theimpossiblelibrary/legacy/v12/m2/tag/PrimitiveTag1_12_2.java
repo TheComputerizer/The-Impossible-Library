@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
 import net.minecraft.nbt.NBTPrimitive;
 
-public class PrimitiveTag1_12_2 extends BaseTag1_12_2<NBTPrimitive> implements PrimitiveTagAPI {
+public class PrimitiveTag1_12_2 extends BaseTag1_12_2<NBTPrimitive> implements PrimitiveTagAPI<NBTPrimitive> {
 
     public PrimitiveTag1_12_2(NBTPrimitive tag) {
         super(tag);
@@ -11,36 +11,36 @@ public class PrimitiveTag1_12_2 extends BaseTag1_12_2<NBTPrimitive> implements P
 
     @Override
     public boolean asBoolean() {
-        return this.tag.getByte()==1;
+        return this.wrapped.getByte()==(byte)1;
     }
 
     @Override
     public byte asByte() {
-        return this.tag.getByte();
+        return this.wrapped.getByte();
     }
 
     @Override
     public double asDouble() {
-        return this.tag.getDouble();
+        return this.wrapped.getDouble();
     }
 
     @Override
     public float asFloat() {
-        return this.tag.getFloat();
+        return this.wrapped.getFloat();
     }
 
     @Override
     public int asInt() {
-        return this.tag.getInt();
+        return this.wrapped.getInt();
     }
 
     @Override
     public long asLong() {
-        return this.tag.getLong();
+        return this.wrapped.getLong();
     }
 
     @Override
     public short asShort() {
-        return this.tag.getShort();
+        return this.wrapped.getShort();
     }
 }

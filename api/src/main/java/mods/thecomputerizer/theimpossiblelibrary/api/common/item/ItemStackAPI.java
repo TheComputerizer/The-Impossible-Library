@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class ItemStackAPI<S> {
 
     protected final S stack;
@@ -24,8 +24,8 @@ public abstract class ItemStackAPI<S> {
     public abstract int getCount();
     public abstract ItemAPI<?> getItem();
 
-    public CompoundTagAPI getOrCreateTag() {
-        CompoundTagAPI tag = getTag();
+    public CompoundTagAPI<?> getOrCreateTag() {
+        CompoundTagAPI<?> tag = getTag();
         if(Objects.isNull(tag)) {
             tag = TagHelper.makeCompoundTag();
             setTag(tag);
@@ -33,7 +33,7 @@ public abstract class ItemStackAPI<S> {
         return tag;
     }
 
-    public abstract @Nullable CompoundTagAPI getTag();
+    public abstract @Nullable CompoundTagAPI<?> getTag();
 
     public void increment() {
         setCount(getCount()+1);
@@ -46,5 +46,5 @@ public abstract class ItemStackAPI<S> {
     }
 
     public abstract void setCount(int count);
-    public abstract void setTag(@Nullable CompoundTagAPI tag);
+    public abstract void setTag(@Nullable CompoundTagAPI<?> tag);
 }

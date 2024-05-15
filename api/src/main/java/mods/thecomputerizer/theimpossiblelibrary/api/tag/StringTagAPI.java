@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.tag;
 
-public interface StringTagAPI {
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 
-    String asString();
+public interface StringTagAPI<T> extends Wrapped<T> {
+
+    String getValue();
 }
