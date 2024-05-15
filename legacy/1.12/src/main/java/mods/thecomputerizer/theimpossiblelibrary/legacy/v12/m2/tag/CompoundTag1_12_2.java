@@ -5,18 +5,32 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.StringTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 
-public class CompoundTag1_12_2 extends BaseTag1_12_2<NBTTagCompound> implements CompoundTagAPI<NBTTagCompound> {
+public class CompoundTag1_12_2 extends CompoundTagAPI<NBTTagCompound> {
 
     public CompoundTag1_12_2(NBTTagCompound tag) {
         super(tag);
     }
-
+    
+    @Override public CompoundTagAPI<?> asCompoundTag() {
+        return this;
+    }
+    
+    @Override public ListTagAPI<?> asListTag() {
+        return null;
+    }
+    
+    @Override public PrimitiveTagAPI<?> asPrimitiveTag() {
+        return null;
+    }
+    
+    @Override public StringTagAPI<?> asStringTag() {
+        return null;
+    }
+    
     @Override
     public boolean contains(String key) {
         return this.wrapped.hasKey(key);
@@ -44,7 +58,23 @@ public class CompoundTag1_12_2 extends BaseTag1_12_2<NBTTagCompound> implements 
 
     @Override
     public BaseTagAPI<?> getTag(String key) {
-        return new BaseTag1_12_2<>(this.wrapped.getTag(key));
+        return TagHelper.getWrapped(this.wrapped.getTag(key));
+    }
+    
+    @Override public boolean isCompound() {
+        return true;
+    }
+    
+    @Override public boolean isList() {
+        return false;
+    }
+    
+    @Override public boolean isPrimitive() {
+        return false;
+    }
+    
+    @Override public boolean isString() {
+        return false;
     }
     
     @Override public void putBoolean(String key, boolean b) {
@@ -84,21 +114,5 @@ public class CompoundTag1_12_2 extends BaseTag1_12_2<NBTTagCompound> implements 
     @Override
     public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.setTag(key,(NBTBase)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, CompoundTagAPI<?> tag) {
-        this.wrapped.setTag(key,(NBTTagCompound)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, ListTagAPI<?> tag) {
-        this.wrapped.setTag(key,(NBTTagList)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, PrimitiveTagAPI<?> tag) {
-        this.wrapped.setTag(key,(NBTPrimitive)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, StringTagAPI<?> tag) {
-        this.wrapped.setTag(key,(NBTTagString)tag.getWrapped());
     }
 }

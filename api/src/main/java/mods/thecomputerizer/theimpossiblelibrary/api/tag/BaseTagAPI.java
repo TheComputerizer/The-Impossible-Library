@@ -18,6 +18,6 @@ public abstract class BaseTagAPI<T> extends AbstractWrapped<T> {
     public abstract StringTagAPI<?> asStringTag();
     public abstract boolean isCompound();
     public abstract boolean isList();
-    public abstract boolean isString();
     public abstract boolean isPrimitive();
+    public abstract boolean isString();
 }

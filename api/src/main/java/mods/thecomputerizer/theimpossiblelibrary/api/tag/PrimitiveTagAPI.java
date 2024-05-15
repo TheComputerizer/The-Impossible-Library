@@ -1,15 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.tag;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
-
 @SuppressWarnings("unused")
-public interface PrimitiveTagAPI<T> extends Wrapped<T> {
-
-    boolean asBoolean();
-    byte asByte();
-    double asDouble();
-    float asFloat();
-    int asInt();
-    long asLong();
-    short asShort();
+public abstract class PrimitiveTagAPI<T> extends BaseTagAPI<T> {
+    
+    protected PrimitiveTagAPI(T tag) {
+        super(tag);
+    }
+    
+    public abstract boolean asBoolean();
+    public abstract byte asByte();
+    public abstract double asDouble();
+    public abstract float asFloat();
+    public abstract int asInt();
+    public abstract long asLong();
+    public abstract short asShort();
 }

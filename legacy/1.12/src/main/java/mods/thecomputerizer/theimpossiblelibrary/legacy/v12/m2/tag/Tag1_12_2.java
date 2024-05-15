@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import net.minecraft.nbt.*;
@@ -8,6 +9,14 @@ import java.io.File;
 import java.io.IOException;
 
 public class Tag1_12_2 implements TagAPI {
+    
+    @SuppressWarnings("unchecked") @Override public <T> BaseTagAPI<T> getWrapped(T tag) {
+        if(tag instanceof NBTTagCompound) return (BaseTagAPI<T>)new CompoundTag1_12_2((NBTTagCompound)tag);
+        if(tag instanceof NBTTagList) return (BaseTagAPI<T>)new ListTag1_12_2((NBTTagList)tag);
+        if(tag instanceof NBTPrimitive) return (BaseTagAPI<T>)new PrimitiveTag1_12_2((NBTPrimitive)tag);
+        if(tag instanceof NBTTagString) return (BaseTagAPI<T>)new StringTag1_12_2((NBTTagString)tag);
+        return null;
+    }
 
     @Override
     public CompoundTag1_12_2 makeCompoundTag() {

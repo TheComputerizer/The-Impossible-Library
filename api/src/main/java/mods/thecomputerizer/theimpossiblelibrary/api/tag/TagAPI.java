@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 public interface TagAPI {
-
+    
+    <T> BaseTagAPI<T> getWrapped(T tag);
     CompoundTagAPI<?> makeCompoundTag();
     ListTagAPI<?> makeListTag();
     PrimitiveTagAPI<?> makePrimitiveTag(boolean b);

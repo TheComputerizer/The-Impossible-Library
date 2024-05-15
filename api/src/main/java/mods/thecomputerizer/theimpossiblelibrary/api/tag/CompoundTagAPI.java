@@ -1,27 +1,25 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.tag;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
-
 @SuppressWarnings("unused")
-public interface CompoundTagAPI<T> extends Wrapped<T> {
-
-    boolean contains(String key);
-    CompoundTagAPI<?> getCompoundTag(String key);
-    ListTagAPI<?> getListTag(String key);
-    PrimitiveTagAPI<?> getPrimitiveTag(String key);
-    String getString(String key);
-    BaseTagAPI<?> getTag(String key);
-    void putBoolean(String key, boolean b);
-    void putByte(String key, byte b);
-    void putDouble(String key, double d);
-    void putFloat(String key, float f);
-    void putInt(String key, int i);
-    void putLong(String key, long l);
-    void putShort(String key, short s);
-    void putString(String key, String value);
-    void putTag(String key, BaseTagAPI<?> tag);
-    void putTag(String key, CompoundTagAPI<?> tag);
-    void putTag(String key, ListTagAPI<?> tag);
-    void putTag(String key, PrimitiveTagAPI<?> tag);
-    void putTag(String key, StringTagAPI<?> tag);
+public abstract class CompoundTagAPI<T> extends BaseTagAPI<T> {
+    
+    protected CompoundTagAPI(T tag) {
+        super(tag);
+    }
+    
+    public abstract boolean contains(String key);
+    public abstract CompoundTagAPI<?> getCompoundTag(String key);
+    public abstract ListTagAPI<?> getListTag(String key);
+    public abstract PrimitiveTagAPI<?> getPrimitiveTag(String key);
+    public abstract String getString(String key);
+    public abstract BaseTagAPI<?> getTag(String key);
+    public abstract void putBoolean(String key, boolean b);
+    public abstract void putByte(String key, byte b);
+    public abstract void putDouble(String key, double d);
+    public abstract void putFloat(String key, float f);
+    public abstract void putInt(String key, int i);
+    public abstract void putLong(String key, long l);
+    public abstract void putShort(String key, short s);
+    public abstract void putString(String key, String value);
+    public abstract void putTag(String key, BaseTagAPI<?> tag);
 }

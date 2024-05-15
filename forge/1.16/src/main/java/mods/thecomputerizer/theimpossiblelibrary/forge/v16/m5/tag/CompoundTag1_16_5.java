@@ -2,19 +2,34 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.tag;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.tag.StringTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NumberNBT;
-import net.minecraft.nbt.StringNBT;
 
-public class CompoundTag1_16_5 extends BaseTag1_16_5<CompoundNBT> implements CompoundTagAPI<CompoundNBT> {
+public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
 
     public CompoundTag1_16_5(CompoundNBT tag) {
         super(tag);
+    }
+    
+    @Override
+    public CompoundTag1_16_5 asCompoundTag() {
+        return this;
+    }
+    
+    @Override
+    public ListTag1_16_5 asListTag() {
+        return null;
+    }
+    
+    @Override
+    public PrimitiveTag1_16_5 asPrimitiveTag() {
+        return null;
+    }
+    
+    @Override
+    public StringTag1_16_5 asStringTag() {
+        return null;
     }
 
     @Override
@@ -29,12 +44,12 @@ public class CompoundTag1_16_5 extends BaseTag1_16_5<CompoundNBT> implements Com
 
     @Override
     public ListTag1_16_5 getListTag(String key) {
-        return getTag(key).asListTag();
+        return (ListTag1_16_5)getTag(key).asListTag();
     }
 
     @Override
     public PrimitiveTag1_16_5 getPrimitiveTag(String key) {
-        return getTag(key).asPrimitiveTag();
+        return (PrimitiveTag1_16_5)getTag(key).asPrimitiveTag();
     }
 
     @Override
@@ -43,8 +58,28 @@ public class CompoundTag1_16_5 extends BaseTag1_16_5<CompoundNBT> implements Com
     }
 
     @Override
-    public BaseTag1_16_5<?> getTag(String key) {
-        return new BaseTag1_16_5<>(this.wrapped.get(key));
+    public BaseTagAPI<?> getTag(String key) {
+        return TagHelper.getWrapped(this.wrapped.get(key));
+    }
+    
+    @Override
+    public boolean isCompound() {
+        return true;
+    }
+    
+    @Override
+    public boolean isList() {
+        return false;
+    }
+    
+    @Override
+    public boolean isPrimitive() {
+        return false;
+    }
+    
+    @Override
+    public boolean isString() {
+        return false;
     }
     
     @Override public void putBoolean(String key, boolean b) {
@@ -84,21 +119,5 @@ public class CompoundTag1_16_5 extends BaseTag1_16_5<CompoundNBT> implements Com
     @Override
     public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.put(key,(INBT)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, CompoundTagAPI<?> tag) {
-        this.wrapped.put(key,(CompoundNBT)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, ListTagAPI<?> tag) {
-        this.wrapped.put(key,(ListNBT)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, PrimitiveTagAPI<?> tag) {
-        this.wrapped.put(key,(NumberNBT)tag.getWrapped());
-    }
-    
-    @Override public void putTag(String key, StringTagAPI<?> tag) {
-        this.wrapped.put(key,(StringNBT)tag.getWrapped());
     }
 }

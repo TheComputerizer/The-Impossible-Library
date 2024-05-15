@@ -90,6 +90,10 @@ public class TagHelper {
         }
         return null;
     }
+    
+    public static <T> BaseTagAPI<T> getWrapped(T tag) {
+        return getTagAPI().getWrapped(tag);
+    }
 
     public static void initGlobal() {
         try {
