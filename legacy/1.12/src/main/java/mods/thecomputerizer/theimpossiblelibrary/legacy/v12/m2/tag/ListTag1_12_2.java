@@ -7,10 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.StringTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTPrimitive;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +21,6 @@ public class ListTag1_12_2 extends ListTagAPI<NBTTagList> {
     @Override
     public void addTag(BaseTagAPI<?> tag) {
         this.wrapped.appendTag((NBTBase)tag.getWrapped());
-    }
-    
-    @Override public void addTag(CompoundTagAPI<?> tag) {
-        this.wrapped.appendTag((NBTTagCompound)tag.getWrapped());
-    }
-    
-    @Override public void addTag(ListTagAPI<?> tag) {
-        this.wrapped.appendTag((NBTTagList)tag.getWrapped());
-    }
-    
-    @Override public void addTag(PrimitiveTagAPI<?> tag) {
-        this.wrapped.appendTag((NBTPrimitive)tag.getWrapped());
-    }
-    
-    @Override public void addTag(StringTagAPI<?> tag) {
-        this.wrapped.appendTag((NBTTagString)tag.getWrapped());
     }
     
     @Override public CompoundTagAPI<?> asCompoundTag() {

@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import org.apache.commons.lang3.StringUtils;
 
@@ -166,13 +165,9 @@ import java.util.function.Function;
     }
     
     
-    @Getter
-    public static class WeightedEntry {
-
-        protected final int weight;
-
-        public WeightedEntry(int weight) {
-            this.weight = weight;
-        }
+    public interface WeightedEntry {
+        
+        int getWeight();
+        void setWeight(int weight);
     }
 }
