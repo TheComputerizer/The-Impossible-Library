@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.tag;
 
+import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
 /**
@@ -20,4 +22,8 @@ public abstract class BaseTagAPI<T> extends AbstractWrapped<T> {
     public abstract boolean isList();
     public abstract boolean isPrimitive();
     public abstract boolean isString();
+    
+    public void write(ByteBuf buf) {
+        if(isCompound()) NetworkHelper.writeTag(buf,(CompoundTagAPI<?>)this);
+    }
 }

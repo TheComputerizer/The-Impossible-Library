@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 
 import java.util.Collection;
 
@@ -25,16 +26,16 @@ public interface NetworkAPI<N,DIR> {
     N getNetwork();
     boolean isDirToClient(DIR d);
     boolean isDirLogin(DIR d);
-    <B extends ByteBuf> ResourceLocationAPI<?> readResourceLocation(B buf);
+    ResourceLocationAPI<?> readResourceLocation(ByteBuf buf);
+    CompoundTagAPI<?> readTag(ByteBuf buf);
 
     /**
-     * There are at least 4 distinct methods of registering custom packets across the versions/loaders and since they
-     * all vary significantly the API supports all of them.
+     * There are at least four distinct methods of registering custom packets across the versions/loaders,
+     * and since they all vary significantly, the API supports all of them.
      * API implementations only need to implement the methods specific to the versions/loaders they are running on
      */
     void registerMessage(MessageDirectionInfo<DIR> dir, int id);
-
     <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player);
-
     <M extends MessageWrapperAPI<?,?>> void sendToServer(M message);
+    void writeTag(ByteBuf buf, CompoundTagAPI<?> tag);
 }

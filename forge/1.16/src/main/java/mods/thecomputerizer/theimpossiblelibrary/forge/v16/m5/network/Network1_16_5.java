@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
@@ -8,8 +10,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocation1_16_5;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -17,6 +24,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -119,8 +127,17 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     }
 
     @Override
-    public <B extends ByteBuf> ResourceLocationAPI<?> readResourceLocation(B buf) {
+    public ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
         return new ResourceLocation1_16_5(new ResourceLocation(NetworkHelper.readString(buf)));
+    }
+    
+    @Override public CompoundTagAPI<?> readTag(ByteBuf buf) {
+        try(ByteBufInputStream stream = new ByteBufInputStream(buf)) {
+            TagHelper.getWrapped(CompressedStreamTools.read(stream,NBTSizeTracker.UNLIMITED));
+        } catch(IOException ex) {
+            TILRef.logError("Failed to write tag to buffer",ex);
+        }
+        return TagHelper.makeCompoundTag();
     }
 
     @Override
@@ -137,5 +154,13 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @Override
     public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
         getNetwork().sendToServer((MessageWrapper1_16_5)message);
+    }
+    
+    @Override public void writeTag(ByteBuf buf, CompoundTagAPI<?> tag) {
+        try(ByteBufOutputStream stream = new ByteBufOutputStream(buf)) {
+            CompressedStreamTools.write((CompoundNBT)tag.getWrapped(), stream);
+        } catch(IOException ex) {
+            TILRef.logError("Failed to write tag to buffer",ex);
+        }
     }
 }

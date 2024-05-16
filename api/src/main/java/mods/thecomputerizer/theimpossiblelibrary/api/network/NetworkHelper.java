@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,7 +66,7 @@ public class NetworkHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static <N,DIR> @Nullable NetworkAPI<N,DIR> getNetworkAPI() {
+    public static <N,DIR> NetworkAPI<N,DIR> getNetworkAPI() {
         return (NetworkAPI<N,DIR>)TILRef.getCommonSubAPI(CommonAPI::getNetwork);
     }
 
@@ -155,6 +156,10 @@ public class NetworkHelper {
     public static String readString(ByteBuf buf) {
         int strLength = buf.readInt();
         return strLength==0 ? "" : (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
+    }
+    
+    public static CompoundTagAPI<?> readTag(ByteBuf buf) {
+        return getNetworkAPI().readTag(buf);
     }
 
     public static <DIR> void registerMessage(MessageDirectionInfo<DIR> info, int id) {
@@ -263,5 +268,9 @@ public class NetworkHelper {
         }
         buf.writeInt(string.length());
         buf.writeCharSequence(string,StandardCharsets.UTF_8);
+    }
+    
+    public static void writeTag(ByteBuf buf, CompoundTagAPI<?> tag) {
+        getNetworkAPI().writeTag(buf,tag);
     }
 }

@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -33,6 +34,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     public TILCommonEntryPoint() {
         devTrace("constructor");
+        TagHelper.initGlobal();
         this.versionHandler = CoreAPI.INSTANCE.getCommonVersionHandler();
     }
 
