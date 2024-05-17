@@ -5,12 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Function;
 
 /**
  * Needs to be registered while the server is starting up (call MinecraftServerAPI#registerCommand to register it)
  */
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class CommandAPI {
 
     protected final CommandAPI parent;
@@ -34,6 +35,7 @@ public abstract class CommandAPI {
     }
 
     public abstract void execute(MinecraftServerAPI<?> server, CommandSenderAPI<?> sender, String ... args) throws Exception;
+    public abstract List<String> getTabCompletions(MinecraftServerAPI<?> server, CommandSenderAPI<?> sender, String ... args);
 
     /**
      * The actual unparsed string should be the last element in the array after the server or whatever else is needed

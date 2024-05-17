@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,7 +58,7 @@ public class TextHelper {
 
     /**
      * Converts an array of generic objects into a single string of the format [ element1 element2 element3 ... ]
-     * If the objects are strings the elements will be in the format [ "element1" "element2" "element3" ... ]
+     * If the objects are strings, the elements will be in the format [ "element1" "element2" "element3" ... ]
      */
     public static String compileCollection(Object ... generics) {
         StringBuilder builder = new StringBuilder();
@@ -73,25 +72,23 @@ public class TextHelper {
         return builder.toString();
     }
 
-    public static @Nullable TextHelperAPI<?> getHelper() {
+    public static TextHelperAPI<?> getHelper() {
         return TILRef.getCommonSubAPI(CommonAPI::getTextHelper);
     }
 
-    public static @Nullable TextStringAPI<?> getLiteral(String text) {
-        TextHelperAPI<?> helper = getHelper();
-        return Objects.nonNull(helper) ? helper.getLiteral(text) : null;
+    public static TextStringAPI<?> getLiteral(String text) {
+        return getHelper().getLiteral(text);
     }
 
-    public static @Nullable TextTranslationAPI<?> getTranslated(String key, Object ... args) {
-        TextHelperAPI<?> helper = getHelper();
-        return Objects.nonNull(helper) ? helper.getTranslated(key,args) : null;
+    public static TextTranslationAPI<?> getTranslated(String key, Object ... args) {
+        return getHelper().getTranslated(key,args);
     }
 
     /**
      * Converts an iterable of strings to a single string with newline characters with an optional limiter. The limit
-     * input determines the maximum number of elements that can be read in before it gets cut off. Setting the limit to 0
+     * input determines the maximum number of elements that can be read in before it gets cut off. Setting the limit to zero
      * or below will disable it. Returns null if the input list is empty or null. If an element in the input list is
-     * empty, null, or has only whitespace it will be replaced with a newline character or be removed if it is the final
+     * empty, null, or has only whitespace, it will be replaced with a newline character or be removed if it is the final
      * element.
      */
     public static String fromIterable(Iterable<String> itr) {

@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.text;
 
+@SuppressWarnings("unused")
 public interface TextAPI<S> {
 
     /**

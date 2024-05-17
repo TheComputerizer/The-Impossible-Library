@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public class CustomTick {
 
     private static final List<CustomTick> registeredTickEvents = new ArrayList<>();
