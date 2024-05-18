@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import org.joml.Vector3d;
@@ -11,6 +11,7 @@ import org.joml.Vector3d;
 import java.util.Objects;
 import java.util.Random;
 
+@SuppressWarnings("unused")
 public class Convex3D {
 
     @Getter private final double radius;
@@ -122,11 +123,12 @@ public class Convex3D {
         if(this.pushMatrix) renderer.popMatrix();
     }
 
-    public void render(RenderAPI renderer, double x, double y, double z) {
-        render(renderer,new Vector3d(x,y,z));
+    public void render(RenderContext ctx, double x, double y, double z) {
+        render(ctx,new Vector3d(x,y,z));
     }
 
-    public void render(RenderAPI renderer, Vector3d pos) {
+    public void render(RenderContext ctx, Vector3d pos) {
+        RenderAPI renderer = ctx.getRenderer();
         preRender(renderer);
         renderer.setColor(this.color[0],this.color[1],this.color[2],this.color[3]);
         renderer.scale(this.scale[0],this.scale[1],this.scale[2]);
@@ -138,7 +140,7 @@ public class Convex3D {
         renderer.rotate(this.currentRotation[2],0f,0f,1f);
         for(TriangleMapper triangle : this.triangles)
             renderTriangle(renderer,triangle);
-        if(this.showOutlines) renderOutlines(renderer);
+        if(this.showOutlines) renderOutlines(ctx);
         postRender(renderer);
     }
 
@@ -178,20 +180,20 @@ public class Convex3D {
         buffer.finish();
     }
 
-    public void renderOutlines(RenderAPI renderer) {
-        renderer.setColor(this.color[4],this.color[5],this.color[6],this.color[7]);
+    public void renderOutlines(RenderContext ctx) {
+        ctx.getRenderer().setColor(this.color[4],this.color[5],this.color[6],this.color[7]);
         for(TriangleMapper triangle : this.triangles)
             for(int i=0; i<triangle.length; i++)
-                renderTriangleOutline(renderer,triangle,i);
+                renderTriangleOutline(ctx,triangle,i);
     }
 
-    public void renderTriangleOutline(RenderAPI renderer, TriangleMapper triangle, int index) {
+    public void renderTriangleOutline(RenderContext ctx, TriangleMapper triangle, int index) {
         Vector3d og = triangle.getOriginal();
         Vector3d a = triangle.getA(index);
         Vector3d b = triangle.getB(index);
-        RenderHelper.drawLineDirect(renderer,og,a);
-        RenderHelper.drawLineDirect(renderer,og,b);
-        RenderHelper.drawLineDirect(renderer,a,b);
+        ctx.drawLine(og,a,1d);
+        ctx.drawLine(og,b,1d);
+        ctx.drawLine(a,b,1d);
     }
 
     private void bufferVertex(VertexWrapper buffer, Vector3d vec) {

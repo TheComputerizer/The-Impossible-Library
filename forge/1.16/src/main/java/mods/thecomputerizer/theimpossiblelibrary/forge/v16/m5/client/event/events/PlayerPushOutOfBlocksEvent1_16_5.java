@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.even
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlayerPushOutOfBlocksEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 
 public class PlayerPushOutOfBlocksEvent1_16_5 extends PlayerPushOutOfBlocksEventWrapper<Object> { //TODO
 

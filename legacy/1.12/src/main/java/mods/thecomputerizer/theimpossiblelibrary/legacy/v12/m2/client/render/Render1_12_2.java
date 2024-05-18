@@ -1,28 +1,22 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Minecraft1_12_2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import java.util.List;
+import java.util.Collection;
 
 public class Render1_12_2 implements RenderAPI {
 
     private final GL1_12_2 gl;
-    private int mouseX;
-    private int mouseY;
-    private float partialTicks;
 
     public Render1_12_2() {
         this.gl = new GL1_12_2();
@@ -92,6 +86,11 @@ public class Render1_12_2 implements RenderAPI {
     public void drawString(FontAPI font, String str, int left, int top, int color) {
         font.draw(this,str,left,top,color);
     }
+    
+    @Override
+    public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
+        font.renderToolTip(this,lines,x,y,width,height,maxWidth);
+    }
 
     @Override
     public void enableAlpha() {
@@ -129,38 +128,8 @@ public class Render1_12_2 implements RenderAPI {
     }
 
     @Override
-    public FontAPI getFont() {
-        return Minecraft1_12_2.getInstance().getFont();
-    }
-
-    @Override
     public GLAPI getGLAPI() {
         return this.gl;
-    }
-
-    @Override
-    public MinecraftAPI getMinecraft() {
-        return Minecraft1_12_2.getInstance();
-    }
-
-    @Override
-    public int getMouseX() {
-        return this.mouseX;
-    }
-
-    @Override
-    public int getMouseY() {
-        return this.mouseY;
-    }
-
-    @Override
-    public float getPartialTicks() {
-        return this.partialTicks;
-    }
-
-    @Override
-    public MinecraftWindow getWindow() {
-        return Minecraft1_12_2.getInstance().getWindow();
     }
 
     @Override
@@ -176,11 +145,6 @@ public class Render1_12_2 implements RenderAPI {
     @Override
     public void pushMatrix() {
         GlStateManager.pushMatrix();
-    }
-
-    @Override
-    public void renderTooltip(FontAPI font, List<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
-        font.renderToolTip(this,lines,x,y,width,height,maxWidth);
     }
 
     @Override
@@ -202,21 +166,7 @@ public class Render1_12_2 implements RenderAPI {
     }
 
     @Override
-    public void setMatrix(Object matrix) {
-    }
-
-    @Override
-    public RenderAPI setMouse(int x, int y) {
-        this.mouseX = x;
-        this.mouseY = y;
-        return this;
-    }
-
-    @Override
-    public RenderAPI setPartialTicks(float partialTicks) {
-        this.partialTicks = partialTicks;
-        return this;
-    }
+    public void setMatrix(Object matrix) {}
 
     @Override
     public void setPosColorShader() {}

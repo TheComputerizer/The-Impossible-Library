@@ -6,6 +6,7 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
 
+@SuppressWarnings("UnusedReturnValue")
 public class Vertex {
 
     @Getter private Number[][] buffer;

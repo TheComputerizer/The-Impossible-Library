@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FogDensityEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
@@ -21,7 +21,7 @@ public class FogDensityEvent1_12_2 extends FogDensityEventWrapper<FogDensity> {
     }
 
     @Override
-    protected RenderAPI initRenderer(@Nonnull FogDensity event) {
+    protected RenderContext initRenderer(@Nonnull FogDensity event) {
         return ClientEvents1_12_2.initRenderer(event::getDensity);
     }
 

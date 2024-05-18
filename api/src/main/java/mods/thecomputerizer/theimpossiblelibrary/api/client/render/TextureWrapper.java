@@ -2,25 +2,28 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
+import org.joml.Vector3d;
 
-import java.util.Objects;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public class TextureWrapper {
 
     private ResourceLocationAPI<?> texture;
     private float alpha;
     private ColorCache colorMask;
-    private float minU;
-    private float minV;
-    private float maxU;
-    private float maxV;
-    private int width;
-    private int height;
+    private double minU;
+    private double minV;
+    private double maxU;
+    private double maxV;
+    private double width;
+    private double height;
 
     public TextureWrapper() {
         this.alpha = 1f;
-        this.colorMask = new ColorCache(0f,0f,0f,0f);
+        this.colorMask = WHITE;
     }
 
     public TextureWrapper(TextureWrapper other) {
@@ -33,6 +36,14 @@ public class TextureWrapper {
         this.maxV = other.maxV;
         this.width = other.width;
         this.height = other.height;
+    }
+    
+    public void bind(RenderAPI renderer) {
+        renderer.bindTexture(this.texture);
+    }
+    
+    public void draw(RenderContext ctx, Vector3d center) {
+        ctx.drawTexturedPlane(center,Plane.getFromAxis(Y,this.width,this.height),this);
     }
 
     public TextureWrapper setTexture(ResourceLocationAPI<?> texture) {
@@ -66,13 +77,5 @@ public class TextureWrapper {
         this.minV = min;
         this.maxV = max;
         return this;
-    }
-
-    public void render(RenderAPI render, float x, float y, float offset) {
-        if(Objects.nonNull(this.texture))
-            RenderHelper.drawTexturedRect(render,x,y,this.width,this.height,this.alpha,this.texture,this.minU,
-                    this.maxU,this.minV,this.maxV);
-        if(this.colorMask.getColorVF().w>0f)
-            RenderHelper.drawBox(render,x,y,this.width,this.height,this.colorMask.getColorVF(),offset);
     }
 }

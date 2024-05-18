@@ -3,23 +3,21 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.entity.ClientPlayer1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.font.Font1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.gui.Screen1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.render.Render1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world.World1_16_5;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.IWorld;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.Objects;
 
 public class Minecraft1_16_5 implements MinecraftAPI {
@@ -40,7 +38,9 @@ public class Minecraft1_16_5 implements MinecraftAPI {
         this.font = new Font1_16_5();
         this.render = new Render1_16_5();
     }
-
+    
+    @Override public void addResourcePackFolder(File dir) {}
+    
     @Override
     public FontAPI getFont() {
         return this.font;
@@ -54,11 +54,6 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     @Override
     public RenderAPI getRenderer() {
         return this.render;
-    }
-
-    @Override
-    public @Nullable ScreenAPI<Screen> getScreen() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.screen) ? new Screen1_16_5(this.mc.screen) : null;
     }
 
     /**
@@ -81,8 +76,8 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     }
 
     @Override
-    public boolean isCurrentScreenAPI(ScreenAPI<?> screen) {
-        return screen.get()==this.mc.screen;
+    public boolean isCurrentScreenAPI() {
+        return false;
     }
 
     @Override
@@ -111,14 +106,5 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     }
 
     @Override
-    public <S> void setScreen(@Nullable S screen) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).getInstance());
-        //else this.mc.displayGuiScreen(null);
-    }
-
-    @Override
-    public void setScreenAPI(@Nullable ScreenAPI<?> screen) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).getInstance());
-        //else this.mc.displayGuiScreen(null);
-    }
+    public <S> void setScreen(@Nullable S screen) {}
 }

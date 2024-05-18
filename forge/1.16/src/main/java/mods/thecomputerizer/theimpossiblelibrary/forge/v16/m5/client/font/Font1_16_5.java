@@ -12,6 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,7 +55,7 @@ public class Font1_16_5 implements FontAPI {
     }
 
     @Override
-    public void renderToolTip(RenderAPI renderer, List<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
+    public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
         List<ITextComponent> components = new ArrayList<>();
         for(TextAPI<?> text : lines) components.add(((Text1_16_5)text).getComponent());
         GuiUtils.drawHoveringText(getMatrix(renderer),components,x,y,width,height,maxWidth,getFont());

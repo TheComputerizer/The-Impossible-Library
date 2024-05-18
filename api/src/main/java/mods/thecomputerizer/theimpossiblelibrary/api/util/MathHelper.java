@@ -5,11 +5,16 @@ import org.joml.Vector2f;
 public class MathHelper {
 
     public static final double RADIANS_360 = Math.toRadians(360d);
+    public static final double RADIANS_270 = Math.toRadians(270d);
     public static final double RADIANS_180 = Math.toRadians(180d);
     public static final double RADIANS_90 = Math.toRadians(90d);
     public static final double RADIANS_60 = Math.toRadians(60d);
     public static final double RADIANS_45 = Math.toRadians(45d);
     public static final double RADIANS_30 = Math.toRadians(30d);
+    
+    public static double clamp(double val, double min, double max) {
+        return Math.max(min,Math.min(val,max));
+    }
 
     /**
         Helper math for radial gui elements

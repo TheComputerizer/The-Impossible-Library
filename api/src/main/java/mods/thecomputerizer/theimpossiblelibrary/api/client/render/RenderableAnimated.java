@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -42,27 +43,25 @@ public class RenderableAnimated extends RenderablePNG {
     }
 
     @Override
-    public void render(RenderAPI renderer) {
+    public void render(RenderContext ctx) {
         if(this.startedRendering) renderTick();
         if(canRender()) {
             if(!this.startedRendering) {
                 this.prevMillis = System.currentTimeMillis();
                 this.startedRendering = true;
             }
-            int resX = (int)renderer.getWindow().getWidth();
-            int resY = (int)renderer.getWindow().getHeight();
-            preRender(renderer);
-            renderer.scale(scaleX(resX,resY),scaleY(),1f);
-            drawSprite(renderer,posX(renderer.getWindow()),posY(resY),resX,resY);
-            postRender(renderer);
+            preRender(ctx,Math.max(0.1f,getOpacity()));
+            drawSprite(ctx);
+            postRender(ctx.getRenderer());
         }
     }
 
-    private void drawSprite(RenderAPI renderer, int x, int y, int width, int height) {
+    private void drawSprite(RenderContext ctx) {
         float framePercent = 1f/((float)this.frames);
         float vMin = (float)Math.max(0d,this.curFrame*framePercent);
         float vMax = (float)Math.min(1d,(this.curFrame+1)*framePercent);
-        RenderHelper.drawTexturedRect(renderer,x,y,width,height,Math.max(0.1f,getOpacity()),this.source,0f,1f,vMin,vMax);
+        this.texture.getShape().getTexture().setV(vMin,vMax);
+        this.texture.draw(ctx,VectorHelper.ZERO_3D,0d,0d);
     }
 
     @Override

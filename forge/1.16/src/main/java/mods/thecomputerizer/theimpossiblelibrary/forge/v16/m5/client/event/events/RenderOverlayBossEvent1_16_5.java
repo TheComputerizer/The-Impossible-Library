@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayBossEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.ClientEvents1_16_5;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo;
@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class RenderOverlayBossEvent1_16_5 extends RenderOverlayBossEventWrapper<BossInfo> {
 
     @Override
-    protected RenderAPI initRenderer(@Nonnull BossInfo event) {
+    protected RenderContext initRenderer(@Nonnull BossInfo event) {
         return ClientEvents1_16_5.initRenderer(() -> 0f,event::getMatrixStack);
     }
 

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayTextEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Text;
@@ -21,7 +21,7 @@ public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<
     }
 
     @Override
-    protected RenderAPI initRenderer(@Nonnull Text event) {
+    protected RenderContext initRenderer(@Nonnull Text event) {
         return ClientEvents1_12_2.initRenderer(event::getPartialTicks);
     }
 

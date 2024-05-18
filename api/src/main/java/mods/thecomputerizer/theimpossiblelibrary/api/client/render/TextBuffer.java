@@ -1,14 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
 
-@Getter
+@SuppressWarnings("unused")  @Getter
 public class TextBuffer {
 
-    private final String text;
+    private final TextAPI<?> text;
     private final int left;
     private final int bottom;
     private final int width;
@@ -16,10 +17,10 @@ public class TextBuffer {
     private final float scaleX;
     private final float scaleY;
     private final int lineSpacing;
-    private final int color;
+    private final ColorCache color;
 
-    private TextBuffer(String text, int left, int bottom, int width, int height, float scaleX, float scaleY,
-                       int spacing, int color) {
+    private TextBuffer(TextAPI<?> text, int left, int bottom, int width, int height, float scaleX, float scaleY,
+                       int spacing, ColorCache color) {
         this.text = text;
         this.left = left;
         this.bottom = bottom;
@@ -34,7 +35,7 @@ public class TextBuffer {
     @SuppressWarnings("SuspiciousNameCombination")
     public static class Builder {
 
-        private final String text;
+        private final TextAPI<?> text;
         private int left;
         private int bottom;
         private int width;
@@ -42,9 +43,9 @@ public class TextBuffer {
         private float scaleX;
         private float scaleY;
         private int spacing;
-        private int color;
+        private ColorCache color;
 
-        public Builder(String text) {
+        public Builder(TextAPI<?> text) {
             this.text = text;
             this.scaleX = 1f;
             this.scaleY = 1f;
@@ -74,31 +75,31 @@ public class TextBuffer {
          * Assumes values from 0-1
          */
         public Builder setColor(Vector4f color) {
-            return setColor(ColorHelper.makeRGBAInt(color));
+            return setColor(new ColorCache(color));
         }
 
         /**
          * Assumes values from 0-1
          */
         public Builder setColor(float r, float g, float b, float a) {
-            return setColor(ColorHelper.makeRGBAInt(r,g,b,a));
+            return setColor(new ColorCache(r,b,g,a));
         }
 
         /**
          * Assumes values from 0-255
          */
         public Builder setColor(Vector4i color) {
-            return setColor(ColorHelper.makeRGBAInt(color));
+            return setColor(new ColorCache(color));
         }
 
         /**
          * Assumes values from 0-255
          */
         public Builder setColor(int r, int g, int b, int a) {
-            return setColor(ColorHelper.makeRGBAInt(r,g,b,a));
+            return setColor(new ColorCache(r,b,g,a));
         }
 
-        public Builder setColor(int color) {
+        public Builder setColor(ColorCache color) {
             this.color = color;
             return this;
         }

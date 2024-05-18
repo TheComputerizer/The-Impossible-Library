@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
+@SuppressWarnings("unused")
 public interface GLAPI {
 
     void directBegin(int mode);

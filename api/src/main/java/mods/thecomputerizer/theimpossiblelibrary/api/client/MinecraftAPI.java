@@ -2,23 +2,23 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.Objects;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public interface MinecraftAPI {
 
+    void addResourcePackFolder(File dir);
     FontAPI getFont();
     @Nullable PlayerAPI<?,?> getPlayer();
     RenderAPI getRenderer();
-    @Nullable ScreenAPI<?> getScreen();
     MinecraftWindow getWindow();
     @Nullable WorldAPI<?> getWorld();
 
@@ -31,7 +31,7 @@ public interface MinecraftAPI {
     }
 
     default boolean hasScreen() {
-        return Objects.nonNull(getScreen());
+        return false;
     }
 
     default boolean hasWorld() {
@@ -39,7 +39,7 @@ public interface MinecraftAPI {
     }
 
     <S> boolean isCurrentScreen(S screen);
-    boolean isCurrentScreenAPI(ScreenAPI<?> screen);
+    boolean isCurrentScreenAPI();
     boolean isDisplayFocused();
     boolean isFinishedLoading();
     boolean isFullScreen();
@@ -65,5 +65,4 @@ public interface MinecraftAPI {
     }
 
     <S> void setScreen(@Nullable S screen);
-    void setScreenAPI(@Nullable ScreenAPI<?> screen);
 }

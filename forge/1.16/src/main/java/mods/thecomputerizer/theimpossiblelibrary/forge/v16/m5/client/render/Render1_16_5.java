@@ -4,21 +4,18 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.Minecraft1_16_5;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 @Getter
@@ -28,7 +25,6 @@ public class Render1_16_5 implements RenderAPI {
     private MatrixStack matrix;
     @Setter private int mouseX;
     @Setter private int mouseY;
-    private float partialTicks;
 
     public Render1_16_5() {
         this.gl = new GL1_16_5();
@@ -144,38 +140,8 @@ public class Render1_16_5 implements RenderAPI {
     }
 
     @Override
-    public FontAPI getFont() {
-        return Minecraft1_16_5.getInstance().getFont();
-    }
-
-    @Override
     public GLAPI getGLAPI() {
         return this.gl;
-    }
-
-    @Override
-    public MinecraftAPI getMinecraft() {
-        return Minecraft1_16_5.getInstance();
-    }
-
-    @Override
-    public int getMouseX() {
-        return this.mouseX;
-    }
-
-    @Override
-    public int getMouseY() {
-        return this.mouseY;
-    }
-
-    @Override
-    public float getPartialTicks() {
-        return this.partialTicks;
-    }
-
-    @Override
-    public MinecraftWindow getWindow() {
-        return Minecraft1_16_5.getInstance().getWindow();
     }
 
     @Override
@@ -195,7 +161,7 @@ public class Render1_16_5 implements RenderAPI {
     }
 
     @Override
-    public void renderTooltip(FontAPI font, List<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
+    public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
         font.renderToolTip(this,lines,x,y,width,height,maxWidth);
     }
 
@@ -222,19 +188,6 @@ public class Render1_16_5 implements RenderAPI {
     @Override
     public void setMatrix(Object matrix) {
         this.matrix = matrix instanceof MatrixStack ? (MatrixStack)matrix : null;
-    }
-
-    @Override
-    public RenderAPI setMouse(int x, int y) {
-        this.mouseX = x;
-        this.mouseY = y;
-        return this;
-    }
-
-    @Override
-    public RenderAPI setPartialTicks(float partialTicks) {
-        this.partialTicks = partialTicks;
-        return this;
     }
 
     @Override

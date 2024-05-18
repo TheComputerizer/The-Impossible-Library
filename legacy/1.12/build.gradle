@@ -48,6 +48,10 @@ fancyGradle {
     }
 }
 
+sourceSets {
+    main.output.resourcesDir = rootProject.file('legacy\\1.12\\run_client\\TILResources')
+}
+
 minecraft {
     mappings channel: 'stable', version: mappings_version
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
@@ -56,13 +57,13 @@ public class ClientEvents1_16_5 implements EventsAPI {
         }
     }
 
-    public static @Nullable RenderAPI initRenderer(Supplier<Float> partialTick, Supplier<MatrixStack> matrix) {
-        RenderAPI renderer = RenderHelper.getRenderer();
-        if(Objects.nonNull(renderer)) {
-            renderer.setPartialTicks(partialTick.get());
-            renderer.setMatrix(matrix.get());
+    public static @Nullable RenderContext initRenderer(Supplier<Float> partialTick, Supplier<MatrixStack> matrix) {
+        RenderContext ctx = RenderHelper.getContext();
+        if(Objects.nonNull(ctx)) {
+            ctx.setPartialTicks(partialTick.get());
+            ctx.getRenderer().setMatrix(matrix.get());
         }
-        return renderer;
+        return ctx;
     }
 
     private boolean defined;

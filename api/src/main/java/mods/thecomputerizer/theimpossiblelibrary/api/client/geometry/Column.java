@@ -1,10 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import org.joml.Vector3d;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Column {
 
     private final Random random;
@@ -50,9 +51,9 @@ public class Column {
             holder.setDirection(new Vector3d(0d,0.04d*this.shapeSpeed,0d));
     }
 
-    public void render(RenderAPI renderer, Vector3d relativeCenter) {
+    public void render(RenderContext ctx, Vector3d relativeCenter) {
         Vector3d actualRender = relativeCenter.add(this.relativeBottom.x,0d,this.relativeBottom.z);
-        this.outline.render(renderer,actualRender);
+        this.outline.render(ctx,actualRender);
         if(this.shouldGenerateShapes) {
             if(this.movingShapes.isEmpty() || Objects.isNull(this.recentShape) ||
                     this.recentShape.getRelativePosition().y - this.relativeBottom.y > this.spacing) {
@@ -65,7 +66,7 @@ public class Column {
             Iterator<ShapeHolder> shapesIterator = this.movingShapes.listIterator();
             while(shapesIterator.hasNext()) {
                 ShapeHolder holder = shapesIterator.next();
-                holder.render(renderer,actualRender);
+                holder.render(ctx,actualRender);
                 if(holder.getRelativePosition().y+this.spacing>this.relativeBottom.y+height)
                     shapesIterator.remove();
             }

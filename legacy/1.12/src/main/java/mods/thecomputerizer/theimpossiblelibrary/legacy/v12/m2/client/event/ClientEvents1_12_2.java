@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
@@ -55,10 +55,10 @@ public class ClientEvents1_12_2 implements EventsAPI {
         }
     }
 
-    public static @Nullable RenderAPI initRenderer(Supplier<Float> partialTickSupplier) {
-        RenderAPI renderer = RenderHelper.getRenderer();
-        if(Objects.nonNull(renderer)) renderer.setPartialTicks(partialTickSupplier.get());
-        return renderer;
+    public static @Nullable RenderContext initRenderer(Supplier<Float> partialTickSupplier) {
+        RenderContext ctx = RenderHelper.getContext();
+        if(Objects.nonNull(ctx)) ctx.setPartialTicks(partialTickSupplier.get());
+        return ctx;
     }
 
     private boolean defined;

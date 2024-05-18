@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FogColorsEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
@@ -21,7 +21,7 @@ public class FogColorsEvent1_12_2 extends FogColorsEventWrapper<FogColors> {
     }
 
     @Override
-    protected RenderAPI initRenderer(@Nonnull FogColors event) {
+    protected RenderContext initRenderer(@Nonnull FogColors event) {
         return ClientEvents1_12_2.initRenderer(() -> (float)event.getRenderPartialTicks());
     }
 

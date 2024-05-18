@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public class ColorCache {
 
     private final int colorI;
@@ -62,5 +62,13 @@ public class ColorCache {
 
     public Vector4i getVIWithAlpha(int alpha) {
         return new Vector4i(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
+    }
+    
+    public ColorCache withAlpha(int alpha) {
+        return new ColorCache(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
+    }
+    
+    public ColorCache withAlpha(float alpha) {
+        return new ColorCache(this.colorVF.x,this.colorVF.y,this.colorVF.z,alpha);
     }
 }

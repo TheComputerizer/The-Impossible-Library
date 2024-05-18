@@ -25,7 +25,7 @@ public class ClientEventHelper {
             if(wrapper.isPhase(END)) RenderHelper.tickRenderables();
         });
         EventHelper.addListener(RENDER_OVERLAY_POST,wrapper -> {
-            if(wrapper.isType(ALL)) RenderHelper.renderAllBackgroundStuff(RenderHelper.getRenderer());
+            if(wrapper.isType(ALL)) RenderHelper.renderAllBackgroundStuff(wrapper.getRenderer());
         });
         if(test) {
             TILDev.logInfo("Registering keybind test");

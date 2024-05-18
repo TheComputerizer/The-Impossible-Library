@@ -3,31 +3,39 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.entity.ClientPlayer1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.font.Font1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui.Screen1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render.Render1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.TILCore1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.FolderResourcePack;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import org.lwjgl.opengl.Display;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class Minecraft1_12_2 implements MinecraftAPI {
+    
+    private static final List<String> MCMETA_LINES = Arrays.asList(
+            "{","\t\"pack\": {","\t\t\"pack_format\": 3,",
+            "\t\t\"description\": \"Relocated The Impossible Library resources\"", "\t}", "}");
 
     public static Minecraft1_12_2 getInstance() {
         return new Minecraft1_12_2(Minecraft.getMinecraft());
@@ -42,7 +50,18 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         this.font = new Font1_12_2();
         this.render = new Render1_12_2();
     }
-
+    
+    @Override public void addResourcePackFolder(File dir) {
+        if(TILDev.DEV) {
+            TILDev.logInfo("Attmpting to manually define dev resources");
+            if(dir.exists() && dir.isDirectory()) {
+                FileHelper.writeLines(new File(dir,"pack.mcmeta"),MCMETA_LINES,false);
+                List<IResourcePack> defaultPacks = getResourcePacks(Minecraft.getMinecraft());
+                if(Objects.nonNull(defaultPacks)) defaultPacks.add(new FolderResourcePack(dir));
+            } else TILDev.logError("The TILResources directory doesn't seem to exist. Were the resources copied correctly?");
+        }
+    }
+    
     @Override
     public FontAPI getFont() {
         return this.font;
@@ -57,11 +76,14 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     public RenderAPI getRenderer() {
         return this.render;
     }
-
-    @Override
-    public @Nullable ScreenAPI<GuiScreen> getScreen() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.currentScreen) ?
-                new Screen1_12_2(this.mc.currentScreen) : null;
+    
+    private @Nullable List<IResourcePack> getResourcePacks(Minecraft mc) {
+        try {
+            return ObfuscationReflectionHelper.getPrivateValue(Minecraft.class, mc, "field_110449_ao");
+        } catch(Exception ex) {
+            TILRef.logError("Unable to get resource pack list",ex);
+            return null;
+        }
     }
 
     /**
@@ -85,8 +107,8 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     }
 
     @Override
-    public boolean isCurrentScreenAPI(ScreenAPI<?> screen) {
-        return isCurrentScreen(screen.getScreen());
+    public boolean isCurrentScreenAPI() {
+        return false;
     }
 
     @Override
@@ -122,14 +144,5 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     }
 
     @Override
-    public <S> void setScreen(@Nullable S screen) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).getInstance());
-        //else this.mc.displayGuiScreen(null);
-    }
-
-    @Override
-    public void setScreenAPI(@Nullable ScreenAPI<?> api) { //TODO Fix this
-        //if(Objects.nonNull(screen)) this.mc.displayGuiScreen(((Screen1_12_2)screen).getInstance());
-        //else this.mc.displayGuiScreen(null);
-    }
+    public <S> void setScreen(@Nullable S screen) {}
 }

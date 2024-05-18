@@ -1,8 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import org.joml.Vector3d;
 
+@SuppressWarnings("unused")
 public class Tesseract extends ShapeHolder {
 
     private final Convex3D innerShape;
@@ -37,23 +38,23 @@ public class Tesseract extends ShapeHolder {
     }
 
     @Override
-    public void render(RenderAPI renderer, Vector3d relativeCenter) {
+    public void render(RenderContext ctx, Vector3d relativeCenter) {
         if(this.scaleCounter>=200) this.counterReversal = true;
         else if(this.scaleCounter<0) this.counterReversal = false;
         if(this.counterReversal) this.scaleCounter--;
         else this.scaleCounter++;
-        super.render(renderer,relativeCenter);
-        this.innerShape.render(renderer,relativeCenter.add(this.relativePosVec));
+        super.render(ctx,relativeCenter);
+        this.innerShape.render(ctx,relativeCenter.add(this.relativePosVec));
     }
 
     @Override
-    public void renderScaledRelative(RenderAPI renderer, Vector3d relativeCenter, float s) {
+    public void renderScaledRelative(RenderContext ctx, Vector3d relativeCenter, float s) {
         if(this.scaleCounter>=200) this.counterReversal = true;
         else if(this.scaleCounter<0) this.counterReversal = false;
         if(this.counterReversal) this.scaleCounter--;
         else this.scaleCounter++;
-        super.renderScaledRelative(renderer,relativeCenter,s);
-        this.innerShape.render(renderer,relativeCenter.add(this.relativePosVec.mul(s)));
+        super.renderScaledRelative(ctx,relativeCenter,s);
+        this.innerShape.render(ctx,relativeCenter.add(this.relativePosVec.mul(s)));
     }
 
     private float getScale(float scale, float factor) {

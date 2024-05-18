@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
@@ -45,7 +46,7 @@ public class TILCore1_12_2 extends CoreAPI {
 
     @Override
     public CommonEntryPoint getClientVersionHandler() {
-        return null;
+        return new TILClientEntryPoint1_12_2();
     }
 
     @Override

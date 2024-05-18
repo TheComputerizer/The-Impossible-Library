@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.util.CustomTick1_12_2;

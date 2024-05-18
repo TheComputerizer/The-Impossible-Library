@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 
+import lombok.Getter;
 import org.joml.Vector3d;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class TriangleMapper {
 
-    private final Vector3d original;
+    @Getter private final Vector3d original;
     private final Vector3d[] pairA;
     private final Vector3d[] pairB;
     public final int length;
@@ -70,11 +71,7 @@ public class TriangleMapper {
     private boolean isCloseEnough(double min, double distance) {
         return ((int)(distance*200d))<=((int)(min*200d));
     }
-
-    public Vector3d getOriginal() {
-        return this.original;
-    }
-
+    
     public Vector3d getA(int index) {
         return this.pairA[index];
     }

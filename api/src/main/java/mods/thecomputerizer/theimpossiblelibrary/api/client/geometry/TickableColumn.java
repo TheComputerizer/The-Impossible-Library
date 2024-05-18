@@ -1,10 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import org.joml.Vector3d;
 
 import java.util.Random;
 
+@SuppressWarnings("unused")
 public class TickableColumn extends Column implements ITickableGeometry<TickableColumn> {
 
     private boolean isInitialized = false;
@@ -16,8 +17,8 @@ public class TickableColumn extends Column implements ITickableGeometry<Tickable
     }
 
     @Override
-    public void render(RenderAPI renderer, Vector3d relativeCenter) {
-        if(this.isInitialized) super.render(renderer,relativeCenter);
+    public void render(RenderContext ctx, Vector3d relativeCenter) {
+        if(this.isInitialized) super.render(ctx,relativeCenter);
     }
 
     @Override

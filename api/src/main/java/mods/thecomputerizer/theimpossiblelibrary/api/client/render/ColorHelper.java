@@ -8,6 +8,7 @@ import org.joml.Vector4i;
  * All color values/vectors stored as floats are assumed to be from 0-1
  * All color values/vectors stored as ints are assumed to be from 0-255
  */
+@SuppressWarnings("unused")
 public class ColorHelper {
 
     public static final ColorCache AQUA = initColor(85,255,255,255);
@@ -102,6 +103,7 @@ public class ColorHelper {
         return getColor(color).getVIWithAlpha(alpha);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static ColorCache initColor(int r, int g, int b, int a) {
         return new ColorCache(r,g,b,a);
     }

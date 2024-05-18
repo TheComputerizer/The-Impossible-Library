@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerEventType;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.PLAYER_PUSH_OUT_OF_BLOCKS;
 

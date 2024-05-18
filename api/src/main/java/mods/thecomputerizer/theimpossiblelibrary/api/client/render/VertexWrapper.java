@@ -7,6 +7,7 @@ import org.joml.Vector4f;
 
 import javax.annotation.Nullable;
 
+@SuppressWarnings("unused")
 public abstract class VertexWrapper {
 
     protected final int mode;
@@ -24,6 +25,10 @@ public abstract class VertexWrapper {
     protected void clearBuffers() {
         for(Vertex vertex : this.vertices) vertex.clearBuffer();
         this.vIndex = 0;
+    }
+    
+    public VertexWrapper color(ColorCache color) {
+        return color(color.getColorVF());
     }
 
     public VertexWrapper color(Vector4f color) {

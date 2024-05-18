@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import org.joml.Vector3d;
 
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public class ShapeHolder {
 
     protected final Convex3D shape;
@@ -73,15 +74,15 @@ public class ShapeHolder {
         return this.relativePosVec;
     }
 
-    public void render(RenderAPI renderer, Vector3d relativeCenter) {
-        this.shape.render(renderer,relativeCenter.add(this.relativePosVec));
+    public void render(RenderContext ctx, Vector3d relativeCenter) {
+        this.shape.render(ctx,relativeCenter.add(this.relativePosVec));
         if(this.isMoving) setRelativePosition(this.relativePosVec.add(this.dirVec));
-        for(ShapeHolder child : this.childHolders) child.render(renderer,relativeCenter);
+        for(ShapeHolder child : this.childHolders) child.render(ctx,relativeCenter);
     }
 
-    public void renderScaledRelative(RenderAPI renderer, Vector3d relativeCenter, float scale) {
-        this.shape.render(renderer,relativeCenter.add(this.relativePosVec.mul(scale)));
+    public void renderScaledRelative(RenderContext ctx, Vector3d relativeCenter, float scale) {
+        this.shape.render(ctx,relativeCenter.add(this.relativePosVec.mul(scale)));
         if(this.isMoving) setRelativePosition(this.relativePosVec.add(this.dirVec));
-        for(ShapeHolder child : this.childHolders) child.render(renderer,relativeCenter);
+        for(ShapeHolder child : this.childHolders) child.render(ctx,relativeCenter);
     }
 }
