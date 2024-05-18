@@ -1,14 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-
-import java.util.Arrays;
 
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
 
@@ -40,7 +36,6 @@ public class VertexWrapper1_12_2 extends VertexWrapper {
     }
 
     private void pushBuffer(VertexFormatElement element, Number[] numbers) {
-        TILDev.logInfo("Pushing buffer wiht {} elements {}",numbers.length,TextHelper.compileCollection(Arrays.asList(numbers)));
         if(element==POSITION_3F)
             this.buffer.pos(numbers[0].doubleValue(),numbers[1].doubleValue(),numbers[2].doubleValue());
         else if(element==COLOR_4UB)

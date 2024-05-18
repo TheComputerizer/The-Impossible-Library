@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
@@ -46,6 +47,8 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
         return Objects.nonNull(this.font) && Objects.nonNull(this.text) ?
                 this.font.getStringWidth(this.text.getText().getApplied()) : 0d;
     }
+    
+    @Override public void onResolutionUpdated(MinecraftWindow window) {}
     
     @Override public TextBuffer getWrapped() {
         return this.text;

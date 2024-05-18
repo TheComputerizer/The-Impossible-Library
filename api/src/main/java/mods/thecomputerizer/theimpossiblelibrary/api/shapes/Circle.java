@@ -5,13 +5,13 @@ import lombok.Setter;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.zero2D;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_180;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_270;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_360;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_90;
-import static mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper.ZERO_2D;
 
-@Getter @Setter
+@SuppressWarnings("unused") @Getter @Setter
 public class Circle extends Shape2D {
     
     protected double radius;
@@ -29,6 +29,10 @@ public class Circle extends Shape2D {
         this.innerRadius = innerRadius;
     }
     
+    @Override public Circle copy() {
+        return getScaled(1d,1d);
+    }
+    
     public double[] getQuadCoords() {
         return new double[] {
                 Math.cos(0d)*this.radius,Math.sin(0d)*this.radius,
@@ -38,8 +42,30 @@ public class Circle extends Shape2D {
         };
     }
     
+    @Override public Circle getScaled(double scale) {
+        return getScaled(scale,scale);
+    }
+    
+    @Override public Circle getScaled(Vector2d scale) {
+        return getScaled(scale.x,scale.y);
+    }
+    
+    @Override public Circle getScaled(double scale, double scaleInner) {
+        if(scale<=0d) scale = 1d;
+        if(scaleInner<=0d) scaleInner = 1d;
+        return new Circle(new Vector3d(this.direction),this.radius*scale,this.innerRadius*scaleInner);
+    }
+    
+    @Override public Circle getScaled(Vector3d scale) {
+        return getScaled(scale.x,scale.y);
+    }
+    
+    @Override public Circle getScaled(double scaleX, double scaleY, double scaleZ) {
+        return getScaled(scaleX,scaleY);
+    }
+    
     @Override public boolean isInsideRelative(Vector2d pos) {
-        double distance = ZERO_2D.distance(pos);
+        double distance = zero2D().distance(pos);
         return distance>=this.innerRadius && distance<=this.radius;
     }
     
@@ -78,6 +104,10 @@ public class Circle extends Shape2D {
             this.endAngle = endAngle;
         }
         
+        @Override public CircleSlice copy() {
+            return getScaled(1d,1d,1d);
+        }
+        
         @Override
         public double[] getQuadCoords() {
             return new double[] {
@@ -88,6 +118,31 @@ public class Circle extends Shape2D {
             };
         }
         
+        @Override public CircleSlice getScaled(double scale) {
+            return getScaled(scale,scale,1d);
+        }
+        
+        @Override public CircleSlice getScaled(Vector2d scale) {
+            return getScaled(scale.x,scale.y,1d);
+        }
+        
+        @Override public CircleSlice getScaled(double scale, double scaleInner) {
+            return getScaled(scale,scaleInner,1d);
+        }
+        
+        @Override public CircleSlice getScaled(Vector3d scale) {
+            return getScaled(scale.x,scale.y,scale.z);
+        }
+        
+        @Override public CircleSlice getScaled(double scale, double scaleInner, double scaleAngle) {
+            if(scale<=0d) scale = 1d;
+            if(scaleInner<=0d) scaleInner = 1d;
+            if(scaleAngle<=0d) scaleAngle = 1d;
+            double radius = this.radius*scale;
+            double innerRadius = this.innerRadius*scaleInner;
+            double endAngle = this.startAngle+((this.endAngle-this.startAngle)*scaleAngle);
+            return new CircleSlice(new Vector3d(this.direction),radius,innerRadius,this.startAngle,endAngle);
+        }
         
         @Override public boolean isInsideRelative(Vector2d pos) {
             if(super.isInsideRelative(pos)) {

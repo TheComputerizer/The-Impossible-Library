@@ -6,6 +6,7 @@ import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY_AT;
 
+@SuppressWarnings("unused")
 public abstract class PlayerInteractEntitySpecificEventWrapper<E> extends CommonPlayerInteractEntityEventType<E> {
 
     protected EventFieldWrapper<E,Vector3d> localPos;

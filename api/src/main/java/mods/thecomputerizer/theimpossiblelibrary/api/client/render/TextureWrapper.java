@@ -8,7 +8,7 @@ import org.joml.Vector3d;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
-@SuppressWarnings("unused") @Getter
+@SuppressWarnings({"unused", "UnusedReturnValue"}) @Getter
 public class TextureWrapper {
 
     private ResourceLocationAPI<?> texture;
@@ -43,7 +43,7 @@ public class TextureWrapper {
     }
     
     public void draw(RenderContext ctx, Vector3d center) {
-        ctx.drawTexturedPlane(center,Plane.getFromAxis(Y,this.width,this.height),this);
+        ctx.drawTexturedPlane(center,Plane.getBoundedAxis(Y,this.width,this.height),this);
     }
 
     public TextureWrapper setTexture(ResourceLocationAPI<?> texture) {

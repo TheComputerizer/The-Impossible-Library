@@ -70,7 +70,11 @@ public abstract class Renderable {
     public abstract void pos(RenderContext ctx);
     
     public void scale(RenderContext ctx) {
-        ctx.getRenderer().scale(getParameterAs("scale_x",1f),getParameterAs("scale_y",1f),1f);
+        double smallerScale = ctx.getScale().getSmallerDimensionScale();
+        float x = (float)(getParameterAs("scale_x",1d)*0.25d*(ctx.isWide() ? smallerScale : 1d));
+        float y = (float)(getParameterAs("scale_y",1d)*0.25d*(ctx.isWide() ? 1d : smallerScale));
+        ctx.getRenderer().scale(x,y,1f);
+        translateScaled(ctx,x,y);
     }
     
     abstract void render(RenderContext ctx);
@@ -101,5 +105,13 @@ public abstract class Renderable {
         if(this.totalTimer<=this.fadeOutTimer) this.fadeOutTimer--;
         this.totalTimer--;
         return true;
+    }
+    
+    protected void translateScaled(RenderContext ctx, float scaleX, float scaleY) {
+        float width = (float)ctx.getScale().getWidth();
+        float height = (float)ctx.getScale().getHeight();
+        float translateX = (width/(scaleX*2f))-(width/2f);
+        float translateY = (height/(scaleY*4f))-(height/2f);
+        ctx.getRenderer().translate(translateX,translateY,0f);
     }
 }

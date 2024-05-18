@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
 import lombok.Getter;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public class MinecraftWindow {
 
     private final double width;
@@ -18,8 +18,20 @@ public class MinecraftWindow {
     public float getHeightF() {
         return (float)this.height;
     }
+    
+    public double getHeightScale() {
+        return this.height/this.width;
+    }
 
     public float getWidthF() {
         return (float)this.width;
+    }
+    
+    public double getSmallerScale() {
+        return isWide() ? getHeightScale() : this.width/this.height;
+    }
+    
+    public boolean isWide() {
+        return this.width>=this.height;
     }
 }

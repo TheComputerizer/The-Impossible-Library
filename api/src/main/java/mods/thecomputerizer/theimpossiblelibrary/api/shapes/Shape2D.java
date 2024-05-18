@@ -4,16 +4,20 @@ import lombok.Getter;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper.ZERO_2D;
-import static mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper.ZERO_3D;
-
 @Getter
 public abstract class Shape2D implements Shape {
+    
+    private static final Vector2d ZERO_2D = VectorHelper.zero2D();
+    private static final Vector3d ZERO_3D = VectorHelper.zero3D();
     
     protected final Vector3d direction;
     
     protected Shape2D(Vector3d direction) {
         this.direction = direction;
+    }
+    
+    @Override public Shape2D copy() {
+        return getScaled(1d,1d);
     }
     
     @Override public Shape2D[] getAs2DArray() {
@@ -33,6 +37,24 @@ public abstract class Shape2D implements Shape {
         Vector3d rotated = world.rotateX(-angles.x,new Vector3d()).rotateY(-angles.y).rotateZ(-angles.z);
         return new Vector2d(rotated.x,rotated.y).mul(distance);
     }
+    
+    @Override public Shape2D getScaled(double scale) {
+        return getScaled(scale,scale);
+    }
+    
+    @Override public Shape2D getScaled(Vector2d scale) {
+        return getScaled(scale.x,scale.y);
+    }
+    
+    @Override public Shape2D getScaled(double scaleX, double scaleY) {
+        return getScaled(scaleX,scaleY,scaleX);
+    }
+    
+    @Override public Shape2D getScaled(Vector3d scale) {
+        return getScaled(scale.x,scale.y);
+    }
+    
+    @Override public abstract Shape2D getScaled(double scaleX, double scaleY, double scaleZ);
     
     public Vector3d getWorldCoordinate(Vector2d relative) {
         Vector3d angles = getDirectionAngles();

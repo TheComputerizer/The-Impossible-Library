@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import org.joml.Vector3d;
 
@@ -14,6 +13,7 @@ public final class RenderScale {
     
     private double width;
     private double height;
+    private double heightRatio;
     private double scaleX;
     private double scaleY;
     @Setter private double scaleZ = 1d;
@@ -35,22 +35,26 @@ public final class RenderScale {
     
     double applyX(double centerX, double x) {
         x = Math.max(this.renderBounds.min.x,Math.min(x,this.renderBounds.max.x));
-        x = 2d*(((x*this.modScaleX)+centerX+this.transformX)/this.scaleX);
+        x = ((x*this.modScaleX)+centerX+this.transformX+1d)/this.scaleX;
         return x;
     }
     
     double applyY(double centerY, double y) {
         y = Math.max(this.renderBounds.min.y,Math.min(y,this.renderBounds.max.y));
-        y = 2d*(((y*this.modScaleY)+centerY+this.transformY)/this.scaleY);
+        y = this.height-(((y*this.modScaleY)+centerY+this.transformY+1d)/this.scaleY);
         return y;
     }
     
     double applyZ(double centerZ, double z) {
-        return 0d;
+        return centerZ+z;
     }
     
     public boolean canDraw(Vector3d center) {
         return this.renderBounds.isInside(center);
+    }
+    
+    public double getSmallerDimensionScale() {
+        return this.width>=this.height ? this.heightRatio : this.width/this.height;
     }
     
     public void modScales(double x, double y, double z) {
@@ -68,6 +72,7 @@ public final class RenderScale {
     public void updateResolution(double width, double height) {
         this.width = width;
         this.height = height;
+        this.heightRatio = height/width;
         this.scaleX = 1d/(width/2d);
         this.scaleY = 1d/(height/2d);
     }

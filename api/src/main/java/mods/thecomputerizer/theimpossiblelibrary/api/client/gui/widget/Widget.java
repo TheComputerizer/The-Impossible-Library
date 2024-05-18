@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import org.joml.Vector3d;
 
@@ -19,4 +20,5 @@ public abstract class Widget {
     
     public abstract double getHeight();
     public abstract double getWidth();
+    public abstract void onResolutionUpdated(MinecraftWindow window);
 }

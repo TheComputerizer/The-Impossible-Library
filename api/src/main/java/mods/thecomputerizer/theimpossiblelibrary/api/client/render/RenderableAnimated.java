@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class RenderableAnimated extends RenderablePNG {
         float vMin = (float)Math.max(0d,this.curFrame*framePercent);
         float vMax = (float)Math.min(1d,(this.curFrame+1)*framePercent);
         this.texture.getShape().getTexture().setV(vMin,vMax);
-        this.texture.draw(ctx,VectorHelper.ZERO_3D,0d,0d);
+        this.texture.draw(ctx,VectorHelper.zero3D(),0d,0d);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
 import org.joml.Vector3d;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class ShapeHolder {
     public ShapeHolder(Convex3D shape) {
         this.shape = shape;
         this.childHolders = new ArrayList<>();
-        this.relativePosVec = VectorHelper.ZERO_3D;
+        this.relativePosVec = VectorHelper.zero3D();
     }
 
     public void addChild(Convex3D shape, Consumer<ShapeHolder> holderSettings) {

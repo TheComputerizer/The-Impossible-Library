@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.server;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
 import org.joml.Vector3d;
 
 import java.util.Objects;
@@ -14,7 +14,7 @@ public abstract class CommandHelperAPI {
     public abstract PlayerAPI<?,?> parsePlayer(MinecraftServerAPI<?> server, CommandSenderAPI<?> sender, String unparsed) throws Exception;
 
     public Vector3d parsePosition(EntityAPI<?,?> reference, String unparsed) {
-        Vector3d pos = Objects.nonNull(reference) ? reference.getPosExact() : VectorHelper.ZERO_3D;
+        Vector3d pos = Objects.nonNull(reference) ? reference.getPosExact() : VectorHelper.zero3D();
         String[] split = unparsed.split(" ",2);
         double x = split.length>0 ? parseDoubleRef(split[0],pos,Vector3d::x) : 0d;
         double y = split.length>1 ? parseDoubleRef(split[1],pos,Vector3d::y) : 0d;

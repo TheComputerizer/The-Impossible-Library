@@ -91,24 +91,24 @@ public class TextHelper {
      * empty, null, or has only whitespace, it will be replaced with a newline character or be removed if it is the final
      * element.
      */
-    public static String fromIterable(Iterable<String> itr) {
+    public static String fromIterable(Iterable<?> itr) {
         return fromIterable(itr,0,System.lineSeparator());
     }
 
-    public static String fromIterable(Iterable<String> itr, int limit) {
+    public static String fromIterable(Iterable<?> itr, int limit) {
         return fromIterable(itr,limit,System.lineSeparator());
     }
 
-    public static String fromIterable(Iterable<String> itr, String split) {
+    public static String fromIterable(Iterable<?> itr, String split) {
         return fromIterable(itr,0,split);
     }
 
-    public static String fromIterable(Iterable<String> itr, int limit, String split) {
+    public static String fromIterable(Iterable<?> itr, int limit, String split) {
         if(Objects.isNull(itr)) return null;
         int count = 0;
         StringJoiner joiner = new StringJoiner(split);
-        for(String str : itr) {
-            joiner.add(str);
+        for(Object value : itr) {
+            joiner.add(String.valueOf(value));
             if(limit>0) {
                 count++;
                 if(count>=limit) break;

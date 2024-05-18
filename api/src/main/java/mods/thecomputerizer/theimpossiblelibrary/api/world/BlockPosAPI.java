@@ -1,13 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import org.joml.Vector3i;
 
-@Getter
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.zero3I;
+
+@SuppressWarnings("unused") @Getter
 public abstract class BlockPosAPI<P> {
 
-    public static final BlockPosAPI<Vector3i> ZERO = new Zero(VectorHelper.ZERO_3I);
+    public static final BlockPosAPI<Vector3i> ZERO = new Zero(zero3I());
 
     protected P pos;
     protected Vector3i posVec;

@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
@@ -54,7 +54,7 @@ public class PlayerInteractBlockEvent1_16_5 extends PlayerInteractBlockEventWrap
 
     @Override
     protected EventFieldWrapper<RightClickBlock,Vector3d> wrapHitVecField() {
-        return wrapGenericGetter(event -> Events1_16_5.getVec3d(event.getHitVec().getLocation()),VectorHelper.ZERO_3D);
+        return wrapGenericGetter(event -> Events1_16_5.getVec3d(event.getHitVec().getLocation()),VectorHelper.zero3D());
     }
 
     @Override

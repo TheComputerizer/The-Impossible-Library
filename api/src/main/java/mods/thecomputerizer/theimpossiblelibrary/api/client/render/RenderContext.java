@@ -5,7 +5,6 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
@@ -62,7 +61,7 @@ public final class RenderContext {
     
     public void drawColoredPlane(Vector3d center, Plane plane, Vector2d innerBounds, ColorCache color) {
         if(innerBounds.x>0d || innerBounds.y>0d) {
-            for(Plane outline : Plane.getOutlinePlanes(plane,plane.getScaled(innerBounds.x,innerBounds.y)))
+            for(Plane outline : Plane.getOutlinePlanes(plane,plane.getScaled(innerBounds)))
                 drawColoredPlane(center,outline,color);
             return;
         }
@@ -117,7 +116,8 @@ public final class RenderContext {
     
     public void drawTexturedPlane(Vector3d center, Plane plane, TextureWrapper texture) {
         drawTexturedPlane(center,plane,texture.getTexture(),new Vector4d(
-                texture.getMinU(),texture.getMinV(),texture.getMaxU(),texture.getMaxV()),texture.getColorMask());
+                texture.getMinU(),texture.getMinV(),texture.getMaxU(),texture.getMaxV()),
+                          texture.getColorMask().withAlpha(texture.getAlpha()));
     }
     
     public void drawTexturedPlane(Vector3d center, Plane plane, ResourceLocationAPI<?> texture, Vector4d uv,
@@ -129,10 +129,10 @@ public final class RenderContext {
         initSolidColor();
         Consumer<VertexWrapper> finisher = wrapper -> supplyVertex(wrapper, w -> bufferColor(w,mask));
         VertexWrapper buffer = initQuads(true);
-        withScaledPos(buffer,center,min).tex(uv.x,uv.y).color(mask).endVertex();
-        withScaledPos(buffer,center,min.x,max.y).tex(uv.x,uv.w).color(mask).endVertex();
-        withScaledPos(buffer,center,max.x,min.y).tex(uv.z,uv.y).color(mask).endVertex();
-        withScaledPos(buffer,center,max).tex(uv.z,uv.w).color(mask).endVertex();
+        withScaledPos(buffer,center,min.x,min.y).tex(uv.x,uv.w).color(mask).endVertex();
+        withScaledPos(buffer,center,max.x,min.y).tex(uv.z,uv.w).color(mask).endVertex();
+        withScaledPos(buffer,center,max.x,max.y).tex(uv.z,uv.y).color(mask).endVertex();
+        withScaledPos(buffer,center,min.x,max.y).tex(uv.x,uv.y).color(mask).endVertex();
         buffer.finish();
         finishSolidColor();
     }
@@ -151,6 +151,10 @@ public final class RenderContext {
         this.renderer.disableBlend();
     }
     
+    public double getHeightRatio() {
+        return this.scale.getHeightRatio();
+    }
+    
     public void initSolidColor() {
         this.renderer.enableBlend();
         this.renderer.resetTextureMatrix();
@@ -160,10 +164,14 @@ public final class RenderContext {
     
     public VertexWrapper initQuads(boolean textured) {
         int quads = this.renderer.getGLAPI().quads();
-        VertexWrapper wrapper = textured ? this.renderer.getBufferBuilderPTC(quads,4) :
+        VertexWrapper buffer = textured ? this.renderer.getBufferBuilderPTC(quads,4) :
                 this.renderer.getBufferBuilderPC(quads,4);
-        wrapper.start();
-        return wrapper;
+        buffer.start();
+        return buffer;
+    }
+    
+    public boolean isWide() {
+        return this.scale.getHeightRatio()<1d;
     }
     
     public void supplyVertex(VertexWrapper wrapper, Function<VertexWrapper,VertexWrapper> builder) {
@@ -179,7 +187,7 @@ public final class RenderContext {
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, Vector2d pos) {
-        return withScaledPos(buffer,center,pos.x,pos.y,0d);
+        return withScaledPos(buffer,center,pos.x,pos.y,1d);
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, Vector3d pos) {
@@ -187,7 +195,7 @@ public final class RenderContext {
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y) {
-        return withScaledPos(buffer,center,x,y,0d);
+        return withScaledPos(buffer,center,x,y,1d);
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y, double z) {

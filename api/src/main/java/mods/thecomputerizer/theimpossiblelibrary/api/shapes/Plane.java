@@ -5,26 +5,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper.MAX_2D;
-import static mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper.MIN_2D;
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.inf2D;
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.negInf2D;
 
+/**
+ Planes always assume (0,0,0) as the center unless implemented otherwise in an extension class
+ */
 @SuppressWarnings("unused") @Getter
 public class Plane extends Shape2D {
     
-    public static Plane getFromAxis(Axis axis, double width, double height) {
-        Plane plane = getFromAxis(axis);
-        plane.setRelativeMin(-width/2d,-height/2d);
-        plane.setRelativeMax(width/2d,height/2d);
-        return plane;
+    public static Plane getBounded(Vector3d direction, double width, double height) {
+        Vector2d min = new Vector2d(-width/2d,-height/2d);
+        Vector2d max = new Vector2d(width/2d,height/2d);
+        return new Plane(direction,min,max);
     }
     
-    public static Plane getFromAxis(Axis axis) {
-        switch(axis) {
-            default:
-            case X: return new Plane(new Vector3d(1d,0d,0d));
-            case Y: return new Plane(new Vector3d(0d,1d,0d));
-            case Z: return new Plane(new Vector3d(0d,0d,1d));
-        }
+    public static Plane getBoundedAxis(Axis axis, double width, double height) {
+        return getBounded(axis.getDirection(),width,height);
     }
     
     public static Plane[] getOutlinePlanes(Plane outer, Plane inner) {
@@ -50,7 +47,7 @@ public class Plane extends Shape2D {
     }
     
     public Plane(Vector3d direction) {
-        this(direction,MIN_2D,MAX_2D);
+        this(direction,negInf2D(),inf2D());
     }
     
     public Plane(Vector3d direction, Vector2d min, Vector2d max) {
@@ -71,14 +68,31 @@ public class Plane extends Shape2D {
         this.height = Math.abs(this.relativeMax.y-this.relativeMin.y);
     }
     
-    public Plane getScaled(double scale) {
+    @Override public Plane copy() {
+        return getScaled(1d,1d);
+    }
+    
+    @Override public Plane getScaled(double scale) {
         return getScaled(scale,scale);
     }
     
-    public Plane getScaled(double scaleX, double scaleY) {
+    @Override public Plane getScaled(Vector2d scale) {
+        return getScaled(scale.x,scale.y);
+    }
+    
+    @Override public Plane getScaled(double scaleX, double scaleY) {
         if(scaleX<=0d) scaleX = 1d;
         if(scaleY<=0d) scaleY = 1d;
-        return new Plane(this.direction,this.relativeMin.mul(scaleX,new Vector2d()),this.relativeMax.mul(scaleY,new Vector2d()));
+        return new Plane(new Vector3d(this.direction),this.relativeMin.mul(scaleX,new Vector2d()),
+                         this.relativeMax.mul(scaleY,new Vector2d()));
+    }
+    
+    @Override public Plane getScaled(Vector3d scale) {
+        return getScaled(scale.x,scale.y);
+    }
+    
+    @Override public Plane getScaled(double scaleX, double scaleY, double scaleZ) {
+        return getScaled(scaleX,scaleY);
     }
     
     @Override public boolean isInsideRelative(Vector2d pos) {

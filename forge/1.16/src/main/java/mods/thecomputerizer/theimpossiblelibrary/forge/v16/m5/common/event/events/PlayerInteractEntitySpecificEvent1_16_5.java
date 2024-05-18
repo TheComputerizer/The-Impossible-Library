@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.Events1_16_5;
@@ -48,7 +48,7 @@ public class PlayerInteractEntitySpecificEvent1_16_5 extends PlayerInteractEntit
 
     @Override
     protected EventFieldWrapper<EntityInteractSpecific,Vector3d> wrapLocalPosField() {
-        return wrapGenericGetter(event -> Events1_16_5.getVec3d(event.getLocalPos()),VectorHelper.ZERO_3D);
+        return wrapGenericGetter(event -> Events1_16_5.getVec3d(event.getLocalPos()),VectorHelper.zero3D());
     }
 
     @Override

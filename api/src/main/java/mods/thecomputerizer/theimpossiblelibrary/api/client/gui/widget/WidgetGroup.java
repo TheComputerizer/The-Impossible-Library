@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector3d;
@@ -119,6 +120,10 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     
     @Override public boolean onClicked(double x, double y, int button) {
         return checkEachClickable(clickable -> clickable.onClicked(x,y,button));
+    }
+    
+    @Override public void onResolutionUpdated(MinecraftWindow window) {
+        eachWidget(widget -> widget.onResolutionUpdated(window));
     }
     
     public void setWidgets(Widget ... widgets) {

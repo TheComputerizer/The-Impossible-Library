@@ -4,6 +4,7 @@
     fade_in = 100
     time = 200
     fade_out = 50
+    y = -0.25
 
 [image]
     name = "test/logo.png"
@@ -11,3 +12,4 @@
     time = 200
     fade_out = 50
     fps = 20
+    y = 0.1

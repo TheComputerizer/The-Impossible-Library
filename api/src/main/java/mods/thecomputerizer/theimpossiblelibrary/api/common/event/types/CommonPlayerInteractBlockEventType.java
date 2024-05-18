@@ -5,6 +5,7 @@ import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
 
+@SuppressWarnings("unused")
 public abstract class CommonPlayerInteractBlockEventType<E> extends CommonPlayerInteractEventType<E> {
 
     protected EventFieldWrapper<E,Result> blockResult;

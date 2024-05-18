@@ -5,7 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
 import org.joml.Vector3d;
 
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class Convex3D {
     public Convex3D(Vector3d ... relativeCoords) {
         if(Objects.isNull(relativeCoords) || relativeCoords.length<=3)
             throw new RuntimeException("Only convex polygons with more than 3 vertices are supported for Convex3D objects");
-        this.radius = relativeCoords[0].distance(VectorHelper.ZERO_3D);
+        this.radius = relativeCoords[0].distance(VectorHelper.zero3D());
         this.triangles = new TriangleMapper[relativeCoords.length];
         for(int i=0; i<relativeCoords.length; i++)
             this.triangles[i] = new TriangleMapper(relativeCoords[i],relativeCoords);

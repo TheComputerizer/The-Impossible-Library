@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
@@ -31,6 +32,10 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     
     @Override public double getWidth() {
         return this.shape.getWidth();
+    }
+    
+    @Override public void onResolutionUpdated(MinecraftWindow window) {
+        this.shape.onResolutionUpdate(window);
     }
     
     @Override public RenderShape getWrapped() {

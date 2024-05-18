@@ -1,19 +1,21 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.util.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 
 import java.util.Objects;
 
 import static java.lang.Double.MAX_VALUE;
-import static java.lang.Double.MIN_VALUE;
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
 
 @SuppressWarnings("unused")
 public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
 
-    public static final Box INFINITE = new Box(MIN_VALUE,MIN_VALUE,MIN_VALUE,MAX_VALUE,MAX_VALUE,MAX_VALUE) {
+    public static final Box INFINITE = new Box(NEGATIVE_INFINITY,NEGATIVE_INFINITY,NEGATIVE_INFINITY,
+                                               POSITIVE_INFINITY,POSITIVE_INFINITY,POSITIVE_INFINITY) {
         @Override public boolean isInside(BlockPosAPI<?> pos) { return true; }
         @Override public boolean isInside(Vector3d pos) { return true; }
         @Override public boolean isInside(Vector3i pos) { return true; }
@@ -66,6 +68,10 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         }
         return new Box(min,max);
     }
+    
+    @Override public Box copy() {
+        return mul(1d,1d,1d);
+    }
 
     /**
      * Multiplies by 1/d.
@@ -111,6 +117,26 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return Math.abs(this.max.y-this.min.y);
     }
     
+    @Override public Box getScaled(double scale) {
+        return mul(scale,scale,scale);
+    }
+    
+    @Override public Box getScaled(Vector2d scale) {
+        return mul(scale.x,scale.y,scale.x);
+    }
+    
+    @Override public Box getScaled(double scaleH, double scaleV) {
+        return mul(scaleH,scaleV,scaleH);
+    }
+    
+    @Override public Box getScaled(Vector3d scale) {
+        return mul(scale.x,scale.y,scale.z);
+    }
+    
+    @Override public Box getScaled(double scaleX, double scaleY, double scaleZ) {
+        return mul(scaleX,scaleY,scaleZ);
+    }
+    
     @Override public double getWidth() {
         return Math.abs(this.max.x-this.min.x);
     }
@@ -127,7 +153,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return isInside(pos.x(),pos.y(),pos.z());
     }
 
-    public boolean isInside(Vector3d pos) {
+    @Override public boolean isInside(Vector3d pos) {
         return isInside(pos.x,pos.y,pos.z);
     }
 
@@ -156,7 +182,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     public Box mul(double x, double y, double z) {
         if(Double.isNaN(x) || x==0 || Double.isNaN(y) || y==0 || Double.isNaN(z) || z==0) return ZERO;
         if(!isFiniteAndNotMaxed(x,y,z)) return INFINITE;
-        if(x==1 && y==1 && z==1) return this;
+        if(x==1d && y==1d && z==1d) return this;
         double xRad = radiusX();
         double yRad = radiusY();
         double zRad = radiusZ();

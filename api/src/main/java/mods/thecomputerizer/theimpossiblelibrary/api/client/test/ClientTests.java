@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.R;
 
+@SuppressWarnings("unused")
 public class ClientTests {
 
     public static KeyAPI<?> TEST_KEY = KeyHelper.create("key.test","key.categories.theimpossiblelibrary",R);
@@ -33,7 +34,7 @@ public class ClientTests {
         try {
             TILDev.logWarn("RENDERABLE TEST");
             Toml transitions = Toml.readStream(ResourceHelper.getResourceStream(TILRef.res("test/transitions.toml")));
-            //renderableTitleTest(transitions);
+            renderableTitleTest(transitions);
             renderableImageTest(transitions);
         } catch(Exception ex) {
             TILRef.logError("Renderable test failed!",ex);

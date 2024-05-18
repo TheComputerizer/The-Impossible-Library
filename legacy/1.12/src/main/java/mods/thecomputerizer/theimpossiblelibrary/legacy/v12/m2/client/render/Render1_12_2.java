@@ -8,11 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Collection;
+
+import static net.minecraft.client.renderer.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA;
+import static net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA;
+import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
+import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX_COLOR;
+import static org.lwjgl.opengl.GL11.GL_EQUAL;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.GL_LESS;
 
 public class Render1_12_2 implements RenderAPI {
 
@@ -24,17 +30,17 @@ public class Render1_12_2 implements RenderAPI {
 
     @Override
     public void alphaFuncEqual(float alpha) {
-        GlStateManager.alphaFunc(GL11.GL_EQUAL,alpha);
+        GlStateManager.alphaFunc(GL_EQUAL,alpha);
     }
 
     @Override
     public void alphaFuncGreater(float alpha) {
-        GlStateManager.alphaFunc(GL11.GL_GREATER,alpha);
+        GlStateManager.alphaFunc(GL_GREATER,alpha);
     }
 
     @Override
     public void alphaFuncLesser(float alpha) {
-        GlStateManager.alphaFunc(GL11.GL_LESS,alpha);
+        GlStateManager.alphaFunc(GL_LESS,alpha);
     }
 
     @Override
@@ -44,7 +50,7 @@ public class Render1_12_2 implements RenderAPI {
 
     @Override
     public void defaultBlendFunc() {
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.blendFunc(SRC_ALPHA,ONE_MINUS_SRC_ALPHA);
     }
 
     @Override
@@ -119,12 +125,12 @@ public class Render1_12_2 implements RenderAPI {
 
     @Override
     public VertexWrapper getBufferBuilderPC(int mode, int vertices) {
-        return new VertexWrapper1_12_2(mode,DefaultVertexFormats.POSITION_COLOR,vertices,3,4);
+        return new VertexWrapper1_12_2(mode,POSITION_COLOR,vertices,3,4);
     }
 
     @Override
     public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
-        return new VertexWrapper1_12_2(mode,DefaultVertexFormats.POSITION_TEX_COLOR,vertices,3,2,4);
+        return new VertexWrapper1_12_2(mode,POSITION_TEX_COLOR,vertices,3,2,4);
     }
 
     @Override

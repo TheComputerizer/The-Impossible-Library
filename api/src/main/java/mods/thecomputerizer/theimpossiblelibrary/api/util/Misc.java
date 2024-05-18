@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 /**
  * Uncategorized util methods
  */
-@SuppressWarnings("ALL")
+@SuppressWarnings("unused")
 public class Misc {
 
     public static boolean allNonNull(Object ... objects) {
@@ -56,7 +56,7 @@ public class Misc {
         if(Objects.nonNull(thing)) conumer.accept(thing);
     }
     
-    public static <T> boolean equalsAny(T thing, T ... others) {
+    @SafeVarargs public static <T> boolean equalsAny(T thing, T ... others) {
         for(T other : others)
             if(thing.equals(other)) return true;
         return false;
@@ -115,11 +115,7 @@ public class Misc {
     public static <V> V getEitherOr(boolean choice1, boolean choice2, V ifChoice1, V ifChoice2, V neither) {
         return choice1 ? ifChoice1 : (choice2 ? ifChoice2 : neither);
     }
-
-    /**
-     * The returns arrays is be used as reference and any choice element not present at the index will be false.
-     * Assumes returns will always be nonnull with at least 1 element
-     */
+    
     @SafeVarargs
     public static <V> V getEitherTrailing(boolean[] choices, V ... returns) {
         if(returns.length==1) return returns[0];
