@@ -7,12 +7,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import org.joml.Vector3d;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
+
 @SuppressWarnings("unused") @Getter @Setter
 public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
+    
+    public static ShapeWidget texturedPlane(
+            double width, double height, double heightRatio, ResourceLocationAPI<?> texture) {
+        RenderShape shape = new RenderShape(Plane.getBoundedAxis(Y,width,height,heightRatio));
+        shape.setTexture(new TextureWrapper().setTexture(texture));
+        return new ShapeWidget(shape,0d,0d);
+    }
     
     protected RenderShape shape;
     

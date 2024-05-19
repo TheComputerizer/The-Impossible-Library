@@ -73,7 +73,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
                     if(hoverable.shouldDrawHovered()) hoverable.drawHovered(ctx,widgetCenter,mouseX,mouseY);
                     Collection<TextAPI<?>> text = hoverable.getHoverLines(mouseX,mouseY);
                     if(!text.isEmpty()) ctx.drawTooltip(text,mouseX,mouseY);
-                    padding+=(widget.getHeight()*1.05d);
+                    //padding+=(widget.getHeight()*1.05d);
                     continue;
                 }
             }
@@ -82,7 +82,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
                 if(selectable.isSelected()) selectable.drawSelected(ctx,widgetCenter,mouseX,mouseY);
                 else widget.draw(ctx,widgetCenter,mouseX,mouseY);
             } else widget.draw(ctx,widgetCenter,mouseX,mouseY);
-            padding+=(widget.getHeight()*1.05d);
+            //padding+=(widget.getHeight()*1.05d);
         }
     }
     

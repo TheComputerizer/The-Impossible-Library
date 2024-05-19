@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle.CircleSlice;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape2D;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
@@ -52,7 +53,8 @@ public final class RenderContext {
     }
     
     public void drawColoredCircle(Vector3d center, Circle circle, int resolution, ColorCache color) {
-        for(CircleSlice slice : circle.slice(resolution)) drawColoredCircle(center,slice,color);
+        circle.setResolution(resolution);
+        for(CircleSlice slice : circle.slice()) drawColoredCircle(center,slice,color);
     }
     
     public void drawColoredCircle(Vector3d center, Circle circle, ColorCache color) {
@@ -87,13 +89,22 @@ public final class RenderContext {
         gl.directEnd();
     }
     
+    public void drawOutline(Shape2D shape, float width) {
+        drawOutline(shape.getOutlineSupplier(),width);
+    }
+    
     public void drawOutline(VectorSupplier2D vectors, float width) {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
-            gl.directVertexD(next.x,next.y);
+            next = new Vector2d(this.scale.applyX(0d,next.x),this.scale.applyY(0d,next.y));
+            gl.directVertexD(next.x,next.y,0d);
         }
         gl.directEnd();
+    }
+    
+    public void drawOutline(Shape3D shape, float width) {
+        drawOutline(shape.getOutlineSupplier(),width);
     }
     
     public void drawOutline(VectorSupplier3D vectors, float width) {
@@ -185,9 +196,8 @@ public final class RenderContext {
     
     public void prepareTexture(ColorCache bgColor) {
         this.renderer.enableBlend();
-        this.renderer.enableTexture();
-        this.renderer.resetTextureMatrix();
         this.renderer.defaultBlendFunc();
+        this.renderer.enableAlpha();
         this.renderer.setColor(bgColor);
     }
     

@@ -13,12 +13,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADI
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_360;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_90;
 
-@SuppressWarnings("unused") @Getter @Setter
+@SuppressWarnings("unused") @Getter
 public class Circle extends Shape2D {
     
-    protected double radius;
-    protected double innerRadius;
-    protected double heightRatio;
+    protected int resolution = 100;
+    @Setter protected double radius;
+    @Setter protected double innerRadius;
+    @Setter protected double heightRatio;
     
     public Circle(Vector3d direction, double radius, double heightRatio) {
         this(direction,radius,0d,heightRatio);
@@ -45,8 +46,12 @@ public class Circle extends Shape2D {
         return this.radius*2d;
     }
     
-    protected Vector2d withRatio(double x, double y) {
-        return new Vector2d(x*Math.min(this.heightRatio,1d),y*Math.min(1d/this.heightRatio,1d));
+    @Override public VectorSupplier2D getOutlineSupplier() {
+        double sliceWidth = RADIANS_360/(double)(this.resolution);
+        Vector2d[] vectors = new Vector2d[this.resolution];
+        for(int i=0;i<vectors.length;i++)
+            vectors[i] = withRatio(Math.cos(sliceWidth*i)*this.radius,Math.sin(sliceWidth*i)*this.radius);
+        return VectorStreams.get2D(vectors);
     }
     
     @Override public Circle getScaled(double scale) {
@@ -60,7 +65,8 @@ public class Circle extends Shape2D {
     @Override public Circle getScaled(double scale, double scaleInner) {
         if(scale<=0d) scale = 1d;
         if(scaleInner<=0d) scaleInner = 1d;
-        return new Circle(new Vector3d(this.direction),this.radius*scale,this.innerRadius*scaleInner);
+        return new Circle(new Vector3d(this.direction),this.radius*scale,this.innerRadius*scaleInner,
+                          this.heightRatio);
     }
     
     @Override public Circle getScaled(Vector3d scale) {
@@ -89,14 +95,21 @@ public class Circle extends Shape2D {
         return distance>=this.innerRadius && distance<=this.radius;
     }
     
-    public CircleSlice[] slice(int resolution) {
-        if(resolution<1) resolution = 1;
-        double sliceWidth = RADIANS_360/(double)resolution;
-        CircleSlice[] slices = new CircleSlice[resolution];
-        for(int i=0;i<resolution;i++)
+    public void setResolution(int resolution) {
+        this.resolution = Math.max(resolution,4);
+    }
+    
+    public CircleSlice[] slice() {
+        double sliceWidth = RADIANS_360/(double)this.resolution;
+        CircleSlice[] slices = new CircleSlice[this.resolution];
+        for(int i=0;i<this.resolution;i++)
             slices[i] = new CircleSlice(new Vector3d(this.direction),this.radius,this.innerRadius,this.heightRatio,
                                         sliceWidth*i,sliceWidth*(i+1));
         return slices;
+    }
+    
+    protected Vector2d withRatio(double x, double y) {
+        return new Vector2d(x*Math.min(this.heightRatio,1d),y*Math.min(1d/this.heightRatio,1d));
     }
     
     public static class CircleSlice extends Circle {

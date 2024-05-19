@@ -33,6 +33,10 @@ public abstract class Shape2D implements Shape {
         return new Vector3d(angleX,angleY,angleZ);
     }
     
+    public VectorSupplier2D getOutlineSupplier() {
+        return getVectorSupplier();
+    }
+    
     public Vector2d getRelativeCoordinate(double x, double y, double z) {
         return getRelativeCoordinate(new Vector3d(x,y,z));
     }

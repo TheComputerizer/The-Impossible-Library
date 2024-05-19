@@ -11,6 +11,10 @@ public abstract class Shape3D implements Shape {
         return getScaled(1d,1d,1d);
     }
     
+    public VectorSupplier3D getOutlineSupplier() {
+        return getVectorSupplier();
+    }
+    
     @Override public Shape3D getScaled(double scale) {
         return getScaled(scale,scale,scale);
     }

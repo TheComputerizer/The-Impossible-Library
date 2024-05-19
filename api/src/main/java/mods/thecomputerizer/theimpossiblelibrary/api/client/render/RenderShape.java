@@ -18,6 +18,22 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.
 @SuppressWarnings("unused") @Getter @Setter
 public class RenderShape extends AbstractWrapped<Shape> {
     
+    public static RenderShape circle(RenderContext ctx) {
+        return circle(ctx,1d,WHITE);
+    }
+    
+    public static RenderShape circle(RenderContext ctx, double max) {
+        return circle(ctx,max,WHITE);
+    }
+    
+    public static RenderShape circle(RenderContext ctx, ColorCache color) {
+        return circle(ctx,1d,color);
+    }
+    
+    public static RenderShape circle(RenderContext ctx, double max, ColorCache color) {
+        return new RenderShape(new Circle(Y.getDirection(),max,ctx.getHeightRatio()),color);
+    }
+    
     public static RenderShape square(RenderContext ctx) {
         return square(ctx,1d,WHITE);
     }
@@ -44,8 +60,8 @@ public class RenderShape extends AbstractWrapped<Shape> {
         return shape;
     }
     
-    private ColorCache color;
-    private TextureWrapper texture;
+    protected ColorCache color;
+    protected TextureWrapper texture;
     
     public RenderShape(Shape wrapped) {
         this(wrapped,WHITE);

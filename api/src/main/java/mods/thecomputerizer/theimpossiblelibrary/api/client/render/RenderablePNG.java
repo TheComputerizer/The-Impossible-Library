@@ -19,7 +19,7 @@ public class RenderablePNG extends Renderable {
         if(!source.getPath().endsWith(".png"))
             throw new IOException("Tried to initialize a non png file to a png " +
                 "object! Make sure that you have the correct file extension on your resource location. ["+source+"]");
-        this.texture = new ShapeWidget(new RenderShape(Plane.getBoundedAxis(Y,2d,2d)),0d,0d);
+        this.texture = new ShapeWidget(new RenderShape(Plane.getBoundedAxis(Y,2d,2d,1d)),0d,0d);
         this.texture.setTexture(new TextureWrapper().setTexture(source).setU(0f,1f).setV(0f,1f));
     }
     

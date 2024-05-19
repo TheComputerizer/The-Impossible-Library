@@ -25,6 +25,8 @@ public class TextureWrapper {
     public TextureWrapper() {
         this.alpha = 1f;
         this.colorMask = WHITE;
+        this.maxU = 1d;
+        this.maxV = 1d;
     }
 
     public TextureWrapper(TextureWrapper other) {
@@ -44,7 +46,7 @@ public class TextureWrapper {
     }
     
     public void draw(RenderContext ctx, Vector3d center) {
-        ctx.drawTexturedPlane(center,Plane.getBoundedAxis(Y,this.width,this.height),this);
+        ctx.drawTexturedPlane(center,Plane.getBoundedAxis(Y,this.width,this.height,ctx.getHeightRatio()),this);
     }
     
     public ColorCache getColorMask(boolean withAlpha) {

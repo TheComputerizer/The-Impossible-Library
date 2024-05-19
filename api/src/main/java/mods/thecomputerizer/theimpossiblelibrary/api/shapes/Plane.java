@@ -16,14 +16,16 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vecto
 @SuppressWarnings("unused") @Getter
 public class Plane extends Shape2D {
     
-    public static Plane getBounded(Vector3d direction, double width, double height) {
-        Vector2d min = new Vector2d(-width/2d,-height/2d);
-        Vector2d max = new Vector2d(width/2d,height/2d);
+    public static Plane getBounded(Vector3d direction, double width, double height, double heightRatio) {
+        width = (width*(Math.min(heightRatio,1d)))/2d;
+        height = (height*(Math.min(1d/heightRatio,1d)))/2d;
+        Vector2d min = new Vector2d(-width,-height);
+        Vector2d max = new Vector2d(width,height);
         return new Plane(direction,min,max);
     }
     
-    public static Plane getBoundedAxis(Axis axis, double width, double height) {
-        return getBounded(axis.getDirection(),width,height);
+    public static Plane getBoundedAxis(Axis axis, double width, double height, double heightRatio) {
+        return getBounded(axis.getDirection(),width,height,heightRatio);
     }
     
     public static Plane[] getOutlinePlanes(Plane outer, Plane inner) {
