@@ -64,7 +64,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        double padding = center.y+(getHeight()/2d);
+        double padding = getInitialPadding(center);
         for(Widget widget : this.widgets) {
             Vector3d widgetCenter = getElementCenter(center,padding,widget);
             if(widget instanceof Hoverable) {
@@ -115,11 +115,15 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     protected Vector3d getElementCenter(Vector3d center, double padding, Widget widget) {
-        return widget.getCenter(center).add(0d,padding-(widget.getHeight()/2d),0d);
+        return widget.getCenter(center).add(0d,padding,0d);
     }
     
-    @Override public boolean onClicked(double x, double y, int button) {
-        return checkEachClickable(clickable -> clickable.onClicked(x,y,button));
+    protected double getInitialPadding(Vector3d center) {
+        return 0d;
+    }
+    
+    @Override public boolean onClicked(double x, double y, boolean leftClickn) {
+        return checkEachClickable(clickable -> clickable.onClicked(x,y,leftClickn));
     }
     
     @Override public void onResolutionUpdated(MinecraftWindow window) {

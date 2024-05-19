@@ -1,5 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -135,6 +138,19 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     
     @Override public Box getScaled(double scaleX, double scaleY, double scaleZ) {
         return mul(scaleX,scaleY,scaleZ);
+    }
+    
+    @Override public VectorSupplier3D getVectorSupplier() {
+        return VectorStreams.get3D(
+                new Vector3d(this.min),
+                new Vector3d(this.min.x,this.min.y,this.max.z),
+                new Vector3d(this.min.x,this.max.y,this.max.z),
+                new Vector3d(this.min.x,this.max.y,this.min.z),
+                new Vector3d(this.max.x,this.max.y,this.min.z),
+                new Vector3d(this.max),
+                new Vector3d(this.max.x,this.min.y,this.max.z),
+                new Vector3d(this.max.x,this.min.y,this.min.z)
+        );
     }
     
     @Override public double getWidth() {

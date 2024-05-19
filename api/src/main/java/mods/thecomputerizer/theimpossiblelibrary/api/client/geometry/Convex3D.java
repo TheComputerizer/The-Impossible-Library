@@ -5,7 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import org.joml.Vector3d;
 
 import java.util.Objects;
@@ -191,9 +191,9 @@ public class Convex3D {
         Vector3d og = triangle.getOriginal();
         Vector3d a = triangle.getA(index);
         Vector3d b = triangle.getB(index);
-        ctx.drawLine(og,a,1d);
-        ctx.drawLine(og,b,1d);
-        ctx.drawLine(a,b,1d);
+        ctx.drawLine(og,a,1f);
+        ctx.drawLine(og,b,1f);
+        ctx.drawLine(a,b,1f);
     }
 
     private void bufferVertex(VertexWrapper buffer, Vector3d vec) {

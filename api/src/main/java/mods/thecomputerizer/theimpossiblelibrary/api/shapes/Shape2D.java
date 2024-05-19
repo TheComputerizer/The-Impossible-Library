@@ -1,10 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class Shape2D implements Shape {
     
     private static final Vector2d ZERO_2D = VectorHelper.zero2D();
@@ -31,6 +33,10 @@ public abstract class Shape2D implements Shape {
         return new Vector3d(angleX,angleY,angleZ);
     }
     
+    public Vector2d getRelativeCoordinate(double x, double y, double z) {
+        return getRelativeCoordinate(new Vector3d(x,y,z));
+    }
+    
     public Vector2d getRelativeCoordinate(Vector3d world) {
         Vector3d angles = getDirectionAngles();
         double distance = world.distance(ZERO_3D)/this.direction.distance(ZERO_3D);
@@ -55,6 +61,11 @@ public abstract class Shape2D implements Shape {
     }
     
     @Override public abstract Shape2D getScaled(double scaleX, double scaleY, double scaleZ);
+    public abstract VectorSupplier2D getVectorSupplier();
+    
+    public Vector3d getWorldCoordinate(double x, double y) {
+        return getWorldCoordinate(new Vector2d(x,y));
+    }
     
     public Vector3d getWorldCoordinate(Vector2d relative) {
         Vector3d angles = getDirectionAngles();

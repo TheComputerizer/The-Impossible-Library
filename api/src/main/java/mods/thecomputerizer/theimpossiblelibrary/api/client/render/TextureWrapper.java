@@ -4,22 +4,23 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import org.joml.Vector3d;
+import org.joml.Vector4d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
-@SuppressWarnings({"unused", "UnusedReturnValue"}) @Getter
+@SuppressWarnings({"unused","UnusedReturnValue"})
 public class TextureWrapper {
 
-    private ResourceLocationAPI<?> texture;
-    private float alpha;
+    @Getter private ResourceLocationAPI<?> texture;
+    @Getter private float alpha;
     private ColorCache colorMask;
-    private double minU;
-    private double minV;
-    private double maxU;
-    private double maxV;
-    private double width;
-    private double height;
+    @Getter private double minU;
+    @Getter private double minV;
+    @Getter private double maxU;
+    @Getter private double maxV;
+    @Getter private double width;
+    @Getter private double height;
 
     public TextureWrapper() {
         this.alpha = 1f;
@@ -44,6 +45,17 @@ public class TextureWrapper {
     
     public void draw(RenderContext ctx, Vector3d center) {
         ctx.drawTexturedPlane(center,Plane.getBoundedAxis(Y,this.width,this.height),this);
+    }
+    
+    public ColorCache getColorMask(boolean withAlpha) {
+        return withAlpha ? this.colorMask.withAlpha(this.alpha) : this.colorMask;
+    }
+    
+    /**
+     x = minU ; y = minV ; z = maxU ; w = maxV
+     */
+    public Vector4d getVectorUV() {
+        return new Vector4d(this.minU,this.minV,this.maxU,this.maxV);
     }
 
     public TextureWrapper setTexture(ResourceLocationAPI<?> texture) {

@@ -30,6 +30,12 @@ public class VertexWrapper1_12_2 extends VertexWrapper {
 
     @Override
     protected void onVertexEnded(Number[][] numbers) {
+        //StringJoiner joiner = new StringJoiner(", ");
+        //for(Number[] buf : numbers) {
+        //    for(Number number : buf) joiner.add(String.valueOf(number));
+        //    joiner.add("]");
+        //}
+        //TILDev.logInfo("Ending vertex [ "+joiner);
         for(int i=0; i<numbers.length; i++)
             pushBuffer(this.format.getElement(i),numbers[i]);
         this.buffer.endVertex();

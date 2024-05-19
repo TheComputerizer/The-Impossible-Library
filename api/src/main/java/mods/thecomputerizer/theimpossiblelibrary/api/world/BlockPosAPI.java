@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.world;
 import lombok.Getter;
 import org.joml.Vector3i;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.zero3I;
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.zero3I;
 
 @SuppressWarnings("unused") @Getter
 public abstract class BlockPosAPI<P> {

@@ -2,5 +2,5 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 public interface Clickable {
     
-    boolean onClicked(double x, double y, int button);
+    boolean onClicked(double x, double y, boolean leftClick);
 }

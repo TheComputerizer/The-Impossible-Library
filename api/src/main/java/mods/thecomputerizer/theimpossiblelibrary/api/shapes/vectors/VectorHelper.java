@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
+package mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors;
 
 import org.joml.Vector2d;
 import org.joml.Vector2f;

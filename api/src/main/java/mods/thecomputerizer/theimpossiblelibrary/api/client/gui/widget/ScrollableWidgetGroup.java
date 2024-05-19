@@ -5,7 +5,6 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import org.joml.Vector3d;
 
-
 @Getter
 public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implements Scrollable {
     
@@ -20,6 +19,10 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         ctx.getScale().modTransforms(0d,this.scrollOffset,0d);
         super.draw(ctx,center,mouseX,mouseY);
         ctx.getScale().modTransforms(0d,-this.scrollOffset,0d);
+    }
+    
+    @Override protected double getInitialPadding(Vector3d center) {
+        return center.y+(getHeight()/2d);
     }
     
     @Override

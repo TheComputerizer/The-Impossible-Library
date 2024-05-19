@@ -11,24 +11,27 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class Button extends BoundedWidgetGroup {
     
     @Getter protected final ShapeWidget shape;
+    @Getter protected final TextWidget text;
     protected Collection<TextAPI<?>> hoverLines;
-    @Setter protected Widget hoverWidget;
+    @Setter protected Widget hover;
     
-    public Button(ShapeWidget shape) {
-        this(shape,null);
+    public Button(ShapeWidget shape, TextWidget text) {
+        this(shape,text,null);
     }
     
-    public Button(ShapeWidget shape, Widget hoverWidget) {
+    public Button(ShapeWidget shape, TextWidget text, Widget hover) {
         this.shape = shape;
+        this.text = text;
+        this.hover = hover;
         this.x = shape.x;
         this.y = shape.y;
         this.hoverLines = new ArrayList<>();
         this.widgets.add(shape);
     }
-    
     
     @Override public Collection<TextAPI<?>> getHoverLines(double x, double y) {
         return Objects.nonNull(this.hoverLines) ? this.hoverLines : Collections.emptyList();
@@ -40,11 +43,11 @@ public class Button extends BoundedWidgetGroup {
     
     @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         draw(ctx,center,mouseX,mouseY);
-        if(Objects.nonNull(this.hoverWidget)) this.hoverWidget.draw(ctx,center,mouseX,mouseY);
+        if(Objects.nonNull(this.hover)) this.hover.draw(ctx, center, mouseX, mouseY);
     }
     
     @Override public boolean shouldDrawHovered() {
-        return Objects.nonNull(this.hoverWidget) || !this.hoverLines.isEmpty();
+        return Objects.nonNull(this.hover) || !this.hoverLines.isEmpty();
     }
     
     @Override public double getHeight() {
@@ -58,7 +61,7 @@ public class Button extends BoundedWidgetGroup {
     /**
      No click actions by default
      */
-    @Override public boolean onClicked(double x, double y, int button) {
+    @Override public boolean onClicked(double x, double y, boolean leftClickn) {
         return false;
     }
 }

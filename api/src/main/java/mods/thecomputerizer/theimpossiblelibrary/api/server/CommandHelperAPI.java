@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.server;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import org.joml.Vector3d;
 
 import java.util.Objects;

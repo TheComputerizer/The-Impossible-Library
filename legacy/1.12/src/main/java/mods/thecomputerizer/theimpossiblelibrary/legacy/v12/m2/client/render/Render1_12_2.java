@@ -84,18 +84,19 @@ public class Render1_12_2 implements RenderAPI {
     }
 
     @Override
-    public void drawCenteredString(FontAPI font, String str, int x, int y, int color) {
-        font.drawWithShadow(this,str,(float)(x-font.getStringWidth(str)/2),(float)y,color);
+    public void drawCenteredString(FontAPI font, String str, Number x, Number y, int color) {
+        font.drawWithShadow(this,str,x.floatValue()-font.getStringWidth(str)/2f,y.floatValue(),color);
     }
 
     @Override
-    public void drawString(FontAPI font, String str, int left, int top, int color) {
-        font.draw(this,str,left,top,color);
+    public void drawString(FontAPI font, String str, Number left, Number top, int color) {
+        font.draw(this,str,left.intValue(),top.intValue(),color);
     }
     
     @Override
-    public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
-        font.renderToolTip(this,lines,x,y,width,height,maxWidth);
+    public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
+            Number height, Number maxWidth) {
+        font.renderToolTip(this,lines,x.intValue(),y.intValue(),width.intValue(),height.intValue(),maxWidth.intValue());
     }
 
     @Override

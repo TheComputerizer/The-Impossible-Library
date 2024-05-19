@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
-import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.zero3D;
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.zero3D;
 
 public class RenderablePNG extends Renderable {
 
@@ -33,12 +33,7 @@ public class RenderablePNG extends Renderable {
     }
     
     protected void preRender(RenderContext ctx, float alpha) {
-        RenderAPI renderer = ctx.getRenderer();
-        renderer.pushMatrix();
-        renderer.enableBlend();
-        renderer.defaultBlendFunc();
-        renderer.enableAlpha();
-        renderer.setColor(1f,1f,1f,alpha);
+        ctx.getRenderer().pushMatrix();
         this.texture.getWrapped().getTexture().setAlpha(alpha);
         pos(ctx);
         scale(ctx);

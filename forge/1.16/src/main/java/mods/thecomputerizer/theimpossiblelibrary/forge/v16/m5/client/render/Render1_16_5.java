@@ -11,12 +11,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
 
 import java.util.Collection;
 import java.util.Objects;
+
+import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
+import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX_COLOR;
+import static org.lwjgl.opengl.GL11.GL_EQUAL;
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.GL_LESS;
 
 @Getter
 public class Render1_16_5 implements RenderAPI {
@@ -34,19 +38,19 @@ public class Render1_16_5 implements RenderAPI {
     @SuppressWarnings("deprecation")
     @Override
     public void alphaFuncEqual(float alpha) {
-        RenderSystem.alphaFunc(GL11.GL_EQUAL,alpha);
+        RenderSystem.alphaFunc(GL_EQUAL,alpha);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void alphaFuncGreater(float alpha) {
-        RenderSystem.alphaFunc(GL11.GL_GREATER,alpha);
+        RenderSystem.alphaFunc(GL_GREATER,alpha);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public void alphaFuncLesser(float alpha) {
-        RenderSystem.alphaFunc(GL11.GL_LESS,alpha);
+        RenderSystem.alphaFunc(GL_LESS,alpha);
     }
 
     @Override
@@ -92,13 +96,19 @@ public class Render1_16_5 implements RenderAPI {
     }
 
     @Override
-    public void drawCenteredString(FontAPI font, String str, int x, int y, int color) {
-        font.drawWithShadow(this,str,(float)(x-font.getStringWidth(str)/2),(float)y,color);
+    public void drawCenteredString(FontAPI font, String str, Number x, Number y, int color) {
+        font.drawWithShadow(this,str,x.floatValue()-font.getStringWidth(str)/2f,y.floatValue(),color);
     }
 
     @Override
-    public void drawString(FontAPI font, String str, int left, int top, int color) {
-        font.draw(this,str,left,top,color);
+    public void drawString(FontAPI font, String str, Number left, Number top, int color) {
+        font.draw(this,str,left.intValue(),top.intValue(),color);
+    }
+    
+    @Override
+    public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
+            Number height, Number maxWidth) {
+        font.renderToolTip(this,lines,x.intValue(),y.intValue(),width.intValue(),height.intValue(),maxWidth.intValue());
     }
 
     @SuppressWarnings("deprecation")
@@ -130,13 +140,13 @@ public class Render1_16_5 implements RenderAPI {
 
     @Override
     public VertexWrapper getBufferBuilderPC(int mode, int vertices) {
-        return new VertexWrapper1_16_5(mode,DefaultVertexFormats.POSITION_COLOR,vertices,3,4);
+        return new VertexWrapper1_16_5(mode,POSITION_COLOR,vertices,3,4);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
-        return new VertexWrapper1_16_5(mode,DefaultVertexFormats.POSITION_TEX_COLOR,vertices,3,2,4);
+        return new VertexWrapper1_16_5(mode,POSITION_TEX_COLOR,vertices,3,2,4);
     }
 
     @Override
@@ -158,11 +168,6 @@ public class Render1_16_5 implements RenderAPI {
     @Override
     public void pushMatrix() {
         this.matrix.pushPose();
-    }
-
-    @Override
-    public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
-        font.renderToolTip(this,lines,x,y,width,height,maxWidth);
     }
 
     @Override

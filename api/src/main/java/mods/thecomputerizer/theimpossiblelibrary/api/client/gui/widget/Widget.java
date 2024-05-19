@@ -15,7 +15,7 @@ public abstract class Widget {
     public abstract void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY);
     
     public Vector3d getCenter(Vector3d center) {
-        return center;
+        return new Vector3d(center.x+this.x,center.y+this.y,center.z);
     }
     
     public abstract double getHeight();

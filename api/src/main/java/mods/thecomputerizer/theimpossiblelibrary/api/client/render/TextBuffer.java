@@ -8,6 +8,10 @@ import org.joml.Vector4i;
 
 @SuppressWarnings("unused")  @Getter
 public class TextBuffer {
+    
+    public static TextBuffer of(TextAPI<?> text) {
+        return new Builder(text).build();
+    }
 
     private final TextAPI<?> text;
     private final int left;

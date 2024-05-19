@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -8,25 +9,22 @@ import org.joml.Vector3d;
 public class Square extends Plane {
     
     protected double sideLength;
+    protected double heightRatio;
     
-    public Square(Vector3d direction, double length) {
+    public Square(Vector3d direction, double length, double heightRatio) {
         super(direction);
-        setSideLength(length);
+        setSideLength(length,heightRatio);
     }
     
     @Override public Square copy() {
         return getScaled(1d);
     }
     
-    @Override protected void calculateSize() {
-        this.sideLength = Math.abs(this.relativeMax.x-this.relativeMin.x);
-        this.width = this.sideLength;
-        this.height = this.sideLength;
-    }
+    @Override protected void calculateSize() {}
     
     @Override public Square getScaled(double scale) {
         if(scale<=0) scale = 1d;
-        return new Square(new Vector3d(this.direction),this.sideLength*scale);
+        return new Square(new Vector3d(this.direction),this.sideLength*scale,this.heightRatio);
     }
     
     @Override public Square getScaled(Vector2d scale) {
@@ -45,25 +43,20 @@ public class Square extends Plane {
         return getScaled(scaleX==1d ? (scaleY==1d ? scaleZ : scaleY) : scaleX);
     }
     
-    protected double getShorterLength(Vector2d vec) {
-        boolean x = Math.abs(vec.x)<=Math.abs(vec.y);
-        return (x ? vec.x : vec.y)*2d;
-    }
+    @Override public void setRelativeMax(Vector2d max) {}
     
-    @Override public void setRelativeMax(Vector2d max) {
-        setSideLength(getShorterLength(max));
-    }
+    @Override public void setRelativeMin(Vector2d min) {}
     
-    @Override public void setRelativeMin(Vector2d min) {
-        setSideLength(getShorterLength(min));
-    }
-    
-    public void setSideLength(double length) {
-        double radius = Math.abs(length)/2d;
-        this.relativeMax = new Vector2d(radius,radius);
-        this.relativeMin = new Vector2d(-radius,-radius);
+    public void setSideLength(double length, double heightRatio) {
+        this.sideLength = length;
+        this.heightRatio = heightRatio;
+        double halfLenX = Math.abs(length*Math.min(heightRatio,1d))/2d;
+        double halfLenY = Math.abs(length*Math.min(1d/heightRatio,1d))/2d;
+        this.relativeMax = new Vector2d(halfLenX,halfLenY);
+        this.relativeMin = new Vector2d(-halfLenX,-halfLenY);
         this.worldMin = getWorldCoordinate(this.relativeMin);
         this.worldMax = getWorldCoordinate(this.relativeMax);
-        calculateSize();
+        TILDev.logInfo("Set length of a square to {} and height ratio {} which puts the min at {} and the max at {}",
+                       length,heightRatio,this.relativeMin,this.relativeMax);
     }
 }

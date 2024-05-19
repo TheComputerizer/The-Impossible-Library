@@ -15,7 +15,7 @@ import java.util.Objects;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
-@SuppressWarnings("unused") @Getter
+@SuppressWarnings("unused") @Getter @Setter
 public class RenderShape extends AbstractWrapped<Shape> {
     
     public static RenderShape square(RenderContext ctx) {
@@ -31,7 +31,7 @@ public class RenderShape extends AbstractWrapped<Shape> {
     }
     
     public static RenderShape square(RenderContext ctx, double max, ColorCache color) {
-        return new RenderShape(new Square(Y.getDirection(),ctx.getScale().getSmallerDimensionScale()*max*2d),color);
+        return new RenderShape(new Square(Y.getDirection(),max*2d,ctx.getHeightRatio()),color);
     }
     
     public static RenderShape square(RenderContext ctx, TextureWrapper texture) {
@@ -44,9 +44,8 @@ public class RenderShape extends AbstractWrapped<Shape> {
         return shape;
     }
     
-    @Setter private ColorCache color;
-    @Setter private TextureWrapper texture;
-    private MinecraftWindow window;
+    private ColorCache color;
+    private TextureWrapper texture;
     
     public RenderShape(Shape wrapped) {
         this(wrapped,WHITE);
@@ -64,12 +63,11 @@ public class RenderShape extends AbstractWrapped<Shape> {
     }
     
     public void draw(RenderContext ctx, Vector3d center) {
-        if(Objects.isNull(this.window)) this.window = ctx.getMc().getWindow();
         if(this.wrapped instanceof Plane) {
             Plane plane = (Plane)this.wrapped;
             if(Objects.nonNull(this.texture)) ctx.drawTexturedPlane(center,plane,this.texture);
             else ctx.drawColoredPlane(center,plane,this.color);
-        } else if(this.wrapped instanceof Circle) ctx.drawColoredCircle(center,(Circle)this.wrapped,this.color);
+        } else if(this.wrapped instanceof Circle) ctx.drawColoredCircle(center,(Circle)this.wrapped,100,this.color);
     }
     
     public double getDepth() {
@@ -85,11 +83,12 @@ public class RenderShape extends AbstractWrapped<Shape> {
     }
     
     public void onResolutionUpdate(MinecraftWindow window) {
-        if(Objects.nonNull(this.window) && this.wrapped instanceof Square) {
+        if(this.wrapped instanceof Square) {
             Square square = (Square)this.wrapped;
-            double max = square.getSideLength()/(2*this.window.getSmallerScale());
-            square.setSideLength(window.getSmallerScale()*max*2d);
+            square.setSideLength(square.getSideLength(),window.getHeightScale());
+        } else if(this.wrapped instanceof Circle) {
+            Circle circle = (Circle)this.wrapped;
+            circle.setHeightRatio(window.getHeightScale());
         }
-        this.window = window;
     }
 }

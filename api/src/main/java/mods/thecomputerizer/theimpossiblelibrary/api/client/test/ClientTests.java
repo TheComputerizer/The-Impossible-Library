@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
@@ -25,8 +26,8 @@ public class ClientTests {
 
     public static void runTests() {
         TILRef.logWarn("Running client tests");
-        renderableTest();
-        //guiTest();
+        //renderableTest();
+        guiTest();
         //tomlTest();
     }
 
@@ -53,8 +54,8 @@ public class ClientTests {
     }
 
     private static void guiTest() {
-        //render testing
-        //Minecraft.getInstance().setScreen(GuiTestClasses.createTestOtherGui());
+        TILDev.logWarn("GUI TEST");
+        ScreenHelper.open(new TestScreen());
     }
 
     private static void tomlTest() {

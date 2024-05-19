@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
 import org.joml.Vector2f;
 
+@SuppressWarnings("unused")
 public class MathHelper {
 
     public static final double RADIANS_360 = Math.toRadians(360d);

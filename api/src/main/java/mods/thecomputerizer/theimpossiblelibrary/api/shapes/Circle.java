@@ -2,10 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.VectorHelper.zero2D;
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.zero2D;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_180;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_270;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_360;
@@ -16,30 +18,35 @@ public class Circle extends Shape2D {
     
     protected double radius;
     protected double innerRadius;
+    protected double heightRatio;
     
-    public Circle(Vector3d direction, double radius) {
-        this(direction,radius,0d);
+    public Circle(Vector3d direction, double radius, double heightRatio) {
+        this(direction,radius,0d,heightRatio);
     }
     
-    public Circle(Vector3d direction, double radius, double innerRadius) {
+    public Circle(Vector3d direction, double radius, double innerRadius, double heightRatio) {
         super(direction);
         if(innerRadius>radius) innerRadius = radius;
         if(innerRadius<0d) innerRadius = 0d;
         this.radius = radius;
         this.innerRadius = innerRadius;
+        this.heightRatio = heightRatio;
     }
     
     @Override public Circle copy() {
         return getScaled(1d,1d);
     }
     
-    public double[] getQuadCoords() {
-        return new double[] {
-                Math.cos(0d)*this.radius,Math.sin(0d)*this.radius,
-                Math.cos(RADIANS_90)*this.radius,Math.sin(RADIANS_90)*this.radius,
-                Math.cos(RADIANS_180)*this.radius,Math.sin(RADIANS_180)*this.radius,
-                Math.cos(RADIANS_270)*this.radius,Math.sin(RADIANS_270)*this.radius
-        };
+    @Override public double getDepth() {
+        return 0d;
+    }
+    
+    @Override public double getHeight() {
+        return this.radius*2d;
+    }
+    
+    protected Vector2d withRatio(double x, double y) {
+        return new Vector2d(x*Math.min(this.heightRatio,1d),y*Math.min(1d/this.heightRatio,1d));
     }
     
     @Override public Circle getScaled(double scale) {
@@ -64,6 +71,19 @@ public class Circle extends Shape2D {
         return getScaled(scaleX,scaleY);
     }
     
+    @Override public VectorSupplier2D getVectorSupplier() {
+        return VectorStreams.get2D(
+                withRatio(Math.cos(0d)*this.radius,Math.sin(0d)*this.radius),
+                withRatio(Math.cos(RADIANS_90)*this.radius,Math.sin(RADIANS_90)*this.radius),
+                withRatio(Math.cos(RADIANS_180)*this.radius,Math.sin(RADIANS_180)*this.radius),
+                withRatio(Math.cos(RADIANS_270)*this.radius,Math.sin(RADIANS_270)*this.radius)
+        );
+    }
+    
+    @Override public double getWidth() {
+        return this.radius*2d;
+    }
+    
     @Override public boolean isInsideRelative(Vector2d pos) {
         double distance = zero2D().distance(pos);
         return distance>=this.innerRadius && distance<=this.radius;
@@ -71,23 +91,12 @@ public class Circle extends Shape2D {
     
     public CircleSlice[] slice(int resolution) {
         if(resolution<1) resolution = 1;
-        double sliceWidth = RADIANS_360/resolution;
+        double sliceWidth = RADIANS_360/(double)resolution;
         CircleSlice[] slices = new CircleSlice[resolution];
         for(int i=0;i<resolution;i++)
-            slices[i] = new CircleSlice(this.direction,this.radius,this.innerRadius,sliceWidth*i,sliceWidth*(i+1));
+            slices[i] = new CircleSlice(new Vector3d(this.direction),this.radius,this.innerRadius,this.heightRatio,
+                                        sliceWidth*i,sliceWidth*(i+1));
         return slices;
-    }
-    
-    @Override public double getDepth() {
-        return 0d;
-    }
-    
-    @Override public double getHeight() {
-        return this.radius*2d;
-    }
-    
-    @Override public double getWidth() {
-        return this.radius*2d;
     }
     
     public static class CircleSlice extends Circle {
@@ -98,8 +107,9 @@ public class Circle extends Shape2D {
         protected final double startAngle;
         protected final double endAngle;
         
-        public CircleSlice(Vector3d direction, double radius, double innerRadius,double startAngle, double endAngle) {
-            super(direction,radius,innerRadius);
+        public CircleSlice(Vector3d direction, double radius, double innerRadius, double heightRatio,
+                double startAngle, double endAngle) {
+            super(direction,radius,innerRadius,heightRatio);
             this.startAngle = startAngle;
             this.endAngle = endAngle;
         }
@@ -108,14 +118,13 @@ public class Circle extends Shape2D {
             return getScaled(1d,1d,1d);
         }
         
-        @Override
-        public double[] getQuadCoords() {
-            return new double[] {
-                    Math.cos(this.startAngle)*this.innerRadius,Math.sin(0d)*Math.sin(this.startAngle)*this.innerRadius,
-                    Math.cos(this.endAngle)*this.innerRadius,Math.sin(this.endAngle)*this.innerRadius,
-                    Math.cos(this.endAngle)*this.radius,Math.sin(this.endAngle)*this.radius,
-                    Math.cos(this.startAngle)*this.radius,Math.sin(0d)*Math.sin(this.startAngle)*this.radius
-            };
+        @Override public VectorSupplier2D getVectorSupplier() {
+            return VectorStreams.get2D(
+                    withRatio(Math.cos(this.startAngle)*this.radius,Math.sin(this.startAngle)*this.radius),
+                    withRatio(Math.cos(this.endAngle)*this.radius,Math.sin(this.endAngle)*this.radius),
+                    withRatio(Math.cos(this.endAngle)*this.innerRadius,Math.sin(this.endAngle)*this.innerRadius),
+                    withRatio(Math.cos(this.startAngle)*this.innerRadius,Math.sin(this.startAngle)*this.innerRadius)
+            );
         }
         
         @Override public CircleSlice getScaled(double scale) {
@@ -141,7 +150,7 @@ public class Circle extends Shape2D {
             double radius = this.radius*scale;
             double innerRadius = this.innerRadius*scaleInner;
             double endAngle = this.startAngle+((this.endAngle-this.startAngle)*scaleAngle);
-            return new CircleSlice(new Vector3d(this.direction),radius,innerRadius,this.startAngle,endAngle);
+            return new CircleSlice(new Vector3d(this.direction),radius,innerRadius,this.heightRatio,this.startAngle,endAngle);
         }
         
         @Override public boolean isInsideRelative(Vector2d pos) {
