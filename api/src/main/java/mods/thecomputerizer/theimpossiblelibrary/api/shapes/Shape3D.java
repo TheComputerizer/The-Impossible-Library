@@ -1,6 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -34,4 +38,13 @@ public abstract class Shape3D implements Shape {
     @Override public abstract Shape3D getScaled(double scaleX, double scaleY, double scaleZ);
     
     public abstract VectorSupplier3D getVectorSupplier();
+    
+    @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth) {
+        return new FuzzBall(
+                () -> ScreenHelper.randomPointSupplier2D(this::random2D, minCount, maxCount),
+                () -> ScreenHelper.randomPointSupplier3D(this::random3D,minCount,maxCount),
+                () -> RandomHelper.randomFloat(minWidth, maxWidth),
+                () -> new ColorCache(0f, 0f, 0f, RandomHelper.randomFloat(0.75f, 1f))
+        );
+    }
 }

@@ -89,11 +89,12 @@ public final class RenderContext {
         gl.directEnd();
     }
     
-    public void drawOutline(Shape2D shape, float width) {
-        drawOutline(shape.getOutlineSupplier(),width);
+    public void drawOutline(Shape2D shape, float width, ColorCache color) {
+        drawOutline(shape.getOutlineSupplier(),width,color);
     }
     
-    public void drawOutline(VectorSupplier2D vectors, float width) {
+    public void drawOutline(VectorSupplier2D vectors, float width, ColorCache color) {
+        prepareGradient(color);
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
@@ -101,19 +102,24 @@ public final class RenderContext {
             gl.directVertexD(next.x,next.y,0d);
         }
         gl.directEnd();
+        this.renderer.enableTexture();
+        this.renderer.disableBlend();
     }
     
-    public void drawOutline(Shape3D shape, float width) {
-        drawOutline(shape.getOutlineSupplier(),width);
+    public void drawOutline(Shape3D shape, float width, ColorCache color) {
+        drawOutline(shape.getOutlineSupplier(),width,color);
     }
     
-    public void drawOutline(VectorSupplier3D vectors, float width) {
+    public void drawOutline(VectorSupplier3D vectors, float width, ColorCache color) {
+        prepareGradient(color);
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
             gl.directVertexD(next.x,next.y,next.z);
         }
         gl.directEnd();
+        this.renderer.enableTexture();
+        this.renderer.disableBlend();
     }
     
     public void drawText(Vector3d center, TextBuffer text) {

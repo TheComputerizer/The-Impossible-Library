@@ -2,8 +2,13 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -95,6 +100,16 @@ public class Circle extends Shape2D {
         return distance>=this.innerRadius && distance<=this.radius;
     }
     
+    @Override public Vector2d random2D() {
+        double radius = RandomHelper.randomDouble(this.innerRadius,this.radius);
+        double angle = RandomHelper.randomDouble(RADIANS_360);
+        return withRatio(Math.cos(angle)*radius,Math.sin(angle)*radius);
+    }
+    
+    @Override public Vector3d random3D() {
+        return new Vector3d(random2D(),0d);
+    }
+    
     public void setResolution(int resolution) {
         this.resolution = Math.max(resolution,4);
     }
@@ -172,6 +187,12 @@ public class Circle extends Shape2D {
                 return angle>=this.startAngle && angle<=this.endAngle;
             }
             return false;
+        }
+        
+        @Override public Vector2d random2D() {
+            double radius = RandomHelper.randomDouble(this.innerRadius,this.radius);
+            double angle = RandomHelper.randomDouble(this.startAngle,this.endAngle);
+            return withRatio(Math.cos(angle)*radius,Math.sin(angle)*radius);
         }
     }
 }

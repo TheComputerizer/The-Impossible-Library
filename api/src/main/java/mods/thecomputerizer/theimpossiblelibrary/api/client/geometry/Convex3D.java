@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
@@ -12,7 +13,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @SuppressWarnings("unused")
-public class Convex3D {
+public class Convex3D { //TODO Hook parts of this into other helper methods
 
     @Getter private final double radius;
     private final TriangleMapper[] triangles;
@@ -181,7 +182,7 @@ public class Convex3D {
     }
 
     public void renderOutlines(RenderContext ctx) {
-        ctx.getRenderer().setColor(this.color[4],this.color[5],this.color[6],this.color[7]);
+        ctx.prepareGradient(new ColorCache(this.color[4],this.color[5],this.color[6],this.color[7]));
         for(TriangleMapper triangle : this.triangles)
             for(int i=0; i<triangle.length; i++)
                 renderTriangleOutline(ctx,triangle,i);

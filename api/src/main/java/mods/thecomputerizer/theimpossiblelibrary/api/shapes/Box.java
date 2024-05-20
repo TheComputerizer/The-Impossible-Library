@@ -225,6 +225,14 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     public double radiusZ() {
         return getDepth()/2d;
     }
+    
+    @Override public Vector2d random2D() {
+        return VectorHelper.random2D(new Vector2d(this.min.x,this.min.y),new Vector2d(this.max.x,this.max.y));
+    }
+    
+    @Override public Vector3d random3D() {
+        return VectorHelper.random3D(this.min,this.max);
+    }
 
     public Box shrink(double d) {
         return expand(-d,-d,-d);

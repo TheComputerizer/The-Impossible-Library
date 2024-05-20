@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -32,4 +33,7 @@ public interface Shape {
     Shape getScaled(double scaleX, double scaleY, double scaleZ);
     double getWidth();
     boolean isInside(Vector3d pos);
+    FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth);
+    Vector2d random2D();
+    Vector3d random3D();
 }

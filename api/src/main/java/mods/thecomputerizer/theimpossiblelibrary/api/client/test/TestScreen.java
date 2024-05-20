@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.ShapeWidget;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
@@ -10,10 +11,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShapeOu
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 
 public class TestScreen extends ScreenAPI {
+    
+    private final FuzzBall fuzz;
     
     @SuppressWarnings("DataFlowIssue")
     public TestScreen() {
@@ -26,6 +30,7 @@ public class TestScreen extends ScreenAPI {
             addRing(circle,scale,f);
             scale+=0.1d;
         }
+        this.fuzz = circle.getWrapped().makeFuzzBall(500,1000,5f,5f);
         RenderShape square = RenderShape.square(ctx,0.75d,new TextureWrapper()
                 .setTexture(TILRef.res("test/logo.png")).setAlpha(0.4f));
         addWidget(new ShapeWidget(square,0d,0d));
@@ -34,5 +39,10 @@ public class TestScreen extends ScreenAPI {
     void addRing(RenderShape reference, double scale, float lineWidth) {
         RenderShape copy = new RenderShape(reference.getWrapped().getScaled(scale),reference.getColor());
         addWidget(new ShapeWidget(RenderShapeOutline.of(copy,lineWidth),0d,0d));
+    }
+    
+    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+        super.draw(ctx,center,mouseX,mouseY);
+        this.fuzz.draw2D(ctx);
     }
 }

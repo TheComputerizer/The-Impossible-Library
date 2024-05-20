@@ -2,13 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.inf2D;
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.negInf2D;
+import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_360;
 
 /**
  Planes always assume (0,0,0) as the center unless implemented otherwise in an extension class
@@ -107,6 +110,14 @@ public class Plane extends Shape2D {
     @Override public boolean isInsideRelative(Vector2d pos) {
         return pos.x>=this.relativeMin.x && pos.x<=this.relativeMax.x &&
                pos.y>=this.relativeMin.y && pos.y<=this.relativeMax.y;
+    }
+    
+    @Override public Vector2d random2D() {
+        return VectorHelper.random2D(this.relativeMin,this.relativeMax);
+    }
+    
+    @Override public Vector3d random3D() {
+        return new Vector3d(random2D(),0d);
     }
     
     public void setRelativeMax(double x, double y) {

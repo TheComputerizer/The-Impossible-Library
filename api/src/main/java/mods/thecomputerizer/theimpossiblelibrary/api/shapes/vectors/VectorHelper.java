@@ -1,11 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import org.joml.Vector4d;
 
 @SuppressWarnings("unused")
 public class VectorHelper {
@@ -127,6 +129,20 @@ public class VectorHelper {
     
     public static Vector3f negInf3F() {
         return new Vector3f(NEG_INF_3F);
+    }
+    
+    public static Vector2d random2D(Vector2d min, Vector2d max) {
+        return new Vector2d(RandomHelper.randomDouble(min.x,max.x),RandomHelper.randomDouble(min.y,max.y));
+    }
+    
+    public static Vector3d random3D(Vector3d min, Vector3d max) {
+        return new Vector3d(RandomHelper.randomDouble(min.x,max.x),RandomHelper.randomDouble(min.y,max.y),
+                            RandomHelper.randomDouble(min.z,max.z));
+    }
+    
+    public static Vector4d random4D(Vector4d min, Vector4d max) {
+        return new Vector4d(RandomHelper.randomDouble(min.x, max.x), RandomHelper.randomDouble(min.y, max.y),
+                            RandomHelper.randomDouble(min.z,max.z),RandomHelper.randomDouble(min.w,max.w));
     }
     
     public static Vector2d zero2D() {
