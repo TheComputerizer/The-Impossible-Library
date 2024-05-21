@@ -1,71 +1,44 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
-import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.MutableWrapped;
 import org.joml.Vector3d;
 
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
-@SuppressWarnings("unused") @Getter @Setter
-public class RenderShape extends AbstractWrapped<Shape> {
+@SuppressWarnings("unused") @Getter
+public class RenderShape extends MutableWrapped<Shape> {
     
-    public static RenderShape circle(RenderContext ctx) {
-        return circle(ctx,1d,WHITE);
+    public static RenderShape from(Shape shape) {
+        return new RenderShape(shape,WHITE);
     }
     
-    public static RenderShape circle(RenderContext ctx, double max) {
-        return circle(ctx,max,WHITE);
+    public static RenderShape from(Shape shape, ColorCache color) {
+        return new RenderShape(shape,color);
     }
     
-    public static RenderShape circle(RenderContext ctx, ColorCache color) {
-        return circle(ctx,1d,color);
+    public static RenderShape from(Shape shape, ResourceLocationAPI<?> texture) {
+        return new RenderShape(shape,WHITE).setTexture(texture);
     }
     
-    public static RenderShape circle(RenderContext ctx, double max, ColorCache color) {
-        return new RenderShape(new Circle(Y.getDirection(),max,ctx.getHeightRatio()),color);
+    public static RenderShape from(Shape shape, ResourceLocationAPI<?> texture, float alpha) {
+        return new RenderShape(shape,WHITE).setTexture(texture,alpha);
     }
     
-    public static RenderShape square(RenderContext ctx) {
-        return square(ctx,1d,WHITE);
-    }
-    
-    public static RenderShape square(RenderContext ctx, double max) {
-        return square(ctx,max,WHITE);
-    }
-    
-    public static RenderShape square(RenderContext ctx, ColorCache color) {
-        return square(ctx,1d,color);
-    }
-    
-    public static RenderShape square(RenderContext ctx, double max, ColorCache color) {
-        return new RenderShape(new Square(Y.getDirection(),max*2d,ctx.getHeightRatio()),color);
-    }
-    
-    public static RenderShape square(RenderContext ctx, TextureWrapper texture) {
-        return square(ctx,1d,texture);
-    }
-    
-    public static RenderShape square(RenderContext ctx, double max, TextureWrapper texture) {
-        RenderShape shape = square(ctx,max,WHITE);
-        shape.texture = texture;
-        return shape;
+    public static RenderShape from(Shape shape, TextureWrapper texture) {
+        return new RenderShape(shape,WHITE).setTexture(texture);
     }
     
     protected ColorCache color;
     protected TextureWrapper texture;
-    
-    public RenderShape(Shape wrapped) {
-        this(wrapped,WHITE);
-    }
     
     public RenderShape(Shape wrapped, ColorCache color) {
         super(wrapped);
@@ -84,6 +57,10 @@ public class RenderShape extends AbstractWrapped<Shape> {
             if(Objects.nonNull(this.texture)) ctx.drawTexturedPlane(center,plane,this.texture);
             else ctx.drawColoredPlane(center,plane,this.color);
         } else if(this.wrapped instanceof Circle) ctx.drawColoredCircle(center,(Circle)this.wrapped,100,this.color);
+    }
+    
+    public Vector3d getCenterForGroup(Vector3d center) {
+        return this.wrapped.getCenter(center);
     }
     
     public double getDepth() {
@@ -106,5 +83,28 @@ public class RenderShape extends AbstractWrapped<Shape> {
             Circle circle = (Circle)this.wrapped;
             circle.setHeightRatio(window.getHeightScale());
         }
+    }
+    
+    public RenderShape setColor(ColorCache color) {
+        this.color = color;
+        return this;
+    }
+    
+    @Override
+    public RenderShape setWrapped(Shape shape) {
+        return (RenderShape)super.setWrapped(shape);
+    }
+    
+    public RenderShape setTexture(ResourceLocationAPI<?> texture) {
+        return setTexture(new TextureWrapper().setTexture(texture));
+    }
+    
+    public RenderShape setTexture(ResourceLocationAPI<?> texture, float alpha) {
+        return setTexture(new TextureWrapper().setTexture(texture).setAlpha(alpha));
+    }
+    
+    public RenderShape setTexture(TextureWrapper texture) {
+        this.texture = texture;
+        return this;
     }
 }

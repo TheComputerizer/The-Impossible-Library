@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import org.joml.Vector3d;
 
 @Getter
@@ -22,7 +23,7 @@ public enum Facing {
         this.positive = positive;
     }
     
-    @SuppressWarnings("unused") @Getter
+    @SuppressWarnings("unused")
     public enum Axis {
 
         X(new Vector3d(1d,0d,0d),true),
@@ -30,15 +31,22 @@ public enum Facing {
         Z(new Vector3d(0d,0d,1d),true);
         
         private final Vector3d direction;
-        private final boolean horizontal;
+        @Getter private final boolean horizontal;
 
         Axis(Vector3d direction, boolean horizontal) {
             this.direction = direction;
             this.horizontal = horizontal;
         }
         
+        /**
+         Return a new vector instance to avoid modifty data
+         */
+        public Vector3d getDirection() {
+            return new Vector3d(this.direction);
+        }
+        
         public Plane getPlane() {
-            return new Plane(new Vector3d(this.direction));
+            return ShapeHelper.plane(this);
         }
 
         public boolean isVertical() {

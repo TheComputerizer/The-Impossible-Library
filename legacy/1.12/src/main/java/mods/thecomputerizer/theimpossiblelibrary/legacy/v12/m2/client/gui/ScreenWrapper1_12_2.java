@@ -26,13 +26,26 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     }
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        RenderContext ctx = RenderContext.get(Minecraft1_12_2.getInstance());
-        ctx.setPartialTicks(partialTicks);
-        if(Objects.nonNull(this.wrapped)) this.wrapped.draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
+        if(Objects.nonNull(this.wrapped)) {
+            RenderContext ctx = RenderContext.get(Minecraft1_12_2.getInstance());
+            ctx.setPartialTicks(partialTicks);
+            double x = -1d+((double)mouseX)*ctx.getScale().getScaleX();
+            double y = 1d-((double)mouseY)*ctx.getScale().getScaleY();
+            this.wrapped.draw(ctx,VectorHelper.zero3D(),x,y);
+        }
     }
     
     @Override public ScreenAPI getWrapped() {
         return this.wrapped;
+    }
+    
+    @Override protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if(Objects.nonNull(this.wrapped)) {
+            RenderContext ctx = RenderContext.get(Minecraft1_12_2.getInstance());
+            double x = -1d+((double)mouseX)*ctx.getScale().getScaleX();
+            double y = 1d-((double)mouseY)*ctx.getScale().getScaleY();
+            this.wrapped.onClicked(x,y,mouseButton==0);
+        }
     }
     
     @Override public void onGuiClosed() {

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
@@ -9,8 +10,16 @@ import org.joml.Vector4i;
 @SuppressWarnings("unused")  @Getter
 public class TextBuffer {
     
+    public static TextBuffer literal(String literal) {
+        return new Builder(TextHelper.getLiteral(literal)).build();
+    }
+    
     public static TextBuffer of(TextAPI<?> text) {
         return new Builder(text).build();
+    }
+    
+    public static TextBuffer translated(String key, Object ... args) {
+        return new Builder(TextHelper.getTranslated(key,args)).build();
     }
 
     private final TextAPI<?> text;

@@ -8,6 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
+import java.util.function.Supplier;
+
 @SuppressWarnings("unused")
 public abstract class Shape3D implements Shape {
     
@@ -39,12 +41,12 @@ public abstract class Shape3D implements Shape {
     
     public abstract VectorSupplier3D getVectorSupplier();
     
-    @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth) {
+    @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, Supplier<ColorCache> colorGenerator) {
         return new FuzzBall(
-                () -> ScreenHelper.randomPointSupplier2D(this::random2D, minCount, maxCount),
+                () -> ScreenHelper.randomPointSupplier2D(this::random2D,minCount,maxCount),
                 () -> ScreenHelper.randomPointSupplier3D(this::random3D,minCount,maxCount),
-                () -> RandomHelper.randomFloat(minWidth, maxWidth),
-                () -> new ColorCache(0f, 0f, 0f, RandomHelper.randomFloat(0.75f, 1f))
+                () -> RandomHelper.randomFloat(minWidth,maxWidth),
+                colorGenerator
         );
     }
 }

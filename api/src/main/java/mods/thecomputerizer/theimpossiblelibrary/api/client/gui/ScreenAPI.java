@@ -6,9 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector3d;
 
-import java.util.Collection;
-import java.util.Collections;
-
 @SuppressWarnings("unused") @Getter
 public class ScreenAPI extends WidgetGroup {
     
@@ -20,6 +17,7 @@ public class ScreenAPI extends WidgetGroup {
     }
     
     public ScreenAPI(ScreenAPI parent, TextAPI<?> title, MinecraftWindow window) {
+        super(true);
         this.parent = parent;
         this.title = title;
         onResolutionUpdated(window);
@@ -35,16 +33,8 @@ public class ScreenAPI extends WidgetGroup {
         return 2d;
     }
     
-    @Override public Collection<TextAPI<?>> getHoverLines(double x, double y) {
-        return Collections.emptyList();
-    }
-    
     @Override public double getWidth() {
         return 2d;
-    }
-    
-    @Override public boolean isHovering(double x, double y) {
-        return false;
     }
     
     public void onScreenClosed() {}
@@ -55,10 +45,6 @@ public class ScreenAPI extends WidgetGroup {
     
     public float defaultBackgroundDarkness() {
         return 1f;
-    }
-    
-    @Override public boolean shouldDrawHovered() {
-        return false;
     }
     
     public boolean shouldPauseGame() {

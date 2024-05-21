@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 
@@ -12,7 +13,7 @@ public class FuzzBall {
     private final Supplier<VectorSupplier2D> generator2D;
     private final Supplier<VectorSupplier3D> generator3D;
     private final Supplier<Float> widthGenerator;
-    private final Supplier<ColorCache> colorGenerator;
+    @Setter private Supplier<ColorCache> colorGenerator;
     
     public FuzzBall(Supplier<VectorSupplier2D> generator2D, Supplier<VectorSupplier3D> generator3D,
             Supplier<Float> widthGenerator, Supplier<ColorCache> colorGenerator) {

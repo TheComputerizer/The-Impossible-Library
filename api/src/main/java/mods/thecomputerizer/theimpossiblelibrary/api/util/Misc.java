@@ -160,4 +160,12 @@ public class Misc {
     public static <V,W> @Nullable W wrap(@Nullable V val, Function<V,W> wrapperFunc) {
         return applyNullable(val,wrapperFunc);
     }
+    
+    public static <V> boolean xOr(V value, V in1, V in2) {
+        return value.equals(in1)!=value.equals(in2);
+    }
+    
+    public static <V> V xOr(V value, V in1, V in2, V on, V off) {
+        return xOr(value,in1,in2) ? on : off;
+    }
 }

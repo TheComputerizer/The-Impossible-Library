@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -11,8 +12,11 @@ public class Square extends Plane {
     protected double sideLength;
     protected double heightRatio;
     
+    /**
+     See ShapeHelper for alternative construction methods
+     */
     public Square(Vector3d direction, double length, double heightRatio) {
-        super(direction);
+        super(direction,VectorHelper.zero2D(),VectorHelper.zero2D());
         setSideLength(length,heightRatio);
     }
     

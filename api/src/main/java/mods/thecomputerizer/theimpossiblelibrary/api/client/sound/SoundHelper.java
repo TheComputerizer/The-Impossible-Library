@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.sound;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.Objects;
@@ -15,6 +16,11 @@ public class SoundHelper {
     public static float getCategoryVolume(String category) {
         SoundHelperAPI<?> api = getAPI();
         return Objects.nonNull(api) ? api.getCategoryVolume(category) : 0f;
+    }
+    
+    public static void play(SoundEventAPI<?> event) {
+        SoundHelperAPI<?> api = getAPI();
+        if(Objects.nonNull(api)) getAPI().play(event);
     }
     
     public static void setCategoryVolume(String category, float volume) {

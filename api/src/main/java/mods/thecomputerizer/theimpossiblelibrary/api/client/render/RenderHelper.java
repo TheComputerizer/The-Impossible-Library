@@ -26,6 +26,11 @@ public class RenderHelper {
         MinecraftAPI mc = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
         return Objects.nonNull(mc) ? new RenderContext(mc) : null;
     }
+    
+    public static double getCurrentHeightRatio() {
+        RenderContext ctx = RenderHelper.getContext();
+        return Objects.nonNull(ctx) ? ctx.getHeightRatio() : 1d;
+    }
 
     public static @Nullable RenderAPI getRenderer() {
         MinecraftAPI mc = TILRef.getClientSubAPI(ClientAPI::getMinecraft);

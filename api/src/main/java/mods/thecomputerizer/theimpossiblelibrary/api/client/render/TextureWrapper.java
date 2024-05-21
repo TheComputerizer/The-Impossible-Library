@@ -81,13 +81,13 @@ public class TextureWrapper {
         return this;
     }
 
-    public TextureWrapper setU(float min, float max) {
+    public TextureWrapper setU(double min, double max) {
         this.minU = min;
         this.maxU = max;
         return this;
     }
 
-    public TextureWrapper setV(float min, float max) {
+    public TextureWrapper setV(double min, double max) {
         this.minV = min;
         this.maxV = max;
         return this;

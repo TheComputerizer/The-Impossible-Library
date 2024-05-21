@@ -2,9 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
@@ -26,21 +23,29 @@ public class Circle extends Shape2D {
     @Setter protected double innerRadius;
     @Setter protected double heightRatio;
     
-    public Circle(Vector3d direction, double radius, double heightRatio) {
-        this(direction,radius,0d,heightRatio);
-    }
-    
+    /**
+     See ShapeHelper for alternative construction methods
+     */
     public Circle(Vector3d direction, double radius, double innerRadius, double heightRatio) {
         super(direction);
-        if(innerRadius>radius) innerRadius = radius;
         if(innerRadius<0d) innerRadius = 0d;
-        this.radius = radius;
-        this.innerRadius = innerRadius;
+        if(radius<0d) radius = 0d;
+        this.radius = Math.max(innerRadius,radius);
+        this.innerRadius = Math.min(innerRadius,radius);
         this.heightRatio = heightRatio;
     }
     
     @Override public Circle copy() {
         return getScaled(1d,1d);
+    }
+    
+    public Vector3d getCenter(Vector3d center) {
+        Vector2d center2D = getCenter();
+        return new Vector3d(center.x+center2D.x,center.y+center2D.y,center.z);
+    }
+    
+    public Vector2d getCenter() {
+        return new Vector2d(0d,0d);
     }
     
     @Override public double getDepth() {
@@ -135,24 +140,24 @@ public class Circle extends Shape2D {
         protected final double startAngle;
         protected final double endAngle;
         
+        /**
+         See ShapeHelper for alternative construction methods
+         */
         public CircleSlice(Vector3d direction, double radius, double innerRadius, double heightRatio,
                 double startAngle, double endAngle) {
             super(direction,radius,innerRadius,heightRatio);
-            this.startAngle = startAngle;
-            this.endAngle = endAngle;
+            this.startAngle = Math.min(startAngle,endAngle);
+            this.endAngle = Math.max(startAngle,endAngle);
         }
         
         @Override public CircleSlice copy() {
             return getScaled(1d,1d,1d);
         }
         
-        @Override public VectorSupplier2D getVectorSupplier() {
-            return VectorStreams.get2D(
-                    withRatio(Math.cos(this.startAngle)*this.radius,Math.sin(this.startAngle)*this.radius),
-                    withRatio(Math.cos(this.endAngle)*this.radius,Math.sin(this.endAngle)*this.radius),
-                    withRatio(Math.cos(this.endAngle)*this.innerRadius,Math.sin(this.endAngle)*this.innerRadius),
-                    withRatio(Math.cos(this.startAngle)*this.innerRadius,Math.sin(this.startAngle)*this.innerRadius)
-            );
+        @Override public Vector2d getCenter() {
+            double radius = MathHelper.getHalfway(this.innerRadius,this.radius);
+            double angle = MathHelper.getHalfway(this.startAngle,this.endAngle);
+            return withRatio(Math.cos(angle)*radius,Math.sin(angle)*radius);
         }
         
         @Override public CircleSlice getScaled(double scale) {
@@ -179,6 +184,15 @@ public class Circle extends Shape2D {
             double innerRadius = this.innerRadius*scaleInner;
             double endAngle = this.startAngle+((this.endAngle-this.startAngle)*scaleAngle);
             return new CircleSlice(new Vector3d(this.direction),radius,innerRadius,this.heightRatio,this.startAngle,endAngle);
+        }
+        
+        @Override public VectorSupplier2D getVectorSupplier() {
+            return VectorStreams.get2D(
+                    withRatio(Math.cos(this.startAngle)*this.radius,Math.sin(this.startAngle)*this.radius),
+                    withRatio(Math.cos(this.endAngle)*this.radius,Math.sin(this.endAngle)*this.radius),
+                    withRatio(Math.cos(this.endAngle)*this.innerRadius,Math.sin(this.endAngle)*this.innerRadius),
+                    withRatio(Math.cos(this.startAngle)*this.innerRadius,Math.sin(this.startAngle)*this.innerRadius)
+            );
         }
         
         @Override public boolean isInsideRelative(Vector2d pos) {

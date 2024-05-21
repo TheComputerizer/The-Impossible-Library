@@ -6,9 +6,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
+
+import java.util.function.Supplier;
+
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
 
 @SuppressWarnings("unused") @Getter
 public abstract class Shape2D implements Shape {
@@ -46,6 +52,12 @@ public abstract class Shape2D implements Shape {
     }
     
     public Vector2d getRelativeCoordinate(Vector3d world) {
+        int inf = 0;
+        for(double d : VectorHelper.toArray(world)) {
+            if(d==POSITIVE_INFINITY && inf==0) inf = 1;
+            else if(d==NEGATIVE_INFINITY) inf = inf==1 ? 2 : 1;
+        }
+        if(inf>0) return inf==1 ? VectorHelper.inf2D() : VectorHelper.negInf2D();
         Vector3d angles = getDirectionAngles();
         double distance = world.distance(ZERO_3D)/this.direction.distance(ZERO_3D);
         Vector3d rotated = world.rotateX(-angles.x,new Vector3d()).rotateY(-angles.y).rotateZ(-angles.z);
@@ -76,23 +88,31 @@ public abstract class Shape2D implements Shape {
     }
     
     public Vector3d getWorldCoordinate(Vector2d relative) {
+        if(Misc.equalsAny(POSITIVE_INFINITY,relative.x,relative.y) ||
+           Misc.equalsAny(NEGATIVE_INFINITY,relative.x,relative.y))
+            return Misc.equalsAny(NEGATIVE_INFINITY,relative.x,relative.y) ?
+                    VectorHelper.negInf3D() : VectorHelper.inf3D();
         Vector3d angles = getDirectionAngles();
         double distance = relative.distance(ZERO_2D)*this.direction.distance(ZERO_3D);
         return new Vector3d(relative,0d).rotateX(angles.x).rotateY(angles.y).rotateZ(angles.z).mul(distance);
     }
     
+    @Override public boolean isInside(double x, double y, double z) {
+        return isInside(new Vector3d(x,y,z));
+    }
+    
     @Override public boolean isInside(Vector3d pos) {
-        return isInsideRelative(getRelativeCoordinate(pos));
+        return isInsideRelative(new Vector2d(pos.x,pos.y));
     }
     
     public abstract boolean isInsideRelative(Vector2d pos);
     
-    @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth) {
+    @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, Supplier<ColorCache> colorGenerator) {
         return new FuzzBall(
-                () -> ScreenHelper.randomPointSupplier2D(this::random2D, minCount, maxCount),
+                () -> ScreenHelper.randomPointSupplier2D(this::random2D,minCount,maxCount),
                 () -> ScreenHelper.randomPointSupplier3D(this::random3D,minCount,maxCount),
-                () -> RandomHelper.randomFloat(minWidth, maxWidth),
-                () -> new ColorCache(0f, 0f, 0f, RandomHelper.randomFloat(0.75f, 1f))
+                () -> RandomHelper.randomFloat(minWidth,maxWidth),
+                colorGenerator
         );
     }
 }

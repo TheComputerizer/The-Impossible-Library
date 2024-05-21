@@ -24,8 +24,8 @@ public class RenderableText extends Renderable {
     
     public RenderableText(Map<String, Object> parameters) {
         super(parameters);
-        this.titleWidget = new TextWidget(null,0d,0d);
-        this.subtitleWidget = new TextWidget(null,0d,0d);
+        this.titleWidget = TextWidget.literal("");
+        this.subtitleWidget = TextWidget.literal("");
         this.potentialText = getParameterAs("titles",new ArrayList<>());
         this.potentialSubtext = getParameterAs("subtitles",new ArrayList<>());
     }

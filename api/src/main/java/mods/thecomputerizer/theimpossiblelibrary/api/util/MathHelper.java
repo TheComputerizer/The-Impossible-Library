@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
+import org.joml.Vector2d;
 import org.joml.Vector2f;
 
 @SuppressWarnings("unused")
@@ -80,6 +81,13 @@ public class MathHelper {
     public static Vector2f toRadians(Vector2f degreeVec) {
         return new Vector2f((float)Math.toRadians(degreeVec.x()),(float)Math.toRadians(degreeVec.y()));
     }
+    
+    /**
+     Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
+     */
+    public static double getHalfway(Vector2d vec) {
+        return getHalfway(vec.x(),vec.y());
+    }
 
     /**
         Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
@@ -90,6 +98,13 @@ public class MathHelper {
 
     /**
         Calculates a 1D position halfway in between a given start and end
+     */
+    public static double getHalfway(double start, double end) {
+        return start+((end-start)/2d);
+    }
+    
+    /**
+     Calculates a 1D position halfway in between a given start and end
      */
     public static float getHalfway(float start, float end) {
         return start+((end-start)/2f);

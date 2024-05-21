@@ -174,6 +174,14 @@ public final class RenderContext {
         return this.scale.getHeightRatio();
     }
     
+    public double getScaledFontHeight() {
+        return ((double)this.font.getFontHeight())*this.scale.getScaleY();
+    }
+    
+    public double getScaledStringWidth(String str) {
+        return ((double)this.font.getStringWidth(str))*this.scale.getScaleX();
+    }
+    
     public VertexWrapper initQuads(boolean textured) {
         int quads = this.renderer.getGLAPI().quads();
         VertexWrapper buffer = textured ? this.renderer.getBufferBuilderPTC(quads,4) :
@@ -235,5 +243,13 @@ public final class RenderContext {
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y, double z) {
         return this.scale.apply(buffer,center,x,y,z);
+    }
+    
+    public double withScaledX(double x) {
+        return this.scale.applyX(0d,x);
+    }
+    
+    public double withScaledY(double y) {
+        return this.scale.applyY(0d,y);
     }
 }

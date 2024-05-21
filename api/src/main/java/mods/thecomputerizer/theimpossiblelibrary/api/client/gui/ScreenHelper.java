@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
@@ -16,15 +16,28 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.LIGHT_PURPLE;
+
 public class ScreenHelper {
 
     public static @Nullable ScreenHelperAPI getAPI() {
         return TILRef.getClientSubAPI(ClientAPI::getScreenHelper);
     }
     
+    public static TextureWrapper getVanillaButtonTexture(boolean hover, boolean disabled) {
+        ScreenHelperAPI api = getAPI();
+        return Objects.nonNull(api) ? api.getVanillaButtonTexture(hover,disabled) :
+                new TextureWrapper().setMask(LIGHT_PURPLE);
+    }
+    
     public static void open(ScreenAPI screen) {
         ScreenHelperAPI api = getAPI();
         if(Objects.nonNull(api)) api.open(screen);
+    }
+    
+    public static void playVanillaClickSound() {
+        ScreenHelperAPI api = getAPI();
+        if(Objects.nonNull(api)) api.playVanillaClickSound();
     }
     
     public static VectorSupplier2D randomPointSupplier2D(Supplier<Vector2d> supplier, int minCount, int maxCount) {

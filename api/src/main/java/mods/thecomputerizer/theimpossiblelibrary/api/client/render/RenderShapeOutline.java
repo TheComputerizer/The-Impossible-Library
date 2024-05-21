@@ -7,13 +7,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape3D;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
-
 @SuppressWarnings("unused") @Getter @Setter
 public class RenderShapeOutline extends RenderShape {
     
     public static RenderShapeOutline of(RenderShape shape) {
-        return of(shape,1f);
+        return new RenderShapeOutline(shape.getWrapped(),shape.getColor(),1f);
     }
     
     public static RenderShapeOutline of(RenderShape shape, float width) {
@@ -21,10 +19,6 @@ public class RenderShapeOutline extends RenderShape {
     }
     
     private float lineWidth;
-    
-    public RenderShapeOutline(Shape wrapped, float lineWidth) {
-        this(wrapped,WHITE,lineWidth);
-    }
     
     public RenderShapeOutline(Shape wrapped, ColorCache color, float lineWidth) {
         super(wrapped,color);

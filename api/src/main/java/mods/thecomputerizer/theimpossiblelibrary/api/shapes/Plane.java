@@ -5,13 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.inf2D;
-import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.negInf2D;
-import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_360;
 
 /**
  Planes always assume (0,0,0) as the center unless implemented otherwise in an extension class
@@ -49,18 +44,13 @@ public class Plane extends Shape2D {
     protected double width;
     protected double height;
     
-    public Plane(Vector3d min, Vector3d max) {
-        this(max.sub(min));
-    }
-    
-    public Plane(Vector3d direction) {
-        this(direction,negInf2D(),inf2D());
-    }
-    
-    public Plane(Vector3d direction, Vector2d min, Vector2d max) {
+    /**
+     See ShapeHelper for alternative construction methods
+     */
+    public Plane(Vector3d direction, Vector2d corner, Vector2d oppositeCorner) {
         super(direction);
-        this.relativeMin = min;
-        this.relativeMax = max;
+        this.relativeMin = new Vector2d(Math.min(corner.x,oppositeCorner.x),Math.min(corner.y,oppositeCorner.y));
+        this.relativeMax = new Vector2d(Math.max(corner.x,oppositeCorner.x),Math.max(corner.y,oppositeCorner.y));
         calculateActuals();
         calculateSize();
     }
@@ -113,7 +103,7 @@ public class Plane extends Shape2D {
     }
     
     @Override public Vector2d random2D() {
-        return VectorHelper.random2D(this.relativeMin,this.relativeMax);
+        return VectorHelper.randomD(this.relativeMin, this.relativeMax);
     }
     
     @Override public Vector3d random3D() {

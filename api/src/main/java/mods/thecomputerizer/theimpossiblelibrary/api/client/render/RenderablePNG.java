@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.ShapeWidget;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class RenderablePNG extends Renderable {
         if(!source.getPath().endsWith(".png"))
             throw new IOException("Tried to initialize a non png file to a png " +
                 "object! Make sure that you have the correct file extension on your resource location. ["+source+"]");
-        this.texture = new ShapeWidget(new RenderShape(Plane.getBoundedAxis(Y,2d,2d,1d)),0d,0d);
+        this.texture = ShapeWidget.from(ShapeHelper.plane(Y));
         this.texture.setTexture(new TextureWrapper().setTexture(source).setU(0f,1f).setV(0f,1f));
     }
     
