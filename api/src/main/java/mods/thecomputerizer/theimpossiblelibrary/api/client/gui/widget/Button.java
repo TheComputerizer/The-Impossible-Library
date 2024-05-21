@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused","UnusedReturnValue"})
 public class Button extends BoundedWidgetGroup {
     
     public static Button basic(TextAPI<?> text, TextAPI<?> ... hoverLines) {
@@ -59,26 +59,24 @@ public class Button extends BoundedWidgetGroup {
         return button;
     }
     
-    public static WidgetGroup raidalGroup(Circle circle, Vector2d center, int slices, BiConsumer<Integer,Button> settings) {
+    public static WidgetGroup raidalGroup(Circle circle, Vector2d center, int slices,
+            BiConsumer<Integer,Button> settings) {
         return BasicWidgetGroup.from(raidal(circle,center,slices,settings));
     }
     
-    public static WidgetGroup raidalGroup(Circle circle, double centerX, double centerY, int slices, BiConsumer<Integer,Button> settings) {
+    public static WidgetGroup raidalGroup(Circle circle, double centerX, double centerY, int slices,
+            BiConsumer<Integer,Button> settings) {
         return BasicWidgetGroup.from(raidal(circle,centerX,centerY,slices,settings));
     }
     
-    public static Button raidal(Circle circle, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
-        return basic(0d,0d,text,hoverLines);
-    }
-    
-    public static Button[] raidal(Circle circle, Vector2d center, int slices, BiConsumer<Integer,Button> settings) {
+    public static Button[] raidal(Circle circle, Vector2d center, int slices,
+            BiConsumer<Integer,Button> settings) {
         return raidal(circle,center.x,center.y,slices,settings);
     }
     
     public static Button[] raidal(Circle circle, double centerX, double centerY, int slices, BiConsumer<Integer,Button> settings) {
-        Button[] buttons = new Button[Math.min(slices,4)];
-        circle.setResolution(slices);
-        CircleSlice[] sliceArray = circle.slice();
+        Button[] buttons = new Button[Math.max(slices,1)];
+        CircleSlice[] sliceArray = circle.slice(Math.max(slices,1));
         for(int i=0;i<sliceArray.length;i++) {
             final int index = i;
             buttons[i] = raidal(sliceArray[i],centerX,centerY,button -> settings.accept(index,button));

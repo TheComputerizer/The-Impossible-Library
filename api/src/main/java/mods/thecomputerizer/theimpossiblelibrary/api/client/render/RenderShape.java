@@ -56,7 +56,7 @@ public class RenderShape extends MutableWrapped<Shape> {
             Plane plane = (Plane)this.wrapped;
             if(Objects.nonNull(this.texture)) ctx.drawTexturedPlane(center,plane,this.texture);
             else ctx.drawColoredPlane(center,plane,this.color);
-        } else if(this.wrapped instanceof Circle) ctx.drawColoredCircle(center,(Circle)this.wrapped,100,this.color);
+        } else if(this.wrapped instanceof Circle) ctx.drawColoredCircle(center,(Circle)this.wrapped,this.color);
     }
     
     public Vector3d getCenterForGroup(Vector3d center) {

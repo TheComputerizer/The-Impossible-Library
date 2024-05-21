@@ -27,7 +27,7 @@ public abstract class KeyAPI<K> {
         K, L, M, N, O, P, Q, R, S, T,
         U, V, W, X, Y, Z }
 
-    public enum Function {
+    public enum FNKeys {
         F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
         F11, F12, F13, F14, F15, F16, F17, F18, F19, F20,
         F21, F22, F23, F24, F25

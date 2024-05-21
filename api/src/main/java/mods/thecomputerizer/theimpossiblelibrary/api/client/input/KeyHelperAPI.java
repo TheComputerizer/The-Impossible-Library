@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.input;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Function;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifier;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
@@ -19,7 +19,7 @@ public interface KeyHelperAPI<K> {
         return create(id,category,getKeyCode(actionKey));
     }
 
-    default KeyAPI<K> create(String id, String category, Function fnKey) {
+    default KeyAPI<K> create(String id, String category, FNKeys fnKey) {
         return create(id,category,getKeyCode(fnKey));
     }
 
@@ -34,7 +34,7 @@ public interface KeyHelperAPI<K> {
     KeyAPI<K> create(String id, String category, int keyCode);
     int getKeyCode(Action actionKey);
     int getKeyCode(AlphaNum alphaNumKey);
-    int getKeyCode(Function fnKey);
+    int getKeyCode(FNKeys fnKey);
     int getKeyCode(Modifier modKey);
     int getKeyCode(NumberPad numPadKey);
     int getKeyCode(Symbol symbolKey);

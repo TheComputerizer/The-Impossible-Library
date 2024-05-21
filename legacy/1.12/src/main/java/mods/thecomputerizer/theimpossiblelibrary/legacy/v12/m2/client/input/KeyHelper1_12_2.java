@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.input;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifier;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
 import net.minecraft.client.settings.KeyBinding;
@@ -94,7 +95,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
     }
 
     @Override
-    public int getKeyCode(KeyAPI.Function fnKey) {
+    public int getKeyCode(FNKeys fnKey) {
         switch(fnKey) {
             case F1: return KEY_F1;
             case F2: return KEY_F2;

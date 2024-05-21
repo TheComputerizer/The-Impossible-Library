@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.input;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Function;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifier;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
@@ -99,7 +99,7 @@ public class KeyHelper1_16_5 implements KeyHelperAPI<KeyBinding> {
     }
 
     @Override
-    public int getKeyCode(Function fnKey) {
+    public int getKeyCode(FNKeys fnKey) {
         switch(fnKey) {
             case F1: return GLFW_KEY_F1;
             case F2: return GLFW_KEY_F2;

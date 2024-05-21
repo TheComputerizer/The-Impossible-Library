@@ -23,17 +23,11 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     protected Collection<Widget> widgets;
     protected double scaleX;
     private double scaleY;
-    protected final boolean topLevel;
     
     protected WidgetGroup() {
-        this(false);
-    }
-    
-    protected WidgetGroup(boolean topLevel) {
         this.widgets = new ArrayList<>();
         this.scaleX = 1d;
         this.scaleY = 1d;
-        this.topLevel = topLevel;
     }
     
     public void addWidget(Widget widget) {
@@ -92,10 +86,10 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
             if(!drawn) widget.draw(ctx,widgetCenter,mouseX,mouseY);
             //padding+=(widget.getHeight()*1.05d);
         }
-        if(this.topLevel) {
-            Collection<TextAPI<?>> text = getHoverLines(mouseX, mouseY);
-            if(!text.isEmpty()) ctx.drawTooltip(text, mouseX, mouseY);
-        }
+    }
+    
+    @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+        draw(ctx,center,mouseX,mouseY);
     }
     
     protected void eachClickable(Consumer<Clickable> func) {
@@ -162,7 +156,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     @Override public boolean shouldDrawHovered() {
-        return false;
+        return checkEachHoverable(Hoverable::shouldDrawHovered);
     }
     
     protected void unapplyScale(RenderContext ctx) {

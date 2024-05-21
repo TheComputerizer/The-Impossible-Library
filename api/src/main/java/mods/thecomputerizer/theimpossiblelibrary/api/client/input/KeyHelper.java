@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.input;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Function;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifier;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class KeyHelper {
 
     public static int applyModifier(int keyCode, Modifier modifier) {
@@ -29,7 +30,7 @@ public class KeyHelper {
         return Objects.nonNull(api) ? api.create(id,category,actionKey) : null;
     }
 
-    public static KeyAPI<?> create(String id, String category, Function fnKey) {
+    public static KeyAPI<?> create(String id, String category, FNKeys fnKey) {
         KeyHelperAPI<?> api = getAPI();
         return Objects.nonNull(api) ? api.create(id,category,fnKey) : null;
     }
@@ -63,7 +64,7 @@ public class KeyHelper {
         return Objects.nonNull(api) ? api.getKeyCode(alphaNumKey) : -1;
     }
 
-    public static int getKeyCode(Function fnKey) {
+    public static int getKeyCode(FNKeys fnKey) {
         KeyHelperAPI<?> api = getAPI();
         return Objects.nonNull(api) ? api.getKeyCode(fnKey) : -1;
     }

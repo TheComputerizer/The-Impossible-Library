@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle.CircleSlice;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape3D;
@@ -52,21 +51,18 @@ public final class RenderContext {
         for(Shape2D shape : box.getAs2DArray()) drawColoredPlane(box.center,(Plane)shape,color);
     }
     
-    public void drawColoredCircle(Vector3d center, Circle circle, int resolution, ColorCache color) {
-        circle.setResolution(resolution);
-        for(CircleSlice slice : circle.slice()) drawColoredCircle(center,slice,color);
-    }
-    
     public void drawColoredCircle(Vector3d center, Circle circle, ColorCache color) {
         if(isNotBounded(center)) return;
         VectorSupplier2D vectors = circle.getVectorSupplier();
-        prepareGradient(color);
-        VertexWrapper buffer = initQuads(false);
-        withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
-        withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
-        withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
-        withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
-        finishGradient(buffer);
+        while(vectors.hasNext()) {
+            prepareGradient(color);
+            VertexWrapper buffer = initQuads(false);
+            withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
+            withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
+            withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
+            withScaledPos(buffer,center,vectors.getNext()).color(color).endVertex();
+            finishGradient(buffer);
+        }
     }
     
     public void drawColoredPlane(Vector3d center, Plane plane, ColorCache color) {

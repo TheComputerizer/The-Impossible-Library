@@ -1,12 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector3d;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @Setter
 public class BasicWidgetGroup extends WidgetGroup {
@@ -69,14 +65,8 @@ public class BasicWidgetGroup extends WidgetGroup {
         this.height = height;
     }
     
-    @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {}
-    
     @Override public double getHeight() {
         return this.height;
-    }
-    
-    @Override public Collection<TextAPI<?>> getHoverLines(double x, double y) {
-        return Collections.emptyList();
     }
     
     @Override public double getWidth() {
