@@ -11,6 +11,7 @@ import net.minecraftforge.client.event.RenderTooltipEvent.PostBackground;
 import net.minecraftforge.client.event.RenderTooltipEvent.PostText;
 import net.minecraftforge.client.event.RenderTooltipEvent.Pre;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,18 +61,21 @@ public class Font1_12_2 implements FontAPI {
     @Override
     public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
         List<String> textLines = new ArrayList<>();
-        for(TextAPI<?> text : lines) textLines.add(text.getApplied());
+        for(TextAPI<?> text : lines) {
+            String asLine = text.getApplied();
+            if(StringUtils.isNotBlank(asLine)) textLines.add(asLine);
+        }
         if(!textLines.isEmpty()) {
-            Pre event = new Pre(EMPTY,textLines,x,y,width,height,maxWidth,this.font);
+            FontRenderer font = getFont();
+            Pre event = new Pre(EMPTY,textLines,x,y,width,height,maxWidth,font);
             if(EVENT_BUS.post(event)) return;
             x = event.getX();
             y = event.getY();
-            this.font = event.getFontRenderer();
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableDepth();
             int tooltipTextWidth = 0;
             for(String textLine : textLines) {
-                int textLineWidth = this.font.getStringWidth(textLine);
+                int textLineWidth = font.getStringWidth(textLine);
                 if(textLineWidth>tooltipTextWidth) tooltipTextWidth = textLineWidth;
             }
             boolean needsWrap = false;
@@ -90,10 +94,10 @@ public class Font1_12_2 implements FontAPI {
                 List<String> wrappedTextLines = new ArrayList<>();
                 for(int i = 0;i<textLines.size();i++) {
                     String textLine = textLines.get(i);
-                    List<String> wrappedLine = this.font.listFormattedStringToWidth(textLine,tooltipTextWidth);
+                    List<String> wrappedLine = font.listFormattedStringToWidth(textLine,tooltipTextWidth);
                     if(i==0) titleLinesCount = wrappedLine.size();
                     for(String line : wrappedLine) {
-                        int lineWidth = this.font.getStringWidth(line);
+                        int lineWidth = font.getStringWidth(line);
                         if(lineWidth>wrappedTooltipWidth) wrappedTooltipWidth = lineWidth;
                         wrappedTextLines.add(line);
                     }
@@ -115,7 +119,7 @@ public class Font1_12_2 implements FontAPI {
             int backgroundColor = 0xF0100010;
             int borderColorStart = 0x505000FF;
             int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
-            Color colorEvent = new Color(EMPTY,textLines,tooltipX,tooltipY,this.font,backgroundColor,borderColorStart,
+            Color colorEvent = new Color(EMPTY,textLines,tooltipX,tooltipY,font,backgroundColor,borderColorStart,
                                          borderColorEnd);
             EVENT_BUS.post(colorEvent);
             backgroundColor = colorEvent.getBackground();
@@ -139,15 +143,15 @@ public class Font1_12_2 implements FontAPI {
                                   tooltipY-3+1,borderColorStart,borderColorStart);
             renderTooltipGradient(zLevel,tooltipX-3,tooltipY+tooltipHeight+2,tooltipX+tooltipTextWidth+3,
                                   tooltipY+tooltipHeight+3,borderColorEnd,borderColorEnd);
-            EVENT_BUS.post(new PostBackground(EMPTY,textLines,tooltipX,tooltipY,this.font,tooltipTextWidth,tooltipHeight));
+            EVENT_BUS.post(new PostBackground(EMPTY,textLines,tooltipX,tooltipY,font,tooltipTextWidth,tooltipHeight));
             int tooltipTop = tooltipY;
             for(int lineNumber = 0;lineNumber<textLines.size(); lineNumber++) {
                 String line = textLines.get(lineNumber);
-                this.font.drawStringWithShadow(line,(float)tooltipX,(float)tooltipY,-1);
+                font.drawStringWithShadow(line,(float)tooltipX,(float)tooltipY,-1);
                 if(lineNumber+1==titleLinesCount) tooltipY+=2;
                 tooltipY+=10;
             }
-            EVENT_BUS.post(new PostText(EMPTY,textLines,tooltipX,tooltipTop,this.font,tooltipTextWidth,tooltipHeight));
+            EVENT_BUS.post(new PostText(EMPTY,textLines,tooltipX,tooltipTop,font,tooltipTextWidth,tooltipHeight));
             GlStateManager.enableDepth();
             GlStateManager.enableRescaleNormal();
         }

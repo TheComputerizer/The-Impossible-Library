@@ -10,12 +10,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderableTex
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.*;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.R;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.L;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 @SuppressWarnings("unused")
 public class ClientTests {
 
-    public static KeyAPI<?> TEST_KEY = KeyHelper.create("key.test","key.categories.theimpossiblelibrary",R);
+    public static final KeyAPI<?> TEST_KEY = KeyHelper.create("key.test",String.format("key.categories.%1$s",MODID),L);
 
     public static void runTests() {
         TILRef.logWarn("Running client tests");

@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.zero2D;
+import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_180;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper.RADIANS_360;
 
 @SuppressWarnings("unused") @Getter
@@ -121,12 +122,17 @@ public class Circle extends Shape2D {
     }
     
     public CircleSlice[] slice(int numSlices) {
+        return slice(numSlices,0d);
+    }
+    
+    public CircleSlice[] slice(int numSlices, double startAngle) {
+        while(startAngle>RADIANS_180) startAngle-=RADIANS_360;
         numSlices = Math.max(numSlices,1);
         double sliceWidth = RADIANS_360/(double)numSlices;
         CircleSlice[] slices = new CircleSlice[numSlices];
         for(int i=0;i<numSlices;i++)
             slices[i] = new CircleSlice(new Vector3d(this.direction),this.radius,this.innerRadius,this.heightRatio,
-                                        sliceWidth*i,sliceWidth*(i+1));
+                                        startAngle+(sliceWidth*i),startAngle+(sliceWidth*(i+1)));
         return slices;
     }
     

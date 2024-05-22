@@ -96,22 +96,28 @@ public class Button extends WidgetGroup {
     
     public static WidgetGroup raidalGroup(Circle circle, Vector2d center, int slices,
             BiConsumer<Integer,Button> settings) {
-        return BasicWidgetGroup.from(raidal(circle,center,slices,settings));
+        return BasicWidgetGroup.from(raidal(circle,center,slices,0d,settings));
     }
     
-    public static WidgetGroup raidalGroup(Circle circle, double centerX, double centerY, int slices,
+    public static WidgetGroup raidalGroup(Circle circle, Vector2d center, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
-        return BasicWidgetGroup.from(raidal(circle,centerX,centerY,slices,settings));
+        return BasicWidgetGroup.from(raidal(circle,center,slices,startAngle,settings));
     }
     
-    public static Button[] raidal(Circle circle, Vector2d center, int slices,
+    public static WidgetGroup raidalGroup(Circle circle, double centerX, double centerY, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
-        return raidal(circle,center.x,center.y,slices,settings);
+        return BasicWidgetGroup.from(raidal(circle,centerX,centerY,slices,startAngle,settings));
     }
     
-    public static Button[] raidal(Circle circle, double centerX, double centerY, int slices, BiConsumer<Integer,Button> settings) {
+    public static Button[] raidal(Circle circle, Vector2d center, int slices, double startAngle,
+            BiConsumer<Integer,Button> settings) {
+        return raidal(circle,center.x,center.y,slices,startAngle,settings);
+    }
+    
+    public static Button[] raidal(Circle circle, double centerX, double centerY, int slices, double startAngle,
+            BiConsumer<Integer,Button> settings) {
         Button[] buttons = new Button[Math.max(slices,1)];
-        CircleSlice[] sliceArray = circle.slice(Math.max(slices,1));
+        CircleSlice[] sliceArray = circle.slice(Math.max(slices,1),startAngle);
         for(int i=0;i<sliceArray.length;i++) {
             final int index = i;
             buttons[i] = raidal(sliceArray[i],centerX,centerY,button -> settings.accept(index,button));

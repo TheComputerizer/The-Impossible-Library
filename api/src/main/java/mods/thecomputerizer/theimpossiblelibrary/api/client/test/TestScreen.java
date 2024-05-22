@@ -60,7 +60,7 @@ public class TestScreen extends ScreenAPI {
     
     private void addRadialMenu(double heightRatio, int slices) {
         Circle circle = ShapeHelper.circle(Y,0.65d,0.35d,heightRatio);
-        WidgetGroup radialMenu = Button.raidalGroup(circle,0d,0d,slices,(i,button) -> {
+        WidgetGroup radialMenu = Button.raidalGroup(circle,0d,0d,slices,0d,(i,button) -> {
             button.getShape().setColor(BLACK);
             Widget texture = ShapeWidget.from(ShapeHelper.square(Y,0.25d,heightRatio),TILRef.res("test/logo.png"));
             Vector3d pos = button.getShape().getCenterForGroup(VectorHelper.zero3D());
