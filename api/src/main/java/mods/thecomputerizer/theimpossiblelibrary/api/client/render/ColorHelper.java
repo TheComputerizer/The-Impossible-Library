@@ -135,18 +135,30 @@ public class ColorHelper {
     public static int makeRGBAInt(int r, int g, int b, int a) {
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
     }
+    
+    public static ColorCache reverse(ColorCache color) {
+        return new ColorCache(reverse(color.getColorVF()));
+    }
+    
+    public static ColorCache reverse(ColorCache color, float alpha) {
+        return reverse(color).withAlpha(alpha);
+    }
+    
+    public static ColorCache reverse(ColorCache color, int alpha) {
+        return reverse(color).withAlpha(alpha);
+    }
 
     /**
      * Reverses a color vector
      */
-    public static Vector4f reverseColors(Vector4f colors) {
+    public static Vector4f reverse(Vector4f colors) {
         return new Vector4f(Math.abs(colors.x()-1f),Math.abs(colors.y()-1f),Math.abs(colors.z()-1f),colors.w());
     }
 
     /**
      * Reverses a color vector
      */
-    public static Vector4i reverseColors(Vector4i colors) {
+    public static Vector4i reverse(Vector4i colors) {
         return new Vector4i(Math.abs(colors.x()-255),Math.abs(colors.y()-255),Math.abs(colors.z()-255),colors.w());
     }
 

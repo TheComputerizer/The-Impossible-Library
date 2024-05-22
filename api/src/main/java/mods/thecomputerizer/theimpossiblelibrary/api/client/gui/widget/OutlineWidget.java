@@ -40,4 +40,11 @@ public class OutlineWidget extends ShapeWidget {
     public OutlineWidget(RenderShapeOutline shape, double x, double y) {
         super(shape,x,y);
     }
+    
+    @Override public OutlineWidget copy() {
+        OutlineWidget copy = new OutlineWidget((RenderShapeOutline)this.shape,this.x,this.y);
+        copy.height = this.height;
+        copy.width = this.width;
+        return copy;
+    }
 }

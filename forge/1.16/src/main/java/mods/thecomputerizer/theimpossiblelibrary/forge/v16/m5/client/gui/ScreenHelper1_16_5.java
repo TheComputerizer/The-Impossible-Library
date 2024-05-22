@@ -10,6 +10,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 public class ScreenHelper1_16_5 implements ScreenHelperAPI {
     
     private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation("textures/gui/widgets.png");
@@ -31,8 +34,10 @@ public class ScreenHelper1_16_5 implements ScreenHelperAPI {
         return disabled ? this.disabledButton : (hover ? this.hoveredButton : this.normalButton);
     }
     
-    @Override public void open(ScreenAPI screen) {
-        Minecraft.getInstance().setScreen(new ScreenWrapper1_16_5(screen));
+    @Override public void open(@Nullable ScreenAPI screen) {
+        Minecraft mc = Minecraft.getInstance();
+        if(Objects.isNull(screen)) mc.setScreen(null);
+        else mc.setScreen(new ScreenWrapper1_16_5(screen));
     }
     
     @Override public void playVanillaClickSound() {

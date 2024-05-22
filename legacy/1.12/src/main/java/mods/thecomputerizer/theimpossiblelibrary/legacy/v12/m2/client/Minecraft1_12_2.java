@@ -66,7 +66,11 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     public FontAPI getFont() {
         return this.font;
     }
-
+    
+    @Override public int getGUIScale() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.gameSettings) ? this.mc.gameSettings.guiScale : 0;
+    }
+    
     @Override
     public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
         return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_12_2(this.mc.player) : null;
@@ -91,8 +95,11 @@ public class Minecraft1_12_2 implements MinecraftAPI {
      */
     @Override
     public MinecraftWindow getWindow() {
-        if(Objects.isNull(this.mc)) return null;
-        ScaledResolution res = new ScaledResolution(this.mc);
+        ScaledResolution res = Objects.nonNull(this.mc) ? new ScaledResolution(this.mc) : null;
+        if(Objects.isNull(res)) {
+            TILRef.logFatal("Unable to get MinecraftWidnow since the Minecraft is null?");
+            return new MinecraftWindow(1d,1d,0);
+        }
         return new MinecraftWindow(res.getScaledWidth(),res.getScaledHeight(),res.getScaleFactor());
     }
 
@@ -103,7 +110,7 @@ public class Minecraft1_12_2 implements MinecraftAPI {
 
     @Override
     public <S> boolean isCurrentScreen(S screen) {
-        return Objects.nonNull(this.mc) && screen==this.mc.currentScreen;
+        return Objects.nonNull(this.mc) && this.mc.currentScreen==screen;
     }
 
     @Override
@@ -113,7 +120,10 @@ public class Minecraft1_12_2 implements MinecraftAPI {
 
     @Override
     public boolean isDisplayFocused() {
-        if(Objects.isNull(this.mc)) return false;
+        if(Objects.isNull(this.mc)) {
+            TILRef.logError("Unable to determine display focus state for null Minecraft instance");
+            return false;
+        }
         try {
             return this.mc.addScheduledTask(() -> Display.isCreated() && Display.isActive()).get();
         } catch(ExecutionException | InterruptedException ex) {
@@ -142,7 +152,4 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     public boolean isPaused() {
         return Objects.nonNull(this.mc) && this.mc.isGamePaused();
     }
-
-    @Override
-    public <S> void setScreen(@Nullable S screen) {}
 }

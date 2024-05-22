@@ -55,21 +55,18 @@ public class BasicWidgetGroup extends WidgetGroup {
         return basic;
     }
     
-    protected double width;
-    protected double height;
-    
     public BasicWidgetGroup(double x, double y, double width, double height) {
-        this.x = x;
-        this.y = y;
+        setX(x);
+        setY(y);
         this.width = width;
         this.height = height;
     }
     
-    @Override public double getHeight() {
-        return this.height;
-    }
-    
-    @Override public double getWidth() {
-        return this.width;
+    @Override public BasicWidgetGroup copy() {
+        BasicWidgetGroup copy = new BasicWidgetGroup(this.x,this.y,this.width,this.height);
+        for(Widget widget : this.widgets) copy.addWidget(widget.copy());
+        copy.scaleX = this.scaleX;
+        copy.scaleY = this.scaleY;
+        return copy;
     }
 }

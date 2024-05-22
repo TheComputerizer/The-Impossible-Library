@@ -9,6 +9,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 public class ScreenHelper1_12_2 implements ScreenHelperAPI {
     
     private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation("textures/gui/widgets.png");
@@ -30,8 +33,10 @@ public class ScreenHelper1_12_2 implements ScreenHelperAPI {
         return disabled ? this.disabledButton : (hover ? this.hoveredButton : this.normalButton);
     }
     
-    @Override public void open(ScreenAPI screen) {
-        Minecraft.getMinecraft().displayGuiScreen(new ScreenWrapper1_12_2(screen));
+    @Override public void open(@Nullable ScreenAPI screen) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(Objects.isNull(screen)) mc.setIngameFocus();
+        else mc.displayGuiScreen(new ScreenWrapper1_12_2(screen));
     }
     
     @Override public void playVanillaClickSound() {

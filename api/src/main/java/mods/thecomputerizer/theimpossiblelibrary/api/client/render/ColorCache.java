@@ -64,6 +64,22 @@ public class ColorCache {
         return new Vector4i(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
     }
     
+    public float r() {
+        return this.colorVF.x;
+    }
+    
+    public float g() {
+        return this.colorVF.y;
+    }
+    
+    public float b() {
+        return this.colorVF.z;
+    }
+    
+    public float a() {
+        return this.colorVF.w;
+    }
+    
     public ColorCache withAlpha(int alpha) {
         return new ColorCache(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
     }

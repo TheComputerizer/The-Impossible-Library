@@ -17,6 +17,7 @@ public interface MinecraftAPI {
 
     void addResourcePackFolder(File dir);
     FontAPI getFont();
+    int getGUIScale();
     @Nullable PlayerAPI<?,?> getPlayer();
     RenderAPI getRenderer();
     MinecraftWindow getWindow();
@@ -63,6 +64,4 @@ public interface MinecraftAPI {
         PlayerAPI<?,?> player = getPlayer();
         if(Objects.nonNull(player)) player.sendStatusMessage(text,actionBar);
     }
-
-    <S> void setScreen(@Nullable S screen);
 }

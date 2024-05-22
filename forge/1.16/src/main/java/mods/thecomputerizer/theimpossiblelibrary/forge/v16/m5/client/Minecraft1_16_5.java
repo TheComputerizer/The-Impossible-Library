@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.entity.ClientPlayer1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.font.Font1_16_5;
@@ -45,7 +46,11 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     public FontAPI getFont() {
         return this.font;
     }
-
+    
+    @Override public int getGUIScale() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.options) ? this.mc.options.guiScale : 0;
+    }
+    
     @Override
     public @Nullable PlayerAPI<ClientPlayerEntity,EntityType<?>> getPlayer() {
         return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_16_5(this.mc.player) : null;
@@ -61,7 +66,11 @@ public class Minecraft1_16_5 implements MinecraftAPI {
      */
     @Override
     public MinecraftWindow getWindow() {
-        MainWindow window = this.mc.getWindow();
+        MainWindow window = Objects.nonNull(this.mc) ? this.mc.getWindow() : null;
+        if(Objects.isNull(window)) {
+            TILRef.logFatal("Unable to get MinecraftWidnow since the Minecraft main window is null?");
+            return new MinecraftWindow(1d,1d,0);
+        }
         return new MinecraftWindow(window.getGuiScaledWidth(),window.getGuiScaledHeight(),(int)window.getGuiScale());
     }
 
@@ -72,7 +81,7 @@ public class Minecraft1_16_5 implements MinecraftAPI {
 
     @Override
     public <S> boolean isCurrentScreen(S screen) {
-        return screen==this.mc.screen;
+        return Objects.nonNull(this.mc) && this.mc.screen==screen;
     }
 
     @Override
@@ -104,7 +113,4 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     public boolean isPaused() {
         return Objects.nonNull(this.mc) && this.mc.isPaused();
     }
-
-    @Override
-    public <S> void setScreen(@Nullable S screen) {}
 }

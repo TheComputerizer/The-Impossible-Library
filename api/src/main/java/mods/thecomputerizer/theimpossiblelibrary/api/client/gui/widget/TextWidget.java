@@ -4,6 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
@@ -95,29 +96,35 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     
     @Getter private ColorCache color;
     private TextBuffer text;
-    private RenderContext ctx;
     
     public TextWidget(TextBuffer text, ColorCache color, double x, double y) {
         this.color = color;
         this.text = text;
-        this.x = MathHelper.clamp(x,-1d,1d);
-        this.y = MathHelper.clamp(y,-1d,1d);
+        setX(MathHelper.clamp(x,-1d,1d));
+        setY(MathHelper.clamp(y,-1d,1d));
+    }
+    
+    @Override public TextWidget copy() {
+        TextWidget copy = new TextWidget(this.text,this.color,this.x,this.y);
+        copy.height = this.height;
+        copy.width = this.width;
+        return copy;
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        if(Objects.nonNull(this.text)) {
-            this.ctx = ctx;
+        if(Objects.nonNull(this.text))
             ctx.drawText(center.add(0d,getHeight()/2d,0d,new Vector3d()),this.text,this.color);
-        }
     }
     
     @Override public double getHeight() {
-        return Objects.nonNull(this.ctx) ? this.ctx.getScaledFontHeight() : 0d;
+        RenderContext ctx = RenderHelper.getContext();
+        return Objects.nonNull(ctx) ? ctx.getScaledFontHeight() : 0d;
     }
     
     @Override public double getWidth() {
-        return Objects.nonNull(this.ctx) && Objects.nonNull(this.text) ?
-                this.ctx.getScaledStringWidth(this.text.getText().getApplied()) : 0d;
+        RenderContext ctx = RenderHelper.getContext();
+        return Objects.nonNull(ctx) && Objects.nonNull(this.text) ?
+                ctx.getScaledStringWidth(this.text.getText().getApplied()) : 0d;
     }
     
     @Override public TextBuffer getWrapped() {

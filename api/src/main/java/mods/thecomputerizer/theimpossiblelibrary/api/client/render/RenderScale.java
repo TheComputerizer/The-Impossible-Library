@@ -34,14 +34,14 @@ public final class RenderScale {
     }
     
     double applyX(double centerX, double x) {
-        x = Math.max(this.renderBounds.min.x,Math.min(x,this.renderBounds.max.x));
-        x = ((x*this.modScaleX)+centerX+this.transformX+1d)/this.scaleX;
+        x = Math.max(this.renderBounds.min.x,Math.min(centerX+x,this.renderBounds.max.x));
+        x = ((x*this.modScaleX)+this.transformX+1d)/this.scaleX;
         return x;
     }
     
     double applyY(double centerY, double y) {
-        y = Math.max(this.renderBounds.min.y,Math.min(y,this.renderBounds.max.y));
-        y = this.height-(((y*this.modScaleY)+centerY+this.transformY+1d)/this.scaleY);
+        y = Math.max(this.renderBounds.min.y,Math.min(centerY+y,this.renderBounds.max.y));
+        y = this.height-(((y*this.modScaleY)+this.transformY+1d)/this.scaleY);
         return y;
     }
     

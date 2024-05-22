@@ -30,7 +30,7 @@ public class RenderShapeOutline extends RenderShape {
     }
     
     public void draw(RenderContext ctx, Vector3d center) {
-        if(this.wrapped instanceof Shape2D) ctx.drawOutline((Shape2D)this.wrapped,this.lineWidth,this.color);
-        else if(this.wrapped instanceof Shape3D) ctx.drawOutline((Shape3D)this.wrapped,this.lineWidth,this.color);
+        if(this.wrapped instanceof Shape2D) ctx.drawOutline(center,(Shape2D)this.wrapped,this.lineWidth,this.color);
+        else if(this.wrapped instanceof Shape3D) ctx.drawOutline(center,(Shape3D)this.wrapped,this.lineWidth,this.color);
     }
 }

@@ -3,6 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
@@ -22,10 +24,11 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.RED;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
 @SuppressWarnings({"unused","UnusedReturnValue"})
-public class Button extends BoundedWidgetGroup {
+public class Button extends WidgetGroup {
     
     public static Button basic(TextAPI<?> text, TextAPI<?> ... hoverLines) {
         return basic(0d, 0d, text,Arrays.asList(hoverLines));
@@ -55,6 +58,38 @@ public class Button extends BoundedWidgetGroup {
         ShapeWidget hoverTex = ShapeWidget.from(shape,ScreenHelper.getVanillaButtonTexture(true,false),centerX,centerY);
         Widget hover = BasicWidgetGroup.from(hoverTex,textWidget,ShapeWidget.outlineFrom(shape,2f,centerX,centerY));
         Button button = new Button(texture,TextWidget.from(text),hover);
+        button.hoverLines.addAll(hoverLines);
+        return button;
+    }
+    
+    public static Button colored(ColorCache color, TextAPI<?> text, TextAPI<?> ... hoverLines) {
+        return colored(0d,0d,color,text,Arrays.asList(hoverLines));
+    }
+    
+    public static Button colored(ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
+        return colored(0d,0d,color,text,hoverLines);
+    }
+    
+    public static Button colored(Vector2d center, ColorCache color, TextAPI<?> text, TextAPI<?> ... hoverLines) {
+        return colored(center.x,center.y,color,text,Arrays.asList(hoverLines));
+    }
+    
+    public static Button colored(Vector2d center, ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
+        return colored(center.x,center.y,color,text,hoverLines);
+    }
+    
+    public static Button colored(double centerX, double centerY, ColorCache color, TextAPI<?> text, TextAPI<?> ... hoverLines) {
+        return colored(centerX,centerY,color,text,Arrays.asList(hoverLines));
+    }
+    
+    public static Button colored(double centerX, double centerY, ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
+        double heightRatio = RenderHelper.getCurrentHeightRatio()*10d; //Vanilla buttons are 200x20
+        Square shape = ShapeHelper.square(Y,0.25,heightRatio);
+        ShapeWidget colorWidget = ShapeWidget.from(shape,color,centerX,centerY);
+        TextWidget textWidget = TextWidget.from(text);
+        ShapeWidget hoverColor = ShapeWidget.from(shape,ColorHelper.reverse(color,color.a()),centerX,centerY);
+        Widget hover = BasicWidgetGroup.from(hoverColor,textWidget,ShapeWidget.outlineFrom(shape,RED,2f,centerX,centerY));
+        Button button = new Button(colorWidget,TextWidget.from(text),hover);
         button.hoverLines.addAll(hoverLines);
         return button;
     }
@@ -101,14 +136,35 @@ public class Button extends BoundedWidgetGroup {
     @Getter protected Consumer<Button> clickFunc;
     
     public Button(@Nullable ShapeWidget shape, @Nullable TextWidget text, @Nullable Widget hover) {
+        this(shape,text,hover,Objects.nonNull(shape) ? shape.x : 0d,Objects.nonNull(shape) ? shape.y : 0d);
+    }
+    
+    private Button(@Nullable ShapeWidget shape, @Nullable TextWidget text, @Nullable Widget hover, double x, double y) {
         this.shape = shape;
         this.text = text;
         this.hover = hover;
-        this.x = Objects.nonNull(shape) ? shape.x : 0d;
-        this.y = Objects.nonNull(shape) ? shape.y : 0d;
+        setX(x);
+        setY(y);
         this.hoverLines = new ArrayList<>();
         if(Objects.nonNull(shape)) this.widgets.add(shape);
         if(Objects.nonNull(text)) this.widgets.add(text);
+        if(Objects.nonNull(hover)) hover.setParent(this);
+    }
+    
+    @Override public Button copy() {
+        Button copy = new Button(Objects.nonNull(this.shape) ? this.shape.copy() : null,
+                                 Objects.nonNull(this.text) ? this.text.copy() : null,
+                                 Objects.nonNull(this.hover) ? this.hover.copy() : null,
+                                 this.x,this.y);
+        copy.addHoverLines(this.hoverLines);
+        for(Widget widget : this.widgets)
+            if(widget!=this.shape && widget!=this.text) copy.addWidget(widget.copy());
+        copy.clickFunc = this.clickFunc;
+        copy.height = this.height;
+        copy.scaleX = this.scaleX;
+        copy.scaleY = this.scaleY;
+        copy.width = this.width;
+        return copy;
     }
     
     @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
@@ -141,7 +197,7 @@ public class Button extends BoundedWidgetGroup {
     }
     
     @Override public boolean isHovering(double x, double y) {
-        return this.shape.isInside(x,y,0d);
+        return this.shape.isInside(x-this.x,y-this.y,0d);
     }
     
     /**
@@ -168,6 +224,23 @@ public class Button extends BoundedWidgetGroup {
     public Button setHoverLines(Collection<TextAPI<?>> text) {
         this.hoverLines = text;
         return this;
+    }
+    
+    public void setHoverText(Consumer<TextWidget> text) {
+        if(this.hover instanceof TextWidget) text.accept((TextWidget)this.hover);
+        else if(this.hover instanceof WidgetGroup)
+            for(Widget widget : ((WidgetGroup)this.hover).widgets)
+                if(widget instanceof TextWidget) text.accept((TextWidget)widget);
+    }
+    
+    public void setX(double x) {
+        super.setX(x);
+        //if(Objects.nonNull(this.hover)) this.hover.setX(x);
+    }
+    
+    public void setY(double y) {
+        super.setY(y);
+        //if(Objects.nonNull(this.hover)) this.hover.setY(y);
     }
     
     @Override public boolean shouldDrawHovered() {

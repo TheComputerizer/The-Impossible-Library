@@ -164,7 +164,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     }
 
     public boolean isInside(double x, double y, double z) {
-        return x>=this.min.x && x<=this.max.x && y>=this.min.y && y<=this.max.y && z>=this.min.z && z<=this.max.z;
+        return x>this.min.x && x<this.max.x && y>this.min.y && y<this.max.y && z>this.min.z && z<this.max.z;
     }
 
     /**

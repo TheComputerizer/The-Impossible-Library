@@ -117,8 +117,15 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     
     public ShapeWidget(RenderShape shape, double x, double y) {
         this.shape = shape;
-        this.x = MathHelper.clamp(x,-1d,1d);
-        this.y = MathHelper.clamp(y,-1d,1d);
+        setX(MathHelper.clamp(x,-1d,1d));
+        setY(MathHelper.clamp(y,-1d,1d));
+    }
+    
+    @Override public ShapeWidget copy() {
+        ShapeWidget copy = new ShapeWidget(this.shape,this.x,this.y);
+        copy.height = this.height;
+        copy.width = this.width;
+        return copy;
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {

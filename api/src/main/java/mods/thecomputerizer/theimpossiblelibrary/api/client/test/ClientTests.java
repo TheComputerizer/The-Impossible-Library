@@ -7,15 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderableText;
-import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.*;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum.R;
 
@@ -55,37 +48,6 @@ public class ClientTests {
 
     private static void guiTest() {
         TILDev.logWarn("GUI TEST");
-        ScreenHelper.open(new TestScreen());
-    }
-
-    private static void tomlTest() {
-        //test smart toml reading and printing
-        try {
-            Toml testHolder = Toml.readStream(ResourceHelper.getResourceStream(TILRef.res("test/thing.toml")));
-            testHolder.getTable("hello").getTable("next").removeTables("furtherbeyond");
-            testTableCreationAndOrdering(testHolder,testHolder.getTable("hello"),testHolder.getTable("hello").getTable("next"));
-            testHolder.getTable("hello").getTable("next").addEntry("lol",3.7);
-            List<String> lines = new ArrayList<>();
-            testHolder.write(lines,0);
-            FileHelper.writeLines(new File(TILRef.DATA_DIRECTORY,"test2.toml"),lines,false);
-        } catch(Exception ex) {
-            TILRef.logError("Toml test failed!",ex);
-        }
-    }
-
-    private static void testTableCreationAndOrdering(Toml testHolder, Toml testTable, Toml referenceTable)
-            throws TomlWritingException {
-        Toml song = testHolder.addTable("song",true);
-        Map<String,String> testMap = new HashMap<>();
-        testHolder.addEntry("first","test1");
-        testHolder.addEntry("second","test2");
-        testHolder.addEntry("third","test3");
-        testHolder.addEntry("fifth","test5");
-        //testHolder.addComment(song,Arrays.asList("c1","c2","c3"),new IndexFinder(song,vars.get(3)));
-        //testHolder.addEntry(song,"fourth","test44",new IndexFinder(song,vars.get(3)));
-    }
-
-    private static class GuiTests {
-
+        ScreenHelper.open(TestScreen::new);
     }
 }

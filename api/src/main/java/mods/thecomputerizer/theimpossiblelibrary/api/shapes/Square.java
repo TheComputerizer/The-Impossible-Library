@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -23,8 +22,6 @@ public class Square extends Plane {
     @Override public Square copy() {
         return getScaled(1d);
     }
-    
-    @Override protected void calculateSize() {}
     
     @Override public Square getScaled(double scale) {
         if(scale<=0) scale = 1d;
@@ -60,7 +57,6 @@ public class Square extends Plane {
         this.relativeMin = new Vector2d(-halfLenX,-halfLenY);
         this.worldMin = getWorldCoordinate(this.relativeMin);
         this.worldMax = getWorldCoordinate(this.relativeMax);
-        TILDev.logInfo("Set length of a square to {} and height ratio {} which puts the min at {} and the max at {}",
-                       length,heightRatio,this.relativeMin,this.relativeMax);
+        calculateSize();
     }
 }

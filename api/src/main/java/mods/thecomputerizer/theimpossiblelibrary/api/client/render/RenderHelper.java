@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.*;
 
@@ -30,11 +29,6 @@ public class RenderHelper {
     public static double getCurrentHeightRatio() {
         RenderContext ctx = RenderHelper.getContext();
         return Objects.nonNull(ctx) ? ctx.getHeightRatio() : 1d;
-    }
-
-    public static @Nullable RenderAPI getRenderer() {
-        MinecraftAPI mc = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
-        return Objects.nonNull(mc) ? mc.getRenderer() : null;
     }
 
     public static RenderablePNG initPNG(ResourceLocationAPI<?> source, Map<String,Object> parameters) {

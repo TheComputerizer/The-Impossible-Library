@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
@@ -14,10 +15,12 @@ import org.joml.Vector4d;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.LIGHT_PURPLE;
 
+@SuppressWarnings("unused")
 public class ScreenHelper {
 
     public static @Nullable ScreenHelperAPI getAPI() {
@@ -28,6 +31,10 @@ public class ScreenHelper {
         ScreenHelperAPI api = getAPI();
         return Objects.nonNull(api) ? api.getVanillaButtonTexture(hover,disabled) :
                 new TextureWrapper().setMask(LIGHT_PURPLE);
+    }
+    
+    public static void open(Function<Integer,ScreenAPI> withGuiScale) {
+        open(withGuiScale.apply(ClientHelper.getGuiScale()));
     }
     
     public static void open(ScreenAPI screen) {

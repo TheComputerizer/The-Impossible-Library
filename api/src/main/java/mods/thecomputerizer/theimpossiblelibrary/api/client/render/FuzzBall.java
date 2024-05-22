@@ -2,12 +2,13 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 
 import java.util.function.Supplier;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public class FuzzBall {
     
     private final Supplier<VectorSupplier2D> generator2D;
@@ -24,10 +25,10 @@ public class FuzzBall {
     }
     
     public void draw2D(RenderContext ctx) {
-        ctx.drawOutline(this.generator2D.get(),this.widthGenerator.get(),this.colorGenerator.get());
+        ctx.drawOutline(VectorHelper.zero3D(),this.generator2D.get(),this.widthGenerator.get(),this.colorGenerator.get());
     }
     
     public void draw3D(RenderContext ctx) {
-        ctx.drawOutline(this.generator3D.get(),this.widthGenerator.get(),this.colorGenerator.get());
+        ctx.drawOutline(VectorHelper.zero3D(),this.generator3D.get(),this.widthGenerator.get(),this.colorGenerator.get());
     }
 }

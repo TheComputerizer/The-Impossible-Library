@@ -85,16 +85,17 @@ public final class RenderContext {
         gl.directEnd();
     }
     
-    public void drawOutline(Shape2D shape, float width, ColorCache color) {
-        drawOutline(shape.getOutlineSupplier(),width,color);
+    public void drawOutline(Vector3d center, Shape2D shape, float width, ColorCache color) {
+        drawOutline(center,shape.getOutlineSupplier(),width,color);
     }
     
-    public void drawOutline(VectorSupplier2D vectors, float width, ColorCache color) {
+    public void drawOutline(Vector3d center, VectorSupplier2D vectors, float width, ColorCache color) {
         prepareGradient(color);
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
-            next = new Vector2d(this.scale.applyX(0d,next.x),this.scale.applyY(0d,next.y));
+            if(isNotBounded(center.add(next.x,next.y,0d,new Vector3d()))) continue;
+            next = new Vector2d(this.scale.applyX(center.x,next.x),this.scale.applyY(center.y,next.y));
             gl.directVertexD(next.x,next.y,0d);
         }
         gl.directEnd();
@@ -102,15 +103,18 @@ public final class RenderContext {
         this.renderer.disableBlend();
     }
     
-    public void drawOutline(Shape3D shape, float width, ColorCache color) {
-        drawOutline(shape.getOutlineSupplier(),width,color);
+    public void drawOutline(Vector3d center, Shape3D shape, float width, ColorCache color) {
+        drawOutline(center,shape.getOutlineSupplier(),width,color);
     }
     
-    public void drawOutline(VectorSupplier3D vectors, float width, ColorCache color) {
+    public void drawOutline(Vector3d center, VectorSupplier3D vectors, float width, ColorCache color) {
         prepareGradient(color);
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
+            if(isNotBounded(center.add(next.x,next.y,next.z,new Vector3d()))) continue;
+            next = new Vector3d(this.scale.applyX(center.x,next.x),this.scale.applyY(center.y,next.y),
+                                this.scale.applyZ(center.z,next.z));
             gl.directVertexD(next.x,next.y,next.z);
         }
         gl.directEnd();
@@ -123,6 +127,12 @@ public final class RenderContext {
     }
     
     public void drawText(Vector3d center, TextBuffer text, ColorCache color) {
+        double height = getScaledFontHeight()/2d;
+        double width = getScaledStringWidth(text.getText().getApplied())/1.75d;
+        if(isNotBounded(center) || //isNotBounded(center.add(0d,height,0d,new Vector3d())) ||
+           isNotBounded(center.add(0d,-height,0d,new Vector3d())) ||
+           isNotBounded(center.add(width,0d,0d,new Vector3d())) ||
+           isNotBounded(center.add(-width,0d,0d,new Vector3d()))) return;
         this.renderer.drawCenteredString(this.font,text,this.scale.applyX(0d,center.x),
                                          this.scale.applyY(0d,center.y),color);
     }
