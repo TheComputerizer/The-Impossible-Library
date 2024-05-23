@@ -88,7 +88,7 @@ public class Button extends WidgetGroup {
         ShapeWidget colorWidget = ShapeWidget.from(shape,color,centerX,centerY);
         TextWidget textWidget = TextWidget.from(text);
         ShapeWidget hoverColor = ShapeWidget.from(shape,ColorHelper.reverse(color,color.a()),centerX,centerY);
-        Widget hover = BasicWidgetGroup.from(hoverColor,textWidget,ShapeWidget.outlineFrom(shape,RED,2f,centerX,centerY));
+        Widget hover = BasicWidgetGroup.from(hoverColor,textWidget,ShapeWidget.outlineFrom(shape,RED,3f,centerX,centerY));
         Button button = new Button(colorWidget,TextWidget.from(text),hover);
         button.hoverLines.addAll(hoverLines);
         return button;

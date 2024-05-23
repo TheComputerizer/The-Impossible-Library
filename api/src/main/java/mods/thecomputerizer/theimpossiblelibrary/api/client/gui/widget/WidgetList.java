@@ -2,10 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
+import org.joml.Vector2d;
 import org.joml.Vector3d;
 
 import java.util.function.BiConsumer;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.GRAY;
 
 @SuppressWarnings("unused") @Getter @Setter
 public class WidgetList extends ScrollableWidgetGroup {
@@ -40,15 +46,21 @@ public class WidgetList extends ScrollableWidgetGroup {
         return list;
     }
     
+    protected final ShapeWidget scrollBar;
     protected Widget elementTemplate;
     protected double spacing;
     
     public WidgetList(Widget elementTemplate, double x, double y, double width, double height) {
+        this.scrollBar = ShapeWidget.from(ShapeHelper.plane(Axis.Y,new Vector2d(-0.01d,-height/2d),
+                                                            new Vector2d(0.01d,height/2d)),GRAY);
         this.elementTemplate = elementTemplate;
         this.height = height;
         this.width = width;
         setX(MathHelper.clamp(x,-1d,1d));
         setY(MathHelper.clamp(y,-1d,1d));
+        this.scrollBar.setParent(this);
+        this.scrollBar.setX(this.x+(this.width/2d)-(this.scrollBar.getWidth()/2d));
+        this.scrollBar.setY(this.y);
     }
     
     public void addWidgetFromTemplate(BiConsumer<Widget,Integer> settings) {
@@ -58,8 +70,15 @@ public class WidgetList extends ScrollableWidgetGroup {
     }
     
     @Override protected Vector3d calculatePosition(Widget widget, int index) {
-        return new Vector3d(0d, getElementsTop(0d)-getIndexHeight(index)-
-                                (this.elementTemplate.getHeight()/2d), 0d);
+        calculateScrollBar();
+        return new Vector3d(0d,getElementsTop(0d)-getIndexHeight(index)-this.spacing-
+                                (this.elementTemplate.getHeight()/2d),0d);
+    }
+    
+    protected void calculateScrollBar() {
+        double height = getHeight();
+        this.scrollBar.setHeight(Math.max(height,height*Math.min(1d,height/getElementsHeight())));
+        this.scrollBar.setY(getTop()-(this.scrollBar.getHeight()/2d));
     }
     
     @Override public WidgetList copy() {
@@ -72,8 +91,13 @@ public class WidgetList extends ScrollableWidgetGroup {
         return copy;
     }
     
+    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+        super.draw(ctx,center,mouseX,mouseY);
+        if(getElementsHeight()>getHeight()) this.scrollBar.draw(ctx,center,mouseX,mouseY);
+    }
+    
     @Override protected double getElementsHeight() {
-        return getIndexHeight(this.widgets.size());
+        return this.spacing+getIndexHeight(this.widgets.size());
     }
     
     public double getIndexHeight(int index) {
@@ -82,5 +106,32 @@ public class WidgetList extends ScrollableWidgetGroup {
     
     public double getTemplateHeight() {
         return this.elementTemplate.getHeight()+this.spacing;
+    }
+    
+    @Override
+    public boolean scrollDown(int scroll) {
+        if(super.scrollDown(scroll)) {
+            setScrollBarPos();
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean scrollUp(int scroll) {
+        if(super.scrollUp(scroll)) {
+            setScrollBarPos();
+            return true;
+        }
+        return false;
+    }
+    
+    protected void setScrollBarPos() {
+        double barHeight = this.scrollBar.getHeight();
+        double top = getTop()-(barHeight/2d);
+        double bottom = getBottom()+(barHeight/2d);
+        double totalScrollOffset = getElementsHeight()-getHeight();
+        double offset = ((totalScrollOffset-this.scrollOffset)/totalScrollOffset)*(top-bottom);
+        this.scrollBar.setY(bottom+offset);
     }
 }

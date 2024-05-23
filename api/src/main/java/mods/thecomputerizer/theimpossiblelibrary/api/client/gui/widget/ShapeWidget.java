@@ -160,6 +160,11 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
         this.shape.setColor(color);
     }
     
+    @Override public void setHeight(double height) {
+        this.height = height;
+        this.shape.setHeight(height);
+    }
+    
     public void setTexture(TextureWrapper texture) {
         this.shape.setTexture(texture);
     }

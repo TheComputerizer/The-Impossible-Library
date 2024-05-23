@@ -18,17 +18,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.BLACK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.BLUE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.LIGHT_PURPLE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
@@ -42,10 +40,11 @@ public class TestScreen extends ScreenAPI {
     public TestScreen(int guiScale) {
         super(TextHelper.getLiteral("test"),ClientHelper.getWindow(),guiScale);
         this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
-        addWidget(this.clicked);
+        addWidget(ShapeWidget.from(ShapeHelper.square(Y,2d,1d),BLACK.withAlpha(0.75f)));
         this.fuzz = addFuzz(5,10,1f,1f);
         //addRadialMenu(RenderHelper.getCurrentHeightRatio(),5);
         addScrollableMenu(100,1.8d,1.8d);
+        addWidget(this.clicked);
     }
     
     private @Nullable FuzzBall addFuzz(int minCount, int maxCount, float minWidth, float maxWidth) {
@@ -79,7 +78,7 @@ public class TestScreen extends ScreenAPI {
     }
     
     private void addScrollableMenu(int size, double width, double height) {
-        WidgetList list = WidgetList.from(Button.colored(BLACK,TextHelper.getLiteral("template")),0d,0d,width,height);
+        WidgetList list = WidgetList.from(Button.colored(BLACK,TextHelper.getLiteral("template")),0d,0d,width,height,0.05d);
         Square square = (Square)((Button)list.getElementTemplate()).getShape().getWrapped().getWrapped();
         square.setSideLength(square.getSideLength()*(((double)this.guiScale)+1d)/2d,square.getHeightRatio());
         for(int i=0;i<size;i++) {
@@ -91,6 +90,7 @@ public class TestScreen extends ScreenAPI {
                 button.setClickFunc(b -> this.clicked.setText(String.valueOf(index)));
             });
         }
+        addWidget(ShapeWidget.from(ShapeHelper.square(Y,1.8d,1d),LIGHT_PURPLE.withAlpha(0.5f)));
         addWidget(list);
         addWidget(ShapeWidget.outlineFrom(ShapeHelper.square(Y,1.8d,1d),WHITE,4f));
     }
@@ -98,11 +98,5 @@ public class TestScreen extends ScreenAPI {
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         this.fuzz.draw2D(ctx);
         super.draw(ctx,center,mouseX,mouseY);
-    }
-    
-    @Override public Collection<TextAPI<?>> getHoverLines(double x, double y) {
-        Collection<TextAPI<?>> lines = super.getHoverLines(x,y);
-        if(lines.isEmpty()) return Collections.singleton(TextHelper.getLiteral(String.format("(%1$2f, %2$2f)",x,y)));
-        return lines;
     }
 }

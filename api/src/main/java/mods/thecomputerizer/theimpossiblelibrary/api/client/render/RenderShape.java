@@ -90,9 +90,22 @@ public class RenderShape extends MutableWrapped<Shape> {
         return this;
     }
     
-    @Override
-    public RenderShape setWrapped(Shape shape) {
-        return (RenderShape)super.setWrapped(shape);
+    public void setHeight(double height) {
+        if(this.wrapped instanceof Plane) {
+            if(this.wrapped instanceof Square) {
+                Square square = (Square)this.wrapped;
+                square.setSideLength(height,square.getHeightRatio());
+            }
+            else {
+                Plane plane = (Plane)this.wrapped;
+                double hheight = height/2d;
+                plane.setRelativeMax(plane.getRelativeMax().x,hheight);
+                plane.setRelativeMin(plane.getRelativeMin().x,-hheight);
+            }
+        } else if(this.wrapped instanceof Circle) {
+            Circle circle = (Circle)this.wrapped;
+            circle.setRadius(height/2d);
+        }
     }
     
     public RenderShape setTexture(ResourceLocationAPI<?> texture) {
@@ -106,5 +119,28 @@ public class RenderShape extends MutableWrapped<Shape> {
     public RenderShape setTexture(TextureWrapper texture) {
         this.texture = texture;
         return this;
+    }
+    
+    public void setWidth(double width) {
+        if(this.wrapped instanceof Plane) {
+            if(this.wrapped instanceof Square) {
+                Square square = (Square)this.wrapped;
+                square.setSideLength(width,square.getHeightRatio());
+            }
+            else {
+                Plane plane = (Plane)this.wrapped;
+                double wwidth = width/2d;
+                plane.setRelativeMax(wwidth,plane.getRelativeMax().y);
+                plane.setRelativeMin(wwidth,plane.getRelativeMin().y);
+            }
+        } else if(this.wrapped instanceof Circle) {
+            Circle circle = (Circle)this.wrapped;
+            circle.setRadius(width/2d);
+        }
+    }
+    
+    @Override
+    public RenderShape setWrapped(Shape shape) {
+        return (RenderShape)super.setWrapped(shape);
     }
 }
