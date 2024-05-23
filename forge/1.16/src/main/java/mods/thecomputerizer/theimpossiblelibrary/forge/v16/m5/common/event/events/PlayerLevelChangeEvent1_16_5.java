@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange;
 
 public class PlayerLevelChangeEvent1_16_5 extends PlayerLevelChangeEventWrapper<LevelChange> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LevelChange event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LevelChange,Integer> wrapLevelsField() {
         return wrapGenericBoth(LevelChange::getLevels,LevelChange::setLevels,0);

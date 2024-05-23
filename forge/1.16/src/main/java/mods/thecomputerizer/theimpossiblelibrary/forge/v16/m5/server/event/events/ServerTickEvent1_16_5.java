@@ -10,6 +10,16 @@ import java.util.Objects;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.*;
 
 public class ServerTickEvent1_16_5 extends ServerTickEventWrapper<ServerTickEvent> {
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ServerTickEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected TickPhase wrapTickPhase() {

@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 
 public class FluidCreateSourceEvent1_16_5 extends FluidCreateSourceEventWrapper<CreateFluidSourceEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(CreateFluidSourceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<CreateFluidSourceEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(CreateFluidSourceEvent::getPos);

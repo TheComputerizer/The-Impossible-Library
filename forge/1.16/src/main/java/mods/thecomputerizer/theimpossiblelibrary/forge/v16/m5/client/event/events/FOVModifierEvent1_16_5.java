@@ -11,7 +11,17 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import javax.annotation.Nonnull;
 
 public class FOVModifierEvent1_16_5 extends FOVModifierEventWrapper<FOVModifier> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FOVModifier event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<FOVModifier,Float> wrapFOVField() {
         return wrapGenericBoth(event -> (float)event.getFOV(),(event,fov) -> event.setFOV(fov),0f);

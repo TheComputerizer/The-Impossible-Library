@@ -14,7 +14,17 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickEmpty
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 
 public class PlayerPunchEmptyEvent1_16_5 extends PlayerPunchEmptyEventWrapper<LeftClickEmpty> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LeftClickEmpty event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(LeftClickEmpty::getItemStack);

@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Pre;
 
 public class CropGrowPreEvent1_16_5 extends CropGrowPreEventWrapper<Pre> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Pre event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Pre,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(Pre::getPos);

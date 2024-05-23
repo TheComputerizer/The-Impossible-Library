@@ -14,6 +14,16 @@ public class LivingFallEvent1_12_2 extends LivingFallEventWrapper<LivingFallEven
     public static void onEvent(LivingFallEvent event) {
         LIVING_FALL.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingFallEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LivingFallEvent,Float> wrapDamageMultiplierField() {

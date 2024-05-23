@@ -11,7 +11,17 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import javax.annotation.Nonnull;
 
 public class CameraSetupEvent1_16_5 extends CameraSetupEventWrapper<CameraSetup> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(CameraSetup event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull CameraSetup event) {
         return ClientEvents1_16_5.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);

@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Dama
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 
 public class LootingLevelEvent1_16_5 extends LootingLevelEventWrapper<LootingLevelEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LootingLevelEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {
         return wrapGenericBoth(LootingLevelEvent::getLootingLevel,LootingLevelEvent::setLootingLevel,1);

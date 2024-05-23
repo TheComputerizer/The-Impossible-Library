@@ -8,6 +8,16 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public class RegisterBlockEntitiesEvent1_16_5 extends RegisterBlockEntitiesEventWrapper<Register<TileEntityType<?>>> {
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<TileEntityType<?>> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(BlockEntityAPI<?,?> entry) {
         this.event.getRegistry().register(((BlockEntity1_16_5)entry).getValue());
     }

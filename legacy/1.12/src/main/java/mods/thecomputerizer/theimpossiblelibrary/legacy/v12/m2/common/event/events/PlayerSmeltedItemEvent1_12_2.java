@@ -15,6 +15,16 @@ public class PlayerSmeltedItemEvent1_12_2 extends PlayerSmeltedItemEventWrapper<
     public static void onEvent(ItemSmeltedEvent event) {
         PLAYER_ITEM_SMELTED.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ItemSmeltedEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<ItemSmeltedEvent,ItemStackAPI<?>> wrapStackField() {

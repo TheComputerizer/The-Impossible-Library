@@ -8,6 +8,16 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public class RegisterBlocksEvent1_16_5 extends RegisterBlocksEventWrapper<Register<Block>> {
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<Block> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(BlockAPI<?> entry) {
         this.event.getRegistry().register(((Block1_16_5)entry).getValue());
     }

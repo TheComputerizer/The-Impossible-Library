@@ -8,6 +8,16 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public class RegisterSoundsEvent1_16_5 extends RegisterSoundsEventWrapper<Register<SoundEvent>> {
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<SoundEvent> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(SoundEventAPI<?> entry) {
         this.event.getRegistry().register(((SoundEvent1_16_5)entry).getValue());
     }

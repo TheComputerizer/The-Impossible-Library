@@ -14,6 +14,16 @@ public class WorldCreateSpawnPosEvent1_12_2 extends WorldCreateSpawnPosEventWrap
     public static void onEvent(CreateSpawnPosition event) {
         WORLD_CREATE_SPAWN_POS.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(CreateSpawnPosition event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<CreateSpawnPosition,WorldAPI<?>> wrapWorldField() {

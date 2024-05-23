@@ -11,7 +11,17 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
 import javax.annotation.Nonnull;
 
 public class FogRenderEvent1_16_5 extends FogRenderEventWrapper<RenderFogEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RenderFogEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull RenderFogEvent event) {
         return ClientEvents1_16_5.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);

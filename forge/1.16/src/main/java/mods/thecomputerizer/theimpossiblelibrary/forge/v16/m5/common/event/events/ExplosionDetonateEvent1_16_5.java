@@ -14,7 +14,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ExplosionDetonateEvent1_16_5 extends ExplosionDetonateEventWrapper<Detonate> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Detonate event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Detonate,List<EntityAPI<?,?>>> wrapAffectedEntitiesField() {
         return wrapGenericGetter(event -> event.getAffectedEntities().stream()

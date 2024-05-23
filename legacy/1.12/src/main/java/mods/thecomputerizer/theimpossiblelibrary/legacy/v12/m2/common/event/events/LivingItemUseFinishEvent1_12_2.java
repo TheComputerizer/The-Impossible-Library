@@ -15,6 +15,16 @@ public class LivingItemUseFinishEvent1_12_2 extends LivingItemUseFinishEventWrap
     public static void onEvent(Finish event) {
         LIVING_ITEM_USE_FINISH.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Finish event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Finish,Integer> wrapDurationField() {

@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.CropGrowEvent.Post;
 
 public class CropGrowPostEvent1_16_5 extends CropGrowPostEventWrapper<Post> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Post event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Post,BlockStateAPI<?>> wrapOriginalStateField() {
         return wrapStateGetter(Post::getOriginalState);

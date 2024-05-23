@@ -16,7 +16,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BlockPlaceMultiEvent1_16_5 extends BlockPlaceMultiEventWrapper<EntityMultiPlaceEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityMultiPlaceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<EntityMultiPlaceEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityMultiPlaceEvent::getEntity);

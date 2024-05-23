@@ -26,6 +26,16 @@ public class PlayerInteractBlockEvent1_12_2 extends PlayerInteractBlockEventWrap
     public static void onEvent(RightClickBlock event) {
         PLAYER_INTERACT_BLOCK.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RightClickBlock event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected ItemStackAPI<?> getStackInHand() {

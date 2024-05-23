@@ -17,6 +17,16 @@ public class BlockBreakEvent1_12_2 extends BlockBreakEventWrapper<BreakEvent> {
     public static void onEvent(BreakEvent event) {
         BLOCK_BREAK.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BreakEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<BreakEvent,Integer> wrapXPField() {

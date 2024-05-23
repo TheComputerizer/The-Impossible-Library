@@ -16,6 +16,16 @@ public class LivingHurtEvent1_12_2 extends LivingHurtEventWrapper<LivingHurtEven
     public static void onEvent(LivingHurtEvent event) {
         LIVING_HURT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingHurtEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     public void setAmount(float amount) {

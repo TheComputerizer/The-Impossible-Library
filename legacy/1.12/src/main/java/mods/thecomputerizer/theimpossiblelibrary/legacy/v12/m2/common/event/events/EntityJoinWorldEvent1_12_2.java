@@ -15,6 +15,16 @@ public class EntityJoinWorldEvent1_12_2 extends EntityJoinWorldEventWrapper<Enti
     public static void onEvent(EntityJoinWorldEvent event) {
         ENTITY_JOIN_WORLD.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityJoinWorldEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<EntityJoinWorldEvent,WorldAPI<?>> wrapWorld() {

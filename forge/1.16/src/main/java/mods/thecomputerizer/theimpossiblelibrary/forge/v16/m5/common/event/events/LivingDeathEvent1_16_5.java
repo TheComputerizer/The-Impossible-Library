@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Dama
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 public class LivingDeathEvent1_16_5 extends LivingDeathEventWrapper<LivingDeathEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingDeathEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LivingDeathEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_16_5(event.getSource(),1f),null);

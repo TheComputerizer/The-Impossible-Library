@@ -22,6 +22,16 @@ public class ExplosionDetonateEvent1_12_2 extends ExplosionDetonateEventWrapper<
     public static void onEvent(Detonate event) {
         EXPLOSION_DETONATE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Detonate event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Detonate,List<EntityAPI<?,?>>> wrapAffectedEntitiesField() {

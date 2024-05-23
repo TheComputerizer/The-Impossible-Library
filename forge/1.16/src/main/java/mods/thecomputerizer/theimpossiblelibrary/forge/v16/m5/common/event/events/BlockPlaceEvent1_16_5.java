@@ -10,7 +10,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 
 public class BlockPlaceEvent1_16_5 extends BlockPlaceEventWrapper<EntityPlaceEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityPlaceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<EntityPlaceEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityPlaceEvent::getEntity);

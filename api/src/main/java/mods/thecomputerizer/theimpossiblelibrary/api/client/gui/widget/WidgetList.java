@@ -77,7 +77,7 @@ public class WidgetList extends ScrollableWidgetGroup {
     
     protected void calculateScrollBar() {
         double height = getHeight();
-        this.scrollBar.setHeight(Math.max(height,height*Math.min(1d,height/getElementsHeight())));
+        this.scrollBar.setHeight(height*Math.min(1d,height/getElementsHeight()));
         this.scrollBar.setY(getTop()-(this.scrollBar.getHeight()/2d));
     }
     

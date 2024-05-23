@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 
 public class EntityStruckByLightningEvent1_16_5 extends EntityStruckByLightningEventWrapper<EntityStruckByLightningEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityStruckByLightningEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<EntityStruckByLightningEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityStruckByLightningEvent::getEntity);

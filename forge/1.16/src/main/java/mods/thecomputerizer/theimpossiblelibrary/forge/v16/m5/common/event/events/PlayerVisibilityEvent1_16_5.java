@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.Visibility;
 
 public class PlayerVisibilityEvent1_16_5 extends PlayerVisibilityEventWrapper<Visibility> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Visibility event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Visibility,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(Visibility::getPlayer);

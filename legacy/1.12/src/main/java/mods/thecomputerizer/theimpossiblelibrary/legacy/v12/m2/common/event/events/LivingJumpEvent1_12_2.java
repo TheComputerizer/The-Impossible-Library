@@ -14,6 +14,16 @@ public class LivingJumpEvent1_12_2 extends LivingJumpEventWrapper<LivingJumpEven
     public static void onEvent(LivingJumpEvent event) {
         LIVING_JUMP.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingJumpEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?,?>> wrapLivingField() {

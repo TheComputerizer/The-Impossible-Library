@@ -16,6 +16,16 @@ public class LivingDeathEvent1_12_2 extends LivingDeathEventWrapper<LivingDeathE
     public static void onEvent(LivingDeathEvent event) {
         LIVING_DEATH.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingDeathEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LivingDeathEvent,DamageAPI> wrapDamageField() {

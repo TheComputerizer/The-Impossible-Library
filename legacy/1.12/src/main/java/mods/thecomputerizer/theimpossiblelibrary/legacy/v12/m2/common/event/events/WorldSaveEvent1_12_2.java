@@ -14,6 +14,16 @@ public class WorldSaveEvent1_12_2 extends WorldSaveEventWrapper<Save> {
     public static void onEvent(Save event) {
         WORLD_SAVE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Save event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Save,WorldAPI<?>> wrapWorldField() {

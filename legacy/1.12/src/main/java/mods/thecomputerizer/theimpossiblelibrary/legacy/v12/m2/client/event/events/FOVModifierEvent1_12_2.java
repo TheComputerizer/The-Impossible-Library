@@ -19,6 +19,16 @@ public class FOVModifierEvent1_12_2 extends FOVModifierEventWrapper<FOVModifier>
     public static void onEvent(FOVModifier event) {
         FOV_MODIFIER.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FOVModifier event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<FOVModifier,Float> wrapFOVField() {

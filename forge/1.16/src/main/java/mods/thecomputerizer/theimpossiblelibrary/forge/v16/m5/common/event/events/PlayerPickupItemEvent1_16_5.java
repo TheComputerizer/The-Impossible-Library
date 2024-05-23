@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.ItemPickupEvent;
 
 public class PlayerPickupItemEvent1_16_5 extends PlayerPickupItemEventWrapper<ItemPickupEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ItemPickupEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(ItemPickupEvent::getOriginalEntity);

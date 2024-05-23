@@ -22,6 +22,16 @@ public class RegisterItemsEvent1_12_2 extends RegisterItemsEventWrapper<Register
         REGISTER_ITEMS.invoke(event);
     }
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<Item> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(ItemAPI<?> entry) {
         Item item = ((Item1_12_2)entry).getValue();
         this.event.getRegistry().register(item);

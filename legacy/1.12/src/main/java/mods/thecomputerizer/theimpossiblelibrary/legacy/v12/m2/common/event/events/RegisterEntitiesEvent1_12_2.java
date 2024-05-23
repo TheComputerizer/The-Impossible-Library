@@ -16,6 +16,16 @@ public class RegisterEntitiesEvent1_12_2 extends RegisterEntitiesEventWrapper<Re
         REGISTER_ENTITIES.invoke(event);
     }
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<EntityEntry> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(EntityAPI<?,?> entry) {
         this.event.getRegistry().register(((Entity1_12_2)entry).getValue());
     }

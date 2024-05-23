@@ -10,7 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemTooltipEvent1_16_5 extends ItemTooltipEventWrapper<ItemTooltipEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ItemTooltipEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(ItemTooltipEvent::getPlayer);

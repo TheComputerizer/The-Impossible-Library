@@ -5,5 +5,14 @@ import net.minecraft.client.audio.ISound;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 
 public class SoundSetupEvent1_16_5 extends SoundSetupEventWrapper<SoundSetupEvent,ISound> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(SoundSetupEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 }

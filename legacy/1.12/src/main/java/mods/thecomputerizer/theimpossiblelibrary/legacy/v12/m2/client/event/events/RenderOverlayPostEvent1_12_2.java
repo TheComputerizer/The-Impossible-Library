@@ -17,6 +17,16 @@ public class RenderOverlayPostEvent1_12_2 extends RenderOverlayPostEventWrapper<
     public static void onEvent(Post event) {
         RENDER_OVERLAY_POST.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Post event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull Post event) {

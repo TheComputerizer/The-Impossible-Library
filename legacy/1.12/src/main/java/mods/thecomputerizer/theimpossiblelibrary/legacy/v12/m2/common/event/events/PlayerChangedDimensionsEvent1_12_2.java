@@ -14,6 +14,16 @@ public class PlayerChangedDimensionsEvent1_12_2 extends PlayerChangedDimensionsE
     public static void onEvent(PlayerChangedDimensionEvent event) {
         PLAYER_CHANGED_DIMENSIONS.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayerChangedDimensionEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlayerChangedDimensionEvent,PlayerAPI<?,?>> wrapPlayerField() {

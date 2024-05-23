@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 
 public class LivingFallEvent1_16_5 extends LivingFallEventWrapper<LivingFallEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingFallEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LivingFallEvent,Float> wrapDamageMultiplierField() {
         return wrapGenericBoth(LivingFallEvent::getDamageMultiplier,LivingFallEvent::setDamageMultiplier,0f);

@@ -9,6 +9,16 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import java.util.Objects;
 
 public class PlaySoundEvent1_16_5 extends PlaySoundEventWrapper<PlaySoundEvent,ISound> {
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlaySoundEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlaySoundEvent,String> wrapNameField() {

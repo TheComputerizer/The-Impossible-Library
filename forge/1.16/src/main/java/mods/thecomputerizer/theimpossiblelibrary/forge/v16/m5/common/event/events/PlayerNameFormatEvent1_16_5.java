@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.TextString1_1
 import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
 
 public class PlayerNameFormatEvent1_16_5 extends PlayerNameFormatEventWrapper<NameFormat> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(NameFormat event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> event.getDisplayname().getString(),

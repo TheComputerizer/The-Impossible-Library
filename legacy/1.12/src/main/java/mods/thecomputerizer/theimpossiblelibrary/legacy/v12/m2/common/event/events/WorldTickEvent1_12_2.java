@@ -16,6 +16,16 @@ public class WorldTickEvent1_12_2 extends WorldTickEventWrapper<WorldTickEvent> 
     public static void onEvent(WorldTickEvent event) {
         TICK_WORLD.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(WorldTickEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected TickPhase wrapTickPhase() {

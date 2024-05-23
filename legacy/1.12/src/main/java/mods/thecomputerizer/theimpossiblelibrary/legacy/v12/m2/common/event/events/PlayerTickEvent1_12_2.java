@@ -16,6 +16,16 @@ public class PlayerTickEvent1_12_2 extends PlayerTickEventWrapper<PlayerTickEven
     public static void onEvent(PlayerTickEvent event) {
         TICK_PLAYER.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayerTickEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected TickPhase wrapTickPhase() {

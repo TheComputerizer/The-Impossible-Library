@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.HarvestCheck;
 
 public class PlayerCheckHarvestEvent1_16_5 extends PlayerCheckHarvestEventWrapper<HarvestCheck> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(HarvestCheck event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<HarvestCheck,Boolean> wrapSuccessField() {
         return wrapGenericBoth(HarvestCheck::canHarvest,HarvestCheck::setCanHarvest,false);

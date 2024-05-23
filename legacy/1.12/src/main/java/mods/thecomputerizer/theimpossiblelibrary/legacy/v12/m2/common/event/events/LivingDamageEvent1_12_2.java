@@ -16,6 +16,16 @@ public class LivingDamageEvent1_12_2 extends LivingDamageEventWrapper<LivingDama
     public static void onEvent(LivingDamageEvent event) {
         LIVING_DAMAGE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingDamageEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     public void setAmount(float amount) {

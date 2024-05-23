@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.FluidPlaceBlockEvent;
 
 public class FluidPlaceEvent1_16_5 extends FluidPlaceEventWrapper<FluidPlaceBlockEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FluidPlaceBlockEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<FluidPlaceBlockEvent,BlockPosAPI<?>> wrapFluidPosField() {
         return wrapPosGetter(FluidPlaceBlockEvent::getLiquidPos);

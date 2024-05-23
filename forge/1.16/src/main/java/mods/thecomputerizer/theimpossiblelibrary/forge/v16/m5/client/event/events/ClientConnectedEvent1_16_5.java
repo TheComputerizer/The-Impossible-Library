@@ -4,7 +4,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.ClientC
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
 
-public class ClientConnectedEvent1_16_5 extends ClientConnectedEventWrapper<LoggedInEvent> { //TODO
+public class ClientConnectedEvent1_16_5 extends ClientConnectedEventWrapper<LoggedInEvent> {
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LoggedInEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LoggedInEvent,Boolean> wrapLocalField() {

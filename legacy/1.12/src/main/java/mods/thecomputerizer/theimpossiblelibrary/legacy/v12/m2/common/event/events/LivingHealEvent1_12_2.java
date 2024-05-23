@@ -15,6 +15,16 @@ public class LivingHealEvent1_12_2 extends LivingHealEventWrapper<LivingHealEven
     public static void onEvent(LivingHealEvent event) {
         LIVING_HEAL.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingHealEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LivingHealEvent,Float> wrapAmountField() {

@@ -19,6 +19,16 @@ public class FogColorsEvent1_12_2 extends FogColorsEventWrapper<FogColors> {
     public static void onEvent(FogColors event) {
         FOG_COLORS.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FogColors event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull FogColors event) {

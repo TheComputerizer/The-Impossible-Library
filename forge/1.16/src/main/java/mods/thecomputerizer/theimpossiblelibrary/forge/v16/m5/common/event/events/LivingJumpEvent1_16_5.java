@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 
 public class LivingJumpEvent1_16_5 extends LivingJumpEventWrapper<LivingJumpEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingJumpEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingJumpEvent::getEntityLiving);

@@ -17,6 +17,16 @@ public class RenderOverlayBossEvent1_12_2 extends RenderOverlayBossEventWrapper<
     public static void onEvent(BossInfo event) {
         RENDER_OVERLAY_BOSS.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BossInfo event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull BossInfo event) {

@@ -4,14 +4,20 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderFuzz;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShapeOutline;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3d;
+
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused") @Setter
 public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
@@ -54,6 +60,74 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     
     public static ShapeWidget from(Shape shape, TextureWrapper texture, double x, double y) {
         return new ShapeWidget(RenderShape.from(shape,texture),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape) {
+        return of(RenderFuzz.from(shape));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, double x, double y) {
+        return of(RenderFuzz.from(shape),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int max) {
+        return of(RenderFuzz.from(shape,max));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int max, double x, double y) {
+        return of(RenderFuzz.from(shape,max),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, Vector2i counts) {
+        return of(RenderFuzz.from(shape,counts));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, Vector2i counts, double x, double y) {
+        return of(RenderFuzz.from(shape,counts),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int minCount, int maxCount) {
+        return of(RenderFuzz.from(shape,minCount,maxCount));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int minCount, int maxCount, double x, double y) {
+        return of(RenderFuzz.from(shape,minCount,maxCount),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths) {
+        return of(RenderFuzz.from(shape,counts,widths));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths, double x, double y) {
+        return of(RenderFuzz.from(shape,counts,widths),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int minCount, int maxCount, float minWidth, float maxWidth) {
+        return of(RenderFuzz.from(shape,minCount,maxCount,minWidth,maxWidth));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int minCount, int maxCount, float minWidth, float maxWidth, double x,
+            double y) {
+        return of(RenderFuzz.from(shape,minCount,maxCount,minWidth,maxWidth),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths, Supplier<ColorCache> color) {
+        return of(RenderFuzz.from(shape,counts,widths,color));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths, Supplier<ColorCache> color, double x,
+            double y) {
+        return of(RenderFuzz.from(shape,counts,widths,color),x,y);
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int minCount, int maxCount, float minWidth, float maxWidth,
+            Supplier<ColorCache> color) {
+        return of(RenderFuzz.from(shape,minCount,maxCount,minWidth,maxWidth,color));
+    }
+    
+    public static ShapeWidget fuzz(Shape shape, int minCount, int maxCount, float minWidth, float maxWidth,
+            Supplier<ColorCache> color, double x, double y) {
+        return of(RenderFuzz.from(shape,minCount,maxCount,minWidth,maxWidth,color),x,y);
     }
     
     public static ShapeWidget of(RenderShape shape) {
@@ -128,8 +202,7 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        //TILDev.logInfo("Drawing shape at ({}, {}) from center {}",);
-        this.shape.draw(ctx,center.add(getX(),getY(),0d,new Vector3d()));
+        this.shape.draw(ctx,VectorHelper.copy3D(center).add(getX(),getY(),0d));
     }
     
     public Vector3d getCenterForGroup(Vector3d center) {

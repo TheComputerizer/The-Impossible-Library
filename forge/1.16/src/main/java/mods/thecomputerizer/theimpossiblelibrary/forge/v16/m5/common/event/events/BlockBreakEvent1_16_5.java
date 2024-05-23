@@ -9,7 +9,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 
 public class BlockBreakEvent1_16_5 extends BlockBreakEventWrapper<BreakEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BreakEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<BreakEvent,Integer> wrapXPField() {
         return wrapGenericBoth(BreakEvent::getExpToDrop,BreakEvent::setExpToDrop,0);

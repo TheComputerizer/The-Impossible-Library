@@ -19,6 +19,16 @@ public class RegisterBlockEntitiesEvent1_12_2 extends RegisterBlockEntitiesEvent
         REGISTER_BLOCK_ENTITIES.invoke(event);
     }
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<Block> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(BlockEntityAPI<?,?> entry) {
         Class<? extends TileEntity> clazz = ((BlockEntity1_12_2)entry).getType();
         GameRegistry.registerTileEntity(clazz,((ResourceLocation1_12_2)entry.getRegistryName()).getInstance());

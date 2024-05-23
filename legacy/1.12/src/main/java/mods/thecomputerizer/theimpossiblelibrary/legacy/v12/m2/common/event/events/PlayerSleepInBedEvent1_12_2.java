@@ -15,6 +15,16 @@ public class PlayerSleepInBedEvent1_12_2 extends PlayerSleepInBedEventWrapper<Pl
     public static void onEvent(PlayerSleepInBedEvent event) {
         PLAYER_SLEEP_IN_BED.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayerSleepInBedEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlayerSleepInBedEvent,PlayerAPI<?,?>> wrapPlayerField() {

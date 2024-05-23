@@ -11,7 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RenderOverlayTextEvent1_16_5 extends RenderOverlayTextEventWrapper<Text> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Text event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull Text event) {
         return ClientEvents1_16_5.initRenderer(() -> 0f,event::getMatrixStack);

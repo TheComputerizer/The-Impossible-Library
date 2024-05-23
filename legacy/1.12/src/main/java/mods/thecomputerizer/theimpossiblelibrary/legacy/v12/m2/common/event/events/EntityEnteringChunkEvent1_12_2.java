@@ -14,6 +14,16 @@ public class EntityEnteringChunkEvent1_12_2 extends EntityEnteringChunkEventWrap
     public static void onEvent(EnteringChunk event) {
         ENTITY_ENTERING_CHUNK.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EnteringChunk event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<EnteringChunk,EntityAPI<?,?>> wrapEntityField() {

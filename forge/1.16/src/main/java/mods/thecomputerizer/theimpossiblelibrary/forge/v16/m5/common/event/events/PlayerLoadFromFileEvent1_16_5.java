@@ -8,7 +8,17 @@ import net.minecraftforge.event.entity.player.PlayerEvent.LoadFromFile;
 import java.io.File;
 
 public class PlayerLoadFromFileEvent1_16_5 extends PlayerLoadFromFileEventWrapper<LoadFromFile> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LoadFromFile event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LoadFromFile,File> wrapDirectoryField() {
         return wrapGenericGetter(LoadFromFile::getPlayerDirectory,null);

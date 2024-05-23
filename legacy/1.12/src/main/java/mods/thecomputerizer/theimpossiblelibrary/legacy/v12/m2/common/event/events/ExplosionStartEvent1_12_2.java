@@ -15,6 +15,16 @@ public class ExplosionStartEvent1_12_2 extends ExplosionStartEventWrapper<Start>
     public static void onEvent(Start event) {
         EXPLOSION_START.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Start event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Start,ExplosionAPI<?>> wrapExplosionField() {

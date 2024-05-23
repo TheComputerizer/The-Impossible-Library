@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.RespawnEvent;
 
 public class ClientRespawnEvent1_16_5 extends ClientRespawnEventWrapper<RespawnEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RespawnEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<RespawnEvent,PlayerAPI<?,?>> wrapOldPlayerField() {
         return wrapPlayerGetter(RespawnEvent::getOldPlayer);

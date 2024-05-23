@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 
 public class PlayerRespawnEvent1_16_5 extends PlayerRespawnEventWrapper<PlayerRespawnEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayerRespawnEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<PlayerRespawnEvent,Boolean> wrapEndConqueredField() {
         return wrapGenericGetter(PlayerRespawnEvent::isEndConquered,false);

@@ -9,7 +9,17 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo;
 import javax.annotation.Nonnull;
 
 public class RenderOverlayBossEvent1_16_5 extends RenderOverlayBossEventWrapper<BossInfo> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BossInfo event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull BossInfo event) {
         return ClientEvents1_16_5.initRenderer(() -> 0f,event::getMatrixStack);

@@ -9,7 +9,17 @@ import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
 import java.util.Objects;
 
 public class PlayerNameTabFormatEvent1_16_5 extends PlayerNameTabFormatEventWrapper<TabListNameFormat> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(TabListNameFormat event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<TabListNameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> Objects.nonNull(event.getDisplayName()) ? event.getDisplayName().getString() : null,

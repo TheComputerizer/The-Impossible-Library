@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Finish;
 
 public class LivingItemUseFinishEvent1_16_5 extends LivingItemUseFinishEventWrapper<Finish> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Finish event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Finish,Integer> wrapDurationField() {
         return wrapGenericBoth(Finish::getDuration,Finish::setDuration,0);

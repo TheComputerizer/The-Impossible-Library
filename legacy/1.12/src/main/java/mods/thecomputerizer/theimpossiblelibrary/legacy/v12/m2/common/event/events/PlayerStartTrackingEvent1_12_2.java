@@ -15,6 +15,16 @@ public class PlayerStartTrackingEvent1_12_2 extends PlayerStartTrackingEventWrap
     public static void onEvent(StartTracking event) {
         PLAYER_START_TRACKING.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(StartTracking event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {

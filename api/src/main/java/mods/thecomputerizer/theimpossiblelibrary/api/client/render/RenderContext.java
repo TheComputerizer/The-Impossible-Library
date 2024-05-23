@@ -19,7 +19,11 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.function.Function;
 
 @SuppressWarnings("unused") @Getter
@@ -219,6 +223,23 @@ public final class RenderContext {
         int iWidth = Math.abs((int)(withScaledX(width)*widthScale));
         int iHeight = Math.abs((int)((withScaledY(height))*heightScale));
         this.renderer.getGLAPI().scissor(iLeft,iBottom,iWidth,iHeight);
+    }
+    
+    public List<String> splitLines(String text, double width) {
+        if(Objects.isNull(text)) text = "";
+        List<String> splits = new ArrayList<>();
+        StringJoiner joiner = new StringJoiner(" ");
+        double textWidth = 0d;
+        for(String word : text.split(" ")) {
+            textWidth+=getScaledStringWidth(word);
+            if(textWidth>width) {
+                splits.add(joiner.toString());
+                joiner = new StringJoiner(" ");
+                textWidth = 0d;
+            }
+            joiner.add(word);
+        }
+        return splits;
     }
     
     public void updateResolution(MinecraftWindow window) {

@@ -15,6 +15,16 @@ public class PlayerStopTrackingEvent1_12_2 extends PlayerStopTrackingEventWrappe
     public static void onEvent(StopTracking event) {
         PLAYER_STOP_TRACKING.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(StopTracking event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<StopTracking,EntityAPI<?,?>> wrapEntityField() {

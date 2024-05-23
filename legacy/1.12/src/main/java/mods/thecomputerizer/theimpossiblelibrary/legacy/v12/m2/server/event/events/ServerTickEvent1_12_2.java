@@ -17,6 +17,16 @@ public class ServerTickEvent1_12_2 extends ServerTickEventWrapper<ServerTickEven
     public static void onEvent(ServerTickEvent event) {
         TICK_SERVER.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ServerTickEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected TickPhase wrapTickPhase() {

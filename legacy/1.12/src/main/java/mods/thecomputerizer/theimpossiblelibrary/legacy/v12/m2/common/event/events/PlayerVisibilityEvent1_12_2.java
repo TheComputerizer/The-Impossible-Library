@@ -14,6 +14,16 @@ public class PlayerVisibilityEvent1_12_2 extends PlayerVisibilityEventWrapper<Vi
     public static void onEvent(Visibility event) {
         PLAYER_VISIBILITY.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Visibility event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Visibility,PlayerAPI<?,?>> wrapPlayerField() {

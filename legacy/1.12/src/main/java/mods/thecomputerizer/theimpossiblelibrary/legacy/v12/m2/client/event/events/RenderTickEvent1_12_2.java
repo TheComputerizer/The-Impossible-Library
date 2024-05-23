@@ -18,6 +18,16 @@ public class RenderTickEvent1_12_2 extends RenderTickEventWrapper<RenderTickEven
     public static void onEvent(RenderTickEvent event) {
         TICK_RENDER.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RenderTickEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected TickPhase wrapTickPhase() {

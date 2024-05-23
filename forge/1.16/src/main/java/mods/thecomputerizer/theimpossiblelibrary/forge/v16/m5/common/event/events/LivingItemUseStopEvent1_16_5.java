@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Stop;
 
 public class LivingItemUseStopEvent1_16_5 extends LivingItemUseStopEventWrapper<Stop> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Stop event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Stop,Integer> wrapDurationField() {
         return wrapGenericBoth(Stop::getDuration, Stop::setDuration,0);

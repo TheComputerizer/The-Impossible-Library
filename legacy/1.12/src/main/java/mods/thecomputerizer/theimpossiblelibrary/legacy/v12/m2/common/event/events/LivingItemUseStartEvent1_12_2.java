@@ -15,6 +15,16 @@ public class LivingItemUseStartEvent1_12_2 extends LivingItemUseStartEventWrappe
     public static void onEvent(Start event) {
         LIVING_ITEM_USE_START.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Start event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Start,Integer> wrapDurationField() {

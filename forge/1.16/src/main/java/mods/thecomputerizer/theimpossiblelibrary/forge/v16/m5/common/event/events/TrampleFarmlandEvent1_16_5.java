@@ -9,7 +9,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.FarmlandTrampleEvent;
 
 public class TrampleFarmlandEvent1_16_5 extends TrampleFarmlandEventWrapper<FarmlandTrampleEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FarmlandTrampleEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<FarmlandTrampleEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(FarmlandTrampleEvent::getEntity);

@@ -96,7 +96,7 @@ public class TestScreen extends ScreenAPI {
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        this.fuzz.draw2D(ctx);
+        this.fuzz.draw2D(ctx,center);
         super.draw(ctx,center,mouseX,mouseY);
     }
 }

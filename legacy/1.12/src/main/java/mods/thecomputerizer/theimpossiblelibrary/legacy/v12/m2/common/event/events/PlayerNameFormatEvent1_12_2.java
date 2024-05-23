@@ -14,6 +14,16 @@ public class PlayerNameFormatEvent1_12_2 extends PlayerNameFormatEventWrapper<Na
     public static void onEvent(NameFormat event) {
         PLAYER_NAME_FORMAT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(NameFormat event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {

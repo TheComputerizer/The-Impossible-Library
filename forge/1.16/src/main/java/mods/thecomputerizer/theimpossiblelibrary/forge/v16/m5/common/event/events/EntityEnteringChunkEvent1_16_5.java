@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import net.minecraftforge.event.entity.EntityEvent.EnteringChunk;
 
 public class EntityEnteringChunkEvent1_16_5 extends EntityEnteringChunkEventWrapper<EnteringChunk> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EnteringChunk event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<EnteringChunk,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EnteringChunk::getEntity);

@@ -14,6 +14,16 @@ public class SetAttackTargetEvent1_12_2 extends SetAttackTargetEventWrapper<Livi
     public static void onEvent(LivingSetAttackTargetEvent event) {
         LIVING_SET_TARGET.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingSetAttackTargetEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LivingSetAttackTargetEvent,LivingEntityAPI<?,?>> wrapLivingField() {

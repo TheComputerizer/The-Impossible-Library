@@ -16,6 +16,16 @@ public class CropGrowPostEvent1_12_2 extends CropGrowPostEventWrapper<Post> {
     public static void onEvent(Post event) {
         CROP_GROW_POST.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Post event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Post,BlockStateAPI<?>> wrapOriginalStateField() {

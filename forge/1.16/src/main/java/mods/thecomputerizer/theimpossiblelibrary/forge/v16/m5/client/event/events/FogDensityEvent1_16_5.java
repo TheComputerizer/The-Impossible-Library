@@ -11,7 +11,17 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity;
 import javax.annotation.Nonnull;
 
 public class FogDensityEvent1_16_5 extends FogDensityEventWrapper<FogDensity> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FogDensity event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull FogDensity event) {
         return ClientEvents1_16_5.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);

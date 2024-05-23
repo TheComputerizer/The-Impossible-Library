@@ -4,5 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.AttachC
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 public class AttachCapabilitiesEvent1_16_5 extends AttachCapabilitiesEventWrapper<AttachCapabilitiesEvent<?>> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(AttachCapabilitiesEvent<?> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 }

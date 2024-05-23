@@ -22,6 +22,16 @@ public class BlockNotifyNeighborEvent1_12_2 extends BlockNotifyNeighborEventWrap
     public static void onEvent(NeighborNotifyEvent event) {
         BLOCK_NOTIFY_NEIGHBOR.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(NeighborNotifyEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<NeighborNotifyEvent,Boolean> wrapForceRedstoneUpdateField() {

@@ -8,6 +8,16 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public class RegisterEntitiesEvent1_16_5 extends RegisterEntitiesEventWrapper<Register<EntityType<?>>> {
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<EntityType<?>> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(EntityAPI<?,?> entry) {
         this.event.getRegistry().register(((Entity1_16_5)entry).getValue());
     }

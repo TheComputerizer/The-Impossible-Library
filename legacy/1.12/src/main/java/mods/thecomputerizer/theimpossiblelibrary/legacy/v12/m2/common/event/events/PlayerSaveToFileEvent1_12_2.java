@@ -16,6 +16,16 @@ public class PlayerSaveToFileEvent1_12_2 extends PlayerSaveToFileEventWrapper<Sa
     public static void onEvent(SaveToFile event) {
         PLAYER_SAVE_TO_FILE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(SaveToFile event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<SaveToFile,File> wrapDirectoryField() {

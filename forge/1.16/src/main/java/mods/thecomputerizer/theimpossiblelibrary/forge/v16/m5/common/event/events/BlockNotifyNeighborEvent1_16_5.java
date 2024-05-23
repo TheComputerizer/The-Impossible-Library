@@ -15,7 +15,17 @@ import java.util.Objects;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 
 public class BlockNotifyNeighborEvent1_16_5 extends BlockNotifyNeighborEventWrapper<NeighborNotifyEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(NeighborNotifyEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<NeighborNotifyEvent,Boolean> wrapForceRedstoneUpdateField() {
         return wrapGenericGetter(NeighborNotifyEvent::getForceRedstoneUpdate,false);

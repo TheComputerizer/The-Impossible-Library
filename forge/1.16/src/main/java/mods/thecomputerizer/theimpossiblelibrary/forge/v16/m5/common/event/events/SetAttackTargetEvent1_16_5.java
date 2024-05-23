@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 
 public class SetAttackTargetEvent1_16_5 extends SetAttackTargetEventWrapper<LivingSetAttackTargetEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingSetAttackTargetEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LivingSetAttackTargetEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingSetAttackTargetEvent::getEntityLiving);

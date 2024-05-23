@@ -7,7 +7,17 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 
 public class LivingHealEvent1_16_5 extends LivingHealEventWrapper<LivingHealEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingHealEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LivingHealEvent,Float> wrapAmountField() {
         return wrapGenericBoth(LivingHealEvent::getAmount,LivingHealEvent::setAmount,0f);

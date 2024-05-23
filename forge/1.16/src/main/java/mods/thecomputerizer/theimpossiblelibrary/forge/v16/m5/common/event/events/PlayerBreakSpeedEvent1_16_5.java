@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 
 public class PlayerBreakSpeedEvent1_16_5 extends PlayerBreakSpeedEventWrapper<BreakSpeed> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BreakSpeed event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<BreakSpeed,Float> wrapOriginalSpeedField() {
         return wrapGenericGetter(BreakSpeed::getOriginalSpeed,0f);

@@ -16,6 +16,16 @@ public class FluidCreateSourceEvent1_12_2 extends FluidCreateSourceEventWrapper<
     public static void onEvent(CreateFluidSourceEvent event) {
         BLOCK_CREATE_FLUID.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(CreateFluidSourceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<CreateFluidSourceEvent,BlockPosAPI<?>> wrapPosField() {

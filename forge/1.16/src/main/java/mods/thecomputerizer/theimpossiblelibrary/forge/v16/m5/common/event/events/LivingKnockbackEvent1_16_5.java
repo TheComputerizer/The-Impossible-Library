@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 
 public class LivingKnockbackEvent1_16_5 extends LivingKnockbackEventWrapper<LivingKnockBackEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingKnockBackEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapAttackerField() {
         return wrapEntityBoth(event -> null,(event,attacker) -> {});

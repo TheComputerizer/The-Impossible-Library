@@ -9,7 +9,17 @@ import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import javax.annotation.Nonnull;
 
 public class RenderOverlayBlockEvent1_16_5 extends RenderOverlayBlockEventWrapper<RenderBlockOverlayEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RenderBlockOverlayEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull RenderBlockOverlayEvent event) {
         return ClientEvents1_16_5.initRenderer(() -> 0f,event::getMatrixStack);

@@ -16,6 +16,16 @@ public class LootingLevelEvent1_12_2 extends LootingLevelEventWrapper<LootingLev
     public static void onEvent(LootingLevelEvent event) {
         LIVING_LOOTING_LEVEL.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LootingLevelEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {

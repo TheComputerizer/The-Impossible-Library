@@ -18,6 +18,16 @@ public class ItemTooltipEvent1_12_2 extends ItemTooltipEventWrapper<ItemTooltipE
     public static void onEvent(ItemTooltipEvent event) {
         ITEM_TOOLTIP.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ItemTooltipEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {

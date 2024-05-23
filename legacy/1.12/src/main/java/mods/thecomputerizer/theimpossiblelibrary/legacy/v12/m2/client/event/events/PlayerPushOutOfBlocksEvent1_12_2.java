@@ -18,6 +18,16 @@ public class PlayerPushOutOfBlocksEvent1_12_2 extends PlayerPushOutOfBlocksEvent
     public static void onEvent(PlayerSPPushOutOfBlocksEvent event) {
         PLAYER_PUSH_OUT_OF_BLOCKS.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayerSPPushOutOfBlocksEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected Box wrapEntityBB() {

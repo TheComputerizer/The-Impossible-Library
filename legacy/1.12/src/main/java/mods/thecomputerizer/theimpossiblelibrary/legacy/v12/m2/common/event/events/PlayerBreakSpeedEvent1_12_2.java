@@ -16,6 +16,16 @@ public class PlayerBreakSpeedEvent1_12_2 extends PlayerBreakSpeedEventWrapper<Br
     public static void onEvent(BreakSpeed event) {
         PLAYER_BREAK_SPEED.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BreakSpeed event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<BreakSpeed,Float> wrapOriginalSpeedField() {

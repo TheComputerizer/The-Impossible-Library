@@ -5,4 +5,13 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 
 public class RegisterModelsEvent1_16_5 extends RegisterModelsEventWrapper<ModelRegistryEvent> {
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ModelRegistryEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }    
 }

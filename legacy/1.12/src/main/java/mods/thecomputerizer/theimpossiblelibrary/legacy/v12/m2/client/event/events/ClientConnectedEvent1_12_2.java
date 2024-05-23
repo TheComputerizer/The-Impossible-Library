@@ -13,6 +13,16 @@ public class ClientConnectedEvent1_12_2 extends ClientConnectedEventWrapper<Clie
     public static void onEvent(ClientConnectedToServerEvent event) {
         CLIENT_CONNECTED.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ClientConnectedToServerEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<ClientConnectedToServerEvent,Boolean> wrapLocalField() {

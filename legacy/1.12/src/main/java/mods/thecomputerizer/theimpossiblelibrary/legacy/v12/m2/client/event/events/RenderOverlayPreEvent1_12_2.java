@@ -17,6 +17,16 @@ public class RenderOverlayPreEvent1_12_2 extends RenderOverlayPreEventWrapper<Pr
     public static void onEvent(Pre event) {
         RENDER_OVERLAY_PRE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Pre event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull Pre event) {

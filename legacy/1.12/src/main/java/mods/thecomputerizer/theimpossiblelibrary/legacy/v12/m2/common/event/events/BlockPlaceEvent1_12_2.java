@@ -18,6 +18,16 @@ public class BlockPlaceEvent1_12_2 extends BlockPlaceEventWrapper<EntityPlaceEve
     public static void onEvent(EntityPlaceEvent event) {
         BLOCK_PLACE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityPlaceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<EntityPlaceEvent,EntityAPI<?,?>> wrapEntityField() {

@@ -10,6 +10,7 @@ import org.joml.Vector3d;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
 
+import java.util.List;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
@@ -104,6 +105,10 @@ public class TextBuffer {
     
     public boolean isTopAlligned() {
         return Misc.equalsAny(this.allignment,TOP_CENTER,TOP_LEFT,TOP_RIGHT);
+    }
+    
+    public List<String> toLines(RenderContext ctx, double width) {
+        return ctx.splitLines(getText().getApplied(),width);
     }
 
     public static class Builder {

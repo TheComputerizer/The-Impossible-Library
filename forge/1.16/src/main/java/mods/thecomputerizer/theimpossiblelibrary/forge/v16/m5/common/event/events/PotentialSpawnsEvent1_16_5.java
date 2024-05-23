@@ -14,7 +14,17 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PotentialSpawnsEvent1_16_5 extends PotentialSpawnsEventWrapper<PotentialSpawns> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PotentialSpawns event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<PotentialSpawns,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(PotentialSpawns::getPos);

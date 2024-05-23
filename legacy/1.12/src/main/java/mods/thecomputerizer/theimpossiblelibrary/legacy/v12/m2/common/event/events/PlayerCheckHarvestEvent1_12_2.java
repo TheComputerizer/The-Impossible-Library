@@ -15,6 +15,16 @@ public class PlayerCheckHarvestEvent1_12_2 extends PlayerCheckHarvestEventWrappe
     public static void onEvent(HarvestCheck event) {
         PLAYER_CHECK_HARVEST.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(HarvestCheck event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<HarvestCheck,Boolean> wrapSuccessField() {

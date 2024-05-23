@@ -12,4 +12,14 @@ public class ClientDisconnectedEvent1_12_2 extends ClientDisconnectedEventWrappe
     public static void onEvent(ClientDisconnectionFromServerEvent event) {
         CLIENT_DISCONNECTED.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ClientDisconnectionFromServerEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 }

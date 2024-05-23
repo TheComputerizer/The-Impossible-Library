@@ -19,7 +19,17 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionRe
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractEntitySpecificEvent1_16_5 extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityInteractSpecific event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(EntityInteractSpecific::getItemStack);

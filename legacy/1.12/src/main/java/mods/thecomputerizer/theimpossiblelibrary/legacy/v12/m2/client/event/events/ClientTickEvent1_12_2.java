@@ -17,6 +17,16 @@ public class ClientTickEvent1_12_2 extends ClientTickEventWrapper<ClientTickEven
     public static void onEvent(ClientTickEvent event) {
         TICK_CLIENT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ClientTickEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected TickPhase wrapTickPhase() {

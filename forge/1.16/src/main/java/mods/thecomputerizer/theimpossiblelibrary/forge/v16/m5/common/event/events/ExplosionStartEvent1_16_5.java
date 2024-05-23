@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.ExplosionEvent.Start;
 
 public class ExplosionStartEvent1_16_5 extends ExplosionStartEventWrapper<Start> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Start event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<Start,ExplosionAPI<?>> wrapExplosionField() {
         return wrapExplosionGetter(Start::getExplosion);

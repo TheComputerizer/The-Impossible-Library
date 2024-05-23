@@ -9,7 +9,17 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.Pre;
 import javax.annotation.Nonnull;
 
 public class RenderOverlayPreEvent1_16_5 extends RenderOverlayPreEventWrapper<Pre> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Pre event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull Pre event) {
         return ClientEvents1_16_5.initRenderer(() -> 0f,event::getMatrixStack);

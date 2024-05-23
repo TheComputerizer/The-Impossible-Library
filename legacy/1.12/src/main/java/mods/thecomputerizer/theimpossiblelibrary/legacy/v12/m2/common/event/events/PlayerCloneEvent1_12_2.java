@@ -14,6 +14,16 @@ public class PlayerCloneEvent1_12_2 extends PlayerCloneEventWrapper<Clone> {
     public static void onEvent(Clone event) {
         PLAYER_CLONE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Clone event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Clone,Boolean> wrapDeathField() {

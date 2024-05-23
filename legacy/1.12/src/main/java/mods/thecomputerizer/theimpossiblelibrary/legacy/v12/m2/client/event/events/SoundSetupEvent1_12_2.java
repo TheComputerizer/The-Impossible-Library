@@ -13,4 +13,14 @@ public class SoundSetupEvent1_12_2 extends SoundSetupEventWrapper<SoundSetupEven
     public static void onEvent(SoundSetupEvent event) {
         SOUND_SETUP.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(SoundSetupEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 }

@@ -16,6 +16,16 @@ public class PlayerPickupItemEvent1_12_2 extends PlayerPickupItemEventWrapper<It
     public static void onEvent(ItemPickupEvent event) {
         PLAYER_ITEM_PICKUP.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ItemPickupEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapEntityField() {

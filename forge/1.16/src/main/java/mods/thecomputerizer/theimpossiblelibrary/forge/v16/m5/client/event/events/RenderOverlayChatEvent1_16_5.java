@@ -9,7 +9,17 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.Chat;
 import javax.annotation.Nonnull;
 
 public class RenderOverlayChatEvent1_16_5 extends RenderOverlayChatEventWrapper<Chat> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Chat event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull Chat event) {
         return ClientEvents1_16_5.initRenderer(() -> 0f,event::getMatrixStack);

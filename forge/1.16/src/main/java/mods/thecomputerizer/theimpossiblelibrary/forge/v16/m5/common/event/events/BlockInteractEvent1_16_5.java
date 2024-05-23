@@ -9,7 +9,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
 
 public class BlockInteractEvent1_16_5 extends BlockInteractEventWrapper<BlockToolInteractEvent> { //TODO Finish implementing this
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(BlockToolInteractEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<BlockToolInteractEvent,PlayerAPI<?,?>> wrapPlayerField() {

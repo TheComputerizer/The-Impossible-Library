@@ -24,6 +24,16 @@ public class HarvestBlockDropsEvent1_12_2 extends HarvestBlockDropsEventWrapper<
     public static void onEvent(HarvestDropsEvent event) {
         BLOCK_HARVEST.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(HarvestDropsEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<HarvestDropsEvent,List<ItemStackAPI<?>>> wrapDropsField() {

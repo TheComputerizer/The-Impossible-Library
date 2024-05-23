@@ -19,7 +19,17 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerPunchBlockEvent1_16_5 extends PlayerPunchBlockEventWrapper<LeftClickBlock> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LeftClickBlock event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(LeftClickBlock::getItemStack);

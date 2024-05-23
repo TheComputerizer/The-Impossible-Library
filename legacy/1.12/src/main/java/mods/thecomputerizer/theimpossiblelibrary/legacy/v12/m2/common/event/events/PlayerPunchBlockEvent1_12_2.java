@@ -26,6 +26,16 @@ public class PlayerPunchBlockEvent1_12_2 extends PlayerPunchBlockEventWrapper<Le
     public static void onEvent(LeftClickBlock event) {
         PLAYER_PUNCH_BLOCK.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LeftClickBlock event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected ItemStackAPI<?> getStackInHand() {

@@ -8,6 +8,16 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public class RegisterItemsEvent1_16_5 extends RegisterItemsEventWrapper<Register<Item>> {
     
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Register<Item> event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override public void register(ItemAPI<?> entry) {
         this.event.getRegistry().register(((Item1_16_5)entry).getValue());
     }

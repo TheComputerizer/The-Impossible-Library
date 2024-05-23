@@ -29,7 +29,7 @@ import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventPriority.NORMAL;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class EventWrapper<E> {
 
     private final EventType<?> type;
@@ -42,6 +42,8 @@ public abstract class EventWrapper<E> {
         this.type = type;
         this.priority = NORMAL;
     }
+    
+    public void cancel() {}
 
     public boolean hasInvokers() {
         return this.type.hasInvokers();
@@ -300,8 +302,15 @@ public abstract class EventWrapper<E> {
 
         public <C> void invoke(C event) {
             if(Objects.nonNull(this.connector) && !this.invokers.isEmpty()) {
-                setWrapperEvent(event,this.connector);
-                for(Consumer<E> invoker : this.invokers) invoker.accept(this.connector);
+                if(setWrapperEvent(event,this.connector)) {
+                    for(Consumer<E> invoker : this.invokers) {
+                        invoker.accept(this.connector);
+                        if(this.connector.isCancelable() && this.connector.isCanceled()) {
+                            this.connector.cancel();
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -317,8 +326,9 @@ public abstract class EventWrapper<E> {
          * Stupid generic casting
          */
         @SuppressWarnings("unchecked")
-        private <C> void setWrapperEvent(C event, EventWrapper<?> wrapper) {
+        private <C> boolean setWrapperEvent(C event, EventWrapper<?> wrapper) {
             ((EventWrapper<C>)wrapper).setEvent(event);
+            return !wrapper.canceled;
         }
     }
 }

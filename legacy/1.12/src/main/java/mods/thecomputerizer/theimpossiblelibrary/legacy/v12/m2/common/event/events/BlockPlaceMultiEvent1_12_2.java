@@ -24,6 +24,16 @@ public class BlockPlaceMultiEvent1_12_2 extends BlockPlaceMultiEventWrapper<Enti
     public static void onEvent(EntityMultiPlaceEvent event) {
         BLOCK_PLACE_MULTI.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityMultiPlaceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<EntityMultiPlaceEvent,EntityAPI<?,?>> wrapEntityField() {

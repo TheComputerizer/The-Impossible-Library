@@ -7,7 +7,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.StartTracking;
 
 public class PlayerStartTrackingEvent1_16_5 extends PlayerStartTrackingEventWrapper<StartTracking> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(StartTracking event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(StartTracking::getTarget);

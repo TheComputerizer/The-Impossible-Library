@@ -6,8 +6,18 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.util.CustomTick1_1
 
 import java.util.Objects;
 
-public class CustomTickEvent1_16_5 extends CustomTickEventWrapper<CustomTick1_16_5> { //TODO
-
+public class CustomTickEvent1_16_5 extends CustomTickEventWrapper<CustomTick1_16_5> {
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(CustomTick1_16_5 event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected CustomTick wrapTicker() {
         return Objects.nonNull(this.event) ? this.event.getTicker() : null;

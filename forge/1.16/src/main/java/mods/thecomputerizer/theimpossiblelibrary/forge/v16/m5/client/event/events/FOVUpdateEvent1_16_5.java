@@ -6,7 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 
 public class FOVUpdateEvent1_16_5 extends FOVUpdateEventWrapper<FOVUpdateEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FOVUpdateEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected EventFieldWrapper<FOVUpdateEvent,Float> wrapFOVField() {
         return wrapGenericGetter(FOVUpdateEvent::getFov,0f);

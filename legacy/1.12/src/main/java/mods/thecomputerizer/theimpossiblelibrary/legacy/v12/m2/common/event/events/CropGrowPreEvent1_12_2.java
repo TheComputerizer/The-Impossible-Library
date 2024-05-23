@@ -16,6 +16,16 @@ public class CropGrowPreEvent1_12_2 extends CropGrowPreEventWrapper<Pre> {
     public static void onEvent(Pre event) {
         CROP_GROW_PRE.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Pre event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Pre,BlockPosAPI<?>> wrapPosField() {

@@ -11,7 +11,17 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
 import javax.annotation.Nonnull;
 
 public class FogColorsEvent1_16_5 extends FogColorsEventWrapper<FogColors> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FogColors event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected RenderContext initRenderer(@Nonnull FogColors event) {
         return ClientEvents1_16_5.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);

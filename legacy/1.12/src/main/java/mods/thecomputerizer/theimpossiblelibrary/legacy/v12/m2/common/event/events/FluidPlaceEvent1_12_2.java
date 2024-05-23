@@ -16,6 +16,16 @@ public class FluidPlaceEvent1_12_2 extends FluidPlaceEventWrapper<FluidPlaceBloc
     public static void onEvent(FluidPlaceBlockEvent event) {
         BLOCK_PLACE_FLUID.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FluidPlaceBlockEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<FluidPlaceBlockEvent,BlockPosAPI<?>> wrapFluidPosField() {

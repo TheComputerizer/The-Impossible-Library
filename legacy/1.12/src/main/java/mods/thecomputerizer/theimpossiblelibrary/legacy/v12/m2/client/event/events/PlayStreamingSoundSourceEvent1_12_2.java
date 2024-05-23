@@ -17,6 +17,16 @@ public class PlayStreamingSoundSourceEvent1_12_2 extends PlayStreamingSoundSourc
     public static void onEvent(PlayStreamingSourceEvent event) {
         SOUND_PLAY_STREAMING.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayStreamingSourceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlayStreamingSourceEvent,String> wrapNameField() {

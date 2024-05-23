@@ -9,6 +9,16 @@ import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
 import java.util.Objects;
 
 public class PlayStreamingSoundSourceEvent1_16_5 extends PlayStreamingSoundSourceEventWrapper<PlayStreamingSourceEvent,ISound> {
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayStreamingSourceEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlayStreamingSourceEvent,String> wrapNameField() {

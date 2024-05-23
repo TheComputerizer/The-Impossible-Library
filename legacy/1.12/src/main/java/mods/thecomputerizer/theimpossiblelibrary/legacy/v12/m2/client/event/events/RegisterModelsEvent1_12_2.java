@@ -12,4 +12,14 @@ public class RegisterModelsEvent1_12_2 extends RegisterModelsEventWrapper<ModelR
     public static void onEvent(ModelRegistryEvent event) {
         REGISTER_MODELS.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(ModelRegistryEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 }

@@ -15,6 +15,16 @@ public class LivingItemUseTickEvent1_12_2 extends LivingItemUseTickEventWrapper<
     public static void onEvent(Tick event) {
         LIVING_ITEM_USE_TICK.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Tick event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<Tick,Integer> wrapDurationField() {

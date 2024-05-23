@@ -8,7 +8,17 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity.Dama
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class LivingHurtEvent1_16_5 extends LivingHurtEventWrapper<LivingHurtEvent> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingHurtEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     public void setAmount(float amount) {
         this.event.setAmount(amount);

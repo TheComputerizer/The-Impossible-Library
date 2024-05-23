@@ -17,6 +17,16 @@ public class TrampleFarmlandEvent1_12_2 extends TrampleFarmlandEventWrapper<Farm
     public static void onEvent(FarmlandTrampleEvent event) {
         BLOCK_TRAMPLE_FARMLAND.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FarmlandTrampleEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<FarmlandTrampleEvent,EntityAPI<?,?>> wrapEntityField() {

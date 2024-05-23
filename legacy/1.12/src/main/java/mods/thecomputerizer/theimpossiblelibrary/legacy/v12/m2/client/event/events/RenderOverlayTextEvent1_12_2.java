@@ -19,6 +19,16 @@ public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<
     public static void onEvent(Text event) {
         RENDER_OVERLAY_TEXT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(Text event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull Text event) {

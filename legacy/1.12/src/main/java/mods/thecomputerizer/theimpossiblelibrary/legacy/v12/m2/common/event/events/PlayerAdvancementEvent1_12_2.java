@@ -15,6 +15,16 @@ public class PlayerAdvancementEvent1_12_2 extends PlayerAdvancementEventWrapper<
     public static void onEvent(AdvancementEvent event) {
         PLAYER_ADVANCEMENT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(AdvancementEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<AdvancementEvent,AdvancementAPI<?>> wrapAdvancementField() {

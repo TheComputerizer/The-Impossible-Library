@@ -15,6 +15,16 @@ public class PlayerPickupXPEvent1_12_2 extends PlayerPickupXPEventWrapper<Player
     public static void onEvent(PlayerPickupXpEvent event) {
         PLAYER_XP_PICKUP.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlayerPickupXpEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlayerPickupXpEvent,PlayerAPI<?,?>> wrapPlayerField() {

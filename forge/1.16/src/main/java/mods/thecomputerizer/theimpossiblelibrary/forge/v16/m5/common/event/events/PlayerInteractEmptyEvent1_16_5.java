@@ -16,7 +16,17 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionRe
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractEmptyEvent1_16_5 extends PlayerInteractEmptyEventWrapper<RightClickEmpty> {
-
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RightClickEmpty event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
+    
     @Override
     protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(RightClickEmpty::getItemStack);

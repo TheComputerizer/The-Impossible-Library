@@ -16,6 +16,16 @@ public class RenderWorldLastEvent1_12_2 extends RenderWorldLastEventWrapper<Rend
     public static void onEvent(RenderWorldLastEvent event) {
         RENDER_WORLD_LAST.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RenderWorldLastEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull RenderWorldLastEvent event) {

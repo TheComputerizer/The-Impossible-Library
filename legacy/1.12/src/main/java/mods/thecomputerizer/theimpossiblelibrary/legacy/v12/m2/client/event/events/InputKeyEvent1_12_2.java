@@ -12,4 +12,14 @@ public class InputKeyEvent1_12_2 extends InputKeyEventWrapper<KeyInputEvent> {
     public static void onEvent(KeyInputEvent event) {
         KEY_INPUT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(KeyInputEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 }

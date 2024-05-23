@@ -15,6 +15,16 @@ public class LivingKnockbackEvent1_12_2 extends LivingKnockbackEventWrapper<Livi
     public static void onEvent(LivingKnockBackEvent event) {
         LIVING_KNOCKBACK.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(LivingKnockBackEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapAttackerField() {

@@ -60,6 +60,42 @@ public class VectorHelper {
     private static final Vector4f ZERO_4F = new Vector4f(0f,0f,0f,0f);
     private static final Vector4i ZERO_4I = new Vector4i(0,0,0,0);
     
+    public static Vector2d copy2D(Vector2d v) {
+        return new Vector2d(v.x,v.y);
+    }
+    
+    public static Vector2f copy2F(Vector2f v) {
+        return new Vector2f(v.x,v.y);
+    }
+    
+    public static Vector2i copy2I(Vector2i v) {
+        return new Vector2i(v.x,v.y);
+    }
+    
+    public static Vector3d copy3D(Vector3d v) {
+        return new Vector3d(v.x,v.y,v.z);
+    }
+    
+    public static Vector3f copy3F(Vector3f v) {
+        return new Vector3f(v.x,v.y,v.z);
+    }
+    
+    public static Vector3i copy3I(Vector3i v) {
+        return new Vector3i(v.x,v.y,v.z);
+    }
+    
+    public static Vector4d copy4D(Vector4d v) {
+        return new Vector4d(v.x,v.y,v.z,v.w);
+    }
+    
+    public static Vector4f copy4F(Vector4f v) {
+        return new Vector4f(v.x,v.y,v.z,v.w);
+    }
+    
+    public static Vector4i copy4I(Vector4i v) {
+        return new Vector4i(v.x,v.y,v.z,v.w);
+    }
+    
     public static Vector3d from(Facing facing) {
         Vector3d axisDir = facing.getAxis().getDirection();
         return facing.isPositive() ? axisDir : axisDir.mul(-1d);

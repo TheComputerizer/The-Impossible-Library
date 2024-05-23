@@ -26,6 +26,16 @@ public class PlayerInteractEntitySpecificEvent1_12_2 extends PlayerInteractEntit
     public static void onEvent(EntityInteractSpecific event) {
         PLAYER_INTERACT_ENTITY_AT.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(EntityInteractSpecific event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected ItemStackAPI<?> getStackInHand() {

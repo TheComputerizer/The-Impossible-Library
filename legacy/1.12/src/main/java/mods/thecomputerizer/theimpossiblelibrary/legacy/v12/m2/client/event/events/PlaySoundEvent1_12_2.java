@@ -17,6 +17,16 @@ public class PlaySoundEvent1_12_2 extends PlaySoundEventWrapper<PlaySoundEvent,I
     public static void onEvent(PlaySoundEvent event) {
         SOUND_PLAY.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(PlaySoundEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected EventFieldWrapper<PlaySoundEvent,String> wrapNameField() {

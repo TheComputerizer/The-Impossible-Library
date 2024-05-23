@@ -19,6 +19,16 @@ public class FogRenderEvent1_12_2 extends FogRenderEventWrapper<RenderFogEvent> 
     public static void onEvent(RenderFogEvent event) {
         FOG_RENDER.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(RenderFogEvent event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull RenderFogEvent event) {

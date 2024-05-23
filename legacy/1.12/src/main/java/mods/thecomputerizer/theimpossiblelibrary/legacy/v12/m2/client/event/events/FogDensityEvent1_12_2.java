@@ -19,6 +19,16 @@ public class FogDensityEvent1_12_2 extends FogDensityEventWrapper<FogDensity> {
     public static void onEvent(FogDensity event) {
         FOG_DENSITY.invoke(event);
     }
+    
+    @Override
+    public void cancel() {
+        this.event.setCanceled(true);
+    }
+    
+    @Override public void setEvent(FogDensity event) {
+        super.setEvent(event);
+        setCanceled(event.isCanceled());
+    }
 
     @Override
     protected RenderContext initRenderer(@Nonnull FogDensity event) {
