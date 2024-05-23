@@ -275,6 +275,50 @@ public class VectorHelper {
         return new int[]{vector.x,vector.y,vector.z,vector.w};
     }
     
+    /**
+     Assumes the input vector is formatted as (radius, angle) where the angle is in radians.
+     */
+    public static Vector2d toCartesian(Vector2d vec) {
+        return new Vector2d(Math.cos(vec.y)*vec.x,Math.sin(vec.y)*vec.x);
+    }
+    
+    /**
+     The angle must be in radians.
+     */
+    public static Vector2d toCartesian(double radius, double angle) {
+        return new Vector2d(Math.cos(angle)*radius,Math.sin(angle)*angle);
+    }
+    
+    /**
+     Returns a vector of (radius, angle) where the angle is in radians.
+     */
+    public static Vector2d toPolar(Vector2d vec) {
+        return new Vector2d(Math.sqrt(Math.pow(vec.x,2)+Math.pow(vec.y,2)),Math.atan2(vec.y,vec.x));
+    }
+    
+    /**
+     Returns a vector of (radius, angle) where the angle is in radians.
+     */
+    public static Vector2d toPolar(double x, double y) {
+        return new Vector2d(Math.sqrt(Math.pow(x,2)+Math.pow(y,2)),Math.atan2(y,x));
+    }
+    
+    /**
+     Returns a vector of (radius, angle) where the angle is in radians.
+     The offset will be added to the resulting angle and as such must be in radians.
+     */
+    public static Vector2d toPolar(Vector2d vec, double offset) {
+        return new Vector2d(Math.sqrt(Math.pow(vec.x,2)+Math.pow(vec.y,2)),Math.atan2(vec.y,vec.x)+offset);
+    }
+    
+    /**
+     Returns a vector of (radius, angle) where the angle is in radians.
+     The offset will be added to the resulting angle and as such must be in radians.
+     */
+    public static Vector2d toPolar(double x, double y, double offset) {
+        return new Vector2d(Math.sqrt(Math.pow(x,2)+Math.pow(y,2)),Math.atan2(y,x)+offset);
+    }
+    
     public static Vector2d zero2D() {
         return new Vector2d(ZERO_2D);
     }

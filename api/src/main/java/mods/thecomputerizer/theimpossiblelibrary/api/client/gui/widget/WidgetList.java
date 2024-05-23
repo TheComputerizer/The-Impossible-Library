@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.joml.Vector3d;
 
@@ -59,8 +58,8 @@ public class WidgetList extends ScrollableWidgetGroup {
     }
     
     @Override protected Vector3d calculatePosition(Widget widget, int index) {
-        return new Vector3d(0d,getElementsTop(VectorHelper.zero3D())-getIndexHeight(index)-
-                                (this.elementTemplate.getHeight()/2d),0d);
+        return new Vector3d(0d, getElementsTop(0d)-getIndexHeight(index)-
+                                (this.elementTemplate.getHeight()/2d), 0d);
     }
     
     @Override public WidgetList copy() {

@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors;
 
+import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier4D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
@@ -37,12 +39,36 @@ public abstract class VectorStreams<V> {
         return new VectorStream4D(vectors);
     }
     
-    private final V[] vectors;
-    private int index;
+    protected final V[] vectors;
+    @Getter protected int index;
     
     @SafeVarargs protected VectorStreams(V ... vectors) {
         this.vectors = Objects.nonNull(vectors) ? vectors : getDefault();
         this.index = 0;
+    }
+    
+    @Override public boolean equals(Object other) {
+        if(this==other) return true;
+        if(Objects.isNull(other)) return false;
+        if(other instanceof VectorSuppliers) {
+            VectorSuppliers<?> vectors = (VectorSuppliers<?>)other;
+            int savedIndex = getIndex();
+            int savedIndexOther = vectors.getIndex();
+            reset();
+            vectors.reset();
+            boolean equals = true;
+            while(hasNext()) {
+                V next = getNext();
+                if(!vectors.hasNext() || !Misc.equalsNullable(next,vectors.getNext())) {
+                    equals = false;
+                    break;
+                }
+            }
+            if(this instanceof VectorSuppliers<?>) ((VectorSuppliers<?>)this).seekTo(savedIndex);
+            vectors.seekTo(savedIndexOther);
+            return equals;
+        }
+        return false;
     }
     
     protected abstract V[] getDefault();

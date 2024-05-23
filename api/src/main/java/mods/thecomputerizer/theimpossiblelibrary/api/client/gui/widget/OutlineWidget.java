@@ -10,11 +10,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorH
 public class OutlineWidget extends ShapeWidget {
     
     public static OutlineWidget of(ShapeWidget widget) {
-        return new OutlineWidget(RenderShapeOutline.of(widget.getShape()),widget.x,widget.y);
+        return new OutlineWidget(RenderShapeOutline.of(widget.getWrapped()),widget.x,widget.y);
     }
     
     public static OutlineWidget of(ShapeWidget widget, float lineWidth) {
-        return new OutlineWidget(RenderShapeOutline.of(widget.getShape(),lineWidth),widget.x,widget.y);
+        return new OutlineWidget(RenderShapeOutline.of(widget.getWrapped(),lineWidth),widget.x,widget.y);
     }
     
     public static OutlineWidget from(Shape shape) {

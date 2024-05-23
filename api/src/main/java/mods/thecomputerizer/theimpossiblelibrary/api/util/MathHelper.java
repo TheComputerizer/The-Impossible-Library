@@ -17,6 +17,15 @@ public class MathHelper {
     public static double clamp(double val, double min, double max) {
         return Math.max(min,Math.min(val,max));
     }
+    
+    /**
+     Ensures the angle is within the range (-RADIANS_180, RADIANS_180]
+     */
+    public static double getBoundedAngle(double angle) {
+        while(angle>RADIANS_180) angle-=RADIANS_360;
+        while(angle<=-RADIANS_180) angle+=RADIANS_360;
+        return angle;
+    }
 
     /**
         Helper math for radial gui elements
@@ -43,9 +52,9 @@ public class MathHelper {
     }
 
     /**
-     Helper math for radial gui buttons
-     Checks whether a given screen position is within an outer radius but not within an inner radius of a circle
-     The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius
+     Helper math for radial gui buttons.
+     Checks whether a given screen position is within an outer radius but not within an inner radius of a circle.
+     The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius.
      */
     public static boolean isInCircle(Vector2f center, double distance, Vector2f radius) {
         return distance>radius.x() && distance<=radius.y();

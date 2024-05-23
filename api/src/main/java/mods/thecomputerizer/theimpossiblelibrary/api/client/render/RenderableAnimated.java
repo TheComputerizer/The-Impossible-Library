@@ -60,7 +60,7 @@ public class RenderableAnimated extends RenderablePNG {
         float framePercent = 1f/((float)this.frames);
         float vMin = (float)Math.max(0d,this.curFrame*framePercent);
         float vMax = (float)Math.min(1d,(this.curFrame+1)*framePercent);
-        this.texture.getShape().getTexture().setV(vMin,vMax);
+        this.texture.getWrapped().getTexture().setV(vMin,vMax);
         this.texture.draw(ctx,VectorHelper.zero3D(),0d,0d);
     }
 

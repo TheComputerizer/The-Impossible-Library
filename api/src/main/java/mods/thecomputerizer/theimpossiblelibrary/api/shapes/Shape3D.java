@@ -17,8 +17,8 @@ public abstract class Shape3D implements Shape {
         return getScaled(1d,1d,1d);
     }
     
-    public VectorSupplier3D getOutlineSupplier() {
-        return getVectorSupplier();
+    public VectorSupplier3D getOutlineSupplier(Box bounds) {
+        return getVectorSupplier(bounds);
     }
     
     @Override public Shape3D getScaled(double scale) {
@@ -39,7 +39,7 @@ public abstract class Shape3D implements Shape {
     
     @Override public abstract Shape3D getScaled(double scaleX, double scaleY, double scaleZ);
     
-    public abstract VectorSupplier3D getVectorSupplier();
+    public abstract VectorSupplier3D getVectorSupplier(Box bounds);
     
     @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, Supplier<ColorCache> colorGenerator) {
         return new FuzzBall(

@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
-import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
@@ -14,7 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import org.joml.Vector3d;
 
-@SuppressWarnings("unused") @Getter @Setter
+@SuppressWarnings("unused") @Setter
 public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     
     public static ShapeWidget from(Shape shape) {
@@ -129,7 +128,8 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        this.shape.draw(ctx,center);
+        //TILDev.logInfo("Drawing shape at ({}, {}) from center {}",);
+        this.shape.draw(ctx,center.add(getX(),getY(),0d,new Vector3d()));
     }
     
     public Vector3d getCenterForGroup(Vector3d center) {
@@ -153,7 +153,7 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     }
     
     public boolean isInside(double x, double y, double z) {
-        return this.shape.getWrapped().isInside(new Vector3d(x,y,z));
+        return this.shape.getWrapped().isInside(new Vector3d(x-getX(),y-getY(),z));
     }
     
     public void setColor(ColorCache color) {

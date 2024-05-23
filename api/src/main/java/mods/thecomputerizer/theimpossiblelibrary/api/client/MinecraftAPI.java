@@ -16,6 +16,8 @@ import java.util.UUID;
 public interface MinecraftAPI {
 
     void addResourcePackFolder(File dir);
+    int getDisplayHeight();
+    int getDisplayWidth();
     FontAPI getFont();
     int getGUIScale();
     @Nullable PlayerAPI<?,?> getPlayer();

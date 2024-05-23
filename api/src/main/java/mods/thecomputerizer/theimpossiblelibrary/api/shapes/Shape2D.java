@@ -36,6 +36,10 @@ public abstract class Shape2D implements Shape {
         return new Shape2D[]{this};
     }
     
+    @Override public double getBoundedZ(double x, double y,double z) {
+        return z;
+    }
+    
     public Vector3d getDirectionAngles() {
         double angleX = new Vector2d(0d,1d).angle(new Vector2d(this.direction.z,this.direction.y));
         double angleY = new Vector2d(0d,1d).angle(new Vector2d(this.direction.x,this.direction.z));
@@ -43,8 +47,8 @@ public abstract class Shape2D implements Shape {
         return new Vector3d(angleX,angleY,angleZ);
     }
     
-    public VectorSupplier2D getOutlineSupplier() {
-        return getVectorSupplier();
+    public VectorSupplier2D getOutlineSupplier(Box bounds) {
+        return getVectorSupplier(bounds);
     }
     
     public Vector2d getRelativeCoordinate(double x, double y, double z) {
@@ -81,7 +85,8 @@ public abstract class Shape2D implements Shape {
     }
     
     @Override public abstract Shape2D getScaled(double scaleX, double scaleY, double scaleZ);
-    public abstract VectorSupplier2D getVectorSupplier();
+    
+    public abstract VectorSupplier2D getVectorSupplier(Box bounds);
     
     public Vector3d getWorldCoordinate(double x, double y) {
         return getWorldCoordinate(new Vector2d(x,y));
@@ -114,5 +119,9 @@ public abstract class Shape2D implements Shape {
                 () -> RandomHelper.randomFloat(minWidth,maxWidth),
                 colorGenerator
         );
+    }
+    
+    public boolean sameDirection(Shape2D other) {
+        return Misc.equalsNullable(this.direction,other.direction);
     }
 }

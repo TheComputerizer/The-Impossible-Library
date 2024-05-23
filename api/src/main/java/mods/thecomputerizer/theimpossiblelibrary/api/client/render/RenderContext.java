@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
@@ -20,8 +21,6 @@ import org.joml.Vector4d;
 
 import java.util.Collection;
 import java.util.function.Function;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 
 @SuppressWarnings("unused") @Getter
 public final class RenderContext {
@@ -52,8 +51,8 @@ public final class RenderContext {
     }
     
     public void drawColoredCircle(Vector3d center, Circle circle, ColorCache color) {
-        if(isNotBounded(center)) return;
-        VectorSupplier2D vectors = circle.getVectorSupplier();
+        if(!circle.checkToleranceBounds(center,this.scale.getRenderBounds())) return;
+        VectorSupplier2D vectors = circle.getVectorSupplier(this.scale.getRenderBounds());
         while(vectors.hasNext()) {
             prepareGradient(color);
             VertexWrapper buffer = initQuads(false);
@@ -66,7 +65,7 @@ public final class RenderContext {
     }
     
     public void drawColoredPlane(Vector3d center, Plane plane, ColorCache color) {
-        if(isNotBounded(center)) return;
+        if(!plane.checkToleranceBounds(center,this.scale.getRenderBounds())) return;
         Vector2d min = plane.getRelativeMin();
         Vector2d max = plane.getRelativeMax();
         prepareGradient(color);
@@ -86,7 +85,7 @@ public final class RenderContext {
     }
     
     public void drawOutline(Vector3d center, Shape2D shape, float width, ColorCache color) {
-        drawOutline(center,shape.getOutlineSupplier(),width,color);
+        drawOutline(center,shape.getOutlineSupplier(this.scale.getRenderBounds()),width,color);
     }
     
     public void drawOutline(Vector3d center, VectorSupplier2D vectors, float width, ColorCache color) {
@@ -94,7 +93,6 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
-            if(isNotBounded(center.add(next.x,next.y,0d,new Vector3d()))) continue;
             next = new Vector2d(this.scale.applyX(center.x,next.x),this.scale.applyY(center.y,next.y));
             gl.directVertexD(next.x,next.y,0d);
         }
@@ -104,7 +102,7 @@ public final class RenderContext {
     }
     
     public void drawOutline(Vector3d center, Shape3D shape, float width, ColorCache color) {
-        drawOutline(center,shape.getOutlineSupplier(),width,color);
+        drawOutline(center,shape.getOutlineSupplier(this.scale.getRenderBounds()),width,color);
     }
     
     public void drawOutline(Vector3d center, VectorSupplier3D vectors, float width, ColorCache color) {
@@ -112,7 +110,6 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
-            if(isNotBounded(center.add(next.x,next.y,next.z,new Vector3d()))) continue;
             next = new Vector3d(this.scale.applyX(center.x,next.x),this.scale.applyY(center.y,next.y),
                                 this.scale.applyZ(center.z,next.z));
             gl.directVertexD(next.x,next.y,next.z);
@@ -120,21 +117,6 @@ public final class RenderContext {
         gl.directEnd();
         this.renderer.enableTexture();
         this.renderer.disableBlend();
-    }
-    
-    public void drawText(Vector3d center, TextBuffer text) {
-        drawText(center,text,WHITE);
-    }
-    
-    public void drawText(Vector3d center, TextBuffer text, ColorCache color) {
-        double height = getScaledFontHeight()/2d;
-        double width = getScaledStringWidth(text.getText().getApplied())/1.75d;
-        if(isNotBounded(center) || //isNotBounded(center.add(0d,height,0d,new Vector3d())) ||
-           isNotBounded(center.add(0d,-height,0d,new Vector3d())) ||
-           isNotBounded(center.add(width,0d,0d,new Vector3d())) ||
-           isNotBounded(center.add(-width,0d,0d,new Vector3d()))) return;
-        this.renderer.drawCenteredString(this.font,text,this.scale.applyX(0d,center.x),
-                                         this.scale.applyY(0d,center.y),color);
     }
     
     public void drawTexturedPlane(Vector3d center, Plane plane, TextureWrapper texture) {
@@ -227,6 +209,18 @@ public final class RenderContext {
         return gl;
     }
     
+    public void scissorScaled(double left, double bottom, double width, double height) {
+        double dHeight = ClientHelper.getDisplayHeight();
+        double dWidth = ClientHelper.getDisplayWidth();
+        double widthScale = dWidth/this.scale.getWidth();
+        double heightScale = dHeight/this.scale.getHeight();
+        int iLeft = (int)((withScaledX(left))*widthScale);
+        int iBottom = (int)((withScaledY(bottom))*heightScale);
+        int iWidth = Math.abs((int)(withScaledX(width)*widthScale));
+        int iHeight = Math.abs((int)((withScaledY(height))*heightScale));
+        this.renderer.getGLAPI().scissor(iLeft,iBottom,iWidth,iHeight);
+    }
+    
     public void updateResolution(MinecraftWindow window) {
         updateResolution(window.getWidth(),window.getHeight());
     }
@@ -252,10 +246,10 @@ public final class RenderContext {
     }
     
     public double withScaledX(double x) {
-        return this.scale.applyX(0d,x);
+        return ((x*this.scale.getModScaleX())+this.scale.getTransformX()+1d)/this.scale.getScaleX();
     }
     
     public double withScaledY(double y) {
-        return this.scale.applyY(0d,y);
+        return this.scale.getHeight()-(((y*this.scale.getModScaleY())+this.scale.getTransformY()+1d)/this.scale.getScaleY());
     }
 }

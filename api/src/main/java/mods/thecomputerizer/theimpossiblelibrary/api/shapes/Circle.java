@@ -2,9 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -41,11 +43,45 @@ public class Circle extends Shape2D {
         this.heightRatio = heightRatio;
     }
     
+    @Override public boolean checkToleranceBounds(Vector3d center, Box bounds) {
+        return bounds.expand(this.radius).isInside(getCenter(center));
+    }
+    
     @Override public Circle copy() {
         return getScaled(1d,1d);
     }
     
-    public Vector3d getCenter(Vector3d center) {
+    @Override public boolean equals(Object other) {
+        if(this==other) return true;
+        if(Objects.isNull(other)) return false;
+        if(other.getClass()==Circle.class) {
+            Circle circle = (Circle)other;
+            return sameDirection(circle) && this.resolution==circle.resolution &&
+                   this.innerRadius==circle.innerRadius && this.radius==circle.radius &&
+                   this.heightRatio==circle.heightRatio;
+        }
+        return false;
+    }
+    
+    @Override public double getBoundedX(double x, double y, double z) {
+        return getBoundedXY(x,y).x;
+    }
+    
+    @Override public Vector2d getBoundedXY(Vector2d xy) {
+        return getBoundedXY(xy.x,xy.y);
+    }
+    
+    @Override public Vector2d getBoundedXY(double x, double y) {
+        Vector2d polar = VectorHelper.toPolar(x,y);
+        polar.set(Math.max(this.innerRadius,Math.min(this.radius,polar.x)),polar.y);
+        return VectorHelper.toCartesian(polar);
+    }
+    
+    @Override public double getBoundedY(double x, double y, double z) {
+        return getBoundedXY(x,y).y;
+    }
+    
+    @Override public Vector3d getCenter(Vector3d center) {
         Vector2d center2D = getCenter();
         return new Vector3d(center.x+center2D.x,center.y+center2D.y,center.z);
     }
@@ -62,7 +98,7 @@ public class Circle extends Shape2D {
         return this.radius*2d;
     }
     
-    @Override public VectorSupplier2D getOutlineSupplier() {
+    @Override public VectorSupplier2D getOutlineSupplier(Box bounds) {
         double sliceWidth = RADIANS_360/(double)(this.resolution);
         Vector2d[] vectors = new Vector2d[this.resolution+1];
         for(int i=0;i<vectors.length;i++)
@@ -97,9 +133,9 @@ public class Circle extends Shape2D {
         return 0d;
     }
     
-    @Override public VectorSupplier2D getVectorSupplier() {
-        return new CircleStream(this.resolution,0d,RADIANS_360/this.resolution,this.innerRadius,
-                                this.radius,vec -> withRatio(vec.x,vec.y));
+    @Override public VectorSupplier2D getVectorSupplier(Box bounds) {
+        return new CircleStream(this,0d,RADIANS_360/this.resolution,
+                                vec -> bounds.getBoundedXY(withRatio(VectorHelper.toCartesian(vec))));
     }
     
     @Override public double getWidth() {
@@ -136,6 +172,10 @@ public class Circle extends Shape2D {
         return slices;
     }
     
+    protected Vector2d withRatio(Vector2d v) {
+        return withRatio(v.x,v.y);
+    }
+    
     protected Vector2d withRatio(double x, double y) {
         return new Vector2d(x*Math.min(this.heightRatio,1d),y*Math.min(1d/this.heightRatio,1d));
     }
@@ -153,15 +193,47 @@ public class Circle extends Shape2D {
          */
         public CircleSlice(Vector3d direction, double radius, double innerRadius, double heightRatio,
                 double startAngle, double endAngle) {
-            super(direction,radius,innerRadius,heightRatio,(int)((360d/(Math.max(startAngle,endAngle)-Math.min(startAngle,endAngle)))+1d));
-            //if(startAngle>MathHelper.RADIANS_180) startAngle-=MathHelper.RADIANS_180;
-            //if(endAngle>MathHelper.RADIANS_180) startAngle-=MathHelper.RADIANS_180;
+            super(direction,radius,innerRadius,heightRatio,(int)((360d/Math.abs(startAngle-endAngle))+1d));
+            startAngle = MathHelper.getBoundedAngle(startAngle);
+            endAngle = MathHelper.getBoundedAngle(endAngle);
             this.startAngle = Math.min(startAngle,endAngle);
             this.endAngle = Math.max(startAngle,endAngle);
         }
         
+        @Override public boolean checkToleranceBounds(Vector3d center, Box bounds) {
+            return bounds.expand((this.radius-this.innerRadius)/2d).isInside(getCenter(center));
+        }
+        
         @Override public CircleSlice copy() {
             return getScaled(1d,1d,1d);
+        }
+        
+        @Override public boolean equals(Object other) {
+            if(this==other) return true;
+            if(Objects.isNull(other)) return false;
+            if(other.getClass()==CircleSlice.class) {
+                CircleSlice slice = (CircleSlice)other;
+                return sameDirection(slice) && this.resolution==slice.resolution &&
+                       this.innerRadius==slice.innerRadius && this.radius==slice.radius &&
+                       this.heightRatio==slice.heightRatio && this.startAngle==slice.startAngle &&
+                       this.endAngle==slice.endAngle;
+            }
+            return false;
+        }
+        
+        @Override public double getBoundedX(double x, double y, double z) {
+            return getBoundedXY(x,y).x;
+        }
+        
+        @Override public Vector2d getBoundedXY(double x, double y) {
+            Vector2d polar = VectorHelper.toPolar(x,y);
+            polar.set(Math.max(this.innerRadius,Math.min(this.radius,polar.x)),
+                      Math.max(this.startAngle,Math.min(this.endAngle,polar.y)));
+            return VectorHelper.toCartesian(polar);
+        }
+        
+        @Override public double getBoundedY(double x, double y, double z) {
+            return getBoundedXY(x,y).y;
         }
         
         @Override public Vector2d getCenter() {
@@ -196,17 +268,16 @@ public class Circle extends Shape2D {
             return new CircleSlice(new Vector3d(this.direction),radius,innerRadius,this.heightRatio,this.startAngle,endAngle);
         }
         
-        @Override public VectorSupplier2D getVectorSupplier() {
-            return new CircleStream(this.resolution,this.startAngle,
-                                    (this.endAngle-this.startAngle)/this.resolution,
-                                    this.innerRadius,this.radius,vec -> withRatio(vec.x,vec.y));
+        @Override public VectorSupplier2D getVectorSupplier(Box bounds) {
+            return new CircleStream(this,this.startAngle,(this.endAngle-this.startAngle)/this.resolution,
+                                    vec -> bounds.getBoundedXY(withRatio(VectorHelper.toCartesian(vec))));
         }
         
         @Override public boolean isInsideRelative(Vector2d pos) {
             pos = new Vector2d(pos.x/Math.min(this.heightRatio,1d),pos.y/Math.min(1d/this.heightRatio,1d));
             double distance = zero2D().distance(pos);
             if(distance>=this.innerRadius && distance<this.radius) {
-                double angle = Math.atan2(-pos.y,-pos.x)+MathHelper.RADIANS_180;
+                double angle = Math.atan2(-pos.y,-pos.x)+RADIANS_180;
                 return angle>=this.startAngle && angle<=this.endAngle;
             }
             return false;
@@ -232,31 +303,41 @@ public class Circle extends Shape2D {
     @Getter
     public static final class CircleStream implements VectorSupplier2D {
         
-        private final int resolution;
+        private final Circle circle;
         private final double startAngle;
         private final double angleDif;
-        private final double innerRadius;
-        private final double outerRadius;
-        private final Function<Vector2d,Vector2d> pointScaling;
+        private final Function<Vector2d,Vector2d> vertexSupplier;
         private int resolutionCount;
         private int cornerCount;
         
-        public CircleStream(int resolution, double startAngle, double angleDif, double innerRadius, double outerRadius,
-                Function<Vector2d,Vector2d> pointScaling) {
-            this.resolution = resolution;
+        public CircleStream(Circle circle, double startAngle, double angleDif,
+                Function<Vector2d,Vector2d> vertexSupplier) {
+            this.circle = circle;
             this.startAngle = startAngle;
             this.angleDif = angleDif;
-            this.innerRadius = Math.min(innerRadius,outerRadius);
-            this.outerRadius = Math.max(innerRadius,outerRadius);
-            this.pointScaling = pointScaling;
+            this.vertexSupplier = vertexSupplier;
+        }
+        
+        @Override public boolean equals(Object other) {
+            if(this==other) return true;
+            if(Objects.isNull(other)) return false;
+            if(other.getClass()==CircleStream.class) {
+                CircleStream stream = (CircleStream)other;
+                return Misc.equalsNullable(this.circle,stream.circle) && this.startAngle==stream.startAngle &&
+                       this.angleDif==stream.angleDif;
+            }
+            return false;
+        }
+        
+        @Override public int getIndex() {
+            return (this.resolutionCount*4)+this.cornerCount;
         }
         
         @Override public Vector2d getNext() {
             double angle = this.startAngle+(this.angleDif*this.resolutionCount);
             if(this.cornerCount==1 || this.cornerCount==2) angle+=this.angleDif;
-            double radius = this.cornerCount<=1 ? this.outerRadius : this.innerRadius;
-            Vector2d next = new Vector2d(Math.cos(angle)*radius,Math.sin(angle)*radius);
-            next = Objects.nonNull(this.pointScaling) ? this.pointScaling.apply(next) : next;
+            double radius = this.cornerCount<=1 ? this.circle.radius : this.circle.innerRadius;
+            Vector2d next = this.vertexSupplier.apply(new Vector2d(angle, radius));
             this.cornerCount++;
             if(this.cornerCount>3) {
                 this.cornerCount = 0;
@@ -266,7 +347,7 @@ public class Circle extends Shape2D {
         }
         
         @Override public boolean hasNext() {
-            return this.resolutionCount<this.resolution;
+            return this.resolutionCount<this.circle.resolution;
         }
         
         @Override public void onFinished() {

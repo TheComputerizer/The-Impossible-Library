@@ -9,9 +9,13 @@ public interface GLAPI {
     void directVertexD(double x, double y);
     void directVertexF(float x, float y, float z);
     void directVertexF(float x, float y);
+    void disable(int cap);
+    void enable(int cap);
     int lineLoop();
     int lines();
     int quads();
+    void scissor(int left, int bottom, int width, int height);
+    int scissorTest();
     void setLineWidth(float width);
     int triangles();
     int triangleFan();

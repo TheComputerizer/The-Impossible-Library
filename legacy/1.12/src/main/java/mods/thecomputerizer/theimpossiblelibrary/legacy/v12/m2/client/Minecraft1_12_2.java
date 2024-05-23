@@ -62,13 +62,22 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         }
     }
     
+    @Override public int getDisplayHeight() {
+        return this.mc.displayHeight;
+    }
+    
+    @Override public int getDisplayWidth() {
+        return this.mc.displayWidth;
+    }
+    
     @Override
     public FontAPI getFont() {
         return this.font;
     }
     
     @Override public int getGUIScale() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.gameSettings) ? this.mc.gameSettings.guiScale : 0;
+        int scale = Objects.nonNull(this.mc) && Objects.nonNull(this.mc.gameSettings) ? this.mc.gameSettings.guiScale : 0;
+        return scale==0 ? 4 : scale;
     }
     
     @Override

@@ -31,6 +31,14 @@ public class GL1_16_5 implements GLAPI {
         GL11.glVertex2f(x,y);
     }
     
+    @Override public void disable(int cap) {
+        GL11.glDisable(cap);
+    }
+    
+    @Override public void enable(int cap) {
+        GL11.glEnable(cap);
+    }
+    
     @Override public int lineLoop() {
         return GL_LINE_LOOP;
     }
@@ -41,6 +49,14 @@ public class GL1_16_5 implements GLAPI {
 
     @Override public int quads() {
         return GL_QUADS;
+    }
+    
+    @Override public void scissor(int left, int bottom, int width, int height) {
+        GL11.glScissor(left,bottom,width,height);
+    }
+    
+    @Override public int scissorTest() {
+        return GL_SCISSOR_TEST;
     }
     
     @Override public void setLineWidth(float width) {

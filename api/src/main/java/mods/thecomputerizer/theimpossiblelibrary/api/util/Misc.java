@@ -56,9 +56,13 @@ public class Misc {
         if(Objects.nonNull(thing)) conumer.accept(thing);
     }
     
+    public static <T> boolean equalsNullable(@Nullable T thing, @Nullable Object other) {
+        return Objects.isNull(thing) ? Objects.isNull(other) : Objects.nonNull(other) && thing.equals(other);
+    }
+    
     @SafeVarargs public static <T> boolean equalsAny(T thing, T ... others) {
         for(T other : others)
-            if(thing.equals(other)) return true;
+            if(equalsNullable(thing,other)) return true;
         return false;
     }
 

@@ -33,14 +33,14 @@ public class RenderableText extends Renderable {
     private TextBuffer createSubtitleBuffer(float opacity, int spacing) {
         return new Builder(TextHelper.getLiteral(this.subtext))
                 .setColor(ColorHelper.getColor(getParameterAs("subtitle_color","white")).withAlpha(opacity))
-                .setSpacing(spacing)
+                .setLineSpacing(spacing)
                 .build();
     }
     
     private TextBuffer createTitleBuffer(float opacity, int spacing) {
         return new Builder(TextHelper.getLiteral(this.text))
                 .setColor(ColorHelper.getColor(getParameterAs("title_color","red")).withAlpha(opacity))
-                .setSpacing(spacing*5)
+                .setLineSpacing(spacing*5)
                 .build();
     }
 

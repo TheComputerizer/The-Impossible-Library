@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -20,15 +21,35 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     public static final Box INFINITE = new Box(NEGATIVE_INFINITY,NEGATIVE_INFINITY,NEGATIVE_INFINITY,
                                                POSITIVE_INFINITY,POSITIVE_INFINITY,POSITIVE_INFINITY) {
         @Override public boolean isInside(BlockPosAPI<?> pos) { return true; }
+        @Override public boolean isInside(BlockPosAPI<?> pos, double tolerance) { return true; }
         @Override public boolean isInside(Vector3d pos) { return true; }
+        @Override public boolean isInside(Vector3d pos, double tolerance) { return true; }
         @Override public boolean isInside(Vector3i pos) { return true; }
+        @Override public boolean isInside(Vector3i pos, double tolerance) { return true; }
         @Override public boolean isInside(double x, double y, double z) { return true; }
+        @Override public boolean isInside(double x, double y, double z, double tolerance) { return true; }
+        @Override public boolean isInsideX(double x) { return true; }
+        @Override public boolean isInsideX(double x, double tolerance) { return true; }
+        @Override public boolean isInsideY(double y) { return true; }
+        @Override public boolean isInsideY(double y, double tolerance) { return true; }
+        @Override public boolean isInsideZ(double z) { return true; }
+        @Override public boolean isInsideZ(double z, double tolerance) { return true; }
     };
     public static final Box ZERO = new Box(0d,0d,0d,0d,0d,0d) {
         @Override public boolean isInside(BlockPosAPI<?> pos) { return false; }
+        @Override public boolean isInside(BlockPosAPI<?> pos, double tolerance) { return true; }
         @Override public boolean isInside(Vector3d pos) { return false; }
+        @Override public boolean isInside(Vector3d pos, double tolerance) { return true; }
         @Override public boolean isInside(Vector3i pos) { return false; }
+        @Override public boolean isInside(Vector3i pos, double tolerance) { return true; }
         @Override public boolean isInside(double x, double y, double z) { return false; }
+        @Override public boolean isInside(double x, double y, double z, double tolerance) { return true; }
+        @Override public boolean isInsideX(double x) { return true; }
+        @Override public boolean isInsideX(double x, double tolerance) { return true; }
+        @Override public boolean isInsideY(double y) { return true; }
+        @Override public boolean isInsideY(double y, double tolerance) { return true; }
+        @Override public boolean isInsideZ(double z) { return true; }
+        @Override public boolean isInsideZ(double z, double tolerance) { return true; }
     };
 
     public final Vector3d min;
@@ -58,6 +79,10 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return ShapeHelper.box(min,max);
     }
     
+    @Override public boolean checkToleranceBounds(Vector3d center, Box bounds) {
+        return bounds.expand(getWidth()/2d,getHeight()/2d,getDepth()/2d).isInside(getCenter(center));
+    }
+    
     @Override public Box copy() {
         return mul(1d,1d,1d);
     }
@@ -80,6 +105,16 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return Double.isNaN(x) || x==0 || Double.isNaN(y) || y==0 || Double.isNaN(z) || z==0 ? INFINITE :
                 (isFiniteAndNotMaxed(x,y,z)  ? mul(1/x,1/y,1/z) : ZERO);
     }
+    
+    @Override public boolean equals(Object other) {
+        if(this==other) return true;
+        if(Objects.isNull(other)) return false;
+        if(other.getClass()==Box.class) {
+            Box box = (Box)other;
+            return Misc.equalsNullable(this.min,box.max) && Misc.equalsNullable(this.max,box.max);
+        }
+        return false;
+    }
 
     public Box expand(double d) {
         return expand(d,d,d);
@@ -96,6 +131,22 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         double zRad = radiusZ();
         if(xRad+x<=0 || yRad+y<=0 || zRad+z<=0) return ZERO;
         return ShapeHelper.box(this.min.sub(x,y,z,new Vector3d()),this.max.add(x,y,z,new Vector3d()));
+    }
+    
+    @Override public double getBoundedX(double x, double y, double z) {
+        return Math.max(this.min.x,Math.min(this.max.x,x));
+    }
+    
+    @Override public double getBoundedY(double x, double y, double z) {
+        return Math.max(this.min.y,Math.min(this.max.y,y));
+    }
+    
+    @Override public double getBoundedZ(double x, double y, double z) {
+        return Math.max(this.min.z,Math.min(this.max.z,z));
+    }
+    
+    @Override public Vector3d getCenter(Vector3d center) {
+        return center.add(this.center,new Vector3d());
     }
     
     @Override public double getDepth() {
@@ -126,21 +177,28 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return mul(scaleX,scaleY,scaleZ);
     }
     
-    @Override public VectorSupplier3D getVectorSupplier() {
+    @Override public VectorSupplier3D getVectorSupplier(Box bounds) {
+        Box bounded = intersection(bounds);
         return VectorStreams.get3D(
-                new Vector3d(this.min),
-                new Vector3d(this.min.x,this.min.y,this.max.z),
-                new Vector3d(this.min.x,this.max.y,this.max.z),
-                new Vector3d(this.min.x,this.max.y,this.min.z),
-                new Vector3d(this.max.x,this.max.y,this.min.z),
-                new Vector3d(this.max),
-                new Vector3d(this.max.x,this.min.y,this.max.z),
-                new Vector3d(this.max.x,this.min.y,this.min.z)
+                new Vector3d(bounded.min),
+                new Vector3d(bounded.min.x,bounded.min.y,bounded.max.z),
+                new Vector3d(bounded.min.x,bounded.max.y,bounded.max.z),
+                new Vector3d(bounded.min.x,bounded.max.y,bounded.min.z),
+                new Vector3d(bounded.max.x,bounded.max.y,bounded.min.z),
+                new Vector3d(bounded.max),
+                new Vector3d(bounded.max.x,bounded.min.y,bounded.max.z),
+                new Vector3d(bounded.max.x,bounded.min.y,bounded.min.z)
         );
     }
     
     @Override public double getWidth() {
         return Math.abs(this.max.x-this.min.x);
+    }
+    
+    public Box intersection(Box other) {
+        return new Box(Math.max(this.min.x,other.min.x),Math.max(this.min.y,other.min.y),
+                       Math.max(this.min.z,other.min.z),Math.min(this.max.x,other.max.x),
+                       Math.min(this.max.y,other.max.y), Math.min(this.max.z,other.max.z));
     }
 
     private boolean isFiniteAndNotMaxed(double d) {
@@ -150,21 +208,61 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     private boolean isFiniteAndNotMaxed(double x, double y, double z) {
         return isFiniteAndNotMaxed(x) && isFiniteAndNotMaxed(y) && isFiniteAndNotMaxed(z);
     }
-
+    
     public boolean isInside(BlockPosAPI<?> pos) {
-        return isInside(pos.x(),pos.y(),pos.z());
+        return isInsideX(pos.x(),0d) && isInsideY(pos.y(),0d) && isInsideZ(pos.z(),0d);
     }
 
+    public boolean isInside(BlockPosAPI<?> pos, double tolerance) {
+        return isInsideX(pos.x(),tolerance) && isInsideY(pos.y(),tolerance) && isInsideZ(pos.z(),tolerance);
+    }
+    
     @Override public boolean isInside(Vector3d pos) {
-        return isInside(pos.x,pos.y,pos.z);
+        return isInsideX(pos.x,0d) && isInsideY(pos.y,0d) && isInsideZ(pos.z,0d);
     }
 
+    public boolean isInside(Vector3d pos, double tolerance) {
+        return isInsideX(pos.x,tolerance) && isInsideY(pos.y,tolerance) && isInsideZ(pos.z,tolerance);
+    }
+    
     public boolean isInside(Vector3i pos) {
-        return isInside(pos.x,pos.y,pos.z);
+        return isInsideX(pos.x,0d) && isInsideY(pos.y,0d) && isInsideZ(pos.z,0d);
     }
 
+    public boolean isInside(Vector3i pos, double tolerance) {
+        return isInsideX(pos.x,tolerance) && isInsideY(pos.y,tolerance) && isInsideZ(pos.z,tolerance);
+    }
+    
     public boolean isInside(double x, double y, double z) {
-        return x>this.min.x && x<this.max.x && y>this.min.y && y<this.max.y && z>this.min.z && z<this.max.z;
+        return isInsideX(x,0d) && isInsideY(y,0d) && isInsideZ(z,0d);
+    }
+
+    public boolean isInside(double x, double y, double z, double tolerance) {
+        return isInsideX(x,tolerance) && isInsideY(y,tolerance) && isInsideZ(z,tolerance);
+    }
+    
+    public boolean isInsideX(double x) {
+        return isInsideX(x,0d);
+    }
+    
+    public boolean isInsideX(double x, double tolerance) {
+        return x>this.min.x-tolerance && x<this.max.x+tolerance;
+    }
+    
+    public boolean isInsideY(double y) {
+        return isInsideY(y,0d);
+    }
+    
+    public boolean isInsideY(double y, double tolerance) {
+        return y>this.min.y-tolerance && y<this.max.y+tolerance;
+    }
+    
+    public boolean isInsideZ(double z) {
+        return isInsideZ(z,0d);
+    }
+    
+    public boolean isInsideZ(double z, double tolerance) {
+        return z>this.min.z-tolerance && z<this.max.z+tolerance;
     }
 
     /**

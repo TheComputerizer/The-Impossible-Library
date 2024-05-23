@@ -5,8 +5,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
+
+import java.util.Objects;
 
 /**
  Planes always assume (0,0,0) as the center unless implemented otherwise in an extension class
@@ -65,8 +68,31 @@ public class Plane extends Shape2D {
         this.height = Math.abs(this.relativeMax.y-this.relativeMin.y);
     }
     
+    @Override public boolean checkToleranceBounds(Vector3d center, Box bounds) {
+        return bounds.expand(getWidth()/2d,getHeight()/2d,0d).isInside(getCenter(center));
+    }
+    
     @Override public Plane copy() {
         return getScaled(1d,1d);
+    }
+    
+    @Override public double getBoundedX(double x, double y, double z) {
+        return Math.max(this.relativeMin.x,Math.min(this.relativeMax.x,x));
+    }
+    
+    @Override public double getBoundedY(double x, double y, double z) {
+        return Math.max(this.relativeMin.y,Math.min(this.relativeMax.y,y));
+    }
+    
+    @Override public boolean equals(Object other) {
+        if(this==other) return true;
+        if(Objects.isNull(other)) return false;
+        if(other.getClass()==Plane.class) {
+            Plane plane = (Plane)other;
+            return sameDirection(plane) && Misc.equalsNullable(this.relativeMin,plane.relativeMin) &&
+                   Misc.equalsNullable(this.relativeMax,plane.relativeMax);
+        }
+        return false;
     }
     
     @Override public Plane getScaled(double scale) {
@@ -92,9 +118,11 @@ public class Plane extends Shape2D {
         return getScaled(scaleX,scaleY);
     }
     
-    @Override public VectorSupplier2D getVectorSupplier() {
-        return VectorStreams.get2D(this.relativeMin,new Vector2d(this.relativeMax.x,this.relativeMin.y),
-                                   this.relativeMax,new Vector2d(this.relativeMin.x,this.relativeMax.y));
+    @Override public VectorSupplier2D getVectorSupplier(Box bounds) {
+        return VectorStreams.get2D(bounds.getBoundedXY(this.relativeMin),
+                                   bounds.getBoundedXY(this.relativeMax.x,this.relativeMin.y),
+                                   bounds.getBoundedXY(this.relativeMax),
+                                   bounds.getBoundedXY(this.relativeMin.x,this.relativeMax.y));
     }
     
     @Override public boolean isInsideRelative(Vector2d pos) {

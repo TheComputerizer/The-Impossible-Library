@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
+import java.util.Objects;
+
 @Getter
 public class Square extends Plane {
     
@@ -21,6 +23,16 @@ public class Square extends Plane {
     
     @Override public Square copy() {
         return getScaled(1d);
+    }
+    
+    @Override public boolean equals(Object other) {
+        if(this==other) return true;
+        if(Objects.isNull(other)) return false;
+        if(other.getClass()==Square.class) {
+            Square square = (Square)other;
+            return sameDirection(square) && this.sideLength==square.sideLength && this.heightRatio==square.heightRatio;
+        }
+        return false;
     }
     
     @Override public Square getScaled(double scale) {

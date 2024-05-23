@@ -7,10 +7,22 @@ import org.joml.Vector4d;
 @SuppressWarnings("unused")
 public interface VectorSuppliers<V> {
     
+    int getIndex();
     V getNext();
     boolean hasNext();
     void onFinished();
     void reset();
+    default void seekTo(int index) {
+        int i = getIndex();
+        if(index<i) {
+            reset();
+            i = getIndex();
+        }
+        while(i<index && hasNext()) {
+            getNext();
+            i = getIndex();
+        }
+    }
     
     interface VectorSupplier2D extends VectorSuppliers<Vector2d> {}
     interface VectorSupplier3D extends VectorSuppliers<Vector3d> {}

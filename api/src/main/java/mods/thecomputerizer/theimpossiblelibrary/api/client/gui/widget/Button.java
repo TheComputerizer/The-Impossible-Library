@@ -142,26 +142,19 @@ public class Button extends WidgetGroup {
     @Getter protected Consumer<Button> clickFunc;
     
     public Button(@Nullable ShapeWidget shape, @Nullable TextWidget text, @Nullable Widget hover) {
-        this(shape,text,hover,Objects.nonNull(shape) ? shape.x : 0d,Objects.nonNull(shape) ? shape.y : 0d);
-    }
-    
-    private Button(@Nullable ShapeWidget shape, @Nullable TextWidget text, @Nullable Widget hover, double x, double y) {
         this.shape = shape;
         this.text = text;
         this.hover = hover;
-        setX(x);
-        setY(y);
         this.hoverLines = new ArrayList<>();
-        if(Objects.nonNull(shape)) this.widgets.add(shape);
-        if(Objects.nonNull(text)) this.widgets.add(text);
+        if(Objects.nonNull(shape)) addWidget(shape);
+        if(Objects.nonNull(text)) addWidget(text);
         if(Objects.nonNull(hover)) hover.setParent(this);
     }
     
     @Override public Button copy() {
         Button copy = new Button(Objects.nonNull(this.shape) ? this.shape.copy() : null,
                                  Objects.nonNull(this.text) ? this.text.copy() : null,
-                                 Objects.nonNull(this.hover) ? this.hover.copy() : null,
-                                 this.x,this.y);
+                                 Objects.nonNull(this.hover) ? this.hover.copy() : null);
         copy.addHoverLines(this.hoverLines);
         for(Widget widget : this.widgets)
             if(widget!=this.shape && widget!=this.text) copy.addWidget(widget.copy());
@@ -170,6 +163,8 @@ public class Button extends WidgetGroup {
         copy.scaleX = this.scaleX;
         copy.scaleY = this.scaleY;
         copy.width = this.width;
+        copy.x = this.x;
+        copy.y = this.y;
         return copy;
     }
     
@@ -203,7 +198,7 @@ public class Button extends WidgetGroup {
     }
     
     @Override public boolean isHovering(double x, double y) {
-        return this.shape.isInside(x-this.x,y-this.y,0d);
+        return this.shape.isInside(x,y,0d);
     }
     
     /**
@@ -237,16 +232,6 @@ public class Button extends WidgetGroup {
         else if(this.hover instanceof WidgetGroup)
             for(Widget widget : ((WidgetGroup)this.hover).widgets)
                 if(widget instanceof TextWidget) text.accept((TextWidget)widget);
-    }
-    
-    public void setX(double x) {
-        super.setX(x);
-        //if(Objects.nonNull(this.hover)) this.hover.setX(x);
-    }
-    
-    public void setY(double y) {
-        super.setY(y);
-        //if(Objects.nonNull(this.hover)) this.hover.setY(y);
     }
     
     @Override public boolean shouldDrawHovered() {

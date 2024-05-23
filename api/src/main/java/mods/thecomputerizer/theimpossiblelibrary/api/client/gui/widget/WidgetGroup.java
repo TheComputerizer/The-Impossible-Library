@@ -87,35 +87,33 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     @Override public abstract WidgetGroup copy();
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        int index = 0;
-        for(Widget widget : this.widgets) {
-            drawWidget(ctx,widget,index,center,mouseX,mouseY);
-            index++;
+        for(Widget widget : this.widgets) drawWidget(ctx,widget,center,mouseX,mouseY);
+    }
+    
+    protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3d center, double mouseX, double mouseY) {
+        if(hoverable.isHovering(mouseX,mouseY) && hoverable.shouldDrawHovered()) {
+            hoverable.drawHovered(ctx,center,mouseX,mouseY);
+            return true;
         }
+        return false;
+    }
+    
+    protected boolean drawSelectable(RenderContext ctx, Selectable selectable, Vector3d center, double mouseX, double mouseY) {
+        if(selectable.isSelected()) {
+            selectable.drawSelected(ctx,center,mouseX,mouseY);
+            return true;
+        }
+        return false;
     }
     
     @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         draw(ctx,center,mouseX,mouseY);
     }
     
-    public void drawWidget(RenderContext ctx, Widget widget, int index, Vector3d center, double mouseX, double mouseY) {
-        boolean drawn = false;
-        Vector3d widgetCenter = getElementCenter(widget,index,center);
-        if(widget instanceof Hoverable) {
-            Hoverable hoverable = (Hoverable)widget;
-            if(hoverable.isHovering(mouseX,mouseY) && hoverable.shouldDrawHovered()) {
-                hoverable.drawHovered(ctx,widgetCenter,mouseX,mouseY);
-                drawn = true;
-            }
-        }
-        if(widget instanceof Selectable) {
-            Selectable selectable = (Selectable)widget;
-            if(selectable.isSelected()) {
-                selectable.drawSelected(ctx,widgetCenter,mouseX,mouseY);
-                drawn = true;
-            }
-        }
-        if(!drawn) widget.draw(ctx,widgetCenter,mouseX,mouseY);
+    public void drawWidget(RenderContext ctx, Widget widget, Vector3d center, double mouseX, double mouseY) {
+        boolean drawn = widget instanceof Hoverable && drawHoverable(ctx,(Hoverable)widget,center,mouseX,mouseY);
+        if(widget instanceof Selectable && drawSelectable(ctx,(Selectable)widget,center,mouseX,mouseY)) drawn = true;
+        if(!drawn) widget.draw(ctx,center,mouseX,mouseY);
     }
     
     protected void eachClickable(Consumer<Clickable> func) {
@@ -152,18 +150,58 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         for(Widget widget : this.widgets) func.accept(widget);
     }
     
+    protected double getElementsBottom(double z) {
+        return Math.max(getBottom(),getCenter(z).y-(getElementsHeight()/2d));
+    }
+    
     protected double getElementsHeight() {
-        double height = 0d;
-        for(Widget widget : this.widgets) height+=widget.getHeight();
-        return height;
+        double top = 0d;
+        double bottom = 0d;
+        boolean first = true;
+        for(Widget widget : this.widgets) {
+            double wTop = widget.getTop();
+            double wBottom = widget.getBottom();
+            if(first) {
+                top = wTop;
+                bottom = wBottom;
+                first = false;
+            } else {
+                if(wBottom<bottom) bottom = wBottom;
+                if(wTop>top) top = wTop;
+            }
+        }
+        return Math.abs(top-bottom);
     }
     
-    protected double getElementsTop(Vector3d parentCenter) {
-        return Math.min(getTop(parentCenter),getCenter(parentCenter).y+(getElementsHeight()/2d));
+    protected double getElementsLeft(double z) {
+        return Math.max(getLeft(),getCenter(z).x-(getElementsWidth()/2d));
     }
     
-    protected Vector3d getElementCenter(Widget widget, int index, Vector3d parentCenter) {
-        return widget.getCenter(parentCenter);
+    protected double getElementsWidth() {
+        double left = 0d;
+        double right = 0d;
+        boolean first = true;
+        for(Widget widget : this.widgets) {
+            double wLeft = widget.getLeft();
+            double wRight = widget.getRight();
+            if(first) {
+                right = wRight;
+                left = wLeft;
+                first = false;
+            } else {
+                if(wLeft<left) left = wLeft;
+                if(wRight>right) right = wRight;
+            }
+        }
+        return Math.abs(right-left);
+    }
+    
+    protected double getElementsTop(double z) {
+        return Math.min(getTop(),getCenter(z).y+(getElementsHeight()/2d));
+    }
+    
+    protected double getElementsRight(double z) {
+        return Math.min(getRight(),getCenter(z).x+(getElementsWidth()/2d));
     }
     
     public @Nullable Widget getHoveredElement(double mouseX, double mouseY) {

@@ -42,6 +42,14 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     
     @Override public void addResourcePackFolder(File dir) {}
     
+    @Override public int getDisplayHeight() {
+        return this.mc.getWindow().getHeight();
+    }
+    
+    @Override public int getDisplayWidth() {
+        return this.mc.getWindow().getWidth();
+    }
+    
     @Override
     public FontAPI getFont() {
         return this.font;

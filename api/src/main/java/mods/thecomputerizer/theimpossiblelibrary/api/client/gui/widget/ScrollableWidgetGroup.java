@@ -35,11 +35,18 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     @Override public abstract ScrollableWidgetGroup copy();
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        super.draw(ctx,new Vector3d(-getOffsetX(center.x),-getOffsetY(center.y),center.z),getOffsetX(mouseX),getOffsetY(mouseY));
+        super.draw(ctx,center.add(0d,this.scrollOffset,0d,new Vector3d()),mouseX,mouseY);
     }
     
-    @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        super.drawHovered(ctx,center,mouseX,mouseY);
+    @Override protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3d center, double mouseX,
+            double mouseY) {
+        mouseX = getOffsetX(mouseX);
+        mouseY = getOffsetY(mouseY);
+        if(isBounded(center,mouseX,mouseY+this.scrollOffset) && hoverable.isHovering(mouseX,mouseY) && hoverable.shouldDrawHovered()) {
+            hoverable.drawHovered(ctx,center,mouseX,mouseY);
+            return true;
+        }
+        return false;
     }
     
     @Override public Collection<TextAPI<?>> getHoverLines(double mouseX, double mouseY) {
@@ -54,8 +61,12 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return y-this.scrollOffset;
     }
     
-    @Override protected Box getRenderBounds(Widget widget, int index, Vector3d center) {
-        return super.getRenderBounds(widget,index,center).offset(0d,-this.scrollOffset,0d);
+    @Override protected Box getRenderBounds(Vector3d center) {
+        return super.getRenderBounds(center).offset(0d,-this.scrollOffset,0d);
+    }
+    
+    @Override public boolean isHovering(double mouseX, double mouseY) {
+        return super.isHovering(mouseX,mouseY);
     }
     
     @Override public boolean onClicked(double mouseX, double mouseY, boolean leftClick) {

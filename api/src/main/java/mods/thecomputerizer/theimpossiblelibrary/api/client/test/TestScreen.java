@@ -16,6 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
@@ -40,7 +41,7 @@ public class TestScreen extends ScreenAPI {
     
     public TestScreen(int guiScale) {
         super(TextHelper.getLiteral("test"),ClientHelper.getWindow(),guiScale);
-        this.clicked = TextWidget.literal("0",BLUE,-0.75d,0.75d);
+        this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
         addWidget(this.clicked);
         this.fuzz = addFuzz(5,10,1f,1f);
         //addRadialMenu(RenderHelper.getCurrentHeightRatio(),5);
@@ -70,7 +71,7 @@ public class TestScreen extends ScreenAPI {
             button.addHoverLine(TextHelper.getLiteral("test hover "+i));
             button.setClickFunc(b -> this.coloredFuzz = !this.coloredFuzz);
             button.setHover(BasicWidgetGroup.from(ShapeWidget.of(RenderShape.from(
-                    button.getShape().getShape().getWrapped()),0d,0d),texture));
+                    button.getShape().getWrapped().getWrapped()),0d,0d),texture));
         });
         addWidget(radialMenu);
         addWidget(ShapeWidget.outlineFrom(circle.getScaled(6d/13d),10f));
@@ -79,6 +80,8 @@ public class TestScreen extends ScreenAPI {
     
     private void addScrollableMenu(int size, double width, double height) {
         WidgetList list = WidgetList.from(Button.colored(BLACK,TextHelper.getLiteral("template")),0d,0d,width,height);
+        Square square = (Square)((Button)list.getElementTemplate()).getShape().getWrapped().getWrapped();
+        square.setSideLength(square.getSideLength()*(((double)this.guiScale)+1d)/2d,square.getHeightRatio());
         for(int i=0;i<size;i++) {
             list.addWidgetFromTemplate((template,index) -> {
                 Button button = (Button)template;

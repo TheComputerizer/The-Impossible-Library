@@ -6,12 +6,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import org.joml.Vector3d;
 
-@SuppressWarnings("unused") @Getter @Setter
+import java.util.Objects;
+
+@SuppressWarnings("unused") @Setter
 public abstract class Widget {
     
-    protected Widget parent;
-    protected double height;
-    protected double width;
+    @Getter protected Widget parent;
+    @Getter protected double height;
+    @Getter protected double width;
     protected double x;
     protected double y;
     
@@ -27,25 +29,33 @@ public abstract class Widget {
     
     public abstract void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY);
     
-    public double getBottom(Vector3d center) {
-        return getCenter(center).y-(getHeight()/2d);
+    public double getBottom() {
+        return getY()-(getHeight()/2d);
     }
     
-    public Vector3d getCenter(Vector3d parentCenter) {
-        return this.x!=0d || this.y!=0d ?
-                new Vector3d(parentCenter.x+this.x,parentCenter.y+this.y,parentCenter.z) : parentCenter;
+    public Vector3d getCenter(double z) {
+        return new Vector3d(getX(),getY(),z);
     }
     
-    public double getLeft(Vector3d center) {
-        return getCenter(center).x-(getWidth()/2d);
+    public double getLeft() {
+        return getX()-(getWidth()/2d);
     }
     
-    public double getRight(Vector3d center) {
-        return getCenter(center).x+(getWidth()/2d);
+    public double getRight() {
+        return getX()+(getWidth()/2d);
     }
     
-    public double getTop(Vector3d center) {
-        return getCenter(center).y+(getHeight()/2d);
+    public double getTop() {
+        return getY()+(getHeight()/2d);
     }
+    
+    public double getX() {
+        return Objects.nonNull(this.parent) ? this.x+this.parent.getX() : this.x;
+    }
+    
+    public double getY() {
+        return Objects.nonNull(this.parent) ? this.y+this.parent.getY() : this.y;
+    }
+    
     public abstract void onResolutionUpdated(MinecraftWindow window);
 }

@@ -22,6 +22,16 @@ public class ClientHelper {
         else TILRef.logError("Unable to add resource pack folder `{}` since MinecraftAPI is null");
     }
     
+    public static int getDisplayHeight() {
+        MinecraftAPI api = getMinecraft();
+        return Objects.nonNull(api) ? api.getDisplayHeight() : 1;
+    }
+    
+    public static int getDisplayWidth() {
+        MinecraftAPI api = getMinecraft();
+        return Objects.nonNull(api) ? api.getDisplayWidth() : 1;
+    }
+    
     public static @Nullable FontAPI getFont() {
         MinecraftAPI api = getMinecraft();
         return Objects.nonNull(api) ? api.getFont() : null;

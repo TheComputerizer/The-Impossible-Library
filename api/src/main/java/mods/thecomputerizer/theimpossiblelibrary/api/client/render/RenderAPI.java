@@ -22,8 +22,8 @@ public interface RenderAPI {
     void disableLighting();
     void disableTexture();
     
-    default void drawCenteredString(FontAPI font, TextBuffer text, Number x, Number y, ColorCache color) {
-        drawCenteredString(font,text.getText().getApplied(),x,y,color.getColorI());
+    default void drawCenteredString(FontAPI font, TextBuffer text, Number x, Number y) {
+        drawCenteredString(font,text.getText().getApplied(),x,y,text.getColor().getColorI());
     }
     
     default void drawCenteredString(FontAPI font, TextAPI<?> text, Number x, Number y, ColorCache color) {
@@ -32,8 +32,8 @@ public interface RenderAPI {
     
     void drawCenteredString(FontAPI font, String str, Number x, Number y, int color);
     
-    default void drawString(FontAPI font, TextBuffer text, Number left, Number top, ColorCache color) {
-        drawString(font,text.getText().getApplied(),left,top,color.getColorI());
+    default void drawString(FontAPI font, TextBuffer text, Number left, Number top) {
+        drawString(font,text.getText().getApplied(),left,top,text.getColor().getColorI());
     }
     
     default void drawString(FontAPI font, TextAPI<?> text, Number left, Number top, ColorCache color) {
