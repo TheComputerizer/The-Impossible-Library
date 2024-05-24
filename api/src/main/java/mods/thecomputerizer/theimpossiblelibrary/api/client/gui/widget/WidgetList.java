@@ -69,10 +69,15 @@ public class WidgetList extends ScrollableWidgetGroup {
         addWidget(widget);
     }
     
-    @Override protected Vector3d calculatePosition(Widget widget, int index) {
+    @Override protected void recalculatePositions() {
+        double offset = this.spacing;
+        double top = getElementsTop(0d);
+        for(Widget widget : this.widgets) {
+            double height = widget.getHeight();
+            widget.setY(top-offset-(height/2d));
+            offset+=(height+spacing);
+        }
         calculateScrollBar();
-        return new Vector3d(0d,getElementsTop(0d)-getIndexHeight(index)-this.spacing-
-                                (this.elementTemplate.getHeight()/2d),0d);
     }
     
     protected void calculateScrollBar() {
@@ -97,15 +102,9 @@ public class WidgetList extends ScrollableWidgetGroup {
     }
     
     @Override protected double getElementsHeight() {
-        return this.spacing+getIndexHeight(this.widgets.size());
-    }
-    
-    public double getIndexHeight(int index) {
-        return index*getTemplateHeight();
-    }
-    
-    public double getTemplateHeight() {
-        return this.elementTemplate.getHeight()+this.spacing;
+        double height = this.spacing;
+        for(Widget widget : this.widgets) height+=(widget.getHeight()+this.spacing);
+        return height;
     }
     
     @Override

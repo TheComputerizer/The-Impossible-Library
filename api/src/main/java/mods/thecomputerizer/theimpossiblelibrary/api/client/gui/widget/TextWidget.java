@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import org.joml.Vector3d;
 
@@ -59,8 +59,8 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     
     public TextWidget(TextBuffer text, double x, double y) {
         this.text = text;
-        setX(MathHelper.clamp(x,-1d,1d));
-        setY(MathHelper.clamp(y,-1d,1d));
+        setX(x);
+        setY(y);
     }
     
     public ColorCache getColor() {
@@ -77,11 +77,11 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.text)) {
             center = getCenter(center.z).add(center.x,center.y,0d);
-            double minX = Objects.nonNull(this.parent) ? center.x-this.parent.getWidth()/2d : -1d;
-            double minY = Objects.nonNull(this.parent) ? center.y-this.parent.getHeight()/2d: -1d;
-            double maxX = Objects.nonNull(this.parent) ? center.x+this.parent.getWidth()/2d : 1d;
-            double maxY = Objects.nonNull(this.parent) ? center.y+this.parent.getHeight()/2d : 1d;
-            this.text.draw(ctx,center,minX,minY,maxX,maxY);
+            double minX = center.x-(Objects.nonNull(this.parent) ? this.parent.getWidth() : getWidth())/2d;
+            double minY = center.y-getHeight()/2d;
+            double maxX = center.x+(Objects.nonNull(this.parent) ? this.parent.getWidth() : getWidth())/2d;
+            double maxY = center.y+getHeight()/2d;
+            this.text.draw(ctx,getCenter(center.z),minX,minY,maxX,maxY);
         }
     }
     
@@ -119,5 +119,9 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     public TextWidget setText(TextBuffer text) {
         this.text = text;
         return this;
+    }
+    
+    @Override public void setWidth(double width) {
+        this.text.setMaxWidth(RenderContext.get(ClientHelper.getMinecraft()),width);
     }
 }

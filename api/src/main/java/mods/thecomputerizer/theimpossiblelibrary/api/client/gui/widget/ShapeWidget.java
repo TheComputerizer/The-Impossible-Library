@@ -11,7 +11,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -190,8 +189,8 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     
     public ShapeWidget(RenderShape shape, double x, double y) {
         this.shape = shape;
-        setX(MathHelper.clamp(x,-1d,1d));
-        setY(MathHelper.clamp(y,-1d,1d));
+        setX(x);
+        setY(y);
     }
     
     @Override public ShapeWidget copy() {

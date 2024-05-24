@@ -18,7 +18,7 @@ import java.util.Objects;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer.Allignment.*;
 
-@SuppressWarnings("unused")  @Getter
+@SuppressWarnings("unused")
 public class TextBuffer {
     
     public static Builder getBuilder(TextAPI<?> text) {
@@ -45,14 +45,18 @@ public class TextBuffer {
         return new Builder(TextHelper.getTranslated(key,args));
     }
 
-    private final TextAPI<?> text;
-    private final Allignment allignment;
-    private final double lineSpacing;
-    private final double scaleX;
-    private final double scaleY;
-    private final double translateX;
-    private final double translateY;
-    @Setter private ColorCache color;
+    @Getter private final TextAPI<?> text;
+    @Getter private final Allignment allignment;
+    @Getter private final double lineSpacing;
+    @Getter private final double scaleX;
+    @Getter private final double scaleY;
+    @Getter private final double translateX;
+    @Getter private final double translateY;
+    @Getter @Setter private ColorCache color;
+    @Getter private boolean cached;
+    private List<String> lineCache;
+    private double widthCache;
+    private double heightCache;
 
     private TextBuffer(TextAPI<?> text, Allignment allignment, ColorCache color, double lineSpacing, double scaleX,
             double scaleY, double translateX, double translateY) {
@@ -66,76 +70,56 @@ public class TextBuffer {
         this.translateY = translateY;
     }
     
+    public void cache(RenderContext ctx, double maxWidth) {
+        List<String> lines = ctx.splitLines(getText().getApplied(),maxWidth);
+        this.heightCache = (lines.size()*ctx.getScaledFontHeight()*this.scaleY)+
+                           (Math.max(0,lines.size()-1)*this.lineSpacing*this.scaleY);
+        this.widthCache = lines.size()==1 ? ctx.getScaledStringWidth(lines.get(0)) : maxWidth;
+        this.lineCache = lines;
+        this.cached = true;
+    }
+    
     public void draw(RenderContext ctx, Vector3d center, double minX, double minY, double maxX, double maxY) {
         double width = Math.abs(maxX-minX);
-        List<String> lines = toLines(ctx,width);
-        draw(ctx,center,lines,minX,minY,width,Math.abs(maxY-minY));
+        if(!this.cached) cache(ctx,width);
+        draw(ctx,center,this.lineCache,minX,minY,width,Math.abs(maxY-minY));
     }
     
     private void draw(RenderContext ctx, Vector3d center, List<String> lines, double left, double bottom, double width,
             double height) {
-        double lineHeight = getHeight(ctx);
+        double lineHeight = ctx.getScaledFontHeight();
         double offset = 0;
         for(String line : lines) {
-            Vector3d next = VectorHelper.copy3D(center).sub(0d,offset,0d);
-            if(next.y+(lineHeight/2d)<bottom) break;
-            draw(ctx,next,line,lineHeight,left,bottom,width,height);
+            draw(ctx,VectorHelper.copy3D(center),line,lineHeight,left,bottom,width,height,offset);
             offset+=(lineHeight+this.lineSpacing);
+            //if(center.y-offset+(lineHeight/2d)<bottom) break;
         }
     }
     
     private void draw(RenderContext ctx, Vector3d center, String line, double lineHeight, double left, double bottom,
-            double width, double height) {
+            double width, double height, double offset) {
         if(isTopAlligned()) center.y = bottom+height;
         else if(isBottomAlligned()) center.y = bottom+lineHeight;
         else center.y = bottom+(height/2d)+(lineHeight/2d);
         if(isLeftAlligned()) center.x = left;
-        else if(isRightAlligned()) center.x = left-getWidth(ctx,line);
+        else if(isRightAlligned()) center.x = left-getWidth(ctx,width);
         else center.x = left+(width/2d);
-        center.add(this.translateX,this.translateY,0d);
+        center.add(this.translateX,this.translateY-offset,0d);
         RenderAPI renderer = ctx.getRenderer();
         double scaledX = ctx.withScaledX(center.x);
         double scaledY = ctx.withScaledY(center.y);
-        if(isLeftAlligned() || isRightAlligned()) renderer.drawString(ctx.getFont(),this,scaledX,scaledY);
-        else renderer.drawCenteredString(ctx.getFont(),this,scaledX,scaledY);
+        if(isLeftAlligned() || isRightAlligned()) renderer.drawString(ctx.getFont(),line,scaledX,scaledY,this.color.getColorI());
+        else renderer.drawCenteredString(ctx.getFont(),line,scaledX,scaledY,this.color.getColorI());
     }
     
     public double getHeight(@Nullable RenderContext ctx, double maxWidth) {
-        if(Objects.isNull(ctx)) return 0d;
-        List<String> lines = toLines(ctx,maxWidth/this.scaleX);
-        return (ctx.getScaledFontHeight()*this.scaleY*lines.size())+(Math.max(0,lines.size()-1)*this.lineSpacing);
-    }
-    
-    private double getHeight(RenderContext ctx, List<String> lines) {
-        return (ctx.getScaledFontHeight()*this.scaleY*lines.size())+(Math.max(0,lines.size()-1)*this.lineSpacing);
-    }
-    
-    private double getHeight(RenderContext ctx) {
-        return ctx.getScaledFontHeight()*this.scaleY;
+        if(!this.cached && Objects.nonNull(ctx)) cache(ctx,maxWidth);
+        return this.heightCache;
     }
     
     public double getWidth(@Nullable RenderContext ctx, double maxWidth) {
-        if(Objects.isNull(ctx)) return 0d;
-        List<String> lines = toLines(ctx,maxWidth/this.scaleX);
-        double width = 0d;
-        for(String line : lines) {
-            double lWidth = ctx.getScaledStringWidth(this.text.getApplied())*this.scaleX;
-            if(lWidth>width) width = lWidth;
-        }
-        return width;
-    }
-    
-    private double getWidth(RenderContext ctx, List<String> lines) {
-        double width = 0d;
-        for(String line : lines) {
-            double lWidth = getWidth(ctx,line);
-            if(lWidth>width) width = lWidth;
-        }
-        return width;
-    }
-    
-    private double getWidth(RenderContext ctx, String line) {
-        return ctx.getScaledStringWidth(this.text.getApplied())*this.scaleX;
+        if(!this.cached && Objects.nonNull(ctx)) cache(ctx,maxWidth);
+        return this.widthCache;
     }
     
     public boolean isBottomAlligned() {
@@ -158,8 +142,8 @@ public class TextBuffer {
         return Misc.equalsAny(this.allignment,TOP_CENTER,TOP_LEFT,TOP_RIGHT);
     }
     
-    public List<String> toLines(RenderContext ctx, double width) {
-        return ctx.splitLines(getText().getApplied(),width);
+    public void setMaxWidth(RenderContext ctx, double maxWidth) {
+        cache(ctx,maxWidth);
     }
 
     public static class Builder {

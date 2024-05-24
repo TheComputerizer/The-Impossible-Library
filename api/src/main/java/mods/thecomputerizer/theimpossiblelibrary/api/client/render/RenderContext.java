@@ -5,6 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
@@ -19,11 +20,8 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector4d;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.function.Function;
 
 @SuppressWarnings("unused") @Getter
@@ -226,20 +224,7 @@ public final class RenderContext {
     }
     
     public List<String> splitLines(String text, double width) {
-        if(Objects.isNull(text)) text = "";
-        List<String> splits = new ArrayList<>();
-        StringJoiner joiner = new StringJoiner(" ");
-        double textWidth = 0d;
-        for(String word : text.split(" ")) {
-            textWidth+=getScaledStringWidth(word);
-            if(textWidth>width) {
-                splits.add(joiner.toString());
-                joiner = new StringJoiner(" ");
-                textWidth = 0d;
-            }
-            joiner.add(word);
-        }
-        return splits;
+        return FontHelper.splitLines(this.font,text,(int)withScaledX(width));
     }
     
     public void updateResolution(MinecraftWindow window) {

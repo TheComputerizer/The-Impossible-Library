@@ -21,16 +21,24 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     
     @Override public void addWidget(Widget widget) {
         super.addWidget(widget);
-        int index = 0;
-        for(Widget w : this.widgets) {
-            Vector3d center = calculatePosition(w,index);
-            w.setX(center.x);
-            w.setY(center.y);
-            index++;
-        }
+        recalculatePositions();
     }
     
-    protected abstract Vector3d calculatePosition(Widget widget, int index);
+    @Override public void addWidgets(Widget ... widgets) {
+        for(Widget widget : widgets) {
+            this.widgets.add(widget);
+            widget.setParent(this);
+        }
+        recalculatePositions();
+    }
+    
+    @Override public void addWidgets(Collection<Widget> widgets) {
+        for(Widget widget : widgets) {
+            this.widgets.add(widget);
+            widget.setParent(this);
+        }
+        recalculatePositions();
+    }
     
     @Override public abstract ScrollableWidgetGroup copy();
     
@@ -73,6 +81,8 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return super.onClicked(getOffsetX(mouseX),getOffsetY(mouseY),leftClick);
     }
     
+    protected abstract void recalculatePositions();
+    
     protected double scroll(int scrollAmount) {
         return this.scrollSpeed*((double)Math.abs(scrollAmount));
     }
@@ -99,12 +109,6 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     
     @Override public void setWidgets(Collection<Widget> widgets) {
         super.setWidgets(widgets);
-        int index = 0;
-        for(Widget widget : widgets) {
-            Vector3d center = calculatePosition(widget,index);
-            widget.setX(center.x);
-            widget.setY(center.y);
-            index++;
-        }
+        recalculatePositions();
     }
 }
