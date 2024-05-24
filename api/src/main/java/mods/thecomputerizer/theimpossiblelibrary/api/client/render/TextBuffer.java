@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
@@ -10,6 +11,7 @@ import org.joml.Vector3d;
 import org.joml.Vector4f;
 import org.joml.Vector4i;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,12 +67,31 @@ public class TextBuffer {
     }
     
     public void draw(RenderContext ctx, Vector3d center, double minX, double minY, double maxX, double maxY) {
-        if(isTopAlligned()) center.y = maxY;
-        else if(isBottomAlligned()) center.y = minY+getHeight(ctx);
-        else center.y = minY+((maxY-minY)/2d)+(getHeight(ctx)/2d);
-        if(isLeftAlligned()) center.x = minX;
-        else if(isRightAlligned()) center.x = maxX-getWidth(ctx);
-        else center.x = minX+((maxX-minX)/2d);
+        double width = Math.abs(maxX-minX);
+        List<String> lines = toLines(ctx,width);
+        draw(ctx,center,lines,minX,minY,width,Math.abs(maxY-minY));
+    }
+    
+    private void draw(RenderContext ctx, Vector3d center, List<String> lines, double left, double bottom, double width,
+            double height) {
+        double lineHeight = getHeight(ctx);
+        double offset = 0;
+        for(String line : lines) {
+            Vector3d next = VectorHelper.copy3D(center).sub(0d,offset,0d);
+            if(next.y+(lineHeight/2d)<bottom) break;
+            draw(ctx,next,line,lineHeight,left,bottom,width,height);
+            offset+=(lineHeight+this.lineSpacing);
+        }
+    }
+    
+    private void draw(RenderContext ctx, Vector3d center, String line, double lineHeight, double left, double bottom,
+            double width, double height) {
+        if(isTopAlligned()) center.y = bottom+height;
+        else if(isBottomAlligned()) center.y = bottom+lineHeight;
+        else center.y = bottom+(height/2d)+(lineHeight/2d);
+        if(isLeftAlligned()) center.x = left;
+        else if(isRightAlligned()) center.x = left-getWidth(ctx,line);
+        else center.x = left+(width/2d);
         center.add(this.translateX,this.translateY,0d);
         RenderAPI renderer = ctx.getRenderer();
         double scaledX = ctx.withScaledX(center.x);
@@ -79,11 +100,41 @@ public class TextBuffer {
         else renderer.drawCenteredString(ctx.getFont(),this,scaledX,scaledY);
     }
     
-    public double getHeight(RenderContext ctx) {
+    public double getHeight(@Nullable RenderContext ctx, double maxWidth) {
+        if(Objects.isNull(ctx)) return 0d;
+        List<String> lines = toLines(ctx,maxWidth/this.scaleX);
+        return (ctx.getScaledFontHeight()*this.scaleY*lines.size())+(Math.max(0,lines.size()-1)*this.lineSpacing);
+    }
+    
+    private double getHeight(RenderContext ctx, List<String> lines) {
+        return (ctx.getScaledFontHeight()*this.scaleY*lines.size())+(Math.max(0,lines.size()-1)*this.lineSpacing);
+    }
+    
+    private double getHeight(RenderContext ctx) {
         return ctx.getScaledFontHeight()*this.scaleY;
     }
     
-    public double getWidth(RenderContext ctx) {
+    public double getWidth(@Nullable RenderContext ctx, double maxWidth) {
+        if(Objects.isNull(ctx)) return 0d;
+        List<String> lines = toLines(ctx,maxWidth/this.scaleX);
+        double width = 0d;
+        for(String line : lines) {
+            double lWidth = ctx.getScaledStringWidth(this.text.getApplied())*this.scaleX;
+            if(lWidth>width) width = lWidth;
+        }
+        return width;
+    }
+    
+    private double getWidth(RenderContext ctx, List<String> lines) {
+        double width = 0d;
+        for(String line : lines) {
+            double lWidth = getWidth(ctx,line);
+            if(lWidth>width) width = lWidth;
+        }
+        return width;
+    }
+    
+    private double getWidth(RenderContext ctx, String line) {
         return ctx.getScaledStringWidth(this.text.getApplied())*this.scaleX;
     }
     

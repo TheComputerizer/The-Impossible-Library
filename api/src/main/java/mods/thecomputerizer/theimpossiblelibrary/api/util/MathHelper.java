@@ -23,7 +23,7 @@ public class MathHelper {
      */
     public static double getBoundedAngle(double angle) {
         while(angle>RADIANS_180) angle-=RADIANS_360;
-        while(angle<=-RADIANS_180) angle+=RADIANS_360;
+        while(angle<-RADIANS_180) angle+=RADIANS_360;
         return angle;
     }
 
@@ -109,14 +109,14 @@ public class MathHelper {
         Calculates a 1D position halfway in between a given start and end
      */
     public static double getHalfway(double start, double end) {
-        return start+((end-start)/2d);
+        return Math.min(start,end)+(Math.abs(end-start)/2d);
     }
     
     /**
      Calculates a 1D position halfway in between a given start and end
      */
     public static float getHalfway(float start, float end) {
-        return start+((end-start)/2f);
+        return Math.min(start,end)+(Math.abs(end-start)/2f);
     }
 
     /**

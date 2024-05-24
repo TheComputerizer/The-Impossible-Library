@@ -86,14 +86,13 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     }
     
     @Override public double getHeight() {
-        RenderContext ctx = RenderHelper.getContext();
-        return Objects.nonNull(ctx) ? ctx.getScaledFontHeight() : 0d;
+        double maxWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 2d;
+        return this.text.getHeight(RenderHelper.getContext(),maxWidth);
     }
     
     @Override public double getWidth() {
-        RenderContext ctx = RenderHelper.getContext();
-        return Objects.nonNull(ctx) && Objects.nonNull(this.text) ?
-                ctx.getScaledStringWidth(this.text.getText().getApplied()) : 0d;
+        double maxWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 2d;
+        return this.text.getWidth(RenderHelper.getContext(),maxWidth);
     }
     
     @Override public TextBuffer getWrapped() {

@@ -94,42 +94,42 @@ public class Button extends WidgetGroup {
         return button;
     }
     
-    public static WidgetGroup raidalGroup(Circle circle, Vector2d center, int slices,
+    public static WidgetGroup radialGroup(Circle circle, Vector2d center, int slices,
             BiConsumer<Integer,Button> settings) {
-        return BasicWidgetGroup.from(raidal(circle,center,slices,0d,settings));
+        return BasicWidgetGroup.from(radial(circle,center,slices,0d,settings));
     }
     
-    public static WidgetGroup raidalGroup(Circle circle, Vector2d center, int slices, double startAngle,
+    public static WidgetGroup radialGroup(Circle circle, Vector2d center, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
-        return BasicWidgetGroup.from(raidal(circle,center,slices,startAngle,settings));
+        return BasicWidgetGroup.from(radial(circle,center,slices,startAngle,settings));
     }
     
-    public static WidgetGroup raidalGroup(Circle circle, double centerX, double centerY, int slices, double startAngle,
+    public static WidgetGroup radialGroup(Circle circle, double centerX, double centerY, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
-        return BasicWidgetGroup.from(raidal(circle,centerX,centerY,slices,startAngle,settings));
+        return BasicWidgetGroup.from(radial(circle,centerX,centerY,slices,startAngle,settings));
     }
     
-    public static Button[] raidal(Circle circle, Vector2d center, int slices, double startAngle,
+    public static Button[] radial(Circle circle, Vector2d center, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
-        return raidal(circle,center.x,center.y,slices,startAngle,settings);
+        return radial(circle,center.x,center.y,slices,startAngle,settings);
     }
     
-    public static Button[] raidal(Circle circle, double centerX, double centerY, int slices, double startAngle,
+    public static Button[] radial(Circle circle, double centerX, double centerY, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
         Button[] buttons = new Button[Math.max(slices,1)];
         CircleSlice[] sliceArray = circle.slice(Math.max(slices,1),startAngle);
         for(int i=0;i<sliceArray.length;i++) {
             final int index = i;
-            buttons[i] = raidal(sliceArray[i],centerX,centerY,button -> settings.accept(index,button));
+            buttons[i] = radial(sliceArray[i],centerX,centerY,button -> settings.accept(index,button));
         }
         return buttons;
     }
     
-    public static Button raidal(Circle circle, Vector2d center, Consumer<Button> settings) {
-        return raidal(circle,center.x,center.y,settings);
+    public static Button radial(Circle circle, Vector2d center, Consumer<Button> settings) {
+        return radial(circle,center.x,center.y,settings);
     }
     
-    public static Button raidal(Circle circle, double centerX, double centerY, Consumer<Button> settings) {
+    public static Button radial(Circle circle, double centerX, double centerY, Consumer<Button> settings) {
         Button button = new Button(ShapeWidget.from(circle,centerX,centerY),null,null);
         settings.accept(button);
         return button;

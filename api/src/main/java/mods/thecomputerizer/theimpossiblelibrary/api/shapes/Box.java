@@ -20,6 +20,14 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
 
     public static final Box INFINITE = new Box(NEGATIVE_INFINITY,NEGATIVE_INFINITY,NEGATIVE_INFINITY,
                                                POSITIVE_INFINITY,POSITIVE_INFINITY,POSITIVE_INFINITY) {
+        @Override public Box div(double x, double y, double z) { return this; }
+        @Override public Box expand(double x, double y, double z) { return this; }
+        @Override public double getBoundedX(double x, double y, double z) { return x; }
+        @Override public double getBoundedY(double x, double y, double z) { return y; }
+        @Override public double getBoundedZ(double x, double y, double z) { return z; }
+        @Override public double getDepth() { return POSITIVE_INFINITY; }
+        @Override public double getHeight() { return POSITIVE_INFINITY; }
+        @Override public double getWidth() { return POSITIVE_INFINITY; }
         @Override public boolean isInside(BlockPosAPI<?> pos) { return true; }
         @Override public boolean isInside(BlockPosAPI<?> pos, double tolerance) { return true; }
         @Override public boolean isInside(Vector3d pos) { return true; }
@@ -34,6 +42,9 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         @Override public boolean isInsideY(double y, double tolerance) { return true; }
         @Override public boolean isInsideZ(double z) { return true; }
         @Override public boolean isInsideZ(double z, double tolerance) { return true; }
+        @Override public Box offset(double x, double y, double z) { return this; }
+        @Override public Box mul(double x, double y, double z) { return this; }
+        @Override public Box shrink(double x, double y, double z) { return this; }
     };
     public static final Box ZERO = new Box(0d,0d,0d,0d,0d,0d) {
         @Override public boolean isInside(BlockPosAPI<?> pos) { return false; }

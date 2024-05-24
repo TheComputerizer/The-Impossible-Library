@@ -322,7 +322,7 @@ public class VectorHelper {
      The angle must be in radians.
      */
     public static Vector2d toCartesian(double radius, double angle) {
-        return new Vector2d(Math.cos(angle)*radius,Math.sin(angle)*angle);
+        return new Vector2d(Math.cos(angle)*radius,Math.sin(angle)*radius);
     }
     
     /**
