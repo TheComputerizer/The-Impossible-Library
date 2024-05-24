@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
 import java.util.Collection;
 
@@ -133,7 +134,15 @@ public class Render1_12_2 implements RenderAPI {
     public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
         return new VertexWrapper1_12_2(mode,POSITION_TEX_COLOR,vertices,3,2,4);
     }
-
+    
+    @Override public int getDirectMouseX() {
+        return Mouse.getX();
+    }
+    
+    @Override public int getDirectMouseY() {
+        return Mouse.getY();
+    }
+    
     @Override
     public GLAPI getGLAPI() {
         return this.gl;

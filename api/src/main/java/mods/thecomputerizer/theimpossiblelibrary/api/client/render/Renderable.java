@@ -108,8 +108,8 @@ public abstract class Renderable {
     }
     
     protected void translateScaled(RenderContext ctx, float scaleX, float scaleY) {
-        float width = (float)ctx.getScale().getWidth();
-        float height = (float)ctx.getScale().getHeight();
+        float width = (float)ctx.getScale().getScreenWidth();
+        float height = (float)ctx.getScale().getScreenHeight();
         float translateX = (width/(scaleX*2f))-(width/2f);
         float translateY = (height/(scaleY*4f))-(height/2f);
         ctx.getRenderer().translate(translateX,translateY,0f);

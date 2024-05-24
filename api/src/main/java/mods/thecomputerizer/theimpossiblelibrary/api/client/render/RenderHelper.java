@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
@@ -22,13 +22,33 @@ public class RenderHelper {
     }
     
     public static RenderContext getContext() {
-        MinecraftAPI mc = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
+        MinecraftAPI mc = ClientHelper.getMinecraft();
         return Objects.nonNull(mc) ? new RenderContext(mc) : null;
     }
     
     public static double getCurrentHeightRatio() {
-        RenderContext ctx = RenderHelper.getContext();
+        RenderContext ctx = getContext();
         return Objects.nonNull(ctx) ? ctx.getHeightRatio() : 1d;
+    }
+    
+    public static int getDirectMouseX() {
+        RenderAPI renderer = ClientHelper.getRenderer();
+        return Objects.nonNull(renderer) ? renderer.getDirectMouseX() : 0;
+    }
+    
+    public static int getDirectMouseY() {
+        RenderAPI renderer = ClientHelper.getRenderer();
+        return Objects.nonNull(renderer) ? renderer.getDirectMouseY() : 0;
+    }
+    
+    public static double getScaledMouseX() {
+        RenderContext ctx = getContext();
+        return Objects.nonNull(ctx) ? ctx.getScaledMouseX() : 0d;
+    }
+    
+    public static double getScaledMouseY() {
+        RenderContext ctx = getContext();
+        return Objects.nonNull(ctx) ? ctx.getScaledMouseY() : 0d;
     }
 
     public static RenderablePNG initPNG(ResourceLocationAPI<?> source, Map<String,Object> parameters) {
@@ -46,7 +66,6 @@ public class RenderHelper {
             RENDERABLES.remove(renderable);
         }
     }
-
 
     public static void renderAllBackgroundStuff(RenderContext ctx) {
         synchronized(RENDERABLES) {

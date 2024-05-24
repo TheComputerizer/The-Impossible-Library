@@ -80,6 +80,10 @@ public class WidgetList extends ScrollableWidgetGroup {
         calculateScrollBar();
     }
     
+    @Override public boolean doesNotRequireHoverToScroll() {
+        return false;
+    }
+    
     protected void calculateScrollBar() {
         double height = getHeight();
         this.scrollBar.setHeight(height*Math.min(1d,height/getElementsHeight()));

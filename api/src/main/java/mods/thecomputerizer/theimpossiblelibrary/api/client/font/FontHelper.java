@@ -2,7 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.font;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
+@SuppressWarnings("unused")
 public class FontHelper {
 
     @SuppressWarnings("UnnecessaryUnicodeEscape")
@@ -23,8 +25,8 @@ public class FontHelper {
     /**
      * Returns the total number of lines a string would be if it was split
      */
-    public static int howManyLinesWillThisBe(FontAPI font, String original, int width) {
-        return splitLines(font,original,0,width).size();
+    public static int howManyLinesWillThisBe(FontAPI font, String original, Number width) {
+        return splitLines(font,original,0,width.intValue()).size();
     }
 
     /**
@@ -37,8 +39,8 @@ public class FontHelper {
     /**
      * Splits a string into a list of lines
      */
-    public static List<String> splitLines(FontAPI font, String original, int width) {
-        return splitLines(font,original,0,width);
+    public static List<String> splitLines(FontAPI font, String original, Number width) {
+        return splitLines(font,original,0,width.intValue());
     }
 
     /**
@@ -47,28 +49,20 @@ public class FontHelper {
     public static List<String> splitLines(FontAPI font, String original, int left, int right) {
         List<String> lines = new ArrayList<>();
         String[] words = original.split(" ");
-        StringBuilder builder = new StringBuilder();
+        StringJoiner joiner = new StringJoiner(" ");
         int lineWidth = 0;
         int linePos = 0;
         for(String word : words) {
-            if (lineWidth == 0) {
-                builder.append(word);
-                lineWidth += font.getStringWidth(word);
-            } else {
-                String withSpace = " " + word;
-                int textWidth = font.getStringWidth(withSpace);
-                if ((left + lineWidth + textWidth) < right) {
-                    builder.append(withSpace);
-                    lineWidth += textWidth;
-                } else {
-                    lines.add(builder.toString());
-                    builder = new StringBuilder();
-                    builder.append(word);
-                    lineWidth = font.getStringWidth(word);
-                }
+            joiner.add(word);
+            lineWidth+=font.getStringWidth(word+" ");
+            if((left+lineWidth)>=right) {
+                lines.add(joiner.toString());
+                joiner = new StringJoiner(" ");
+                joiner.add(word);
+                lineWidth = 0;
             }
         }
-        lines.add(builder.toString());
+        lines.add(joiner.toString());
         return lines;
     }
 }

@@ -8,8 +8,8 @@ import java.util.Collection;
 
 public interface Hoverable {
     
-    Collection<TextAPI<?>> getHoverLines(double x, double y);
-    boolean isHovering(double x, double y);
+    Collection<TextAPI<?>> getHoverLines(double mouseX, double mouseY);
+    boolean isHovering(double mouseX, double mouseY);
     void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY);
     boolean shouldDrawHovered();
 }

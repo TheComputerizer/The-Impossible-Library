@@ -148,6 +148,14 @@ public class Render1_16_5 implements RenderAPI {
     public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
         return new VertexWrapper1_16_5(mode,POSITION_TEX_COLOR,vertices,3,2,4);
     }
+    
+    @Override public int getDirectMouseX() { //TODO
+        return 0;
+    }
+    
+    @Override public int getDirectMouseY() { //TODO
+        return 0;
+    }
 
     @Override
     public GLAPI getGLAPI() {

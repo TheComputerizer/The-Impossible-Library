@@ -106,8 +106,8 @@ public class TextBuffer {
         else center.x = left+(width/2d);
         center.add(this.translateX,this.translateY-offset,0d);
         RenderAPI renderer = ctx.getRenderer();
-        double scaledX = ctx.withScaledX(center.x);
-        double scaledY = ctx.withScaledY(center.y);
+        double scaledX = ctx.withScreenScaledX(center.x);
+        double scaledY = ctx.withScreenScaledY(center.y);
         if(isLeftAlligned() || isRightAlligned()) renderer.drawString(ctx.getFont(),line,scaledX,scaledY,this.color.getColorI());
         else renderer.drawCenteredString(ctx.getFont(),line,scaledX,scaledY,this.color.getColorI());
     }

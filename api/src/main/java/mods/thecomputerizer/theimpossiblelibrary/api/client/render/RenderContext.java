@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontHelper;
@@ -95,7 +94,7 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
-            next = new Vector2d(this.scale.applyX(center.x,next.x),this.scale.applyY(center.y,next.y));
+            next = new Vector2d(this.scale.applyXForScreen(center.x,next.x),this.scale.applyYForScreen(center.y,next.y));
             gl.directVertexD(next.x,next.y,0d);
         }
         gl.directEnd();
@@ -112,8 +111,8 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
-            next = new Vector3d(this.scale.applyX(center.x,next.x),this.scale.applyY(center.y,next.y),
-                                this.scale.applyZ(center.z,next.z));
+            next = new Vector3d(this.scale.applyXForScreen(center.x,next.x),this.scale.applyYForScreen(center.y,next.y),
+                                this.scale.applyZForScreen(center.z,next.z));
             gl.directVertexD(next.x,next.y,next.z);
         }
         gl.directEnd();
@@ -145,8 +144,9 @@ public final class RenderContext {
     }
     
     public void drawTooltip(Collection<TextAPI<?>> text, double x, double y, double maxWidth) {
-        this.renderer.drawTooltip(this.font,text,(int)this.scale.applyX(0d,x),(int)scale.applyY(0d,y),
-                                  (int)this.scale.getWidth(),(int)this.scale.getHeight(),(int)maxWidth);
+        this.renderer.drawTooltip(this.font,text,this.scale.applyXForScreen(0d,x),
+                this.scale.applyYForScreen(0d,y), this.scale.getScreenWidth(),this.scale.getScreenHeight(),
+                                  maxWidth);
     }
     
     public void finishGradient(VertexWrapper buffer) {
@@ -160,16 +160,24 @@ public final class RenderContext {
         this.renderer.disableBlend();
     }
     
+    public double getScaledMouseX() {
+        return this.scale.normalizeDisplayX(this.renderer.getDirectMouseX());
+    }
+    
+    public double getScaledMouseY() {
+        return this.scale.normalizeDisplayY(this.renderer.getDirectMouseY());
+    }
+    
     public double getHeightRatio() {
-        return this.scale.getHeightRatio();
+        return this.scale.getScreenRatio();
     }
     
     public double getScaledFontHeight() {
-        return ((double)this.font.getFontHeight())*this.scale.getScaleY();
+        return ((double)this.font.getFontHeight())*this.scale.getScreenScaleY();
     }
     
     public double getScaledStringWidth(String str) {
-        return ((double)this.font.getStringWidth(str))*this.scale.getScaleX();
+        return ((double)this.font.getStringWidth(str))*this.scale.getScreenScaleX();
     }
     
     public VertexWrapper initQuads(boolean textured) {
@@ -181,7 +189,7 @@ public final class RenderContext {
     }
     
     public boolean isWide() {
-        return this.scale.getHeightRatio()<1d;
+        return this.scale.getScreenRatio()<1d;
     }
     
     public void prepareGradient(ColorCache bgColor) {
@@ -212,27 +220,23 @@ public final class RenderContext {
     }
     
     public void scissorScaled(double left, double bottom, double width, double height) {
-        double dHeight = ClientHelper.getDisplayHeight();
-        double dWidth = ClientHelper.getDisplayWidth();
-        double widthScale = dWidth/this.scale.getWidth();
-        double heightScale = dHeight/this.scale.getHeight();
-        int iLeft = (int)((withScaledX(left))*widthScale);
-        int iBottom = (int)((withScaledY(bottom))*heightScale);
-        int iWidth = Math.abs((int)(withScaledX(width)*widthScale));
-        int iHeight = Math.abs((int)((withScaledY(height))*heightScale));
+        int iLeft = (int)(withDisplayScaledX(left));
+        int iBottom = (int)((withDisplayScaledY(bottom)));
+        int iWidth = Math.abs((int)(withDisplayScaledX(width)));
+        int iHeight = Math.abs((int)((withDisplayScaledY(height))));
         this.renderer.getGLAPI().scissor(iLeft,iBottom,iWidth,iHeight);
     }
     
     public List<String> splitLines(String text, double width) {
-        return FontHelper.splitLines(this.font,text,(int)withScaledX(width));
+        return FontHelper.splitLines(this.font,text,withScreenScaledX(width));
     }
     
     public void updateResolution(MinecraftWindow window) {
-        updateResolution(window.getWidth(),window.getHeight());
+        updateResolution(window.getWidth(),window.getHeight(),window.getDisplayWidth(),window.getDisplayHeight());
     }
     
-    public void updateResolution(double width, double height) {
-        this.scale.updateResolution(width,height);
+    public void updateResolution(double screenWidth, double screenHeight, double displayWidth, double displayHeight) {
+        this.scale.updateResolution(screenWidth,screenHeight,displayWidth,displayHeight);
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, Vector2d pos) {
@@ -248,14 +252,22 @@ public final class RenderContext {
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y, double z) {
-        return this.scale.apply(buffer,center,x,y,z);
+        return this.scale.applyForScreen(buffer, center, x, y, z);
     }
     
-    public double withScaledX(double x) {
-        return ((x*this.scale.getModScaleX())+this.scale.getTransformX()+1d)/this.scale.getScaleX();
+    public double withDisplayScaledX(double x) {
+        return ((x*this.scale.getModScaleX())+this.scale.getTransformX()+1d)/this.scale.getDisplayScaleX();
     }
     
-    public double withScaledY(double y) {
-        return this.scale.getHeight()-(((y*this.scale.getModScaleY())+this.scale.getTransformY()+1d)/this.scale.getScaleY());
+    public double withDisplayScaledY(double y) {
+        return this.scale.getDisplayHeight()-(((y*this.scale.getModScaleY())+this.scale.getTransformY()+1d)/this.scale.getDisplayScaleY());
+    }
+    
+    public double withScreenScaledX(double x) {
+        return ((x*this.scale.getModScaleX())+this.scale.getTransformX()+1d)/this.scale.getScreenScaleX();
+    }
+    
+    public double withScreenScaledY(double y) {
+        return this.scale.getScreenHeight()-(((y*this.scale.getModScaleY())+this.scale.getTransformY()+1d)/this.scale.getScreenScaleY());
     }
 }
