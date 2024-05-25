@@ -79,6 +79,11 @@ public class TextBuffer {
         this.cached = true;
     }
     
+    public TextBuffer copy() {
+        return new TextBuffer(this.text,this.allignment,this.color,this.lineSpacing,this.scaleX,this.scaleY,
+                              this.translateX,this.translateY);
+    }
+    
     public void draw(RenderContext ctx, Vector3d center, double minX, double minY, double maxX, double maxY) {
         double width = Math.abs(maxX-minX);
         if(!this.cached) cache(ctx,width);

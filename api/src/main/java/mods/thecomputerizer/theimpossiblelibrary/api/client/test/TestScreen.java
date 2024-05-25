@@ -13,8 +13,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
@@ -73,15 +73,18 @@ public class TestScreen extends ScreenAPI {
     
     private void addScrollableMenu(int size, double width, double height) {
         WidgetList list = WidgetList.from(Button.colored(BLACK,TextHelper.getLiteral("template")),0d,0d,width,height,0.05d);
-        Square square = (Square)((Button)list.getElementTemplate()).getShape().getWrapped().getWrapped();
-        square.setSideLength(square.getSideLength()*(((double)this.guiScale)+1d)/2d,square.getHeightRatio());
+        Plane shape = (Plane)((Button)list.getElementTemplate()).getShape().getWrapped().getWrapped();
+        double scaleRatio = (((double)this.guiScale)+1d)/2d;
+        shape.setScales(scaleRatio,scaleRatio);
         for(int i=0;i<size;i++) {
             list.addWidgetFromTemplate((template,index) -> {
                 Button button = (Button)template;
-                button.getText().setText("element "+index);
-                button.setHoverText(text -> text.setText("element "+index));
-                button.addHoverLine(TextHelper.getLiteral("hover "+index));
-                button.setClickFunc(b -> this.clicked.setText(String.valueOf(index)));
+                String indexStr = index==3 ? "33333333333333333333333333333333333333" : String.valueOf(index);
+                String literally = "element "+indexStr;
+                button.setText(literally);
+                button.setHoverText(text -> text.setText(literally));
+                button.addHoverLine(TextHelper.getLiteral("hover "+indexStr));
+                button.setClickFunc(b -> this.clicked.setText(indexStr));
             });
         }
         addWidget(ShapeWidget.from(ShapeHelper.square(Y,1.8d,1d),LIGHT_PURPLE.withAlpha(0.5f)));

@@ -64,6 +64,12 @@ public class RenderFuzz extends RenderShape {
         this.fuzz = shape.makeFuzzBall(minCount,maxCount,minWidth,maxWidth,color);
     }
     
+    public RenderFuzz copy() {
+        RenderFuzz fuzz = (RenderFuzz)super.copy();
+        fuzz.fuzz = Objects.nonNull(this.fuzz) ? this.fuzz.copy() : null;
+        return fuzz;
+    }
+    
     public void draw(RenderContext ctx, Vector3d center) {
         if(Objects.nonNull(this.fuzz)) this.fuzz.draw(ctx,center);
     }

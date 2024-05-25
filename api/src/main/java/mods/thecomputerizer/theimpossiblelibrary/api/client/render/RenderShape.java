@@ -98,9 +98,8 @@ public class RenderShape extends MutableWrapped<Shape> {
             }
             else {
                 Plane plane = (Plane)this.wrapped;
-                double hheight = height/2d;
-                plane.setRelativeMax(plane.getRelativeMax().x,hheight);
-                plane.setRelativeMin(plane.getRelativeMin().x,-hheight);
+                double heightScale = height/plane.getHeight();
+                plane.setScaleHeight(heightScale);
             }
         } else if(this.wrapped instanceof Circle) {
             Circle circle = (Circle)this.wrapped;
@@ -129,9 +128,8 @@ public class RenderShape extends MutableWrapped<Shape> {
             }
             else {
                 Plane plane = (Plane)this.wrapped;
-                double wwidth = width/2d;
-                plane.setRelativeMax(wwidth,plane.getRelativeMax().y);
-                plane.setRelativeMin(wwidth,plane.getRelativeMin().y);
+                double widthScale = width/plane.getWidth();
+                plane.setScaleWidth(widthScale);
             }
         } else if(this.wrapped instanceof Circle) {
             Circle circle = (Circle)this.wrapped;

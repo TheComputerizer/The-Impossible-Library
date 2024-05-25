@@ -194,10 +194,7 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     }
     
     @Override public ShapeWidget copy() {
-        ShapeWidget copy = new ShapeWidget(this.shape,this.x,this.y);
-        copy.height = this.height;
-        copy.width = this.width;
-        return copy;
+        return new ShapeWidget(this.shape.copy(),this.x,this.y);
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
@@ -235,6 +232,11 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     @Override public void setHeight(double height) {
         this.height = height;
         this.shape.setHeight(height);
+    }
+    
+    @Override public void setWidth(double width) {
+        this.width = width;
+        this.shape.setWidth(width);
     }
     
     public void setTexture(TextureWrapper texture) {

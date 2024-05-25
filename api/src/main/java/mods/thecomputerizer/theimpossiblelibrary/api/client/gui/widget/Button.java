@@ -7,10 +7,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle.CircleSlice;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -51,8 +53,8 @@ public class Button extends WidgetGroup {
     }
     
     public static Button basic(double centerX, double centerY, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
-        double heightRatio = RenderHelper.getCurrentHeightRatio()*10d; //Vanilla buttons are 200x20
-        Square shape = ShapeHelper.square(Y,0.25,heightRatio);
+        double heightRatio = RenderHelper.getCurrentHeightRatio();
+        Plane shape = ShapeHelper.plane(Y, new Vector2d(-0.25d*heightRatio,-0.025d),new Vector2d(0.25d*heightRatio,0.025d));
         ShapeWidget texture = ShapeWidget.from(shape,ScreenHelper.getVanillaButtonTexture(false,false),centerX,centerY);
         TextWidget textWidget = TextWidget.from(text);
         ShapeWidget hoverTex = ShapeWidget.from(shape,ScreenHelper.getVanillaButtonTexture(true,false),centerX,centerY);
@@ -83,8 +85,8 @@ public class Button extends WidgetGroup {
     }
     
     public static Button colored(double centerX, double centerY, ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
-        double heightRatio = RenderHelper.getCurrentHeightRatio()*10d; //Vanilla buttons are 200x20
-        Square shape = ShapeHelper.square(Y,0.25,heightRatio);
+        double heightRatio = RenderHelper.getCurrentHeightRatio();
+        Plane shape = ShapeHelper.plane(Y, new Vector2d(-0.25d*heightRatio,-0.025d),new Vector2d(0.25d*heightRatio,0.025d));
         ShapeWidget colorWidget = ShapeWidget.from(shape,color,centerX,centerY);
         TextWidget textWidget = TextWidget.from(text);
         ShapeWidget hoverColor = ShapeWidget.from(shape,ColorHelper.reverse(color,color.a()),centerX,centerY);
@@ -146,9 +148,11 @@ public class Button extends WidgetGroup {
         this.text = text;
         this.hover = hover;
         this.hoverLines = new ArrayList<>();
-        if(Objects.nonNull(shape)) addWidget(shape);
+        boolean hasShape = Objects.nonNull(shape);
+        if(hasShape) addWidget(shape);
         if(Objects.nonNull(text)) addWidget(text);
         if(Objects.nonNull(hover)) hover.setParent(this);
+        expandShapeToText();
     }
     
     @Override public Button copy() {
@@ -156,8 +160,6 @@ public class Button extends WidgetGroup {
                                  Objects.nonNull(this.text) ? this.text.copy() : null,
                                  Objects.nonNull(this.hover) ? this.hover.copy() : null);
         copy.addHoverLines(this.hoverLines);
-        for(Widget widget : this.widgets)
-            if(widget!=this.shape && widget!=this.text) copy.addWidget(widget.copy());
         copy.clickFunc = this.clickFunc;
         copy.height = this.height;
         copy.scaleX = this.scaleX;
@@ -171,6 +173,52 @@ public class Button extends WidgetGroup {
     @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.hover)) this.hover.draw(ctx,center,mouseX,mouseY);
         else draw(ctx,center,mouseX,mouseY);
+    }
+    
+    public void expandShapeHeightToText() {
+        if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
+            double textHeight = this.text.getHeight()*1.05d;
+            if(this.shape.getHeight()<textHeight) this.shape.setHeight(textHeight);
+        }
+    }
+    
+    public void expandShapeToText() {
+        if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
+            double textWidth = this.text.getWidth()*1.05d;
+            double textHeight = this.text.getHeight()*1.05d;
+            if(this.shape.getWidth()<textWidth) this.shape.setWidth(textWidth);
+            if(this.shape.getHeight()<textHeight) this.shape.setHeight(textHeight);
+        }
+    }
+    
+    public void expandShapeWidthToText() {
+        if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
+            double textWidth = this.text.getWidth()*1.05d;
+            if(this.shape.getWidth()<textWidth) this.shape.setWidth(textWidth);
+        }
+    }
+    
+    public void fitShapeHeightToText() {
+        if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
+            double textHeight = this.text.getHeight()*1.05d;
+            if(this.shape.getHeight()!=textHeight) this.shape.setHeight(textHeight);
+        }
+    }
+    
+    public void fitShapeToText() {
+        if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
+            double textWidth = this.text.getWidth()*1.05d;
+            double textHeight = this.text.getHeight()*1.05d;
+            if(this.shape.getWidth()!=textWidth) this.shape.setWidth(textWidth);
+            if(this.shape.getHeight()!=textHeight) this.shape.setHeight(textHeight);
+        }
+    }
+    
+    public void fitShapeWidthToText() {
+        if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
+            double textWidth = this.text.getWidth()*1.05d;
+            if(this.shape.getWidth()!=textWidth) this.shape.setWidth(textWidth);
+        }
     }
     
     @Override public double getHeight() {
@@ -229,9 +277,44 @@ public class Button extends WidgetGroup {
     
     public void setHoverText(Consumer<TextWidget> text) {
         if(this.hover instanceof TextWidget) text.accept((TextWidget)this.hover);
-        else if(this.hover instanceof WidgetGroup)
-            for(Widget widget : ((WidgetGroup)this.hover).widgets)
-                if(widget instanceof TextWidget) text.accept((TextWidget)widget);
+        else if(this.hover instanceof WidgetGroup) {
+            List<ShapeWidget> shapes = new ArrayList<>();
+            TextWidget found = null;
+            for(Widget widget : ((WidgetGroup)this.hover).widgets) {
+                if(widget instanceof ShapeWidget) shapes.add((ShapeWidget)widget);
+                else if(widget instanceof TextWidget) {
+                    found = (TextWidget)widget;
+                    text.accept(found);
+                }
+            }
+            for(ShapeWidget shape :shapes) {
+                if(Objects.nonNull(found)) {
+                    double textWidth = found.getWidth()*1.05d;
+                    if(shape.getWidth()<textWidth) shape.setWidth(textWidth);
+                }
+            }
+        }
+    }
+    
+    public void setText(String literal) {
+        if(Objects.nonNull(this.text)) {
+            this.text.setText(literal);
+            expandShapeWidthToText();
+        }
+    }
+    
+    public void setText(TextAPI<?> text) {
+        if(Objects.nonNull(this.text)) {
+            this.text.setText(text);
+            expandShapeWidthToText();
+        }
+    }
+    
+    public void setText(TextBuffer buffer) {
+        if(Objects.nonNull(this.text)) {
+            this.text.setText(buffer);
+            expandShapeWidthToText();
+        }
     }
     
     @Override public boolean shouldDrawHovered() {

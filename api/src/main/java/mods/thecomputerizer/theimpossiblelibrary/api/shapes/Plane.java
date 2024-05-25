@@ -76,14 +76,6 @@ public class Plane extends Shape2D {
         return getScaled(1d,1d);
     }
     
-    @Override public double getBoundedX(double x, double y, double z) {
-        return Math.max(this.relativeMin.x,Math.min(this.relativeMax.x,x));
-    }
-    
-    @Override public double getBoundedY(double x, double y, double z) {
-        return Math.max(this.relativeMin.y,Math.min(this.relativeMax.y,y));
-    }
-    
     @Override public boolean equals(Object other) {
         if(this==other) return true;
         if(Objects.isNull(other)) return false;
@@ -93,6 +85,18 @@ public class Plane extends Shape2D {
                    Misc.equalsNullable(this.relativeMax,plane.relativeMax);
         }
         return false;
+    }
+    
+    @Override public double getDepth() {
+        return 0d;
+    }
+    
+    @Override public double getBoundedX(double x, double y, double z) {
+        return Math.max(this.relativeMin.x,Math.min(this.relativeMax.x,x));
+    }
+    
+    @Override public double getBoundedY(double x, double y, double z) {
+        return Math.max(this.relativeMin.y,Math.min(this.relativeMax.y,y));
     }
     
     @Override public Plane getScaled(double scale) {
@@ -158,7 +162,22 @@ public class Plane extends Shape2D {
         calculateSize();
     }
     
-    @Override public double getDepth() {
-        return 0d;
+    public void setScales(double scaledWidth, double scaledHeight) {
+        setScaleWidth(scaledWidth);
+        setScaleHeight(scaledHeight);
+    }
+    
+    public void setScaleHeight(double scale) {
+        double height = getHeight()/2d;
+        double center = this.relativeMin.y+height;
+        setRelativeMin(this.relativeMin.x,center-(height*scale));
+        setRelativeMax(this.relativeMax.x,center+(height*scale));
+    }
+    
+    public void setScaleWidth(double scale) {
+        double width = getWidth()/2d;
+        double center = this.relativeMin.x+width;
+        setRelativeMin(center-(width*scale),this.relativeMin.y);
+        setRelativeMax(center+(width*scale),this.relativeMax.y);
     }
 }

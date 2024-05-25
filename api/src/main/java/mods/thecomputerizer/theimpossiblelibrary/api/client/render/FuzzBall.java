@@ -68,6 +68,10 @@ public class FuzzBall {
         this.colorGenerator = colorGenerator;
     }
     
+    public FuzzBall copy() {
+        return new FuzzBall(this.generator2D,this.generator3D,this.widthGenerator,this.colorGenerator);
+    }
+    
     public void draw(RenderContext ctx) {
         draw(ctx,VectorHelper.zero3D());
     }
