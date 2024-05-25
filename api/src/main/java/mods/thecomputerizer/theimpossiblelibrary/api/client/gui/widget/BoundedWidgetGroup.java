@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderScale;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector3d;
 
@@ -34,12 +35,12 @@ public abstract class BoundedWidgetGroup extends WidgetGroup {
     }
     
     @Override public Collection<TextAPI<?>> getHoverLines(double mouseX, double mouseY) {
-        return isBounded(getCenter(0d),mouseX,mouseY) ?
+        return isBounded(VectorHelper.zero3D(),mouseX,mouseY) ?
                 super.getHoverLines(mouseX,mouseY) : Collections.emptyList();
     }
     
     protected Box getRenderBounds(Vector3d center) {
-        return ShapeHelper.box(center,getWidth(),getHeight());
+        return ShapeHelper.box(getCenter(0d).add(center),getWidth(),getHeight());
     }
     
     public boolean isBounded(Vector3d center, double x, double y) {
@@ -50,11 +51,7 @@ public abstract class BoundedWidgetGroup extends WidgetGroup {
         return getRenderBounds(center).isInside(pos);
     }
     
-    @Override public boolean isHovering(double mouseX, double mouseY) {
-        return super.isHovering(mouseX,mouseY);
-    }
-    
     @Override public boolean onClicked(double mouseX, double mouseY, boolean leftClick) {
-        return isBounded(getCenter(0d),mouseX,mouseY) && super.onClicked(mouseX,mouseY,leftClick);
+        return isBounded(VectorHelper.zero3D(),mouseX,mouseY) && super.onClicked(mouseX,mouseY,leftClick);
     }
 }

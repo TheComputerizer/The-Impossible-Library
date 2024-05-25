@@ -5,7 +5,6 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
@@ -56,10 +55,10 @@ public class WidgetList extends ScrollableWidgetGroup {
         this.elementTemplate = elementTemplate;
         this.height = height;
         this.width = width;
-        setX(MathHelper.clamp(x,-1d,1d));
-        setY(MathHelper.clamp(y,-1d,1d));
+        setX(x);
+        setY(y);
         this.scrollBar.setParent(this);
-        this.scrollBar.setX(this.x+(this.width/2d)-(this.scrollBar.getWidth()/2d));
+        this.scrollBar.setX((this.width/2d)-(this.scrollBar.getWidth()/2d));
         this.scrollBar.setY(this.y);
     }
     

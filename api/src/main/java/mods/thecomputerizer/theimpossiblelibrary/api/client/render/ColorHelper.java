@@ -33,7 +33,7 @@ public class ColorHelper {
      */
     public static Vector4f convert(Vector4i color) {
         return new Vector4f(((float)color.x)/255f,((float)color.y)/255f,
-                ((float)color.z)/255f, ((float)color.w)/255f);
+                ((float)color.z)/255f,((float)color.w)/255f);
     }
 
     /**
@@ -133,7 +133,7 @@ public class ColorHelper {
      * Converts rgba integers into a single color integer
      */
     public static int makeRGBAInt(int r, int g, int b, int a) {
-        return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((b & 0xFF) << 8) | (g & 0xFF);
+        return ((a&0xFF)<<24) | ((r&0xFF)<<16) | ((g&0xFF)<<8) | (b&0xFF);
     }
     
     public static ColorCache reverse(ColorCache color) {

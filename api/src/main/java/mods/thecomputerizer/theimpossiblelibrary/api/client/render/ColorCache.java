@@ -24,13 +24,13 @@ public class ColorCache {
     }
 
     public ColorCache(float r, float g, float b, float a) {
-        this.colorVF = new Vector4f(r, g, b, a);
+        this.colorVF = new Vector4f(r,g,b,a);
         this.colorVI = ColorHelper.convert(this.colorVF);
         this.colorI = ColorHelper.makeRGBAInt(this.colorVI);
     }
 
     public ColorCache(int r, int g, int b, int a) {
-        this.colorVI = new Vector4i(r, g, b, a);
+        this.colorVI = new Vector4i(r,g,b,a);
         this.colorVF = ColorHelper.convert(this.colorVI);
         this.colorI = ColorHelper.makeRGBAInt(this.colorVI);
     }

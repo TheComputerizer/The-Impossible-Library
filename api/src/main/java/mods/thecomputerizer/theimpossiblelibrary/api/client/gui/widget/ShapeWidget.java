@@ -230,12 +230,10 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     }
     
     @Override public void setHeight(double height) {
-        this.height = height;
         this.shape.setHeight(height);
     }
     
     @Override public void setWidth(double width) {
-        this.width = width;
         this.shape.setWidth(width);
     }
     

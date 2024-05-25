@@ -76,10 +76,6 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return super.getRenderBounds(center).offset(0d,-this.scrollOffset,0d);
     }
     
-    @Override public boolean isHovering(double mouseX, double mouseY) {
-        return super.isHovering(mouseX,mouseY);
-    }
-    
     public boolean isHoveringForScroll() {
         double mouseX = RenderHelper.getScaledMouseX();
         double mouseY = RenderHelper.getScaledMouseY();
