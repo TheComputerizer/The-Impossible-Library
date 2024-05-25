@@ -104,7 +104,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
     compileOnly(fg.deobf("curse.maven:orelib-307806:${orelib_version}"))
 
-    runtimeOnly(project(':api'))
+    implementation(project(':api'))
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))

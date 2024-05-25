@@ -86,8 +86,12 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return mouseX>left && mouseY>bottom && mouseX<left+width && mouseY<bottom+height;
     }
     
-    @Override public boolean onClicked(double mouseX, double mouseY, boolean leftClick) {
-        return super.onClicked(getOffsetX(mouseX),getOffsetY(mouseY),leftClick);
+    @Override public boolean onLeftClick(double mouseX, double mouseY) {
+        return super.onLeftClick(getOffsetX(mouseX),getOffsetY(mouseY));
+    }
+    
+    @Override public boolean onRightClick(double mouseX, double mouseY) {
+        return super.onRightClick(getOffsetX(mouseX),getOffsetY(mouseY));
     }
     
     protected abstract void recalculatePositions();

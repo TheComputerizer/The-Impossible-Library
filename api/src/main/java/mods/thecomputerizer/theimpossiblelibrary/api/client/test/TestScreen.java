@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.BasicTypeableWidget;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.BasicWidgetGroup;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.Button;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.ShapeWidget;
@@ -20,10 +21,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import org.joml.Vector3d;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.BLACK;
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.BLUE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.LIGHT_PURPLE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 
 @SuppressWarnings({"SameParameterValue","unused"})
@@ -39,6 +37,7 @@ public class TestScreen extends ScreenAPI {
         this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
         addScrollableMenu(100,1.8d,1.8d);
         addWidget(this.clicked);
+        addWidget(BasicTypeableWidget.literal("Text Box!",RED,0d,0.95d));
     }
     
     private void addFuzz(int minCount, int maxCount, float minWidth, float maxWidth) {

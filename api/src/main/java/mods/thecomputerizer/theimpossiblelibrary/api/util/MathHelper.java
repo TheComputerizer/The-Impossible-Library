@@ -18,6 +18,10 @@ public class MathHelper {
         return Math.max(min,Math.min(val,max));
     }
     
+    public static int clamp(int val, int min, int max) {
+        return Math.max(min,Math.min(val,max));
+    }
+    
     /**
      Ensures the angle is within the range (-RADIANS_180, RADIANS_180]
      */

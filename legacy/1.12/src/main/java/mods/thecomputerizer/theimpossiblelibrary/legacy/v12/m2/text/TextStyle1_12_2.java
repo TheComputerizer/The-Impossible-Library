@@ -146,5 +146,6 @@ public class TextStyle1_12_2 implements TextStyleAPI<Style> {
         return YELLOW;
     }
 
+    @SuppressWarnings("unused")
     public enum StyleType { BOLD, COLOR, ITALICS, OBFUSCATED, STRIKETHROUGH, UNDERLINE }
 }

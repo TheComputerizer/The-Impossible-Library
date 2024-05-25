@@ -20,7 +20,7 @@ import java.util.function.Function;
  A collection of widgets from which there can only be one hovered, clicked, selected, or typed on at a time
  */
 @SuppressWarnings("unused") @Getter
-public abstract class WidgetGroup extends Widget implements Clickable, Hoverable, Scrollable, Typeable {
+public abstract class WidgetGroup extends Widget implements Clickable, Hoverable, Scrollable, Tickable, Typeable {
     
     protected Collection<Widget> widgets;
      @Setter protected double scaleX;
@@ -54,8 +54,12 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         ctx.getScale().modScales(this.scaleX,this.scaleY,1d);
     }
     
-    @Override public boolean canType() {
-        return checkEachTypeable(Typeable::canType);
+    @Override public boolean canBackspace() {
+        return checkEachTypeable(Typeable::canBackspace);
+    }
+    
+    @Override public boolean canType(char c) {
+        return checkEachTypeable(typeable -> typeable.canType(c));
     }
     
     protected boolean checkEachClickable(Function<Clickable,Boolean> func) {
@@ -72,6 +76,10 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     
     protected boolean checkEachSelectable(Function<Selectable,Boolean> func) {
         return checkEachWidget(widget -> widget instanceof Selectable && func.apply((Selectable)widget));
+    }
+    
+    protected boolean checkEachTickable(Function<Tickable,Boolean> func) {
+        return checkEachWidget(widget -> widget instanceof Tickable && func.apply((Tickable)widget));
     }
     
     protected boolean checkEachTypeable(Function<Typeable,Boolean> func) {
@@ -137,6 +145,12 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     protected void eachSelectable(Consumer<Selectable> func) {
         eachWidget(widget -> {
             if(widget instanceof Selectable) func.accept((Selectable)widget);
+        });
+    }
+    
+    protected void eachTickable(Consumer<Tickable> func) {
+        eachWidget(widget -> {
+            if(widget instanceof Tickable) func.accept((Tickable)widget);
         });
     }
     
@@ -223,6 +237,26 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return null;
     }
     
+    public boolean hasNonBlankText() {
+        for(Widget widget : this.widgets) {
+            if(widget instanceof TextWidget && ((TextWidget)widget).isNotBlank()) return true;
+            else if(widget instanceof WidgetGroup && ((WidgetGroup)widget).hasNonBlankText()) return true;
+        }
+        return false;
+    }
+    
+    public boolean hasNonEmptyText() {
+        for(Widget widget : this.widgets) {
+            if(widget instanceof TextWidget && ((TextWidget)widget).isNotEmpty()) return true;
+            else if(widget instanceof WidgetGroup && ((WidgetGroup)widget).hasNonEmptyText()) return true;
+        }
+        return false;
+    }
+    
+    @Override public boolean isActivelyTicking() {
+        return checkEachTickable(Tickable::isActivelyTicking);
+    }
+    
     @Override public boolean isHovering(double mouseX, double mouseY) {
         return checkEachHoverable(hoverable -> hoverable.isHovering(mouseX,mouseY));
     }
@@ -235,9 +269,19 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return checkEachTypeable(typeable -> typeable.onCharTyped(c));
     }
     
-    @Override public boolean onClicked(double x, double y, boolean leftClick) {
+    @Override public boolean onKeyPressed(int keycode) {
+        return checkEachTypeable(typeable -> typeable.onKeyPressed(keycode));
+    }
+    
+    @Override public boolean onLeftClick(double x, double y) {
         for(Widget widget : this.widgets)
-            if(widget instanceof Clickable && ((Clickable)widget).onClicked(x,y,leftClick)) return true;
+            if(widget instanceof Clickable && ((Clickable)widget).onLeftClick(x,y)) return true;
+        return false;
+    }
+    
+    @Override public boolean onRightClick(double x, double y) {
+        for(Widget widget : this.widgets)
+            if(widget instanceof Clickable && ((Clickable)widget).onRightClick(x,y)) return true;
         return false;
     }
     
@@ -269,19 +313,28 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return checkEachTypeable(Typeable::onSelectAll);
     }
     
-    @Override public void playClickSound() {}
+    @Override public void onTick() {
+        for(Widget widget : this.widgets) {
+            if(widget instanceof Tickable) {
+                Tickable tickable = (Tickable)widget;
+                if(tickable.isActivelyTicking()) tickable.onTick();
+            }
+        }
+    }
+    
+    @Override public void playLeftClickSound() {}
+    
+    @Override public void playRightClickSound() {}
     
     @Override public void onResolutionUpdated(MinecraftWindow window) {
         eachWidget(widget -> widget.onResolutionUpdated(window));
     }
     
-    @Override
-    public boolean scrollDown(int scroll) {
+    @Override public boolean scrollDown(int scroll) {
         return checkEachScrollable(scrollable -> scrollable.scrollDown(scroll));
     }
     
-    @Override
-    public boolean scrollUp(int scroll) {
+    @Override public boolean scrollUp(int scroll) {
         return checkEachScrollable(scrollable -> scrollable.scrollUp(scroll));
     }
     

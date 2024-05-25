@@ -141,7 +141,8 @@ public class Button extends WidgetGroup {
     @Getter protected final TextWidget text;
     @Getter protected Collection<TextAPI<?>> hoverLines;
     @Setter protected Widget hover;
-    @Getter protected Consumer<Button> clickFunc;
+    @Getter protected Consumer<Button> clickFunc; //left click
+    @Getter protected Consumer<Button> contextFunc; //right click
     
     public Button(@Nullable ShapeWidget shape, @Nullable TextWidget text, @Nullable Widget hover) {
         this.shape = shape;
@@ -153,6 +154,18 @@ public class Button extends WidgetGroup {
         if(Objects.nonNull(text)) addWidget(text);
         if(Objects.nonNull(hover)) hover.setParent(this);
         expandShapeToText();
+    }
+    
+    public void addHoverLine(TextAPI<?> text) {
+        this.hoverLines.add(text);
+    }
+    
+    public void addHoverLines(TextAPI<?> ... text) {
+        this.hoverLines.addAll(Arrays.asList(text));
+    }
+    
+    public void addHoverLines(Collection<TextAPI<?>> text) {
+        this.hoverLines.addAll(text);
     }
     
     @Override public Button copy() {
@@ -225,24 +238,32 @@ public class Button extends WidgetGroup {
         return this.shape.getHeight();
     }
     
-    public void addHoverLine(TextAPI<?> text) {
-        this.hoverLines.add(text);
-    }
-    
-    public void addHoverLines(TextAPI<?> ... text) {
-        this.hoverLines.addAll(Arrays.asList(text));
-    }
-    
-    public void addHoverLines(Collection<TextAPI<?>> text) {
-        this.hoverLines.addAll(text);
-    }
-    
     @Override public Collection<TextAPI<?>> getHoverLines(double x, double y) {
         return Objects.nonNull(this.hoverLines) && isHovering(x,y) ? this.hoverLines : Collections.emptyList();
     }
     
     @Override public double getWidth() {
         return this.shape.getWidth();
+    }
+    
+    public boolean hasNonBlankHoverText() {
+        if(Objects.nonNull(this.hover)) {
+            if(this.hover instanceof TextWidget) return ((TextWidget)this.hover).isNotBlank();
+            else if(this.hover instanceof WidgetGroup) ((WidgetGroup)this.hover).hasNonBlankText();
+        }
+        return false;
+    }
+    
+    public boolean hasNonEmptyHoverText() {
+        if(Objects.nonNull(this.hover)) {
+            if(this.hover instanceof TextWidget) return ((TextWidget)this.hover).isNotEmpty();
+            else if(this.hover instanceof WidgetGroup) ((WidgetGroup)this.hover).hasNonEmptyText();
+        }
+        return false;
+    }
+    
+    public boolean hasNonEmptyText() {
+        return Objects.nonNull(this.text) && !this.text.isEmpty();
     }
     
     @Override public boolean isHovering(double x, double y) {
@@ -252,21 +273,42 @@ public class Button extends WidgetGroup {
     /**
      No click actions by default
      */
-    @Override public boolean onClicked(double x, double y, boolean leftClick) {
+    @Override public boolean onLeftClick(double x, double y) {
         if(isHovering(x,y)) {
-            playClickSound();
-            if(Objects.nonNull(this.clickFunc)) this.clickFunc.accept(this);
+            if(Objects.nonNull(this.clickFunc)) {
+                playLeftClickSound();
+                this.clickFunc.accept(this);
+            }
             return true;
         }
         return false;
     }
     
-    @Override public void playClickSound() {
+    /**
+     No click actions by default
+     */
+    @Override public boolean onRightClick(double x, double y) {
+        if(isHovering(x,y)) {
+            if(Objects.nonNull(this.contextFunc)) {
+                playRightClickSound();
+                this.contextFunc.accept(this);
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    @Override public void playLeftClickSound() {
         ScreenHelper.playVanillaClickSound();
     }
     
-    public Button setClickFunc(Consumer<Button> onClick) {
-        this.clickFunc = onClick;
+    public Button setClickFunc(Consumer<Button> onLeftClick) {
+        this.clickFunc = onLeftClick;
+        return this;
+    }
+    
+    public Button setContextFunc(Consumer<Button> onRightClick) {
+        this.contextFunc = onRightClick;
         return this;
     }
     

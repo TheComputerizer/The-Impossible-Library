@@ -51,7 +51,11 @@ public abstract class BoundedWidgetGroup extends WidgetGroup {
         return getRenderBounds(center).isInside(pos);
     }
     
-    @Override public boolean onClicked(double mouseX, double mouseY, boolean leftClick) {
-        return isBounded(VectorHelper.zero3D(),mouseX,mouseY) && super.onClicked(mouseX,mouseY,leftClick);
+    @Override public boolean onLeftClick(double mouseX, double mouseY) {
+        return isBounded(VectorHelper.zero3D(),mouseX,mouseY) && super.onLeftClick(mouseX,mouseY);
+    }
+    
+    @Override public boolean onRightClick(double mouseX, double mouseY) {
+        return isBounded(VectorHelper.zero3D(),mouseX,mouseY) && super.onRightClick(mouseX,mouseY);
     }
 }

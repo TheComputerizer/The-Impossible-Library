@@ -80,8 +80,21 @@ public class TextBuffer {
     }
     
     public TextBuffer copy() {
-        return new TextBuffer(this.text,this.allignment,this.color,this.lineSpacing,this.scaleX,this.scaleY,
-                              this.translateX,this.translateY);
+        return copyToBuilder(this.text).build();
+    }
+    
+    public TextBuffer copyTo(TextAPI<?> text) {
+        return copyToBuilder(text).build();
+    }
+    
+    public Builder copyToBuilder() {
+        return copyToBuilder(this.text);
+    }
+    
+    public Builder copyToBuilder(TextAPI<?> text) {
+        return new Builder(this.text).setAllignment(this.allignment).setColor(this.color)
+                .setLineSpacing(this.lineSpacing).setScale(this.scaleX,this.scaleY)
+                .setTranslation(this.translateX,this.translateY);
     }
     
     public void draw(RenderContext ctx, Vector3d center, double minX, double minY, double maxX, double maxY) {
@@ -97,7 +110,6 @@ public class TextBuffer {
         for(String line : lines) {
             draw(ctx,VectorHelper.copy3D(center),line,lineHeight,left,bottom,width,height,offset);
             offset+=(lineHeight+this.lineSpacing);
-            //if(center.y-offset+(lineHeight/2d)<bottom) break;
         }
     }
     
@@ -127,12 +139,20 @@ public class TextBuffer {
         return this.widthCache;
     }
     
+    public boolean isBlank() {
+        return Objects.isNull(this.text) || this.text.isAppliedBlank();
+    }
+    
     public boolean isBottomAlligned() {
         return Misc.equalsAny(this.allignment,BOTTOM_CENTER,BOTTOM_LEFT,BOTTOM_RIGHT);
     }
     
     public boolean isCenterAlligned() {
         return Misc.equalsAny(this.allignment,BOTTOM_CENTER,CENTER,TOP_CENTER);
+    }
+    
+    public boolean isEmpty() {
+        return Objects.isNull(this.text) || this.text.isOriginalEmpty();
     }
     
     public boolean isLeftAlligned() {
@@ -149,6 +169,14 @@ public class TextBuffer {
     
     public void setMaxWidth(RenderContext ctx, double maxWidth) {
         cache(ctx,maxWidth);
+    }
+    
+    public int textLength() {
+        return toString().length();
+    }
+    
+    @Override public String toString() {
+        return String.valueOf(this.text);
     }
 
     public static class Builder {

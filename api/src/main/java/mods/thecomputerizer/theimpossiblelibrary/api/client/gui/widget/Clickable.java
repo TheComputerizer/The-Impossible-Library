@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 public interface Clickable {
     
-    boolean onClicked(double x, double y, boolean leftClick);
-    void playClickSound();
+    boolean onLeftClick(double x, double y);
+    boolean onRightClick(double x, double y);
+    void playLeftClickSound();
+    void playRightClickSound();
 }

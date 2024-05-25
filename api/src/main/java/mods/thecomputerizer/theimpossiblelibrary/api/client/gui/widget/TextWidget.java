@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import org.joml.Vector3d;
 
@@ -55,7 +56,7 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
         return new TextWidget(TextBuffer.translated(key,args),x,y);
     }
     
-    private TextBuffer text;
+    protected TextBuffer text;
     
     public TextWidget(TextBuffer text, double x, double y) {
         this.text = text;
@@ -96,6 +97,22 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
         return this.text;
     }
     
+    public boolean isBlank() {
+        return Objects.isNull(this.text) || this.text.isBlank();
+    }
+    
+    public boolean isNotBlank() {
+        return Objects.nonNull(this.text) && !this.text.isBlank();
+    }
+    
+    public boolean isNotEmpty() {
+        return Objects.nonNull(this.text) && !this.text.isEmpty();
+    }
+    
+    public boolean isEmpty() {
+        return Objects.isNull(this.text) || this.text.isEmpty();
+    }
+    
     @Override public void onResolutionUpdated(MinecraftWindow window) {}
     
     public TextWidget setColor(ColorCache color) {
@@ -104,13 +121,11 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     }
     
     public TextWidget setText(String text) {
-        ColorCache color = getColor();
-        return setText(TextBuffer.literal(text)).setColor(color);
+        return setText(this.text.copyTo(TextHelper.getLiteral(text)));
     }
     
     public TextWidget setText(TextAPI<?> text) {
-        ColorCache color = getColor();
-        return setText(TextBuffer.of(text)).setColor(color);
+        return setText(this.text.copyTo(text));
     }
     
     public TextWidget setText(TextBuffer text) {
@@ -120,5 +135,13 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     
     @Override public void setWidth(double width) {
         this.text.setMaxWidth(RenderContext.get(ClientHelper.getMinecraft()),width);
+    }
+    
+    public int textLength() {
+        return toString().length();
+    }
+    
+    @Override public String toString() {
+        return String.valueOf(this.text);
     }
 }

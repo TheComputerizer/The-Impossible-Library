@@ -317,6 +317,10 @@ public abstract class EventWrapper<E> {
         public abstract boolean isClient();
         public abstract boolean isCommon();
         public abstract boolean isServer();
+        
+        public void removeInvoker(Consumer<E> invoker) {
+            this.invokers.remove(invoker);
+        }
 
         public <I extends E> void setConnector(I impl) {
             this.connector = impl;

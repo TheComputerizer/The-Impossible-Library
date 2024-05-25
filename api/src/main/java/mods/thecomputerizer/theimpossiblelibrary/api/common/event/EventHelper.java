@@ -12,10 +12,8 @@ public class EventHelper {
 
     public static <E extends EventWrapper<?>> void addListener(EventType<E> type, Consumer<E> invoker) {
         EventsAPI api = getEventsAPI(type.isClient());
-        if(Objects.nonNull(api)) {
-            if(!api.isDefined()) api.defineEvents();
-            type.addInvoker(invoker);
-        }
+        if(!api.isDefined()) api.defineEvents();
+        type.addInvoker(invoker);
     }
 
     public static EventsAPI getCommonEventsAPI() {

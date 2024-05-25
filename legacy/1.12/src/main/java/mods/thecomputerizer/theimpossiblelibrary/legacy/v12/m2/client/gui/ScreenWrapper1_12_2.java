@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Minecraft1_12_2;
@@ -13,15 +14,43 @@ import org.lwjgl.input.Mouse;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.TICK_CLIENT;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
 import static org.lwjgl.input.Keyboard.KEY_BACK;
 import static org.lwjgl.input.Keyboard.KEY_ESCAPE;
 
 @ParametersAreNonnullByDefault
 public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI> {
     
+    private static final Set<ScreenWrapper1_12_2> TICKERS = new HashSet<>();
+    private static boolean initializedTicker;
+    
+    private static void addTicker(ScreenWrapper1_12_2 wrapper) {
+        if(Objects.nonNull(wrapper.wrapped)) {
+            if(!initializedTicker) initializeTicker();
+            TICKERS.add(wrapper);
+        }
+    }
+    
+    private static void initializeTicker() {
+        EventHelper.addListener(TICK_CLIENT,wrapper -> {
+            if(wrapper.isPhase(END))
+                for(ScreenWrapper1_12_2 screen : TICKERS)
+                    if(screen.isActivelyTicking() && screen.isOpen) screen.wrapped.onTick();
+        });
+        initializedTicker = true;
+    }
+    
+    private static void removeTicker(ScreenWrapper1_12_2 wrapper) {
+        TICKERS.remove(wrapper);
+    }
+    
     private final ScreenAPI wrapped;
+    private boolean isOpen;
     
     public ScreenWrapper1_12_2(@Nullable ScreenAPI wrapped) {
         this.wrapped = wrapped;
@@ -39,6 +68,8 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
             this.wrapped.draw(ctx,VectorHelper.zero3D(),x,y);
         }
+        updateScreen();
+        initGui();
     }
     
     @Override public ScreenAPI getWrapped() {
@@ -53,6 +84,16 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
         }
         super.handleMouseInput();
     }
+    
+    @Override public void initGui() {
+        addTicker(this);
+        this.isOpen = true;
+    }
+    
+    private boolean isActivelyTicking() {
+        return Objects.nonNull(this.wrapped) && this.wrapped.isActivelyTicking();
+    }
+    
     
     @Override protected void keyTyped(char c, int keyCode) throws IOException {
         if(Objects.nonNull(this.wrapped)) {
@@ -77,6 +118,7 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
                     return;
                 }
             }
+            if(this.wrapped.onKeyPressed(keyCode)) return;
             if(ChatAllowedCharacters.isAllowedCharacter(c) && this.wrapped.onCharTyped(c)) return;
         }
         super.keyTyped(c,keyCode);
@@ -87,12 +129,15 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
             RenderContext ctx = RenderContext.get(Minecraft1_12_2.getInstance());
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
-            this.wrapped.onClicked(x,y,mouseButton==0);
+            if(mouseButton==0) this.wrapped.onLeftClick(x,y);
+            else if(mouseButton==1) this.wrapped.onRightClick(x,y);
         }
     }
     
     @Override public void onGuiClosed() {
+        this.isOpen = false;
         if(Objects.nonNull(this.wrapped)) this.wrapped.onScreenClosed();
+        removeTicker(this);
     }
     
     @Override public void onResize(Minecraft mc, int w, int h) {
