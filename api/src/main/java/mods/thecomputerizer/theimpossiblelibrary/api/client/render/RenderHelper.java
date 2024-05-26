@@ -41,6 +41,11 @@ public class RenderHelper {
         return Objects.nonNull(renderer) ? renderer.getDirectMouseY() : 0;
     }
     
+    public static double getScaledFontHeight() {
+        RenderContext ctx = getContext();
+        return Objects.nonNull(ctx) ? ctx.getScaledFontHeight() : 0d;
+    }
+    
     public static double getScaledMouseX() {
         RenderContext ctx = getContext();
         return Objects.nonNull(ctx) ? ctx.getScaledMouseX() : 0d;
@@ -49,6 +54,11 @@ public class RenderHelper {
     public static double getScaledMouseY() {
         RenderContext ctx = getContext();
         return Objects.nonNull(ctx) ? ctx.getScaledMouseY() : 0d;
+    }
+    
+    public static double getScaledStringWidth(String str) {
+        RenderContext ctx = getContext();
+        return Objects.nonNull(ctx) ? ctx.getScaledStringWidth(str) : 0d;
     }
 
     public static RenderablePNG initPNG(ResourceLocationAPI<?> source, Map<String,Object> parameters) {

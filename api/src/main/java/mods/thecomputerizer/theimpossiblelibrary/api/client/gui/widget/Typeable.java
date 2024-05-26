@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ public interface Typeable {
         return true;
     }
     boolean onBackspace();
-    boolean onKeyPressed(int keycode);
+    boolean onKeyPressed(KeyStateCache cache, int keycode);
     boolean onCharTyped(char c);
     @Nullable String onCopy();
     @Nullable String onCut();

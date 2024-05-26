@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector3d;
@@ -269,8 +270,8 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return checkEachTypeable(typeable -> typeable.onCharTyped(c));
     }
     
-    @Override public boolean onKeyPressed(int keycode) {
-        return checkEachTypeable(typeable -> typeable.onKeyPressed(keycode));
+    @Override public boolean onKeyPressed(KeyStateCache cache, int keycode) {
+        return checkEachTypeable(typeable -> typeable.onKeyPressed(cache,keycode));
     }
     
     @Override public boolean onLeftClick(double x, double y) {

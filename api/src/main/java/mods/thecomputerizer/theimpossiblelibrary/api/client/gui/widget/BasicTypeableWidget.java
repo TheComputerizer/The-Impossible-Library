@@ -2,25 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer.Allignment;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer.Alignment;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
-import java.util.Objects;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.LEFT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.RIGHT;
 
@@ -113,34 +104,27 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
     }
     
     @Getter protected final int charLimit;
-    private final ShapeWidget highligher;
-    @Getter protected int cursorPos;
-    protected int highlightStart;
-    protected int highlightEnd;
     protected String buffer;
-    private boolean cursorVisible;
     private int cursorBlinkCounter;
     
     public BasicTypeableWidget(TextBuffer text, double x, double y, int charLimit) {
         super(text,x,y);
         this.charLimit = charLimit;
-        this.highligher = ShapeWidget.from(ShapeHelper.plane(Y,new Vector2d(0d,0d),new Vector2d(0d,0d)),
-                                           ColorHelper.reverse(getColor()),x,y);
+        if(!this.text.isLeftAligned()) setText(text.copyToBuilder().setAlignment(Alignment.LEFT).build());
         this.buffer = toString();
-        this.cursorPos = textLength();
-        if(!this.text.isLeftAlligned()) setText(text.copyToBuilder().setAllignment(Allignment.LEFT).build());
+        this.text.setBlinkerPos(this.buffer.length());
     }
     
     @Override public boolean canBackspace() {
-        return isNotEmpty();
+        return isNotEmpty() && (this.text.isHighlighting() || this.text.getBlinkerPos()>0);
     }
     
     @Override public boolean canCopy() {
-        return isNotEmpty() && isHighlighting();
+        return isNotEmpty() && this.text.isHighlighting();
     }
     
     @Override public boolean canCut() {
-        return isNotEmpty() && isHighlighting();
+        return isNotEmpty() && this.text.isHighlighting();
     }
     
     @Override public boolean canPaste(@Nullable String text) {
@@ -151,35 +135,16 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
         return this.charLimit<=0 || this.charLimit>textLength();
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        super.draw(ctx,center,mouseX,mouseY);
-        if(isHighlighting() && Objects.nonNull(this.highligher)) this.highligher.draw(ctx,center,mouseX,mouseY);
-    }
-    
-    public String getHighlightedText() {
-        if(!isHighlighting()) return "";
-        if(this.highlightEnd<this.highlightStart) {
-            int i = this.highlightEnd;
-            this.highlightEnd = this.highlightStart;
-            this.highlightStart = i;
-        }
-        int length = this.highlightEnd-this.highlightStart;
-        return this.buffer.substring(this.highlightStart,this.highlightStart+length);
-    }
-    
     @Override public boolean isActivelyTicking() {
         return true;
     }
     
-    public boolean isHighlighting() {
-        return this.highlightStart!=this.highlightEnd && this.highlightEnd>=0 && this.highlightStart>=0;
-    }
-    
     @Override public boolean onBackspace() {
         if(canBackspace()) {
-            if(!isHighlighting()) {
-                this.highlightEnd = textLength();
-                this.highlightStart = this.highlightEnd-1;
+            if(!this.text.isHighlighting()) {
+                int textLength = textLength();
+                this.text.setHighlightEnd(this.text.getBlinkerPos());
+                this.text.setHighlightStart(this.text.getBlinkerPos()-1);
             }
             onTextRemoved();
             return true;
@@ -196,21 +161,32 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
     }
     
     @Nullable @Override public String onCopy() {
-        return canCopy() ? getHighlightedText() : null;
+        return canCopy() ? this.text.getHighlighted() : null;
     }
     
     @Nullable @Override public String onCut() {
         return canCut() ? onTextRemoved() : null;
     }
     
-    @Override public boolean onKeyPressed(int keyCode) {
+    @Override public boolean onKeyPressed(KeyStateCache cache, int keyCode) {
         if(KeyHelper.isArrow(keyCode)) {
-            if(keyCode==KeyHelper.getKeyCode(LEFT) && this.cursorPos>0) {
-                this.cursorPos--;
+            if(keyCode==KeyHelper.getKeyCode(LEFT) && this.text.getBlinkerPos()>0) {
+                if(cache.isHoldingCtrl()) this.text.setBlinkerPos(0);
+                else {
+                    if(cache.isHoldingShift()) this.text.decrementHighlight();
+                    this.text.decrementBlinkerPos();
+                }
                 return true;
             }
-            else if(keyCode==KeyHelper.getKeyCode(RIGHT) && this.cursorPos<textLength()) {
-                this.cursorPos++;
+            else if(keyCode==KeyHelper.getKeyCode(RIGHT)) {
+                int textLength = textLength();
+                if(this.text.getBlinkerPos()<textLength) {
+                    if(cache.isHoldingCtrl()) this.text.setBlinkerPos(textLength);
+                    else {
+                        if(cache.isHoldingShift()) this.text.incrementHighlight();
+                        this.text.incrementBlinkerPos();
+                    }
+                }
                 return true;
             }
         }
@@ -227,8 +203,8 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
     
     @Override public boolean onSelectAll() {
         if(isEmpty()) return false;
-        this.highlightStart = 0;
-        this.highlightEnd = this.buffer.length();
+        this.text.setHighlightStart(0);
+        this.text.setHighlightEnd(textLength());
         return true;
     }
     
@@ -236,32 +212,34 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
         int cutLength = 0;
         int pasteLength = text.length();
         int textLength = textLength();
-        if(isHighlighting()) {
-            String cut = getHighlightedText();
+        if(this.text.isHighlighting()) {
+            String cut = this.text.getHighlighted();
             cutLength = cut.length();
             if(cutLength<textLength) {
-                if(this.highlightStart>0) text = this.buffer.substring(0,this.highlightStart)+text;
-                if(this.highlightEnd<textLength) text+=this.buffer.substring(this.highlightStart+cutLength);
+                if(this.text.getHighlightStart()>0) text = this.buffer.substring(0,this.text.getHighlightStart())+text;
+                if(this.text.getHighlightEnd()<textLength)
+                    text+=this.buffer.substring(this.text.getHighlightStart()+cutLength);
             }
             resetHighlight();
         } else {
-            if(this.cursorPos<textLength()) text+=this.buffer.substring(this.cursorPos-1);
-            if(this.cursorPos>0) text = this.buffer.substring(0,this.cursorPos)+text;
+            if(this.text.getBlinkerPos()<textLength()) text+=this.buffer.substring(this.text.getBlinkerPos()-1);
+            if(this.text.getBlinkerPos()>0) text = this.buffer.substring(0,this.text.getBlinkerPos())+text;
         }
         setText(text);
-        this.cursorPos+=(pasteLength-cutLength);
+        this.text.setBlinkerPos(this.text.getBlinkerPos()+pasteLength-cutLength);
     }
     
     protected String onTextRemoved() {
-        String cut = getHighlightedText();
+        String cut = this.text.getHighlighted();
         int cutLength = cut.length();
         int textLength = textLength();
         String s = "";
         if(cutLength<textLength) {
-            if(this.highlightStart>0) s+=this.buffer.substring(0,this.highlightStart);
-            if(this.highlightEnd<textLength) s+=this.buffer.substring(this.highlightStart+cutLength);
+            if(this.text.getHighlightStart()>0) s+=this.buffer.substring(0,this.text.getHighlightStart());
+            if(this.text.getHighlightEnd()<textLength)
+                s+=this.buffer.substring(this.text.getHighlightStart()+cutLength);
         }
-        this.cursorPos = this.highlightStart;
+        this.text.setBlinkerPos(this.text.getHighlightStart());
         setText(s);
         resetHighlight();
         return cut;
@@ -270,51 +248,28 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
     @Override public void onTick() {
         this.cursorBlinkCounter++;
         if(this.cursorBlinkCounter==10) {
-            this.cursorVisible = !this.cursorVisible;
-            TILDev.logInfo("Previous text = {} | Previous buffer = {}",this.text,this.buffer);
+            this.text.flipBlinkerVisibility();
             setText(this.buffer);
-            TILDev.logInfo("New text = {} | New buffer = {}",this.text,this.buffer);
             this.cursorBlinkCounter = 0;
-            TILDev.logInfo("Text length = {} | Buffer length = {}",this.text.textLength(),this.buffer.length());
+            TILDev.logInfo("Text length = {} | Buffer length = {} | Blinker Pos = {} | Blinker visible = {} | " +
+                           "Highlight start = {} | Highlight end = {}",this.text.textLength(),
+                           this.buffer.length(),this.text.getBlinkerPos(),this.text.isBlinkerVisible(),
+                           this.text.getHighlightStart(),this.text.getHighlightEnd());
         }
     }
     
     public void resetHighlight() {
-        this.highlightStart = 0;
-        this.highlightEnd = 0;
-    }
-    
-    @Override public BasicTypeableWidget setColor(ColorCache color) {
-        if(Objects.nonNull(this.highligher)) this.highligher.setColor(ColorHelper.reverse(color));
-        return (BasicTypeableWidget)super.setColor(color);
+        this.text.setHighlightEnd(0);
+        this.text.setHighlightStart(0);
     }
     
     @Override public BasicTypeableWidget setText(TextBuffer text) {
+        this.text = text;
         String str = String.valueOf(text);
-        if(str.length()>2) str = str.substring(0,str.length()-2);
         this.buffer = str;
-        this.cursorPos = MathHelper.clamp(this.cursorPos,0,str.length());
-        this.text = text.copyToBuilder(TextHelper.getLiteral(withCursor(str))).setAllignment(Allignment.LEFT).build();
+        int blinkerPos = this.text.getBlinkerPos();
+        if(blinkerPos>str.length() || blinkerPos<0) blinkerPos = str.length();
+        this.text.setBlinkerPos(blinkerPos);
         return this;
-    }
-    
-    @Override public void setX(double x) {
-        super.setX(x);
-        if(Objects.nonNull(this.highligher)) this.highligher.setX(x);
-    }
-    
-    @Override public void setY(double y) {
-        super.setY(y);
-        if(Objects.nonNull(this.highligher)) this.highligher.setY(y);
-    }
-    
-    @Override public int textLength() {
-        return Objects.nonNull(this.buffer) ? this.buffer.length() : 0;
-    }
-    
-    protected String withCursor(String text) {
-        return (this.cursorPos>0 ? text.substring(0,this.cursorPos) : "")+
-               (this.cursorVisible ? "|" : " ")+
-               (this.cursorPos<text.length() ? text.substring(Math.max(0,this.cursorPos-1)) : "");
     }
 }

@@ -152,6 +152,43 @@ public class ShapeHelper {
         return new Plane(direction,corner,oppositeCorner);
     }
     
+    public static Plane plane(Facing facing, double sideLength) {
+        return plane(VectorHelper.from(facing),VectorHelper.zero2D(),sideLength,sideLength);
+    }
+    
+    public static Plane plane(Axis axis, double sideLength) {
+        return plane(VectorHelper.from(axis),VectorHelper.zero2D(),sideLength,sideLength);
+    }
+    
+    public static Plane plane(Vector3d direction, double sideLength) {
+        return plane(direction,VectorHelper.zero2D(),sideLength,sideLength);
+    }
+    
+    public static Plane plane(Facing facing, double width, double height) {
+        return plane(VectorHelper.from(facing),VectorHelper.zero2D(),width,height);
+    }
+    
+    public static Plane plane(Axis axis, double width, double height) {
+        return plane(VectorHelper.from(axis),VectorHelper.zero2D(),width,height);
+    }
+    
+    public static Plane plane(Vector3d direction, double width, double height) {
+        return plane(direction,VectorHelper.zero2D(),width,height);
+    }
+    
+    public static Plane plane(Facing facing, Vector2d center, double width, double height) {
+        return plane(VectorHelper.from(facing),center,width,height);
+    }
+    
+    public static Plane plane(Axis axis, Vector2d center, double width, double height) {
+        return plane(VectorHelper.from(axis),center,width,height);
+    }
+    
+    public static Plane plane(Vector3d direction, Vector2d center, double width, double height) {
+        return new Plane(direction,center.sub(width/2d,height/2d,new Vector2d()),
+                         center.add(width/2d,height/2d,new Vector2d()));
+    }
+    
     public static Square square(Facing facing, double heightRatio) {
         return square(VectorHelper.from(facing),1d,heightRatio);
     }

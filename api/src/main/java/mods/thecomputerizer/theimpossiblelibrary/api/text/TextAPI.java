@@ -9,6 +9,7 @@ public interface TextAPI<S> {
      * Returns the applied string after stylization and transformations have been added
      */
     String getApplied();
+    String getAppliedNoReset();
 
     TextHelperAPI<S> getHelper();
 

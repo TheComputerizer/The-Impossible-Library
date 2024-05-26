@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
@@ -72,6 +73,10 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
         initGui();
     }
     
+    private KeyStateCache getKeyState() {
+        return new KeyStateCache(isAltKeyDown(),isCtrlKeyDown(),isShiftKeyDown());
+    }
+    
     @Override public ScreenAPI getWrapped() {
         return this.wrapped;
     }
@@ -118,7 +123,7 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
                     return;
                 }
             }
-            if(this.wrapped.onKeyPressed(keyCode)) return;
+            if(this.wrapped.onKeyPressed(getKeyState(),keyCode)) return;
             if(ChatAllowedCharacters.isAllowedCharacter(c) && this.wrapped.onCharTyped(c)) return;
         }
         super.keyTyped(c,keyCode);
