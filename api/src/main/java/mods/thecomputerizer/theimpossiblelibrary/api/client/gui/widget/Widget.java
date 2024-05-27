@@ -58,4 +58,8 @@ public abstract class Widget {
     }
     
     public abstract void onResolutionUpdated(MinecraftWindow window);
+    
+    public void onScreenClosed() {}
+    
+    public void onScreenOpened() {}
 }

@@ -191,6 +191,40 @@ public class TextBuffer {
         this.blinkerVisible = !this.blinkerVisible;
     }
     
+    /**
+     Returns -1 if the position is too far outside the drawn text or if the buffer is not yet cached.
+     */
+    public int getCharPos(double x, double y, Vector3d center, double minX, double minY, double maxX, double maxY) {
+        return this.cached ? getCharPos(x,y,center,minX,minY,Math.abs(maxX-minX),Math.abs(maxY-minY)) : -1;
+    }
+    
+    private int getCharPos(double x, double y, Vector3d center, List<String> lines, double left, double bottom,
+            double width, double height) {
+        int pos = -1;
+        double lineHeight = this.heightCache/lines.size();
+        double offset = 0;
+        int blinker = this.blinkerPos;
+        for(String line : lines) {
+            int lineLength = line.length();
+            pos = getCharPos(x,y,VectorHelper.copy3D(center),line,lineHeight,left,bottom,width,height,offset);
+            if(pos!=-1) break;
+            offset+=(lineHeight);
+        }
+        return pos;
+    }
+    
+    private int getCharPos(double x, double y, Vector3d center, String line, double lineHeight, double left,
+            double bottom, double width, double height, double offset) { //TODO finish this
+        if(isTopAligned()) center.y = bottom+height;
+        else if(isBottomAligned()) center.y = bottom+lineHeight;
+        else center.y = bottom+(height/2d)+(lineHeight/2d);
+        if(isLeftAligned()) center.x = left;
+        else if(isRightAligned()) center.x = left-this.widthCache;
+        else center.x = left+(width/2d);
+        center.add(this.translateX,this.translateY-offset,0d);
+        return -1;
+    }
+    
     public double getHeight(@Nullable RenderContext ctx, double maxWidth) {
         if(!this.cached && Objects.nonNull(ctx)) cache(ctx,maxWidth);
         return this.heightCache;

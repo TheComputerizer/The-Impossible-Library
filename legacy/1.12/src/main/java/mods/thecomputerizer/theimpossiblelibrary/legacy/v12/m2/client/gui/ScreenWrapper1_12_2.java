@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Minecraft1
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ChatAllowedCharacters;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import javax.annotation.Nullable;
@@ -38,7 +39,7 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     }
     
     private static void initializeTicker() {
-        EventHelper.addListener(TICK_CLIENT,wrapper -> {
+        EventHelper.addListener(TICK_CLIENT, wrapper -> {
             if(wrapper.isPhase(END))
                 for(ScreenWrapper1_12_2 screen : TICKERS)
                     if(screen.isActivelyTicking() && screen.isOpen) screen.wrapped.onTick();
@@ -91,6 +92,8 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     }
     
     @Override public void initGui() {
+        Keyboard.enableRepeatEvents(true);
+        if(Objects.nonNull(this.wrapped)) this.wrapped.onScreenOpened();
         addTicker(this);
         this.isOpen = true;
     }
@@ -98,7 +101,6 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     private boolean isActivelyTicking() {
         return Objects.nonNull(this.wrapped) && this.wrapped.isActivelyTicking();
     }
-    
     
     @Override protected void keyTyped(char c, int keyCode) throws IOException {
         if(Objects.nonNull(this.wrapped)) {
@@ -115,7 +117,10 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
                     return;
                 }
             }
-            if(GuiScreen.isKeyComboCtrlV(keyCode) && this.wrapped.onPaste(GuiScreen.getClipboardString())) return;
+            if(GuiScreen.isKeyComboCtrlV(keyCode)) {
+                String pasted = GuiScreen.getClipboardString();
+                if(this.wrapped.onPaste(pasted)) return;
+            }
             if(GuiScreen.isKeyComboCtrlX(keyCode)) {
                 String copied = this.wrapped.onCut();
                 if(Objects.nonNull(copied)) {
@@ -142,6 +147,7 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     @Override public void onGuiClosed() {
         this.isOpen = false;
         if(Objects.nonNull(this.wrapped)) this.wrapped.onScreenClosed();
+        Keyboard.enableRepeatEvents(false);
         removeTicker(this);
     }
     

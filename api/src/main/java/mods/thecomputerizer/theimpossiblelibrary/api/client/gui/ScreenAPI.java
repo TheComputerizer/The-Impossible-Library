@@ -110,10 +110,16 @@ public class ScreenAPI extends WidgetGroup {
         return 2d;
     }
     
-    public void onScreenClosed() {}
-    
     public boolean onCloseRequested(boolean pressedEsc) {
         return true;
+    }
+    
+    @Override public void onScreenClosed() {
+        eachWidget(Widget::onScreenClosed);
+    }
+    
+    @Override public void onScreenOpened() {
+        eachWidget(Widget::onScreenOpened);
     }
     
     public boolean shouldPauseGame() {
