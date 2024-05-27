@@ -142,7 +142,6 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
     @Override public boolean onBackspace() {
         if(canBackspace()) {
             if(!this.text.isHighlighting()) {
-                int textLength = textLength();
                 this.text.setHighlightEnd(this.text.getBlinkerPos());
                 this.text.setHighlightStart(this.text.getBlinkerPos()-1);
             }
@@ -171,9 +170,12 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
     @Override public boolean onKeyPressed(KeyStateCache cache, int keyCode) {
         if(KeyHelper.isArrow(keyCode)) {
             if(keyCode==KeyHelper.getKeyCode(LEFT) && this.text.getBlinkerPos()>0) {
-                if(cache.isHoldingCtrl()) this.text.setBlinkerPos(0);
-                else {
+                if(cache.isHoldingCtrl()) {
+                    this.text.setBlinkerPos(0);
+                    resetHighlight();
+                } else {
                     if(cache.isHoldingShift()) this.text.decrementHighlight();
+                    else resetHighlight();
                     this.text.decrementBlinkerPos();
                 }
                 return true;
@@ -181,9 +183,12 @@ public class BasicTypeableWidget extends TextWidget implements Tickable, Typeabl
             else if(keyCode==KeyHelper.getKeyCode(RIGHT)) {
                 int textLength = textLength();
                 if(this.text.getBlinkerPos()<textLength) {
-                    if(cache.isHoldingCtrl()) this.text.setBlinkerPos(textLength);
-                    else {
+                    if(cache.isHoldingCtrl()) {
+                        this.text.setBlinkerPos(textLength);
+                        resetHighlight();
+                    } else {
                         if(cache.isHoldingShift()) this.text.incrementHighlight();
+                        else resetHighlight();
                         this.text.incrementBlinkerPos();
                     }
                 }

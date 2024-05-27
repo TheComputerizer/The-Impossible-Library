@@ -25,7 +25,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.
 @SuppressWarnings("unused")
 public class TextBuffer {
     
-    public static final RenderShape highlightShape = RenderShape.from(ShapeHelper.plane(Y,0d,0d),
+    public static final RenderShape highlightShape = RenderShape.from(ShapeHelper.plane(Y,0.01d),
                                                                       WHITE.withAlpha(0.5f));
     
     public static Builder getBuilder(TextAPI<?> text) {
@@ -197,7 +197,7 @@ public class TextBuffer {
     }
     
     public String getHighlighted() {
-        if(isHighlighting()) return "";
+        if(!isHighlighting()) return "";
         if(this.highlightEnd<this.highlightStart) {
             int i = this.highlightEnd;
             this.highlightEnd = this.highlightStart;
