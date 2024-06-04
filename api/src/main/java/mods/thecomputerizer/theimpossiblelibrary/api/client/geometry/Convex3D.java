@@ -182,7 +182,7 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
     }
 
     public void renderOutlines(RenderContext ctx) {
-        ctx.prepareGradient(new ColorCache(this.color[4],this.color[5],this.color[6],this.color[7]));
+        ctx.prepareGradient(ColorCache.of(this.color[4],this.color[5],this.color[6],this.color[7]));
         for(TriangleMapper triangle : this.triangles)
             for(int i=0; i<triangle.length; i++)
                 renderTriangleOutline(ctx,triangle,i);

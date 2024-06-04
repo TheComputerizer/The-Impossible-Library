@@ -42,7 +42,7 @@ public class TestScreen extends ScreenAPI {
     
     private void addFuzz(int minCount, int maxCount, float minWidth, float maxWidth) {
         addWidget(ShapeWidget.fuzz(ShapeHelper.square(Y,2d,1d),minCount,maxCount,minWidth,maxWidth,
-                                   () -> new ColorCache(
+                                   () -> ColorCache.of(
                                            this.coloredFuzz ? RandomHelper.randomFloat(0.6f,1f) : 0f,
                                            this.coloredFuzz ? 0.5f : 0f,
                                            this.coloredFuzz ? 0.5f : 0f,

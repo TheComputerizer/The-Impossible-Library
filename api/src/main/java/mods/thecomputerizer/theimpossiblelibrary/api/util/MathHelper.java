@@ -18,6 +18,10 @@ public class MathHelper {
         return Math.max(min,Math.min(val,max));
     }
     
+    public static float clamp(float val, float min, float max) {
+        return Math.max(min,Math.min(val,max));
+    }
+    
     public static int clamp(int val, int min, int max) {
         return Math.max(min,Math.min(val,max));
     }
@@ -29,70 +33,6 @@ public class MathHelper {
         while(angle>RADIANS_180) angle-=RADIANS_360;
         while(angle<-RADIANS_180) angle+=RADIANS_360;
         return angle;
-    }
-
-    /**
-        Helper math for radial gui elements
-        Calculates a vector to be pushed into a BufferBuilder using the center of the circle and the given radius and angle
-        The angle is in radians
-     */
-    public static Vector2f getVertex(Vector2f center, float radius, float angle) {
-        return getVertex(center.x,center.y,radius,angle);
-    }
-
-    public static Vector2f getVertex(float centerX, float centerY, float radius, float angle) {
-        return new Vector2f(centerX+(radius*(float)Math.cos(angle)),centerY+(radius*(float)Math.sin(angle)));
-    }
-
-    /**
-        More precise version of the above method
-     */
-    public static Vector2f getVertex(Vector2f center, double radius, double angle) {
-        return getVertex(center.x,center.y,radius,angle);
-    }
-
-    public static Vector2f getVertex(float centerX, float centerY, double radius, double angle) {
-        return new Vector2f((float)((double)centerX+(radius*Math.cos(angle))),(float)((double)centerY+(radius*Math.sin(angle))));
-    }
-
-    /**
-     Helper math for radial gui buttons.
-     Checks whether a given screen position is within an outer radius but not within an inner radius of a circle.
-     The input radius is a vector where radius.x is the inner radius and radius.y is the outer radius.
-     */
-    public static boolean isInCircle(Vector2f center, double distance, Vector2f radius) {
-        return distance>radius.x() && distance<=radius.y();
-    }
-
-    /**
-     Helper math for radial gui buttons
-     Checks whether a given screen position is within the bounds of a circle
-     */
-    public static boolean isInCircle(Vector2f center, double distance, float outerRadius) {
-        return distance<=outerRadius;
-    }
-
-    /**
-        returns a vector of the angle bounds of a circle slice given the index of the slice and total number of slices
-     */
-    public static Vector2f makeAngleVector(int index, int numSlices) {
-        float startAngle = (((index - 0.5f) / numSlices) + 0.25f) * 360;
-        float endAngle = (((index + 0.5f) / numSlices) + 0.25f) * 360;
-        return new Vector2f(startAngle,endAngle);
-    }
-
-    /**
-        returns a vector of the angle bounds for a radial progress bar given a percentage progress
-     */
-    public static Vector2f progressAngles(float progress) {
-        return new Vector2f(0f,360*progress);
-    }
-
-    /**
-        converts angle bounds stored in a vector as degrees to radians
-     */
-    public static Vector2f toRadians(Vector2f degreeVec) {
-        return new Vector2f((float)Math.toRadians(degreeVec.x()),(float)Math.toRadians(degreeVec.y()));
     }
     
     /**
@@ -121,19 +61,5 @@ public class MathHelper {
      */
     public static float getHalfway(float start, float end) {
         return Math.min(start,end)+(Math.abs(end-start)/2f);
-    }
-
-    /**
-        Calculates the center position of a circle give the start and end angles,
-        inner and outer radius, relative center position, and total number of slices
-        Angles must be in degrees
-     */
-    public static Vector2f getCenterPosOfSlice(Vector2f angles, Vector2f radius, Vector2f center, int numSlices) {
-        float centerAngle;
-        if(numSlices>1) centerAngle = (float) Math.toRadians(getHalfway(angles.x(),angles.y()));
-        else centerAngle = (float)Math.toRadians(90d);
-        float relativeRadius = radius.y()-((radius.y()-radius.x())*0.5f);
-        return new Vector2f((float) (center.x()+relativeRadius*Math.cos(centerAngle)),
-                (float)(center.y()+relativeRadius*Math.sin(centerAngle)));
     }
 }

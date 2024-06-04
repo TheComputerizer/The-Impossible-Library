@@ -359,7 +359,7 @@ public class TextBuffer {
          * Assumes values from 0-1
          */
         public Builder setColor(float r, float g, float b, float a) {
-            return setColor(new ColorCache(r,g,b,a));
+            return setColor(ColorCache.of(r,g,b,a));
         }
 
         /**
@@ -373,7 +373,7 @@ public class TextBuffer {
          * Assumes values from 0-255
          */
         public Builder setColor(int r, int g, int b, int a) {
-            return setColor(new ColorCache(r,g,b,a));
+            return setColor(ColorCache.of(r,g,b,a));
         }
         
         /**

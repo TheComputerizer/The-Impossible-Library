@@ -8,9 +8,12 @@ import org.joml.Vector3d;
 
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.BLACK;
+
 @SuppressWarnings("unused")
 public interface Shape {
     
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean checkToleranceBounds(Vector3d center, Box bounds);
     
     default Shape copy() {
@@ -102,8 +105,17 @@ public interface Shape {
     }
     
     default FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth) {
-        return makeFuzzBall(minCount,maxCount,minWidth,maxWidth,
-                            () -> new ColorCache(0f,0f,0f,RandomHelper.randomFloat(0.75f,1f)));
+        return makeFuzzBall(minCount,maxCount,minWidth,maxWidth,BLACK,0.75f,1f);
+    }
+    
+    default FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, ColorCache baseColor,
+            float minAlpha, float maxAlpha) {
+        return makeFuzzBall(minCount,maxCount,minWidth,maxWidth,baseColor,RandomHelper.randomFloat(0.75f,1f));
+    }
+    
+    default FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, ColorCache baseColor,
+            float alpha) {
+        return makeFuzzBall(minCount,maxCount,minWidth,maxWidth,() -> baseColor.withAlpha(alpha));
     }
     
     FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, Supplier<ColorCache> colorGenerator);

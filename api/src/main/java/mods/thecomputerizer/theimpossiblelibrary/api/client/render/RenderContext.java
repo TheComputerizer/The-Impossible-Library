@@ -21,6 +21,7 @@ import org.joml.Vector4d;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 @SuppressWarnings("unused") @Getter
@@ -126,7 +127,7 @@ public final class RenderContext {
     
     public void drawTexturedPlane(Vector3d center, Plane plane, ResourceLocationAPI<?> texture, Vector4d uv,
             ColorCache mask) {
-        if(isNotBounded(center)) return;
+        if(Objects.isNull(texture) || isNotBounded(center)) return;
         Vector2d min = plane.getRelativeMin();
         Vector2d max = plane.getRelativeMax();
         this.renderer.bindTexture(texture);

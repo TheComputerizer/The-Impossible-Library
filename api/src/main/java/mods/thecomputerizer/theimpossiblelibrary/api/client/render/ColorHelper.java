@@ -11,22 +11,22 @@ import org.joml.Vector4i;
 @SuppressWarnings("unused")
 public class ColorHelper {
 
-    public static final ColorCache AQUA = initColor(85,255,255,255);
-    public static final ColorCache BLACK = initColor(0,0,0,255);
-    public static final ColorCache BLUE = initColor(85,85,255,255);
-    public static final ColorCache DARK_AQUA = initColor(0,170,170,255);
-    public static final ColorCache DARK_BLUE = initColor(0,0,170,255);
-    public static final ColorCache DARK_GRAY = initColor(85,85,85,255);
-    public static final ColorCache DARK_GREEN = initColor(0,170,0,255);
-    public static final ColorCache DARK_PURPLE = initColor(170,0,170,255);
-    public static final ColorCache DARK_RED = initColor(170,0,0,255);
-    public static final ColorCache GOLD = initColor(255,170,0,255);
-    public static final ColorCache GRAY = initColor(170,170,170,255);
-    public static final ColorCache GREEN = initColor(85,255,85,255);
-    public static final ColorCache LIGHT_PURPLE = initColor(255,85,255,255);
-    public static final ColorCache RED = initColor(255,85,85,255);
-    public static final ColorCache WHITE = initColor(255,255,255,255);
-    public static final ColorCache YELLOW = initColor(255,255,85,255);
+    public static final ColorCache AQUA = ColorCache.of(85,255,255);
+    public static final ColorCache BLACK = ColorCache.grayscale(0);
+    public static final ColorCache BLUE = ColorCache.of(85,85,255);
+    public static final ColorCache DARK_AQUA = ColorCache.of(0,170,170);
+    public static final ColorCache DARK_BLUE = ColorCache.of(0,0,170);
+    public static final ColorCache DARK_GRAY = ColorCache.grayscale(85);
+    public static final ColorCache DARK_GREEN = ColorCache.of(0,170,0);
+    public static final ColorCache DARK_PURPLE = ColorCache.of(170,0,170);
+    public static final ColorCache DARK_RED = ColorCache.of(170,0,0);
+    public static final ColorCache GOLD = ColorCache.of(255,170,0);
+    public static final ColorCache GRAY = ColorCache.grayscale(170);
+    public static final ColorCache GREEN = ColorCache.of(85,255,85);
+    public static final ColorCache LIGHT_PURPLE = ColorCache.of(255,85,255);
+    public static final ColorCache RED = ColorCache.of(255,85,85);
+    public static final ColorCache WHITE = ColorCache.grayscale(255);
+    public static final ColorCache YELLOW = ColorCache.of(255,255,85);
 
     /**
      * Converts a color vector stored as 0-255 to a color vector stored as 0-1
@@ -41,6 +41,27 @@ public class ColorHelper {
      */
     public static Vector4i convert(Vector4f color) {
         return new Vector4i((int)(color.x*255f),(int)(color.y*255f),(int)(color.z*255f),(int)(color.w*255f));
+    }
+    
+    /**
+     * Extracts a color that has been encoded as an integer
+     */
+    public static ColorCache decode(int encoded) {
+        return ColorCache.of((encoded>>16)&0xFF,(encoded>>8)&0xFF,encoded&0xFF,(encoded>>24)&0xFF);
+    }
+    
+    /**
+     * Extracts a color that has been encoded as an integer and applies the alpha override
+     */
+    public static ColorCache decode(int encoded, float alphaOverride) {
+        return ColorCache.of((encoded>>16)&0xFF,(encoded>>8)&0xFF,encoded&0xFF,alphaOverride);
+    }
+    
+    /**
+     * Extracts a color that has been encoded as an integer and applies the alpha override
+     */
+    public static ColorCache decode(int encoded, int alphaOverride) {
+        return ColorCache.of((encoded>>16)&0xFF,(encoded>>8)&0xFF,encoded&0xFF,alphaOverride);
     }
 
     /**
@@ -101,11 +122,6 @@ public class ColorHelper {
 
     public static Vector4i getColorVI(String color, int alpha) {
         return getColor(color).getVIWithAlpha(alpha);
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private static ColorCache initColor(int r, int g, int b, int a) {
-        return new ColorCache(r,g,b,a);
     }
 
     /**
