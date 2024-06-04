@@ -260,6 +260,14 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return x>this.min.x-tolerance && x<this.max.x+tolerance;
     }
     
+    public boolean isInsideXY(double x, double y) {
+        return isInsideX(x,0d) && isInsideY(y,0d);
+    }
+    
+    public boolean isInsideXY(double x, double y, double tolerance) {
+        return isInsideX(x,tolerance) && isInsideY(y,tolerance);
+    }
+    
     public boolean isInsideY(double y) {
         return isInsideY(y,0d);
     }

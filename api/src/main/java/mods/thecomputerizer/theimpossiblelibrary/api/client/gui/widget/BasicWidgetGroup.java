@@ -64,9 +64,7 @@ public class BasicWidgetGroup extends WidgetGroup {
     
     @Override public BasicWidgetGroup copy() {
         BasicWidgetGroup copy = new BasicWidgetGroup(this.x,this.y,this.width,this.height);
-        for(Widget widget : this.widgets) copy.addWidget(widget.copy());
-        copy.scaleX = this.scaleX;
-        copy.scaleY = this.scaleY;
+        copy.copyGroup(this);
         return copy;
     }
 }

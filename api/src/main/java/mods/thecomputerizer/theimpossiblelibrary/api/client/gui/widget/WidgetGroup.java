@@ -23,9 +23,9 @@ import java.util.function.Function;
 @SuppressWarnings("unused") @Getter
 public abstract class WidgetGroup extends Widget implements Clickable, Hoverable, Scrollable, Tickable, Typeable {
     
+    @Setter protected double scaleX;
+    @Setter protected double scaleY;
     protected Collection<Widget> widgets;
-     @Setter protected double scaleX;
-     @Setter protected double scaleY;
     
     protected WidgetGroup() {
         this(null);
@@ -56,47 +56,57 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     @Override public boolean canBackspace() {
-        return checkEachTypeable(Typeable::canBackspace);
+        return canDraw() && checkEachTypeable(Typeable::canBackspace);
     }
     
     @Override public boolean canType(char c) {
-        return checkEachTypeable(typeable -> typeable.canType(c));
+        return canDraw() && checkEachTypeable(typeable -> typeable.canType(c));
     }
     
     protected boolean checkEachClickable(Function<Clickable,Boolean> func) {
-        return checkEachWidget(widget -> widget instanceof Clickable && func.apply((Clickable)widget));
+        return canDraw() && checkEachWidget(widget -> widget instanceof Clickable && func.apply((Clickable)widget));
     }
     
     protected boolean checkEachHoverable(Function<Hoverable,Boolean> func) {
-        return checkEachWidget(widget -> widget instanceof Hoverable && func.apply((Hoverable)widget));
+        return canDraw() && checkEachWidget(widget -> widget instanceof Hoverable && func.apply((Hoverable)widget));
     }
     
     protected boolean checkEachScrollable(Function<Scrollable,Boolean> func) {
-        return checkEachWidget(widget -> widget instanceof Scrollable && func.apply((Scrollable)widget));
+        return canDraw() && checkEachWidget(widget -> widget instanceof Scrollable && func.apply((Scrollable)widget));
     }
     
     protected boolean checkEachSelectable(Function<Selectable,Boolean> func) {
-        return checkEachWidget(widget -> widget instanceof Selectable && func.apply((Selectable)widget));
+        return canDraw() && checkEachWidget(widget -> widget instanceof Selectable && func.apply((Selectable)widget));
     }
     
     protected boolean checkEachTickable(Function<Tickable,Boolean> func) {
-        return checkEachWidget(widget -> widget instanceof Tickable && func.apply((Tickable)widget));
+        return canDraw() && checkEachWidget(widget -> widget instanceof Tickable && func.apply((Tickable)widget));
     }
     
     protected boolean checkEachTypeable(Function<Typeable,Boolean> func) {
-        return checkEachWidget(widget -> widget instanceof Typeable && func.apply((Typeable)widget));
+        return canDraw() && checkEachWidget(widget -> widget instanceof Typeable && func.apply((Typeable)widget));
     }
     
     protected boolean checkEachWidget(Function<Widget,Boolean> func) {
         for(Widget widget : this.widgets)
-            if(func.apply(widget)) return true;
+            if(widget.canDraw() && func.apply(widget)) return true;
         return false;
     }
     
     @Override public abstract WidgetGroup copy();
     
+    protected void copyGroup(WidgetGroup other) {
+        copyBasic(other);
+        this.scaleX = other.scaleX;
+        this.scaleY = other.scaleY;
+        for(Widget otherChild : other.widgets)
+            if(!this.widgets.contains(otherChild)) addWidget(otherChild.copy());
+    }
+    
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        for(Widget widget : this.widgets) drawWidget(ctx,widget,center,mouseX,mouseY);
+        if(canDraw())
+            for(Widget widget : this.widgets)
+                if(widget.canDraw()) drawWidget(ctx,widget,center,mouseX,mouseY);
     }
     
     protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3d center, double mouseX, double mouseY) {
@@ -162,7 +172,8 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     protected void eachWidget(Consumer<Widget> func) {
-        for(Widget widget : this.widgets) func.accept(widget);
+        for(Widget widget : this.widgets)
+            if(widget.canDraw()) func.accept(widget);
     }
     
     protected double getElementsBottom(double z) {
@@ -174,6 +185,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         double bottom = 0d;
         boolean first = true;
         for(Widget widget : this.widgets) {
+            if(!widget.canDraw()) continue;
             double wTop = widget.getTop();
             double wBottom = widget.getBottom();
             if(first) {
@@ -197,6 +209,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         double right = 0d;
         boolean first = true;
         for(Widget widget : this.widgets) {
+            if(!widget.canDraw()) continue;
             double wLeft = widget.getLeft();
             double wRight = widget.getRight();
             if(first) {
@@ -211,6 +224,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return Math.abs(right-left);
     }
     
+    @SuppressWarnings("SameParameterValue")
     protected double getElementsTop(double z) {
         return Math.min(getTop(),getCenter(z).y+(getElementsHeight()/2d));
     }
@@ -220,36 +234,49 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     public @Nullable Widget getHoveredElement(double mouseX, double mouseY) {
-        for(Widget widget : this.widgets)
-            if(widget instanceof Hoverable && ((Hoverable)widget).isHovering(mouseX,mouseY)) return widget;
+        if(canDraw())
+            for(Widget widget : this.widgets)
+                if(widget.canDraw() && widget instanceof Hoverable && ((Hoverable)widget).isHovering(mouseX,mouseY))
+                    return widget;
         return null;
     }
     
     @Override public Collection<TextAPI<?>> getHoverLines(double mouseX, double mouseY) {
-        for(Widget widget : this.widgets)
-            if(widget instanceof Hoverable && ((Hoverable)widget).isHovering(mouseX,mouseY))
-                return ((Hoverable)widget).getHoverLines(mouseX,mouseY);
+        if(canDraw())
+            for(Widget widget : this.widgets)
+                if(widget.canDraw() && widget instanceof Hoverable && ((Hoverable)widget).isHovering(mouseX,mouseY))
+                    return ((Hoverable)widget).getHoverLines(mouseX,mouseY);
         return Collections.emptyList();
     }
     
     public @Nullable Widget getSelectedElement(double mouseX, double mouseY) {
-        for(Widget widget : this.widgets)
-            if(widget instanceof Selectable && ((Selectable)widget).isSelected()) return widget;
+        if(canDraw())
+            for(Widget widget : this.widgets)
+                if(widget.canDraw() && widget instanceof Selectable && ((Selectable)widget).isSelected())
+                    return widget;
         return null;
     }
     
     public boolean hasNonBlankText() {
-        for(Widget widget : this.widgets) {
-            if(widget instanceof TextWidget && ((TextWidget)widget).isNotBlank()) return true;
-            else if(widget instanceof WidgetGroup && ((WidgetGroup)widget).hasNonBlankText()) return true;
+        if(canDraw()) {
+            for(Widget widget : this.widgets) {
+                if(widget.canDraw()) {
+                    if(widget instanceof TextWidget && ((TextWidget)widget).isNotBlank()) return true;
+                    else if(widget instanceof WidgetGroup && ((WidgetGroup)widget).hasNonBlankText()) return true;
+                }
+            }
         }
         return false;
     }
     
     public boolean hasNonEmptyText() {
-        for(Widget widget : this.widgets) {
-            if(widget instanceof TextWidget && ((TextWidget)widget).isNotEmpty()) return true;
-            else if(widget instanceof WidgetGroup && ((WidgetGroup)widget).hasNonEmptyText()) return true;
+        if(canDraw()) {
+            for(Widget widget : this.widgets) {
+                if(widget.canDraw()) {
+                    if(widget instanceof TextWidget && ((TextWidget)widget).isNotEmpty()) return true;
+                    else if(widget instanceof WidgetGroup && ((WidgetGroup)widget).hasNonEmptyText()) return true;
+                }
+            }
         }
         return false;
     }
@@ -270,44 +297,50 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return checkEachTypeable(typeable -> typeable.onCharTyped(c));
     }
     
-    @Override public boolean onKeyPressed(KeyStateCache cache, int keycode) {
-        return checkEachTypeable(typeable -> typeable.onKeyPressed(cache,keycode));
-    }
-    
-    @Override public boolean onLeftClick(double x, double y) {
-        for(Widget widget : this.widgets)
-            if(widget instanceof Clickable && ((Clickable)widget).onLeftClick(x,y)) return true;
-        return false;
-    }
-    
-    @Override public boolean onRightClick(double x, double y) {
-        for(Widget widget : this.widgets)
-            if(widget instanceof Clickable && ((Clickable)widget).onRightClick(x,y)) return true;
-        return false;
-    }
-    
     @Override public @Nullable String onCopy() {
-        for(Widget widget : this.widgets) {
-            if(widget instanceof Typeable) {
-                String copied = ((Typeable)widget).onCopy();
-                if(Objects.nonNull(copied)) return copied;
+        if(canDraw()) {
+            for(Widget widget : this.widgets) {
+                if(widget.canDraw() && widget instanceof Typeable) {
+                    String copied = ((Typeable)widget).onCopy();
+                    if(Objects.nonNull(copied)) return copied;
+                }
             }
         }
         return null;
     }
     
     @Override public @Nullable String onCut() {
-        for(Widget widget : this.widgets) {
-            if(widget instanceof Typeable) {
-                String copied = ((Typeable)widget).onCut();
-                if(Objects.nonNull(copied)) return copied;
+        if(canDraw()) {
+            for(Widget widget : this.widgets) {
+                if(widget.canDraw() && widget instanceof Typeable) {
+                    String copied = ((Typeable)widget).onCut();
+                    if(Objects.nonNull(copied)) return copied;
+                }
             }
         }
         return null;
     }
     
+    @Override public boolean onKeyPressed(KeyStateCache cache, int keycode) {
+        return checkEachTypeable(typeable -> typeable.onKeyPressed(cache,keycode));
+    }
+    
+    @Override public boolean onLeftClick(double x, double y) {
+        if(canDraw())
+            for(Widget widget : this.widgets)
+                if(widget.canDraw() && widget instanceof Clickable && ((Clickable)widget).onLeftClick(x,y)) return true;
+        return false;
+    }
+    
     @Override public boolean onPaste(@Nullable String text) {
         return checkEachTypeable(typeable -> typeable.onPaste(text));
+    }
+    
+    @Override public boolean onRightClick(double x, double y) {
+        if(canDraw())
+            for(Widget widget : this.widgets)
+                if(widget.canDraw() && widget instanceof Clickable && ((Clickable)widget).onRightClick(x,y)) return true;
+        return false;
     }
     
     @Override public boolean onSelectAll() {
@@ -315,10 +348,12 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     @Override public void onTick() {
-        for(Widget widget : this.widgets) {
-            if(widget instanceof Tickable) {
-                Tickable tickable = (Tickable)widget;
-                if(tickable.isActivelyTicking()) tickable.onTick();
+        if(canDraw()) {
+            for(Widget widget : this.widgets) {
+                if(widget.canDraw() && widget instanceof Tickable) {
+                    Tickable tickable = (Tickable)widget;
+                    if(tickable.isActivelyTicking()) tickable.onTick();
+                }
             }
         }
     }

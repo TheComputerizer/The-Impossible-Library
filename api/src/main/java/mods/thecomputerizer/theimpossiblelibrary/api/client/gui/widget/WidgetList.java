@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.GRAY;
@@ -91,22 +92,20 @@ public class WidgetList extends ScrollableWidgetGroup {
     
     @Override public WidgetList copy() {
         WidgetList copy = new WidgetList(this.elementTemplate,this.x,this.y,this.width,this.height);
-        for(Widget widget : this.widgets) copy.addWidget(widget.copy());
-        copy.scaleX = this.scaleX;
-        copy.scaleY = this.scaleY;
-        copy.scrollOffset = this.scrollOffset;
-        copy.scrollSpeed = this.scrollSpeed;
+        copy.copyScrollable(this);
         return copy;
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         super.draw(ctx,center,mouseX,mouseY);
-        if(getElementsHeight()>getHeight()) this.scrollBar.draw(ctx,center,mouseX,mouseY);
+        if(Objects.nonNull(this.scrollBar) && this.scrollBar.canDraw() && getElementsHeight()>getHeight())
+            this.scrollBar.draw(ctx,center,mouseX,mouseY);
     }
     
     @Override protected double getElementsHeight() {
         double height = this.spacing;
-        for(Widget widget : this.widgets) height+=(widget.getHeight()+this.spacing);
+        for(Widget widget : this.widgets)
+            if(widget.canDraw()) height+=(widget.getHeight()+this.spacing);
         return height;
     }
     

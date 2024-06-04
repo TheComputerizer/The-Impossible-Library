@@ -69,7 +69,9 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     }
     
     @Override public TextWidget copy() {
-        return new TextWidget(this.text.copy(),this.x,this.y);
+        TextWidget copy = new TextWidget(this.text.copy(),this.x,this.y);
+        copy.copyBasic(this);
+        return copy;
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {

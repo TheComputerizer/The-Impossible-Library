@@ -13,8 +13,8 @@ import java.util.Collection;
 @Getter
 public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implements Scrollable {
     
-    @Setter protected double scrollSpeed;
     protected double scrollOffset;
+    @Setter protected double scrollSpeed;
     
     protected ScrollableWidgetGroup() {
         this.scrollSpeed = 0.001d;
@@ -42,6 +42,12 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     }
     
     @Override public abstract ScrollableWidgetGroup copy();
+    
+    protected void copyScrollable(ScrollableWidgetGroup other) {
+        copyGroup(other);
+        this.scrollOffset = other.scrollOffset;
+        this.scrollSpeed = other.scrollSpeed;
+    }
     
     public abstract boolean doesNotRequireHoverToScroll();
     
@@ -73,7 +79,7 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     }
     
     @Override protected Box getRenderBounds(Vector3d center) {
-        return super.getRenderBounds(center).offset(0d,-this.scrollOffset,0d);
+        return super.getRenderBounds(center,0d,-this.scrollOffset,0d);
     }
     
     public boolean isHoveringForScroll() {
@@ -84,14 +90,6 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         double left = getX()-(width/2d);
         double bottom = getY()-(height/2d);
         return mouseX>left && mouseY>bottom && mouseX<left+width && mouseY<bottom+height;
-    }
-    
-    @Override public boolean onLeftClick(double mouseX, double mouseY) {
-        return super.onLeftClick(getOffsetX(mouseX),getOffsetY(mouseY));
-    }
-    
-    @Override public boolean onRightClick(double mouseX, double mouseY) {
-        return super.onRightClick(getOffsetX(mouseX),getOffsetY(mouseY));
     }
     
     protected abstract void recalculatePositions();

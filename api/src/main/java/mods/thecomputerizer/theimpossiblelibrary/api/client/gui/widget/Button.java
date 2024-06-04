@@ -172,14 +172,11 @@ public class Button extends WidgetGroup {
         Button copy = new Button(Objects.nonNull(this.shape) ? this.shape.copy() : null,
                                  Objects.nonNull(this.text) ? this.text.copy() : null,
                                  Objects.nonNull(this.hover) ? this.hover.copy() : null);
+        copy.copyBasic(this);
         copy.addHoverLines(this.hoverLines);
         copy.clickFunc = this.clickFunc;
-        copy.height = this.height;
         copy.scaleX = this.scaleX;
         copy.scaleY = this.scaleY;
-        copy.width = this.width;
-        copy.x = this.x;
-        copy.y = this.y;
         return copy;
     }
     

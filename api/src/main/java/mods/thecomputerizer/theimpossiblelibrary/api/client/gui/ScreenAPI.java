@@ -75,13 +75,7 @@ public class ScreenAPI extends WidgetGroup {
     
     @Override public ScreenAPI copy() {
         ScreenAPI copy = new ScreenAPI(this.parentScreen,this.title,this.guiScale,this.focused);
-        for(Widget widget : this.widgets) copy.addWidget(widget.copy());
-        copy.height = this.height;
-        copy.scaleX = this.scaleX;
-        copy.scaleY = this.scaleY;
-        copy.width = this.width;
-        copy.x = this.x;
-        copy.y = this.y;
+        copy.copyGroup(this);
         return copy;
     }
     
