@@ -4,12 +4,16 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer.Alignment;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.apache.commons.lang3.StringUtils;
+import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
+
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.LEFT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.RIGHT;
@@ -109,7 +113,7 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     public BasicTypeableWidget(TextBuffer text, double x, double y, int charLimit) {
         super(text,x,y);
         this.charLimit = charLimit;
-        if(!this.text.isLeftAligned()) setText(text.copyToBuilder().setAlignment(Alignment.LEFT).build());
+        //if(!this.text.isLeftAligned()) setText(text.copyToBuilder().setAlignment(Alignment.LEFT).build());
         this.buffer = toString();
         this.text.setBlinkerPos(this.buffer.length());
     }
@@ -204,6 +208,17 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     }
     
     @Override public boolean onLeftClick(double x, double y) {
+        double width = getWidth();
+        double parentWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 0d;
+        double height = getHeight();
+        Vector3d center = getCenter(0d);
+        int pos = this.text.getCharPos(RenderHelper.getContext(),x,y,getCenter(0d),
+                getMinX(center.x,width,parentWidth),getMinY(center.y,height),getMaxX(center.x,width,parentWidth),
+                                       getMaxY(center.y,height));
+        if(pos!=-1) {
+            this.text.setBlinkerPos(pos);
+            return true;
+        }
         return false;
     }
     

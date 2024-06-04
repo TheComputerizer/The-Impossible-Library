@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.item.ItemStack.EMPTY;
+import static net.minecraft.util.text.TextFormatting.RESET;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class Font1_12_2 implements FontAPI {
@@ -160,5 +161,11 @@ public class Font1_12_2 implements FontAPI {
     @SuppressWarnings("SameParameterValue")
     private void renderTooltipGradient(int z, int left, int top, int right, int bottom, int colorStart, int colorEnd) {
         GuiUtils.drawGradientRect(z,left,top,right,bottom,colorStart,colorEnd);
+    }
+    
+    @Override public String trimStringTo(String str, int width, boolean withReset) {
+        String trimmed = getFont().trimStringToWidth(str,width);
+        String reset = RESET.toString();
+        return !withReset && trimmed.endsWith(reset) ? trimmed.substring(0,trimmed.length()-reset.length()) : trimmed;
     }
 }

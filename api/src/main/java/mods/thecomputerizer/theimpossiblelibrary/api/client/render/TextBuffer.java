@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
@@ -194,34 +195,40 @@ public class TextBuffer {
     /**
      Returns -1 if the position is too far outside the drawn text or if the buffer is not yet cached.
      */
-    public int getCharPos(double x, double y, Vector3d center, double minX, double minY, double maxX, double maxY) {
-        return this.cached ? getCharPos(x,y,center,minX,minY,Math.abs(maxX-minX),Math.abs(maxY-minY)) : -1;
+    public int getCharPos(RenderContext ctx, double x, double y, Vector3d center, double minX, double minY, double maxX, double maxY) {
+        return this.cached ? getCharPos(ctx,x,y,center,this.lineCache,minX,minY,Math.abs(maxX-minX),Math.abs(maxY-minY)) : -1;
     }
     
-    private int getCharPos(double x, double y, Vector3d center, List<String> lines, double left, double bottom,
-            double width, double height) {
+    private int getCharPos(RenderContext ctx, double x, double y, Vector3d center, List<String> lines, double left,
+            double bottom, double width, double height) {
         int pos = -1;
         double lineHeight = this.heightCache/lines.size();
         double offset = 0;
         int blinker = this.blinkerPos;
         for(String line : lines) {
             int lineLength = line.length();
-            pos = getCharPos(x,y,VectorHelper.copy3D(center),line,lineHeight,left,bottom,width,height,offset);
+            pos = getCharPos(ctx,x,y,VectorHelper.copy3D(center),line,lineHeight,left,bottom,width,height,offset);
             if(pos!=-1) break;
             offset+=(lineHeight);
         }
         return pos;
     }
     
-    private int getCharPos(double x, double y, Vector3d center, String line, double lineHeight, double left,
-            double bottom, double width, double height, double offset) { //TODO finish this
+    private int getCharPos(RenderContext ctx, double x, double y, Vector3d center, String line, double lineHeight,
+            double left, double bottom, double width, double height, double offset) {
         if(isTopAligned()) center.y = bottom+height;
         else if(isBottomAligned()) center.y = bottom+lineHeight;
         else center.y = bottom+(height/2d)+(lineHeight/2d);
+        double lineWidth = ctx.getScaledStringWidth(line);
         if(isLeftAligned()) center.x = left;
         else if(isRightAligned()) center.x = left-this.widthCache;
-        else center.x = left+(width/2d);
+        else center.x = left+(width/2d)-(lineWidth/2d);
         center.add(this.translateX,this.translateY-offset,0d);
+        if(x>=center.x && x<center.x+ctx.getScaledStringWidth(line+"|") && y<=center.y && y>center.y-lineHeight) {
+            FontAPI font = ctx.getFont();
+            String trimmed = font.trimStringTo(line,font.getStringWidth(line)*((x-center.x)/lineWidth));
+            return trimmed.length();
+        }
         return -1;
     }
     

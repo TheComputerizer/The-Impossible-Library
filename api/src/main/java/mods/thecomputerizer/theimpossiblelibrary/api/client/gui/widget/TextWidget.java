@@ -75,17 +75,33 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.text)) {
             center = getCenter(center.z).add(center.x,center.y,0d);
-            double minX = center.x-(Objects.nonNull(this.parent) ? this.parent.getWidth() : getWidth())/2d;
-            double minY = center.y-getHeight()/2d;
-            double maxX = center.x+(Objects.nonNull(this.parent) ? this.parent.getWidth() : getWidth())/2d;
-            double maxY = center.y+getHeight()/2d;
-            this.text.draw(ctx,getCenter(center.z),minX,minY,maxX,maxY);
+            double width = getWidth();
+            double parentWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 0d;
+            double height = getHeight();
+            this.text.draw(ctx,getCenter(center.z),getMinX(center.x,width,parentWidth),getMinY(center.y,height),
+                           getMaxX(center.x,width,parentWidth),getMaxY(center.y,height));
         }
     }
     
     @Override public double getHeight() {
         double maxWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 2d;
         return this.text.getHeight(RenderHelper.getContext(),maxWidth);
+    }
+    
+    public double getMaxX(double centerX, double width, double parentWidth) {
+        return centerX+((parentWidth>0d ? parentWidth : width)/2d);
+    }
+    
+    public double getMaxY(double centerY, double height) {
+        return centerY+(height/2d);
+    }
+    
+    public double getMinX(double centerX, double width, double parentWidth) {
+        return centerX-((parentWidth>0d ? parentWidth : width)/2d);
+    }
+    
+    public double getMinY(double centerY, double height) {
+        return centerY-(height/2d);
     }
     
     @Override public double getWidth() {

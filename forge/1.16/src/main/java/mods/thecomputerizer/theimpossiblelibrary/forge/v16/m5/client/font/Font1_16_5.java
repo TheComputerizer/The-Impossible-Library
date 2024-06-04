@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static net.minecraft.util.text.TextFormatting.RESET;
+
 public class Font1_16_5 implements FontAPI {
 
     private FontRenderer font;
@@ -59,5 +61,11 @@ public class Font1_16_5 implements FontAPI {
         List<ITextComponent> components = new ArrayList<>();
         for(TextAPI<?> text : lines) components.add(((Text1_16_5)text).getComponent());
         GuiUtils.drawHoveringText(getMatrix(renderer),components,x,y,width,height,maxWidth,getFont());
+    }
+    
+    @Override public String trimStringTo(String str, int width, boolean withReset) {
+        String trimmed = getFont().plainSubstrByWidth(str,width);
+        String reset = RESET.toString();
+        return !withReset && trimmed.endsWith(reset) ? trimmed.substring(0,trimmed.length()-reset.length()) : trimmed;
     }
 }

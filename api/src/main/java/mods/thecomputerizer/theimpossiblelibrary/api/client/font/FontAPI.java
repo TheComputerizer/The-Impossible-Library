@@ -14,4 +14,10 @@ public interface FontAPI {
     int getFontHeight();
     int getStringWidth(String str);
     void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth);
+    
+    default String trimStringTo(String str, Number width) {
+        return trimStringTo(str,width.intValue(),false);
+    }
+    
+    String trimStringTo(String str, int width, boolean withReset);
 }

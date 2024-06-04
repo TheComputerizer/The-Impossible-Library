@@ -227,6 +227,10 @@ public final class RenderContext {
         this.renderer.getGLAPI().scissor(iLeft,iBottom,iWidth,iHeight);
     }
     
+    public String trimStringScaled(String text, double width) {
+        return this.font.trimStringTo(text,withScreenScaledX(width));
+    }
+    
     public List<String> splitLines(String text, double width) {
         return FontHelper.splitLines(this.font,text,withScreenScaledX(width));
     }
