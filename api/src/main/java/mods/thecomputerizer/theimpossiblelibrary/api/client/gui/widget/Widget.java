@@ -81,7 +81,7 @@ public abstract class Widget {
     }
     
     public boolean isVisible() {
-        return this.visible && Objects.isNull(this.parent) || this.parent.isVisible();
+        return this.visible && (Objects.isNull(this.parent) || this.parent.isVisible());
     }
     
     public abstract void onResolutionUpdated(MinecraftWindow window);

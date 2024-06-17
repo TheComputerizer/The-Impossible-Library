@@ -53,13 +53,14 @@ public class FontHelper {
         int lineWidth = 0;
         int linePos = 0;
         for(String word : words) {
-            lineWidth+=font.getStringWidth(word+" ");
-            if(lineWidth==0) joiner.add(word);
-            else if((left+lineWidth)>=right) {
+            int wordWidth = font.getStringWidth(word+" ");
+            if(lineWidth>0 && (left+wordWidth+lineWidth)>=right) {
                 lines.add(joiner.toString());
                 joiner = new StringJoiner(" ");
                 lineWidth = 0;
-            } else joiner.add(word);
+            }
+            joiner.add(word);
+            lineWidth+=wordWidth;
         }
         lines.add(joiner.toString());
         return lines;

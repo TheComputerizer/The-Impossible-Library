@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer.Alignment;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Vector3d;
@@ -113,7 +112,6 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     public BasicTypeableWidget(TextBuffer text, double x, double y, int charLimit) {
         super(text,x,y);
         this.charLimit = charLimit;
-        //if(!this.text.isLeftAligned()) setText(text.copyToBuilder().setAlignment(Alignment.LEFT).build());
         this.buffer = toString();
         this.text.setBlinkerPos(this.buffer.length());
     }
@@ -136,6 +134,13 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     
     @Override public boolean canType(char c) {
         return this.charLimit<=0 || this.charLimit>textLength();
+    }
+    
+    @Override public BasicTypeableWidget copy() {
+        BasicTypeableWidget copy = new BasicTypeableWidget(this.text.copy(),this.x,this.y,this.charLimit);
+        copy.copyBasic(this);
+        this.cursorBlinkCounter = copy.cursorBlinkCounter;
+        return copy;
     }
     
     @Override public boolean isActivelyTicking() {
