@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShapeOu
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import org.joml.Vector2f;
@@ -18,8 +19,26 @@ import org.joml.Vector3d;
 
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
+
 @SuppressWarnings("unused") @Setter
 public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
+    
+    public static ShapeWidget from(double sideLength) {
+        return new ShapeWidget(RenderShape.from(ShapeHelper.plane(Y,sideLength)),0d,0d);
+    }
+    
+    public static ShapeWidget from(double width, double height) {
+        return new ShapeWidget(RenderShape.from(ShapeHelper.plane(Y,width,height)),0d,0d);
+    }
+    
+    public static ShapeWidget from(double sideLength, double x, double y) {
+        return new ShapeWidget(RenderShape.from(ShapeHelper.plane(Y,sideLength)),x,y);
+    }
+    
+    public static ShapeWidget from(double width, double height, double x, double y) {
+        return new ShapeWidget(RenderShape.from(ShapeHelper.plane(Y,width,height)),x,y);
+    }
     
     public static ShapeWidget from(Shape shape) {
         return new ShapeWidget(RenderShape.from(shape),0d,0d);
@@ -135,6 +154,22 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     
     public static ShapeWidget of(RenderShape shape, double x, double y) {
         return new ShapeWidget(shape,x,y);
+    }
+    
+    public static ShapeWidget outlineFrom(double sideLength) {
+        return new ShapeWidget(RenderShapeOutline.of(RenderShape.from(ShapeHelper.plane(Y,sideLength))),0d,0d);
+    }
+    
+    public static ShapeWidget outlineFrom(double width, double height) {
+        return new ShapeWidget(RenderShapeOutline.of(RenderShape.from(ShapeHelper.plane(Y,width,height))),0d,0d);
+    }
+    
+    public static ShapeWidget outlineFrom(double sideLength, double x, double y) {
+        return new ShapeWidget(RenderShapeOutline.of(RenderShape.from(ShapeHelper.plane(Y,sideLength))),x,y);
+    }
+    
+    public static ShapeWidget outlineFrom(double width, double height, double x, double y) {
+        return new ShapeWidget(RenderShapeOutline.of(RenderShape.from(ShapeHelper.plane(Y,width,height))),x,y);
     }
     
     public static ShapeWidget outlineFrom(Shape shape) {

@@ -4,6 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
@@ -18,7 +19,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.RIGHT;
 
 @SuppressWarnings("unused")
-public class BasicTypeableWidget extends TextWidget implements Clickable, Tickable, Typeable {
+public class BasicTypeableWidget extends TextWidget implements Clickable, Selectable, Tickable, Typeable {
     
     public static BasicTypeableWidget from(TextAPI<?> text) {
         return from(TextBuffer.of(text),0d,0d,-1);
@@ -107,7 +108,8 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     
     @Getter protected final int charLimit;
     protected String buffer;
-    private int cursorBlinkCounter;
+    protected int cursorBlinkCounter;
+    protected boolean selected = true;
     
     public BasicTypeableWidget(TextBuffer text, double x, double y, int charLimit) {
         super(text,x,y);
@@ -117,34 +119,48 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     }
     
     @Override public boolean canBackspace() {
-        return isNotEmpty() && (this.text.isHighlighting() || this.text.getBlinkerPos()>0);
+        return canInteract(true) && (this.text.isHighlighting() || this.text.getBlinkerPos()>0);
     }
     
     @Override public boolean canCopy() {
-        return isNotEmpty() && this.text.isHighlighting();
+        return canInteract(true) && this.text.isHighlighting();
     }
     
     @Override public boolean canCut() {
-        return isNotEmpty() && this.text.isHighlighting();
+        return canInteract(true) && this.text.isHighlighting();
+    }
+    
+    public boolean canInteract(boolean checkEmpty) {
+        return isSelected() && (!checkEmpty || isNotEmpty());
     }
     
     @Override public boolean canPaste(@Nullable String text) {
-        return StringUtils.isNotEmpty(text) && (this.charLimit<=0 || this.charLimit>textLength());
+        return canInteract(false) && StringUtils.isNotEmpty(text) &&
+               (this.charLimit<=0 || this.charLimit>textLength());
     }
     
     @Override public boolean canType(char c) {
-        return this.charLimit<=0 || this.charLimit>textLength();
+        return canInteract(false) && this.charLimit<=0 || this.charLimit>textLength();
     }
     
     @Override public BasicTypeableWidget copy() {
         BasicTypeableWidget copy = new BasicTypeableWidget(this.text.copy(),this.x,this.y,this.charLimit);
         copy.copyBasic(this);
         this.cursorBlinkCounter = copy.cursorBlinkCounter;
+        this.selected = copy.selected;
         return copy;
     }
     
+    @Override public void drawSelected(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+        draw(ctx,center,mouseX,mouseY);
+    }
+    
     @Override public boolean isActivelyTicking() {
-        return true;
+        return this.selected;
+    }
+    
+    @Override public boolean isSelected() {
+        return this.selected;
     }
     
     @Override public boolean onBackspace() {
@@ -176,7 +192,7 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     }
     
     @Override public boolean onKeyPressed(KeyStateCache cache, int keyCode) {
-        if(KeyHelper.isArrow(keyCode)) {
+        if(canInteract(true) && KeyHelper.isArrow(keyCode)) {
             if(keyCode==KeyHelper.getKeyCode(LEFT) && this.text.getBlinkerPos()>0) {
                 if(cache.isHoldingCtrl()) {
                     if(cache.isHoldingShift()) {
@@ -221,9 +237,12 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
                 getMinX(center.x,width,parentWidth),getMinY(center.y,height),getMaxX(center.x,width,parentWidth),
                                        getMaxY(center.y,height));
         if(pos!=-1) {
+            this.selected = true;
             this.text.setBlinkerPos(pos);
             return true;
         }
+        this.selected = false;
+        this.text.setBlinkerVisible(false);
         return false;
     }
     
@@ -241,13 +260,16 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Tickab
     
     @Override public void onScreenClosed() {
         this.cursorBlinkCounter = 0;
+        this.selected = false;
     }
     
     @Override public boolean onSelectAll() {
-        if(isEmpty()) return false;
-        this.text.setHighlightStart(0);
-        this.text.setHighlightEnd(textLength());
-        return true;
+        if(canInteract(true)) {
+            this.text.setHighlightStart(0);
+            this.text.setHighlightEnd(textLength());
+            return true;
+        }
+        return false;
     }
     
     protected void onTextAdded(String text) {

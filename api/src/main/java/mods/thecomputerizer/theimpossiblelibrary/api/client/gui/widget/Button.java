@@ -187,7 +187,7 @@ public class Button extends WidgetGroup {
     
     public void expandShapeHeightToText() {
         if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
-            double textHeight = this.text.getHeight()*1.05d;
+            double textHeight = this.text.getHeight()*1.15d;
             if(this.shape.getHeight()<textHeight) this.shape.setHeight(textHeight);
         }
     }
@@ -195,7 +195,7 @@ public class Button extends WidgetGroup {
     public void expandShapeToText() {
         if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
             double textWidth = this.text.getWidth()*1.05d;
-            double textHeight = this.text.getHeight()*1.05d;
+            double textHeight = this.text.getHeight()*1.15d;
             if(this.shape.getWidth()<textWidth) this.shape.setWidth(textWidth);
             if(this.shape.getHeight()<textHeight) this.shape.setHeight(textHeight);
         }
@@ -210,7 +210,7 @@ public class Button extends WidgetGroup {
     
     public void fitShapeHeightToText() {
         if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
-            double textHeight = this.text.getHeight()*1.05d;
+            double textHeight = this.text.getHeight()*1.15d;
             if(this.shape.getHeight()!=textHeight) this.shape.setHeight(textHeight);
         }
     }
@@ -218,7 +218,7 @@ public class Button extends WidgetGroup {
     public void fitShapeToText() {
         if(Objects.nonNull(this.shape) && Objects.nonNull(this.text)) {
             double textWidth = this.text.getWidth()*1.05d;
-            double textHeight = this.text.getHeight()*1.05d;
+            double textHeight = this.text.getHeight()*1.15d;
             if(this.shape.getWidth()!=textWidth) this.shape.setWidth(textWidth);
             if(this.shape.getHeight()!=textHeight) this.shape.setHeight(textHeight);
         }
