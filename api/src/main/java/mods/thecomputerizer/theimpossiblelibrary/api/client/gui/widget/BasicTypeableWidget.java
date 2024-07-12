@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import lombok.Getter;
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
@@ -109,6 +110,7 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
     @Getter protected final int charLimit;
     protected String buffer;
     protected int cursorBlinkCounter;
+    @Getter @Setter protected ColorCache colorOverride;
     protected boolean selected = true;
     
     public BasicTypeableWidget(TextBuffer text, double x, double y, int charLimit) {
@@ -149,6 +151,15 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
         this.cursorBlinkCounter = copy.cursorBlinkCounter;
         this.selected = copy.selected;
         return copy;
+    }
+    
+    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+        if(Objects.nonNull(this.text)) {
+            ColorCache color = this.text.getColor();
+            if(Objects.nonNull(this.colorOverride)) this.text.setColor(this.colorOverride);
+            super.draw(ctx,center,mouseX,mouseY);
+            this.text.setColor(color);
+        }
     }
     
     @Override public void drawSelected(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {

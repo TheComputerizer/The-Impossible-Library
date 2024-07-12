@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
@@ -44,8 +45,40 @@ public final class RenderContext {
         this.scale = new RenderScale(mc.getWindow());
     }
     
-    public boolean isNotBounded(Vector3d pos) {
-        return !this.scale.canDraw(pos);
+    public void drawArrow2D(Vector3d center, Plane bounds, Facing facing, float lineWidth, ColorCache color,
+            boolean withTail) {
+        double width = bounds.getWidth()/2d;
+        double height = bounds.getHeight()/2d;
+        prepareGradient(color);
+        switch(facing) {
+            case DOWN:
+            case SOUTH: {
+                drawArrow2D(center,0d,-height,-width,0d,lineWidth,withTail);
+                break;
+            }
+            case EAST: {
+                drawArrow2D(center,width,0d,0d,-height,lineWidth,withTail);
+                break;
+            }
+            case UP:
+            case NORTH:
+            default: {
+                drawArrow2D(center,0d,height,width,0d,lineWidth,withTail);
+                break;
+            }
+            case WEST: {
+                drawArrow2D(center,-width,0d,0d,height,lineWidth,withTail);
+                break;
+            }
+        }
+    }
+    
+    public void drawArrow2D(Vector3d center, double tipX, double tipY, double prongX, double prongY, float width,
+            boolean withTail) {
+        Vector3d tip = center.add(tipX,tipY,0d,new Vector3d());
+        drawLine(tip,center.x+prongX,center.y+prongY,center.z,width);
+        drawLine(tip,center.x-prongX,center.y-prongY,center.z,width);
+        if(withTail) drawLine(tip,center.x-tipX,center.y-tipY,center.z,width);
     }
     
     public void drawColoredBox(Box box, ColorCache color) {
@@ -80,9 +113,18 @@ public final class RenderContext {
     }
     
     public void drawLine(Vector3d start, Vector3d end, float width) {
+        drawLine(start.x,start.y,start.z,end.x,end.y,end.z,width);
+    }
+    
+    public void drawLine(Vector3d start, double endX, double endY, double endZ, float width) {
+        drawLine(start.x,start.y,start.z,endX,endY,endZ,width);
+    }
+    
+    public void drawLine(double startX, double startY, double startZ, double endX, double endY, double endZ,
+            float width) {
         GLAPI gl = prepareLine(GLAPI::lines,width);
-        gl.directVertexD(start.x,start.y,start.z);
-        gl.directVertexD(end.x,end.y,end.z);
+        gl.directVertexD(withDisplayScaledX(startX),withDisplayScaledY(startY),withScaledZ(startZ));
+        gl.directVertexD(withDisplayScaledX(endX),withDisplayScaledY(endY),withScaledZ(endZ));
         gl.directEnd();
     }
     
@@ -189,6 +231,10 @@ public final class RenderContext {
         return buffer;
     }
     
+    public boolean isNotBounded(Vector3d pos) {
+        return !this.scale.canDraw(pos);
+    }
+    
     public boolean isWide() {
         return this.scale.getScreenRatio()<1d;
     }
@@ -266,6 +312,10 @@ public final class RenderContext {
     
     public double withDisplayScaledY(double y) {
         return this.scale.getDisplayHeight()-(((y*this.scale.getModScaleY())+this.scale.getTransformY()+1d)/this.scale.getDisplayScaleY());
+    }
+    
+    public double withScaledZ(double z) {
+        return (z*this.scale.getModScaleZ())+this.scale.getTransformZ();
     }
     
     public double withScreenScaledX(double x) {

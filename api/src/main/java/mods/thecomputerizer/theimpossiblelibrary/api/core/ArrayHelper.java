@@ -255,6 +255,21 @@ public class ArrayHelper {
         }
         return false;
     }
+    
+    public static int[] intRange(int min, int max) {
+        return intRange(min,max,true);
+    }
+    
+    public static int[] intRange(int min, int max, boolean inclusive) {
+        int length = Math.abs(max-min)+1;
+        if(!inclusive) length-=2;
+        if(length<=0) return new int[]{};
+        min = Math.min(min,max);
+        if(!inclusive) min+=1;
+        int[] array = new int[length];
+        for(int i=0;i<length;i++) array[i] = min+i;
+        return array;
+    }
 
     public static <E> boolean isEmpty(E[] array) {
         return Objects.isNull(array) || array.length==0;

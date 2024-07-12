@@ -16,32 +16,32 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorH
 @SuppressWarnings("unused") @Getter @Setter
 public class WidgetList extends ScrollableWidgetGroup {
     
-    public static WidgetList from(Widget elementTemplate) {
-        return new WidgetList(elementTemplate,0d,0d,2d,2d);
+    public static WidgetList from(Widget template) {
+        return new WidgetList(template,0d,0d,2d,2d);
     }
     
-    public static WidgetList from(Widget elementTemplate, double spacing) {
-        WidgetList list = new WidgetList(elementTemplate,0d,0d,2d,2d);
+    public static WidgetList from(Widget template, double spacing) {
+        WidgetList list = new WidgetList(template,0d,0d,2d,2d);
         list.spacing = spacing;
         return list;
     }
     
-    public static WidgetList from(Widget elementTemplate, double width, double height) {
-        return new WidgetList(elementTemplate,0d,0d,width,height);
+    public static WidgetList from(Widget template, double width, double height) {
+        return new WidgetList(template,0d,0d,width,height);
     }
     
-    public static WidgetList from(Widget elementTemplate, double width, double height, double spacing) {
-        WidgetList list = new WidgetList(elementTemplate,0d,0d,width,height);
+    public static WidgetList from(Widget template, double width, double height, double spacing) {
+        WidgetList list = new WidgetList(template,0d,0d,width,height);
         list.spacing = spacing;
         return list;
     }
     
-    public static WidgetList from(Widget elementTemplate, double x, double y, double width, double height) {
-        return new WidgetList(elementTemplate,x,y,width,height);
+    public static WidgetList from(Widget template, double x, double y, double width, double height) {
+        return new WidgetList(template,x,y,width,height);
     }
     
-    public static WidgetList from(Widget elementTemplate, double x, double y, double width, double height, double spacing) {
-        WidgetList list = new WidgetList(elementTemplate,x,y,width,height);
+    public static WidgetList from(Widget template, double x, double y, double width, double height, double spacing) {
+        WidgetList list = new WidgetList(template,x,y,width,height);
         list.spacing = spacing;
         return list;
     }
@@ -69,21 +69,6 @@ public class WidgetList extends ScrollableWidgetGroup {
         addWidget(widget);
     }
     
-    @Override protected void recalculatePositions() {
-        double offset = this.spacing;
-        double top = getElementsTop(0d);
-        for(Widget widget : this.widgets) {
-            double height = widget.getHeight();
-            widget.setY(top-offset-(height/2d));
-            offset+=(height+spacing);
-        }
-        calculateScrollBar();
-    }
-    
-    @Override public boolean doesNotRequireHoverToScroll() {
-        return false;
-    }
-    
     protected void calculateScrollBar() {
         double height = getHeight();
         this.scrollBar.setHeight(height*Math.min(1d,height/getElementsHeight()));
@@ -94,6 +79,10 @@ public class WidgetList extends ScrollableWidgetGroup {
         WidgetList copy = new WidgetList(this.elementTemplate,this.x,this.y,this.width,this.height);
         copy.copyScrollable(this);
         return copy;
+    }
+    
+    @Override public boolean doesNotRequireHoverToScroll() {
+        return false;
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
@@ -107,6 +96,17 @@ public class WidgetList extends ScrollableWidgetGroup {
         for(Widget widget : this.widgets)
             if(widget.canDraw()) height+=(widget.getHeight()+this.spacing);
         return height;
+    }
+    
+    @Override protected void recalculatePositions() {
+        double offset = this.spacing;
+        double top = getElementsTop(0d);
+        for(Widget widget : this.widgets) {
+            double height = widget.getHeight();
+            widget.setY(top-offset-(height/2d));
+            offset+=(height+spacing);
+        }
+        calculateScrollBar();
     }
     
     @Override

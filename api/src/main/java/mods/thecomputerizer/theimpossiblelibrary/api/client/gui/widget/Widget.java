@@ -8,15 +8,15 @@ import org.joml.Vector3d;
 
 import java.util.Objects;
 
-@SuppressWarnings("unused")
+@Setter @SuppressWarnings("unused")
 public abstract class Widget {
     
-    @Getter @Setter protected double height;
-    @Getter @Setter protected Widget parent;
+    @Getter protected double height;
+    @Getter protected Widget parent;
     protected boolean visible;
-    @Getter @Setter protected double width;
-    @Setter protected double x;
-    @Setter protected double y;
+    @Getter protected double width;
+    protected double x;
+    protected double y;
     
     protected Widget() {
         this(null);
