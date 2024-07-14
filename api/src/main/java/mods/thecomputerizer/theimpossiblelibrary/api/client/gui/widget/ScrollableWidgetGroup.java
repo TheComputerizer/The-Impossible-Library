@@ -87,8 +87,8 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         double mouseY = RenderHelper.getScaledMouseY();
         double width = getWidth();
         double height = getHeight();
-        double left = getX()-(width/2d);
-        double bottom = getY()-(height/2d);
+        double left = getLeft();
+        double bottom = getBottom();
         return mouseX>left && mouseY>bottom && mouseX<left+width && mouseY<bottom+height;
     }
     

@@ -51,8 +51,9 @@ public class WidgetList extends ScrollableWidgetGroup {
     protected double spacing;
     
     public WidgetList(Widget elementTemplate, double x, double y, double width, double height) {
-        this.scrollBar = ShapeWidget.from(ShapeHelper.plane(Axis.Y,new Vector2d(-0.01d,-height/2d),
-                                                            new Vector2d(0.01d,height/2d)),GRAY);
+        double barWidth = 0.01d*(Math.min(2d,width)/2d);
+        this.scrollBar = ShapeWidget.from(ShapeHelper.plane(Axis.Y, new Vector2d(-barWidth,-height/2d),
+                                                            new Vector2d(barWidth,height/2d)),GRAY);
         this.elementTemplate = elementTemplate;
         this.height = height;
         this.width = width;
@@ -72,7 +73,7 @@ public class WidgetList extends ScrollableWidgetGroup {
     protected void calculateScrollBar() {
         double height = getHeight();
         this.scrollBar.setHeight(height*Math.min(1d,height/getElementsHeight()));
-        this.scrollBar.setY(getTop()-(this.scrollBar.getHeight()/2d));
+        this.scrollBar.setY(getRelativeTop()-(this.scrollBar.getHeight()/2d));
     }
     
     @Override public WidgetList copy() {
@@ -100,7 +101,7 @@ public class WidgetList extends ScrollableWidgetGroup {
     
     @Override protected void recalculatePositions() {
         double offset = this.spacing;
-        double top = getElementsTop(0d);
+        double top = getRelativeTop();
         for(Widget widget : this.widgets) {
             double height = widget.getHeight();
             widget.setY(top-offset-(height/2d));
@@ -129,9 +130,10 @@ public class WidgetList extends ScrollableWidgetGroup {
     
     protected void setScrollBarPos() {
         double barHeight = this.scrollBar.getHeight();
-        double top = getTop()-(barHeight/2d);
-        double bottom = getBottom()+(barHeight/2d);
-        double totalScrollOffset = getElementsHeight()-getHeight();
+        double height = getHeight();
+        double top = getRelativeTop()-(barHeight/2d);
+        double bottom = top-height+barHeight;
+        double totalScrollOffset = getElementsHeight()-height;
         double offset = ((totalScrollOffset-this.scrollOffset)/totalScrollOffset)*(top-bottom);
         this.scrollBar.setY(bottom+offset);
     }

@@ -79,7 +79,7 @@ public final class RenderScale {
     }
     
     public double normalizeDisplayY(Number y) {
-        return 1d-(y.doubleValue()*this.displayScaleY);
+        return -1d+(y.doubleValue()*this.displayScaleY);
     }
     
     public double normalizeX(Number x) {

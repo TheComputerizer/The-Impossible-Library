@@ -249,6 +249,10 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return Collections.emptyList();
     }
     
+    public double getRelativeTop() {
+        return getHeight()/2d;
+    }
+    
     public @Nullable Widget getSelectedElement(double mouseX, double mouseY) {
         if(canDraw())
             for(Widget widget : this.widgets)
