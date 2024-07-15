@@ -48,19 +48,29 @@ public class FontHelper {
      */
     public static List<String> splitLines(FontAPI font, String original, int left, int right) {
         List<String> lines = new ArrayList<>();
-        String[] words = original.split(" ");
+        String[] words = original.replace("\\n","\n").split(" ");
         StringJoiner joiner = new StringJoiner(" ");
         int lineWidth = 0;
         int linePos = 0;
         for(String word : words) {
-            int wordWidth = font.getStringWidth(word+" ");
-            if(lineWidth>0 && (left+wordWidth+lineWidth)>=right) {
-                lines.add(joiner.toString());
-                joiner = new StringJoiner(" ");
-                lineWidth = 0;
+            String[] newLines = word.split("\n");
+            int lineCount = 0;
+            for(String line : newLines) {
+                int wordWidth = font.getStringWidth(line+" ");
+                if(lineWidth>0 && (left+wordWidth+lineWidth)>=right) {
+                    lines.add(joiner.toString());
+                    joiner = new StringJoiner(" ");
+                    lineWidth = 0;
+                }
+                joiner.add(line);
+                lineWidth+=wordWidth;
+                lineCount++;
+                if(lineCount<newLines.length) {
+                    lines.add(joiner.toString());
+                    joiner = new StringJoiner(" ");
+                    lineWidth = 0;
+                }
             }
-            joiner.add(word);
-            lineWidth+=wordWidth;
         }
         lines.add(joiner.toString());
         return lines;
