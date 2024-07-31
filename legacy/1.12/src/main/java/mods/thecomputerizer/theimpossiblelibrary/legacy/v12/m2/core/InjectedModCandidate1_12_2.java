@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
 import static net.minecraft.launchwrapper.Launch.classLoader;
 import static net.minecraftforge.fml.common.discovery.ContainerType.JAR;
@@ -46,7 +47,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
     private static Map<String,MultiVersionModData> getModData() {
         if(Objects.nonNull(DATA_MAP)) return DATA_MAP;
         File root = (File)ReflectionHelper.getFieldInstance(null,Loader.class,"minecraftDir");
-        DATA_MAP = CoreAPI.INSTANCE.getModData(root);
+        DATA_MAP = INSTANCE.getModData(root);
         return DATA_MAP;
     }
 
@@ -109,8 +110,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
         if(Objects.isNull(field)) return;
         Object mods = ReflectionHelper.getFieldInstance(this,field);
         if(Objects.nonNull(mods)) {
-            if (mods instanceof List<?>)
-                ((List<ModContainer>) mods).add(container);
+            if(mods instanceof List<?>) ((List<ModContainer>) mods).add(container);
         } else {
             List<ModContainer> list = new ArrayList<>();
             list.add(container);
@@ -130,7 +130,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
                 table.registerPackage(this,pkgName);
                 Field dataField = ReflectionHelper.getField(ASMDataTable.class,"containerAnnotationData");
                 if(Objects.nonNull(ReflectionHelper.getFieldInstance(table,dataField)))
-                    ReflectionHelper.setFieldValue(table,dataField,null); // Fixes @SidedProxy checks breaking
+                    ReflectionHelper.setFieldValue(table,dataField,null); // Fixes @SidedProxy check breaking
                 return true;
             }
         }

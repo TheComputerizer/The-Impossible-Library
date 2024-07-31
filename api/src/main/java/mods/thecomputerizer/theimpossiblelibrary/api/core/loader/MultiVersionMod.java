@@ -28,7 +28,12 @@ public @interface MultiVersionMod {
      * Compatible with versions before 1.13
      */
     boolean legacy() default true;
-
+    
+    /**
+     * A description of the mod
+     */
+    String modDescription() default "Multiversion mod loaded by The Impossible Library";
+    
     /**
      * Lowercase ID of the mod
      */

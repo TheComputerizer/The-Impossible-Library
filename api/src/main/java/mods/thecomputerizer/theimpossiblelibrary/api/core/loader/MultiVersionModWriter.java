@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ClassPrinter;
@@ -17,6 +16,7 @@ import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
@@ -36,8 +36,8 @@ public class MultiVersionModWriter {
     }
 
     private static Type generateClassType(String pkgName, String entryType, String name) {
-        return Type.getType(pkgName.replace('.','/')+"/"+
-                name.replace(" ","")+"Generated"+entryType+"Mod");
+        return Type.getType("L"+pkgName.replace('.','/')+"/"+
+                name.replace(" ","")+"Generated"+entryType+"Mod;");
     }
 
     private static String getEntryType(boolean client, boolean server) {
@@ -60,11 +60,12 @@ public class MultiVersionModWriter {
                 case "serverStarted": return getLegacyEventType("FMLServerStartedEvent");
                 case "serverStopping": return getLegacyEventType("FMLServerStoppingEvent");
                 case "serverStopped": return getLegacyEventType("FMLServerStoppedEvent");
-                default: return VOID_TYPE;
+                default: return VOID_EMPTY_METHOD;
             }
         }
         else if(loader==FORGE) {
             switch(methodName) {
+                case "clientSetup": return getForgeEventType("FMLClientSetupEvent",false);
                 case "commonSetup": return getForgeEventType("FMLCommonSetupEvent",false);
                 case "dedicatedServerSetup": return getForgeEventType("FMLDedicatedServerSetupEvent",false);
                 case "interModEnqueue": return getForgeEventType("InterModEnqueueEvent",false);
@@ -219,7 +220,7 @@ public class MultiVersionModWriter {
             }
         }
         try {
-            byte[] bytes = ASMHelper.finishWriting(writer,type,TILDev.DEV);
+            byte[] bytes = ASMHelper.finishWriting(writer,type,DEV);
             String classpath = ClassPrinter.getClassPath(type.getInternalName());
             TILRef.logDebug("Wrote bytecode for `{}` entrypoint to `{}`",info.getModID(),classpath);
             return new ImmutablePair<>(classpath,bytes);

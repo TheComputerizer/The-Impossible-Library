@@ -25,6 +25,9 @@ public class ReflectionHelper {
         try {
             return clazz.getConstructor(args);
         } catch(NoSuchMethodException ex) {
+            try {
+                return clazz.getDeclaredConstructor(args);
+            } catch(NoSuchMethodException ignored) {}
             TILRef.logError("Unable to find constructor of class `{}` with args `{}`",clazz,args);
             return null;
         }

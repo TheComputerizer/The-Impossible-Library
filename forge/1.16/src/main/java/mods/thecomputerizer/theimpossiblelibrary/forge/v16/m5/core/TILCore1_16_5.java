@@ -48,9 +48,14 @@ public class TILCore1_16_5 extends CoreAPI {
     public void injectWrittenMod(Class<?> containerClass, String modid) {
 
     }
+    
+    @Override
+    public void modConstructed(Package pkg, String modid, String name, String entryType) {
+        TILRef.logInfo("Skipping extra entrypoint for `{}` in `{}`",modid,pkg);
+    }
 
     @Override
     protected boolean modConstructed(String modid, Class<?> clazz) {
-        return false;
+        return true;
     }
 }

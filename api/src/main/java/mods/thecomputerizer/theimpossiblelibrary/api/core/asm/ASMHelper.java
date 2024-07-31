@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 
+import static java.io.File.separatorChar;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DATA_DIRECTORY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 
 public class ASMHelper {
@@ -183,8 +185,8 @@ public class ASMHelper {
     }
 
     public static void writeDebugByteCode(String classpath, byte[] bytes) {
-        File debugDir = new File(TILRef.DATA_DIRECTORY,"asm_debug");
-        String filepath = classpath.replace('.',File.separatorChar)+".class";
+        File debugDir = new File(DATA_DIRECTORY,"asm_debug");
+        String filepath = classpath.replace('.',separatorChar)+".class";
         writeByteCodeToFile(FileHelper.get(new File(debugDir,filepath),false),bytes);
     }
 

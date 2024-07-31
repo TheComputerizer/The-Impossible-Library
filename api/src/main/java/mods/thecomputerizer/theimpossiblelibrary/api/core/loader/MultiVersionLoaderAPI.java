@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.Map.Entry;
@@ -16,12 +16,18 @@ import java.util.Map.Entry;
 public abstract class MultiVersionLoaderAPI {
 
     protected final CoreAPI parent;
+    protected final Set<Path> potentialModPaths;
     protected Collection<MultiVersionModCandidate> candidates;
 
     protected MultiVersionLoaderAPI(CoreAPI parent) {
         this.parent = parent;
+        this.potentialModPaths = new LinkedHashSet<>();
     }
 
+    public void addPotentialModPath(Path path) {
+        this.potentialModPaths.add(path);
+    }
+    
     protected abstract File findCoreModRoot();
     protected abstract File findModRoot();
     protected abstract List<File> gatherCandidateModFiles(File root);
@@ -66,7 +72,7 @@ public abstract class MultiVersionLoaderAPI {
     }
 
     public void loadCoreMods(
-            Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap, URLClassLoader loader) {
+            Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap, ClassLoader loader) {
         File root = findCoreModRoot();
         TILDev.logInfo("Finding multiversion coremods from root `{}`", root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes = new HashMap<>();
@@ -99,7 +105,7 @@ public abstract class MultiVersionLoaderAPI {
     }
 
     public void loadMods(
-            Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap,URLClassLoader loader) {
+            Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap,ClassLoader loader) {
         File root = findModRoot();
         TILDev.logInfo("Finding multiversion mods from root `{}`",root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes = new HashMap<>();
@@ -111,7 +117,7 @@ public abstract class MultiVersionLoaderAPI {
             MultiVersionModCandidate candidate = entry.getKey();
             if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
             for(Class<? extends CommonEntryPoint> clazz : entry.getValue()) {
-                MultiVersionModInfo info = loadMod(loader,root,clazz);
+                MultiVersionModInfo info = loadMod(loader,candidate,clazz);
                 if(Objects.nonNull(info)) {
                     infoMap.get(candidate).add(info);
                     TILDev.logInfo("Successfully preloaded mod `{}` using class `{}`",info.getName(),info.getEntryClass());
@@ -123,13 +129,15 @@ public abstract class MultiVersionLoaderAPI {
     /**
      * Assumes canBeLoaded has already passed for the input class by this point
      */
-    private @Nullable MultiVersionModInfo loadMod(URLClassLoader classLoader, File root, Class<? extends CommonEntryPoint> clazz) {
-        return loadMod(classLoader,root,clazz,clazz.getAnnotation(MultiVersionMod.class));
+    private @Nullable MultiVersionModInfo loadMod(
+            ClassLoader classLoader, MultiVersionModCandidate candidate, Class<? extends CommonEntryPoint> clazz) {
+        return loadMod(classLoader,candidate,clazz,clazz.getAnnotation(MultiVersionMod.class));
     }
 
-    private @Nullable MultiVersionModInfo loadMod(URLClassLoader classLoader, File root, Class<? extends CommonEntryPoint> clazz, MultiVersionMod mod) {
-        return isValidContext(mod) ? loadModInfo(classLoader,root,MultiVersionModInfo.get(clazz,mod)) : null;
+    private @Nullable MultiVersionModInfo loadMod(ClassLoader classLoader, MultiVersionModCandidate candidate, Class<? extends CommonEntryPoint> clazz, MultiVersionMod mod) {
+        return isValidContext(mod) ? loadModInfo(classLoader,candidate,MultiVersionModInfo.get(clazz,mod)) : null;
     }
 
-    protected abstract MultiVersionModInfo loadModInfo(ClassLoader classLoader, File root, MultiVersionModInfo info);
+    protected abstract MultiVersionModInfo loadModInfo(
+            ClassLoader classLoader, MultiVersionModCandidate candidate, MultiVersionModInfo info);
 }

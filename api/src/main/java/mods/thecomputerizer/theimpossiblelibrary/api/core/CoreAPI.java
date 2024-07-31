@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -66,7 +65,7 @@ public abstract class CoreAPI {
         }
     }
 
-    public void loadCoreModInfo(URLClassLoader classLoader) {
+    public void loadCoreModInfo(ClassLoader classLoader) {
         getLoader().loadCoreMods(this.coreInfo,classLoader);
     }
 
@@ -87,7 +86,7 @@ public abstract class CoreAPI {
      */
     protected abstract boolean modConstructed(String modid, Class<?> clazz);
 
-    public void writeModContainers(URLClassLoader classLoader) {
+    public void writeModContainers(ClassLoader classLoader) {
         getLoader().loadMods(this.modInfo,classLoader);
     }
 

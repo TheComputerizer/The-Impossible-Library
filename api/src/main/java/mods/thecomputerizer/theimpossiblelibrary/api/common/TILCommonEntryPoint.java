@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.TILClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
@@ -13,10 +12,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
+
 /**
  * For internal use only
  */
-@MultiVersionMod(modid = TILRef.MODID, modName = TILRef.NAME, modVersion = TILRef.VERSION)
+@MultiVersionMod(modid = MODID, modName = NAME, modVersion = VERSION)
 public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     private static TILCommonEntryPoint INSTANCE;
@@ -45,12 +48,12 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     @Override
     protected String getModID() {
-        return TILRef.MODID;
+        return MODID;
     }
 
     @Override
     protected String getModName() {
-        return TILRef.NAME;
+        return NAME;
     }
 
     @Override

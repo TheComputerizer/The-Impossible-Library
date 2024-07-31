@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import javax.annotation.Nullable;
@@ -9,10 +8,13 @@ import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.CLASSPATH_COREMODS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.CLASSPATH_MODS;
+
 public class MultiVersionModFinder {
 
-    private static final Name MULTIVERSION_COREMODS = new Name("TILMultiversionCoreMods");
-    private static final Name MULTIVERSION_MODS = new Name("TILMultiversionMods");
+    public static final Name MULTIVERSION_COREMODS = new Name("TILMultiversionCoreMods");
+    public static final Name MULTIVERSION_MODS = new Name("TILMultiversionMods");
 
     public static Set<MultiVersionModCandidate> discover(MultiVersionLoaderAPI loader, File root, boolean isCore) {
         TILRef.logDebug("Attempting to find multiversion mod candidates from root `{}`",root);
@@ -36,11 +38,15 @@ public class MultiVersionModFinder {
         } else TILRef.logDebug("File did not contain any attributes to check");
         return null;
     }
+    
+    public static boolean hasMods(Attributes attributes) {
+        return attributes.containsKey(MULTIVERSION_MODS) || attributes.containsKey(MULTIVERSION_COREMODS);
+    }
 
     private static void addClasspathMods(Set<MultiVersionModCandidate> candidates, boolean isCore) {
         if(isCore) {
-            TILRef.logDebug("Adding {} classpath coremods", TILDev.CLASSPATH_COREMODS.size());
-            for(String core : TILDev.CLASSPATH_COREMODS) {
+            TILRef.logDebug("Adding {} classpath coremods", CLASSPATH_COREMODS.size());
+            for(String core : CLASSPATH_COREMODS) {
                 MultiVersionModCandidate candidate = new MultiVersionModCandidate(core);
                 TILRef.logDebug("Adding classpath coremod `{}`", core);
                 candidate.addCoreClasses(core);
@@ -48,8 +54,8 @@ public class MultiVersionModFinder {
             }
         }
         else {
-            TILRef.logDebug("Adding {} classpath mods", TILDev.CLASSPATH_MODS.size());
-            for(String mod : TILDev.CLASSPATH_MODS) {
+            TILRef.logDebug("Adding {} classpath mods", CLASSPATH_MODS.size());
+            for(String mod : CLASSPATH_MODS) {
                 MultiVersionModCandidate candidate = new MultiVersionModCandidate(mod);
                 TILRef.logDebug("Adding classpath mod `{}`", mod);
                 candidate.addModClasses(mod);

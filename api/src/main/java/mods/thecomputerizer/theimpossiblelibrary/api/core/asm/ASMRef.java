@@ -6,6 +6,8 @@ import org.objectweb.asm.Type;
 
 import java.io.File;
 
+import static org.objectweb.asm.Type.VOID_TYPE;
+
 @SuppressWarnings("PointlessBitwiseExpression")
 public class ASMRef {
 
@@ -65,6 +67,6 @@ public class ASMRef {
     public static final int SYNCHRONIZED = Opcodes.ACC_SYNCHRONIZED;
     public static final int SYNTHETIC = Opcodes.ACC_SYNTHETIC;
     public static final int VARARGS = Opcodes.ACC_VARARGS;
-    public static final Type VOID_EMPTY_METHOD = Type.getMethodType(Type.VOID_TYPE);
+    public static final Type VOID_EMPTY_METHOD = Type.getMethodType(VOID_TYPE);
     public static final int VOLATILE = Opcodes.ACC_VOLATILE;
 }

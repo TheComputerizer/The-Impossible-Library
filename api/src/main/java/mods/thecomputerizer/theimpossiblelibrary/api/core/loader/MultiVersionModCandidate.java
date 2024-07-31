@@ -14,19 +14,24 @@ import java.net.MalformedURLException;
 import java.net.URLClassLoader;
 import java.util.*;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
+
 @Getter
 public class MultiVersionModCandidate {
+    
+    public static File loaderFile;
 
     private final File file;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
 
     public MultiVersionModCandidate(String classpath) {
-        this(new File(Misc.getLastSplit(classpath,'.')+".class"));
+        this(Objects.nonNull(loaderFile) ? loaderFile : new File(Misc.getLastSplit(classpath,'.')+".class"));
     }
 
     public MultiVersionModCandidate(File file) {
-        this.file = Objects.nonNull(file) ? file : new File(TILRef.MODID+"-"+TILRef.VERSION+".jar");
+        this.file = Objects.nonNull(file) ? file : new File(MODID+"-"+VERSION+".jar");
         this.coreClassNames = new HashSet<>();
         this.modClassNames = new HashSet<>();
     }
@@ -45,11 +50,11 @@ public class MultiVersionModCandidate {
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) && clazz.isAnnotationPresent(annotation);
     }
 
-    private @Nullable Class<?> findClass(URLClassLoader classLoader, String name) {
+    private @Nullable Class<?> findClass(ClassLoader classLoader, String name) {
         TILRef.logInfo("Attempting to add source for loader class `{}`",name);
         try {
-            ClassHelper.loadURL(classLoader,this.file.toURI().toURL());
-        } catch(MalformedURLException ex) {
+            ClassHelper.loadURL((URLClassLoader)classLoader,this.file.toURI().toURL());
+        } catch(MalformedURLException | ClassCastException ex) {
             TILRef.logError("Error getting URL for source file `{}`!",this.file.getPath(),ex);
             return null;
         }
@@ -64,7 +69,7 @@ public class MultiVersionModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,
-                                MultiVersionModCandidate candidate, URLClassLoader classLoader) {
+                                MultiVersionModCandidate candidate, ClassLoader classLoader) {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(classLoader,name);
@@ -77,7 +82,7 @@ public class MultiVersionModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
-                               MultiVersionModCandidate candidate, URLClassLoader classLoader) {
+                               MultiVersionModCandidate candidate, ClassLoader classLoader) {
         TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(classLoader,name);
