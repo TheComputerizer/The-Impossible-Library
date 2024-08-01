@@ -5,15 +5,22 @@ import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import org.apache.commons.lang3.StringUtils;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
+
 @Getter
 public abstract class CoreAPI {
 
     public static CoreAPI INSTANCE;
+    static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
+    static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
 
     protected final GameVersion version;
     protected final ModLoader modLoader;
@@ -50,6 +57,12 @@ public abstract class CoreAPI {
     }
 
     public abstract void initAPI();
+    
+    public void injectGetLoader(MethodVisitor visitor) {
+        visitor.visitFieldInsn(GETSTATIC,OWNER,"INSTANCE","L"+OWNER+";");
+        visitor.visitMethodInsn(INVOKEVIRTUAL,OWNER,"getLoader",Type.getMethodDescriptor(LOADER),false);
+    }
+    
     public abstract void injectWrittenMod(Class<?> containerClass, String modid);
 
     public void instantiateCoreMods() {

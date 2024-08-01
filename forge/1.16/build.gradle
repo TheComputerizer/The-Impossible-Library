@@ -63,7 +63,7 @@ minecraft {
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', 'trace'
             jvmArgs args
         }
         server {

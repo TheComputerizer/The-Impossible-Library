@@ -6,6 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -56,6 +60,13 @@ public class MultiVersionLoader1_16_5 extends MultiVersionLoaderAPI {
             TILRef.logError("Error getting attributes for jar file {}",file,ex);
         }
         return null;
+    }
+    
+    public FMLModContainer getModContainer(String modid) {
+        ModList list = ModList.get();
+        TILRef.logInfo("MOD LIST IS {}",list);
+        Optional<? extends ModContainer> container = list.getModContainerById(modid);
+        return (FMLModContainer)container.orElse(null);
     }
 
     @Override

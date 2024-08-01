@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.mod;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import net.minecraftforge.forgespi.language.IConfigurable;

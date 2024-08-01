@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import org.objectweb.asm.Type;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -32,6 +33,10 @@ public abstract class MultiVersionLoaderAPI {
     protected abstract File findModRoot();
     protected abstract List<File> gatherCandidateModFiles(File root);
     protected abstract @Nullable Attributes getFileAttributes(File file);
+    
+    public String getOwnerName() {
+        return Type.getType(getClass()).getInternalName();
+    }
 
     private boolean isValidContext(MultiVersionCoreMod mod) {
         return isValidSide(mod.client(),mod.server()) &&

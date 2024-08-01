@@ -37,6 +37,10 @@ import java.util.function.Supplier;
     public static void logFatal(String msg, Object ... args) {
         log(Level.FATAL,msg,args);
     }
+    
+    public static void logFromASM(String msg, Object arg) {
+        logError(msg,arg);
+    }
 
     public static void logInfo(String msg, Object ... args) {
         log(Level.INFO,msg,args);

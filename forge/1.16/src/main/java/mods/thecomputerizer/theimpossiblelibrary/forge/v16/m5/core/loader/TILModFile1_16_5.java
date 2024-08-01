@@ -1,9 +1,8 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.mod;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.TILBetterModScan1_16_5;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.CoreModFile;
