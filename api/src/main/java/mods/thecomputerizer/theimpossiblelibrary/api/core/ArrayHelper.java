@@ -31,7 +31,7 @@ public class ArrayHelper {
         return expanded;
     }
 
-    public static <E> int countOccurances(E[] array, E occurance) {
+    public static <E> int countOccurrences(E[] array, E occurance) {
         int count = 0;
         for(E element : array)
             if((Objects.isNull(element) && Objects.isNull(occurance)) || element.equals(occurance)) count++;
@@ -81,11 +81,11 @@ public class ArrayHelper {
         for(int i=0;i<array.length;i++) {
             T element = array[i];
             if(hasElement(valuesToIgnore,element)) continue;
-            int next = findFirstOccuranceAfter(array,element,i);
+            int next = findFirstOccurrenceAfter(array, element, i);
             if(next!=-1) replacements[next] = true;
         }
-        int newLength = array.length-countOccurances(replacements,true);
-        int first = findFirstOccurance(replacements,true);
+        int newLength = array.length-countOccurrences(replacements, true);
+        int first = findFirstOccurrence(replacements, true);
         while(first!=-1) {
             if(replaceValues) {
                 array[first] = replacement;
@@ -94,7 +94,7 @@ public class ArrayHelper {
                 removeElement(array,first);
                 removeElement(replacements,first);
             }
-            first = findFirstOccurance(replacements,true);
+            first = findFirstOccurrence(replacements, true);
         }
         return array;
     }
@@ -113,14 +113,14 @@ public class ArrayHelper {
     /**
      * Returns -1 if the element is not found in the array
      */
-    public static <E> int findFirstOccurance(E[] array, E element) {
-        return findFirstOccuranceAfter(array,element,-1);
+    public static <E> int findFirstOccurrence(E[] array, E element) {
+        return findFirstOccurrenceAfter(array, element, -1);
     }
 
     /**
      * Returns -1 if the element is not found in the array after the index
      */
-    public static <E> int findFirstOccuranceAfter(E[] array, E element, int index) {
+    public static <E> int findFirstOccurrenceAfter(E[] array, E element, int index) {
         if(Objects.isNull(array) || array.length==0) return -1;
         for(int i=index+1;i<array.length;i++)
             if(array[i]==element) return i;
@@ -130,7 +130,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Boolean arrays
      */
-    public static boolean[] fixBoxedPrimitve(Boolean ... boxed) {
+    public static boolean[] fixBoxedPrimitive(Boolean ... boxed) {
         boolean[] primitive = new boolean[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -139,7 +139,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Boolean arrays
      */
-    public static byte[] fixBoxedPrimitve(Byte ... boxed) {
+    public static byte[] fixBoxedPrimitive(Byte ... boxed) {
         byte[] primitive = new byte[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -148,7 +148,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Character arrays
      */
-    public static char[] fixBoxedPrimitve(Character ... boxed) {
+    public static char[] fixBoxedPrimitive(Character ... boxed) {
         char[] primitive = new char[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -157,7 +157,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Double arrays
      */
-    public static double[] fixBoxedPrimitve(Double ... boxed) {
+    public static double[] fixBoxedPrimitive(Double ... boxed) {
         double[] primitive = new double[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -166,7 +166,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Float arrays
      */
-    public static float[] fixBoxedPrimitve(Float ... boxed) {
+    public static float[] fixBoxedPrimitive(Float ... boxed) {
         float[] primitive = new float[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -175,7 +175,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Integer arrays
      */
-    public static int[] fixBoxedPrimitve(Integer ... boxed) {
+    public static int[] fixBoxedPrimitive(Integer ... boxed) {
         int[] primitive = new int[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -184,7 +184,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Long arrays
      */
-    public static long[] fixBoxedPrimitve(Long ... boxed) {
+    public static long[] fixBoxedPrimitive(Long ... boxed) {
         long[] primitive = new long[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -193,7 +193,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Short arrays
      */
-    public static short[] fixBoxedPrimitve(Short ... boxed) {
+    public static short[] fixBoxedPrimitive(Short ... boxed) {
         short[] primitive = new short[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
         return primitive;
@@ -310,19 +310,19 @@ public class ArrayHelper {
         return true;
     }
 
-    public static <E> E[] removeAllOccurancesAfter(E[] array, E element, int after) {
+    public static <E> E[] removeAllOccurrencesAfter(E[] array, E element, int after) {
         if(Objects.nonNull(array) && after<array.length-1) {
-            int index = findFirstOccuranceAfter(array,element,after);
+            int index = findFirstOccurrenceAfter(array, element, after);
             while (index != -1) {
                 array = removeElement(array,index);
-                index = findFirstOccurance(array,element);
+                index = findFirstOccurrence(array, element);
             }
         }
         return array;
     }
 
-    public static <E> E[] removeAllOccurancesOf(E[] array, E element) {
-        return removeAllOccurancesAfter(array,element,-1);
+    public static <E> E[] removeAllOccurrencesOf(E[] array, E element) {
+        return removeAllOccurrencesAfter(array, element, -1);
     }
 
     @SuppressWarnings("unchecked")

@@ -190,7 +190,7 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
             String name = pkgPair.getRight();
             this.interfaces[i] = name.equals("?") ? null : name;
         }
-        this.interfaces = ArrayHelper.removeAllOccurancesOf(this.interfaces,"?");
+        this.interfaces = ArrayHelper.removeAllOccurrencesOf(this.interfaces, "?");
     }
 
     protected MethodPrinter parseMethod(int access, String name, String desc, String[] exceptions) {

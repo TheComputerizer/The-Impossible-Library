@@ -21,6 +21,10 @@ public abstract class CoreAPI {
     public static CoreAPI INSTANCE;
     static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
     static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
+    
+    public static CoreAPI getInstance() {
+        return INSTANCE;
+    }
 
     protected final GameVersion version;
     protected final ModLoader modLoader;

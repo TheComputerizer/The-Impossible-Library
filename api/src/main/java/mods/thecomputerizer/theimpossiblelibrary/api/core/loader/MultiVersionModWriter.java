@@ -180,11 +180,9 @@ public class MultiVersionModWriter {
         constructor.visitMethodInsn(INVOKESPECIAL,apiName,"<init>",VOID_EMPTY_METHOD.getDescriptor(),false);
         constructor.visitFieldInsn(PUTFIELD,name,"entryPoint",apiType.getDescriptor());
         if(INSTANCE.getModLoader()==FORGE) {
-            constructor.visitMethodInsn(INVOKESTATIC,"net/minecraftforge/fml/javafmlmod/FMLJavaModLoadingContext",
-                                        "get", "()Lnet/minecraftforge/fml/javafmlmod/FMLJavaModLoadingContext;",false);
-            constructor.visitVarInsn(ASTORE,1);
             constructor.visitLdcInsn("Loading context string {}");
-            constructor.visitVarInsn(ALOAD,1);
+            constructor.visitMethodInsn(INVOKESTATIC,"net/minecraftforge/fml/ModLoadingContext",
+                                        "get","()Lnet/minecraftforge/fml/ModLoadingContext;",false);
             log(constructor);
             //constructor.visitMethodInsn(INVOKEVIRTUAL, "net/minecraftforge/fml/javafmlmod/FMLJavaModLoadingContext",
             //                              "getModEventBus", "()Lnet/minecraftforge/eventbus/api/IEventBus;", false);

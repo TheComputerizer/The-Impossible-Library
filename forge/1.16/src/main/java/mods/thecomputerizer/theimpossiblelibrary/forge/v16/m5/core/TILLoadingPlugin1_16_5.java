@@ -108,7 +108,7 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
             if(Objects.nonNull(classBytes)) {
                 String classpath = classBytes.getLeft();
                 byte[] bytes = classBytes.getRight();
-                ASMHelper.writeDebugByteCode(classpath, bytes);
+                ASMHelper.writeDebugByteCode(classpath,bytes);
                 ClassHelper.defineClass(classLoader,classpath,bytes);
                 TILRef.logInfo("Successfully loaded mod class {}!",classpath);
             }

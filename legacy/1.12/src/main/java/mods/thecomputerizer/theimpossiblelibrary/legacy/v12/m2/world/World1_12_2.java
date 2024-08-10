@@ -58,9 +58,13 @@ public class World1_12_2 extends WorldAPI<World> {
     public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
         List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
         if(this.world instanceof World) {
-            for(TileEntity tile : this.world.loadedTileEntityList) {
-                BlockPos pos = tile.getPos();
-                if(box.isInside(pos.getX(),pos.getY(),pos.getZ())) entities.add(new BlockEntity1_12_2(tile));
+            Iterator<TileEntity> tiles = this.world.loadedTileEntityList.iterator();
+            while(tiles.hasNext()) {
+                synchronized(tiles) { //Double layer insurance against cmod stupidity
+                    TileEntity tile = tiles.next();
+                    BlockPos pos = tile.getPos();
+                    if(box.isInside(pos.getX(),pos.getY(),pos.getZ())) entities.add(new BlockEntity1_12_2(tile));
+                }
             }
         }
         return entities;
