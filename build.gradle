@@ -9,15 +9,19 @@ apply from: rootProject.file('buildSrc\\shared.gradle')
 java.toolchain.languageVersion = JavaLanguageVersion.of(22)
 
 jar {
-    project(':legacy:legacy.1_12').afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
-    project(':forge:forge.1_16').afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
+    def api = project(':api')
+    def legacy_1_12 = project(':legacy:legacy.1_12')
+    def forge_1_16 = project(':forge:forge.1_16')
+    legacy_1_12.afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
+    forge_1_16.afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
     manifest {
         attributes([
                 'FMLAT': 'theimpossiblelibrary_at.cfg',
-                'FMLCorePlugin': "mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.${mod_plugin}1_12_2",
+                'FMLCorePlugin': legacy_1_12.mod_plugin,
                 'ForceLoadAsMod': true,
-                'Implementation-Title': project.name,
-                'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                'Implementation-Title': name,
+                'Implementation-Version': version,
+                'TILMultiversionMods': api.common_entrypoint
         ])
     }
 }

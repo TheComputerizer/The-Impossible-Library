@@ -1,3 +1,4 @@
+//file:noinspection GroovyAssignabilityCheck
 buildscript {
     repositories {
         gradlePluginPortal() {
@@ -46,7 +47,7 @@ plugins.apply('org.spongepowered.mixin')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    mappings channel: 'parchment', version: "${parchment_base_version}-${minecraft_base_version}"
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
         def args = [
@@ -110,23 +111,24 @@ repositories {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
 
     implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
+    compileOnly(project(':forge')) //Compile against common stuff without running duplicate minecrafts
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
     implementation(fg.deobf("curse.maven:blueskies-312918:${blueskies_version}"))
-    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_version}:${bookshelf_version}"))
+    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_base_version}:${bookshelf_version}"))
     implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
     implementation(fg.deobf("curse.maven:configured-457570:${configured_version}"))
     implementation(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
     implementation(fg.deobf("curse.maven:enhancedcelestials-438447:${enhancedcelestials_version}"))
-    implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"))
+    implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_base_version}:${gamestages_version}"))
     implementation(fg.deobf("curse.maven:sereneseasons-291874:${seasons_version}"))
-    implementation(fg.deobf("com.legacy:structure-gel:${minecraft_version}-${structuregel_version}"))
+    implementation(fg.deobf("com.legacy:structure-gel:${minecraft_base_version}-${structuregel_version}"))
 
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_base_version}:${jei_version}"))
 }
 
 mixin {
@@ -149,20 +151,21 @@ processTestResources {
 }
 
 compileJava {
-    source(project(':api').sourceSets.main.allJava)
+    source(project(':api').sourceSets.main.allJava, project(':forge').sourceSets.main.allJava)
 }
 
 compileTestJava {
-    source(project(':api').sourceSets.test.allJava)
+    source(project(':api').sourceSets.test.allJava, project(':forge').sourceSets.test.allJava)
 }
 
 jar {
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
-                'Implementation-Title': project.name,
-                'MixinConfigs': project.mod_mixin,
-                'TweakClass': project.mod_tweakclass,
+                'Implementation-Title': name,
+                'Implementation-Version': version,
+                'MixinConfigs': mod_mixin,
+                'TweakClass': mod_tweakclass,
                 'TweakOrder': 0
         ])
     }

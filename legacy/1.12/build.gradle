@@ -147,10 +147,11 @@ jar {
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
-                'FMLCorePlugin': "${module_package}.${mod_plugin}1_12_2",
+                'FMLCorePlugin': "${legacy_1_12_2_package}.${mod_plugin}1_12_2",
                 'FMLCorePluginContainsFMLMod': true,
                 'ForceLoadAsMod': true,
-                "Implementation-Title": project.name,
+                "Implementation-Title": name,
+                "Implementation-Version": version,
                 'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
         ])
     }

@@ -3,5 +3,5 @@ apply from: rootProject.file('shared.gradle')
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 dependencies {
-    implementation(project(':forge'))
+    compileOnly(project(':forge'))
 }

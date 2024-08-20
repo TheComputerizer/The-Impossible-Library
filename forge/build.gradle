@@ -1,14 +1,101 @@
-apply from: rootProject.file('buildSrc\\shared.gradle')
+/**
+ * Common builds and sources relevant to all Forge modules
+ *
+ * Base is 1.16.5
+ */
+//file:noinspection GroovyAssignabilityCheck
 
-jar {
-    from(project(':api').jar.archiveFile.collect {
-        include 'mods/**'
-        zipTree(it)
-    })
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                [ 'com.fasterxml', 'com.fasterxml.jackson', 'com.fasterxml.woodstox', 'com.google.code.findbugs',
+                  'com.google.code.gson', 'com.google.errorprone', 'com.google.guava', 'com.google.j2objc',
+                  'com.machinezoo.noexception', 'commons-codec', 'commons-io', 'commons-logging', 'de.siegmar',
+                  'io.fabric8', 'io.github.goooler.shadow', 'io.netty', 'it.unimi.dsi', 'jakarta.platform',
+                  'net.sf.jopt-simple', 'org.apache', 'org.apache.ant', 'org.apache.commons',
+                  'org.apache.httpcomponents', 'org.apache.logging', 'org.apache.logging.log4j', 'org.apache.maven',
+                  'org.checkerframework', 'org.codehaus.groovy', 'org.codehaus.plexus', 'org.codehaus.woodstox',
+                  'org.eclipse.ee4j', 'org.eclipse.jetty', 'org.jdom', 'org.junit', 'org.mockito', 'org.ow2',
+                  'org.ow2.asm', 'org.slf4j', 'org.sonatype.oss', 'org.springframework', 'org.tukaani',
+                  'org.vafer' ].forEach { includeGroup it }
+            }
+        }
+        maven {
+            name = 'Forge'
+            url = uri('https://maven.minecraftforge.net/')
+            content {
+                [ 'net.minecraftforge', 'net.minecraftforge.gradle' ].forEach{ includeGroup it }
+            }
+        }
+        maven {
+            name = 'ParchmentMC'
+            url = uri('https://maven.parchmentmc.org')
+            content {
+                [ 'org.parchmentmc', 'org.parchmentmc.feather',
+                  'org.parchmentmc.librarian.forgegradle' ].forEach { includeGroup it }
+            }
+        }
+    }
+    dependencies {
+        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
+        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
+        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+    }
+}
+
+apply from: rootProject.file('gradle\\java8-module.gradle')
+apply from: rootProject.file('gradle\\shadow-relocate.gradle')
+
+plugins.apply('net.minecraftforge.gradle')
+plugins.apply('org.parchmentmc.librarian.forgegradle')
+
+minecraft {
+    mappings channel: 'parchment', version: "${parchment_base_version}-${minecraft_base_version}"
+    accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
+    runs {
+        def args = [
+                '-DtilDev=true',
+                '-DtilClassPathMods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+        ]
+        configureEach {
+            def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
+            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', srgToMcpFile
+        }
+
+        client {
+            workingDirectory file('run_client')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'trace'
+            jvmArgs args
+        }
+        server {
+            workingDirectory file('run_server')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            jvmArgs args
+        }
+    }
+}
+
+dependencies {
+    //noinspection VulnerableLibrariesLocal
+    minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
+
+    implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
+}
+
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
+    }
 }
 
 processResources {
-    def replacements = [ 'loader_range': forge_version_range, 'minecraft_range': minecraft_range,
+    def replacements = [ 'loader_range': forge_version_range, 'minecraft_range': minecraft_version_range,
                          'mod_author': mod_authors,  'mod_description': mod_description, 'mod_license': mod_license,
                          'mod_id': mod_id, 'mod_name': mod_name, 'mod_version': version ]
     inputs.properties replacements
@@ -24,4 +111,29 @@ processTestResources {
     from(project(':api').processTestResources.outputs)
 }
 
+compileJava {
+    source(project(':api').sourceSets.main.allJava)
+}
+
+compileTestJava {
+    source(project(':api').sourceSets.test.allJava)
+}
+
+jar {
+    manifest {
+        attributes([
+                'FMLAT': mod_accesstransformer,
+                'Implementation-Title': name,
+                'Implementation-Version': version
+        ])
+    }
+}
+
+shadowJar {
+    from(project(':api').jar.archiveFile.collect { zipTree(it) })
+}
+
+tasks.assemble.dependsOn(shadowJar)
+tasks.shadowJar.dependsOn('reobfJar')
+tasks.jar.finalizedBy('reobfJar')
 tasks.jar.dependsOn(':api:build')
