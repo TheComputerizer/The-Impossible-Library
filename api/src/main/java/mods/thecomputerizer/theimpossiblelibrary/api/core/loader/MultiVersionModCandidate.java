@@ -51,14 +51,18 @@ public class MultiVersionModCandidate {
     }
 
     private @Nullable Class<?> findClass(ClassLoader classLoader, String name) {
-        TILRef.logInfo("Attempting to add source for loader class `{}`",name);
+        TILRef.logInfo("Locating loader class {}",name);
+        try {
+            return Class.forName(name,true,classLoader);
+        } catch(ClassNotFoundException ignored) {}
+        TILRef.logDebug("Attempting to add source for class that has not yet been loaded");
         try {
             ClassHelper.loadURL((URLClassLoader)classLoader,this.file.toURI().toURL());
         } catch(MalformedURLException | ClassCastException ex) {
             TILRef.logError("Error getting URL for source file `{}`!",this.file.getPath(),ex);
             return null;
         }
-        TILRef.logInfo("Successfully added source! Attempting to retrieve loader class");
+        TILRef.logDebug("Successfully added source! Reattempting to locate loader class");
         try {
             return Class.forName(name,true,classLoader);
         } catch(ClassNotFoundException ex) {
@@ -79,7 +83,7 @@ public class MultiVersionModCandidate {
             }
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
                                MultiVersionModCandidate candidate, ClassLoader classLoader) {
@@ -92,8 +96,7 @@ public class MultiVersionModCandidate {
             }
         }
     }
-
-
+    
     public boolean hasCoreMods() {
         return !this.coreClassNames.isEmpty();
     }

@@ -69,8 +69,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
         for(MultiVersionModData data : getModDataValues()) {
             CANDIDATE_MAP.putIfAbsent(data.getSource(),new InjectedModCandidate1_12_2(
                     data.getRoot(),data.getSource()));
-            Pair<String,byte[]> classBytes = data.writeModClass(JAVA8);
-            if(Objects.nonNull(classBytes)) {
+            for(Pair<String,byte[]> classBytes : data.writeModClass(JAVA8)) {
                 String classpath = classBytes.getLeft();
                 byte[] bytes = classBytes.getRight();
                 ASMHelper.writeDebugByteCode(classpath,bytes);

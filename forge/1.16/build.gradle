@@ -114,7 +114,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
 
     implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
-    compileOnly(project(':forge')) //Compile against common stuff without running duplicate minecrafts
+    implementation(project(':forge'))
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
@@ -172,7 +172,8 @@ jar {
 }
 
 shadowJar {
-    from(project(':forge').jar.archiveFile.collect { zipTree(it) })
+    from(project(':api').jar.archiveFile.collect { zipTree(it) },
+            project(':forge').jar.archiveFile.collect { zipTree(it) })
 }
 
 tasks.assemble.dependsOn(shadowJar)

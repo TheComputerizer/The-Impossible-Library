@@ -12,6 +12,10 @@ import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
 
@@ -22,8 +26,49 @@ public abstract class CoreAPI {
     static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
     static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
     
+    public static CoreAPI getInstance(ClassLoader loader) {
+        if(Objects.isNull(INSTANCE)) { //Try syncing the instance from the system classloader
+            TILDev.logDebug("CoreAPI instance is null! Trying to access via {}",loader);
+            TILDev.logDebug("Thread context class loader is also {}",Thread.currentThread().getContextClassLoader());
+            try {
+                Class<?> systemClass = ClassLoader.getSystemClassLoader().loadClass(OWNER.replace('/','.'));
+                TILRef.logDebug("System loaded class is {}",systemClass);
+                Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
+                TILRef.logDebug("System instance is {}",instance);
+                INSTANCE = (CoreAPI)instance;
+                TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
+            } catch(ClassNotFoundException ex) {
+                TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader",ex);
+            }
+        }
+        return INSTANCE;
+    }
     public static CoreAPI getInstance() {
         return INSTANCE;
+    }
+    
+    public static boolean isClient() {
+        return getInstance().getSide().isClient();
+    }
+    
+    public static boolean isFabric() {
+        return getInstance().getModLoader()==FABRIC;
+    }
+    
+    public static boolean isForge() {
+        return getInstance().getModLoader()==FORGE;
+    }
+    
+    public static boolean isLegacy() {
+        return getInstance().getModLoader()==LEGACY;
+    }
+    
+    public static boolean isNeoforge() {
+        return getInstance().getModLoader()==NEOFORGE;
+    }
+    
+    public static boolean isServer() {
+        return getInstance().getSide().isServer();
     }
 
     protected final GameVersion version;
@@ -45,6 +90,7 @@ public abstract class CoreAPI {
         INSTANCE = this;
         TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
+        TILDev.logDebug("Initialized with {}",getClass().getClassLoader());
     }
 
     public abstract CommonEntryPoint getClientVersionHandler();

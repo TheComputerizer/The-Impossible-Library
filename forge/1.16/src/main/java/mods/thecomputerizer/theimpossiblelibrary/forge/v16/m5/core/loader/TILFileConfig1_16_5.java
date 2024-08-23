@@ -15,17 +15,20 @@ import java.util.Optional;
 public class TILFileConfig1_16_5 implements IConfigurable {
     
     private final Map<String,Object> infoMap;
-    private final Map<String,List<TILModConfig1_16_5>> childConfigs;
+    private final Map<String,List<IConfigurable>> childConfigs;
     
     public TILFileConfig1_16_5(Collection<MultiVersionModInfo> infos) {
         this.infoMap = new HashMap<>();
-        this.infoMap.put("modLoader","javafml");
-        this.infoMap.put("loaderVersion","[36.2,)");
+        this.infoMap.put("modLoader","multiversionprovider");
+        this.infoMap.put("loaderVersion","[36,)");
         this.infoMap.put("license","NYI");
         this.childConfigs = new HashMap<>();
         this.childConfigs.put("mods",new ArrayList<>());
         for(MultiVersionModInfo info : infos)
             this.childConfigs.get("mods").add(new TILModConfig1_16_5(info));
+        //this.childConfigs.put("dependencies",new ArrayList<>());
+        //this.childConfigs.get("dependencies").add(new TILDependencyConfig1_16_5(
+        //        "forge","[36.2.0,)","NONE","BOTH",true));
     }
     
     @SuppressWarnings("unchecked") @Override

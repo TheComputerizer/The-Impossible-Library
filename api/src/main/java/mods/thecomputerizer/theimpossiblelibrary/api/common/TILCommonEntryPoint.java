@@ -25,7 +25,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     private static TILCommonEntryPoint INSTANCE;
     
     private static void devTrace(String msg, Object ... args) {
-        TILDev.logTrace("[TILCommonEntryPoint Trace]: "+msg,args);
+        TILDev.logDebug("[TILCommonEntryPoint Trace]: "+msg,args);
     }
 
     public static TILCommonEntryPoint getInstance() {

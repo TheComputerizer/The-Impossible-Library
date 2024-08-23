@@ -38,14 +38,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
+        //classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
         classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
         classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
     }
 }
 
 apply from: rootProject.file('gradle\\java8-module.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')
+//apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
@@ -86,14 +86,14 @@ dependencies {
 
     implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
 }
-
+/*
 reobf {
     shadowJar {
         dependsOn createMcpToSrg
         mappings = createMcpToSrg.output
     }
 }
-
+*/
 processResources {
     def replacements = [ 'loader_range': forge_version_range, 'minecraft_range': minecraft_version_range,
                          'mod_author': mod_authors,  'mod_description': mod_description, 'mod_license': mod_license,
@@ -128,12 +128,12 @@ jar {
         ])
     }
 }
-
+/*
 shadowJar {
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
 }
 
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')
+tasks.jar.finalizedBy('reobfJar')*/
 tasks.jar.dependsOn(':api:build')

@@ -4,9 +4,45 @@ import org.objectweb.asm.Type;
 
 public class TypeHelper {
     
-    public static Type getMethodType(Class<?> returnClass, Class<?> ... args) {
+    public static Type fml(String path) {
+        return forge("fml/"+path);
+    }
+    
+    public static Type forge(String path) {
+        return get("net/minecraftforge/"+path);
+    }
+    
+    public static Type get(String className) {
+        return Type.getType("L"+className+";");
+    }
+    
+    public static Type inner(Type type, String name) {
+        return get(type.getInternalName()+"$"+name);
+    }
+    
+    public static Type method(Class<?> returnClass, Class<?> ... args) {
+        return method(Type.getType(returnClass),args);
+    }
+    
+    public static Type method(Class<?> returnClass, Type ... args) {
+        return method(Type.getType(returnClass),args);
+    }
+    
+    public static Type method(Type returnType, Class<?> ... args) {
         Type[] argTypes = new Type[args.length];
         for(int i=0;i<argTypes.length;i++) argTypes[i] = Type.getType(args[i]);
-        return Type.getMethodType(Type.getType(returnClass),argTypes);
+        return method(returnType,argTypes);
+    }
+    
+    public static Type method(Type returnType, Type ... args) {
+        return Type.getMethodType(returnType,args);
+    }
+    
+    public static Type lang(String path) {
+        return get("java/lang/"+path);
+    }
+    
+    public static Type minecraft(String path) {
+        return get("net/minecraft/"+path);
     }
 }

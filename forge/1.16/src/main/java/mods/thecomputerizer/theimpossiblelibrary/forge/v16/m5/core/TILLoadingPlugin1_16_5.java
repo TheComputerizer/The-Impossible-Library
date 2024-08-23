@@ -1,19 +1,18 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.TILModFile1_16_5;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,18 +27,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
 
 /**
  Targeted version of ClasspathLocator
  */
+@EventBusSubscriber
 public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
     
     static {
@@ -49,6 +47,11 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
     private final Map<MultiVersionModCandidate,TILModFile1_16_5> candidateMap = new HashMap<>();
+    
+    public TILLoadingPlugin1_16_5() {
+        TILDev.logDebug("Loading plugin loaded with {}",getClass().getClassLoader());
+        TILDev.logDebug("System classloader is {}",ClassLoader.getSystemClassLoader());
+    }
     
     public void loadCandidateInfos(Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap) {
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> fileEntry : infoMap.entrySet()) {
@@ -92,26 +95,18 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
     }
     
     @Override public String name() {
-        return "til_multiversion_loader";
+        return "multiversionloader";
     }
     
     @Override
     public List<IModFile> scanMods() {
+        TILRef.logDebug("Scanning for mods in multiversion jars");
         List<IModFile> mods = new ArrayList<>();
+        Map<String,MultiVersionModData> data = INSTANCE.getModData(new File("."));
         for(TILModFile1_16_5 candidate : this.candidateMap.values()) {
             this.modJars.compute(candidate,(file,system) -> createFileSystem(file));
+            candidate.populateMultiversionData(data);
             mods.add(candidate);
-        }
-        ClassLoader classLoader = getClass().getClassLoader();
-        for(MultiVersionModData data : INSTANCE.getModData(new File(".")).values()) {
-            Pair<String,byte[]> classBytes = data.writeModClass(JAVA8);
-            if(Objects.nonNull(classBytes)) {
-                String classpath = classBytes.getLeft();
-                byte[] bytes = classBytes.getRight();
-                ASMHelper.writeDebugByteCode(classpath,bytes);
-                ClassHelper.defineClass(classLoader,classpath,bytes);
-                TILRef.logInfo("Successfully loaded mod class {}!",classpath);
-            }
         }
         return Collections.unmodifiableList(mods);
     }

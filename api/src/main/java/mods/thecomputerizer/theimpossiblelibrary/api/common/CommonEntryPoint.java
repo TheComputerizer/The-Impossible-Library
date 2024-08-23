@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
 
 /**
  * Common entrypoint API
@@ -15,9 +15,10 @@ public abstract class CommonEntryPoint {
     protected final ClientEntryPoint delegatedClient;
 
     protected CommonEntryPoint() {
-        INSTANCE.modConstructed(getClass().getPackage(),getModID(),getModName(),
+        TILRef.logWarn("INSTANCE exists? {}",Objects.nonNull(CoreAPI.getInstance(getClass().getClassLoader())));
+        CoreAPI.getInstance().modConstructed(getClass().getPackage(),getModID(),getModName(),
                 this instanceof ClientEntryPoint ? "Client" : "Common");
-        this.delegatedClient = INSTANCE.getSide().isClient() ? delegatedClientEntry() : null;
+        this.delegatedClient = CoreAPI.isClient() ? delegatedClientEntry() : null;
     }
 
     public final void checkClientSetup() {
@@ -25,7 +26,7 @@ public abstract class CommonEntryPoint {
     }
 
     public final void checkDedicatedServerSetup() {
-        if(INSTANCE.getSide().isServer()) onDedicatedServerSetup();
+        if(CoreAPI.isServer()) onDedicatedServerSetup();
     }
 
     public abstract @Nullable ClientEntryPoint delegatedClientEntry();

@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.io.File;
+import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
 
@@ -27,7 +27,7 @@ public class MultiVersionModData {
         return this.candidate.getFile();
     }
 
-    public @Nullable Pair<String,byte[]> writeModClass(int javaVer) {
+    public List<Pair<String,byte[]>> writeModClass(int javaVer) {
         return MultiVersionModWriter.buildModClass(javaVer,INSTANCE.getModLoader(),this.info);
     }
 }

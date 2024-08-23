@@ -36,8 +36,8 @@ public class TILRef {
      * Should only exist on the client
      */
     public static @Nullable ClientAPI getClientAPI() {
-        CoreAPI core = CoreAPI.INSTANCE;
-        if(core.side.isClient()) {
+        CoreAPI core = CoreAPI.getInstance();
+        if(core.getSide().isClient()) {
             if(Objects.isNull(API)) core.initAPI();
             return (ClientAPI)API;
         }
@@ -46,13 +46,13 @@ public class TILRef {
     }
 
     public static <A> @Nullable A getClientSubAPI(Function<ClientAPI,A> getter) {
-        if(CoreAPI.INSTANCE.side.isClient()) return getter.apply(getClientAPI());
+        if(CoreAPI.isClient()) return getter.apply(getClientAPI());
         else logError("Cannot get client sub API {} since this is not the client side!");
         return null;
     }
 
     public static CommonAPI getCommonAPI() {
-        if(Objects.isNull(API)) CoreAPI.INSTANCE.initAPI();
+        if(Objects.isNull(API)) CoreAPI.getInstance().initAPI();
         return API;
     }
 
