@@ -2,10 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import org.objectweb.asm.Type;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -33,10 +35,6 @@ public abstract class MultiVersionLoaderAPI {
     protected abstract File findModRoot();
     protected abstract List<File> gatherCandidateModFiles(File root);
     protected abstract @Nullable Attributes getFileAttributes(File file);
-    
-    public String getOwnerName() {
-        return Type.getType(getClass()).getInternalName();
-    }
 
     private boolean isValidContext(MultiVersionCoreMod mod) {
         return isValidSide(mod.client(),mod.server()) &&
@@ -51,29 +49,30 @@ public abstract class MultiVersionLoaderAPI {
     }
 
     private boolean isValidLoader(boolean fabric, boolean forge, boolean legacy, boolean neoforge) {
-        switch(this.parent.getModLoader()) {
-            case FABRIC: return fabric;
-            case FORGE: return forge;
-            case LEGACY: return legacy;
-            case NEOFORGE: return neoforge;
-            default: return false;
-        }
+        ModLoader loader = this.parent.getModLoader();
+        if(loader.isFabric()) return fabric;
+        if(loader.isLegacyForge()) return legacy;
+        if(loader.isModernForge()) return forge;
+        if(loader.isNeoForge()) return neoforge;
+        return false;
     }
 
     private boolean isValidSide(boolean client, boolean server) {
-        return this.parent.getSide().isClient()==client || this.parent.getSide().isServer()==server;
+        Side side = this.parent.getSide();
+        if(side.isClient()) return client;
+        if(side.isServer()) return server;
+        return false;
     }
 
     private boolean isValidVersion(boolean v12, boolean v16, boolean v18, boolean v19, boolean v20, boolean v21) {
-        switch(this.parent.getVersion()) {
-            case V12: return v12;
-            case V16: return v16;
-            case V18: return v18;
-            case V19: return v19;
-            case V20: return v20;
-            case V21: return v21;
-            default: return false;
-        }
+        GameVersion version = this.parent.getVersion();
+        if(version.isV12()) return v12;
+        if(version.isV16()) return v16;
+        if(version.isV18()) return v18;
+        if(version.isV19()) return v19;
+        if(version.isV20()) return v20;
+        if(version.isV21()) return v21;
+        return false;
     }
 
     public void loadCoreMods(

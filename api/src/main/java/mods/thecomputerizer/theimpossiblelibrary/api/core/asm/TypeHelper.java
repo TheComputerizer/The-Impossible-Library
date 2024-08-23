@@ -1,8 +1,8 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.core;
+package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 
 import org.objectweb.asm.Type;
 
-public class TypeHelper {
+@SuppressWarnings("unused") public class TypeHelper {
     
     public static Type fml(String path) {
         return forge("fml/"+path);
@@ -12,12 +12,20 @@ public class TypeHelper {
         return get("net/minecraftforge/"+path);
     }
     
+    public static Type fromBinary(String binaryClasspath) {
+        return get(binaryClasspath.replace('.','/'));
+    }
+    
     public static Type get(String className) {
         return Type.getType("L"+className+";");
     }
     
     public static Type inner(Type type, String name) {
-        return get(type.getInternalName()+"$"+name);
+        return fromBinary(type.getClassName()+"$"+name);
+    }
+    
+    public static Type lang(String path) {
+        return get("java/lang/"+path);
     }
     
     public static Type method(Class<?> returnClass, Class<?> ... args) {
@@ -36,10 +44,6 @@ public class TypeHelper {
     
     public static Type method(Type returnType, Type ... args) {
         return Type.getMethodType(returnType,args);
-    }
-    
-    public static Type lang(String path) {
-        return get("java/lang/"+path);
     }
     
     public static Type minecraft(String path) {

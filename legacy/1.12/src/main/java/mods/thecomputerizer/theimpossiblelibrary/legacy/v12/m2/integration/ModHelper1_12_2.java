@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.ModContainer;
 import java.util.Collections;
 import java.util.Map;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12_2;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
 
 public class ModHelper1_12_2 extends ModHelperAPI {
 
     public ModHelper1_12_2(Side side) {
-        super(V12,LEGACY,side);
+        super(V12_2, LEGACY, side);
     }
 
     @Override

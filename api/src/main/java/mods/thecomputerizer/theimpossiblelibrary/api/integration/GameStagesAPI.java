@@ -8,9 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
-
+@SuppressWarnings("unused")
 public abstract class GameStagesAPI implements ModAPI {
 
     public static final String MODID = "gamestages";
@@ -58,13 +56,7 @@ public abstract class GameStagesAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        switch(version) {
-            case V12: return loader==LEGACY;
-            case V16:
-            case V18:
-            case V19: return loader==FORGE;
-            default: return false;
-        }
+        return version.isCompatibleForge() && loader.isForge();
     }
 
     public boolean missingStage(PlayerAPI<?,?> player, String stage) {

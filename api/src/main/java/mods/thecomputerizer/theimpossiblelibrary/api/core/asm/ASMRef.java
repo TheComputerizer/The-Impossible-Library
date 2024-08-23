@@ -27,6 +27,7 @@ public class ASMRef {
     public static final int COMPUTE_FRAMES = ClassWriter.COMPUTE_FRAMES;
     public static final int COMPUTE_MAXS = ClassWriter.COMPUTE_MAXS;
     public static final int DUP = Opcodes.DUP;
+    public static final Type EMPTY_METHOD = Type.getMethodType(VOID_TYPE);
     public static final Type FILE_TYPE = Type.getType(File.class);
     public static final int FINAL = ACC_FINAL;
     public static final int GETFIELD = Opcodes.GETFIELD;
@@ -75,6 +76,5 @@ public class ASMRef {
     public static final int SYNCHRONIZED = ACC_SYNCHRONIZED;
     public static final int SYNTHETIC = ACC_SYNTHETIC;
     public static final int VARARGS = ACC_VARARGS;
-    public static final Type VOID_EMPTY_METHOD = Type.getMethodType(VOID_TYPE);
     public static final int VOLATILE = ACC_VOLATILE;
 }

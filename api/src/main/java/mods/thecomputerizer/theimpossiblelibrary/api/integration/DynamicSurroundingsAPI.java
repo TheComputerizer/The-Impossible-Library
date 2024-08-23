@@ -5,9 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
-
+@SuppressWarnings("unused")
 public abstract class DynamicSurroundingsAPI implements ModAPI {
 
     public static final String MODID = "dsurround";
@@ -30,10 +28,6 @@ public abstract class DynamicSurroundingsAPI implements ModAPI {
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         if(!side.isClient()) return false;
-        switch(version) {
-            case V12: return loader==LEGACY;
-            case V16: return loader==FORGE;
-            default: return false;
-        }
+        return loader.isLegacyForge() ? version.isV12() : loader.isModernForge() && version.isV16();
     }
 }

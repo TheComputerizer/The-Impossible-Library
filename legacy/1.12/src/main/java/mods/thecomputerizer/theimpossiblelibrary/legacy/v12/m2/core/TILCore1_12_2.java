@@ -2,12 +2,15 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.*;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModWriter1_12_2;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
@@ -15,7 +18,7 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import java.io.File;
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12_2;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_CLIENT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_SERVER;
@@ -35,23 +38,27 @@ public class TILCore1_12_2 extends CoreAPI {
     private final MultiVersionLoader1_12_2 loader;
 
     public TILCore1_12_2() {
-        super(V12,LEGACY,LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
+        super(V12_2, LEGACY, LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
         this.loader = new MultiVersionLoader1_12_2(this);
+    }
+    
+    @Override
+    public CommonEntryPoint getClientVersionHandler() {
+        return new TILClientEntryPoint1_12_2();
+    }
+    
+    @Override
+    public CommonEntryPoint getCommonVersionHandler() {
+        return new TILCommonEntryPoint1_12_2();
     }
 
     @Override
     public MultiVersionLoaderAPI getLoader() {
         return this.loader;
     }
-
-    @Override
-    public CommonEntryPoint getClientVersionHandler() {
-        return new TILClientEntryPoint1_12_2();
-    }
-
-    @Override
-    public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPoint1_12_2();
+    
+    @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
+        return new ModWriter1_12_2(this,info);
     }
 
     @Override

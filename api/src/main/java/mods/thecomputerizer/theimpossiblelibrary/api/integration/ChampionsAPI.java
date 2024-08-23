@@ -10,9 +10,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
-
+@SuppressWarnings("unused")
 public abstract class ChampionsAPI implements ModAPI {
 
     public static final String MODID = "champions";
@@ -38,12 +36,8 @@ public abstract class ChampionsAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        switch(version) {
-            case V12: return loader==LEGACY;
-            case V16:
-            case V18: return loader==FORGE;
-            default: return false;
-        }
+        return loader.isLegacyForge() ? version.isV12() :
+                (loader.isModernForge() && (version.isV16() || version.isV18()));
     }
 
     @Getter

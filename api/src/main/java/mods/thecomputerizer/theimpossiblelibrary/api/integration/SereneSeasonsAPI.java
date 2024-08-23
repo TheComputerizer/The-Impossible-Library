@@ -5,8 +5,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
 
+@SuppressWarnings("unused")
 public abstract class SereneSeasonsAPI implements ModAPI {
 
     public static final String MODID = "sereneseasons";
@@ -28,14 +29,7 @@ public abstract class SereneSeasonsAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        switch(version) {
-            case V12: return loader==LEGACY;
-            case V16:
-            case V18:
-            case V19: return loader==FORGE;
-            case V20: return loader==FABRIC || loader==FORGE || loader==NEOFORGE;
-            default: return false;
-        }
+        return loader.isForge() || version.isV21() || (version.isV20() && version!=V20_1);
     }
 
     public abstract boolean isSpring(WorldAPI<?> world);

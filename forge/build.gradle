@@ -38,7 +38,6 @@ buildscript {
         }
     }
     dependencies {
-        //classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
         classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
         classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
     }
@@ -84,16 +83,9 @@ dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
 
-    implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
+    compileOnly(project(':api'))
 }
-/*
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-*/
+
 processResources {
     def replacements = [ 'loader_range': forge_version_range, 'minecraft_range': minecraft_version_range,
                          'mod_author': mod_authors,  'mod_description': mod_description, 'mod_license': mod_license,
@@ -111,13 +103,13 @@ processTestResources {
     from(project(':api').processTestResources.outputs)
 }
 
-compileJava {
-    source(project(':api').sourceSets.main.allJava)
-}
-
-compileTestJava {
-    source(project(':api').sourceSets.test.allJava)
-}
+//compileJava {
+//    source(project(':api').sourceSets.main.allJava)
+//}
+//
+//compileTestJava {
+//    source(project(':api').sourceSets.test.allJava)
+//}
 
 jar {
     manifest {
@@ -128,12 +120,3 @@ jar {
         ])
     }
 }
-/*
-shadowJar {
-    from(project(':api').jar.archiveFile.collect { zipTree(it) })
-}
-
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')*/
-tasks.jar.dependsOn(':api:build')

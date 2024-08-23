@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.MethodVisitor;
@@ -19,7 +20,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
 
-@Getter
+@SuppressWarnings("unused") @Getter
 public abstract class CoreAPI {
 
     public static CoreAPI INSTANCE;
@@ -35,7 +36,7 @@ public abstract class CoreAPI {
                 TILRef.logDebug("System loaded class is {}",systemClass);
                 Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
                 TILRef.logDebug("System instance is {}",instance);
-                INSTANCE = (CoreAPI)instance;
+                INSTANCE = parseFrom(String.valueOf(instance),loader);
                 TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
             } catch(ClassNotFoundException ex) {
                 TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader",ex);
@@ -70,6 +71,22 @@ public abstract class CoreAPI {
     public static boolean isServer() {
         return getInstance().getSide().isServer();
     }
+    
+    static CoreAPI parseFrom(String unparsed, ClassLoader loader) {
+        TILRef.logError("incoming loader is {}",loader);
+        try {
+            
+            Class<?> type = loader.loadClass(unparsed.split(" ")[0]);
+            Object instance = type.newInstance();
+            TILDev.logDebug("parsed loader is {} from source {}",instance.getClass().getClassLoader(),
+                            instance.getClass().getProtectionDomain().getCodeSource().getLocation());
+            TILRef.logError("CoreAPI loader is {}",CoreAPI.class.getClassLoader());
+            return (CoreAPI)instance;
+        } catch(ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
+            TILRef.logError("Unable to parse CoreAPI instance from {}",unparsed,ex);
+        }
+        return null;
+    }
 
     protected final GameVersion version;
     protected final ModLoader modLoader;
@@ -90,11 +107,17 @@ public abstract class CoreAPI {
         INSTANCE = this;
         TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
-        TILDev.logDebug("Initialized with {}",getClass().getClassLoader());
+        TILDev.logDebug("Initialized with {} from source {}",getClass().getClassLoader(),
+                        getClass().getProtectionDomain().getCodeSource().getLocation());
     }
 
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
+    
+    public String getPackageName(String base) {
+        return getVersion().getPackageName(getModLoader().getPackageName(base));
+    }
+    
     public abstract MultiVersionLoaderAPI getLoader();
 
     public Map<String,MultiVersionModData> getModData(File root) {
@@ -102,9 +125,11 @@ public abstract class CoreAPI {
         TILRef.logInfo("Parsing data for {} mod candidate(s)",this.modInfo.size());
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> entry : this.modInfo.entrySet())
             for(MultiVersionModInfo info : entry.getValue())
-                map.putIfAbsent(info.getModID(),new MultiVersionModData(root,entry.getKey(),info));
+                map.putIfAbsent(info.getModID(),new MultiVersionModData(root,entry.getKey(),getModWriter(info)));
         return map;
     }
+    
+    protected abstract ModWriter getModWriter(MultiVersionModInfo info);
 
     public abstract void initAPI();
     
@@ -148,6 +173,10 @@ public abstract class CoreAPI {
      * Mod class
      */
     protected abstract boolean modConstructed(String modid, Class<?> clazz);
+    
+    @Override public String toString() {
+        return getClass().getName()+" "+this.version+" "+this.modLoader+" "+this.side;
+    }
 
     public void writeModContainers(ClassLoader classLoader) {
         getLoader().loadMods(this.modInfo,classLoader);
@@ -155,17 +184,70 @@ public abstract class CoreAPI {
 
     @Getter
     public enum GameVersion {
-        V12("1.12"),
-        V16("1.16"),
-        V18("1.18"),
-        V19("1.19"),
-        V20("1.20"),
-        V21("1.21");
+        V12_2("1.12.2","v12.m2"),
+        V16_5("1.16.5","v16.m5"),
+        V18_2("1.18.2","v18.m2"),
+        V19_2("1.19.2","v19.m2"),
+        V19_4("1.19.4","v19.m4"),
+        V20_1("1.20.1","v20.m1"),
+        V20_4("1.20.4","v20.m4"),
+        V20_6("1.20.6","v20.m6"),
+        V21_1("1.21.1","v21.m1");
 
         private final String name;
+        private final String pkg;
 
-        GameVersion(String name) {
+        GameVersion(String name, String pkg) {
             this.name = name;
+            this.pkg = pkg;
+        }
+        
+        public String getPackageName(String base) {
+            return base+"."+this.pkg;
+        }
+        
+        public boolean isCompatibleFabric() {
+            return !isV12();
+        }
+        
+        public boolean isCompatibleForge() {
+            return isCompatibleLegacyForge() || isCompatibleModernForge();
+        }
+        
+        public boolean isCompatibleLegacyForge() {
+            return isV12();
+        }
+        
+        public boolean isCompatibleModernForge() {
+            return isV16() || isV18() || isV19() || this==V20_1;
+        }
+        
+        public boolean isCompatibleNeoForge() {
+            return isV20() || isV21();
+        }
+        
+        public boolean isV12() {
+            return this==V12_2;
+        }
+        
+        public boolean isV16() {
+            return this==V16_5;
+        }
+        
+        public boolean isV18() {
+            return this==V18_2;
+        }
+        
+        public boolean isV19() {
+            return this==V19_2 || this==V19_4;
+        }
+        
+        public boolean isV20() {
+            return this==V20_1 || this==V20_4 || this==V20_6;
+        }
+        
+        public boolean isV21() {
+            return this==V21_1;
         }
 
         @Override
@@ -181,9 +263,38 @@ public abstract class CoreAPI {
         NEOFORGE("NeoForge");
 
         private final String name;
+        private final String pkg;
 
         ModLoader(String name) {
             this.name = name;
+            this.pkg = name.toLowerCase();
+        }
+        
+        public String getPackageName(String base) {
+            return base+"."+this.pkg;
+        }
+        
+        public boolean isFabric() {
+            return this==FABRIC;
+        }
+        
+        /**
+         * Legacy or modern Forge but not NeoForge
+         */
+        public boolean isForge() {
+            return isLegacyForge() || isModernForge();
+        }
+        
+        public boolean isLegacyForge() {
+            return this==LEGACY;
+        }
+        
+        public boolean isModernForge() {
+            return this==FORGE;
+        }
+        
+        public boolean isNeoForge() {
+            return this==NEOFORGE;
         }
 
         @Override
@@ -216,7 +327,9 @@ public abstract class CoreAPI {
 
         @Override
         public String toString() {
-            return isClient() ? (isServer() ? "Both" : "Client") : "Server";
+            if(this==ALL) return "all";
+            String side = this.client && this.server ? "both" : (this.client ? "client" : "server");
+            return (this.dedicated ? "dedicated" : "logical")+"_"+side;
         }
     }
 }

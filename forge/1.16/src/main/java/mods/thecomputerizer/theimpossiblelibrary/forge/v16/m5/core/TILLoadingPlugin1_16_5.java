@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
@@ -74,7 +75,7 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
                 if(Files.isDirectory(path)) continue;
                 String fileName = path.getFileName().toString();
                 TILRef.logDebug("Checking if file {} is the loader",fileName);
-                if(fileName.equals(MODID+"-"+VERSION+".jar")) {
+                if(Objects.isNull(MultiVersionModCandidate.loaderFile) && fileName.equals(MODID+"-"+VERSION+".jar")) {
                     TILRef.logDebug("File is the loader");
                     MultiVersionModCandidate.loaderFile = path.toFile();
                 }

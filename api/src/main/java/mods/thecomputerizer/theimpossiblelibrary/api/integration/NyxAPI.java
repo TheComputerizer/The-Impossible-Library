@@ -5,9 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.*;
-
+@SuppressWarnings("unused")
 public abstract class NyxAPI implements ModAPI {
 
     public static final String MODID = "nyx";
@@ -29,7 +27,7 @@ public abstract class NyxAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        return version==V12 && loader==LEGACY;
+        return version.isV12() && loader.isLegacyForge();
     }
 
     public abstract boolean isStarShower(WorldAPI<?> world);

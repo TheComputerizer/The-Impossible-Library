@@ -179,4 +179,5 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
 tasks.jar.finalizedBy('reobfJar')
+tasks.jar.dependsOn(':api:build')
 tasks.jar.dependsOn(':forge:build')

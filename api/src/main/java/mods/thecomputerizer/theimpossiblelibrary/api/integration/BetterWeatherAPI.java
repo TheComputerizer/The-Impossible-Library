@@ -5,9 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V16;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
-
+@SuppressWarnings("unused")
 public abstract class BetterWeatherAPI implements ModAPI {
 
     public static final String MODID = "betterweather";
@@ -31,7 +29,7 @@ public abstract class BetterWeatherAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        return version==V16 && loader==FORGE;
+        return version.isV16() && loader.isModernForge() ;
     }
 
     public abstract boolean isRaining(WorldAPI<?> world);

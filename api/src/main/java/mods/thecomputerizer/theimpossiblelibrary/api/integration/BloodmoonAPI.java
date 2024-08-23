@@ -4,9 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
-
+@SuppressWarnings("unused")
 public abstract class BloodmoonAPI implements ModAPI {
 
     public static final String MODID = "bloodmoon";
@@ -28,6 +26,6 @@ public abstract class BloodmoonAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        return version==V12 && loader==LEGACY;
+        return version.isV12() && loader.isLegacyForge();
     }
 }

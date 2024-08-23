@@ -21,6 +21,7 @@ public class TILRef {
 
     public static final File DATA_DIRECTORY = new File("./impossible_data");
     public static final Logger LOGGER = LogManager.getLogger("The Impossible Library");
+    public static final String BASE_PACKAGE = "mods.thecomputerizer.theimpossiblelibrary";
     public static final String DESCRIPTION = "Multiversion API & mod loader with helpers to do things deemed impossible";
     public static final String MODID = "theimpossiblelibrary";
     public static final String NAME = "The Impossible Library";

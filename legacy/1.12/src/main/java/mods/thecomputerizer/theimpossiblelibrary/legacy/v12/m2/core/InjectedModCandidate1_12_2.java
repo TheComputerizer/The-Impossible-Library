@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
 import static net.minecraft.launchwrapper.Launch.classLoader;
 import static net.minecraftforge.fml.common.discovery.ContainerType.JAR;
 
@@ -69,7 +68,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
         for(MultiVersionModData data : getModDataValues()) {
             CANDIDATE_MAP.putIfAbsent(data.getSource(),new InjectedModCandidate1_12_2(
                     data.getRoot(),data.getSource()));
-            for(Pair<String,byte[]> classBytes : data.writeModClass(JAVA8)) {
+            for(Pair<String,byte[]> classBytes : data.writeModClass()) {
                 String classpath = classBytes.getLeft();
                 byte[] bytes = classBytes.getRight();
                 ASMHelper.writeDebugByteCode(classpath,bytes);

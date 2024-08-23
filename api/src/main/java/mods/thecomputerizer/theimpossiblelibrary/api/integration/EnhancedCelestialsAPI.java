@@ -5,9 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
-
+@SuppressWarnings("unused")
 public abstract class EnhancedCelestialsAPI implements ModAPI {
 
     public static final String MODID = "enhancedcelestials";
@@ -30,13 +28,7 @@ public abstract class EnhancedCelestialsAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        switch(version) {
-            case V16:
-            case V18:
-            case V19: return loader==FABRIC || loader==FORGE;
-            case V20: return loader==FABRIC;
-            default: return false;
-        }
+        return version.isCompatibleModernForge() && (loader.isFabric() || loader.isModernForge());
     }
 
     public abstract boolean isHarvestMoon(WorldAPI<?> world);

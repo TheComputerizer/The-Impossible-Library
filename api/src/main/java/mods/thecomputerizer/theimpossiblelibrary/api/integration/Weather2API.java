@@ -11,10 +11,9 @@ import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.integration.Weather2API.WeatherType.*;
 
+@SuppressWarnings("unused")
 public abstract class Weather2API implements ModAPI {
 
     public static final String MODID = "weather2remaster";
@@ -41,7 +40,7 @@ public abstract class Weather2API implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        return version==V12 && loader==LEGACY;
+        return version.isV12() && loader.isLegacyForge();
     }
 
     @Getter

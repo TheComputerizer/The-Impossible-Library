@@ -15,11 +15,24 @@ import java.lang.annotation.Annotation;
 import static java.io.File.separatorChar;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DATA_DIRECTORY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
+import static org.objectweb.asm.Type.VOID_TYPE;
 
-public class ASMHelper {
+@SuppressWarnings("unused") public class ASMHelper {
 
     public static void addField(ClassVisitor visitor, int access, String name, Type type, String signature, Object value) {
         visitor.visitField(access,name,type.getDescriptor(),signature,value).visitEnd();
+    }
+    
+    public static void addSuperConstructor(MethodVisitor constructor, String name, String desc, boolean isInterface) {
+        constructor.visitCode();
+        constructor.visitVarInsn(ALOAD,0);
+        invokeInit(constructor,name,desc,isInterface);
+    }
+    
+    public static void addNewInstance(MethodVisitor method, String name, String desc, boolean isInterface) {
+        method.visitTypeInsn(NEW,name);
+        method.visitInsn(DUP);
+        invokeInit(method,name,desc,isInterface);
     }
 
     public static String buildSignature(Type base, Type ... innerTypes) {
@@ -90,25 +103,24 @@ public class ASMHelper {
         return visitor.visitAnnotation(type.getDescriptor(),runtime);
     }
 
-    public static MethodVisitor getClassConstructor(ClassVisitor visitor) {
-        return getMethod(visitor,STATIC,"<clinit>",null,new String[]{},Type.VOID_TYPE);
+    public static MethodVisitor getClassInit(ClassVisitor visitor) {
+        return getMethod(visitor, STATIC, "<clinit>", null, new String[]{}, VOID_TYPE);
     }
 
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, Type ... argTypes) {
-        return getMethod(visitor,access,"<init>",null,new String[]{},Type.VOID_TYPE,argTypes);
+        return getMethod(visitor, access, "<init>", null, new String[]{}, VOID_TYPE, argTypes);
     }
-
-
+    
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, Type returnType, Type ... argTypes) {
         return getMethod(visitor,access,"<init>",null,new String[]{},returnType,argTypes);
     }
 
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String signature, Type ... argTypes) {
-        return getMethod(visitor,access,"<init>",signature,new String[]{},Type.VOID_TYPE,argTypes);
+        return getMethod(visitor, access, "<init>", signature, new String[]{}, VOID_TYPE, argTypes);
     }
 
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String[] exceptions, Type ... argTypes) {
-        return getMethod(visitor,access,"<init>",null,exceptions,Type.VOID_TYPE,argTypes);
+        return getMethod(visitor, access, "<init>", null, exceptions, VOID_TYPE, argTypes);
     }
 
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String signature, Type returnType,
@@ -127,11 +139,11 @@ public class ASMHelper {
     }
 
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, Type ... argTypes) {
-        return getMethod(visitor,access,name,null,new String[]{},Type.VOID_TYPE,argTypes);
+        return getMethod(visitor,access,name,null,new String[]{},VOID_TYPE,argTypes);
     }
 
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, String[] exceptions, Type ... argTypes) {
-        return getMethod(visitor,access,name,null,exceptions,Type.VOID_TYPE,argTypes);
+        return getMethod(visitor,access,name,null,exceptions,VOID_TYPE,argTypes);
     }
 
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, String signature,
@@ -182,6 +194,10 @@ public class ASMHelper {
         ClassWriter writer = new ClassWriter(COMPUTE_FRAMES);
         writer.visit(javaVer,access,type.getInternalName(),signature,superType.getInternalName(),interfaces);
         return writer;
+    }
+    
+    public static void invokeInit(MethodVisitor method, String name, String desc, boolean isInterface) {
+        method.visitMethodInsn(INVOKESPECIAL,name,"<init>",desc,isInterface);
     }
 
     public static void writeDebugByteCode(String classpath, byte[] bytes) {

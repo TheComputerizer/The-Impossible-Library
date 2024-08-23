@@ -13,8 +13,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
 
+@SuppressWarnings("unused")
 public abstract class InfernalMobsAPI implements ModAPI {
 
     public static final String MODID = "infernalmobs";
@@ -36,13 +37,7 @@ public abstract class InfernalMobsAPI implements ModAPI {
 
     @Override
     public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        switch(version) {
-            case V12: return loader==LEGACY;
-            case V18:
-            case V19: return loader==FORGE;
-            case V20: return loader==FORGE || loader==NEOFORGE;
-            default: return false;
-        }
+        return loader.isForge() || (loader.isNeoForge() && (version.isV21() || (version.isV20() && version!=V20_1)));
     }
 
     public boolean isInfernal(EntityAPI<?,?> entity) {

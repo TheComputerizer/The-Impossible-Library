@@ -35,7 +35,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.MOD;
 
 public class TILModFile1_16_5 extends ModFile {
@@ -69,7 +68,7 @@ public class TILModFile1_16_5 extends ModFile {
                     TILRef.logWarn("Skipping mod injection for {} since no data exists",entry.getKey().getModID());
                     continue;
                 }
-                for(Pair<String,byte[]> classBytes : data.writeModClass(JAVA8)) {
+                for(Pair<String,byte[]> classBytes : data.writeModClass()) {
                     String classpath = classBytes.getLeft();
                     byte[] bytes = classBytes.getRight();
                     scan.addWrittenClass(classpath,bytes);
