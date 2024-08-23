@@ -47,7 +47,7 @@ public class TILLanguageLoader implements IModLanguageLoader {
                     ClassLoader.class,ModFileScanData.class);
             if(Objects.isNull(constructor))
                 throw new NoSuchMethodException("Could not find constructor for "+MOD_CONTAINER+"!");
-            this.scan.defineClass(this.modClass,classLoader);
+            this.scan.defineClasses(classLoader);
             return (T)constructor.newInstance(info,this.modClass,classLoader,scanResults);
         } catch(InvocationTargetException ex) {
             TILRef.logFatal("Failed to build multiversion mod!",ex);

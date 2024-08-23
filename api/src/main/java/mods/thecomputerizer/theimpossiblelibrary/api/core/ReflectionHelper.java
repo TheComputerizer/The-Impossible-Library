@@ -102,16 +102,22 @@ public class ReflectionHelper {
         return Misc.applyNullable(clazz,c -> {
             try {
                 return c.getMethod(name,argTypes);
-            } catch(NoSuchMethodException ex) {
-                TILRef.logError("Failed to find method of name {} in class {} with args {}",name,clazz,argTypes);
-                return null;
+            } catch(NoSuchMethodException ignored) {
+                try {
+                    return c.getDeclaredMethod(name,argTypes);
+                } catch(NoSuchMethodException ex) {
+                    TILRef.logError("Failed to find method of name {} in class {} with args {}",name,clazz,argTypes);
+                    return null;
+                }
             }
         });
     }
 
+    @SuppressWarnings("DataFlowIssue")
     public static @Nullable Object invokeMethod(@Nullable Method method, Object invoker, Object ... args) {
         return Misc.applyNullable(method,m -> {
             try {
+                if(!method.isAccessible()) method.setAccessible(true);
                 return m.invoke(invoker,args);
             } catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException ex) {
                 TILRef.logError("Failed to invoke method {} with invoker {} and args {}",m,invoker,args,ex);

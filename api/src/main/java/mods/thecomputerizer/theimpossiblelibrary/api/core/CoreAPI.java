@@ -10,6 +10,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -27,24 +28,8 @@ public abstract class CoreAPI {
     static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
     static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
     
-    public static CoreAPI getInstance(ClassLoader loader) {
-        if(Objects.isNull(INSTANCE)) { //Try syncing the instance from the system classloader
-            TILDev.logDebug("CoreAPI instance is null! Trying to access via {}",loader);
-            TILDev.logDebug("Thread context class loader is also {}",Thread.currentThread().getContextClassLoader());
-            try {
-                Class<?> systemClass = ClassLoader.getSystemClassLoader().loadClass(OWNER.replace('/','.'));
-                TILRef.logDebug("System loaded class is {}",systemClass);
-                Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
-                TILRef.logDebug("System instance is {}",instance);
-                INSTANCE = parseFrom(String.valueOf(instance),loader);
-                TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
-            } catch(ClassNotFoundException ex) {
-                TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader",ex);
-            }
-        }
-        return INSTANCE;
-    }
     public static CoreAPI getInstance() {
+        if(Objects.isNull(INSTANCE)) syncSystemInstance(CoreAPI.class.getClassLoader());
         return INSTANCE;
     }
     
@@ -75,17 +60,42 @@ public abstract class CoreAPI {
     static CoreAPI parseFrom(String unparsed, ClassLoader loader) {
         TILRef.logError("incoming loader is {}",loader);
         try {
-            
-            Class<?> type = loader.loadClass(unparsed.split(" ")[0]);
+            String className = unparsed.split(" ")[0];
+            TILRef.logError("The class loader is transforming so we will assume it is the mod class loader");
+            Method method = ReflectionHelper.getMethod(ClassLoader.class, "findResource", String.class);
+            if(Objects.nonNull(method)) {
+                String classResource = className.replace('.','/')+".class";
+                Object obj = ReflectionHelper.invokeMethod(method,loader,classResource);
+                TILRef.logError("Tried to get URL for class {} and ended up with {}",classResource,obj);
+            } else TILRef.logError("Why doesn't the findResource method exist??");
+            Class<?> type = loader.loadClass(className);
             Object instance = type.newInstance();
-            TILDev.logDebug("parsed loader is {} from source {}",instance.getClass().getClassLoader(),
-                            instance.getClass().getProtectionDomain().getCodeSource().getLocation());
             TILRef.logError("CoreAPI loader is {}",CoreAPI.class.getClassLoader());
             return (CoreAPI)instance;
         } catch(ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
             TILRef.logError("Unable to parse CoreAPI instance from {}",unparsed,ex);
         }
         return null;
+    }
+    
+    public static void setInstance(Class<?> clazz) {
+        if(Objects.nonNull(INSTANCE)) return;
+        try {
+            INSTANCE = (CoreAPI)clazz.newInstance();
+        } catch(IllegalAccessException | InstantiationException ex) {
+            TILRef.logError("Failed to set CoreAPI instance using {}",clazz,ex);
+        }
+    }
+    
+    public static void syncSystemInstance(ClassLoader loader) {
+        try {
+            Class<?> systemClass = ClassLoader.getSystemClassLoader().loadClass(OWNER.replace('/','.'));
+            Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
+            INSTANCE = parseFrom(String.valueOf(instance),loader);
+            TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
+        } catch(ClassNotFoundException ex) {
+            TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader",ex);
+        }
     }
 
     protected final GameVersion version;
@@ -107,17 +117,10 @@ public abstract class CoreAPI {
         INSTANCE = this;
         TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
-        TILDev.logDebug("Initialized with {} from source {}",getClass().getClassLoader(),
-                        getClass().getProtectionDomain().getCodeSource().getLocation());
     }
 
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
-    
-    public String getPackageName(String base) {
-        return getVersion().getPackageName(getModLoader().getPackageName(base));
-    }
-    
     public abstract MultiVersionLoaderAPI getLoader();
 
     public Map<String,MultiVersionModData> getModData(File root) {
@@ -130,6 +133,10 @@ public abstract class CoreAPI {
     }
     
     protected abstract ModWriter getModWriter(MultiVersionModInfo info);
+    
+    public String getPackageName(String base) {
+        return getVersion().getPackageName(getModLoader().getPackageName(base));
+    }
 
     public abstract void initAPI();
     

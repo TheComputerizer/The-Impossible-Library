@@ -14,7 +14,7 @@ import org.objectweb.asm.Type;
 import java.util.Map;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.EMPTY_METHOD;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.PUBLIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.PUBLIC_STATIC;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
 public abstract class ModWriterForge extends ModWriter {
@@ -54,7 +54,7 @@ public abstract class ModWriterForge extends ModWriter {
             addEventSubscriber(inner,modid,modBus,client,server);
             for(String methodName : entryMethods) {
                 Type eventType = this.entryPointMethodTypes.get(methodName);
-                writeMethod(inner,cv -> ASMHelper.getMethod(cv,PUBLIC,methodName,eventType.getArgumentTypes()),
+                writeMethod(inner,cv -> ASMHelper.getMethod(cv,PUBLIC_STATIC,methodName,eventType.getArgumentTypes()),
                         method -> {
                             writeMethodAnnotation(method,SUBSCRIBE_EVENT,annotation -> {});
                             addEntryHooks(method,methodName);

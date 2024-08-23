@@ -5,12 +5,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import org.apache.logging.log4j.core.net.UrlConnectionFactory;
 import org.objectweb.asm.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.net.URLConnection;
 
 import static java.io.File.separatorChar;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DATA_DIRECTORY;
@@ -101,6 +105,22 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 
     public static AnnotationVisitor getAnnotation(MethodVisitor visitor, Type type, boolean runtime) {
         return visitor.visitAnnotation(type.getDescriptor(),runtime);
+    }
+    
+    public static byte[] getBytes(URL url) throws IOException {
+        return getBytes(UrlConnectionFactory.createConnection(url));
+    }
+    
+    public static byte[] getBytes(URLConnection connection) throws IOException {
+        return getBytes(connection.getInputStream());
+    }
+    
+    public static byte[] getBytes(InputStream stream) throws IOException {
+        return getBytes(new ClassReader(stream));
+    }
+    
+    public static byte[] getBytes(ClassReader reader) {
+        return getWriter(reader).toByteArray();
     }
 
     public static MethodVisitor getClassInit(ClassVisitor visitor) {
@@ -194,6 +214,10 @@ import static org.objectweb.asm.Type.VOID_TYPE;
         ClassWriter writer = new ClassWriter(COMPUTE_FRAMES);
         writer.visit(javaVer,access,type.getInternalName(),signature,superType.getInternalName(),interfaces);
         return writer;
+    }
+    
+    public static ClassWriter getWriter(ClassReader reader) {
+        return new ClassWriter(reader,COMPUTE_FRAMES);
     }
     
     public static void invokeInit(MethodVisitor method, String name, String desc, boolean isInterface) {

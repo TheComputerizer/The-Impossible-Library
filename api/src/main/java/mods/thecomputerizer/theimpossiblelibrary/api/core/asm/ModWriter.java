@@ -71,8 +71,8 @@ public abstract class ModWriter {
     }
     
     protected void addFields(ClassVisitor visitor) {
-        ASMHelper.addField(visitor,PRIVATE_STATIC,"INSTANCE",this.modType,null,null);
-        ASMHelper.addField(visitor,PRIVATE_FINAL,"entryPoint",this.entryPoint,null,null);
+        ASMHelper.addField(visitor,PUBLIC_STATIC,"INSTANCE",this.modType,null,null);
+        ASMHelper.addField(visitor,PUBLIC_FINAL,"entryPoint",this.entryPoint,null,null);
     }
     
     protected Pair<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,

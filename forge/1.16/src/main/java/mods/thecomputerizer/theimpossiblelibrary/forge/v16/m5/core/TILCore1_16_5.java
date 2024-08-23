@@ -25,7 +25,6 @@ public class TILCore1_16_5 extends CoreAPI {
     public TILCore1_16_5() {
         super(V16_5, FORGE, FORGE_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
         this.loader = new MultiVersionLoader1_16_5(this);
-        TILRef.logError("Class loader for 1.16.5 core {}",TILCore1_16_5.class.getClassLoader());
     }
 
     @Override

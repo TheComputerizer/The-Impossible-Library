@@ -72,7 +72,10 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
             while(manifests.hasMoreElements()) {
                 URL url = manifests.nextElement();
                 Path path = LibraryFinder.findJarPathFor(MANIFEST,"manifest_jar",url);
-                if(Files.isDirectory(path)) continue;
+                if(Files.isDirectory(path)) {
+                    TILRef.logDebug("Hi directory {}",path);
+                    continue;
+                }
                 String fileName = path.getFileName().toString();
                 TILRef.logDebug("Checking if file {} is the loader",fileName);
                 if(Objects.isNull(MultiVersionModCandidate.loaderFile) && fileName.equals(MODID+"-"+VERSION+".jar")) {
