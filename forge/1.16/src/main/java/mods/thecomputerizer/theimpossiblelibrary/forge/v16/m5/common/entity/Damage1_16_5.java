@@ -1,27 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.entity.DamageForge;
 import net.minecraft.util.DamageSource;
 
 import java.util.Objects;
 
-public class Damage1_16_5 extends DamageAPI {
-
-    private final DamageSource source;
+public class Damage1_16_5 extends DamageForge {
 
     public Damage1_16_5(DamageSource source, float amount) {
-        super(Objects.nonNull(source.getEntity()) ? new Entity1_16_5(source.getEntity()) : null,amount);
-        this.source = source;
-    }
-
-    @Override
-    public String getName() {
-        return this.source.msgId;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <S> S getSourceObject() {
-        return (S)this.source;
+        super(source,Objects.nonNull(source.getEntity()) ? new Entity1_16_5(source.getEntity()) : null,amount);
     }
 }

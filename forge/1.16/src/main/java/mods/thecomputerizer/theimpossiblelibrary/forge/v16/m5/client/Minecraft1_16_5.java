@@ -16,6 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.IWorld;
+import net.minecraftforge.fml.client.ClientModLoader;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -101,7 +102,7 @@ public class Minecraft1_16_5 implements MinecraftAPI {
 
     @Override
     public boolean isFinishedLoading() {
-        return false;
+        return !isLoading();
     }
 
     @Override
@@ -111,7 +112,7 @@ public class Minecraft1_16_5 implements MinecraftAPI {
 
     @Override
     public boolean isLoading() {
-        return false;
+        return ClientModLoader.isLoading() || Objects.isNull(this.mc);
     }
 
     @Override

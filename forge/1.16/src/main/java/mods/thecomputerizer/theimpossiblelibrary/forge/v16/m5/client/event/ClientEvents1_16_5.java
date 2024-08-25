@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.*;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.util.CustomTick1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
@@ -115,7 +115,7 @@ public class ClientEvents1_16_5 implements EventsAPI {
 
     @Override
     public void postCustomTick(CustomTick ticker) {
-        EVENT_BUS.post(new CustomTick1_16_5(ticker));
+        EVENT_BUS.post(new CustomTickForge(ticker));
     }
     
     @Override

@@ -1,21 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterSoundsEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.RegisterSoundsEventForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.sound.SoundEvent1_16_5;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class RegisterSoundsEvent1_16_5 extends RegisterSoundsEventWrapper<Register<SoundEvent>> {
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_SOUNDS;
+
+public class RegisterSoundsEvent1_16_5 extends RegisterSoundsEventForge {
     
-    @Override
-    public void cancel() {
-        this.event.setCanceled(true);
-    }
-    
-    @Override public void setEvent(Register<SoundEvent> event) {
-        super.setEvent(event);
-        setCanceled(event.isCanceled());
+    @SubscribeEvent
+    public static void onEvent(Register<SoundEvent> event) {
+        REGISTER_SOUNDS.invoke(event);
     }
     
     @Override public void register(SoundEventAPI<?> entry) {

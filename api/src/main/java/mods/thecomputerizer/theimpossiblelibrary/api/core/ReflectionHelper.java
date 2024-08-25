@@ -11,8 +11,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Objects;
 import java.util.function.Function;
+
+import static java.lang.reflect.Modifier.FINAL;
 
 @SuppressWarnings("unused") public class ReflectionHelper {
 
@@ -171,6 +174,23 @@ import java.util.function.Function;
     public static @Nullable Object invokeStaticMethod(@Nullable String className, String name, Class<?>[] argTypes,
             Object ... args) {
         return invokeMethod(className,name,null,argTypes,args);
+    }
+    
+    /**
+     * We do a little trolling
+     */
+    public static void modifyFinalField(@Nullable Object parent, @Nullable Field field, @Nullable Object value) {
+        if(Objects.isNull(field)) return;
+        int modifiers = field.getModifiers();
+        boolean isFinal = Modifier.isFinal(modifiers);
+        if(isFinal) setFieldModifiers(field,modifiers & ~FINAL); //Yep, you can do that
+        setFieldValue(parent,field,value);
+        if(isFinal) setFieldModifiers(field,modifiers); //Change it back since fields are usually final for a reason
+    }
+    
+    public static void setFieldModifiers(@Nullable Field field, int modifiers) {
+        if(Objects.nonNull(field)) setFieldValue(field,getField(Field.class,"modifiers"),modifiers);
+        else TILRef.logError("Cannot change the modifiers of null field");
     }
 
     public static void setFieldValue(@Nullable Object parent, @Nullable Field field, @Nullable Object value) {

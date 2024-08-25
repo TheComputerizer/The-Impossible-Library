@@ -10,6 +10,7 @@ public interface TextAPI<S> {
      */
     String getApplied();
     String getAppliedNoReset();
+    <C> C getAsComponent();
 
     TextHelperAPI<S> getHelper();
 

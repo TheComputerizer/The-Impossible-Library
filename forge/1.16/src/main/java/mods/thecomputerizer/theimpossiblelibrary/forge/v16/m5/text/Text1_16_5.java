@@ -13,6 +13,11 @@ public abstract class Text1_16_5 implements TextAPI<Style> {
         String resetStr = RESET.toString();
         return applied.endsWith(resetStr) ? applied.substring(0,applied.length()-resetStr.length()) : applied;
     }
+    
+    @SuppressWarnings("unchecked") @Override
+    public ITextComponent getAsComponent() {
+        return getComponent();
+    }
 
     public abstract ITextComponent getComponent();
     
