@@ -59,20 +59,14 @@ public abstract class CoreAPI {
     }
     
     static CoreAPI parseFrom(String unparsed, ClassLoader loader) {
-        TILRef.logError("incoming loader is {}",loader);
         try {
             String className = unparsed.split(" ")[0];
-            TILRef.logError("The class loader is transforming so we will assume it is the mod class loader");
-            Method method = ReflectionHelper.getMethod(ClassLoader.class, "findResource", String.class);
+            Method method = ReflectionHelper.getMethod(ClassLoader.class,"findResource",String.class);
             if(Objects.nonNull(method)) {
                 String classResource = className.replace('.','/')+".class";
                 Object obj = ReflectionHelper.invokeMethod(method,loader,classResource);
-                TILRef.logError("Tried to get URL for class {} and ended up with {}",classResource,obj);
             } else TILRef.logError("Why doesn't the findResource method exist??");
-            Class<?> type = loader.loadClass(className);
-            Object instance = type.newInstance();
-            TILRef.logError("CoreAPI loader is {}",CoreAPI.class.getClassLoader());
-            return (CoreAPI)instance;
+            return (CoreAPI)loader.loadClass(className).newInstance();
         } catch(ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
             TILRef.logError("Unable to parse CoreAPI instance from {}",unparsed,ex);
         }
