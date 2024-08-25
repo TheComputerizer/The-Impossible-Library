@@ -23,11 +23,8 @@ import java.util.Objects;
 
 public class Minecraft1_16_5 implements MinecraftAPI {
 
-    private static Minecraft1_16_5 INSTANCE;
-
     public static Minecraft1_16_5 getInstance() {
-        if(Objects.isNull(INSTANCE)) INSTANCE = new Minecraft1_16_5(Minecraft.getInstance());
-        return INSTANCE;
+        return new Minecraft1_16_5(Minecraft.getInstance());
     }
 
     private final Minecraft mc;

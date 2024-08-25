@@ -71,7 +71,7 @@ public class TILModFile1_16_5 extends ModFile {
                 for(Pair<String,byte[]> classBytes : data.writeModClass()) {
                     String classpath = classBytes.getLeft();
                     byte[] bytes = classBytes.getRight();
-                    scan.addWrittenClass(classpath,bytes);
+                    scan.addWrittenClass(classpath,data.getInfo(),bytes);
                     ModClassVisitor visitor = new ModClassVisitor();
                     ClassReader reader = new ClassReader(bytes);
                     reader.accept(visitor,0);

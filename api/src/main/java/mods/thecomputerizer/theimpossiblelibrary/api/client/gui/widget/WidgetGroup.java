@@ -370,11 +370,11 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         eachWidget(widget -> widget.onResolutionUpdated(window));
     }
     
-    @Override public boolean scrollDown(int scroll) {
+    @Override public boolean scrollDown(double scroll) {
         return checkEachScrollable(scrollable -> scrollable.scrollDown(scroll));
     }
     
-    @Override public boolean scrollUp(int scroll) {
+    @Override public boolean scrollUp(double scroll) {
         return checkEachScrollable(scrollable -> scrollable.scrollUp(scroll));
     }
     

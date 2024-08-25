@@ -32,8 +32,6 @@ import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
 /**
  Targeted version of ClasspathLocator
@@ -78,7 +76,7 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
                 }
                 String fileName = path.getFileName().toString();
                 TILRef.logDebug("Checking if file {} is the loader",fileName);
-                if(Objects.isNull(MultiVersionModCandidate.loaderFile) && fileName.equals(MODID+"-"+VERSION+".jar")) {
+                if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
                     TILRef.logDebug("File is the loader");
                     MultiVersionModCandidate.loaderFile = path.toFile();
                 }

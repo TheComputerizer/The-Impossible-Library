@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.test.ClientTests.TEST_KEY;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 /**
  * For internal use only
@@ -58,7 +59,7 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     @Override
     public void onPreRegistration() {
         devTrace("onPreRegistration");
-        EventHelper.initTILListeners(true,TILDev.DEV);
+        EventHelper.initTILListeners(true,DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
     }
 

@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
-import java.net.URLClassLoader;
 import java.util.*;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
@@ -36,14 +35,30 @@ public class MultiVersionModCandidate {
         this.modClassNames = new HashSet<>();
     }
 
-    public void addCoreClasses(String ... classes) {
-        TILRef.logDebug("Registering {} coremod classes for file `{}` -> `{}`",classes.length,this.file,classes);
-        this.coreClassNames.addAll(Arrays.asList(classes));
+    public void addCoreClasses(Collection<String> foundCoreClasses, String ... classes) {
+        TILRef.logDebug("Attempting to register {} coremod classes for file `{}` -> `{}`",
+                        classes.length,this.file,classes);
+        for(String className : classes) {
+            if(foundCoreClasses.contains(className)) {
+                TILRef.logDebug("Skipping already known core class {}",className);
+                continue;
+            }
+            foundCoreClasses.add(className);
+            this.coreClassNames.add(className);
+        }
     }
 
-    public void addModClasses(String ... classes) {
-        TILRef.logDebug("Registering {} mod classes for file `{}` -> `{}`",classes.length,this.file,classes);
-        this.modClassNames.addAll(Arrays.asList(classes));
+    public void addModClasses(Collection<String> foundModClasses, String ... classes) {
+        TILRef.logDebug("Attempting to register {} mod classes for file `{}` -> `{}`",
+                        classes.length,this.file,classes);
+        for(String className : classes) {
+            if(foundModClasses.contains(className)) {
+                TILRef.logDebug("Skipping already known mod class {}",className);
+                continue;
+            }
+            foundModClasses.add(className);
+            this.modClassNames.add(className);
+        }
     }
 
     public boolean canBeLoaded(@Nullable Class<?> clazz, Class<?> superClass, Class<? extends Annotation> annotation) {
@@ -57,7 +72,8 @@ public class MultiVersionModCandidate {
         } catch(ClassNotFoundException ignored) {}
         TILRef.logDebug("Attempting to add source for class that has not yet been loaded");
         try {
-            ClassHelper.loadURL((URLClassLoader)classLoader,this.file.toURI().toURL());
+            if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, this.file.toURI().toURL()))
+                TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}",name,classLoader);
         } catch(MalformedURLException | ClassCastException ex) {
             TILRef.logError("Error getting URL for source file `{}`!",this.file.getPath(),ex);
             return null;
@@ -97,7 +113,7 @@ public class MultiVersionModCandidate {
         }
     }
     
-    public boolean hasCoreMods() {
+    @SuppressWarnings("unused") public boolean hasCoreMods() {
         return !this.coreClassNames.isEmpty();
     }
 

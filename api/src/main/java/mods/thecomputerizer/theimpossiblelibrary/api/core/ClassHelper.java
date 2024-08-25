@@ -7,12 +7,17 @@ import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Objects;
+import java.util.function.BiFunction;
 
-public class ClassHelper {
+@SuppressWarnings("unused") public class ClassHelper {
 
     private static final MethodHandle CLASS_DEFINER = ReflectionHelper.findMethodHandle(ClassLoader.class,
             "defineClass",String.class,byte[].class,int.class,int.class);
+    private static final MethodHandle CLASS_RESOLVER = ReflectionHelper.findMethodHandle(ClassLoader.class,
+            "resolveClass",Class.class);
     private static final MethodHandle URL_LOADER = ReflectionHelper.findMethodHandle(URLClassLoader.class,
             "addURL", URL.class);
 
@@ -43,7 +48,10 @@ public class ClassHelper {
     public static String className(@Nullable Class<?> clazz, boolean simple) {
         return Objects.nonNull(clazz) ? (simple ? clazz.getSimpleName() : clazz.getName()) : "";
     }
-
+    
+    /**
+     * Defines and resolves a class from byteCode
+     */
     @SneakyThrows
     @SuppressWarnings("DataFlowIssue")
     public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
@@ -56,6 +64,35 @@ public class ClassHelper {
 
     public static String descriptor(String classpath) {
         return StringUtils.isNotBlank(classpath) ? "L"+internalName(classpath)+";" : "";
+    }
+    
+    public static @Nullable String getResourcePath(@Nullable Class<?> clazz) {
+        return Objects.nonNull(clazz) ? clazz.getName().replace('.','/')+".class" : null;
+    }
+    
+    public static @Nullable URL getSourceURL(@Nullable String className, ClassLoader loader) {
+        if(StringUtils.isNotBlank(className)) {
+            try {
+                return getSourceURL(loader.loadClass(className));
+            } catch(ClassNotFoundException ex) {
+                TILRef.logError("Failed to find class {} on loader {}", className, loader, ex);
+            }
+        } else TILRef.logError("Cannot get source URL for blank class name");
+        return null;
+    }
+    
+    public static @Nullable URL getSourceURL(@Nullable Class<?> clazz) {
+        if(Objects.nonNull(clazz)) {
+            ProtectionDomain domain = clazz.getProtectionDomain();
+            if(Objects.nonNull(domain)) {
+                CodeSource source = domain.getCodeSource();
+                if(Objects.nonNull(source)) return source.getLocation();
+                TILRef.logError("Cannot get URL for null CodeSource of {}",clazz);
+            }
+            TILRef.logError("Cannot get URL for null ProtectionDomain of {}",clazz);
+        }
+        TILRef.logError("Cannot get URL for null class");
+        return null;
     }
 
     /**
@@ -100,6 +137,22 @@ public class ClassHelper {
                     classLoader.getClass().getName());
             return null;
         }
+    }
+    
+    public static @Nullable Class<?>[] findClasses(String ... names) {
+        return ArrayHelper.mapTo(names,Class.class,ClassHelper::findClass);
+    }
+    
+    public static @Nullable Class<?>[] findClasses(ClassLoader classLoader, String ... names) {
+        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,classLoader));
+    }
+    
+    public static @Nullable Class<?>[] findClasses(boolean inititalize, String ... names) {
+        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,inititalize));
+    }
+    
+    public static @Nullable Class<?>[] findClasses(boolean inititalize, ClassLoader classLoader, String ... names) {
+        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,inititalize,classLoader));
     }
 
     public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName) {
@@ -163,14 +216,29 @@ public class ClassHelper {
     }
 
     @SneakyThrows
-    public static void loadURL(URLClassLoader classLoader, URL url) {
+    public static boolean loadURL(URLClassLoader classLoader, URL url) {
         TILRef.logTrace("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
-        if(Objects.nonNull(URL_LOADER)) URL_LOADER.invoke(classLoader,url);
+        if(Objects.nonNull(URL_LOADER)) {
+            URL_LOADER.invoke(classLoader,url);
+            return true;
+        }
         else TILRef.logError("Cannot load URL `{}` since the URL_LOADER handle failed to intialize",url);
+        return false;
     }
 
     public static String packageName(@Nullable Class<?> clazz) {
         return Objects.nonNull(clazz) ? clazz.getPackage().getName() : "";
+    }
+    
+    /**
+     * Defines and resolves a class from byteCode
+     */
+    @SneakyThrows
+    @SuppressWarnings("DataFlowIssue")
+    public static Class<?> resolveClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
+        if(Objects.nonNull(clazz)) CLASS_RESOLVER.invoke(classLoader,clazz);
+        else TILRef.logFatal("Cannot resolve null defined class!");
+        return clazz;
     }
 
     /**
@@ -204,6 +272,39 @@ public class ClassHelper {
     public static String signatureInternal(String name, String ... parameterNames) {
         if(StringUtils.isBlank(name)) return "";
         return signatureDesc("L"+name+";",ArrayHelper.mapTo(parameterNames,String.class,p -> "L"+p+";"));
+    }
+    
+    public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className) {
+        syncSourcesForClass(syncFrom,syncTo,className,className);
+    }
+    
+    public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
+            BiFunction<ClassLoader,URL,Boolean> urlLoader) {
+        syncSourcesForClass(syncFrom,syncTo,className,urlLoader,className);
+    }
+    
+    public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
+            @Nullable String ... classesToLoad) {
+        syncSourcesForClass(syncFrom,syncTo,className, (loader,url) ->
+                CoreAPI.getInstance().addURLToClassLoader(loader,url),classesToLoad);
+    }
+    
+    
+    public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
+            BiFunction<ClassLoader,URL,Boolean> urlLoader, @Nullable String ... classesToLoad) {
+        try {
+            TILRef.logDebug("Attempting to sync class loaders for {} ({} -> {})",className,syncFrom,syncTo);
+            URL url = getSourceURL(syncFrom.loadClass(className));
+            if(Objects.nonNull(url)) {
+                TILRef.logDebug("Syncing URL {}",url);
+                if(!urlLoader.apply(syncTo,url))
+                    TILRef.logError("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo);
+                else if(Objects.nonNull(classesToLoad))
+                    for(String classToLoad : classesToLoad) findClass(classToLoad,syncTo);
+            } else TILRef.logDebug("Not syncing null URL");
+        } catch(ClassNotFoundException ex) {
+            TILRef.logError("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo,ex);
+        }
     }
 
     /**

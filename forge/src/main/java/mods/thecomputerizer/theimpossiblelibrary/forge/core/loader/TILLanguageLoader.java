@@ -35,7 +35,7 @@ public class TILLanguageLoader implements IModLanguageLoader {
     }
     
     /**
-     * Make all the local variable final like how FML does it.
+     * Make all the local variables final like how FML does it.
      */
     @SuppressWarnings("unchecked") @Override
     public <T> T loadMod(IModInfo info, ClassLoader classLoader, ModFileScanData scanResults) {

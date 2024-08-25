@@ -10,11 +10,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static org.apache.logging.log4j.Level.*;
 
 @SuppressWarnings("unused") public class TILDev {
 
     public static final boolean DEV = Boolean.parseBoolean(System.getProperty("tilDev")); //`-DtilDev=true`
+    private static final String LOADER_FILE = System.getProperty("tilLoaderFile",MODID+"-"+VERSION+".jar");
     private static final Logger LOGGER = DEV ? LogManager.getLogger("TIL DEV") : null;
     public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(System.getProperty("tilClassPathCoreMods"));
     public static final Set<String> CLASSPATH_MODS = parseClasspathMods(System.getProperty("tilClassPathMods"));
@@ -29,6 +32,14 @@ import static org.apache.logging.log4j.Level.*;
     
     public static <R> @Nullable R devSupply(Supplier<R> supplier) {
         return DEV ? supplier.get() : null;
+    }
+    
+    /**
+     * When used as a local dependency, the file needs to be remapped which can confuse the loader's auto-detection.
+     * The loader file can be set manually via -DtilLoaderFile
+     */
+    public static boolean isLoader(String fileName) {
+        return LOADER_FILE.equals(fileName);
     }
 
     public static void log(Level level, String msg, Object ... args) {

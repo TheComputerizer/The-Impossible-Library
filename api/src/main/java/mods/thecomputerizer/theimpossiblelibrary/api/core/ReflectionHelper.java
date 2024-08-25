@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
@@ -11,8 +12,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
+import java.util.function.Function;
 
-public class ReflectionHelper {
+@SuppressWarnings("unused") public class ReflectionHelper {
 
     public static final Lookup LOOKUP = MethodHandles.lookup();
 
@@ -41,8 +43,16 @@ public class ReflectionHelper {
         Class<?> clazz = ClassHelper.findClass(name);
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
     }
+    
+    public static MethodHandle findMethodHandle(@Nullable String className, String name, Class<?> ... args) {
+        return findMethodHandle(StringUtils.isBlank(className) ? null : ClassHelper.findClass(className),name,args);
+    }
 
-    public static MethodHandle findMethodHandle(Class<?> clazz, String name, Class<?> ... args) {
+    public static MethodHandle findMethodHandle(@Nullable Class<?> clazz, String name, Class<?> ... args) {
+        if(Objects.isNull(clazz)) {
+            TILRef.logError("Cannot find method handle of null class!");
+            return null;
+        }
         try {
             Method method = clazz.getDeclaredMethod(name,args);
             method.setAccessible(true);
@@ -51,6 +61,10 @@ public class ReflectionHelper {
             TILRef.logError("Unable to find method handle of name `{}` in class `{}` with args `{}`",name,clazz,args,ex);
             return null;
         }
+    }
+    
+    public static @Nullable Field getField(@Nullable String className, String fieldName) {
+        return getField(StringUtils.isBlank(className) ? null : ClassHelper.findClass(className),fieldName);
     }
 
     public static @Nullable Field getField(@Nullable Class<?> clazz, String fieldName) {
@@ -97,6 +111,10 @@ public class ReflectionHelper {
             return null;
         });
     }
+    
+    public static @Nullable Method getMethod(@Nullable String className, String name, Class<?> ... argTypes) {
+        return getMethod(StringUtils.isBlank(className) ? null : ClassHelper.findClass(className),name,argTypes);
+    }
 
     public static @Nullable Method getMethod(@Nullable Class<?> clazz, String name, Class<?> ... argTypes) {
         return Misc.applyNullable(clazz,c -> {
@@ -114,7 +132,7 @@ public class ReflectionHelper {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    public static @Nullable Object invokeMethod(@Nullable Method method, Object invoker, Object ... args) {
+    public static @Nullable Object invokeMethod(@Nullable Method method, @Nullable Object invoker, Object ... args) {
         return Misc.applyNullable(method,m -> {
             try {
                 if(!method.isAccessible()) method.setAccessible(true);
@@ -124,6 +142,35 @@ public class ReflectionHelper {
                 return null;
             }
         });
+    }
+    
+    public static @Nullable Object invokeMethod(@Nullable Class<?> clazz, String name, @Nullable Object invoker,
+            Class<?>[] argTypes, Object ... args) {
+        return invokeMethod(getMethod(clazz,name,argTypes),invoker,args);
+    }
+    
+    public static @Nullable Object invokeMethod(@Nullable String className, String name,
+            @Nullable Function<Class<?>,Object> invokerFunc, Class<?>[] argTypes, Object ... args) {
+        if(StringUtils.isBlank(className)) {
+            TILRef.logError("Tried to invoke method {} with null class name",name);
+            return null;
+        }
+        Class<?> clazz = ClassHelper.findClass(className);
+        return invokeMethod(clazz,name,Objects.nonNull(invokerFunc) ? invokerFunc.apply(clazz) : null,argTypes,args);
+    }
+    
+    public static <T> @Nullable Object invokeStaticMethod(@Nullable Method method, Object ... args) {
+        return invokeMethod(method,null,args);
+    }
+    
+    public static <T> @Nullable Object invokeStaticMethod(@Nullable Class<T> clazz, String name, Class<?>[] argTypes,
+            Object ... args) {
+        return invokeMethod(clazz,name,null,argTypes,args);
+    }
+    
+    public static @Nullable Object invokeStaticMethod(@Nullable String className, String name, Class<?>[] argTypes,
+            Object ... args) {
+        return invokeMethod(className,name,null,argTypes,args);
     }
 
     public static void setFieldValue(@Nullable Object parent, @Nullable Field field, @Nullable Object value) {

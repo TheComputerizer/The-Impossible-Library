@@ -11,6 +11,7 @@ import org.objectweb.asm.Type;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -118,7 +119,9 @@ public abstract class CoreAPI {
         TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
     }
-
+    
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public abstract boolean addURLToClassLoader(ClassLoader loader, URL url);
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
     public abstract MultiVersionLoaderAPI getLoader();
@@ -266,7 +269,7 @@ public abstract class CoreAPI {
     public enum ModLoader {
         FABRIC("Fabric"),
         FORGE("Forge"),
-        LEGACY("Forge"),
+        LEGACY("Legacy"),
         NEOFORGE("NeoForge");
 
         private final String name;

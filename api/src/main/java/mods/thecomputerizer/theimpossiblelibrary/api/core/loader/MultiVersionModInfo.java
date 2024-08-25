@@ -2,18 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DESCRIPTION;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
 @Getter
 public class MultiVersionModInfo {
-
-    public static final MultiVersionModInfo API_INFO = new MultiVersionModInfo(TILCommonEntryPoint.class,MODID,NAME,
-            VERSION,DESCRIPTION,true,true);
 
     public static MultiVersionModInfo get(Class<? extends CommonEntryPoint> clazz, MultiVersionMod mod) {
         return new MultiVersionModInfo(clazz,mod.modid(),mod.modName(),mod.modVersion(),mod.modDescription(),

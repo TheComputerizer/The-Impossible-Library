@@ -16,6 +16,8 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12_2;
@@ -27,10 +29,12 @@ public class TILCore1_12_2 extends CoreAPI {
 
     public static final Reference LEGACY_REF = TILRef.instance(FMLLaunchHandler.side()::isClient,"");
 
+    @SuppressWarnings("unused") //Accessed via ASM
     public static ModContainer getFMLModContainer(String modid) {
         return InjectedModCandidate1_12_2.findModContainer(modid);
     }
-
+    
+    @SuppressWarnings("unused") //Accessed via ASM
     public static File getModSource(String modid) {
         return InjectedModCandidate1_12_2.findSource(modid);
     }
@@ -38,8 +42,12 @@ public class TILCore1_12_2 extends CoreAPI {
     private final MultiVersionLoader1_12_2 loader;
 
     public TILCore1_12_2() {
-        super(V12_2, LEGACY, LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
+        super(V12_2,LEGACY,LEGACY_REF.isClient() ? DEDICATED_CLIENT : DEDICATED_SERVER);
         this.loader = new MultiVersionLoader1_12_2(this);
+    }
+    
+    @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
+        return ClassHelper.loadURL((URLClassLoader)loader,url);
     }
     
     @Override

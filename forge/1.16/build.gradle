@@ -64,7 +64,7 @@ minecraft {
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'trace'
+            property 'forge.logging.console.level', 'debug'
             jvmArgs args
         }
         server {
@@ -119,14 +119,14 @@ dependencies {
     //mod support dependencies
     implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
     implementation(fg.deobf("curse.maven:blueskies-312918:${blueskies_version}"))
-    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_base_version}:${bookshelf_version}"))
     implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
     implementation(fg.deobf("curse.maven:configured-457570:${configured_version}"))
     implementation(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
     implementation(fg.deobf("curse.maven:enhancedcelestials-438447:${enhancedcelestials_version}"))
-    implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_base_version}:${gamestages_version}"))
     implementation(fg.deobf("curse.maven:sereneseasons-291874:${seasons_version}"))
-    implementation(fg.deobf("com.legacy:structure-gel:${minecraft_base_version}-${structuregel_version}"))
+    implementation(fg.deobf("curse.maven:structure-gel-378802:${structuregel_version}"))
+    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_base_version}:${bookshelf_version}"))
+    implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_base_version}:${gamestages_version}"))
 
     runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_base_version}:${jei_version}"))
 }
@@ -159,6 +159,7 @@ compileTestJava {
 }
 
 jar {
+    from(project(':forge').jar.archiveFile.collect { zipTree(it) })
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
@@ -172,12 +173,10 @@ jar {
 }
 
 shadowJar {
-    from(project(':api').jar.archiveFile.collect { zipTree(it) },
-            project(':forge').jar.archiveFile.collect { zipTree(it) })
+    from(project(':api').jar.archiveFile.collect { zipTree(it) })
 }
 
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
 tasks.jar.finalizedBy('reobfJar')
-tasks.jar.dependsOn(':api:build')
 tasks.jar.dependsOn(':forge:build')

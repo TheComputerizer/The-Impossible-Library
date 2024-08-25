@@ -102,12 +102,12 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     
     protected abstract void recalculatePositions();
     
-    protected double scroll(int scrollAmount) {
-        return this.scrollSpeed*((double)Math.abs(scrollAmount));
+    protected double scroll(double scrollAmount) {
+        return this.scrollSpeed*Math.abs(scrollAmount);
     }
     
     @Override
-    public boolean scrollDown(int scroll) {
+    public boolean scrollDown(double scroll) {
         if(doesNotRequireHoverToScroll() || isHoveringForScroll()) {
             double height = getHeight();
             double elementsHeight = getElementsHeight();
@@ -120,7 +120,7 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     }
     
     @Override
-    public boolean scrollUp(int scroll) {
+    public boolean scrollUp(double scroll) {
         if(doesNotRequireHoverToScroll() || isHoveringForScroll()) {
             if(this.scrollOffset>0d) {
                 this.scrollOffset = Math.max(this.scrollOffset-(scroll(scroll)),0d);

@@ -71,7 +71,6 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
             this.wrapped.draw(ctx,VectorHelper.zero3D(),x,y);
         }
         updateScreen();
-        initGui();
     }
     
     private KeyStateCache getKeyState() {

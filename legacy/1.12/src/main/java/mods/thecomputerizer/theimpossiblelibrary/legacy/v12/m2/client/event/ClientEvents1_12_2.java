@@ -10,13 +10,13 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.even
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.util.CustomTick1_12_2;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class ClientEvents1_12_2 implements EventsAPI {
 
@@ -111,11 +111,11 @@ public class ClientEvents1_12_2 implements EventsAPI {
 
     @Override
     public void postCustomTick(CustomTick ticker) {
-        MinecraftForge.EVENT_BUS.post(new CustomTick1_12_2(ticker));
+        EVENT_BUS.post(new CustomTick1_12_2(ticker));
     }
 
     @Override
     public <E extends EventWrapper<?>> void register(E wrapper) {
-        MinecraftForge.EVENT_BUS.register(wrapper.getClass());
+        EVENT_BUS.register(wrapper.getClass());
     }
 }

@@ -8,6 +8,7 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V16_5;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
@@ -15,7 +16,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 public class ModHelper1_16_5 extends ModHelperAPI {
 
     public ModHelper1_16_5(Side side) {
-        super(V16_5, FORGE, side);
+        super(V16_5,FORGE,side);
     }
 
     @Override
@@ -32,9 +33,9 @@ public class ModHelper1_16_5 extends ModHelperAPI {
     @Override
     public String getModName(String modid) {
         String name = super.getModName(modid);
-        ModList list = ModList.get();
-        if(name.equals(modid) && list.isLoaded(modid)) {
-            for(ModInfo info : list.getMods()) {
+        ModList mods = ModList.get();
+        if(Objects.nonNull(mods) && name.equals(modid) && mods.isLoaded(modid)) {
+            for(ModInfo info : mods.getMods()) {
                 if(modid.equals(info.getModId())) {
                     name = info.getDisplayName();
                     break;
@@ -46,6 +47,7 @@ public class ModHelper1_16_5 extends ModHelperAPI {
 
     @Override
     public boolean isModLoaded(String modid) {
-        return ModList.get().isLoaded(modid);
+        ModList mods = ModList.get();
+        return Objects.nonNull(mods) && mods.isLoaded(modid);
     }
 }

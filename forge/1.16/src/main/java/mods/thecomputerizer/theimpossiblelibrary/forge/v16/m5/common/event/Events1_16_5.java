@@ -13,7 +13,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.util.CustomTick1_1
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import org.joml.Vector3d;
 
@@ -24,6 +23,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.OFFHAND;
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 @SuppressWarnings("unused") public class Events1_16_5 implements EventsAPI {
 
@@ -197,11 +197,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.OFF
 
     @Override
     public void postCustomTick(CustomTick ticker) {
-        MinecraftForge.EVENT_BUS.post(new CustomTick1_16_5(ticker));
+        EVENT_BUS.post(new CustomTick1_16_5(ticker));
     }
 
     @Override
     public <E extends EventWrapper<?>> void register(E wrapper) {
-        MinecraftForge.EVENT_BUS.addListener(event -> wrapper.getType().invoke(event));
+        //EVENT_BUS.addListener(event -> wrapper.getType().invoke(event)); TODO Don't use a consumer here
     }
 }

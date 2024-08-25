@@ -17,7 +17,7 @@ jar {
     manifest {
         attributes([
                 'FMLAT': 'theimpossiblelibrary_at.cfg',
-                'FMLCorePlugin': legacy_1_12.mod_plugin,
+                'FMLCorePlugin': "${legacy_1_12.mod_plugin}1_12_2",
                 'ForceLoadAsMod': true,
                 'Implementation-Title': name,
                 'Implementation-Version': version,
