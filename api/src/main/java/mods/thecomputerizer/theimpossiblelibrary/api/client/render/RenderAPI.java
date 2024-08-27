@@ -55,8 +55,8 @@ public interface RenderAPI {
      * POSITION_TEX_COLOR
      */
     VertexWrapper getBufferBuilderPTC(int mode, int vertices);
-    int getDirectMouseX();
-    int getDirectMouseY();
+    double getDirectMouseX();
+    double getDirectMouseY();
     GLAPI getGLAPI();
     RenderAPI init(Object context);
     void popMatrix();

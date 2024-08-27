@@ -20,6 +20,7 @@ public class SoundHelper1_16_5 implements SoundHelperAPI<ISound> {
     }
     
     @Override public float getCategoryVolume(String name) {
+        if(name.equals("record")) name = "records";
         SoundCategory category = SoundCategory.valueOf(name.toUpperCase());
         return Objects.nonNull(category) ? Minecraft.getInstance().options.getSoundSourceVolume(category) : 0f;
     }

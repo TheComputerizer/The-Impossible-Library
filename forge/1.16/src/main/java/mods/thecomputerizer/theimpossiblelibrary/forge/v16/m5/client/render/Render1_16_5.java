@@ -149,12 +149,12 @@ public class Render1_16_5 implements RenderAPI {
         return new VertexWrapper1_16_5(mode,POSITION_TEX_COLOR,vertices,3,2,4);
     }
     
-    @Override public int getDirectMouseX() { //TODO
-        return 0;
+    @Override public double getDirectMouseX() {
+        return Minecraft.getInstance().mouseHandler.xpos();
     }
     
-    @Override public int getDirectMouseY() { //TODO
-        return 0;
+    @Override public double getDirectMouseY() {
+        return Minecraft.getInstance().mouseHandler.ypos();
     }
 
     @Override

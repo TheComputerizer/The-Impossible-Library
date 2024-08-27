@@ -17,7 +17,7 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     @Setter protected double scrollSpeed;
     
     protected ScrollableWidgetGroup() {
-        this.scrollSpeed = 0.001d;
+        this.scrollSpeed = 0.1d;
     }
     
     @Override public void addWidget(Widget widget) {

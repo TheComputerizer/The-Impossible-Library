@@ -61,6 +61,10 @@ public class TILRef {
         return getter.apply(getCommonAPI());
     }
 
+    public static String getNetworkVersion() {
+        return MODID+VERSION.replace('.','_');
+    }
+    
     /**
      * Initializes the base reference API
      */

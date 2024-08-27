@@ -31,14 +31,14 @@ public class RenderHelper {
         return Objects.nonNull(ctx) ? ctx.getHeightRatio() : 1d;
     }
     
-    public static int getDirectMouseX() {
+    public static double getDirectMouseX() {
         RenderAPI renderer = ClientHelper.getRenderer();
-        return Objects.nonNull(renderer) ? renderer.getDirectMouseX() : 0;
+        return Objects.nonNull(renderer) ? renderer.getDirectMouseX() : 0d;
     }
     
-    public static int getDirectMouseY() {
+    public static double getDirectMouseY() {
         RenderAPI renderer = ClientHelper.getRenderer();
-        return Objects.nonNull(renderer) ? renderer.getDirectMouseY() : 0;
+        return Objects.nonNull(renderer) ? renderer.getDirectMouseY() : 0d;
     }
     
     public static double getScaledFontHeight() {

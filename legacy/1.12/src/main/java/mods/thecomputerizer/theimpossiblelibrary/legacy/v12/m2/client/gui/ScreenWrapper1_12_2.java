@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Minecraft1_12_2;
 import net.minecraft.client.Minecraft;
@@ -83,9 +84,10 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     
     @Override public void handleMouseInput() throws IOException {
         if(Objects.nonNull(this.wrapped)) {
-            int scroll = Mouse.getEventDWheel();
-            if(scroll>0 && this.wrapped.scrollUp(scroll)) return;
-            if(scroll<0 && this.wrapped.scrollDown(scroll)) return;
+            double scroll = Mouse.getEventDWheel();
+            if(scroll>0d) {
+                if(this.wrapped.scrollUp(MathHelper.clamp(scroll,-1d,1d))) return;
+            } else if(scroll<0d && this.wrapped.scrollDown(MathHelper.clamp(scroll,-1d,1d))) return;
         }
         super.handleMouseInput();
     }

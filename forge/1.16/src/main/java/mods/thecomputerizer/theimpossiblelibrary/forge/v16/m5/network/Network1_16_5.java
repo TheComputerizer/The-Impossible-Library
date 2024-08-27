@@ -19,8 +19,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import javax.annotation.Nullable;
@@ -30,7 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static net.minecraftforge.fml.network.NetworkDirection.*;
-import static org.apache.http.params.CoreProtocolPNames.PROTOCOL_VERSION;
+import static net.minecraftforge.fml.network.PacketDistributor.PLAYER;
 
 public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection> {
 
@@ -85,7 +84,7 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @SuppressWarnings("unchecked")
     @Override
     public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)new MessageWrapper1_16_5();
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
@@ -93,7 +92,7 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @SuppressWarnings("unchecked")
     @Override
     public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)new MessageWrapper1_16_5();
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
@@ -101,7 +100,7 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @SuppressWarnings("unchecked")
     @Override
     public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)new MessageWrapper1_16_5();
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
@@ -110,9 +109,11 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @Override
     public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network))
-            this.network = NetworkRegistry.ChannelBuilder.named((ResourceLocation)TILRef.res("main_network").getInstance())
-                .clientAcceptedVersions(PROTOCOL_VERSION::equals).serverAcceptedVersions(PROTOCOL_VERSION::equals)
-                .networkProtocolVersion(() -> PROTOCOL_VERSION).simpleChannel();
+            this.network = ChannelBuilder.named((ResourceLocation)TILRef.res("main_network").getInstance())
+                    .clientAcceptedVersions(version -> true)
+                    .serverAcceptedVersions(version -> true)
+                    .networkProtocolVersion(TILRef::getNetworkVersion)
+                    .simpleChannel();
         return this.network;
     }
 
@@ -140,17 +141,21 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
         return TagHelper.makeCompoundTag();
     }
 
-    @Override
+    //TODO I'm pretty sure the login directions need an extra flag to be set
+    @SuppressWarnings("unchecked") @Override
     public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
-        getNetwork().registerMessage(id,MessageWrapper1_16_5.class,MessageWrapperAPI::encode,MessageWrapper1_16_5::new,
+        getNetwork().registerMessage(id,(Class<MessageWrapper1_16_5>)MessageWrapper1_16_5.getClass(dir.getDirection()),
+                MessageWrapperAPI::encode, buf -> MessageWrapper1_16_5.getInstance(dir.getDirection(),buf),
                 (message,supplier) -> message.handle(supplier.get()),Optional.of(dir.getDirection()));
     }
-
+    
+    //TODO Does not support login direction
     @Override
     public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        getNetwork().send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)player),(MessageWrapper1_16_5)message);
+        getNetwork().send(PLAYER.with(() -> (ServerPlayerEntity)player),(MessageWrapper1_16_5)message);
     }
-
+    
+    //TODO Does not support login direction
     @Override
     public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
         getNetwork().sendToServer((MessageWrapper1_16_5)message);

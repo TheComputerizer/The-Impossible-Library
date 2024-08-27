@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DESCRIPTION;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
@@ -19,7 +20,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 /**
  * For internal use only
  */
-@MultiVersionMod(modid = MODID, modName = NAME, modVersion = VERSION)
+@MultiVersionMod(modDescription = DESCRIPTION, modid = MODID, modName = NAME, modVersion = VERSION)
 public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     private static TILCommonEntryPoint INSTANCE;
@@ -65,7 +66,6 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     @Override
     public void onPreRegistration() {
         devTrace("onPreRegistration");
-        NetworkHandler.load();
         EventHelper.initTILListeners(false,TILDev.DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
         if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onPreRegistration();
@@ -99,6 +99,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     public void onLoadComplete() {
         devTrace("onLoadComplete");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onLoadComplete();
+        NetworkHandler.load();
     }
 
     @Override

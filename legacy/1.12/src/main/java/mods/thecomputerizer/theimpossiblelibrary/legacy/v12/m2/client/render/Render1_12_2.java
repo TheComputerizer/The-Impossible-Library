@@ -135,11 +135,11 @@ public class Render1_12_2 implements RenderAPI {
         return new VertexWrapper1_12_2(mode,POSITION_TEX_COLOR,vertices,3,2,4);
     }
     
-    @Override public int getDirectMouseX() {
+    @Override public double getDirectMouseX() {
         return Mouse.getX();
     }
     
-    @Override public int getDirectMouseY() {
+    @Override public double getDirectMouseY() {
         return Mouse.getY();
     }
     

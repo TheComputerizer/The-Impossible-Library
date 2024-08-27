@@ -1,15 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.Mappable;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.function.Function;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_ONLY;
 
 @SuppressWarnings("unused")
 public class NetworkHandler {
@@ -33,8 +33,9 @@ public class NetworkHandler {
      * Ignored if TILRef#CLIENT_ONLY is enabled
      */
     public static void load() {
-        if(TILRef.CLIENT_ONLY) return;
+        if(CLIENT_ONLY) return;
         int id = 0;
+        if(DIRECTION_INFO.isNotEmpty()) NetworkHelper.getNetwork();
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
             id++;

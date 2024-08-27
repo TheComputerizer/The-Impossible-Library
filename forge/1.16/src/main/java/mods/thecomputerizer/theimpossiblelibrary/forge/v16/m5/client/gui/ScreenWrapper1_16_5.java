@@ -2,47 +2,25 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.Minecraft1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.Text1_16_5;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.fonts.TextInputUtil;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.SharedConstants;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.TICK_CLIENT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
-    
-    private static final Set<ScreenWrapper1_16_5> TICKERS = new HashSet<>();
-    private static boolean initializedTicker;
-    
-    private static void addTicker(ScreenWrapper1_16_5 wrapper) {
-        if(Objects.nonNull(wrapper.wrapped)) {
-            if(!initializedTicker) initializeTicker();
-            TICKERS.add(wrapper);
-        }
-    }
-    
-    private static void initializeTicker() {
-        EventHelper.addListener(TICK_CLIENT, wrapper -> {
-            if(wrapper.isPhase(END))
-                for(ScreenWrapper1_16_5 screen : TICKERS)
-                    if(screen.isActivelyTicking() && screen.isOpen) screen.wrapped.onTick();
-        });
-        initializedTicker = true;
-    }
-    
-    private static void removeTicker(ScreenWrapper1_16_5 wrapper) {
-        TICKERS.remove(wrapper);
-    }
     
     private final ScreenAPI wrapped;
     private boolean isOpen;
@@ -52,13 +30,21 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
         this.wrapped = wrapped;
     }
     
+    @Override public boolean charTyped(char c, int mods) {
+        if(SharedConstants.isAllowedChatCharacter(c) && this.wrapped.onCharTyped(c)) return true;
+        return super.charTyped(c,mods);
+    }
+    
+    private KeyStateCache getKeyState() {
+        return new KeyStateCache(hasAltDown(),hasControlDown(),hasShiftDown());
+    }
+    
     @Override public ScreenAPI getWrapped() {
         return this.wrapped;
     }
     
     @Override public void init() {
         if(Objects.nonNull(this.wrapped)) this.wrapped.onScreenOpened();
-        addTicker(this);
         this.isOpen = true;
     }
     
@@ -68,6 +54,38 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
     
     @Override public boolean isPauseScreen() {
         return Objects.isNull(this.wrapped) || this.wrapped.shouldPauseGame();
+    }
+    
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int mod) {
+        if(Objects.nonNull(this.wrapped)) {
+            if(keyCode==GLFW_KEY_ESCAPE) {
+                if(this.wrapped.onCloseRequested(true)) onClose();
+                return true;
+            }
+            if(keyCode==GLFW_KEY_BACKSPACE && this.wrapped.onBackspace()) return true;
+            if(Screen.isSelectAll(keyCode) && this.wrapped.onSelectAll()) return true;
+            if(Screen.isCopy(keyCode)) {
+                String copied = this.wrapped.onCopy();
+                if(Objects.nonNull(copied)) {
+                    TextInputUtil.setClipboardContents(getMinecraft(),copied);
+                    return true;
+                }
+            }
+            if(Screen.isPaste(keyCode)) {
+                String pasted = TextInputUtil.getClipboardContents(getMinecraft());
+                if(this.wrapped.onPaste(pasted)) return true;
+            }
+            if(Screen.isCut(keyCode)) {
+                String copied = this.wrapped.onCut();
+                if(Objects.nonNull(copied)) {
+                    TextInputUtil.setClipboardContents(getMinecraft(),copied);
+                    return true;
+                }
+            }
+            if(this.wrapped.onKeyPressed(getKeyState(),keyCode)) return true;
+        }
+        return super.keyPressed(keyCode,scanCode,mod);
     }
     
     @Override public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
@@ -85,9 +103,10 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
     }
     
     @Override public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if(Objects.nonNull(this.wrapped)) {
-            if(delta>0d && this.wrapped.scrollUp(delta)) return true;
-            if(delta<0d && this.wrapped.scrollDown(delta)) return true;
+        if(Objects.nonNull(this.wrapped) && delta!=0d) {
+            if(delta>=1d) {
+                if(this.wrapped.scrollUp(MathHelper.clamp(delta,-1d,1d))) return true;
+            } else if(this.wrapped.scrollDown(MathHelper.clamp(delta,-1d,1d))) return true;
         }
         return super.mouseScrolled(mouseX,mouseY,delta);
     }

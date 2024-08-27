@@ -38,7 +38,6 @@ import org.joml.Vector3d;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -67,10 +66,8 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
         List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
         if(this.world instanceof World) {
-            Iterator<TileEntity> tiles = ((World)this.world).blockEntityList.iterator();
-            while(tiles.hasNext()) {
-                synchronized(tiles) { //Double layer insurance against cmod stupidity
-                    TileEntity tile = tiles.next();
+            synchronized(this.world) {
+                for(TileEntity tile : ((World)this.world).blockEntityList) {
                     BlockPos pos = tile.getBlockPos();
                     if(box.isInside(pos.getX(),pos.getY(),pos.getZ())) entities.add(new BlockEntity1_16_5(tile));
                 }
@@ -184,12 +181,12 @@ public class World1_16_5 extends WorldAPI<IWorld> {
 
     @Override
     public boolean isDaytime() {
-        return this.world instanceof World && ((World)this.world).isDay();
+        return this.world instanceof World && getTimeDay()<13000L;
     }
 
     @Override
     public boolean isNighttime() {
-        return this.world instanceof World && ((World)this.world).isNight();
+        return this.world instanceof World && getTimeDay()>=13000L;
     }
 
     @Override
