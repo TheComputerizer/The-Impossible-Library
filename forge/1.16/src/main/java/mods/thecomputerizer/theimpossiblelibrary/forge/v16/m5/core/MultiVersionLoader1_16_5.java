@@ -38,7 +38,7 @@ public class MultiVersionLoader1_16_5 extends MultiVersionLoaderAPI {
     }
 
     @Override
-    protected File findModRoot() {
+    public File findModRoot() {
         return new File("mods");
     }
 

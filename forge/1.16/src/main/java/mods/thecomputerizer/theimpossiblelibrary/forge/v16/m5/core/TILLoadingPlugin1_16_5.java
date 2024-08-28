@@ -41,6 +41,7 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
     
     static {
         new TILCore1_16_5();
+        TILRef.logInfo("Loaded CoreAPI instance with {}",CoreAPI.getInstance().getClass().getClassLoader());
     }
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
@@ -48,7 +49,7 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
     private final Map<MultiVersionModCandidate,TILModFile1_16_5> candidateMap = new HashMap<>();
     
     public TILLoadingPlugin1_16_5() {
-        TILDev.logDebug("Loading plugin loaded with {}",getClass().getClassLoader());
+        TILRef.logInfo("Loading plugin loaded with {}",getClass().getClassLoader());
         TILDev.logDebug("System classloader is {}",ClassLoader.getSystemClassLoader());
     }
     
@@ -67,24 +68,11 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
             final Enumeration<URL> manifests = ClassLoader.getSystemClassLoader().getResources(MANIFEST);
             Predicate<Path> filter = path -> findManifest(path).map(Manifest::getMainAttributes)
                     .map(attributes -> MultiVersionModFinder.hasMods(attributes) ? attributes : null).isPresent();
-            while(manifests.hasMoreElements()) {
-                URL url = manifests.nextElement();
-                Path path = LibraryFinder.findJarPathFor(MANIFEST,"manifest_jar",url);
-                if(Files.isDirectory(path)) {
-                    TILRef.logDebug("Hi directory {}",path);
-                    continue;
-                }
-                String fileName = path.getFileName().toString();
-                TILRef.logDebug("Checking if file {} is the loader",fileName);
-                if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
-                    TILRef.logDebug("File is the loader");
-                    MultiVersionModCandidate.loaderFile = path.toFile();
-                }
-                if(filter.test(path)) {
-                    TILRef.logDebug("Found classpath mod candidate: {}",path);
-                    loader.addPotentialModPath(path);
-                }
-            }
+            while(manifests.hasMoreElements()) loadURL(loader,manifests.nextElement(),filter);
+            File[] mods = core.getLoader().findModRoot().listFiles(file -> file.isFile() && file.getName().endsWith(".jar"));
+            if(Objects.nonNull(mods))
+                for(File mod : mods) loadURL(loader,mod.toURI().toURL(),mod.toPath(),filter,true);
+            
         } catch(IOException ex) {
             TILRef.logError("Error finding multiversion mods to load",ex);
             throw new RuntimeException("Error finding multiversion mods to load",ex);
@@ -94,6 +82,28 @@ public class TILLoadingPlugin1_16_5 extends AbstractJarFileLocator {
         core.instantiateCoreMods();
         core.writeModContainers(classLoader);
         loadCandidateInfos(core.getModInfo());
+    }
+    
+    
+    
+    private void loadURL(MultiVersionLoaderAPI loader, URL url, Predicate<Path> filter) {
+        Path path = LibraryFinder.findJarPathFor(MANIFEST,"manifest_jar",url);
+        loadURL(loader,url,path,filter,false);
+    }
+    
+    private void loadURL(MultiVersionLoaderAPI loader, URL url, Path path, Predicate<Path> filter, boolean addToClassLoader) {
+        if(Files.isDirectory(path)) return;
+        String fileName = path.getFileName().toString();
+        TILRef.logInfo("Checking if file {} is the loader",fileName);
+        if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
+            TILRef.logInfo("File is the loader");
+            MultiVersionModCandidate.loaderFile = path.toFile();
+        }
+        if(filter.test(path)) {
+            TILRef.logInfo("Found classpath mod candidate: {}",path);
+            //if(addToClassLoader) CoreAPI.getInstance().addURLToClassLoader(ClassLoader.getSystemClassLoader(),url);
+            loader.addPotentialModPath(path);
+        }
     }
     
     @Override public String name() {

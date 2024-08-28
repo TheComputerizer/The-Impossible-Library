@@ -33,6 +33,7 @@ public class TILBetterModScan extends ModFileScanData {
     }
     
     public void defineClasses(ClassLoader ... loaders) {
+        TILRef.logInfo("This is being called from {} and being synced to {}",getClass().getClassLoader(),loaders);
         loadSources(loaders);
         for(Entry<String,byte[]> entry : this.writtenClasses.entrySet()) {
             String classpath = entry.getKey();
@@ -52,13 +53,12 @@ public class TILBetterModScan extends ModFileScanData {
     
     private void loadSources(ClassLoader ... loaders) {
         try {
-            Class<?> systemClass = ClassLoader.getSystemClassLoader().loadClass(CoreAPI.class.getName());
+            Class<?> systemClass = getClass().getClassLoader().loadClass(CoreAPI.class.getName());
             Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
             if(Objects.nonNull(instance)) {
                 //The classpath of the CoreAPI implementation extracted from the system classloader
                 String coreImplClass = String.valueOf(instance).split(" ")[0];
                 syncCoreAPI(coreImplClass,ClassHelper.getSourceURL(systemClass),loaders);
-                
             } else TILRef.logFatal("System CoreAPI instance not found! Things will likely break soon");
         } catch(ClassNotFoundException ex) {
             TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader",ex);

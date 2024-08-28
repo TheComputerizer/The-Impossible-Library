@@ -23,7 +23,6 @@ import static net.minecraftforge.fml.relauncher.libraries.LibraryManager.DISABLE
 
 public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
 
-
     public MultiVersionLoader1_12_2(CoreAPI parent) {
         super(parent);
     }
@@ -35,7 +34,7 @@ public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
     }
 
     @Override
-    protected File findModRoot() {//TODO Figure out how to get around classpath injection
+    public File findModRoot() {//TODO Figure out how to get around classpath injection
         //return (File)ReflectionHelper.getFieldInstance(null,Loader.class,"minecraftDir");
         return new File("mods");
     }

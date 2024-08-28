@@ -32,7 +32,7 @@ public abstract class MultiVersionLoaderAPI {
     }
     
     protected abstract File findCoreModRoot();
-    protected abstract File findModRoot();
+    public abstract File findModRoot();
     protected abstract List<File> gatherCandidateModFiles(File root);
     protected abstract @Nullable Attributes getFileAttributes(File file);
 

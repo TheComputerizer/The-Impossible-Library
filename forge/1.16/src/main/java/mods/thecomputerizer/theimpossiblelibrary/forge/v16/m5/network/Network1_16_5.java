@@ -19,6 +19,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
@@ -81,30 +82,6 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
-        wrapper.setMessage(dir,message);
-        return wrapper;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
-        wrapper.setMessages(dir,messages);
-        return wrapper;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
-        wrapper.setMessages(dir,messages);
-        return wrapper;
-    }
-
     @SuppressWarnings("DataFlowIssue")
     @Override
     public SimpleChannel getNetwork() {
@@ -146,7 +123,14 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
         getNetwork().registerMessage(id,(Class<MessageWrapper1_16_5>)MessageWrapper1_16_5.getClass(dir.getDirection()),
                 MessageWrapperAPI::encode, buf -> MessageWrapper1_16_5.getInstance(dir.getDirection(),buf),
-                (message,supplier) -> message.handle(supplier.get()),Optional.of(dir.getDirection()));
+                (message,supplier) -> { //Response handler
+                    Context context = supplier.get();
+                    MessageWrapper1_16_5 wrapper = (MessageWrapper1_16_5)message.handle(context);
+                    if(Objects.nonNull(wrapper)) {
+                        if(!dir.isToClient()) wrapper.setPlayer(context.getSender());
+                        wrapper.send();
+                    }
+                },Optional.of(dir.getDirection()));
     }
     
     //TODO Does not support login direction
@@ -159,6 +143,30 @@ public class Network1_16_5 implements NetworkAPI<SimpleChannel,NetworkDirection>
     @Override
     public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
         getNetwork().sendToServer((MessageWrapper1_16_5)message);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
+        wrapper.setMessage(dir,message);
+        return wrapper;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
+        wrapper.setMessages(dir,messages);
+        return wrapper;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapper1_16_5.getInstance(dir);
+        wrapper.setMessages(dir,messages);
+        return wrapper;
     }
     
     @Override public void writeTag(ByteBuf buf, CompoundTagAPI<?> tag) {

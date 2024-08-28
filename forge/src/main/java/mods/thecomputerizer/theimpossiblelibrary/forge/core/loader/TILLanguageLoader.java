@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -26,12 +26,29 @@ public class TILLanguageLoader implements IModLanguageLoader {
     
     private final String modClass;
     @Getter private final String modid;
-    private final TILBetterModScan scan;
+    private final ModFileScanData scan;
     
-    public TILLanguageLoader(String modClass, String modid, TILBetterModScan scan) {
+    public TILLanguageLoader(String modClass, String modid, ModFileScanData scan) {
         this.modClass = modClass;
         this.modid = modid;
         this.scan = scan;
+    }
+    
+    /**
+     * Due to class loading conflicts, ModFileScanData cannot be directly cast to TILBetterModScan.
+     * Reflection is the only way...
+     */
+    void defineClasses(ClassLoader loader) {
+        ReflectionHelper.invokeMethod(this.scan.getClass(),"defineClasses",this.scan,new Class<?>[]{
+                ClassLoader[].class},(Object)new ClassLoader[]{loader});
+        String unparsedCore = CoreAPI.getInstance(this.scan.getClass().getClassLoader()).toString().split(" ")[0];
+        try {
+            Class<?> coreClass = loader.loadClass(unparsedCore);
+            ReflectionHelper.invokeStaticMethod(coreClass.getSuperclass(),"setInstance",new Class<?>[]{
+                    Class.class},coreClass);
+        } catch(ClassNotFoundException ex) {
+            TILRef.logInfo("Couldn't actually load CoreAPI to {}",loader,ex);
+        }
     }
     
     /**
@@ -42,12 +59,12 @@ public class TILLanguageLoader implements IModLanguageLoader {
         final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
             final Class<?> container = Class.forName(MOD_CONTAINER,true,contextLoader);
-            TILDev.logDebug("Loading FMLModContainer class from {} and got {}",contextLoader,container.getClassLoader());
+            TILRef.logInfo("Loading FMLModContainer class from {} and got {}",contextLoader,container.getClassLoader());
             final Constructor<?> constructor = ReflectionHelper.findConstructor(container,IModInfo.class,String.class,
                     ClassLoader.class,ModFileScanData.class);
             if(Objects.isNull(constructor))
                 throw new NoSuchMethodException("Could not find constructor for "+MOD_CONTAINER+"!");
-            this.scan.defineClasses(classLoader);
+            defineClasses(classLoader);
             return (T)constructor.newInstance(info,this.modClass,classLoader,scanResults);
         } catch(InvocationTargetException ex) {
             TILRef.logFatal("Failed to build multiversion mod!",ex);

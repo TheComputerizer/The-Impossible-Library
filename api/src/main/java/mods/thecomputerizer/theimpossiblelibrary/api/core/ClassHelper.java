@@ -19,7 +19,17 @@ import java.util.function.BiFunction;
     private static final MethodHandle CLASS_RESOLVER = ReflectionHelper.findMethodHandle(ClassLoader.class,
             "resolveClass",Class.class);
     private static final MethodHandle URL_LOADER = ReflectionHelper.findMethodHandle(URLClassLoader.class,
-            "addURL", URL.class);
+            "addURL",URL.class);
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T castToOtherClassLoader(Object obj, String className, ClassLoader loader) {
+        try {
+            return ((Class<T>)loader.loadClass(className)).cast(obj);
+        } catch(ClassNotFoundException | ClassCastException ex) {
+            TILRef.logError("Failed to do a stupid cast",ex);
+        }
+        return (T)obj; // Give up and try casting anyway if it doesn't work
+    }
 
     /**
      * Returns the full name of the class of the object or an empty string if the object is null.
@@ -285,8 +295,8 @@ import java.util.function.BiFunction;
     
     public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
             @Nullable String ... classesToLoad) {
-        syncSourcesForClass(syncFrom,syncTo,className, (loader,url) ->
-                CoreAPI.getInstance().addURLToClassLoader(loader,url),classesToLoad);
+        syncSourcesForClass(syncFrom,syncTo,className,(loader,url) ->
+                CoreAPI.getInstance(syncFrom).addURLToClassLoader(loader,url),classesToLoad);
     }
     
     

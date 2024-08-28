@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILBetterModScan;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LanguageLoadingProvider;
 import net.minecraftforge.fml.loading.moddiscovery.CoreModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -35,9 +36,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static net.minecraftforge.forgespi.locating.IModFile.Type.MOD;
+import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 
 public class TILModFile1_16_5 extends ModFile {
+    
+    static boolean loadedProvider;
     
     private final Map<MultiVersionModInfo,MultiVersionModData> infos;
     protected IModFileInfo fileInfo;
@@ -102,16 +105,18 @@ public class TILModFile1_16_5 extends ModFile {
         return this.loader;
     }
     
-    @Override public Type getType() {
-        return MOD;
-    }
-    
     @Override public List<IModInfo> getModInfos() {
         return getModFileInfo().getMods();
     }
     
     @Override public IModFileInfo getModFileInfo() {
         if(Objects.isNull(this.fileInfo)) {
+            if(!loadedProvider) {
+                TILRef.logInfo("Loading multiversion language provider");
+                LanguageLoadingProvider provider =  FMLLoader.getLanguageLoadingProvider();
+                provider.addAdditionalLanguages(Collections.singletonList(new TILLanguageProviderLoader(getFilePath(),getLocator())));
+                loadedProvider = true;
+            }
             TILRef.logInfo("Building IModFileInfo");
             Constructor<?> infoConstructor = ReflectionHelper.findConstructor(ModFileInfo.class,ModFile.class,IConfigurable.class);
             if(Objects.nonNull(infoConstructor)) {
@@ -130,7 +135,8 @@ public class TILModFile1_16_5 extends ModFile {
     @Override
     public void identifyLanguage() {
         IModFileInfo info = getModFileInfo();
-        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this,info.getModLoader(),info.getModLoaderVersion());
+        LanguageLoadingProvider provider =  FMLLoader.getLanguageLoadingProvider();
+        this.loader = provider.findLanguage(this,info.getModLoader(),info.getModLoaderVersion());
     }
     
     @Override
@@ -157,6 +163,17 @@ public class TILModFile1_16_5 extends ModFile {
             handle.invoke(scanner,path,scan);
         } catch(Throwable ex) {
             TILRef.logError("Failed to scan {}!",path,ex);
+        }
+    }
+    
+    public static class TILLanguageProviderLoader extends ModFile {
+        
+        public TILLanguageProviderLoader(Path file, IModLocator locator) {
+            super(file,locator,null);
+        }
+        
+        @Override public Type getType() {
+            return LANGPROVIDER;
         }
     }
 }

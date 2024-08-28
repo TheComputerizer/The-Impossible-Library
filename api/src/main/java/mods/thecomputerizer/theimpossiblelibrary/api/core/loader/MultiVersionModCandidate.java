@@ -24,6 +24,7 @@ public class MultiVersionModCandidate {
     private final File file;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
+    private boolean loaded;
 
     public MultiVersionModCandidate(String classpath) {
         this(Objects.nonNull(loaderFile) ? loaderFile : new File(Misc.getLastSplit(classpath,'.')+".class"));
@@ -67,22 +68,25 @@ public class MultiVersionModCandidate {
 
     private @Nullable Class<?> findClass(ClassLoader classLoader, String name) {
         TILRef.logInfo("Locating loader class {}",name);
-        try {
-            return Class.forName(name,true,classLoader);
-        } catch(ClassNotFoundException ignored) {}
-        TILRef.logDebug("Attempting to add source for class that has not yet been loaded");
-        try {
-            if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, this.file.toURI().toURL()))
-                TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}",name,classLoader);
-        } catch(MalformedURLException | ClassCastException ex) {
-            TILRef.logError("Error getting URL for source file `{}`!",this.file.getPath(),ex);
-            return null;
+        //try {
+        //    return Class.forName(name,true,classLoader);
+        //} catch(ClassNotFoundException ignored) {}
+        if(!this.loaded) {
+            TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
+            try {
+                if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, this.file.toURI().toURL()))
+                    TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name, classLoader);
+            } catch(MalformedURLException|ClassCastException ex) {
+                TILRef.logError("Error getting URL for source file `{}`!", this.file.getPath(), ex);
+                return null;
+            }
+            this.loaded = true;
         }
-        TILRef.logDebug("Successfully added source! Reattempting to locate loader class");
+        TILRef.logInfo("Successfully added source! Reattempting to locate loader class");
         try {
             return Class.forName(name,true,classLoader);
         } catch(ClassNotFoundException ex) {
-            TILRef.logDebug("Debug stacktrace",ex);
+            TILRef.logInfo("Debug stacktrace",ex);
         }
         return null;
     }

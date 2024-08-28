@@ -20,6 +20,7 @@ public class TILModConfig1_16_5 implements IConfigurable {
         this.infoMap.put("displayName",info.getName());
         this.infoMap.put("modId",info.getModID());
         this.infoMap.put("version",info.getVersion());
+        this.infoMap.put("logoFile","logo.png");
     }
     
     @SuppressWarnings("unchecked") @Override

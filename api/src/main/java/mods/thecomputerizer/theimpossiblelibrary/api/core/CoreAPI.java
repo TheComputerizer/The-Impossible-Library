@@ -29,8 +29,15 @@ public abstract class CoreAPI {
     static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
     static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
     
+    public static CoreAPI getInstance(ClassLoader loader) {
+        if(Objects.isNull(INSTANCE))
+            syncInstanceClassLoader(CoreAPI.class.getClassLoader(),loader);
+        return INSTANCE;
+    }
+    
     public static CoreAPI getInstance() {
-        if(Objects.isNull(INSTANCE)) syncSystemInstance(CoreAPI.class.getClassLoader());
+        if(Objects.isNull(INSTANCE))
+            syncInstanceClassLoader(CoreAPI.class.getClassLoader(),MultiVersionModFinder.class.getClassLoader());
         return INSTANCE;
     }
     
@@ -58,7 +65,7 @@ public abstract class CoreAPI {
         return getInstance().getSide().isServer();
     }
     
-    static CoreAPI parseFrom(String unparsed, ClassLoader loader) {
+    public static CoreAPI parseFrom(String unparsed, ClassLoader loader) {
         try {
             String className = unparsed.split(" ")[0];
             Method method = ReflectionHelper.getMethod(ClassLoader.class,"findResource",String.class);
@@ -82,9 +89,10 @@ public abstract class CoreAPI {
         }
     }
     
-    public static void syncSystemInstance(ClassLoader loader) {
+    public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom) {
         try {
-            Class<?> systemClass = ClassLoader.getSystemClassLoader().loadClass(OWNER.replace('/','.'));
+            TILRef.logInfo("Trying to sync CoreAPI instance from {} to {} in the context of {}",loadFrom,loader,Thread.currentThread().getContextClassLoader());
+            Class<?> systemClass = loadFrom.loadClass(OWNER.replace('/','.'));
             Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
             INSTANCE = parseFrom(String.valueOf(instance),loader);
             TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
