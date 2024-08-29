@@ -15,8 +15,7 @@ public class WorldLoadEventForge extends WorldLoadEventWrapper<Load> {
         WORLD_LOAD.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class WorldLoadEventForge extends WorldLoadEventWrapper<Load> {
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<Load,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Load,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Load::getWorld);
     }
 }

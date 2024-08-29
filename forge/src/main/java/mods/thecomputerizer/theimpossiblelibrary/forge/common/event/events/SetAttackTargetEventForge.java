@@ -15,8 +15,7 @@ public class SetAttackTargetEventForge extends SetAttackTargetEventWrapper<Livin
         LIVING_SET_TARGET.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class SetAttackTargetEventForge extends SetAttackTargetEventWrapper<Livin
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LivingSetAttackTargetEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingSetAttackTargetEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingSetAttackTargetEvent::getEntityLiving);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingSetAttackTargetEvent,LivingEntityAPI<?,?>> wrapTargetField() {
+    @Override protected EventFieldWrapper<LivingSetAttackTargetEvent,LivingEntityAPI<?,?>> wrapTargetField() {
         return wrapLivingGetter(LivingSetAttackTargetEvent::getTarget);
     }
 }

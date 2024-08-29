@@ -15,8 +15,7 @@ public class EntityStruckByLightningEventForge extends EntityStruckByLightningEv
         ENTITY_SMITTEN.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class EntityStruckByLightningEventForge extends EntityStruckByLightningEv
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<EntityStruckByLightningEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<EntityStruckByLightningEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityStruckByLightningEvent::getEntity);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityStruckByLightningEvent,EntityAPI<?,?>> wrapLightningEntityField() {
+    @Override protected EventFieldWrapper<EntityStruckByLightningEvent,EntityAPI<?,?>> wrapLightningEntityField() {
         return wrapEntityGetter(EntityStruckByLightningEvent::getLightning);
     }
 }

@@ -17,8 +17,7 @@ public class PlayerLoadFromFileEventForge extends PlayerLoadFromFileEventWrapper
         PLAYER_LOAD_FROM_FILE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,18 +26,15 @@ public class PlayerLoadFromFileEventForge extends PlayerLoadFromFileEventWrapper
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LoadFromFile,File> wrapDirectoryField() {
+    @Override protected EventFieldWrapper<LoadFromFile,File> wrapDirectoryField() {
         return wrapGenericGetter(LoadFromFile::getPlayerDirectory,null);
     }
 
-    @Override
-    protected EventFieldWrapper<LoadFromFile,String> wrapUUIDField() {
+    @Override protected EventFieldWrapper<LoadFromFile,String> wrapUUIDField() {
         return wrapGenericGetter(LoadFromFile::getPlayerUUID,null);
     }
 
-    @Override
-    protected EventFieldWrapper<LoadFromFile,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<LoadFromFile,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(LoadFromFile::getPlayer);
     }
 }

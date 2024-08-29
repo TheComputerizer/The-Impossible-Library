@@ -17,43 +17,35 @@ public class PlayerPunchEntityEventForge extends PlayerPunchEntityEventWrapper<O
     //    PLAYER_PUNCH_ENTITY.invoke(event);
     //} //TODO
 
-    @Override
-    protected ItemStackAPI<?> getStackInHand() {
+    @Override protected ItemStackAPI<?> getStackInHand() {
         return null;
     }
 
-    @Override
-    protected WorldAPI<?> getWorld() {
+    @Override protected WorldAPI<?> getWorld() {
         return null;
     }
 
-    @Override
-    protected EventFieldWrapper<Object,ActionResult> wrapCancelResultField() {
+    @Override protected EventFieldWrapper<Object,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> null,(event,result) -> {},null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,Facing> wrapFacingField() {
+    @Override protected EventFieldWrapper<Object,Facing> wrapFacingField() {
         return wrapGenericGetter(event -> null,null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,Hand> wrapHandField() {
+    @Override protected EventFieldWrapper<Object,Hand> wrapHandField() {
         return wrapGenericGetter(event -> null,null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,EntityAPI<?,?>> wrapTargetField() {
+    @Override protected EventFieldWrapper<Object,EntityAPI<?,?>> wrapTargetField() {
         return wrapEntityGetter(event -> null);
     }
 }

@@ -15,8 +15,7 @@ public class FOVUpdateEvent1_12_2 extends FOVUpdateEventWrapper<FOVUpdateEvent> 
         FOV_UPDATE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,18 +24,15 @@ public class FOVUpdateEvent1_12_2 extends FOVUpdateEventWrapper<FOVUpdateEvent> 
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<FOVUpdateEvent,Float> wrapFOVField() {
+    @Override protected EventFieldWrapper<FOVUpdateEvent,Float> wrapFOVField() {
         return wrapGenericGetter(FOVUpdateEvent::getFov,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FOVUpdateEvent,Float> wrapNewFOVField() {
+    @Override protected EventFieldWrapper<FOVUpdateEvent,Float> wrapNewFOVField() {
         return wrapGenericBoth(FOVUpdateEvent::getNewfov,FOVUpdateEvent::setNewfov,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FOVUpdateEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<FOVUpdateEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(FOVUpdateEvent::getEntity);
     }
 }

@@ -5,8 +5,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 
 public abstract class RegisterCommandsEventForge extends RegisterCommandsEventWrapper<RegisterCommandsEvent> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

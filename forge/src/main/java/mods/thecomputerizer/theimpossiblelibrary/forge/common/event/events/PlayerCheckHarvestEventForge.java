@@ -16,8 +16,7 @@ public class PlayerCheckHarvestEventForge extends PlayerCheckHarvestEventWrapper
         PLAYER_CHECK_HARVEST.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,18 +25,15 @@ public class PlayerCheckHarvestEventForge extends PlayerCheckHarvestEventWrapper
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<HarvestCheck,Boolean> wrapSuccessField() {
+    @Override protected EventFieldWrapper<HarvestCheck,Boolean> wrapSuccessField() {
         return wrapGenericBoth(HarvestCheck::canHarvest,HarvestCheck::setCanHarvest,false);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestCheck,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<HarvestCheck,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(HarvestCheck::getTargetBlock);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestCheck,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<HarvestCheck,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(HarvestCheck::getPlayer);
     }
 }

@@ -13,7 +13,7 @@ public abstract class MinecraftServerAPI<S> {
     public abstract void registerCommand(CommandAPI cmd);
     public abstract void executeCommandLiteral(String command);
     public abstract @Nullable PlayerAPI<?,?> getPlayerByUUID(String uuid);
-    public abstract List<PlayerAPI<?,?>> getPlayers();
+    public abstract List<? extends PlayerAPI<?,?>> getPlayers();
     public abstract @Nullable File getSaveDir();
     public abstract S getServer();
 }

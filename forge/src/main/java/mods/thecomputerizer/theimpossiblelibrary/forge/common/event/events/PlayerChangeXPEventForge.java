@@ -15,8 +15,7 @@ public class PlayerChangeXPEventForge extends PlayerChangeXPEventWrapper<XpChang
         PLAYER_XP_CHANGE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class PlayerChangeXPEventForge extends PlayerChangeXPEventWrapper<XpChang
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<XpChange,Integer> wrapAmountField() {
+    @Override protected EventFieldWrapper<XpChange,Integer> wrapAmountField() {
         return wrapGenericBoth(XpChange::getAmount,XpChange::setAmount,0);
     }
 
-    @Override
-    protected EventFieldWrapper<XpChange,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<XpChange,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(XpChange::getPlayer);
     }
 }

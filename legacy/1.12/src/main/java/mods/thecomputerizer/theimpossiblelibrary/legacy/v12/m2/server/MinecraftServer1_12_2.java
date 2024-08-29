@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
@@ -31,13 +30,13 @@ public class MinecraftServer1_12_2 extends MinecraftServerAPI<MinecraftServer> {
     }
     
     @SuppressWarnings({"ConstantValue","UnreachableCode"}) @Nullable @Override
-    public PlayerAPI<?,?> getPlayerByUUID(String uuid) {
+    public ServerPlayer1_12_2 getPlayerByUUID(String uuid) {
         EntityPlayerMP player = getServer().getPlayerList().getPlayerByUUID(UUID.fromString(uuid));
         return Objects.nonNull(player) ? new ServerPlayer1_12_2(player) : null;
     }
     
-    @Override public List<PlayerAPI<?,?>> getPlayers() {
-        List<PlayerAPI<?,?>> players = new ArrayList<>();
+    @Override public List<ServerPlayer1_12_2> getPlayers() {
+        List<ServerPlayer1_12_2> players = new ArrayList<>();
         for(EntityPlayerMP player : getServer().getPlayerList().getPlayers())
             players.add(new ServerPlayer1_12_2(player));
         return players;

@@ -6,8 +6,7 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public abstract class RegisterBlocksEventForge extends RegisterBlocksEventWrapper<Register<Block>> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

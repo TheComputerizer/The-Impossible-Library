@@ -15,8 +15,7 @@ public class LivingFallEventForge extends LivingFallEventWrapper<LivingFallEvent
         LIVING_FALL.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,18 +24,15 @@ public class LivingFallEventForge extends LivingFallEventWrapper<LivingFallEvent
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LivingFallEvent,Float> wrapDamageMultiplierField() {
+    @Override protected EventFieldWrapper<LivingFallEvent,Float> wrapDamageMultiplierField() {
         return wrapGenericBoth(LivingFallEvent::getDamageMultiplier,LivingFallEvent::setDamageMultiplier,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingFallEvent,Float> wrapDistanceField() {
+    @Override protected EventFieldWrapper<LivingFallEvent,Float> wrapDistanceField() {
         return wrapGenericBoth(LivingFallEvent::getDistance,LivingFallEvent::setDistance,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingFallEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingFallEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingFallEvent::getEntityLiving);
     }
 }

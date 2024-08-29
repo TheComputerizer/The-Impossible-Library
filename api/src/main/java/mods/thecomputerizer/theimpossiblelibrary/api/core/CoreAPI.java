@@ -9,8 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
@@ -28,6 +30,52 @@ public abstract class CoreAPI {
     public static CoreAPI INSTANCE;
     static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
     static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
+    
+    public static void addClassLoadingURLS(ClassLoader ... loaders) {
+        Set<String> urls = new HashSet<>();
+        Object instance = findClassLoadingURLS(urls,CoreAPI.class.getClassLoader());
+        if(Objects.isNull(instance)) return;
+        TILRef.logInfo("Found {} sources to add {}",urls.size(),urls);
+        if(!urls.isEmpty()) {
+            TILRef.logInfo("Adding the above sources to {}",(Object)loaders);
+            Set<ClassLoader> loaderSet = new HashSet<>(Arrays.asList(loaders)); //Remove duplicate loaders
+            Method urlHandler = ReflectionHelper.getMethod(instance.getClass(),"addURLToClassLoader",
+                                                       ClassLoader.class,URL.class);
+            for(String urlString : urls) {
+                try {
+                    URL url = new URL(urlString);
+                    for(ClassLoader loader : loaderSet) ReflectionHelper.invokeMethod(urlHandler,instance,loader,url);
+                } catch(MalformedURLException ex) {
+                    TILRef.logError("Failed to get URL from source {}",urlString,ex);
+                }
+            }
+        } else TILRef.logWarn("Not adding sources from empty set");
+    }
+    
+    static @Nullable Object findClassLoadingURLS(Set<String> urls, ClassLoader coreLoader) {
+        Object coreInstance = findInstance(coreLoader);
+        if(Objects.isNull(coreInstance)) {
+            TILRef.logError("Cannot find class loading URLs for null instance from {}",coreLoader);
+            return null;
+        }
+        ReflectionHelper.invokeMethod(coreInstance.getClass(),"addSources",coreInstance,new Class<?>[]{
+                Set.class},urls);
+        return coreInstance;
+    }
+    
+    public static @Nullable Object findInstance(ClassLoader loader) {
+        try {
+            Class<?> coreClass = loader.loadClass(OWNER.replace('/','.'));
+            return ReflectionHelper.invokeStaticMethod(coreClass,"getInstance",new Class<?>[]{});
+        } catch(ClassNotFoundException ex) {
+            TILRef.logError("Unable to get CoreAPI class from {}",loader,ex);
+            return null;
+        }
+    }
+    
+    public static String findLoadingClass() {
+        return String.valueOf(findInstance(CoreAPI.class.getClassLoader())).split(" ")[0];
+    }
     
     public static CoreAPI getInstance(ClassLoader loader) {
         if(Objects.isNull(INSTANCE))
@@ -141,6 +189,10 @@ public abstract class CoreAPI {
     
     public String getPackageName(String base) {
         return getVersion().getPackageName(getModLoader().getPackageName(base));
+    }
+    
+    public void addSources(Set<String> sources) {
+        ClassHelper.addSource(sources,CoreAPI.class);
     }
 
     public abstract void initAPI();

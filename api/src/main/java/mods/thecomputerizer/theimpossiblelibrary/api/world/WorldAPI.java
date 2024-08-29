@@ -30,16 +30,16 @@ public abstract class WorldAPI<W> {
     
     public abstract boolean canSnowAt(BlockPosAPI<?> pos);
     public abstract BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos);
-    public abstract Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box);
+    public abstract Collection<? extends BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box);
     public abstract @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos);
     public abstract int getDayNumber();
     public abstract int getDifficultyOrdinal();
     public abstract DimensionAPI<?> getDimension();
-    public abstract List<EntityAPI<?,?>> getEntitiesInBox(Box box);
+    public abstract List<? extends EntityAPI<?,?>> getEntitiesInBox(Box box);
     public abstract int getLightBlock(BlockPosAPI<?> pos);
     public abstract int getLightSky(BlockPosAPI<?> pos);
     public abstract int getLightTotal(BlockPosAPI<?> pos);
-    public abstract List<LivingEntityAPI<?,?>> getLivingInBox(Box box);
+    public abstract List<? extends LivingEntityAPI<?,?>> getLivingInBox(Box box);
 
     public MaterialAPI<?> getMaterialAt(BlockPosAPI<?> pos) {
         return getStateAt(pos).getMaterial();

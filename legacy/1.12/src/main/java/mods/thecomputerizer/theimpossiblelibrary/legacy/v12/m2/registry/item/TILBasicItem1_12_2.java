@@ -2,10 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
@@ -53,11 +53,12 @@ public class TILBasicItem1_12_2 extends Item implements WithItemProperties { //T
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
             float hitX, float hitY, float hitZ) {
-        return Events1_12_2.setActionResult(getUseResult(() -> {
+        return EventHelper.setActionResult(getUseResult(() -> {
             TILItemUseContext ctx = new TILItemUseContext(
-                    WrapperHelper.wrapPlayer(player),new World1_12_2(world),new BlockPos1_12_2(pos),null,
-                    Events1_12_2.getHand(hand),Events1_12_2.getFacing(facing));
-            ctx.setSuperResult(Events1_12_2.getActionResult(super.onItemUse(player,world,pos,hand,facing,hitX,hitY,hitZ)));
+                    WrapperHelper.wrapPlayer(player), new World1_12_2(world), new BlockPos1_12_2(pos), null,
+                    EventHelper.getHand(hand),EventHelper.getFacing(facing));
+            ctx.setSuperResult(
+                    EventHelper.getActionResult(super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ)));
             return ctx;
         }));
     }

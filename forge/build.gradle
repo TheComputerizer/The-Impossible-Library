@@ -87,7 +87,7 @@ dependencies {
 }
 
 processResources {
-    from(project(':api').processResources.outputs) { exclude 'mcmod.info' } //The mods.toml file isn't needed
+    from(project(':api').processResources.outputs)
 }
 
 processTestResources {

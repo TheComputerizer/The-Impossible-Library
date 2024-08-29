@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientEventsForge;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -20,43 +20,36 @@ public class CameraSetupEventForge extends CameraSetupEventWrapper<CameraSetup> 
         CAMERA_SETUP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected RenderContext initRenderer(@Nonnull CameraSetup event) {
+        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     
     @Override public void setEvent(CameraSetup event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-    
-    @Override
-    protected RenderContext initRenderer(@Nonnull CameraSetup event) {
-        return ClientEventsForge.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);
-    }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,Float> wrapPitchField() {
+    @Override protected EventFieldWrapper<CameraSetup,Float> wrapPitchField() {
         return wrapGenericGetter(CameraSetup::getPitch,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,Float> wrapRollField() {
+    @Override protected EventFieldWrapper<CameraSetup,Float> wrapRollField() {
         return wrapGenericGetter(CameraSetup::getRoll,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,Float> wrapYawField() {
+    @Override protected EventFieldWrapper<CameraSetup,Float> wrapYawField() {
         return wrapGenericGetter(CameraSetup::getYaw,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<CameraSetup,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<CameraSetup,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(event -> null);
     }
 }

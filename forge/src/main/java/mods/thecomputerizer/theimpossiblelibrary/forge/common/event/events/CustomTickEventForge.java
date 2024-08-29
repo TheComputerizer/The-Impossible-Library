@@ -16,8 +16,7 @@ public class CustomTickEventForge extends CustomTickEventWrapper<CustomTickForge
         CUSTOM_TICK.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,8 +25,7 @@ public class CustomTickEventForge extends CustomTickEventWrapper<CustomTickForge
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected CustomTick wrapTicker() {
+    @Override protected CustomTick wrapTicker() {
         return Objects.nonNull(this.event) ? this.event.getTicker() : null;
     }
 }

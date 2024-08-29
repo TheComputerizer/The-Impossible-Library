@@ -23,8 +23,7 @@ public class PotentialSpawnsEventForge extends PotentialSpawnsEventWrapper<Poten
         WORLD_POTENTIAL_SPAWNS.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -33,21 +32,18 @@ public class PotentialSpawnsEventForge extends PotentialSpawnsEventWrapper<Poten
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<PotentialSpawns,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<PotentialSpawns,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(PotentialSpawns::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<PotentialSpawns,List<SpawnEntryAPI<?>>> wrapSpawnsField() {
+    @Override protected EventFieldWrapper<PotentialSpawns,List<SpawnEntryAPI<?>>> wrapSpawnsField() {
         return wrapGenericGetter(event -> event.getList().stream()
                 .map(entry -> SpawnHelper.getSpawnEntry(entry.type.getClass(),entry.weight,entry.maxCount,entry.minCount))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()),new ArrayList<>());
     }
 
-    @Override
-    protected EventFieldWrapper<PotentialSpawns,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<PotentialSpawns,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(PotentialSpawns::getWorld);
     }
 }

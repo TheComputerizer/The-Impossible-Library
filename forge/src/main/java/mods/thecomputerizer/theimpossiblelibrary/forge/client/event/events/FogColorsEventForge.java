@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientEventsForge;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -20,43 +20,36 @@ public class FogColorsEventForge extends FogColorsEventWrapper<FogColors> {
         FOG_COLORS.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected RenderContext initRenderer(@Nonnull FogColors event) {
+        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     
     @Override public void setEvent(FogColors event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-    
-    @Override
-    protected RenderContext initRenderer(@Nonnull FogColors event) {
-        return ClientEventsForge.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);
-    }
 
-    @Override
-    protected EventFieldWrapper<FogColors,Float> wrapBlue() {
+    @Override protected EventFieldWrapper<FogColors,Float> wrapBlue() {
         return wrapGenericBoth(FogColors::getBlue,FogColors::setBlue,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FogColors,Float> wrapGreen() {
+    @Override protected EventFieldWrapper<FogColors,Float> wrapGreen() {
         return wrapGenericBoth(FogColors::getGreen,FogColors::setGreen,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FogColors,Float> wrapRed() {
+    @Override protected EventFieldWrapper<FogColors,Float> wrapRed() {
         return wrapGenericBoth(FogColors::getRed,FogColors::setRed,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FogColors,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<FogColors,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 
-    @Override
-    protected EventFieldWrapper<FogColors,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<FogColors,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(event -> null);
     }
 }

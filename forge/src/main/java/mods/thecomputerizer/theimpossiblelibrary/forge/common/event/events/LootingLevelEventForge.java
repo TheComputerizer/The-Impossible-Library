@@ -7,8 +7,7 @@ import net.minecraftforge.event.entity.living.LootingLevelEvent;
 
 public abstract class LootingLevelEventForge extends LootingLevelEventWrapper<LootingLevelEvent> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -17,13 +16,11 @@ public abstract class LootingLevelEventForge extends LootingLevelEventWrapper<Lo
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {
+    @Override protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {
         return wrapGenericBoth(LootingLevelEvent::getLootingLevel,LootingLevelEvent::setLootingLevel,1);
     }
 
-    @Override
-    protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LootingLevelEvent::getEntityLiving);
     }
 }

@@ -17,8 +17,7 @@ public class PlayerSaveToFileEventForge extends PlayerSaveToFileEventWrapper<Sav
         PLAYER_SAVE_TO_FILE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,18 +26,15 @@ public class PlayerSaveToFileEventForge extends PlayerSaveToFileEventWrapper<Sav
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<SaveToFile,File> wrapDirectoryField() {
+    @Override protected EventFieldWrapper<SaveToFile,File> wrapDirectoryField() {
         return wrapGenericGetter(SaveToFile::getPlayerDirectory,null);
     }
 
-    @Override
-    protected EventFieldWrapper<SaveToFile,String> wrapUUIDField() {
+    @Override protected EventFieldWrapper<SaveToFile,String> wrapUUIDField() {
         return wrapGenericGetter(SaveToFile::getPlayerUUID,null);
     }
 
-    @Override
-    protected EventFieldWrapper<SaveToFile,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<SaveToFile,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(SaveToFile::getPlayer);
     }
 }

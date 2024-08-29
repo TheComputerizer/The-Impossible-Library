@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
@@ -31,6 +32,10 @@ import javax.annotation.Nullable;
 
     public static <A> AdvancementAPI<A> wrapAdvancement(@Nullable A advancement) {
         return getAPI().wrapAdvancement(advancement);
+    }
+    
+    public static <B> BiomeAPI<B> wrapBiome(@Nullable B biome) {
+        return getAPI().wrapBiome(biome);
     }
 
     public static <B> BlockAPI<B> wrapBlock(@Nullable B block) {

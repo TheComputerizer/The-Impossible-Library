@@ -4,11 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlayerP
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.EventsForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickEmpty;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -22,35 +22,32 @@ public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<Lef
         PLAYER_PUNCH_EMPTY.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected ItemStackAPI<?> getStackInHand() {
+        return wrapItemStack(LeftClickEmpty::getItemStack);
+    }
+    
+    @Override protected WorldAPI<?> getWorld() {
+        return wrapWorld(LeftClickEmpty::getWorld);
     }
     
     @Override public void setEvent(LeftClickEmpty event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-    
-    @Override
-    protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(LeftClickEmpty::getItemStack);
-    }
-
-    @Override
-    protected WorldAPI<?> getWorld() {
-        return wrapWorld(LeftClickEmpty::getWorld);
-    }
 
     @Override
     protected EventFieldWrapper<LeftClickEmpty,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventsForge.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventsForge.setActionResult(result)),PASS);
+        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
     }
 
     @Override
     protected EventFieldWrapper<LeftClickEmpty,Facing> wrapFacingField() {
-        return wrapGenericGetter(event -> EventsForge.getFacing(event.getFace()),Facing.UP);
+        return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),Facing.UP);
     }
 
     @Override

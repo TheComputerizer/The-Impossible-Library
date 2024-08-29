@@ -19,8 +19,7 @@ public class PlayerTickEventForge extends PlayerTickEventWrapper<PlayerTickEvent
         TICK_PLAYER.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -29,8 +28,7 @@ public class PlayerTickEventForge extends PlayerTickEventWrapper<PlayerTickEvent
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
     }
 }

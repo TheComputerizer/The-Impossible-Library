@@ -15,8 +15,7 @@ public class PlayerLoggedOutEventForge extends PlayerLoggedOutEventWrapper<Playe
         PLAYER_LOGGED_OUT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class PlayerLoggedOutEventForge extends PlayerLoggedOutEventWrapper<Playe
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<PlayerLoggedOutEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerLoggedOutEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(PlayerLoggedOutEvent::getPlayer);
     }
 }

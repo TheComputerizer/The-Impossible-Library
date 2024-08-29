@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockNotifyNeighborEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.EventsForge;
 import net.minecraft.util.Direction;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,8 +23,7 @@ public class BlockNotifyNeighborEventForge extends BlockNotifyNeighborEventWrapp
         BLOCK_NOTIFY_NEIGHBOR.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -33,16 +32,14 @@ public class BlockNotifyNeighborEventForge extends BlockNotifyNeighborEventWrapp
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<NeighborNotifyEvent,Boolean> wrapForceRedstoneUpdateField() {
+    @Override protected EventFieldWrapper<NeighborNotifyEvent,Boolean> wrapForceRedstoneUpdateField() {
         return wrapGenericGetter(NeighborNotifyEvent::getForceRedstoneUpdate,false);
     }
 
-    @Override
-    protected EnumSet<Facing> wrapSidesField() {
+    @Override protected EnumSet<Facing> wrapSidesField() {
         if(Objects.isNull(this.event)) return EnumSet.of(UP);
         List<Facing> list = new ArrayList<>();
-        for(Direction facing : this.event.getNotifiedSides()) list.add(EventsForge.getFacing(facing));
+        for(Direction facing : this.event.getNotifiedSides()) list.add(EventHelper.getFacing(facing));
         return EnumSet.copyOf(list);
     }
 }

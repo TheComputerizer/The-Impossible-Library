@@ -17,8 +17,7 @@ public class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<Bre
         PLAYER_BREAK_SPEED.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,28 +26,23 @@ public class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<Bre
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<BreakSpeed,Float> wrapOriginalSpeedField() {
+    @Override protected EventFieldWrapper<BreakSpeed,Float> wrapOriginalSpeedField() {
         return wrapGenericGetter(BreakSpeed::getOriginalSpeed,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakSpeed,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<BreakSpeed,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BreakSpeed::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakSpeed,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<BreakSpeed,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(BreakSpeed::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakSpeed,Float> wrapSpeedField() {
+    @Override protected EventFieldWrapper<BreakSpeed,Float> wrapSpeedField() {
         return wrapGenericBoth(BreakSpeed::getNewSpeed,BreakSpeed::setNewSpeed,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakSpeed,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<BreakSpeed,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(BreakSpeed::getState);
     }
 }

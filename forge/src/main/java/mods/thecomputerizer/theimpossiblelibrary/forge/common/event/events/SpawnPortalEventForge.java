@@ -18,8 +18,7 @@ public class SpawnPortalEventForge extends SpawnPortalEventWrapper<PortalSpawnEv
         BLOCK_SPAWN_PORTAL.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,23 +27,19 @@ public class SpawnPortalEventForge extends SpawnPortalEventWrapper<PortalSpawnEv
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<PortalSpawnEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<PortalSpawnEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(PortalSpawnEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<PortalSpawnEvent,PortalSize> wrapSizeField() { //TODO Implement this
+    @Override protected EventFieldWrapper<PortalSpawnEvent,PortalSize> wrapSizeField() { //TODO Implement this
         return wrapGenericGetter(event -> null,null);
     }
 
-    @Override
-    protected EventFieldWrapper<PortalSpawnEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<PortalSpawnEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(PortalSpawnEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<PortalSpawnEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<PortalSpawnEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(PortalSpawnEvent::getWorld);
     }
 }

@@ -25,7 +25,7 @@ public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
         this.type = type;
     }
 
-    public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
+    public abstract Collection<? extends EffectInstanceAPI<?>> getActiveEffects();
     public abstract Box getBoundingBox();
     public abstract DimensionAPI<?> getDimension();
 

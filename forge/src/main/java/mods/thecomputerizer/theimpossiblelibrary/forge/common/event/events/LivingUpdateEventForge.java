@@ -15,8 +15,7 @@ public class LivingUpdateEventForge extends LivingUpdateEventWrapper<LivingUpdat
         LIVING_UPDATE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class LivingUpdateEventForge extends LivingUpdateEventWrapper<LivingUpdat
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LivingUpdateEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingUpdateEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingUpdateEvent::getEntityLiving);
     }
 }

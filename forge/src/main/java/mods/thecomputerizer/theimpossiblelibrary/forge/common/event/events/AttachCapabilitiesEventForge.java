@@ -13,8 +13,7 @@ public class AttachCapabilitiesEventForge extends AttachCapabilitiesEventWrapper
         ATTACH_CAPABILITIES.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

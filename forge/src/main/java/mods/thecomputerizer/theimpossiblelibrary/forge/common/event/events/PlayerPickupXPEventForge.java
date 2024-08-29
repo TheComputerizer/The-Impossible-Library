@@ -16,8 +16,7 @@ public class PlayerPickupXPEventForge extends PlayerPickupXPEventWrapper<PickupX
         PLAYER_XP_PICKUP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class PlayerPickupXPEventForge extends PlayerPickupXPEventWrapper<PickupX
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<PickupXp,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PickupXp,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(PickupXp::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(PickupXp::getOrb);
     }
 }

@@ -17,43 +17,35 @@ public class HarvestBlockDropsEventForge extends HarvestBlockDropsEventWrapper<O
     //    BLOCK_HARVEST.invoke(event);
     //} TODO
 
-    @Override
-    protected EventFieldWrapper<Object,List<ItemStackAPI<?>>> wrapDropsField() {
+    @Override protected EventFieldWrapper<Object,List<ItemStackAPI<?>>> wrapDropsField() {
         return wrapGenericGetter(event -> new ArrayList<>(),new ArrayList<>());
     }
 
-    @Override
-    protected EventFieldWrapper<Object,Float> wrapDropChanceField() {
+    @Override protected EventFieldWrapper<Object,Float> wrapDropChanceField() {
         return wrapGenericBoth(event -> 0f,(event,chance) -> {},0f);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,Integer> wrapFortuneLevelField() {
+    @Override protected EventFieldWrapper<Object,Integer> wrapFortuneLevelField() {
         return wrapGenericGetter(event -> 0,0);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,Boolean> wrapSilkTouchingField() {
+    @Override protected EventFieldWrapper<Object,Boolean> wrapSilkTouchingField() {
         return wrapGenericGetter(event -> false,false);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<Object,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Object,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(event -> null);
     }
 }

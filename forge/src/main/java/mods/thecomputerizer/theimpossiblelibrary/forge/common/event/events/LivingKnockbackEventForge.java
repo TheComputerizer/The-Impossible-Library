@@ -16,8 +16,7 @@ public class LivingKnockbackEventForge extends LivingKnockbackEventWrapper<Livin
         LIVING_KNOCKBACK.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,48 +25,39 @@ public class LivingKnockbackEventForge extends LivingKnockbackEventWrapper<Livin
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapAttackerField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapAttackerField() {
         return wrapEntityBoth(event -> null,(event,attacker) -> {});
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingKnockBackEvent::getEntityLiving);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapOriginalAttackerField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapOriginalAttackerField() {
         return wrapEntityGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapOriginalRatioXField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapOriginalRatioXField() {
         return wrapGenericGetter(LivingKnockBackEvent::getOriginalRatioX,0d);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapOriginalRatioZField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapOriginalRatioZField() {
         return wrapGenericGetter(LivingKnockBackEvent::getOriginalRatioZ,0d);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,Float> wrapOriginalStrengthField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,Float> wrapOriginalStrengthField() {
         return wrapGenericGetter(LivingKnockBackEvent::getStrength,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapRatioXField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapRatioXField() {
         return wrapGenericBoth(LivingKnockBackEvent::getRatioX,LivingKnockBackEvent::setRatioX,0d);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapRatioZField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,Double> wrapRatioZField() {
         return wrapGenericBoth(LivingKnockBackEvent::getRatioZ,LivingKnockBackEvent::setRatioZ,0d);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingKnockBackEvent,Float> wrapStrengthField() {
+    @Override protected EventFieldWrapper<LivingKnockBackEvent,Float> wrapStrengthField() {
         return wrapGenericBoth(LivingKnockBackEvent::getStrength,LivingKnockBackEvent::setStrength,0f);
     }
 }

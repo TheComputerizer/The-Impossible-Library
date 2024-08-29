@@ -16,8 +16,7 @@ public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<Nam
         PLAYER_NAME_FORMAT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,19 +25,16 @@ public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<Nam
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {
+    @Override protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> event.getDisplayname().getString(),
                 (event,name) -> event.setDisplayname(TextHelper.getLiteral(name).getAsComponent()),"");
     }
 
-    @Override
-    protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(NameFormat::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<NameFormat,String> wrapUsernameField() {
+    @Override protected EventFieldWrapper<NameFormat,String> wrapUsernameField() {
         return wrapGenericGetter(event -> event.getDisplayname().getString(),"");
     }
 }

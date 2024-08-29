@@ -17,8 +17,7 @@ public class CropGrowPreEventForge extends CropGrowPreEventWrapper<Pre> {
         CROP_GROW_PRE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,18 +26,15 @@ public class CropGrowPreEventForge extends CropGrowPreEventWrapper<Pre> {
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<Pre,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<Pre,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(Pre::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<Pre,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<Pre,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(Pre::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<Pre,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Pre,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Pre::getWorld);
     }
 }

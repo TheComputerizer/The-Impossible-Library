@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.eve
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayTextEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Text;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_TEXT;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
 
 public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<Text> {
 
@@ -20,9 +21,12 @@ public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<
         RENDER_OVERLAY_TEXT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected RenderContext initRenderer(@Nonnull Text event) {
+        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks(event.getPartialTicks()));
     }
     
     @Override public void setEvent(Text event) {
@@ -30,23 +34,15 @@ public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected RenderContext initRenderer(@Nonnull Text event) {
-        return ClientEvents1_12_2.initRenderer(event::getPartialTicks);
+    @Override protected EventFieldWrapper<Text,OverlayType> wrapOverlayType() {
+        return wrapGenericGetter(event -> EventHelper.getOverlayElementType(event.getType()),ALL);
     }
 
-    @Override
-    protected EventFieldWrapper<Text,OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> ClientEvents1_12_2.getOverlayElementType(event.getType()),OverlayType.ALL);
-    }
-
-    @Override
-    protected EventFieldWrapper<Text,List<String>> wrapLeftField() {
+    @Override protected EventFieldWrapper<Text,List<String>> wrapLeftField() {
         return wrapGenericGetter(Text::getLeft,new ArrayList<>());
     }
 
-    @Override
-    protected EventFieldWrapper<Text,List<String>> wrapRightField() {
+    @Override protected EventFieldWrapper<Text,List<String>> wrapRightField() {
         return wrapGenericGetter(Text::getRight,new ArrayList<>());
     }
 }

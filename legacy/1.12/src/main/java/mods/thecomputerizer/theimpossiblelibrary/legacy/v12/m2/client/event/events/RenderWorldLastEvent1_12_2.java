@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderWorldLastEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -17,18 +17,16 @@ public class RenderWorldLastEvent1_12_2 extends RenderWorldLastEventWrapper<Rend
         RENDER_WORLD_LAST.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected RenderContext initRenderer(@Nonnull RenderWorldLastEvent event) {
+        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks(event.getPartialTicks()));
     }
     
     @Override public void setEvent(RenderWorldLastEvent event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-
-    @Override
-    protected RenderContext initRenderer(@Nonnull RenderWorldLastEvent event) {
-        return ClientEvents1_12_2.initRenderer(event::getPartialTicks);
     }
 }

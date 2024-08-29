@@ -18,8 +18,7 @@ public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapp
         PLAYER_TAB_FORMAT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,15 +27,13 @@ public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapp
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<TabListNameFormat,String> wrapDisplayNameField() {
+    @Override protected EventFieldWrapper<TabListNameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> Objects.nonNull(event.getDisplayName()) ? event.getDisplayName().getString() : null,
                                (event,name) -> event.setDisplayName(Objects.nonNull(name) ?
                                                TextHelper.getLiteral(name).getAsComponent() : null),null);
     }
 
-    @Override
-    protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(TabListNameFormat::getPlayer);
     }
 }

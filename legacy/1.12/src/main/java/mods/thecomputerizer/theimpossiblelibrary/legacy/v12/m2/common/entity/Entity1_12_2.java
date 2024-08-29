@@ -1,13 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.EffectInstance1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Dimension1_12_2;
@@ -47,7 +43,7 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     }
 
     @Override
-    public Collection<EffectInstanceAPI<?>> getActiveEffects() {
+    public Collection<EffectInstance1_12_2> getActiveEffects() {
         return this.entity instanceof EntityLivingBase ?
                 ((EntityLivingBase)this.entity).getActivePotionEffects().stream().map(EffectInstance1_12_2::new)
                         .collect(Collectors.toList()) : Collections.emptyList();
@@ -63,8 +59,8 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     }
 
     @Override
-    public DimensionAPI<?> getDimension() {
-        return new Dimension1_12_2((World1_12_2)getWorld(),DimensionManager.getProviderType(this.entity.dimension));
+    public Dimension1_12_2 getDimension() {
+        return new Dimension1_12_2(getWorld(),DimensionManager.getProviderType(this.entity.dimension));
     }
 
     @Override
@@ -84,23 +80,23 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     }
 
     @Override
-    public ResourceLocationAPI<?> getRegistryName() {
+    public ResourceLocation1_12_2 getRegistryName() {
         return new ResourceLocation1_12_2(this.type.getRegistryName());
     }
 
     @Override
-    public EntityAPI<?,?> getRootVehicle() {
+    public Entity1_12_2 getRootVehicle() {
         return new Entity1_12_2(this.entity.getLowestRidingEntity());
     }
 
     @Override
-    public @Nullable EntityAPI<?,?> getVehicle() {
+    public @Nullable Entity1_12_2 getVehicle() {
         Entity entity = this.entity.getRidingEntity();
         return Objects.nonNull(entity) ? new Entity1_12_2(entity) : null;
     }
 
     @Override
-    public WorldAPI<?> getWorld() {
+    public World1_12_2 getWorld() {
         return new World1_12_2(this.entity.world);
     }
 

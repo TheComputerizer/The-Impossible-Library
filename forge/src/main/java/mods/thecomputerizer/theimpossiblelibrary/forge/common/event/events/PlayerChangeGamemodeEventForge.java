@@ -15,8 +15,7 @@ public class PlayerChangeGamemodeEventForge extends PlayerChangeGamemodeEventWra
         PLAYER_CHANGE_GAMEMODE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class PlayerChangeGamemodeEventForge extends PlayerChangeGamemodeEventWra
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<PlayerChangeGameModeEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerChangeGameModeEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(PlayerChangeGameModeEvent::getPlayer);
     }
 }

@@ -7,8 +7,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 public abstract class LivingDeathEventForge extends LivingDeathEventWrapper<LivingDeathEvent> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -17,8 +16,7 @@ public abstract class LivingDeathEventForge extends LivingDeathEventWrapper<Livi
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingDeathEvent::getEntityLiving);
     }
 }

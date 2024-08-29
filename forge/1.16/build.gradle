@@ -114,6 +114,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
 
     implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
+    implementation(project(':shared:shared.1_16'))
     implementation(project(':forge'))
 
     //mod support dependencies
@@ -151,15 +152,20 @@ processTestResources {
 }
 
 compileJava {
-    source(project(':api').sourceSets.main.allJava, project(':forge').sourceSets.main.allJava)
+    source(project(':api').sourceSets.main.allJava,
+            project(':shared:shared.1_16').sourceSets.main.allJava,
+            project(':forge').sourceSets.main.allJava)
 }
 
 compileTestJava {
-    source(project(':api').sourceSets.test.allJava, project(':forge').sourceSets.test.allJava)
+    source(project(':api').sourceSets.test.allJava,
+            project(':shared:shared.1_16').sourceSets.test.allJava,
+            project(':forge').sourceSets.test.allJava)
 }
 
 jar {
     from(project(':forge').jar.archiveFile.collect { zipTree(it) })
+    //from(project(':shared:shared.1_16').jar.archiveFile.collect { zipTree(it) })
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
@@ -179,4 +185,5 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
 tasks.jar.finalizedBy('reobfJar')
+tasks.jar.dependsOn(':shared:shared.1_16:build')
 tasks.jar.dependsOn(':forge:build')

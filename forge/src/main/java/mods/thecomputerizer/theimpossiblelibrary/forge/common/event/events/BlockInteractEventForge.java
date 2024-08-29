@@ -18,8 +18,7 @@ public class BlockInteractEventForge extends BlockInteractEventWrapper<BlockTool
         BLOCK_INTERACT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,23 +27,19 @@ public class BlockInteractEventForge extends BlockInteractEventWrapper<BlockTool
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<BlockToolInteractEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<BlockToolInteractEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BlockToolInteractEvent::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<BlockToolInteractEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<BlockToolInteractEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(BlockToolInteractEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<BlockToolInteractEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<BlockToolInteractEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(BlockToolInteractEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<BlockToolInteractEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<BlockToolInteractEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(BlockToolInteractEvent::getWorld);
     }
     

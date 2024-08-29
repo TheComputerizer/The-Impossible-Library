@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
@@ -21,6 +22,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.advancement.Advancement1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome.Biome1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Block1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockSnapShot1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
@@ -60,6 +62,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.util.BlockSnapshot;
 
 import javax.annotation.Nullable;
@@ -72,7 +75,11 @@ public class Wrapper1_12_2 implements WrapperAPI {
     public @Nullable <A> AdvancementAPI<A> wrapAdvancement(@Nullable A advancement) {
         return Objects.nonNull(advancement) ? (AdvancementAPI<A>)new Advancement1_12_2((Advancement)advancement) : null;
     }
-
+    
+    @Override public @Nullable <B> BiomeAPI<B> wrapBiome(@Nullable B biome) {
+        return Objects.nonNull(biome) ? (BiomeAPI<B>)new Biome1_12_2((Biome)biome) : null;
+    }
+    
     @Override
     public @Nullable <B> BlockAPI<B> wrapBlock(@Nullable B block) {
         return Objects.nonNull(block) ? (BlockAPI<B>)new Block1_12_2((Block)block) : null;

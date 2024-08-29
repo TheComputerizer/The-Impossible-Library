@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientEventsForge;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -20,9 +20,12 @@ public class FOVModifierEventForge extends FOVModifierEventWrapper<FOVModifier> 
         FOV_MODIFIER.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected RenderContext initRenderer(@Nonnull FOVModifier event) {
+        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     
     @Override public void setEvent(FOVModifier event) {
@@ -30,23 +33,15 @@ public class FOVModifierEventForge extends FOVModifierEventWrapper<FOVModifier> 
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<FOVModifier,Float> wrapFOVField() {
+    @Override protected EventFieldWrapper<FOVModifier,Float> wrapFOVField() {
         return wrapGenericBoth(event -> (float)event.getFOV(),(event,fov) -> event.setFOV(fov),0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FOVModifier,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<FOVModifier,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 
-    @Override
-    protected EventFieldWrapper<FOVModifier,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<FOVModifier,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(event -> null);
-    }
-
-    @Override
-    protected RenderContext initRenderer(@Nonnull FOVModifier event) {
-        return ClientEventsForge.initRenderer(() -> (float)event.getRenderPartialTicks(),() -> null);
     }
 }

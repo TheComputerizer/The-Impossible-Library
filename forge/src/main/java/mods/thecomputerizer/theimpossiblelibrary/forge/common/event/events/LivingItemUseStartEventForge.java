@@ -16,8 +16,7 @@ public class LivingItemUseStartEventForge extends LivingItemUseStartEventWrapper
         LIVING_ITEM_USE_START.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,18 +25,15 @@ public class LivingItemUseStartEventForge extends LivingItemUseStartEventWrapper
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<Start,Integer> wrapDurationField() {
+    @Override protected EventFieldWrapper<Start,Integer> wrapDurationField() {
         return wrapGenericBoth(Start::getDuration, Start::setDuration,0);
     }
 
-    @Override
-    protected EventFieldWrapper<Start,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<Start,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(Start::getEntityLiving);
     }
 
-    @Override
-    protected EventFieldWrapper<Start,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<Start,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Start::getItem);
     }
 }

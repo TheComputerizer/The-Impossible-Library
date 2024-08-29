@@ -6,8 +6,7 @@ import net.minecraftforge.event.RegistryEvent.Register;
 
 public abstract class RegisterEntitiesEventForge extends RegisterEntitiesEventWrapper<Register<EntityType<?>>> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

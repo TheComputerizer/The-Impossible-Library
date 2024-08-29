@@ -1,17 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome.Biome1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
@@ -50,13 +45,13 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override
-    public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
+    public Biome1_12_2 getBiomeAt(BlockPosAPI<?> pos) {
         return new Biome1_12_2(this.world.getBiome(((BlockPos1_12_2)pos).getPos()));
     }
 
     @Override
-    public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
-        List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
+    public Collection<BlockEntity1_12_2> getBlockEntitiesInBox(Box box) {
+        List<BlockEntity1_12_2> entities = new ArrayList<>();
         if(this.world instanceof World) {
             synchronized(this.world) {
                 for(TileEntity tile : this.world.loadedTileEntityList) {
@@ -69,7 +64,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override
-    public @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos) {
+    public @Nullable BlockEntity1_12_2 getBlockEntityAt(BlockPosAPI<?> pos) {
         TileEntity tile = this.world.getTileEntity(((BlockPos1_12_2)pos).getPos());
         return Objects.nonNull(tile) ? new BlockEntity1_12_2(tile) : null;
     }
@@ -92,17 +87,17 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override
-    public DimensionAPI<?> getDimension() {
+    public Dimension1_12_2 getDimension() {
         return new Dimension1_12_2(this);
     }
 
     @Override
-    public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
+    public List<Entity1_12_2> getEntitiesInBox(Box box) {
         return getEntitiesInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
     }
 
-    public List<EntityAPI<?,?>> getEntitiesInBox(AxisAlignedBB box) {
-        List<EntityAPI<?,?>> entities = new ArrayList<>();
+    public List<Entity1_12_2> getEntitiesInBox(AxisAlignedBB box) {
+        List<Entity1_12_2> entities = new ArrayList<>();
         for(Entity entity : this.world.getEntitiesWithinAABB(Entity.class,box)) entities.add(new Entity1_12_2(entity));
         return entities;
     }
@@ -123,12 +118,12 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override
-    public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
+    public List<Living1_12_2> getLivingInBox(Box box) {
         return getLivingInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
     }
 
-    public List<LivingEntityAPI<?,?>> getLivingInBox(AxisAlignedBB box) {
-        List<LivingEntityAPI<?,?>> entities = new ArrayList<>();
+    public List<Living1_12_2> getLivingInBox(AxisAlignedBB box) {
+        List<Living1_12_2> entities = new ArrayList<>();
         for(EntityLivingBase entity : this.world.getEntitiesWithinAABB(EntityLivingBase.class,box))
             entities.add(new Living1_12_2(entity));
         return entities;
@@ -140,12 +135,12 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override
-    public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
+    public BlockState1_12_2 getStateAt(BlockPosAPI<?> pos) {
         return new BlockState1_12_2(this.world.getBlockState(((BlockPos1_12_2)pos).getPos()));
     }
 
     @Override
-    public StructureAPI<?> getStructureAt(BlockPosAPI<?> pos) {
+    public Structure1_12_2 getStructureAt(BlockPosAPI<?> pos) {
         if(this.world instanceof WorldServer) {
             StructureRef ref = StructureRef.getStructureAt((WorldServer)this.world,((BlockPos1_12_2)pos).getPos());
             return Objects.nonNull(ref) ? new Structure1_12_2(ref) : null;

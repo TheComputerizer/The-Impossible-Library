@@ -7,8 +7,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public abstract class LivingHurtEventForge extends LivingHurtEventWrapper<LivingHurtEvent> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -17,8 +16,7 @@ public abstract class LivingHurtEventForge extends LivingHurtEventWrapper<Living
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LivingHurtEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingHurtEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingHurtEvent::getEntityLiving);
     }
 }

@@ -16,8 +16,7 @@ public class PlayerSleepInBedEventForge extends PlayerSleepInBedEventWrapper<Pla
         PLAYER_SLEEP_IN_BED.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class PlayerSleepInBedEventForge extends PlayerSleepInBedEventWrapper<Pla
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<PlayerSleepInBedEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerSleepInBedEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(PlayerSleepInBedEvent::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerSleepInBedEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<PlayerSleepInBedEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(PlayerSleepInBedEvent::getPos);
     }
 }

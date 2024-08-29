@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventsAPI;
 
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
@@ -16,7 +15,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 
 public class ClientEventHelper {
 
-    public static EventsAPI getEventsAPI() {
+    public static ClientEventsAPI getEventsAPI() {
         return TILRef.getClientSubAPI(ClientAPI::getClientEvents);
     }
 

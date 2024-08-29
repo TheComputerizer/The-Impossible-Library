@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.InventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
@@ -25,6 +26,7 @@ import javax.annotation.Nullable;
 public interface WrapperAPI {
 
     <A> @Nullable AdvancementAPI<A> wrapAdvancement(@Nullable A advancement);
+    <B> @Nullable BiomeAPI<B> wrapBiome(@Nullable B biome);
     <B> @Nullable BlockAPI<B> wrapBlock(@Nullable B block);
     <BE> @Nullable BlockEntityAPI<BE,?> wrapBlockEntity(@Nullable BE blockentity);
     <D> @Nullable DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable D dimension);
@@ -36,6 +38,7 @@ public interface WrapperAPI {
     @SuppressWarnings("unchecked")
     default <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable G generic) {
         if(AdvancementAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapAdvancement(generic);
+        if(BiomeAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBiome(generic);
         if(BlockAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBlock(generic);
         if(BlockEntityAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBlockEntity(generic);
         if(EffectAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapEffect(generic);

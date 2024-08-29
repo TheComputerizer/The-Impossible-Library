@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockNotifyNeighborEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,7 +42,7 @@ public class BlockNotifyNeighborEvent1_12_2 extends BlockNotifyNeighborEventWrap
     protected EnumSet<Facing> wrapSidesField() {
         if(Objects.isNull(this.event)) return EnumSet.of(UP);
         List<Facing> list = new ArrayList<>();
-        for(EnumFacing facing : this.event.getNotifiedSides()) list.add(Events1_12_2.getFacing(facing));
+        for(EnumFacing facing : this.event.getNotifiedSides()) list.add(EventHelper.getFacing(facing));
         return EnumSet.copyOf(list);
     }
 }

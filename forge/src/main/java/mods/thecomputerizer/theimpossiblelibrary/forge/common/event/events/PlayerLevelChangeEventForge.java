@@ -15,8 +15,7 @@ public class PlayerLevelChangeEventForge extends PlayerLevelChangeEventWrapper<L
         PLAYER_XP_LEVEL_CHANGE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class PlayerLevelChangeEventForge extends PlayerLevelChangeEventWrapper<L
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<LevelChange,Integer> wrapLevelsField() {
+    @Override protected EventFieldWrapper<LevelChange,Integer> wrapLevelsField() {
         return wrapGenericBoth(LevelChange::getLevels,LevelChange::setLevels,0);
     }
 
-    @Override
-    protected EventFieldWrapper<LevelChange,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<LevelChange,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(LevelChange::getPlayer);
     }
 }

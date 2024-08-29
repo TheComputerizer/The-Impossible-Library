@@ -2,11 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.block;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockState1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.Events1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
@@ -78,8 +78,8 @@ public class TILBasicBlock1_12_2 extends Block {
             EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(this.properties.hasUseResult()) {
             return this.properties.getUseResult(new TILItemUseContext(
-                    WrapperHelper.wrapPlayer(player),new World1_12_2(world),new BlockPos1_12_2(pos),new BlockState1_12_2(state),
-                    Events1_12_2.getHand(hand),Events1_12_2.getFacing(facing)))==SUCCESS;
+                    WrapperHelper.wrapPlayer(player), new World1_12_2(world), new BlockPos1_12_2(pos), new BlockState1_12_2(state),
+                    EventHelper.getHand(hand),EventHelper.getFacing(facing)))==SUCCESS;
         }
         return super.onBlockActivated(world,pos,state,player,hand,facing,hitX,hitY,hitZ);
     }

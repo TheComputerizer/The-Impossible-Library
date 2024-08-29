@@ -1,17 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container.PlayerInventory1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.EffectInstance1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
@@ -39,7 +34,7 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override
-    public Collection<EffectInstanceAPI<?>> getActiveEffects() {
+    public Collection<EffectInstance1_12_2> getActiveEffects() {
         return this.entity.getActivePotionEffects().stream().map(EffectInstance1_12_2::new).collect(Collectors.toList());
     }
 
@@ -68,8 +63,8 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override
-    public DimensionAPI<?> getDimension() {
-        return new Dimension1_12_2((World1_12_2)getWorld(),DimensionManager.getProviderType(this.entity.dimension));
+    public Dimension1_12_2 getDimension() {
+        return new Dimension1_12_2(getWorld(),DimensionManager.getProviderType(this.entity.dimension));
     }
 
     @Override
@@ -78,12 +73,12 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override
-    public PlayerInventoryAPI<?> getInventory() {
+    public PlayerInventory1_12_2 getInventory() {
         return new PlayerInventory1_12_2(this.entity.inventory);
     }
 
     @Override
-    public ItemStackAPI<?> getMainHandStack() {
+    public ItemStack1_12_2 getMainHandStack() {
         return new ItemStack1_12_2(this.entity.getHeldItemMainhand());
     }
 
@@ -98,7 +93,7 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override
-    public ItemStackAPI<?> getOffHandStack() {
+    public ItemStack1_12_2 getOffHandStack() {
         return new ItemStack1_12_2(this.entity.getHeldItemOffhand());
     }
 
@@ -114,12 +109,12 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override
-    public ResourceLocationAPI<?> getRegistryName() {
+    public ResourceLocation1_12_2 getRegistryName() {
         return new ResourceLocation1_12_2(this.type.getRegistryName());
     }
 
     @Override
-    public EntityAPI<?,?> getRootVehicle() {
+    public Entity1_12_2 getRootVehicle() {
         return new Entity1_12_2(this.entity.getLowestRidingEntity());
     }
 
@@ -129,13 +124,13 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override
-    public @Nullable EntityAPI<?,?> getVehicle() {
+    public @Nullable Entity1_12_2 getVehicle() {
         Entity entity = this.entity.getRidingEntity();
         return Objects.nonNull(entity) ? new Entity1_12_2(entity) : null;
     }
 
     @Override
-    public WorldAPI<?> getWorld() {
+    public World1_12_2 getWorld() {
         return new World1_12_2(this.entity.world);
     }
 

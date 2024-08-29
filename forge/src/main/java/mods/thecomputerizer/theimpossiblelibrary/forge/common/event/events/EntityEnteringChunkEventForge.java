@@ -15,8 +15,7 @@ public class EntityEnteringChunkEventForge extends EntityEnteringChunkEventWrapp
         ENTITY_ENTERING_CHUNK.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,28 +24,23 @@ public class EntityEnteringChunkEventForge extends EntityEnteringChunkEventWrapp
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<EnteringChunk,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<EnteringChunk,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EnteringChunk::getEntity);
     }
 
-    @Override
-    protected EventFieldWrapper<EnteringChunk,Integer> wrapNewXField() {
+    @Override protected EventFieldWrapper<EnteringChunk,Integer> wrapNewXField() {
         return wrapGenericBoth(EnteringChunk::getNewChunkX,EnteringChunk::setNewChunkX,0);
     }
 
-    @Override
-    protected EventFieldWrapper<EnteringChunk,Integer> wrapNewZField() {
+    @Override protected EventFieldWrapper<EnteringChunk,Integer> wrapNewZField() {
         return wrapGenericBoth(EnteringChunk::getNewChunkZ,EnteringChunk::setNewChunkZ,0);
     }
 
-    @Override
-    protected EventFieldWrapper<EnteringChunk,Integer> wrapOldXField() {
+    @Override protected EventFieldWrapper<EnteringChunk,Integer> wrapOldXField() {
         return wrapGenericBoth(EnteringChunk::getOldChunkX,EnteringChunk::setOldChunkX,0);
     }
 
-    @Override
-    protected EventFieldWrapper<EnteringChunk,Integer> wrapOldZField() {
+    @Override protected EventFieldWrapper<EnteringChunk,Integer> wrapOldZField() {
         return wrapGenericBoth(EnteringChunk::getOldChunkZ,EnteringChunk::setOldChunkZ,0);
     }
 }

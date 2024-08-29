@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 @SuppressWarnings("unused") public class ClassHelper {
@@ -20,6 +21,12 @@ import java.util.function.BiFunction;
             "resolveClass",Class.class);
     private static final MethodHandle URL_LOADER = ReflectionHelper.findMethodHandle(URLClassLoader.class,
             "addURL",URL.class);
+    
+    public static void addSource(Set<String> sources, Class<?> clazz) {
+        URL url = getSourceURL(clazz);
+        if(Objects.nonNull(url)) sources.add(url.toString());
+        else TILRef.logError("Failed to add source for {}",clazz);
+    }
     
     @SuppressWarnings("unchecked")
     public static <T> T castToOtherClassLoader(Object obj, String className, ClassLoader loader) {
