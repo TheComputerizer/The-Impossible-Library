@@ -46,8 +46,10 @@ plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.spongepowered.mixin')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
+def shared = project(':shared:shared.1_16')
+
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_base_version}-${minecraft_base_version}"
+    mappings channel: 'parchment', version: "${shared.parchment_version}-${shared.minecraft_version}"
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
         def args = [
@@ -111,10 +113,10 @@ repositories {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
+    minecraft("net.minecraftforge:forge:${shared.minecraft_version}-${shared.forge_version}")
 
     implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
-    implementation(project(':shared:shared.1_16'))
+    implementation(shared)
     implementation(project(':forge'))
 
     //mod support dependencies
@@ -129,7 +131,7 @@ dependencies {
     implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_base_version}:${bookshelf_version}"))
     implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_base_version}:${gamestages_version}"))
 
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_base_version}:${jei_version}"))
+    runtimeOnly(fg.deobf("mezz.jei:jei-${shared.minecraft_version}:${jei_version}"))
 }
 
 mixin {
@@ -153,13 +155,13 @@ processTestResources {
 
 compileJava {
     source(project(':api').sourceSets.main.allJava,
-            project(':shared:shared.1_16').sourceSets.main.allJava,
+            shared.sourceSets.main.allJava,
             project(':forge').sourceSets.main.allJava)
 }
 
 compileTestJava {
     source(project(':api').sourceSets.test.allJava,
-            project(':shared:shared.1_16').sourceSets.test.allJava,
+            shared.sourceSets.test.allJava,
             project(':forge').sourceSets.test.allJava)
 }
 
