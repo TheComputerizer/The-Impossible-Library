@@ -8,11 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.TILModFileForge1_16_5;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.loading.LibraryFinder;
-import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
-import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.io.File;
 import java.io.IOException;

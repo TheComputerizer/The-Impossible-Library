@@ -35,14 +35,14 @@ import java.util.Set;
 public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
 
     private final Set<? super Registry1_16_5<?>> registries;
-    protected Registry1_16_5<Biome> biome;
-    protected Registry1_16_5<Block> block;
-    protected Registry1_16_5<TileEntityType<?>> blockEntity;
-    protected Registry1_16_5<Effect> effect;
-    protected Registry1_16_5<EntityType<?>> entity;
-    protected Registry1_16_5<Item> item;
-    protected Registry1_16_5<Potion> potion;
-    protected Registry1_16_5<SoundEvent> sound;
+    protected Registry1_16_5<?> biome;
+    protected Registry1_16_5<?> block;
+    protected Registry1_16_5<?> blockEntity;
+    protected Registry1_16_5<?> effect;
+    protected Registry1_16_5<?> entity;
+    protected Registry1_16_5<?> item;
+    protected Registry1_16_5<?> potion;
+    protected Registry1_16_5<?> sound;
 
     public RegistryHandler1_16_5() {
         Set<? super Registry1_16_5<?>> registries = new HashSet<>();
@@ -59,39 +59,39 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
         return reg.hasKey(entryKey) ? reg.getValue(entryKey) : null;
     }
 
-    @Override
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<Biome> getBiomeRegistry() {
-        return this.biome;
+        return (Registry1_16_5<Biome>)this.biome;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<Block> getBlockRegistry() {
-        return this.block;
+        return (Registry1_16_5<Block>)this.block;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<TileEntityType<?>> getBlockEntityRegistry() {
-        return this.blockEntity;
+        return (Registry1_16_5<TileEntityType<?>> )this.blockEntity;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<Effect> getEffectRegistry() {
-        return this.effect;
+        return (Registry1_16_5<Effect>)this.effect;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<EntityType<?>> getEntityRegistry() {
-        return this.entity;
+        return (Registry1_16_5<EntityType<?>>)this.entity;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<Item> getItemRegistry() {
-        return this.item;
+        return (Registry1_16_5<Item>)this.item;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<Potion> getPotionRegistry() {
-        return this.potion;
+        return (Registry1_16_5<Potion>)this.potion;
     }
 
     @Override
@@ -117,10 +117,10 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
         }
         return null;
     }
-
-    @Override
+    
+    @SuppressWarnings("unchecked") @Override
     public Registry1_16_5<SoundEvent> getSoundRegistry() {
-        return this.sound;
+        return (Registry1_16_5<SoundEvent>)this.sound;
     }
     
     @Override public BlockBuilder1_16_5 makeBlockBuilder(@Nullable BlockBuilderAPI parent) {

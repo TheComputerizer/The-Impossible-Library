@@ -19,29 +19,29 @@ import static net.minecraft.util.registry.Registry.BIOME_REGISTRY;
 import static net.minecraft.world.biome.Biome.RainType.RAIN;
 import static net.minecraft.world.biome.Biome.RainType.SNOW;
 
-public abstract class Biome1_16_5 extends BiomeAPI<Biome> {
+public abstract class Biome1_16_5<B> extends BiomeAPI<B> {
 
-    public Biome1_16_5(Biome biome) {
+    public Biome1_16_5(B biome) {
         super(biome);
     }
 
     @Override
     public boolean canRain() {
-        return this.biome.getPrecipitation()==RAIN;
+        return ((Biome)this.biome).getPrecipitation()==RAIN;
     }
 
     @Override
     public boolean canSnow() {
-        return this.biome.getPrecipitation()==SNOW;
+        return ((Biome)this.biome).getPrecipitation()==SNOW;
     }
 
     public @Nullable RegistryKey<Biome> getRegistryKey(DynamicRegistries registries) {
-        return registries.registryOrThrow(BIOME_REGISTRY).getResourceKey(this.biome).orElse(null);
+        return registries.registryOrThrow(BIOME_REGISTRY).getResourceKey((Biome)this.biome).orElse(null);
     }
 
     @Override
     public float getRainfall() {
-        return this.biome.getDownfall();
+        return ((Biome)this.biome).getDownfall();
     }
 
     @Override
@@ -53,13 +53,13 @@ public abstract class Biome1_16_5 extends BiomeAPI<Biome> {
 
     @Override
     public float getTemperatureAt(BlockPosAPI<?> pos) {
-        return this.biome.getTemperature((BlockPos)pos.getPos());
+        return ((Biome)this.biome).getTemperature((BlockPos)pos.getPos());
     }
 
-    protected abstract void getTypes(Set<String> typeSet, @Nullable RegistryKey<Biome> biomeKey);
+    protected abstract void getTypes(Set<String> typeSet, @Nullable Object biomeKey);
 
     @Override
     public ResourceLocationAPI<?> getRegistryName() {
-        return new ResourceLocation1_16_5(this.biome.getRegistryName());
+        return new ResourceLocation1_16_5(((Biome)this.biome).getRegistryName());
     }
 }

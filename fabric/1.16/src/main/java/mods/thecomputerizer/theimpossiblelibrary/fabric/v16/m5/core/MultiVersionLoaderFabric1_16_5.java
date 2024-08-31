@@ -1,17 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core;
 
-import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.TILLoadingPluginForge1_16_5;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.fabricmc.loader.api.ModContainer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,10 +20,7 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-@Setter
 public class MultiVersionLoaderFabric1_16_5 extends MultiVersionLoaderAPI {
-
-    private TILLoadingPluginForge1_16_5 locator;
     
     protected MultiVersionLoaderFabric1_16_5(CoreAPI parent) {
         super(parent);

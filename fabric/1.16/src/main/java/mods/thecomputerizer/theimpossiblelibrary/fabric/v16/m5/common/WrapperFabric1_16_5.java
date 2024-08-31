@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.biome.BiomeFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.Wrapper1_16_5;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core;
 
-import cpw.mods.modlauncher.TransformingClassLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
@@ -9,12 +8,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.ClientForge1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.CommonForge1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.asm.ModWriterForge1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.ClientFabric1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.CommonFabric1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core.asm.ModWriterFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.core.TILCore1_16_5;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -22,28 +21,29 @@ import java.net.URLClassLoader;
 import java.util.Objects;
 import java.util.Set;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
+import static net.fabricmc.api.EnvType.CLIENT;
 
-public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreForge {
+public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric {
 
-    public static final Reference FORGE_REF = TILRef.instance(FMLLoader.getDist()::isClient,"");
+    public static final Reference FABRIC_REF = TILRef.instance(() -> FabricLoader.getInstance().getEnvironmentType()==CLIENT,"");
     private final MultiVersionLoaderFabric1_16_5 loader;
 
     public TILCoreFabric1_16_5() {
-        super(FORGE,FORGE_REF.isClient());
+        super(FABRIC,FABRIC_REF.isClient());
         this.loader = new MultiVersionLoaderFabric1_16_5(this);
     }
     
     @Override public void addSources(Set<String> sources) {
         super.addSources(sources);
-        ClassHelper.addSource(sources,TILCoreForge.class);
-        ClassHelper.addSource(sources, TILCoreFabric1_16_5.class);
+        ClassHelper.addSource(sources,TILCoreFabric.class);
+        ClassHelper.addSource(sources,TILCoreFabric1_16_5.class);
     }
     
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
         if(loader instanceof TransformingClassLoader) {
-            Field field = ReflectionHelper.getField(TransformingClassLoader.class, "delegatedClassLoader");
+            Field field = ReflectionHelper.getField(TransformingClassLoader.class,"delegatedClassLoader");
             if(Objects.nonNull(field)) {
                 Object instance = ReflectionHelper.getFieldInstance(loader,field);
                 if(instance instanceof URLClassLoader) {
@@ -73,12 +73,12 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterForge1_16_5(this, info);
+        return new ModWriterFabric1_16_5(this,info);
     }
     
     @Override
     public void initAPI() {
-        TILRef.setAPI(this.side.isClient() ? new ClientForge1_16_5() : new CommonForge1_16_5());
+        TILRef.setAPI(this.side.isClient() ? new ClientFabric1_16_5() : new CommonFabric1_16_5());
     }
 
     @Override

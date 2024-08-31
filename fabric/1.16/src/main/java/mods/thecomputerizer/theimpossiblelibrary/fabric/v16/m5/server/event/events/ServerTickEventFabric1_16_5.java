@@ -2,29 +2,28 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.server.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.event.events.ServerTickEventWrapper;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraft.server.MinecraftServer;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.START;
 
-public class ServerTickEventFabric1_16_5 extends ServerTickEventWrapper<ServerTickEvent> {
+public class ServerTickEventFabric1_16_5 extends ServerTickEventWrapper<Supplier<MinecraftServer>> {
     
     @Override
     public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(ServerTickEvent event) {
+    @Override public void setEvent(Supplier<MinecraftServer> event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
 
     @Override
     protected TickPhase wrapTickPhase() {
-        return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
+        return Objects.nonNull(this.event) ? END : DEFAULT;
     }
 }

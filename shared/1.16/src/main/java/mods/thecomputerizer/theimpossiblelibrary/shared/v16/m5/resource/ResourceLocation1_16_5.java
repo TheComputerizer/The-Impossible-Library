@@ -7,8 +7,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class ResourceLocation1_16_5 extends ResourceLocationAPI<ResourceLocation> {
     
-    public ResourceLocation1_16_5(ResourceLocation instance) {
-        super(instance);
+    public ResourceLocation1_16_5(Object instance) {
+        super((ResourceLocation)instance);
     }
 
     @Override

@@ -2,8 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
-import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.*;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.event.CommonEvents1_16_5;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
@@ -97,21 +99,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
     }
     
     @Override public <R> Result getEventResult(R result) {
-        return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
-    }
-
-    @Override
-    public void postCustomTick(CustomTick ticker) {
-        EVENT_BUS.post(new CustomTickFabric(ticker));
-    }
-
-    @Override
-    public <E extends EventWrapper<?>> void register(E wrapper) {
-        EVENT_BUS.register(wrapper.getClass());
+        return DEFAULT;
     }
     
     @SuppressWarnings("unchecked")
-    @Override public Event.Result setEventResult(Result result) {
-        return result==DEFAULT ? Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW);
+    @Override public Object setEventResult(Result result) {
+        return null;
     }
 }

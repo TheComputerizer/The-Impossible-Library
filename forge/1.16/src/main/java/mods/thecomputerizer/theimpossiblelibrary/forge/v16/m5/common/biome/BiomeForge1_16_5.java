@@ -11,14 +11,16 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
-public class BiomeForge1_16_5 extends Biome1_16_5 {
+public class BiomeForge1_16_5 extends Biome1_16_5<Biome> {
     
     public BiomeForge1_16_5(Biome biome) {
         super(biome);
     }
     
-    @Override protected void getTypes(Set<String> typeSet, @Nullable RegistryKey<Biome> biomeKey) {
-        Set<Type> dictTypes = Objects.nonNull(biomeKey) ? BiomeDictionary.getTypes(biomeKey) : Collections.emptySet();
+    @SuppressWarnings("unchecked")
+    @Override protected void getTypes(Set<String> typeSet, @Nullable Object biomeKey) {
+        Set<Type> dictTypes = Objects.nonNull(biomeKey) ?
+                BiomeDictionary.getTypes((RegistryKey<Biome>)biomeKey) : Collections.emptySet();
         for(Type type : dictTypes) typeSet.add(type.getName());
     }
 }
