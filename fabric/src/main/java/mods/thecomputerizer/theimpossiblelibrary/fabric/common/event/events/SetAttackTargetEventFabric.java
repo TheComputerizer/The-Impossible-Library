@@ -13,10 +13,10 @@ public class SetAttackTargetEventFabric extends SetAttackTargetEventWrapper<Obje
     }
     
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingSetAttackTargetEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapTargetField() {
-        return wrapLivingGetter(LivingSetAttackTargetEvent::getTarget);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 }

@@ -2,35 +2,32 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.impl.networking.client.ClientNetworkingImpl;
+import net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
-import static net.minecraftforge.fml.network.NetworkDirection.LOGIN_TO_CLIENT;
-import static net.minecraftforge.fml.network.NetworkDirection.LOGIN_TO_SERVER;
-import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_CLIENT;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
-/**
- * It took me way too long to figure out that the wrapper class determines the network direction for decoding.
- */
-public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<ServerPlayerEntity,Context> {
+public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<ServerPlayer,PacketSender> {
     
-    public static MessageWrapperFabric1_16_5 getInstance(NetworkDirection dir) {
-        boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
-        boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
+    public static MessageWrapperFabric1_16_5 getInstance(Object dir) {
+        boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
+        boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
         return login ? (client ? new ClientLogin() : new ServerLogin()) : (client ? new Client() : new Server());
     }
     
-    public static MessageWrapperFabric1_16_5 getInstance(NetworkDirection dir, ByteBuf buf) {
-        boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
-        boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
+    public static MessageWrapperFabric1_16_5 getInstance(Object dir, ByteBuf buf) {
+        boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
+        boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
         return login ? (client ? new ClientLogin(buf) : new ServerLogin(buf)) :
                 (client ? new Client(buf) : new Server(buf));
     }
     
-    public static Class<? extends MessageWrapperFabric1_16_5> getClass(NetworkDirection dir) {
-        boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
-        boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
+    public static Class<? extends MessageWrapperFabric1_16_5> getClass(Object dir) {
+        boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
+        boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
         return login ? (client ? ClientLogin.class : ServerLogin.class) : (client ? Client.class : Server.class);
     }
     
@@ -42,6 +39,8 @@ public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<Serve
         super(buf);
     }
     
+    public abstract ResourceLocation getRegistryName();
+    
     public static final class Client extends MessageWrapperFabric1_16_5 {
         
         Client() {
@@ -50,6 +49,10 @@ public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<Serve
         
         Client(ByteBuf buf) {
             super(buf);
+        }
+        
+        @Override public ResourceLocation getRegistryName() {
+            return new ResourceLocation(MODID,"message_play_to_client");
         }
     }
     
@@ -62,6 +65,10 @@ public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<Serve
         ClientLogin(ByteBuf buf) {
             super(buf);
         }
+        
+        @Override public ResourceLocation getRegistryName() {
+            return new ResourceLocation(MODID,"message_login_to_client");
+        }
     }
     
     public static final class Server extends MessageWrapperFabric1_16_5 {
@@ -73,6 +80,10 @@ public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<Serve
         Server(ByteBuf buf) {
             super(buf);
         }
+        
+        @Override public ResourceLocation getRegistryName() {
+            return new ResourceLocation(MODID,"message_play_to_server");
+        }
     }
     
     public static final class ServerLogin extends MessageWrapperFabric1_16_5 {
@@ -83,6 +94,10 @@ public abstract class MessageWrapperFabric1_16_5 extends MessageWrapperAPI<Serve
         
         ServerLogin(ByteBuf buf) {
             super(buf);
+        }
+        
+        @Override public ResourceLocation getRegistryName() {
+            return new ResourceLocation(MODID,"message_login_to_server");
         }
     }
 }

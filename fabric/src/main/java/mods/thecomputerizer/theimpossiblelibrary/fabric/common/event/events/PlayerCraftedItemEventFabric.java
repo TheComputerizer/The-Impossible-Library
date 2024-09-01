@@ -14,10 +14,10 @@ public class PlayerCraftedItemEventFabric extends PlayerCraftedItemEventWrapper<
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemCraftedEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(ItemCraftedEvent::getCrafting);
+        return wrapItemStackGetter(wrapArrayGetter(0));
     }
 }

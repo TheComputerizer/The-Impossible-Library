@@ -13,6 +13,6 @@ public class WorldSaveEventFabric extends WorldSaveEventWrapper<Object[]> implem
     }
     
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(Save::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

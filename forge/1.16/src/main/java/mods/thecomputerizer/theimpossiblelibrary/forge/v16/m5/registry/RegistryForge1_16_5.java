@@ -7,31 +7,33 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class RegistryForge1_16_5<V extends IForgeRegistryEntry<V>> extends Registry1_16_5<V> {
-
-    private final IForgeRegistry<V> forgeRegistry;
-
+    
     public RegistryForge1_16_5(IForgeRegistry<V> forgeRegistry, ResourceLocation1_16_5 registryKey, Class<V> type) {
-        super(type,registryKey);
-        this.forgeRegistry = forgeRegistry;
+        super(forgeRegistry,type,registryKey);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override public IForgeRegistry<V> getBackend() {
+        return (IForgeRegistry<V>)this.backend;
     }
 
     @Override
     public ResourceLocation1_16_5 getKey(V value) {
-        return new ResourceLocation1_16_5(this.forgeRegistry.getKey(value));
+        return new ResourceLocation1_16_5(getBackend().getKey(value));
     }
 
     @Override
     public V getValue(ResourceLocationAPI<?> key) {
-        return this.forgeRegistry.getValue(((ResourceLocation1_16_5)key).getInstance());
+        return getBackend().getValue(((ResourceLocation1_16_5)key).getInstance());
     }
 
     @Override
     public boolean hasKey(ResourceLocationAPI<?> key) {
-        return this.forgeRegistry.containsKey(((ResourceLocation1_16_5)key).getInstance());
+        return getBackend().containsKey(((ResourceLocation1_16_5)key).getInstance());
     }
 
     @Override
     public boolean hasValue(V value) {
-        return this.forgeRegistry.containsValue(value);
+        return getBackend().containsValue(value);
     }
 }

@@ -7,13 +7,15 @@ import net.fabricmc.fabric.api.event.Event;
 
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric.CUSTOM_TICK;
+
 public class CustomTickEventFabric extends CustomTickEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return CUSTOM_TICK;
     }
     
     @Override protected CustomTick wrapTicker() {
-        return Objects.nonNull(this.event) ? this.event.getTicker() : null;
+        return Objects.nonNull(this.event) ? (CustomTick)this.event[0] : null;
     }
 }

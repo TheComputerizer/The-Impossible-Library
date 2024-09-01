@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
@@ -13,8 +12,6 @@ import net.fabricmc.fabric.api.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class BlockPlaceMultiEventFabric extends BlockPlaceMultiEventWrapper<Object[]> implements CommonFabricEvent {
     
@@ -23,37 +20,38 @@ public class BlockPlaceMultiEventFabric extends BlockPlaceMultiEventWrapper<Obje
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(EntityMultiPlaceEvent::getEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapPlacedAgainstField() {
-        return wrapStateGetter(EntityMultiPlaceEvent::getPlacedAgainst);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapPlacedField() {
-        return wrapStateGetter(EntityMultiPlaceEvent::getPlacedBlock);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockSnapshotAPI<?>> wrapSnapshotField() {
-        return wrapSnapshotGetter(EntityMultiPlaceEvent::getBlockSnapshot);
+        return wrapSnapshotGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],List<BlockSnapshotAPI<?>>> wrapSnapshotsField() {
-        return wrapGenericGetter(event -> event.getReplacedBlockSnapshots().stream()
-                .map(WrapperHelper::wrapSnapshot)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()),new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(0),//event -> event.getReplacedBlockSnapshots().stream()
+               // .map(WrapperHelper::wrapSnapshot)
+               // .filter(Objects::nonNull)
+               // .collect(Collectors.toList()),
+                new ArrayList<>());
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(EntityMultiPlaceEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(EntityMultiPlaceEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(EntityMultiPlaceEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

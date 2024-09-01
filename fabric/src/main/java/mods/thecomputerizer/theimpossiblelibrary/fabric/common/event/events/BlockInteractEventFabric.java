@@ -16,19 +16,19 @@ public class BlockInteractEventFabric extends BlockInteractEventWrapper<Object[]
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(BlockToolInteractEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(BlockToolInteractEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(BlockToolInteractEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(BlockToolInteractEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
     
 }

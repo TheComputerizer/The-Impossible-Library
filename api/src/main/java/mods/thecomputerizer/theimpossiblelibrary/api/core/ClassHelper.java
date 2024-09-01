@@ -205,6 +205,17 @@ import java.util.function.BiFunction;
                                                    ClassLoader classLoader) {
         return findClass(withPkgName(pkg,simpleName),inititalize,classLoader);
     }
+    
+    public static <T> @Nullable T initialize(@Nullable Class<T> clazz) {
+        if(Objects.nonNull(clazz)) {
+            try {
+                return clazz.newInstance();
+            } catch(InstantiationException | IllegalAccessException ex) {
+                TILRef.logError("Failed to initialize {}",clazz,ex);
+            }
+        } else TILRef.logError("Cannot initialize null class");
+        return null;
+    }
 
     public static String internalName(Class<?> clazz) {
         return internalName(clazz.getName());

@@ -13,6 +13,6 @@ public class LivingUpdateEventFabric extends LivingUpdateEventWrapper<Object[]> 
     }
     
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingUpdateEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 }

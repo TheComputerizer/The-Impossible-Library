@@ -14,14 +14,14 @@ public class LivingItemUseTickEventFabric extends LivingItemUseTickEventWrapper<
     }
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapDurationField() {
-        return wrapGenericBoth(Tick::getDuration, Tick::setDuration,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,duration) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(Tick::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(Tick::getItem);
+        return wrapItemStackGetter(wrapArrayGetter(0));
     }
 }

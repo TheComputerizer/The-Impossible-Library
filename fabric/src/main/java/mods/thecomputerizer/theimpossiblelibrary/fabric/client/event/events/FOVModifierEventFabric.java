@@ -23,14 +23,14 @@ public class FOVModifierEventFabric extends FOVModifierEventWrapper<Object[]> im
     }
     
     @Override protected EventFieldWrapper<Object[],Float> wrapFOVField() {
-        return wrapGenericBoth(event -> (float)event.getFOV(),(event,fov) -> event.setFOV(fov),0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(event,fov) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(event -> event.getInfo().getEntity());
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(event -> null);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 }

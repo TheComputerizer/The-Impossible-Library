@@ -5,10 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.resources.sounds.SoundInstance;
-
-import java.util.Objects;
 
 public class PlaySoundSourceEventFabric extends PlaySoundSourceEventWrapper<Object[],SoundInstance> implements ClientFabricEvent {
     
@@ -18,16 +15,16 @@ public class PlaySoundSourceEventFabric extends PlaySoundSourceEventWrapper<Obje
 
     @Override
     protected EventFieldWrapper<Object[],String> wrapNameField() {
-        return wrapGenericGetter(PlaySoundSourceEvent::getName,"");
+        return wrapGenericGetter(wrapArrayGetter(0),"");
     }
 
     @Override
-    protected EventFieldWrapper<Object[],SoundAPI<ISound>> wrapSoundField() {
-        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
+    protected EventFieldWrapper<Object[],SoundAPI<SoundInstance>> wrapSoundField() {
+        return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
     @Override
     protected EventFieldWrapper<Object[],String> wrapUUIDField() { //TODO
-        return wrapGenericGetter(event -> "","");
+        return wrapGenericGetter(wrapArrayGetter(0),"");
     }
 }

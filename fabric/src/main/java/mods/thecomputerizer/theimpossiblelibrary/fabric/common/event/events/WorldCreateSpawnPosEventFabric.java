@@ -13,6 +13,6 @@ public class WorldCreateSpawnPosEventFabric extends WorldCreateSpawnPosEventWrap
     }
     
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(CreateSpawnPosition::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

@@ -13,10 +13,10 @@ public class PlayerChangeXPEventFabric extends PlayerChangeXPEventWrapper<Object
     }
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapAmountField() {
-        return wrapGenericBoth(XpChange::getAmount,XpChange::setAmount,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,amount) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(XpChange::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

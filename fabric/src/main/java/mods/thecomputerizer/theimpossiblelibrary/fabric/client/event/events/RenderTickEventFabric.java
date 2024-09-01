@@ -17,13 +17,11 @@ public class RenderTickEventFabric extends RenderTickEventWrapper<Object[]> impl
         return null;
     }
     
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? END : DEFAULT;
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],Float> wrapTickTimeField() {
-        return wrapGenericGetter(ev -> ev.renderTickTime,0f);
+    @Override protected EventFieldWrapper<Object[],Float> wrapTickTimeField() {
+        return wrapGenericGetter(wrapArrayGetter(0),0f);
     }
 }

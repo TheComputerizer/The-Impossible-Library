@@ -13,6 +13,6 @@ public class PlayerLoggedOutEventFabric extends PlayerLoggedOutEventWrapper<Obje
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerLoggedOutEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

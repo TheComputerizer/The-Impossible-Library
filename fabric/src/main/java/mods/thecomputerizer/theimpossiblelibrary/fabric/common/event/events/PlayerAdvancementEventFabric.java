@@ -14,10 +14,10 @@ public class PlayerAdvancementEventFabric extends PlayerAdvancementEventWrapper<
     }
     
     @Override protected EventFieldWrapper<Object[],AdvancementAPI<?>> wrapAdvancementField() {
-        return wrapAdvancementGetter(AdvancementEvent::getAdvancement);
+        return wrapAdvancementGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(AdvancementEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

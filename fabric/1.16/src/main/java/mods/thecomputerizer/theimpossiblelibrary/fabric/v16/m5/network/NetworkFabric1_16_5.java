@@ -1,143 +1,140 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.network;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.network.Network1_16_5;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.impl.networking.client.ClientNetworkingImpl;
+import net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 
-import static net.minecraftforge.fml.network.NetworkDirection.*;
-import static net.minecraftforge.fml.network.PacketDistributor.PLAYER;
+/**
+ * Fabric doesn't have mod specific network channels or network direction API classes...
+ */
+public class NetworkFabric1_16_5 extends Network1_16_5<Object,Object> {
+    
+    FriendlyByteBuf encodeMessage(MessageWrapperAPI<?,?> message) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        message.encode(buf);
+        return buf;
+    }
 
-public class NetworkFabric1_16_5 extends Network1_16_5<SimpleChannel,NetworkDirection> {
-
-    private SimpleChannel network;
-
-    @Override
-    public NetworkDirection getDirFromName(String name) {
+    @Override public Object getDirFromName(String name) {
         switch(name.toUpperCase()) {
-            case "LOGIN_TO_CLIENT" : return LOGIN_TO_CLIENT;
-            case "PLAY_TO_SERVER" : return PLAY_TO_SERVER;
-            case "LOGIN_TO_SERVER" : return LOGIN_TO_SERVER;
-            default: return PLAY_TO_CLIENT;
+            case "LOGIN_TO_CLIENT" : return ClientNetworkingImpl.LOGIN;
+            case "LOGIN_TO_SERVER" : return ServerNetworkingImpl.LOGIN;
+            case "PLAY_TO_SERVER" : return ServerNetworkingImpl.PLAY;
+            default: return ClientNetworkingImpl.PLAY;
         }
     }
 
-    @Override
-    public String getNameFromDir(NetworkDirection dir) {
-        return dir.name();
+    @Override public String getNameFromDir(Object dir) {
+        if(dir==ClientNetworkingImpl.LOGIN) return "LOGIN_TO_CLIENT";
+        if(dir==ClientNetworkingImpl.PLAY) return "PLAY_TO_CLIENT";
+        if(dir==ServerNetworkingImpl.LOGIN) return "LOGIN_TO_SERVER";
+        return "PLAY_TO_SERVER";
     }
 
-    @Override
-    public NetworkDirection getDirToClient() {
-        return PLAY_TO_CLIENT;
+    @Override public Object getDirToClient() {
+        return ClientNetworkingImpl.PLAY;
     }
 
-    @Override
-    public NetworkDirection getDirToClientLogin() {
-        return LOGIN_TO_CLIENT;
+    @Override public Object getDirToClientLogin() {
+        return ClientNetworkingImpl.LOGIN;
     }
 
-    @Override
-    public NetworkDirection getDirToServer() {
-        return PLAY_TO_SERVER;
+    @Override public Object getDirToServer() {
+        return ServerNetworkingImpl.PLAY;
     }
 
-    @Override
-    public NetworkDirection getDirToServerLogin() {
-        return LOGIN_TO_SERVER;
-    }
-
-    @Override
-    public @Nullable NetworkDirection getOppositeDir(NetworkDirection dir) {
-        switch(dir) {
-            case PLAY_TO_CLIENT: return PLAY_TO_SERVER;
-            case PLAY_TO_SERVER: return PLAY_TO_CLIENT;
-            case LOGIN_TO_CLIENT: return LOGIN_TO_SERVER;
-            case LOGIN_TO_SERVER: return LOGIN_TO_CLIENT;
-            default: return null;
-        }
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Override
-    public SimpleChannel getNetwork() {
-        if(Objects.isNull(this.network))
-            this.network = ChannelBuilder.named((ResourceLocation)TILRef.res("main_network").getInstance())
-                    .clientAcceptedVersions(version -> true)
-                    .serverAcceptedVersions(version -> true)
-                    .networkProtocolVersion(TILRef::getNetworkVersion)
-                    .simpleChannel();
-        return this.network;
-    }
-
-    @Override
-    public boolean isDirToClient(NetworkDirection dir) {
-        return dir==PLAY_TO_CLIENT || dir==LOGIN_TO_CLIENT;
-    }
-
-    @Override
-    public boolean isDirLogin(NetworkDirection dir) {
-        return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
-    }
-
-    //TODO I'm pretty sure the login directions need an extra flag to be set
-    @SuppressWarnings("unchecked") @Override
-    public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
-        getNetwork().registerMessage(id,(Class<MessageWrapperFabric1_16_5>)MessageWrapperFabric1_16_5.getClass(dir.getDirection()),
-                MessageWrapperAPI::encode, buf -> MessageWrapperFabric1_16_5.getInstance(dir.getDirection(), buf),
-                (message,supplier) -> { //Response handler
-                    Context context = supplier.get();
-                    MessageWrapperFabric1_16_5 wrapper = (MessageWrapperFabric1_16_5)message.handle(context);
-                    if(Objects.nonNull(wrapper)) {
-                        if(!dir.isToClient()) wrapper.setPlayer(context.getSender());
-                        wrapper.send();
-                    }
-                },Optional.of(dir.getDirection()));
+    @Override public Object getDirToServerLogin() {
+        return ServerNetworkingImpl.LOGIN;
     }
     
-    //TODO Does not support login direction
-    @Override
-    public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        getNetwork().send(PLAYER.with(() -> (ServerPlayerEntity)player),(MessageWrapperFabric1_16_5)message);
+    @Override public Object getNetwork() {
+        return null; //Nothing to register or get
+    }
+
+    @Override public @Nullable Object getOppositeDir(Object dir) {
+        if(dir==ClientNetworkingImpl.LOGIN) return ServerNetworkingImpl.LOGIN;
+        if(dir==ClientNetworkingImpl.PLAY) return ServerNetworkingImpl.PLAY;
+        if(dir==ServerNetworkingImpl.LOGIN) return ClientNetworkingImpl.LOGIN;
+        return ClientNetworkingImpl.PLAY;
     }
     
-    //TODO Does not support login direction
-    @Override
-    public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
-        getNetwork().sendToServer((MessageWrapperFabric1_16_5)message);
+    ResourceLocation getRegistryName(MessageWrapperAPI<?,?> message) {
+        return ((MessageWrapperFabric1_16_5)message).getRegistryName();
+    }
+
+    @Override public boolean isDirToClient(Object dir) {
+        return dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
+    }
+
+    @Override public boolean isDirLogin(Object dir) {
+        return dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
+    }
+
+    @Override public void registerMessage(MessageDirectionInfo<Object> dir, int id) {
+        if(dir.isToClient()) registerClientReceiver(dir);
+        else registerServerReceiver(dir);
+    }
+    
+    void registerClientReceiver(MessageDirectionInfo<Object> info) {
+        Object dir = info.getDirection();
+        ResourceLocation registryName = MessageWrapperFabric1_16_5.getInstance(dir).getRegistryName();
+        ClientPlayNetworking.registerGlobalReceiver(registryName,(mc,handler,buf,sender) -> {
+            MessageWrapperFabric1_16_5 wrapper = MessageWrapperFabric1_16_5.getInstance(dir,buf);
+            MessageWrapperFabric1_16_5 response = (MessageWrapperFabric1_16_5)wrapper.handle(sender);
+            if(Objects.nonNull(response)) wrapper.send();
+        });
+    }
+    
+    void registerServerReceiver(MessageDirectionInfo<Object> info) {
+        Object dir = info.getDirection();
+        ResourceLocation registryName = MessageWrapperFabric1_16_5.getInstance(dir).getRegistryName();
+        ServerPlayNetworking.registerGlobalReceiver(registryName, (server,player,handler,buf,sender) -> {
+            MessageWrapperFabric1_16_5 wrapper = MessageWrapperFabric1_16_5.getInstance(dir,buf);
+            MessageWrapperFabric1_16_5 response = (MessageWrapperFabric1_16_5)wrapper.handle(sender);
+            if(Objects.nonNull(response)) {
+                response.setPlayer(player);
+                wrapper.send();
+            }
+        });
+    }
+    
+    @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
+        ServerPlayNetworking.send((ServerPlayer)player,getRegistryName(message),encodeMessage(message));
+    }
+    
+    @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
+        ClientPlayNetworking.send(getRegistryName(message),encodeMessage(message));
     }
     
     @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Object dir, MessageAPI<CTX> message) {
         MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_16_5.getInstance(dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
         MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_16_5.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, Collection<MessageAPI<CTX>> messages) {
         MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_16_5.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;

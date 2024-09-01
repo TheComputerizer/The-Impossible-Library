@@ -13,10 +13,10 @@ public class EntityStruckByLightningEventFabric extends EntityStruckByLightningE
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(EntityStruckByLightningEvent::getEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapLightningEntityField() {
-        return wrapEntityGetter(EntityStruckByLightningEvent::getLightning);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 }

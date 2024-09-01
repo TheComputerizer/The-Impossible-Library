@@ -14,14 +14,14 @@ public class LivingItemUseStartEventFabric extends LivingItemUseStartEventWrappe
     }
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapDurationField() {
-        return wrapGenericBoth(Start::getDuration, Start::setDuration,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,duration) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(Start::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(Start::getItem);
+        return wrapItemStackGetter(wrapArrayGetter(0));
     }
 }

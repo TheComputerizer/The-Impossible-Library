@@ -14,10 +14,10 @@ public class PlayerSmeltedItemEventFabric extends PlayerSmeltedItemEventWrapper<
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemSmeltedEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(ItemSmeltedEvent::getSmelting);
+        return wrapItemStackGetter(wrapArrayGetter(0));
     }
 }

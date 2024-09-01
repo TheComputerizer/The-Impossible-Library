@@ -15,26 +15,26 @@ public class FluidPlaceEventFabric extends FluidPlaceEventWrapper<Object[]> impl
     }
     
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapFluidPosField() {
-        return wrapPosGetter(FluidPlaceBlockEvent::getLiquidPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapNewStateField() {
-        return wrapStateBoth(FluidPlaceBlockEvent::getNewState,FluidPlaceBlockEvent::setNewState);
+        return wrapStateBoth(wrapArrayGetter(0),(args,state) -> {});
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapOriginalStateField() {
-        return wrapStateGetter(FluidPlaceBlockEvent::getOriginalState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(FluidPlaceBlockEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(FluidPlaceBlockEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(FluidPlaceBlockEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

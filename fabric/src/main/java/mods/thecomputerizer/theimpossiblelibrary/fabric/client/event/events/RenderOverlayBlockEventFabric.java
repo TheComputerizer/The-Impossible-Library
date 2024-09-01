@@ -23,6 +23,6 @@ public class RenderOverlayBlockEventFabric extends RenderOverlayBlockEventWrappe
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> EventHelper.getOverlayBlockType(event.getOverlayType()),BLOCK);
+        return wrapGenericGetter(wrapArrayGetter(0),BLOCK);
     }
 }

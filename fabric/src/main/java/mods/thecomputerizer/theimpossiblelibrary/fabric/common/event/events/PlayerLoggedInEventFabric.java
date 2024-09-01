@@ -13,6 +13,6 @@ public class PlayerLoggedInEventFabric extends PlayerLoggedInEventWrapper<Object
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerLoggedInEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

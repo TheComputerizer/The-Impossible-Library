@@ -8,10 +8,10 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabri
 public abstract class LootingLevelEventFabric extends LootingLevelEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapLootingLevelField() {
-        return wrapGenericBoth(LootingLevelEvent::getLootingLevel,LootingLevelEvent::setLootingLevel,1);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,level) -> {},1);
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LootingLevelEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 }

@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerNameFormatEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
 
@@ -14,15 +13,14 @@ public class PlayerNameFormatEventFabric extends PlayerNameFormatEventWrapper<Ob
     }
     
     @Override protected EventFieldWrapper<Object[],String> wrapDisplayNameField() {
-        return wrapGenericBoth(event -> event.getDisplayname().getString(),
-                (event,name) -> event.setDisplayname(TextHelper.getLiteral(name).getAsComponent()),"");
+        return wrapGenericBoth(wrapArrayGetter(0),(args,name) -> {},"");
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(NameFormat::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],String> wrapUsernameField() {
-        return wrapGenericGetter(event -> event.getDisplayname().getString(),"");
+        return wrapGenericGetter(wrapArrayGetter(0),"");
     }
 }

@@ -23,20 +23,20 @@ public class RenderOverlayBossEventFabric extends RenderOverlayBossEventWrapper<
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> EventHelper.getOverlayElementType(event.getType()),ALL);
+        return wrapGenericGetter(wrapArrayGetter(0),ALL);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapIncrementField() {
-        return wrapGenericBoth(BossInfo::getIncrement,BossInfo::setIncrement,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,increment) -> {},0);
     }
 
     @Override
     protected EventFieldWrapper<Object[],Integer> wrapXField() {
-        return wrapGenericGetter(BossInfo::getX,0);
+        return wrapGenericGetter(wrapArrayGetter(0),0);
     }
 
     @Override
     protected EventFieldWrapper<Object[],Integer> wrapYField() {
-        return wrapGenericGetter(BossInfo::getY,0);
+        return wrapGenericGetter(wrapArrayGetter(0),0);
     }
 }

@@ -7,17 +7,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
 
+import static net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents.START_SLEEPING;
+
 public class PlayerSleepInBedEventFabric extends PlayerSleepInBedEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return START_SLEEPING;
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerSleepInBedEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(PlayerSleepInBedEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(1));
     }
 }

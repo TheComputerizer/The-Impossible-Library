@@ -11,8 +11,6 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabri
 import net.fabricmc.fabric.api.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_COLORS;
-
 public class FogColorsEventFabric extends FogColorsEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
@@ -25,22 +23,22 @@ public class FogColorsEventFabric extends FogColorsEventWrapper<Object[]> implem
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapBlue() {
-        return wrapGenericBoth(FogColors::getBlue,FogColors::setBlue,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,blue) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapGreen() {
-        return wrapGenericBoth(FogColors::getGreen,FogColors::setGreen,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,green) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapRed() {
-        return wrapGenericBoth(FogColors::getRed,FogColors::setRed,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,red) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(event -> event.getInfo().getEntity());
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(event -> null);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 }

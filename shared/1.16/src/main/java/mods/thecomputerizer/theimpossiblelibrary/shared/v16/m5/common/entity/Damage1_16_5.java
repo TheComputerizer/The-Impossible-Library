@@ -9,9 +9,9 @@ public class Damage1_16_5 extends DamageAPI {
     
     private final DamageSource source;
 
-    public Damage1_16_5(DamageSource source, float amount) {
-        super(Objects.nonNull(source.getEntity()) ? new Entity1_16_5(source.getEntity()) : null, amount);
-        this.source = source;
+    public Damage1_16_5(Object source, float amount) {
+        super(Objects.nonNull(((DamageSource)source).getEntity()) ? new Entity1_16_5(((DamageSource)source).getEntity()) : null, amount);
+        this.source = (DamageSource)source;
     }
     
     @Override

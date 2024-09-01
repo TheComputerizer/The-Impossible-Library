@@ -13,6 +13,6 @@ public class PlayerChangeGamemodeEventFabric extends PlayerChangeGamemodeEventWr
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerChangeGameModeEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

@@ -128,6 +128,26 @@ public abstract class CoreAPI {
         return null;
     }
     
+    public static GameVersion parseVersion(String versionStr) {
+        String[] splits = versionStr.split("\\.");
+        if(splits.length<2 || !splits[0].equals("1")) return null;
+        switch(splits[1]) {
+            case "12": return GameVersion.V12_2;
+            case "16": return GameVersion.V16_5;
+            case "18": return GameVersion.V18_2;
+            case "19": return splits.length>2 && splits[2].equals("4") ? GameVersion.V19_4 : GameVersion.V19_2;
+            case "20": {
+                switch(splits.length>2 ? splits[2] : "1") {
+                    case "4": return GameVersion.V20_4;
+                    case "6": return GameVersion.V20_6;
+                    default: return GameVersion.V20_1;
+                }
+            }
+            case "21": return GameVersion.V21_1;
+            default: return null;
+        }
+    }
+    
     public static void setInstance(Class<?> clazz) {
         if(Objects.nonNull(INSTANCE)) return;
         try {
@@ -264,6 +284,10 @@ public abstract class CoreAPI {
         GameVersion(String name, String pkg) {
             this.name = name;
             this.pkg = pkg;
+        }
+        
+        public String getPackageName(ModLoader loader, String base) {
+            return getPackageName(loader.getPackageName(base));
         }
         
         public String getPackageName(String base) {

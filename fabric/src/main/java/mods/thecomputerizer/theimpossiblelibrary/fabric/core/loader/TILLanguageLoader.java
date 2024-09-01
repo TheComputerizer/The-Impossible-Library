@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.core.loader;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
@@ -12,7 +11,6 @@ import java.util.Objects;
 
 /**
  * Basically the same as FMLJavaModLanguageProvider$FMLModTarget but since it's private, we can't use it...
- * TODO Might not be needed
  */
 public class TILLanguageLoader implements IModLanguageLoader {
     

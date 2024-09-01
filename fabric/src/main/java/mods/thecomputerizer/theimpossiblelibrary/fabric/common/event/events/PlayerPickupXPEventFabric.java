@@ -14,10 +14,10 @@ public class PlayerPickupXPEventFabric extends PlayerPickupXPEventWrapper<Object
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PickupXp::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(PickupXp::getOrb);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 }

@@ -7,17 +7,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.ZERO;
+
 public class PlayerPushOutOfBlocksEventFabric extends PlayerPushOutOfBlocksEventWrapper<Object[]> implements ClientFabricEvent {
-
-    @Override protected Box wrapEntityBB() {
-        return Box.ZERO;
-    }
-
-    @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(event -> null);
-    }
     
     @Override public Event<?> getEventInstance() {
         return null;
+    }
+    
+    @Override protected Box wrapEntityBB() {
+        return ZERO;
+    }
+
+    @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

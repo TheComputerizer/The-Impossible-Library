@@ -13,14 +13,14 @@ public class LivingFallEventFabric extends LivingFallEventWrapper<Object[]> impl
     }
     
     @Override protected EventFieldWrapper<Object[],Float> wrapDamageMultiplierField() {
-        return wrapGenericBoth(LivingFallEvent::getDamageMultiplier,LivingFallEvent::setDamageMultiplier,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,multiplier) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapDistanceField() {
-        return wrapGenericBoth(LivingFallEvent::getDistance,LivingFallEvent::setDistance,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,distance) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingFallEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 }

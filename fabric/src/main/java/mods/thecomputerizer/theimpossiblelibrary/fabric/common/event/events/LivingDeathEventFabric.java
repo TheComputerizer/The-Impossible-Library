@@ -8,6 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabri
 public abstract class LivingDeathEventFabric extends LivingDeathEventWrapper<Object[]> implements CommonFabricEvent {
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingDeathEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 }

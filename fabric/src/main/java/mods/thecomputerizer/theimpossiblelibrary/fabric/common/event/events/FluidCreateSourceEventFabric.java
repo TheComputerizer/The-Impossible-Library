@@ -15,14 +15,14 @@ public class FluidCreateSourceEventFabric extends FluidCreateSourceEventWrapper<
     }
     
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(CreateFluidSourceEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(CreateFluidSourceEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(CreateFluidSourceEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

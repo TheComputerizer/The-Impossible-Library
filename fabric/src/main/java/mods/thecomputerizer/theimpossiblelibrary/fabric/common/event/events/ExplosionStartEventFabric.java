@@ -14,10 +14,10 @@ public class ExplosionStartEventFabric extends ExplosionStartEventWrapper<Object
     }
     
     @Override protected EventFieldWrapper<Object[],ExplosionAPI<?>> wrapExplosionField() {
-        return wrapExplosionGetter(Start::getExplosion);
+        return wrapExplosionGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(Start::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

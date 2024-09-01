@@ -5,18 +5,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.events.*;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.event.ClientEvents1_16_5;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric.CUSTOM_TICK;
 
 public class ClientEventsFabric1_16_5 extends ClientEvents1_16_5 {
 
-    @Override
-    public void defineEvents() {
+    @Override public void defineEvents() {
         CAMERA_SETUP.setConnector(new CameraSetupEventFabric());
         CLICK_INPUT.setConnector(new InputClickEventFabric());
         CLIENT_CONNECTED.setConnector(new ClientConnectedEventFabric());
@@ -53,22 +50,20 @@ public class ClientEventsFabric1_16_5 extends ClientEvents1_16_5 {
     }
     
     @Override public <R> Result getEventResult(R result) {
-        return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
+        return null;
     }
     
-    @Override
-    public void postCustomTick(CustomTick ticker) {
-        CustomTickFabric.CUSTOM_TICK.invoker().onTick(ticker);
+    @Override public void postCustomTick(CustomTick ticker) {
+        CUSTOM_TICK.invoker().onTick(ticker);
     }
     
-    @Override
-    public <E extends EventWrapper<?>> void register(E wrapper) {
+    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
         Class<?> wrapperClass = wrapper.getClass();
-        ReflectionHelper.invokeStaticMethod(wrapperClass, "register", new Class<?>[]{wrapperClass}, wrapper);
+        ReflectionHelper.invokeStaticMethod(wrapperClass,"register",new Class<?>[]{wrapperClass},wrapper);
     }
     
     @SuppressWarnings("unchecked")
     @Override public Object setEventResult(Result result) {
-        return result==DEFAULT ? Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW);
+        return DEFAULT;
     }
 }

@@ -13,22 +13,22 @@ public class EntityEnteringChunkEventFabric extends EntityEnteringChunkEventWrap
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(EnteringChunk::getEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapNewXField() {
-        return wrapGenericBoth(EnteringChunk::getNewChunkX,EnteringChunk::setNewChunkX,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,x) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapNewZField() {
-        return wrapGenericBoth(EnteringChunk::getNewChunkZ,EnteringChunk::setNewChunkZ,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,z) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapOldXField() {
-        return wrapGenericBoth(EnteringChunk::getOldChunkX,EnteringChunk::setOldChunkX,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,x) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapOldZField() {
-        return wrapGenericBoth(EnteringChunk::getOldChunkZ,EnteringChunk::setOldChunkZ,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,z) -> {},0);
     }
 }

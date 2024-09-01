@@ -26,7 +26,7 @@ public abstract class ModWriterForge extends ModWriter {
     protected static final Type SUBSCRIBE_EVENT = TypeHelper.forge("eventbus/api/SubscribeEvent");
     
     protected ModWriterForge(CoreAPI core, MultiVersionModInfo info, int javaVersion) {
-        super(core, info, javaVersion);
+        super(core,info,javaVersion);
     }
     
     @Override protected void addClassAnnotations(ClassVisitor visitor) {

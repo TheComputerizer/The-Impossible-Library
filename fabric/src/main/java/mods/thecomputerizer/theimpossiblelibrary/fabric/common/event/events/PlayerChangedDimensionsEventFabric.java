@@ -13,6 +13,6 @@ public class PlayerChangedDimensionsEventFabric extends PlayerChangedDimensionsE
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerChangedDimensionEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

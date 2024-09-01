@@ -28,10 +28,6 @@ import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
 
-/**
- Targeted version of ClasspathLocator
- */
-@EventBusSubscriber
 public class TILLoadingPluginFabric1_16_5 extends AbstractJarFileLocator {
     
     static {

@@ -16,7 +16,7 @@ public class SpawnPortalEventFabric extends SpawnPortalEventWrapper<Object[]> im
     }
     
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(PortalSpawnEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],PortalSize> wrapSizeField() { //TODO Implement this
@@ -24,10 +24,10 @@ public class SpawnPortalEventFabric extends SpawnPortalEventWrapper<Object[]> im
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(PortalSpawnEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(PortalSpawnEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

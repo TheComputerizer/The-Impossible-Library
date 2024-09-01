@@ -14,10 +14,10 @@ public class EntityJoinWorldEventFabric extends EntityJoinWorldEventWrapper<Obje
     }
     
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorld() {
-        return wrapWorldGetter(EntityJoinWorldEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(EntityJoinWorldEvent::getEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 }

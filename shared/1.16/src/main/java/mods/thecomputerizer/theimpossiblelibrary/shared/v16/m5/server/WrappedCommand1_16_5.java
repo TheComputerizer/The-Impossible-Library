@@ -32,8 +32,9 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class WrappedCommand1_16_5 {
-
-    public static void register(CommandDispatcher<CommandSource> dispatcher, CommandAPI wrapped) {
+    
+    @SuppressWarnings("unchecked")  public static void register(Object dispatcherObj, CommandAPI wrapped) {
+        CommandDispatcher<CommandSource> dispatcher = (CommandDispatcher<CommandSource>)dispatcherObj;
         LiteralArgumentBuilder<CommandSource> root = Commands.literal(wrapped.getName());
         for(CommandAPI subcmd : wrapped.getSubCommands()) {
             RequiredArgumentBuilder<CommandSource,?> arg = getArg(subcmd);

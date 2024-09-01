@@ -14,10 +14,10 @@ public class PlayerStartTrackingEventFabric extends PlayerStartTrackingEventWrap
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(StartTracking::getTarget);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(StartTracking::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

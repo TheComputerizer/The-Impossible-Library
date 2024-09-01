@@ -13,10 +13,10 @@ public class LivingHealEventFabric extends LivingHealEventWrapper<Object[]> impl
     }
     
     @Override protected EventFieldWrapper<Object[],Float> wrapAmountField() {
-        return wrapGenericBoth(LivingHealEvent::getAmount,LivingHealEvent::setAmount,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,amount) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 }

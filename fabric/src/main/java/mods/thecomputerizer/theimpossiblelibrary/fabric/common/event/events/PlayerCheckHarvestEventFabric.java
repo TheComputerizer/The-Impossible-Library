@@ -14,14 +14,14 @@ public class PlayerCheckHarvestEventFabric extends PlayerCheckHarvestEventWrappe
     }
     
     @Override protected EventFieldWrapper<Object[],Boolean> wrapSuccessField() {
-        return wrapGenericBoth(HarvestCheck::canHarvest,HarvestCheck::setCanHarvest,false);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,canHarvest) -> {},false);
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(HarvestCheck::getTargetBlock);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(HarvestCheck::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

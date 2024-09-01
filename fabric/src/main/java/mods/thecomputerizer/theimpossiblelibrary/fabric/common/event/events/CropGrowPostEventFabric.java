@@ -15,18 +15,18 @@ public class CropGrowPostEventFabric extends CropGrowPostEventWrapper<Object[]> 
     }
     
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapOriginalStateField() {
-        return wrapStateGetter(Post::getOriginalState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(Post::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(Post::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(Post::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

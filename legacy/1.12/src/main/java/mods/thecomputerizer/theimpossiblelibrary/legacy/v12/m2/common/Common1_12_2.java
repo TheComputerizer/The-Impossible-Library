@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
@@ -25,6 +26,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.Registry
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.Resource1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.CommandHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.MinecraftServer1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.event.ServerEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn.SpawnHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.Tag1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.text.TextHelper1_12_2;
@@ -68,6 +70,10 @@ public class Common1_12_2 extends CommonAPI {
     
     @Override public Supplier<MinecraftServerAPI<?>> initServer() {
         return MinecraftServer1_12_2::new;
+    }
+    
+    @Override public Supplier<ServerEventsAPI> initServerEvents() {
+        return ServerEvents1_12_2::new;
     }
     
     @Override public Supplier<SpawnHelperAPI<?>> initSpawnHelper() {

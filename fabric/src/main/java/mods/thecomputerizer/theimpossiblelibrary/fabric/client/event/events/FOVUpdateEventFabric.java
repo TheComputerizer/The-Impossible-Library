@@ -14,16 +14,16 @@ public class FOVUpdateEventFabric extends FOVUpdateEventWrapper<Object[]> implem
     
     @Override
     protected EventFieldWrapper<Object[],Float> wrapFOVField() {
-        return wrapGenericGetter(FOVUpdateEvent::getFov,0f);
+        return wrapGenericGetter(wrapArrayGetter(0),0f);
     }
 
     @Override
     protected EventFieldWrapper<Object[],Float> wrapNewFOVField() {
-        return wrapGenericBoth(FOVUpdateEvent::getNewfov,FOVUpdateEvent::setNewfov,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,fov) -> {},0f);
     }
 
     @Override
     protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(FOVUpdateEvent::getEntity);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

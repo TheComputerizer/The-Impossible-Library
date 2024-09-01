@@ -15,14 +15,14 @@ public class PlayerLoadFromFileEventFabric extends PlayerLoadFromFileEventWrappe
     }
     
     @Override protected EventFieldWrapper<Object[],File> wrapDirectoryField() {
-        return wrapGenericGetter(LoadFromFile::getPlayerDirectory,null);
+        return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
     @Override protected EventFieldWrapper<Object[],String> wrapUUIDField() {
-        return wrapGenericGetter(LoadFromFile::getPlayerUUID,null);
+        return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LoadFromFile::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

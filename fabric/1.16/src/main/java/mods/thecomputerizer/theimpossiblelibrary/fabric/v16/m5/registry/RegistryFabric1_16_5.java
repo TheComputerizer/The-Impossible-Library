@@ -10,30 +10,32 @@ import java.util.Objects;
 
 public class RegistryFabric1_16_5<V> extends Registry1_16_5<V> {
 
-    private final Registry<V> registry;
-
     public RegistryFabric1_16_5(Registry<V> registry, ResourceLocation1_16_5 registryKey, Class<V> type) {
-        super(type,registryKey);
-        this.registry = registry;
+        super(registry,type,registryKey);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override public Registry<V> getBackend() {
+        return (Registry<V>)this.backend;
     }
 
     @Override
     public ResourceLocation1_16_5 getKey(V value) {
-        return new ResourceLocation1_16_5(this.registry.getKey(value));
+        return new ResourceLocation1_16_5(getBackend().getKey(value));
     }
 
     @Override
     public V getValue(ResourceLocationAPI<?> key) {
-        return this.registry.get((ResourceLocation)key.getInstance());
+        return getBackend().get((ResourceLocation)key.getInstance());
     }
 
     @Override
     public boolean hasKey(ResourceLocationAPI<?> key) {
-        return this.registry.containsKey((ResourceLocation)key.getInstance());
+        return getBackend().containsKey((ResourceLocation)key.getInstance());
     }
 
     @Override
     public boolean hasValue(V value) {
-        return Objects.nonNull(this.registry.getKey(value));
+        return Objects.nonNull(getBackend().getKey(value));
     }
 }

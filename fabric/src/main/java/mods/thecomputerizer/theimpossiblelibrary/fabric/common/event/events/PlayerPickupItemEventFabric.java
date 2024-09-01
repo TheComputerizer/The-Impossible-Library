@@ -15,14 +15,14 @@ public class PlayerPickupItemEventFabric extends PlayerPickupItemEventWrapper<Ob
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(ItemPickupEvent::getOriginalEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemPickupEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(ItemPickupEvent::getStack);
+        return wrapItemStackGetter(wrapArrayGetter(0));
     }
 }

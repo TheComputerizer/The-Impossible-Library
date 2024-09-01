@@ -13,10 +13,10 @@ public class PlayerLevelChangeEventFabric extends PlayerLevelChangeEventWrapper<
     }
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapLevelsField() {
-        return wrapGenericBoth(LevelChange::getLevels,LevelChange::setLevels,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,levels) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LevelChange::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

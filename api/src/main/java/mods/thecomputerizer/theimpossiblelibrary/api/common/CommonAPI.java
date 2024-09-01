@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
@@ -21,13 +22,14 @@ public abstract class CommonAPI {
     
     private BlockHelperAPI blockHelper;
     private CommandHelperAPI commands;
-    private CommonEventsAPI events;
+    private CommonEventsAPI commonEvents;
     private ModHelperAPI modHelper;
     private NetworkAPI<?,?> network;
     private PosHelperAPI<?> posHelper;
     private RegistryHandlerAPI registry;
     private ResourceAPI resource;
     private MinecraftServerAPI<?> server;
+    private ServerEventsAPI serverEvents;
     private SpawnHelperAPI<?> spawnHelper;
     private TagAPI tag;
     private TextHelperAPI<?> textHelper;
@@ -45,8 +47,8 @@ public abstract class CommonAPI {
     }
     
     public CommonEventsAPI getCommonEvents() {
-        if(Objects.isNull(this.events)) this.events = initCommonEvents().get();
-        return this.events;
+        if(Objects.isNull(this.commonEvents)) this.commonEvents = initCommonEvents().get();
+        return this.commonEvents;
     }
     
     public ModHelperAPI getModHelper() {
@@ -77,6 +79,11 @@ public abstract class CommonAPI {
     public MinecraftServerAPI<?> getServer() {
         if(Objects.isNull(this.server)) this.server = initServer().get();
         return this.server;
+    }
+    
+    public ServerEventsAPI getServerEvents() {
+        if(Objects.isNull(this.serverEvents)) this.serverEvents = initServerEvents().get();
+        return this.serverEvents;
     }
     
     public SpawnHelperAPI<?> getSpawnHelper() {
@@ -113,6 +120,7 @@ public abstract class CommonAPI {
     public abstract Supplier<RegistryHandlerAPI> initRegistryHandler();
     public abstract Supplier<ResourceAPI> initResource();
     public abstract Supplier<MinecraftServerAPI<?>> initServer();
+    public abstract Supplier<ServerEventsAPI> initServerEvents();
     public abstract Supplier<SpawnHelperAPI<?>> initSpawnHelper();
     public abstract Supplier<TagAPI> initTag();
     public abstract Supplier<TextHelperAPI<?>> initTextHelper();

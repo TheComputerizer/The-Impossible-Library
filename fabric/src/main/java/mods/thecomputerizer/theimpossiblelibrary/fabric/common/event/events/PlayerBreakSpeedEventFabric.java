@@ -15,22 +15,22 @@ public class PlayerBreakSpeedEventFabric extends PlayerBreakSpeedEventWrapper<Ob
     }
     
     @Override protected EventFieldWrapper<Object[],Float> wrapOriginalSpeedField() {
-        return wrapGenericGetter(BreakSpeed::getOriginalSpeed,0f);
+        return wrapGenericGetter(wrapArrayGetter(0),0f);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(BreakSpeed::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(BreakSpeed::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapSpeedField() {
-        return wrapGenericBoth(BreakSpeed::getNewSpeed,BreakSpeed::setNewSpeed,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,speed) -> {},0f);
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(BreakSpeed::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 }

@@ -6,17 +6,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.event.CommonEvents1_16_5;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
 
 @SuppressWarnings("unused") public class CommonEventsFabric1_16_5 extends CommonEvents1_16_5 {
 
-    @Override
-    public void defineEvents() {
+    @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventFabric());
         BLOCK_BREAK.setConnector(new BlockBreakEventFabric());
         BLOCK_CREATE_FLUID.setConnector(new FluidCreateSourceEventFabric());
@@ -82,7 +80,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEventFabric());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEventFabric());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventFabric());
-        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventFabric1_16_5()); //TODO Deferred registers?
+        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventFabric1_16_5());
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventFabric1_16_5());
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventFabric1_16_5());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventFabric1_16_5());
@@ -100,6 +98,15 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
     
     @Override public <R> Result getEventResult(R result) {
         return DEFAULT;
+    }
+    
+    @Override public void postCustomTick(CustomTick ticker) {
+        CustomTickFabric.CUSTOM_TICK.invoker().onTick(ticker);
+    }
+    
+    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
+        Class<?> wrapperClass = wrapper.getClass();
+        ReflectionHelper.invokeStaticMethod(wrapperClass,"register",new Class<?>[]{wrapperClass},wrapper);
     }
     
     @SuppressWarnings("unchecked")

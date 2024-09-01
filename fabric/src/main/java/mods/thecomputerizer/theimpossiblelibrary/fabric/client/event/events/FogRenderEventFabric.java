@@ -23,18 +23,18 @@ public class FogRenderEventFabric extends FogRenderEventWrapper<Object[]> implem
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(event -> event.getInfo().getEntity());
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapFarplaneField() {
-        return wrapGenericGetter(RenderFogEvent::getFarPlaneDistance,0f);
+        return wrapGenericGetter(wrapArrayGetter(0),0f);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapFogModeField() {
-        return wrapGenericGetter(event -> 0,0);
+        return wrapGenericGetter(wrapArrayGetter(0),0);
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(event -> null);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 }

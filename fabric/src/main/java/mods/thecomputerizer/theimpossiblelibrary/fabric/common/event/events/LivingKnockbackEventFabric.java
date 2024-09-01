@@ -18,7 +18,7 @@ public class LivingKnockbackEventFabric extends LivingKnockbackEventWrapper<Obje
     }
 
     @Override protected EventFieldWrapper<Object[],LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingKnockBackEvent::getEntityLiving);
+        return wrapLivingGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapOriginalAttackerField() {
@@ -26,26 +26,26 @@ public class LivingKnockbackEventFabric extends LivingKnockbackEventWrapper<Obje
     }
 
     @Override protected EventFieldWrapper<Object[],Double> wrapOriginalRatioXField() {
-        return wrapGenericGetter(LivingKnockBackEvent::getOriginalRatioX,0d);
+        return wrapGenericGetter(wrapArrayGetter(0),0d);
     }
 
     @Override protected EventFieldWrapper<Object[],Double> wrapOriginalRatioZField() {
-        return wrapGenericGetter(LivingKnockBackEvent::getOriginalRatioZ,0d);
+        return wrapGenericGetter(wrapArrayGetter(0),0d);
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapOriginalStrengthField() {
-        return wrapGenericGetter(LivingKnockBackEvent::getStrength,0f);
+        return wrapGenericGetter(wrapArrayGetter(0),0f);
     }
 
     @Override protected EventFieldWrapper<Object[],Double> wrapRatioXField() {
-        return wrapGenericBoth(LivingKnockBackEvent::getRatioX,LivingKnockBackEvent::setRatioX,0d);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,ratioX) -> {},0d);
     }
 
     @Override protected EventFieldWrapper<Object[],Double> wrapRatioZField() {
-        return wrapGenericBoth(LivingKnockBackEvent::getRatioZ,LivingKnockBackEvent::setRatioZ,0d);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,ratioZ) -> {},0d);
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapStrengthField() {
-        return wrapGenericBoth(LivingKnockBackEvent::getStrength,LivingKnockBackEvent::setStrength,0f);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,strength) -> {},0f);
     }
 }

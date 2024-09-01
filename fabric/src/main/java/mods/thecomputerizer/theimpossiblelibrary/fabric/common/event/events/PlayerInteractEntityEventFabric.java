@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractEntityEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
@@ -25,35 +24,34 @@ public class PlayerInteractEntityEventFabric extends PlayerInteractEntityEventWr
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(EntityInteract::getItemStack);
+        return wrapItemStack(wrapArrayGetter(0));
     }
-
+    
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(EntityInteract::getWorld);
+        return wrapWorld(wrapArrayGetter(0));
     }
-
+    
     @Override protected EventFieldWrapper<Object[],ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+        return wrapGenericBoth(wrapArrayGetter(0), (args,result) -> {},PASS);
     }
-
+    
     @Override protected EventFieldWrapper<Object[],Facing> wrapFacingField() {
-        return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),UP);
+        return wrapGenericGetter(wrapArrayGetter(0),UP);
     }
-
+    
     @Override protected EventFieldWrapper<Object[],Hand> wrapHandField() {
-        return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
+        return wrapGenericGetter(wrapArrayGetter(0),MAINHAND);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(EntityInteract::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(EntityInteract::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapTargetField() {
-        return wrapEntityGetter(EntityInteract::getTarget);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 }

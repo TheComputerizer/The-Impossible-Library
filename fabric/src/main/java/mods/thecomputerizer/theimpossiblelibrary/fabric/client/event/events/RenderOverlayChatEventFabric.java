@@ -23,14 +23,14 @@ public class RenderOverlayChatEventFabric extends RenderOverlayChatEventWrapper<
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> EventHelper.getOverlayElementType(event.getType()),ALL);
+        return wrapGenericGetter(wrapArrayGetter(0),ALL);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapPosXField() {
-        return wrapGenericBoth(Chat::getPosX,Chat::setPosX,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,x) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapPosYField() {
-        return wrapGenericBoth(Chat::getPosY,Chat::setPosY,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,y) -> {},0);
     }
 }

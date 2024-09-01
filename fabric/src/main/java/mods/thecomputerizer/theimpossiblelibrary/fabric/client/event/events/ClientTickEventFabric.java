@@ -9,11 +9,12 @@ import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
+import static net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK;
 
 public class ClientTickEventFabric extends ClientTickEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return END_CLIENT_TICK;
     }
     
     @Override

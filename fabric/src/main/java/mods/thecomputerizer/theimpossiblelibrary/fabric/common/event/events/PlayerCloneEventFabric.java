@@ -6,21 +6,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerC
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
 
+import static net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.COPY_FROM;
+
 public class PlayerCloneEventFabric extends PlayerCloneEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return COPY_FROM;
     }
     
     @Override protected EventFieldWrapper<Object[],Boolean> wrapDeathField() {
-        return wrapGenericGetter(Clone::isWasDeath,true);
+        return wrapGenericGetter(wrapArrayGetter(2),true);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapOriginalField() {
-        return wrapPlayerGetter(Clone::getOriginal);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(Clone::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(1));
     }
 }

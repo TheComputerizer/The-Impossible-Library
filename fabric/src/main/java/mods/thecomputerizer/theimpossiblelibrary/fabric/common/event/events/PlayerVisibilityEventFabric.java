@@ -13,10 +13,10 @@ public class PlayerVisibilityEventFabric extends PlayerVisibilityEventWrapper<Ob
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(Visibility::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],Double> wrapVisibilityModifierField() {
-        return wrapGenericBoth(Visibility::getVisibilityModifier,Visibility::modifyVisibility,1d);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,visibility) -> {},1d);
     }
 }

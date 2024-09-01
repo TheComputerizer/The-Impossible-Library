@@ -15,14 +15,14 @@ public class PlayerSaveToFileEventFabric extends PlayerSaveToFileEventWrapper<Ob
     }
     
     @Override protected EventFieldWrapper<Object[],File> wrapDirectoryField() {
-        return wrapGenericGetter(SaveToFile::getPlayerDirectory,null);
+        return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
     @Override protected EventFieldWrapper<Object[],String> wrapUUIDField() {
-        return wrapGenericGetter(SaveToFile::getPlayerUUID,null);
+        return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(SaveToFile::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

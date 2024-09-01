@@ -16,22 +16,22 @@ public class TrampleFarmlandEventFabric extends TrampleFarmlandEventWrapper<Obje
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(FarmlandTrampleEvent::getEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],Float> wrapFallDistanceField() {
-        return wrapGenericGetter(FarmlandTrampleEvent::getFallDistance,0f);
+        return wrapGenericGetter(wrapArrayGetter(0),0f);
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(FarmlandTrampleEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(FarmlandTrampleEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(FarmlandTrampleEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

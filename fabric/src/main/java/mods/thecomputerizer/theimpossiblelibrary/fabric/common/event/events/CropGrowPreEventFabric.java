@@ -15,14 +15,14 @@ public class CropGrowPreEventFabric extends CropGrowPreEventWrapper<Object[]> im
     }
     
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(Pre::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(Pre::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(Pre::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

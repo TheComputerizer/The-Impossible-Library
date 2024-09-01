@@ -17,30 +17,30 @@ public class BlockPlaceEventFabric extends BlockPlaceEventWrapper<Object[]> impl
     }
     
     @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(EntityPlaceEvent::getEntity);
+        return wrapEntityGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapPlacedAgainstField() {
-        return wrapStateGetter(EntityPlaceEvent::getPlacedAgainst);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapPlacedField() {
-        return wrapStateGetter(EntityPlaceEvent::getPlacedBlock);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockSnapshotAPI<?>> wrapSnapshotField() {
-        return wrapSnapshotGetter(EntityPlaceEvent::getBlockSnapshot);
+        return wrapSnapshotGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(EntityPlaceEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(EntityPlaceEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(EntityPlaceEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }

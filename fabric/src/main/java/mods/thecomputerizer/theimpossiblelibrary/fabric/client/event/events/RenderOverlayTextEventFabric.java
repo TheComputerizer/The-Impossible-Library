@@ -25,14 +25,14 @@ public class RenderOverlayTextEventFabric extends RenderOverlayTextEventWrapper<
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> EventHelper.getOverlayElementType(event.getType()),ALL);
+        return wrapGenericGetter(wrapArrayGetter(0),ALL);
     }
 
     @Override protected EventFieldWrapper<Object[],List<String>> wrapLeftField() {
-        return wrapGenericGetter(Text::getLeft,new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(0),new ArrayList<>());
     }
 
     @Override protected EventFieldWrapper<Object[],List<String>> wrapRightField() {
-        return wrapGenericGetter(Text::getRight,new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(0),new ArrayList<>());
     }
 }

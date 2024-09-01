@@ -18,16 +18,16 @@ public class ItemTooltipEventFabric extends ItemTooltipEventWrapper<Object[]> im
     
     @Override
     protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemTooltipEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override
     protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(ItemTooltipEvent::getItemStack);
+        return wrapItemStackGetter(wrapArrayGetter(0));
     }
 
     @Override
     protected EventFieldWrapper<Object[],List<String>> wrapTooltipField() { //TODO Adjust for text components
-        return wrapGenericGetter(event -> new ArrayList<>(),new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(0),new ArrayList<>());
     }
 }

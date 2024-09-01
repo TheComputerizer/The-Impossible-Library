@@ -5,15 +5,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 
 import javax.annotation.Nullable;
 
-@Getter
 public abstract class RegistryAPI<V> {
 
-    protected final Class<V> type;
-    protected final ResourceLocationAPI<?> registryKey;
+    @Getter protected final Class<V> type;
+    @Getter protected final ResourceLocationAPI<?> registryKey;
+    protected final Object backend;
 
-    protected RegistryAPI(Class<V> type, ResourceLocationAPI<?> registryKey) {
+    protected RegistryAPI(Object backend, Class<V> type, ResourceLocationAPI<?> registryKey) {
+        this.backend = backend;
         this.type = type;
         this.registryKey = registryKey;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <B> B getBackend() {
+        return (B)this.backend;
     }
 
     public abstract ResourceLocationAPI<?> getKey(V value);

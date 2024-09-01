@@ -16,22 +16,22 @@ public class BlockBreakEventFabric extends BlockBreakEventWrapper<Object[]> impl
     }
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapXPField() {
-        return wrapGenericBoth(BreakEvent::getExpToDrop,BreakEvent::setExpToDrop,0);
+        return wrapGenericBoth(wrapArrayGetter(0),(args,xp) -> {},0);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(BreakEvent::getPlayer);
+        return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(BreakEvent::getPos);
+        return wrapPosGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(BreakEvent::getState);
+        return wrapStateGetter(wrapArrayGetter(0));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(BreakEvent::getWorld);
+        return wrapWorldGetter(wrapArrayGetter(0));
     }
 }
