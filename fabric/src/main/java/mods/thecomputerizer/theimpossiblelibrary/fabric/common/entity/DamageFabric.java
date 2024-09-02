@@ -2,15 +2,14 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.common.entity;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-
-public class DamageForge extends DamageAPI {
+public class DamageFabric extends DamageAPI {
     
     private final DamageSource source;
     
-    public DamageForge(DamageSource source, @Nullable EntityAPI<?,?> entity, float amount) {
+    public DamageFabric(DamageSource source, @Nullable EntityAPI<?,?> entity, float amount) {
         super(entity,amount);
         this.source = source;
     }

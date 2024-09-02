@@ -116,40 +116,40 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     }
     
     @SuppressWarnings("unchecked")
-    @Override public AxisAlignedBB setAABB(Box box) {
-        return new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z);
+    @Override public <B> B setAABB(Box box) {
+        return (B)new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z);
     }
     
     @SuppressWarnings("unchecked")
-    @Override public ActionResultType setActionResult(ActionResult result) {
+    @Override public <A> A setActionResult(ActionResult result) {
         switch(result) {
-            case CONSUME: return ActionResultType.CONSUME;
-            case PASS: return ActionResultType.PASS;
-            case SUCCESS: return ActionResultType.SUCCESS;
-            default: return ActionResultType.FAIL;
+            case CONSUME: return (A)ActionResultType.CONSUME;
+            case PASS: return (A)ActionResultType.PASS;
+            case SUCCESS: return (A)ActionResultType.SUCCESS;
+            default: return (A)ActionResultType.FAIL;
         }
     }
     
     @SuppressWarnings("unchecked")
-    @Override public @Nullable Direction setFacing(@Nullable Facing facing) {
+    @Override public <F> @Nullable F setFacing(@Nullable Facing facing) {
         if(Objects.isNull(facing)) return null;
         switch(facing) {
-            case DOWN: return Direction.DOWN;
-            case EAST: return Direction.EAST;
-            case NORTH: return Direction.NORTH;
-            case SOUTH: return Direction.SOUTH;
-            case UP: return Direction.UP;
-            default: return Direction.WEST;
+            case DOWN: return (F)Direction.DOWN;
+            case EAST: return (F)Direction.EAST;
+            case NORTH: return (F)Direction.NORTH;
+            case SOUTH: return (F)Direction.SOUTH;
+            case UP: return (F)Direction.UP;
+            default: return (F)Direction.WEST;
         }
     }
     
     @SuppressWarnings("unchecked")
-    @Override public net.minecraft.util.Hand setHand(Hand hand) {
-        return hand==MAINHAND ? net.minecraft.util.Hand.MAIN_HAND : net.minecraft.util.Hand.OFF_HAND;
+    @Override public <H> H setHand(Hand hand) {
+        return (H)(hand==MAINHAND ? net.minecraft.util.Hand.MAIN_HAND : net.minecraft.util.Hand.OFF_HAND);
     }
     
     @SuppressWarnings("unchecked")
-    @Override public net.minecraft.util.math.vector.Vector3d setVec3d(Vector3d vector) {
-        return new net.minecraft.util.math.vector.Vector3d(vector.x,vector.y,vector.z);
+    @Override public <V> V setVec3d(Vector3d vector) {
+        return (V)new net.minecraft.util.math.vector.Vector3d(vector.x,vector.y,vector.z);
     }
 }

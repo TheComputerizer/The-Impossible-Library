@@ -50,7 +50,7 @@ plugins.apply('org.parchmentmc.librarian.forgegradle')
 minecraft {
     mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
     runs {
-        def args = [ '-DtilDev=true' ]
+        def args = [ '-Dtil.dev=true' ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
             property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
@@ -70,6 +70,13 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             jvmArgs args
         }
+    }
+}
+
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
     }
 }
 
@@ -95,6 +102,10 @@ jar {
                 'Implementation-Version': version
         ])
     }
+}
+
+artifacts {
+    dev jar
 }
 
 tasks.jar.dependsOn(':shared:build')

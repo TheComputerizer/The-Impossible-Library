@@ -11,6 +11,13 @@ repositories {
     }
 }
 
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
 dependencies {
     compileOnly("com.google.code.findbugs:jsr305:${jsr_version}")
     compileOnly("io.netty:netty-all:${netty_version}")
@@ -23,4 +30,8 @@ dependencies {
 
 processResources {
     from(sourceSets.main.resources.srcDirs)
+}
+
+artifacts {
+    dev jar
 }

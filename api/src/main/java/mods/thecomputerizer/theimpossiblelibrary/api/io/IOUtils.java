@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.io;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.WrapperableMappable;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
@@ -9,12 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Read/write util methods with some addition specific string stuff
@@ -65,10 +68,12 @@ public class IOUtils {
     /**
      * Removes blank values from string collections
      */
+    @IndirectCallers
     public static void lintCollections(Collection<String> ... collections) {
         for(Collection<String> c : collections) c.removeIf(StringUtils::isBlank);
     }
-
+    
+    @IndirectCallers
     public static void loadDefaults() {
         loadDefaultClassAliases();
     }
@@ -86,6 +91,7 @@ public class IOUtils {
      * It's assumed that the instance array is not empty, the index array is not empty, and the generic type is the
      * correct superclass level
      */
+    @IndirectCallers
     public static <E> E[] mapArray(E[] instances, int[] indices) {
         assert instances.length>0 && indices.length>0;
         E[] mapped = (E[])Array.newInstance(instances[0].getClass(),indices.length);
@@ -96,6 +102,7 @@ public class IOUtils {
     /**
      * 2D version of the mapper.
      */
+    @IndirectCallers
     public static <E> E[][] mapGrid(E[] instances, int[][] indices) {
         assert instances.length>0 && indices.length>0 && indices[0].length>0;
         E[][] mapped = (E[][])Array.newInstance(instances[0].getClass(),indices.length,indices[0].length);
@@ -109,6 +116,7 @@ public class IOUtils {
     /**
      * 3D version of the mapper
      */
+    @IndirectCallers
     public static <E> E[][][] mapBox(E[] instances, int[][][] indices) {
         assert instances.length>0 && indices.length>0 && indices[0].length>0 && indices[0][0].length>0;
         E[][][] mapped = (E[][][])Array.newInstance(instances[0].getClass(),indices.length,indices[0].length,indices[0][0].length);
@@ -123,6 +131,11 @@ public class IOUtils {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         for(int length;(length = stream.read(buffer))!=-1;) output.write(buffer,0,length);
-        return output.toString(StandardCharsets.UTF_8.name());
+        return output.toString(UTF_8.name());
+    }
+    
+    @IndirectCallers
+    public static InputStream stringToStream(String str) {
+        return new ByteArrayInputStream(str.getBytes(UTF_8));
     }
 }

@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.SneakyThrows;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import java.lang.invoke.MethodHandle;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -13,14 +13,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-@SuppressWarnings("unused") public class ClassHelper {
-
-    private static final MethodHandle CLASS_DEFINER = ReflectionHelper.findMethodHandle(ClassLoader.class,
-            "defineClass",String.class,byte[].class,int.class,int.class);
-    private static final MethodHandle CLASS_RESOLVER = ReflectionHelper.findMethodHandle(ClassLoader.class,
-            "resolveClass",Class.class);
-    private static final MethodHandle URL_LOADER = ReflectionHelper.findMethodHandle(URLClassLoader.class,
-            "addURL",URL.class);
+@IndirectCallers
+public class ClassHelper {
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
@@ -70,9 +64,9 @@ import java.util.function.BiFunction;
      * Defines and resolves a class from byteCode
      */
     @SneakyThrows
-    @SuppressWarnings("DataFlowIssue")
     public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
-        return (Class<?>)CLASS_DEFINER.invoke(classLoader,classpath,bytes,0,bytes.length);
+        return (Class<?>)ReflectionHelper.invokeMethod(ClassLoader.class,"defineClass",classLoader,new Class<?>[]{
+                String.class,String.class,byte[].class,int.class,int.class},classpath,bytes,0,bytes.length);
     }
 
     public static String descriptor(Class<?> clazz) {
@@ -143,7 +137,7 @@ import java.util.function.BiFunction;
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findClass(String name, boolean inititalize, ClassLoader classLoader) {
-        if(StringUtils.isBlank(name)) {
+        if(Objects.isNull(name) || name.isEmpty()) {
             TILRef.logError("Cannot find class from null or blank name!");
             return null;
         }
@@ -230,8 +224,7 @@ import java.util.function.BiFunction;
     }
 
     public static void loadClass(ClassLoader classLoader, String classpath, byte[] bytes) {
-        if(Objects.nonNull(CLASS_DEFINER)) loadClass(classLoader,defineClass(classLoader,classpath,bytes));
-        else TILRef.logError("Cannot load class `{}` since the CLASS_DEFINER handle failed to intialize",classpath);
+        loadClass(classLoader,defineClass(classLoader,classpath,bytes));
     }
 
     public static void loadClass(Class<?> clazz) {
@@ -246,12 +239,8 @@ import java.util.function.BiFunction;
     @SneakyThrows
     public static boolean loadURL(URLClassLoader classLoader, URL url) {
         TILRef.logTrace("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
-        if(Objects.nonNull(URL_LOADER)) {
-            URL_LOADER.invoke(classLoader,url);
-            return true;
-        }
-        else TILRef.logError("Cannot load URL `{}` since the URL_LOADER handle failed to intialize",url);
-        return false;
+        ReflectionHelper.invokeMethod(URLClassLoader.class,"addURL",classLoader,new Class<?>[]{URL.class},url);
+        return true;
     }
 
     public static String packageName(@Nullable Class<?> clazz) {
@@ -262,9 +251,10 @@ import java.util.function.BiFunction;
      * Defines and resolves a class from byteCode
      */
     @SneakyThrows
-    @SuppressWarnings("DataFlowIssue")
     public static Class<?> resolveClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
-        if(Objects.nonNull(clazz)) CLASS_RESOLVER.invoke(classLoader,clazz);
+        if(Objects.nonNull(clazz))
+            ReflectionHelper.invokeMethod(ClassLoader.class,"resolveClass",classLoader,new Class<?>[]{
+                    Class.class},clazz);
         else TILRef.logFatal("Cannot resolve null defined class!");
         return clazz;
     }

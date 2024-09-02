@@ -16,11 +16,11 @@ import static org.apache.logging.log4j.Level.*;
 
 @SuppressWarnings("unused") public class TILDev {
 
-    public static final boolean DEV = Boolean.parseBoolean(System.getProperty("tilDev")); //`-DtilDev=true`
-    private static final String LOADER_FILE = System.getProperty("tilLoaderFile",MODID+"-"+VERSION+".jar");
+    public static final boolean DEV = Boolean.parseBoolean(System.getProperty("til.dev")); //`-Dtil.dev=true`
+    private static final String LOADER_FILE = System.getProperty("til.classpath.file",MODID+"-"+VERSION+".jar");
     private static final Logger LOGGER = DEV ? LogManager.getLogger("TIL DEV") : null;
-    public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(System.getProperty("tilClassPathCoreMods"));
-    public static final Set<String> CLASSPATH_MODS = parseClasspathMods(System.getProperty("tilClassPathMods"));
+    public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(System.getProperty("til.classpath.coremods"));
+    public static final Set<String> CLASSPATH_MODS = parseClasspathMods(System.getProperty("til.classpath.mods"));
     
     public static <I> void devConsume(I input, Consumer<I> consumer) {
         if(DEV) consumer.accept(input);
@@ -36,7 +36,7 @@ import static org.apache.logging.log4j.Level.*;
     
     /**
      * When used as a local dependency, the file needs to be remapped which can confuse the loader's auto-detection.
-     * The loader file can be set manually via -DtilLoaderFile
+     * The loader file can be set manually via -Dtil.classpath.file
      */
     public static boolean isLoader(String fileName) {
         return LOADER_FILE.equals(fileName);

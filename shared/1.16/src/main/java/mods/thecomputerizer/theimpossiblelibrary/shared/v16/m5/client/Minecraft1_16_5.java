@@ -14,7 +14,6 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.world.IWorld;
 import net.minecraftforge.fml.client.ClientModLoader;
 
@@ -58,7 +57,7 @@ public class Minecraft1_16_5 implements MinecraftAPI {
     }
     
     @Override
-    public @Nullable PlayerAPI<ClientPlayerEntity,EntityType<?>> getPlayer() {
+    public @Nullable PlayerAPI<ClientPlayerEntity,?> getPlayer() {
         return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_16_5(this.mc.player) : null;
     }
 

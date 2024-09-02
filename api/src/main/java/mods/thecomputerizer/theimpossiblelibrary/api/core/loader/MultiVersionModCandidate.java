@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 
 import javax.annotation.Nullable;
@@ -66,11 +68,9 @@ public class MultiVersionModCandidate {
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) && clazz.isAnnotationPresent(annotation);
     }
 
-    private @Nullable Class<?> findClass(ClassLoader classLoader, String name) {
+    private @Nullable Class<?> findClass(ClassLoader classLoader, String name, boolean loadSources) {
         TILRef.logInfo("Locating loader class {}",name);
-        //try {
-        //    return Class.forName(name,true,classLoader);
-        //} catch(ClassNotFoundException ignored) {}
+        if(!loadSources) this.loaded = true;
         if(!this.loaded) {
             TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
             try {
@@ -93,11 +93,11 @@ public class MultiVersionModCandidate {
 
     @SuppressWarnings("unchecked")
     public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,
-                                MultiVersionModCandidate candidate, ClassLoader classLoader) {
+                                MultiVersionModCandidate candidate, ClassLoader classLoader, boolean loadSources) {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
-            Class<?> clazz = findClass(classLoader,name);
-            if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class)) {
+            Class<?> clazz = findClass(classLoader,name,loadSources);
+            if(canBeLoaded(clazz, CoreEntryPoint.class, MultiVersionCoreMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CoreEntryPoint>)clazz);
             }
@@ -106,11 +106,11 @@ public class MultiVersionModCandidate {
     
     @SuppressWarnings("unchecked")
     public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
-                               MultiVersionModCandidate candidate, ClassLoader classLoader) {
+                               MultiVersionModCandidate candidate, ClassLoader classLoader, boolean loadSources) {
         TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
         for(String name : this.modClassNames) {
-            Class<?> clazz = findClass(classLoader,name);
-            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class)) {
+            Class<?> clazz = findClass(classLoader,name,loadSources);
+            if(canBeLoaded(clazz, CommonEntryPoint.class, MultiVersionMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CommonEntryPoint>)clazz);
             }

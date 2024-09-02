@@ -238,7 +238,11 @@ public abstract class CoreAPI {
     }
 
     public void loadCoreModInfo(ClassLoader classLoader) {
-        getLoader().loadCoreMods(this.coreInfo,classLoader);
+        loadCoreModInfo(classLoader,true);
+    }
+    
+    public void loadCoreModInfo(ClassLoader classLoader, boolean loadSources) {
+        getLoader().loadCoreMods(this.coreInfo,classLoader,loadSources);
     }
 
     @SneakyThrows
@@ -263,7 +267,11 @@ public abstract class CoreAPI {
     }
 
     public void writeModContainers(ClassLoader classLoader) {
-        getLoader().loadMods(this.modInfo,classLoader);
+        writeModContainers(classLoader,true);
+    }
+    
+    public void writeModContainers(ClassLoader classLoader, boolean loadSources) {
+        getLoader().loadMods(this.modInfo,classLoader,loadSources);
     }
 
     @Getter

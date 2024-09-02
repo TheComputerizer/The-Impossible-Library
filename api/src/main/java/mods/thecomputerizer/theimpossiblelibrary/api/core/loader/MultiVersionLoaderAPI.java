@@ -8,6 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -75,14 +77,14 @@ public abstract class MultiVersionLoaderAPI {
         return false;
     }
 
-    public void loadCoreMods(
-            Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap, ClassLoader loader) {
+    public void loadCoreMods(Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap,
+            ClassLoader loader, boolean loadSources) {
         File root = findCoreModRoot();
         TILDev.logInfo("Finding multiversion coremods from root `{}`", root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,true);
         for(MultiVersionModCandidate candidate : this.candidates)
-            candidate.findCoreClasses(classes,candidate,loader);
+            candidate.findCoreClasses(classes,candidate,loader,loadSources);
         TILRef.logDebug("{} coremods will attempt to be loaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
@@ -108,14 +110,14 @@ public abstract class MultiVersionLoaderAPI {
         return isValidContext(mod) ? MultiVersionCoreModInfo.get(clazz,mod) : null;
     }
 
-    public void loadMods(
-            Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap,ClassLoader loader) {
+    public void loadMods(Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap, ClassLoader loader,
+            boolean loadSources) {
         File root = findModRoot();
         TILDev.logInfo("Finding multiversion mods from root `{}`",root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,false);
         for(MultiVersionModCandidate candidate : this.candidates)
-            candidate.findModClasses(classes,candidate,loader);
+            candidate.findModClasses(classes,candidate,loader,loadSources);
         TILRef.logDebug("{} mods will attempt to be preloaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();

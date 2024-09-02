@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.resource.ResourceLocation1_16_5;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.IWorld;
@@ -35,8 +34,9 @@ public abstract class Biome1_16_5<B> extends BiomeAPI<B> {
         return ((Biome)this.biome).getPrecipitation()==SNOW;
     }
 
-    public @Nullable RegistryKey<Biome> getRegistryKey(DynamicRegistries registries) {
-        return registries.registryOrThrow(BIOME_REGISTRY).getResourceKey((Biome)this.biome).orElse(null);
+    @SuppressWarnings("unchecked")
+    public <K> @Nullable K getRegistryKey(DynamicRegistries registries) {
+        return (K)registries.registryOrThrow(BIOME_REGISTRY).getResourceKey((Biome)this.biome).orElse(null);
     }
 
     @Override

@@ -34,6 +34,31 @@ apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply('fabric-loom')
 
+def file = "build\\libs\\${mod_id}-${mod_version}.jar"
+def classes = 'build\\classes\\java\\main'
+def sources = "-Dtil.dev.sources=api\\${file};shared\\1.16\\${file};fabric\\1.16\\${classes}"
+def args = [
+        '-Dfabric.debug.logClassLoad=true',
+        '-Dfabric.debug.logClassLoadErrors=true',
+        '-Dfabric.debug.logTransformErrors=true',
+        '-Dfabric.log.level=trace',
+        '-Dtil.dev=true',
+        '-Dtil.dev.testModLoading',
+        sources, '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+]
+
+[ runClient, runServer ].forEach { it.jvmArgs args}
+
+repositories {
+    maven {
+        name 'Modrinth'
+        url = uri('https://api.modrinth.com/maven')
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+}
+
 def shared = project(':shared:shared.1_16')
 
 dependencies {
@@ -42,14 +67,15 @@ dependencies {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${shared.minecraft_version}:${shared.parchment_version}@zip")
     }
-
-    implementation(project(':api'))
-    implementation(project(':fabric'))
+    implementation(project(path: ':api', configuration: 'dev'))
+    implementation(project(path: ':fabric', configuration: 'dev'))
     //The shared module builds with forge but since it only touches vanilla code this is fine
-    implementation(shared) { transitive = false }
+    compileOnly(project(path: ':shared:shared.1_16', configuration: 'dev')) { transitive = false }
 
     modImplementation("net.fabricmc:fabric-loader:${loader_version}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${shared.fabric_version}+1.16")
+    modImplementation("maven.modrinth:cloth-config:${cloth_version}")
+    modImplementation("maven.modrinth:modmenu:${modmenu_version}")
 }
 
 remapJar {
@@ -57,11 +83,11 @@ remapJar {
 }
 
 processResources {
-    from(project(':fabric').processResources.outputs)
+    from(project(':api').processResources.outputs)
 }
 
 processTestResources {
-    from(project(':fabric').processTestResources.outputs)
+    from(project(':api').processTestResources.outputs)
 }
 
 compileJava {

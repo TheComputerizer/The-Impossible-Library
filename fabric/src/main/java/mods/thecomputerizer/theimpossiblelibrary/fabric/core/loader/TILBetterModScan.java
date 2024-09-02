@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-public class TILBetterModScan extends ModFileScanData {
+public class TILBetterModScan {
     
     private final Map<String,MultiVersionModInfo> modInfos;
     private final Map<String,byte[]> writtenClasses;

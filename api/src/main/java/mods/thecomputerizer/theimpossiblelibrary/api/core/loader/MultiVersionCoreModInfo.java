@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 
 import javax.annotation.Nullable;
 

@@ -1,13 +1,13 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
+package mods.thecomputerizer.theimpossiblelibrary.api.core.annotation;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface MultiVersionMod {
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Retention(RUNTIME) @Target(TYPE)
+public @interface MultiVersionCoreMod {
 
     /**
      * Can be loaded on clients
@@ -28,12 +28,7 @@ public @interface MultiVersionMod {
      * Compatible with versions before 1.13
      */
     boolean legacy() default true;
-    
-    /**
-     * A description of the mod
-     */
-    String modDescription() default "Multiversion mod loaded by The Impossible Library";
-    
+
     /**
      * Lowercase ID of the mod
      */

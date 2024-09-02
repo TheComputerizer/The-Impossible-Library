@@ -1,26 +1,25 @@
 {
-  "description": "Multiversion API & mod loader with helpers to do things deemed impossible",
+  "schemaVersion": 1,
+  "description": "Multiversion loader for The Impossible Library disguised as a language adaptor",
   "depends": {
     "fabricloader": ">=0.14.0",
     "fabric": "*",
     "minecraft": ">=1.16.5",
     "java": ">=8"
   },
-  "entrypoints": {
-    "preLaunch": [
-      {
-        "adapter": "multiversionAdaptor",
-        "value": "mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILLoadingPluginFabric"
-      }
-    ]
-  },
   "environment": "*",
   "icon": "logo.png",
-  "id": "theimpossiblelibrary",
-  "languageAdapter": {
-    "multiversionAdaptor": "mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILLanguageAdaptor"
+  "id": "theimpossibleloader",
+  "languageAdapters": {
+    "multiversionAdaptor": "${adaptorClass}"
   },
-  "name": "${name}",
-  "schemaVersion": 1,
-  "version": "${version}"
+  "name": "The Impossible Loader",
+  "version": "${version}",
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
+    }
+  }
 }

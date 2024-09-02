@@ -38,6 +38,13 @@ apply from: rootProject.file('gradle\\fabric.gradle')
 
 plugins.apply('fabric-loom')
 
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
 dependencies {
     def shared = project(':shared:shared.1_16')
     minecraft("com.mojang:minecraft:${shared.minecraft_version}")
@@ -53,6 +60,12 @@ dependencies {
 }
 
 processResources {
+    def core = "${fabric_package}.core."
+    def replacements = [ 'adaptorClass': "${core}TILLanguageAdaptor", 'version': version ]
+    inputs.properties replacements
+    filesMatching("fabric.mod.json") {
+        expand replacements
+    }
     from(project(':api').processResources.outputs)
 }
 
@@ -67,6 +80,10 @@ jar {
                 'Implementation-Version': version
         ])
     }
+}
+
+artifacts {
+    dev jar
 }
 
 tasks.jar.dependsOn(':api:build')

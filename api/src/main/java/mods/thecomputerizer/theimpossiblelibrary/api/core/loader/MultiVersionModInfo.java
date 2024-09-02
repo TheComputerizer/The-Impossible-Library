@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 
 @Getter
 public class MultiVersionModInfo {
@@ -33,5 +34,9 @@ public class MultiVersionModInfo {
         String baseName = clazz.getPackage().getName()+"."+name.replace(" ","");
         this.modClasspath = baseName+"GeneratedCommonMod";
         this.containerClasspath = baseName+"GeneratedModContainer";
+    }
+    
+    @Override public String toString() {
+        return super.toString()+"("+getModID()+")";
     }
 }

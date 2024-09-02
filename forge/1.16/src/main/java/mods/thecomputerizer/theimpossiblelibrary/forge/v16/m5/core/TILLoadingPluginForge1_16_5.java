@@ -63,7 +63,6 @@ public class TILLoadingPluginForge1_16_5 extends AbstractJarFileLocator {
     @Override public void initArguments(Map<String,?> arguments) {
         CoreAPI core = INSTANCE;
         MultiVersionLoaderAPI loader = core.getLoader();
-        ((MultiVersionLoaderForge1_16_5)loader).setLocator(this);
         try {
             final Enumeration<URL> manifests = ClassLoader.getSystemClassLoader().getResources(MANIFEST);
             Predicate<Path> filter = path -> findManifest(path).map(Manifest::getMainAttributes)

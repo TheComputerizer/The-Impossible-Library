@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.TILClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 

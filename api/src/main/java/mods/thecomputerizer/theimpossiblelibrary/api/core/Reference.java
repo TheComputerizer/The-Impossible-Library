@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,13 +41,23 @@ public class Reference {
         this.client = client;
         this.dependencies = Objects.nonNull(dependencies) ? dependencies : "";
         this.logger = Objects.nonNull(logger) ? logger : LogManager.getLogger("TIL REF");
-        this.modid = StringUtils.isNotBlank(modid) ? modid : "modid";
-        this.name = StringUtils.isNotBlank(name) ? name : "Name";
-        this.version = StringUtils.isNotBlank(version) ? version : "0.0.1";
+        this.modid = isNotBlank(modid) ? modid : "modid";
+        this.name = isNotBlank(name) ? name : "Name";
+        this.version = isNotBlank(version) ? version : "0.0.1";
     }
 
     public @Nullable ResourceLocationAPI<?> getResource(String path) {
         return ResourceHelper.getResource(this.modid,path);
+    }
+    
+    /**
+     * StringUtils can't be used here since fabric is picky about which classes are allowed to load early
+     */
+    boolean isNotBlank(@Nullable String str) {
+        if(Objects.isNull(str) || str.isEmpty()) return false;
+        for(int i=0;i<str.length();i++)
+            if(Character.isWhitespace(str.charAt(i))) return false;
+        return true;
     }
 
     public void log(Level level, String msg, Object ... args) {

@@ -19,11 +19,9 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.Too
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.sound.SoundBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.tab.CreativeTabBuilder1_16_5;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 
@@ -69,9 +67,9 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
         return (Registry1_16_5<Block>)this.block;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<TileEntityType<?>> getBlockEntityRegistry() {
-        return (Registry1_16_5<TileEntityType<?>> )this.blockEntity;
+    @Override
+    public Registry1_16_5<?> getBlockEntityRegistry() {
+        return this.blockEntity;
     }
     
     @SuppressWarnings("unchecked") @Override
@@ -79,9 +77,9 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
         return (Registry1_16_5<Effect>)this.effect;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<EntityType<?>> getEntityRegistry() {
-        return (Registry1_16_5<EntityType<?>>)this.entity;
+    @Override
+    public Registry1_16_5<?> getEntityRegistry() {
+        return this.entity;
     }
     
     @SuppressWarnings("unchecked") @Override

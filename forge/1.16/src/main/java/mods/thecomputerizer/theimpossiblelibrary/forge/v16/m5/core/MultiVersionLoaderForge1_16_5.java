@@ -23,10 +23,7 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-@Setter
 public class MultiVersionLoaderForge1_16_5 extends MultiVersionLoaderAPI {
-
-    private TILLoadingPluginForge1_16_5 locator;
     
     protected MultiVersionLoaderForge1_16_5(CoreAPI parent) {
         super(parent);
