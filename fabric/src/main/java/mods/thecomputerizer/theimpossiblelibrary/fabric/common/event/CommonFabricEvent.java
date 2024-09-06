@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.EventType;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.fabricmc.fabric.api.event.Event;
 
 import java.lang.reflect.InvocationHandler;
@@ -14,7 +15,10 @@ public interface CommonFabricEvent {
     @SuppressWarnings("unchecked")
     static <T> void register(EventWrapper<?> wrapper, Event<T> event, EventType<?> type) {
         if(Objects.isNull(event)) return;
-        Class<T> eventType = (Class<T>)event.invoker().getClass();
+        Object invoker = event.invoker();
+        TILRef.logInfo("Event invoker is {}",invoker);
+        Class<T> eventType = (Class<T>)invoker.getClass().getInterfaces()[0];
+        TILRef.logInfo("Event invoker clas is {}",eventType);
         event.register((T)Proxy.newProxyInstance(eventType.getClassLoader(),new Class<?>[]{eventType},
                                                              ((CommonFabricEvent)wrapper).createEventProxy(type)));
     }
@@ -24,7 +28,6 @@ public interface CommonFabricEvent {
         if(wrapper.isCancelable()) wrapper.setCanceled(true);
     }
     
-    @SuppressWarnings("SuspiciousInvocationHandlerImplementation")
     default InvocationHandler createEventProxy(EventType<?> type) {
         return ((proxy,method,args) -> {
             if(method.getReturnType()==Boolean.class) return (Boolean)registerReturn(type,args);

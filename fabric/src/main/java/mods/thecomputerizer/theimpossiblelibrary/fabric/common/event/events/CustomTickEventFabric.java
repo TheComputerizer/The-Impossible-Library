@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.event.Event;
 
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric.CUSTOM_TICK;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.CUSTOM_TICK;
 
 public class CustomTickEventFabric extends CustomTickEventWrapper<Object[]> implements CommonFabricEvent {
     

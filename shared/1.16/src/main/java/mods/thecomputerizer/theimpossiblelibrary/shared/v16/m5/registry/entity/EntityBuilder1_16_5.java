@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.entity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Entity1_16_5;
 
 import javax.annotation.Nullable;
 
@@ -11,7 +11,7 @@ public class EntityBuilder1_16_5 extends EntityBuilderAPI {
         super(parent);
     }
     
-    @Override public Entity1_16_5 build() {
+    @Override public EntityAPI<?,?> build() {
         return null;
     }
 }

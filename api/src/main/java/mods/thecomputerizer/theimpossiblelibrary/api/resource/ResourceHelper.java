@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.resource;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
@@ -24,10 +25,12 @@ public class ResourceHelper {
 
     }
 
+    @IndirectCallers
     public static @Nullable InputStream getResourceStream(String path) {
         return getResourceStream(getResource(path));
     }
-
+    
+    @IndirectCallers
     public static @Nullable InputStream getResourceStream(String modid, String path) {
         return getResourceStream(getResource(modid,path));
     }

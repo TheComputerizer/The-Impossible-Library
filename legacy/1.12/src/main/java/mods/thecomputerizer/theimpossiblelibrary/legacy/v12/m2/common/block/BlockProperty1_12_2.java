@@ -13,22 +13,18 @@ public class BlockProperty1_12_2<V extends Comparable<V>> extends BlockPropertyA
     }
     
     @Override public String asString(V value) {
-        return this.property.getName(value);
+        return this.wrapped.getName(value);
     }
     
     @Override public Collection<V> getAllowedValues() {
-        return this.property.getAllowedValues();
+        return this.wrapped.getAllowedValues();
     }
     
     @Override public String getName() {
-        return this.property.getName();
-    }
-    
-    @Override public Class<V> getValueClass() {
-        return this.property.getValueClass();
+        return this.wrapped.getName();
     }
     
     @Override public Optional<V> parseValue(String unparsed) {
-        return this.property.parseValue(unparsed).toJavaUtil();
+        return this.wrapped.parseValue(unparsed).toJavaUtil();
     }
 }

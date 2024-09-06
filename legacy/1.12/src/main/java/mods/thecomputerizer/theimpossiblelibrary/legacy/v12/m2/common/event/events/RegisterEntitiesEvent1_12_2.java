@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterEntitiesEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -16,8 +15,7 @@ public class RegisterEntitiesEvent1_12_2 extends RegisterEntitiesEventWrapper<Re
         REGISTER_ENTITIES.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,6 +25,6 @@ public class RegisterEntitiesEvent1_12_2 extends RegisterEntitiesEventWrapper<Re
     }
     
     @Override public void register(EntityAPI<?,?> entry) {
-        this.event.getRegistry().register(((Entity1_12_2)entry).getValue());
+        this.event.getRegistry().register(entry.unwrap());
     }
 }

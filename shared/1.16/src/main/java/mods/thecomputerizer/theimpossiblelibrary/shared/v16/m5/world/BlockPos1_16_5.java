@@ -26,14 +26,12 @@ public class BlockPos1_16_5 extends BlockPosAPI<BlockPos> {
         super(pos,posVec);
     }
 
-    @Override
-    public BlockPosAPI<?> add(BlockPos pos) {
+    @Override public BlockPosAPI<?> add(BlockPos pos) {
         return add(pos.getX(),pos.getY(),pos.getZ());
     }
 
-    @Override
-    public BlockPosAPI<?> add(int x, int y, int z) {
-        BlockPos newPos = this.pos.offset(x,y,z);
-        return newPos==this.pos ? this : new BlockPos1_16_5(newPos);
+    @Override public BlockPosAPI<?> add(int x, int y, int z) {
+        BlockPos newPos = this.wrapped.offset(x,y,z);
+        return newPos==this.wrapped ? this : new BlockPos1_16_5(newPos);
     }
 }

@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
@@ -14,7 +15,8 @@ import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("unused") public abstract class DiscBuilderAPI extends ItemBuilderAPI {
+
+public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     protected Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier;
     protected SoundEventAPI<?> sound;
@@ -23,14 +25,12 @@ import java.util.function.Function;
         super(parent);
     }
     
-    @Override
-    public DiscBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
-        this.propertyMap.put(key,properyGetter);
+    @Override public DiscBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
+        this.propertyMap.put(key,propertyGetter);
         return this;
     }
     
-    @Override
-    public DiscBuilderAPI setCreativeTab(CreativeTabAPI tab) {
+    @Override public DiscBuilderAPI setCreativeTab(CreativeTabAPI tab) {
         this.creativeTab = tab;
         return this;
     }
@@ -40,17 +40,18 @@ import java.util.function.Function;
         return this;
     }
     
-    @Override
-    public DiscBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public DiscBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }
     
+    @IndirectCallers
     public DiscBuilderAPI setSoundEvent(SoundEventAPI<?> sound) {
         this.sound = sound;
         return this;
     }
     
+    @IndirectCallers
     public DiscBuilderAPI setSoundNameSupplier(Function<ItemStackAPI<?>,TextAPI<?>> name) {
         this.nameSupplier = name;
         return this;
@@ -61,7 +62,7 @@ import java.util.function.Function;
         return this;
     }
     
-    public DiscBuilderAPI setTootltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
+    public DiscBuilderAPI setTooltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
         this.descFunc = descFunc;
         return this;
     }

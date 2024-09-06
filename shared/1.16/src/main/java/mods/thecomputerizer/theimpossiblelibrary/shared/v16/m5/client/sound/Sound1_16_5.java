@@ -3,22 +3,19 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.sound;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
 
-public class Sound1_16_5 extends SoundAPI<ISound> {
+public abstract class Sound1_16_5<S> extends SoundAPI<S> {
 
-    public Sound1_16_5(ISound sound) {
+    protected Sound1_16_5(S sound) {
         super(sound);
     }
 
-    @Override
-    public ResourceLocationAPI<ResourceLocation> getOggLocation() {
+    @Override public ResourceLocationAPI<ResourceLocation> getOggLocation() { //TODO
         return null;
     }
 
-    @Override
-    public void play(float volume) {
-        Minecraft.getInstance().getSoundManager().play(this.wrapped);
+    @Override public void play(float volume) {
+        Minecraft.getInstance().getSoundManager().play(unwrap());
     }
 }

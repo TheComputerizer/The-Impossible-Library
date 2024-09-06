@@ -1,15 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.structure;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class StructureAPI<S> {
-
-    protected final S structure;
+public abstract class StructureAPI<S> extends AbstractWrapped<S> {
 
     protected StructureAPI(S structure) {
-        this.structure = structure;
+        super(structure);
     }
 
     public abstract String getName();

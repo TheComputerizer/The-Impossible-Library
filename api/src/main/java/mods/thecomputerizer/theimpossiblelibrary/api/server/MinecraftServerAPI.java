@@ -1,19 +1,27 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.server;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 
-public abstract class MinecraftServerAPI<S> {
+public abstract class MinecraftServerAPI<S> extends AbstractWrapped<S> {
 
-    protected MinecraftServerAPI() {}
+    protected MinecraftServerAPI() {
+        super(null);
+    }
 
-    public abstract void registerCommand(CommandAPI cmd);
+    @IndirectCallers public abstract void registerCommand(CommandAPI cmd);
     public abstract void executeCommandLiteral(String command);
-    public abstract @Nullable PlayerAPI<?,?> getPlayerByUUID(String uuid);
-    public abstract List<? extends PlayerAPI<?,?>> getPlayers();
+    @IndirectCallers public abstract @Nullable PlayerAPI<?,?> getPlayerByUUID(String uuid);
+    @IndirectCallers public abstract List<? extends PlayerAPI<?,?>> getPlayers();
     public abstract @Nullable File getSaveDir();
     public abstract S getServer();
+    
+    @Override public S getWrapped() {
+        return getServer();
+    }
 }

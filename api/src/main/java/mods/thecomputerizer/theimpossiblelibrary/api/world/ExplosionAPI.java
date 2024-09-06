@@ -1,6 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
-public interface ExplosionAPI<E> {
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-    E getExplosion();
+public abstract class ExplosionAPI<E> extends AbstractWrapped<E> {
+    
+    protected ExplosionAPI(E explosion) {
+        super(explosion);
+    }
 }

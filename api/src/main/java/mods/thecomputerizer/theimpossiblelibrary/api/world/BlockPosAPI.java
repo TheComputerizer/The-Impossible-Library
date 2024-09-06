@@ -1,20 +1,22 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 import org.joml.Vector3i;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.zero3I;
 
-@SuppressWarnings("unused") @Getter
-public abstract class BlockPosAPI<P> {
+@Getter
+public abstract class BlockPosAPI<P> extends AbstractWrapped<P> {
 
+    @IndirectCallers
     public static final BlockPosAPI<Vector3i> ZERO = new Zero(zero3I());
 
-    protected P pos;
     protected Vector3i posVec;
 
     protected BlockPosAPI(P pos, Vector3i posVec) {
-        this.pos = pos;
+        super(pos);
         this.posVec = posVec;
     }
 
@@ -40,15 +42,18 @@ public abstract class BlockPosAPI<P> {
     public BlockPosAPI<?> down() {
         return add(0,-1,0);
     }
-
+    
+    @IndirectCallers
     public BlockPosAPI<?> east() {
         return add(1,0,0);
     }
-
+    
+    @IndirectCallers
     public BlockPosAPI<?> north() {
         return add(0,0,-1);
     }
-
+    
+    @IndirectCallers
     public BlockPosAPI<?> south() {
         return add(0,0,1);
     }
@@ -56,7 +61,8 @@ public abstract class BlockPosAPI<P> {
     public BlockPosAPI<?> up() {
         return add(0,1,0);
     }
-
+    
+    @IndirectCallers
     public BlockPosAPI<?> west() {
         return add(-1,0,0);
     }
@@ -79,43 +85,35 @@ public abstract class BlockPosAPI<P> {
             super(pos,pos);
         }
 
-        @Override
-        public BlockPosAPI<?> add(Vector3i pos) {
+        @Override public BlockPosAPI<?> add(Vector3i pos) {
             return pos.x==0 && pos.y==0 && pos.z==0 ? this : PosHelper.getPos(pos.add(this.posVec));
         }
 
-        @Override
-        public BlockPosAPI<?> add(int x, int y, int z) {
+        @Override public BlockPosAPI<?> add(int x, int y, int z) {
             return add(new Vector3i(x,y,z));
         }
 
-        @Override
-        public BlockPosAPI<?> down() {
+        @Override public BlockPosAPI<?> down() {
             return add(0,-1,0);
         }
 
-        @Override
-        public BlockPosAPI<?> east() {
+        @Override public BlockPosAPI<?> east() {
             return add(1,0,0);
         }
 
-        @Override
-        public BlockPosAPI<?> north() {
+        @Override public BlockPosAPI<?> north() {
             return add(0,0,-1);
         }
 
-        @Override
-        public BlockPosAPI<?> south() {
+        @Override public BlockPosAPI<?> south() {
             return add(0,0,1);
         }
 
-        @Override
-        public BlockPosAPI<?> up() {
+        @Override public BlockPosAPI<?> up() {
             return add(0,1,0);
         }
 
-        @Override
-        public BlockPosAPI<?> west() {
+        @Override public BlockPosAPI<?> west() {
             return add(-1,0,0);
         }
     }

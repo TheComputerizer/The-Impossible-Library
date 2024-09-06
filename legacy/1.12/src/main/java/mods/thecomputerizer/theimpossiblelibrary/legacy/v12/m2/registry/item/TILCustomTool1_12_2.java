@@ -6,9 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,8 +28,7 @@ import java.util.Set;
 
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILCustomTool1_12_2 extends ItemTool implements WithItemProperties {
     
     private final ItemProperties properties;
@@ -42,32 +38,27 @@ public class TILCustomTool1_12_2 extends ItemTool implements WithItemProperties 
         super(damage,speed,material,blocks);
         this.properties = properties;
         this.setMaxStackSize(properties.getStackSize());
-        ResourceLocation name = (ResourceLocation)properties.getRegistryName().getInstance();
+        ResourceLocation name = properties.getRegistryName().unwrap();
         setRegistryName(name);
         setTranslationKey(name.getNamespace()+"."+name.getPath());
     }
     
-    @Override
     @SideOnly(CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        getTooltipLines(() -> new ItemStack1_12_2(stack),() -> Objects.nonNull(world) ? new World1_12_2(world) : null)
-                .forEach(text -> tooltip.add(text.getApplied()));
+    @Override public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
+        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),() -> Objects.nonNull(world) ?
+                WrapperHelper.wrapWorld(world) : null).forEach(text -> tooltip.add(text.getApplied()));
     }
     
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
+    @Override public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
             float hitX, float hitY, float hitZ) {
         return EventHelper.setActionResult(getUseResult(() -> {
-            TILItemUseContext ctx = new TILItemUseContext(
-                    WrapperHelper.wrapPlayer(player), new World1_12_2(world), new BlockPos1_12_2(pos), null,
-                    EventHelper.getHand(hand),EventHelper.getFacing(facing));
-            ctx.setSuperResult(
-                    EventHelper.getActionResult(super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ)));
+            TILItemUseContext ctx = TILItemUseContext.wrap(player,world,pos,null,hand,facing);
+            ctx.setSuperResult(EventHelper.getActionResult(super.onItemUse(player,world,pos,hand,facing,hitX,hitY,hitZ)));
             return ctx;
         }));
     }
     
-    @Nonnull @Override public ItemProperties getProperties() {
+    @Override public @Nonnull ItemProperties getProperties() {
         return this.properties;
     }
 }

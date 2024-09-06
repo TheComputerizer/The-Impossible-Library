@@ -8,6 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.ClientFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.CommonFabric1_16_5;
@@ -50,7 +52,7 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return null;
+        return new TILCommonEntryPointFabric();
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {
@@ -70,5 +72,9 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
         return true;
+    }
+    
+    @Override protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
+        return TILCommonEntryPointFabricTest.class;
     }
 }

@@ -1,26 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@SuppressWarnings("unused") @Getter
-public abstract class BlockAPI<B> implements RegistryEntryAPI<B> {
-
-    protected final B block;
+public abstract class BlockAPI<B> extends AbstractWrapped<B> implements RegistryEntryAPI<B> {
 
     protected BlockAPI(B block) {
-        this.block = block;
+        super(block);
     }
     
-    public abstract BlockStateAPI<?> getDefaultState();
-
-    @Override
-    public B getValue() {
-        return this.block;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class<? extends B> getValueClass() {
-        return (Class<? extends B>)this.block.getClass();
-    }
+    @IndirectCallers public abstract BlockStateAPI<?> getDefaultState();
 }

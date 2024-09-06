@@ -10,8 +10,7 @@ public abstract class SoundBuilderAPI extends RegistryEntryBuilder<SoundEventAPI
     
     protected SoundBuilderAPI(@Nullable SoundBuilderAPI parent) {}
     
-    @Override
-    public SoundBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public SoundBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }

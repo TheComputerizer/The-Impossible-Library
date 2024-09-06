@@ -1,18 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.advancement;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class AdvancementAPI<A> {
-
-    protected final A advancement;
+public abstract class AdvancementAPI<A> extends AbstractWrapped<A> {
 
     protected AdvancementAPI(A advancement) {
-        this.advancement = advancement;
+        super(advancement);
     }
 
-    public abstract AdvancementDisplayInfoAPI getDisplayInfo();
+    @IndirectCallers public abstract AdvancementDisplayInfoAPI getDisplayInfo();
     public abstract ResourceLocationAPI<?> getID();
     public abstract A getParent();
 }

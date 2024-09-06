@@ -1,5 +1,12 @@
 {
   "schemaVersion": 1,
+  "custom": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
+    }
+  },
   "description": "Multiversion loader for The Impossible Library disguised as a language adaptor",
   "depends": {
     "fabricloader": ">=0.14.0",
@@ -7,19 +14,23 @@
     "minecraft": ">=1.16.5",
     "java": ">=8"
   },
+  "entrypoints": {
+    "preLaunch": [
+      {
+        "adapter": "multiversionAdaptor",
+        "value": "${injector}"
+      }
+    ]
+  },
   "environment": "*",
   "icon": "logo.png",
   "id": "theimpossibleloader",
   "languageAdapters": {
-    "multiversionAdaptor": "${adaptorClass}"
+    "multiversionAdaptor": "${adaptor}"
   },
+  "mixins": [
+    "theimpossiblelibrary.mixins.json"
+  ],
   "name": "The Impossible Loader",
-  "version": "${version}",
-  "custom": {
-    "modmenu": {
-      "badges": [
-        "library"
-      ]
-    }
-  }
+  "version": "${version}"
 }

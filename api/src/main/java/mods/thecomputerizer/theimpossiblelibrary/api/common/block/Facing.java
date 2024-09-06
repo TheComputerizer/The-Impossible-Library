@@ -39,7 +39,7 @@ public enum Facing {
         }
         
         /**
-         Return a new vector instance to avoid modifty data
+         Return a new vector instance to avoid modify data
          */
         public Vector3d getDirection() {
             return new Vector3d(this.direction);

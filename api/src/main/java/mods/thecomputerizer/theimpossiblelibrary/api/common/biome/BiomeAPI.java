@@ -1,34 +1,22 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.biome;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import java.util.Set;
 
-@Getter
-public abstract class BiomeAPI<B> implements RegistryEntryAPI<B> {
-
-    protected final B biome;
+public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements RegistryEntryAPI<B> {
 
     protected BiomeAPI(B biome) {
-        this.biome = biome;
+        super(biome);
     }
 
-    public abstract boolean canRain();
-    public abstract boolean canSnow();
-    public abstract float getRainfall();
-    public abstract Set<String> getTagNames(WorldAPI<?> world);
-    public abstract float getTemperatureAt(BlockPosAPI<?> pos);
-
-    @Override
-    public B getValue() {
-        return this.biome;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class<? extends B> getValueClass() {
-        return (Class<? extends B>)this.biome.getClass();
-    }
+    @IndirectCallers public abstract boolean canRain();
+    @IndirectCallers public abstract boolean canSnow();
+    @IndirectCallers public abstract float getRainfall();
+    @IndirectCallers public abstract Set<String> getTagNames(WorldAPI<?> world);
+    @IndirectCallers public abstract float getTemperatureAt(BlockPosAPI<?> pos);
 }

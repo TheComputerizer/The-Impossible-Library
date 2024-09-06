@@ -3,9 +3,10 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.*;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.util.CustomTickFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.event.CommonEvents1_16_5;
 
@@ -101,12 +102,12 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
     }
     
     @Override public void postCustomTick(CustomTick ticker) {
-        CustomTickFabric.CUSTOM_TICK.invoker().onTick(ticker);
+        CustomFabricEvents.CUSTOM_TICK.invoker().onTick(ticker);
     }
     
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
-        Class<?> wrapperClass = wrapper.getClass();
-        ReflectionHelper.invokeStaticMethod(wrapperClass,"register",new Class<?>[]{wrapperClass},wrapper);
+        TILRef.logInfo("Trying to register event wrapper {}",wrapper);
+        ReflectionHelper.invokeMethod(wrapper.getClass(),"register",wrapper,new Class<?>[]{});
     }
     
     @SuppressWarnings("unchecked")

@@ -50,8 +50,8 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
     }
     
     @Override
-    public ToolBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
-        this.propertyMap.put(key,properyGetter);
+    public ToolBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
+        this.propertyMap.put(key,propertyGetter);
         return this;
     }
     
@@ -101,7 +101,7 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    public ToolBuilderAPI setTootltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
+    public ToolBuilderAPI setTooltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
         this.descFunc = descFunc;
         return this;
     }

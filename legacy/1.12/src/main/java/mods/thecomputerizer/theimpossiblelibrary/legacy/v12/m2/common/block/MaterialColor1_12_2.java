@@ -10,10 +10,10 @@ public class MaterialColor1_12_2 extends MaterialColorAPI<MapColor> {
     }
     
     @Override public int getColor() {
-        return this.materialColor.colorValue;
+        return this.wrapped.colorValue;
     }
     
     @Override public int getID() {
-        return this.materialColor.colorIndex;
+        return this.wrapped.colorIndex;
     }
 }

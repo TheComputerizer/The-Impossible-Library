@@ -9,22 +9,16 @@ public class Dimension1_12_2 extends DimensionAPI<DimensionType> {
 
     private final ResourceLocationAPI<Integer> res;
 
-    public Dimension1_12_2(World1_12_2 world) {
-        this(world,world.getWorld().provider.getDimensionType());
-    }
-
     public Dimension1_12_2(World1_12_2 world, DimensionType type) {
         super(world,type);
         this.res = new Pseudo<>(type.getId());
     }
 
-    @Override
-    public String getName() {
-        return this.dimension.getName();
+    @Override public String getName() {
+        return this.wrapped.getName();
     }
 
-    @Override
-    public ResourceLocationAPI<Integer> getRegistryName() {
+    @Override public ResourceLocationAPI<Integer> getRegistryName() {
         return this.res;
     }
 }

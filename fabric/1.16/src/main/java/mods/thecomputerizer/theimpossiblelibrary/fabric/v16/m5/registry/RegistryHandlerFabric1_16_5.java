@@ -1,8 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.registry.blockentity.BlockEntityBuilderFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.Registry1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.RegistryHandler1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.resource.ResourceLocation1_16_5;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -14,6 +17,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 import static net.minecraft.core.Registry.*;
@@ -35,9 +39,13 @@ public class RegistryHandlerFabric1_16_5 extends RegistryHandler1_16_5 {
     @SuppressWarnings("unchecked")
     private <V> Registry1_16_5<V> getRegistry(
             Set<? super Registry1_16_5<?>> registries, Registry<V> forgeRegistry, String name, Class<?> type) {
-        ResourceLocation1_16_5 key = new ResourceLocation1_16_5(new ResourceLocation(name));
-        RegistryFabric1_16_5<V> registry = new RegistryFabric1_16_5<>(forgeRegistry, key, (Class<V>)type);
+        ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
+        RegistryFabric1_16_5<V> registry = new RegistryFabric1_16_5<>(forgeRegistry,key.unwrap(),(Class<V>)type);
         registries.add(registry);
         return registry;
+    }
+    
+    @Override public BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
+        return new BlockEntityBuilderFabric1_16_5(parent);
     }
 }

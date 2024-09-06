@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -18,7 +17,7 @@ public class SpawnEntry1_12_2 extends SpawnEntryAPI<EntityLiving> {
 
     @Override
     public EntityLiving newInstance(WorldAPI<?> worldAPI) throws Exception {
-        World world = ((World1_12_2)worldAPI).getWorld();
+        World world = worldAPI.unwrap();
         EntityEntry entry = EntityRegistry.getEntry(this.entityClass);
         return Objects.nonNull(entry) ? (EntityLiving)entry.newInstance(world) :
                 this.entityClass.getConstructor(World.class).newInstance(world);

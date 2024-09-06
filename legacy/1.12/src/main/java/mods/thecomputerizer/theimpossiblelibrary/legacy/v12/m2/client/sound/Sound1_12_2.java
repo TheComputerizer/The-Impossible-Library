@@ -7,17 +7,15 @@ import net.minecraft.client.audio.ISound;
 
 public class Sound1_12_2 extends SoundAPI<ISound> {
 
-    public Sound1_12_2(ISound sound) {
-        super(sound);
+    public Sound1_12_2(Object sound) {
+        super((ISound)sound);
     }
 
-    @Override
-    public ResourceLocation1_12_2 getOggLocation() {
+    @Override public ResourceLocation1_12_2 getOggLocation() { //TODO
         return null;
     }
 
-    @Override
-    public void play(float volume) {
+    @Override public void play(float volume) {
         Minecraft.getMinecraft().getSoundHandler().playSound(this.wrapped);
     }
 }

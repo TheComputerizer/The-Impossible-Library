@@ -1,21 +1,20 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.item;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-@SuppressWarnings("unused") @Getter
-public abstract class ItemStackAPI<S> {
-
-    protected final S stack;
+public abstract class ItemStackAPI<S> extends AbstractWrapped<S> {
 
     protected ItemStackAPI(S stack) {
-        this.stack = stack;
+        super(stack);
     }
 
+    @IndirectCallers
     public void decrement() {
         int count = getCount();
         if(count>0) setCount(count-1);
@@ -23,7 +22,8 @@ public abstract class ItemStackAPI<S> {
 
     public abstract int getCount();
     public abstract ItemAPI<?> getItem();
-
+    
+    @IndirectCallers
     public CompoundTagAPI<?> getOrCreateTag() {
         CompoundTagAPI<?> tag = getTag();
         if(Objects.isNull(tag)) {
@@ -34,7 +34,8 @@ public abstract class ItemStackAPI<S> {
     }
 
     public abstract @Nullable CompoundTagAPI<?> getTag();
-
+    
+    @IndirectCallers
     public void increment() {
         setCount(getCount()+1);
     }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
@@ -76,10 +77,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapAdvancement(advancementFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapAdvancement(getter),
-                (event,api) -> setter.accept(event,((AdvancementAPI<V>)api).getAdvancement()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementGetter(Function<E,V> getter) {
@@ -91,10 +91,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapBlock(blockFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,BlockAPI<?>> wrapBlockBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapBlock(getter),
-                (event,api) -> setter.accept(event,((BlockAPI<V>)api).getBlock()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,BlockAPI<?>> wrapBlockGetter(Function<E,V> getter) {
@@ -106,10 +105,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapBlockEntity(blockEntityFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapBlockEntity(getter),
-                (event,api) -> setter.accept(event,((BlockEntityAPI<V,?>)api).getEntity()),null);
+                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
     }
 
     protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityGetter(Function<E,V> getter) {
@@ -121,10 +119,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapEntity(entityFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapEntity(getter),
-                (event,api) -> setter.accept(event,((EntityAPI<V,?>)api).getEntity()),null);
+                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
     }
 
     protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityGetter(Function<E,V> getter) {
@@ -136,10 +133,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapExplosion(explosionFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,ExplosionAPI<?>> wrapExplosionBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapExplosion(getter),
-                (event,api) -> setter.accept(event,((ExplosionAPI<V>)api).getExplosion()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,ExplosionAPI<?>> wrapExplosionGetter(Function<E,V> getter) {
@@ -151,10 +147,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapItem(itemFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,ItemAPI<?>> wrapItemBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapItem(getter),
-                (event,api) -> setter.accept(event,((ItemAPI<V>)api).getItem()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,ItemAPI<?>> wrapItemGetter(Function<E,V> getter) {
@@ -166,10 +161,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapItemStack(itemStackFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,ItemStackAPI<?>> wrapItemStackBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapItemStack(getter),
-                (event,api) -> setter.accept(event,((ItemStackAPI<V>)api).getStack()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,ItemStackAPI<?>> wrapItemStackGetter(Function<E,V> getter) {
@@ -181,10 +175,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapLivingEntity(livingFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapLiving(getter),
-                (event,api) -> setter.accept(event,((LivingEntityAPI<V,?>)api).getEntity()),null);
+                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
     }
 
     protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingGetter(Function<E,V> getter) {
@@ -196,10 +189,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapPlayer(playerFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapPlayer(getter),
-                (event,api) -> setter.accept(event,((PlayerAPI<V,?>)api).getEntity()),null);
+                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
     }
 
     protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerGetter(Function<E,V> getter) {
@@ -211,10 +203,9 @@ public abstract class EventWrapper<E> {
                 PosHelper.getPos(posFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapPos(getter),
-                (event,api) -> setter.accept(event,((BlockPosAPI<V>)api).getPos()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosGetter(Function<E,V> getter) {
@@ -234,10 +225,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapSnapshot(snapshotFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,BlockSnapshotAPI<?>> wrapSnapshotBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapSnapshot(getter),
-                (event,api) -> setter.accept(event,((BlockSnapshotAPI<V>)api).getSnapshot()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,BlockSnapshotAPI<?>> wrapSnapshotGetter(Function<E,V> getter) {
@@ -249,10 +239,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapState(stateFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,BlockStateAPI<?>> wrapStateBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapState(getter),
-                (event,api) -> setter.accept(event,((BlockStateAPI<V>)api).getState()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,BlockStateAPI<?>> wrapStateGetter(Function<E,V> getter) {
@@ -264,10 +253,9 @@ public abstract class EventWrapper<E> {
                 WrapperHelper.wrapWorld(worldFunc.apply(this.event)) : null;
     }
 
-    @SuppressWarnings("unchecked")
     protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
         return new EventFieldWrapper<>(event -> wrapWorld(getter),
-                (event,api) -> setter.accept(event,((WorldAPI<V>)api).getWorld()),null);
+                (event,api) -> setter.accept(event,api.unwrap()),null);
     }
 
     protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldGetter(Function<E,V> getter) {

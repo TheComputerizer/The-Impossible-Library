@@ -16,7 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.entity.E
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.DiscBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ItemBlockBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ItemBuilder1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ToolBulder1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item.ToolBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.sound.SoundBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.tab.CreativeTabBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
@@ -162,7 +162,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         return new SoundBuilder1_12_2(parent);
     }
     
-    @Override public ToolBulder1_12_2 makeToolBuilder(@Nullable ItemBuilderAPI parent, ToolType tool) {
-        return new ToolBulder1_12_2(parent,tool);
+    @Override public ToolBuilder1_12_2 makeToolBuilder(@Nullable ItemBuilderAPI parent, ToolType tool) {
+        return new ToolBuilder1_12_2(parent, tool);
     }
 }

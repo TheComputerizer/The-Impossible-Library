@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import net.minecraft.util.math.BlockPos;
-import org.joml.Vector3d;
 import org.joml.Vector3i;
 
 public class BlockPos1_12_2 extends BlockPosAPI<BlockPos> {
@@ -27,14 +26,12 @@ public class BlockPos1_12_2 extends BlockPosAPI<BlockPos> {
         super(pos,posVec);
     }
 
-    @Override
-    public BlockPosAPI<?> add(BlockPos pos) {
+    @Override public BlockPosAPI<?> add(BlockPos pos) {
         return add(pos.getX(),pos.getY(),pos.getZ());
     }
 
-    @Override
-    public BlockPosAPI<?> add(int x, int y, int z) {
-        BlockPos newPos = this.pos.add(x,y,z);
-        return newPos==this.pos ? this : new BlockPos1_12_2(newPos);
+    @Override public BlockPosAPI<?> add(int x, int y, int z) {
+        BlockPos newPos = this.wrapped.add(x,y,z);
+        return newPos==this.wrapped ? this : new BlockPos1_12_2(newPos);
     }
 }

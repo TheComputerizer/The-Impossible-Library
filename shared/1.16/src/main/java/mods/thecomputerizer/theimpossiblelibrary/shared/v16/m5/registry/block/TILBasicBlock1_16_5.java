@@ -6,9 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block.BlockState1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.resource.ResourceLocation1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.BlockPos1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -18,6 +16,7 @@ import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
@@ -29,36 +28,36 @@ import java.util.Collections;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.SUCCESS;
 import static net.minecraft.util.ActionResultType.PASS;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@SuppressWarnings("deprecation")
+@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILBasicBlock1_16_5 extends Block {
     
     public static Collection<Property<?>> stateProperties = Collections.emptyList();
     
-    protected final BlockProperties properties;
-    
-    public TILBasicBlock1_16_5(BlockProperties properties) {
-        super(Properties.of((Material)properties.getMaterial().getMaterial(),
-                            (MaterialColor)properties.getMaterialColor().getMaterialColor()));
-        if(properties.hasStateTransformer())
-            registerDefaultState((BlockState)properties.getDefaultState(
-                    new BlockState1_16_5(this.stateDefinition.any())).getState());
-        this.properties = properties;
-        setRegistryName(((ResourceLocation1_16_5)properties.getRegistryName()).getInstance());
+    public static TILBasicBlock1_16_5 basicFrom(BlockProperties properties) {
+        Material material = properties.getMaterial().unwrap();
+        MaterialColor color = properties.getMaterialColor().unwrap();
+        return new TILBasicBlock1_16_5(Properties.of(material,color),properties);
     }
     
-    @Override
-    protected void createBlockStateDefinition(Builder<Block,BlockState> builder) {
+    protected final BlockProperties properties;
+    
+    public TILBasicBlock1_16_5(Properties vanillaProperties, BlockProperties properties) {
+        super(vanillaProperties);
+        if(properties.hasStateTransformer())
+            registerDefaultState(properties.getDefaultState(WrapperHelper.wrapState(this.stateDefinition.any())).unwrap());
+        this.properties = properties;
+        setRegistryName((ResourceLocation)properties.getRegistryName().unwrap());
+    }
+    
+    @Override protected void createBlockStateDefinition(Builder<Block,BlockState> builder) {
         for(Property<?> property : stateProperties) builder.add(property);
     }
     
-    @SuppressWarnings("deprecation") @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
+    @Override public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand,
             BlockRayTraceResult hit) {
         if(this.properties.hasUseResult()) {
-            return this.properties.getUseResult(new TILItemUseContext(
-                    WrapperHelper.wrapPlayer(player), new World1_16_5(world), new BlockPos1_16_5(pos),
-                    new BlockState1_16_5(state),EventHelper.getHand(hand),null))==SUCCESS ?
+            return this.properties.getUseResult(TILItemUseContext.wrap(player,world,pos,state,hand,null))==SUCCESS ?
                     ActionResultType.sidedSuccess(world.isClientSide) : PASS;
         }
         return super.use(state,world,pos,player,hand,hit);

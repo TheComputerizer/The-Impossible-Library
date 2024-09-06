@@ -1,44 +1,42 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings("unused") @Getter
-public abstract class BlockStateAPI<S> {
-
-    protected final S state;
+public abstract class BlockStateAPI<S> extends AbstractWrapped<S> {
 
     protected BlockStateAPI(S state) {
-        this.state = state;
+        super(state);
     }
 
     public abstract BlockAPI<?> getBlock();
     public abstract MaterialAPI<?> getMaterial();
     public abstract @Nullable BlockPropertyAPI<?,?> getProperty(String name);
     
-    @SuppressWarnings("unchecked")
+    @IndirectCallers @SuppressWarnings("unchecked")
     public boolean getPropertyBool(String name) {
         return getPropertyBool((BlockPropertyAPI<?,Boolean>)getProperty(name));
     }
     
     public abstract boolean getPropertyBool(BlockPropertyAPI<?,Boolean> property);
     
-    @SuppressWarnings("unchecked")
+    @IndirectCallers @SuppressWarnings("unchecked")
     public <E extends Enum<E>> E getPropertyEnum(String name) {
         return getPropertyEnum((BlockPropertyAPI<?,E>)getProperty(name));
     }
     
     public abstract <E extends Enum<E>> E getPropertyEnum(BlockPropertyAPI<?,E> property);
     
-    @SuppressWarnings("unchecked")
+    @IndirectCallers @SuppressWarnings("unchecked")
     public <V extends Comparable<V>> V getPropertyValue(String name) {
         return getPropertyValue((BlockPropertyAPI<?,V>)getProperty(name));
     }
     
     public abstract <V extends Comparable<V>> V getPropertyValue(BlockPropertyAPI<?,V> property);
     
-    @SuppressWarnings("unchecked")
+    @IndirectCallers @SuppressWarnings("unchecked")
     public <V extends Comparable<V>> BlockStateAPI<?> withProperty(String name, V value) {
         return withProperty((BlockPropertyAPI<?,V>)getProperty(name),value);
     }

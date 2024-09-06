@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.CompoundTag1_12_2;
@@ -15,34 +17,28 @@ public class ItemStack1_12_2 extends ItemStackAPI<ItemStack> {
         super(stack);
     }
 
-    @Override
-    public int getCount() {
-        return this.stack.getCount();
+    @Override public int getCount() {
+        return this.wrapped.getCount();
     }
 
-    @Override
-    public Item1_12_2 getItem() {
-        return new Item1_12_2(this.stack.getItem());
+    @Override public ItemAPI<?> getItem() {
+        return WrapperHelper.wrapItem(this.wrapped.getItem());
     }
 
-    @Override
-    public @Nullable CompoundTag1_12_2 getTag() {
-        NBTTagCompound tag = this.stack.getTagCompound();
+    @Override public @Nullable CompoundTag1_12_2 getTag() {
+        NBTTagCompound tag = this.wrapped.getTagCompound();
         return Objects.nonNull(tag) ? new CompoundTag1_12_2(tag) : null;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this.stack.isEmpty();
+    @Override public boolean isEmpty() {
+        return this.wrapped.isEmpty();
     }
 
-    @Override
-    public void setCount(int count) {
-        this.stack.setCount(count);
+    @Override public void setCount(int count) {
+        this.wrapped.setCount(count);
     }
 
-    @Override
-    public void setTag(@Nullable CompoundTagAPI<?> tag) {
-        this.stack.setTagCompound(Objects.nonNull(tag) ? (NBTTagCompound)tag.getWrapped() : null);
+    @Override public void setTag(@Nullable CompoundTagAPI<?> tag) {
+        this.wrapped.setTagCompound(Objects.nonNull(tag) ? tag.unwrap() : null);
     }
 }

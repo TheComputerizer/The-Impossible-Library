@@ -5,12 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.test.ClientTests.TEST_KEY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
 /**
  * For internal use only
@@ -20,7 +21,7 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     private static TILClientEntryPoint INSTANCE;
     
     private static void devTrace(String msg, Object ... args) {
-        TILDev.logTrace("[TILClientEntryPoint Trace]: "+msg,args);
+        TILDev.logDebug("[TILClientEntryPoint Trace]: "+msg,args);
     }
 
     public static TILClientEntryPoint getInstance() {
@@ -37,34 +38,29 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
 
     public TILClientEntryPoint() {
         devTrace("constructor");
-        CommonEntryPoint versionHandler = CoreAPI.INSTANCE.getClientVersionHandler();
+        CommonEntryPoint versionHandler = CoreAPI.getInstance().getClientVersionHandler();
         this.versionHandler = versionHandler instanceof ClientEntryPoint ? (ClientEntryPoint)versionHandler : null;
     }
 
-    @Override
-    public ClientEntryPoint delegatedClientEntry() {
+    @Override public ClientEntryPoint delegatedClientEntry() {
         return this;
     }
 
-    @Override
-    protected String getModID() {
-        return TILRef.MODID;
+    @Override protected String getModID() {
+        return MODID;
     }
 
-    @Override
-    protected String getModName() {
-        return TILRef.NAME;
+    @Override protected String getModName() {
+        return NAME;
     }
 
-    @Override
-    public void onPreRegistration() {
+    @Override public void onPreRegistration() {
         devTrace("onPreRegistration");
         EventHelper.initTILListeners(true,DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
     }
 
-    @Override
-    public void onClientSetup() {
+    @Override public void onClientSetup() {
         devTrace("onClientSetup");
         KeyHelper.register(TEST_KEY);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();

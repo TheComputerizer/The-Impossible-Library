@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
@@ -17,14 +18,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings("unused") public class WrapperHelper {
+public class WrapperHelper {
 
     public static WrapperAPI getAPI() {
         return TILRef.getCommonSubAPI(CommonAPI::getWrapper);
@@ -70,6 +75,7 @@ import javax.annotation.Nullable;
         return getAPI().wrapGeneric(wrapperClass,generic);
     }
 
+    @IndirectCallers
     public static <I> InventoryAPI<I> wrapInventory(@Nullable I inventory) {
         return getAPI().wrapInventory(inventory);
     }
@@ -97,17 +103,35 @@ import javax.annotation.Nullable;
     public static <I> PlayerInventoryAPI<I> wrapPlayerInventory(@Nullable I inventory) {
         return getAPI().wrapPlayerInventory(inventory);
     }
-
+    
+    @IndirectCallers
     public static <P> PotionAPI<P> wrapPotion(@Nullable P potion) {
         return getAPI().wrapPotion(potion);
+    }
+    
+    public static <R> ResourceLocationAPI<R> wrapResourceLocation(@Nullable R resourceLocation) {
+        return getAPI().wrapResourceLocation(resourceLocation);
     }
 
     public static <S> BlockSnapshotAPI<S> wrapSnapshot(@Nullable S state) {
         return getAPI().wrapSnapshot(state);
     }
+    
+    public static @Nullable <S> SoundEventAPI<S> wrapSoundEvent(@Nullable S soundEvent) {
+        return getAPI().wrapSoundEvent(soundEvent);
+    }
+    
+    public static @Nullable <S> SoundAPI<S> wrapSoundInstance(@Nullable S sound) {
+        return getAPI().wrapSoundInstance(sound);
+    }
 
     public static <S> BlockStateAPI<S> wrapState(@Nullable S state) {
         return getAPI().wrapState(state);
+    }
+    
+    @IndirectCallers
+    public static <S> StructureAPI<S> wrapStructure(@Nullable S structure) {
+        return getAPI().wrapStructure(structure);
     }
 
     public static <W> WorldAPI<W> wrapWorld(@Nullable W world) {

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.server;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.function.Function;
 /**
  * Needs to be registered while the server is starting up (call MinecraftServerAPI#registerCommand to register it)
  */
-@SuppressWarnings("unused") @Getter
+@Getter
 public abstract class CommandAPI {
 
     protected final CommandAPI parent;
@@ -30,6 +31,7 @@ public abstract class CommandAPI {
         this.subCommands = new HashSet<>();
     }
 
+    @IndirectCallers
     public void addSubCommand(CommandAPI cmd) {
         this.subCommands.add(cmd);
     }
@@ -41,6 +43,7 @@ public abstract class CommandAPI {
      * The actual unparsed string should be the last element in the array after the server or whatever else is needed
      * to parse it correctly.
      */
+    @IndirectCallers
     public <T> T parseArgAs(Object[] arg, Class<T> ignored) throws Exception {
         return this.type.parseArg(arg);
     }

@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.InputKeyEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -21,5 +23,9 @@ public class InputKeyEventForge extends InputKeyEventWrapper<KeyInputEvent> {
     @Override public void setEvent(KeyInputEvent event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
+    }
+    
+    @Override public boolean isKey(KeyAPI<?> key) {
+        return ((KeyBinding)key.getKeybind()).matches(this.event.getKey(),this.event.getScanCode());
     }
 }

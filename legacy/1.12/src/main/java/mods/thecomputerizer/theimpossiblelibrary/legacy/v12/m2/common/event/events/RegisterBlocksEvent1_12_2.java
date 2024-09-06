@@ -16,8 +16,7 @@ public class RegisterBlocksEvent1_12_2 extends RegisterBlocksEventWrapper<Regist
         REGISTER_BLOCKS.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,6 +26,6 @@ public class RegisterBlocksEvent1_12_2 extends RegisterBlocksEventWrapper<Regist
     }
     
     @Override public void register(BlockAPI<?> entry) {
-        this.event.getRegistry().register(((Block1_12_2)entry).getBlock());
+        this.event.getRegistry().register(entry.unwrap());
     }
 }

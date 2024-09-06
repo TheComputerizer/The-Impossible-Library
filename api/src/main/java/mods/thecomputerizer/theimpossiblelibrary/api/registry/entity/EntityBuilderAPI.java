@@ -10,8 +10,7 @@ public abstract class EntityBuilderAPI extends RegistryEntryBuilder<EntityAPI<?,
     
     protected EntityBuilderAPI(@Nullable EntityBuilderAPI parent) {}
     
-    @Override
-    public EntityBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public EntityBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }

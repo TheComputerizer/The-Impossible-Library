@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
@@ -13,32 +14,42 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
-@SuppressWarnings({"unchecked","unused"})
 public class RegistryHelper {
-
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBiomeRegistry() {
-        return (RegistryAPI<R>)getHandler().getBiomeRegistry();
+    
+    static <R extends RegistryEntryAPI<?>> RegistryAPI<R> get(Function<RegistryHandlerAPI,RegistryAPI<?>> getter) {
+        return BasicWrapped.cast(getter.apply(getHandler()));
     }
 
+    @IndirectCallers
+    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBiomeRegistry() {
+        return get(RegistryHandlerAPI::getBiomeRegistry);
+    }
+    
+    @IndirectCallers
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBlockRegistry() {
-        return (RegistryAPI<R>)getHandler().getBlockRegistry();
+        return get(RegistryHandlerAPI::getBlockRegistry);
     }
 
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBlockEntityRegistry() {
-        return (RegistryAPI<R>)getHandler().getBlockEntityRegistry();
+        return get(RegistryHandlerAPI::getBlockEntityRegistry);
     }
-
+    
+    @IndirectCallers
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getEffectRegistry() {
-        return (RegistryAPI<R>)getHandler().getEffectRegistry();
+        return get(RegistryHandlerAPI::getEffectRegistry);
     }
-
+    
+    @IndirectCallers
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getEntityRegistry() {
-        return (RegistryAPI<R>)getHandler().getEntityRegistry();
+        return get(RegistryHandlerAPI::getEntityRegistry);
     }
-
+    
+    @IndirectCallers
     public static <E extends RegistryEntryAPI<?>> E getEntryIfPresent(
             ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
         return getHandler().getEntryIfPresent(registryKey,entryKey);
@@ -47,13 +58,15 @@ public class RegistryHelper {
     public static RegistryHandlerAPI getHandler() {
         return TILRef.getCommonSubAPI(CommonAPI::getRegistryHandler);
     }
-
+    
+    @IndirectCallers
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getItemRegistry() {
-        return (RegistryAPI<R>)getHandler().getItemRegistry();
+        return get(RegistryHandlerAPI::getItemRegistry);
     }
-
+    
+    @IndirectCallers
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getPotionRegistry() {
-        return (RegistryAPI<R>)getHandler().getPotionRegistry();
+        return get(RegistryHandlerAPI::getPotionRegistry);
     }
 
     public static RegistryAPI<?> getRegistry(ResourceLocationAPI<?> key) {
@@ -63,11 +76,13 @@ public class RegistryHelper {
     public static RegistryAPI<?> getRegistry(Class<?> type) {
         return getHandler().getRegistry(type);
     }
-
+    
+    @IndirectCallers
     public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getSoundRegistry() {
-        return (RegistryAPI<R>)getHandler().getSoundRegistry();
+        return get(RegistryHandlerAPI::getSoundRegistry);
     }
     
+    @IndirectCallers
     public static BlockBuilderAPI makeBlockBuilder() {
         return makeBlockBuilder(null);
     }
@@ -76,6 +91,7 @@ public class RegistryHelper {
         return getHandler().makeBlockBuilder(parent);
     }
     
+    @IndirectCallers
     public static BlockEntityBuilderAPI makeBlockEntityBuilder() {
         return makeBlockEntityBuilder(null);
     }
@@ -84,10 +100,12 @@ public class RegistryHelper {
         return getHandler().makeBlockEntityBuilder(parent);
     }
     
+    @IndirectCallers
     public static CreativeTabBuilderAPI makeCreativeTabBuilder() {
         return getHandler().makeCreativeTabBuilder();
     }
     
+    @IndirectCallers
     public static DiscBuilderAPI makeDiscBuilder() {
         return makeDiscBuilder(null);
     }
@@ -96,6 +114,7 @@ public class RegistryHelper {
         return getHandler().makeDiscBuilder(parent);
     }
     
+    @IndirectCallers
     public static EntityBuilderAPI makeEntityBuilder() {
         return makeEntityBuilder(null);
     }
@@ -104,6 +123,7 @@ public class RegistryHelper {
         return getHandler().makeEntityBuilder(parent);
     }
     
+    @IndirectCallers
     public static ItemBlockBuilderAPI makeItemBlockBuilder() {
         return makeItemBlockBuilder(null);
     }
@@ -112,6 +132,7 @@ public class RegistryHelper {
         return getHandler().makeItemBlockBuilder(parent);
     }
     
+    @IndirectCallers
     public static ItemBuilderAPI makeItemBuilder() {
         return makeItemBuilder(null);
     }
@@ -120,6 +141,7 @@ public class RegistryHelper {
         return getHandler().makeItemBuilder(parent);
     }
     
+    @IndirectCallers
     public static SoundBuilderAPI makeSoundBuilder() {
         return makeSoundBuilder(null);
     }
@@ -128,6 +150,7 @@ public class RegistryHelper {
         return getHandler().makeSoundBuilder(parent);
     }
     
+    @IndirectCallers
     public static ToolBuilderAPI makeToolBuilder(ToolType tool) {
         return makeToolBuilder(null,tool);
     }

@@ -1,24 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.effect;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class EffectAPI<E> implements RegistryEntryAPI<E> {
-
-    protected final E effect;
+public abstract class EffectAPI<E> extends AbstractWrapped<E> implements RegistryEntryAPI<E> {
 
     protected EffectAPI(E effect) {
-        this.effect = effect;
-    }
-
-    @Override
-    public E getValue() {
-        return this.effect;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class<? extends E> getValueClass() {
-        return (Class<? extends E>)this.effect.getClass();
+        super(effect);
     }
 }

@@ -12,13 +12,11 @@ public class Block1_12_2 extends BlockAPI<Block> {
         super(block);
     }
     
-    @Override
-    public BlockStateAPI<?> getDefaultState() {
-        return new BlockState1_12_2(this.block.getDefaultState());
+    @Override public BlockStateAPI<?> getDefaultState() {
+        return new BlockState1_12_2(this.wrapped.getDefaultState());
     }
 
-    @Override
-    public ResourceLocationAPI<?> getRegistryName() {
-        return new ResourceLocation1_12_2(this.block.getRegistryName());
+    @Override public ResourceLocationAPI<?> getRegistryName() {
+        return new ResourceLocation1_12_2(this.wrapped.getRegistryName());
     }
 }

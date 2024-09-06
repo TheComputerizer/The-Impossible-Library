@@ -1,13 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class BlockSnapshotAPI<S> {
-
-    protected final S snapshot;
+public abstract class BlockSnapshotAPI<S> extends AbstractWrapped<S> {
 
     protected BlockSnapshotAPI(S snapshot) {
-        this.snapshot = snapshot;
+        super(snapshot);
     }
 }

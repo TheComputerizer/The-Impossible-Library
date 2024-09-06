@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
@@ -16,26 +17,22 @@ public class Registry1_12_2<V extends IForgeRegistryEntry<V>> extends RegistryAP
     
     @SuppressWarnings("unchecked")
     @Override public IForgeRegistry<V> getBackend() {
-        return (IForgeRegistry<V>)this.backend;
+        return super.getBackend();
     }
 
-    @Override
-    public ResourceLocationAPI<?> getKey(V value) {
-        return new ResourceLocation1_12_2(getBackend().getKey(value));
+    @Override public ResourceLocationAPI<?> getKey(V value) {
+        return WrapperHelper.wrapResourceLocation(getBackend().getKey(value));
     }
 
-    @Override
-    public V getValue(ResourceLocationAPI<?> key) {
-        return getBackend().getValue(((ResourceLocation1_12_2)key).getInstance());
+    @Override public V getValue(ResourceLocationAPI<?> key) {
+        return getBackend().getValue(key.unwrap());
     }
 
-    @Override
-    public boolean hasKey(ResourceLocationAPI<?> key) {
-        return getBackend().containsKey(((ResourceLocation1_12_2)key).getInstance());
+    @Override public boolean hasKey(ResourceLocationAPI<?> key) {
+        return getBackend().containsKey(key.unwrap());
     }
 
-    @Override
-    public boolean hasValue(V value) {
+    @Override public boolean hasValue(V value) {
         return getBackend().containsValue(value);
     }
 }

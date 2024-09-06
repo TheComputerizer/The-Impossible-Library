@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
@@ -8,6 +9,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInve
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -53,8 +57,12 @@ public interface WrapperAPI {
         if(MaterialAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapMaterial(generic);
         if(PlayerInventoryAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapPlayerInventory(generic);
         if(PotionAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapPotion(generic);
+        if(ResourceLocationAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapResourceLocation(generic);
         if(BlockSnapshotAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapSnapshot(generic);
+        if(SoundEventAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapSoundEvent(generic);
+        if(SoundAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapSoundInstance(generic);
         if(BlockStateAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapState(generic);
+        if(StructureAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapStructure(generic);
         if(WorldAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapWorld(generic);
         return null;
     }
@@ -66,8 +74,12 @@ public interface WrapperAPI {
     <M> @Nullable MaterialAPI<M> wrapMaterial(@Nullable M material);
     <P> @Nullable PlayerAPI<P,?> wrapPlayer(@Nullable P player);
     <I> @Nullable PlayerInventoryAPI<I> wrapPlayerInventory(@Nullable I inventory);
+    <R> ResourceLocationAPI<R> wrapResourceLocation(@Nullable R resourceLocation);
     <P> @Nullable PotionAPI<P> wrapPotion(@Nullable P potion);
     <S> @Nullable BlockSnapshotAPI<S> wrapSnapshot(@Nullable S snapshot);
+    <S> @Nullable SoundEventAPI<S> wrapSoundEvent(@Nullable S soundEvent);
+    <S> @Nullable SoundAPI<S> wrapSoundInstance(@Nullable S sound);
     <S> @Nullable BlockStateAPI<S> wrapState(@Nullable S state);
+    <S> StructureAPI<S> wrapStructure(@Nullable S structure);
     <W> @Nullable WorldAPI<W> wrapWorld(@Nullable W world);
 }

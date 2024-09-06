@@ -26,10 +26,9 @@ public abstract class ItemBlockBuilderAPI extends ItemBuilderAPI {
         this.itemType = BLOCK;
     }
     
-    @Override
-    public ItemBlockBuilderAPI addProperty(
-            ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
-        this.propertyMap.put(key,properyGetter);
+    @Override public ItemBlockBuilderAPI addProperty(
+            ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
+        this.propertyMap.put(key,propertyGetter);
         return this;
     }
     
@@ -48,8 +47,7 @@ public abstract class ItemBlockBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    @Override
-    public ItemBlockBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public ItemBlockBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }
@@ -59,7 +57,7 @@ public abstract class ItemBlockBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    public ItemBlockBuilderAPI setTootltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
+    public ItemBlockBuilderAPI setTooltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
         this.descFunc = descFunc;
         return this;
     }

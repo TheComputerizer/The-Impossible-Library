@@ -1,14 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class MaterialAPI<M> {
-
-    protected final M material;
+public abstract class MaterialAPI<M> extends AbstractWrapped<M> {
 
     protected MaterialAPI(M material) {
-        this.material = material;
+        super(material);
     }
 
     public abstract boolean hasCollider();

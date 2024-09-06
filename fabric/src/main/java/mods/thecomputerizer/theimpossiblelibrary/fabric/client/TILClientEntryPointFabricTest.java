@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.client;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -9,6 +10,8 @@ import net.fabricmc.api.ClientModInitializer;
 public class TILClientEntryPointFabricTest implements ClientModInitializer {
     
     @Override public void onInitializeClient() {
-        TILCommonEntryPoint.getInstance().checkClientSetup();
+        CommonEntryPoint entryPoint = TILCommonEntryPoint.getInstance();
+        entryPoint.checkClientSetup();
+        entryPoint.onInterModEnqueue();
     }
 }

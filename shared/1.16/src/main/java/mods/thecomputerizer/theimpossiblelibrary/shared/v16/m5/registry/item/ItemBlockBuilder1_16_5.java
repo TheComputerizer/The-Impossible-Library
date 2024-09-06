@@ -1,14 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block.Block1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.item.Item1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.item.ItemStack1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemModelsProperties;
@@ -24,14 +22,14 @@ public class ItemBlockBuilder1_16_5 extends ItemBlockBuilderAPI {
         super(parent);
     }
     
-    @Override public Item1_16_5 build() {
-        BlockItem item = new TILItemBlock1_16_5(((Block1_16_5)this.block.get()).getBlock(),buildProperties());
+    @Override public ItemAPI<?> build() {
+        BlockItem item = new TILItemBlock1_16_5(this.block.get().unwrap(),buildProperties());
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = (ResourceLocation)property.getKey().getInstance();
+            ResourceLocation location = property.getKey().unwrap();
             IItemPropertyGetter getter = (stack,world,entity) ->
-                    property.getValue().apply(new ItemStack1_16_5(stack), new World1_16_5(world));
-            ItemModelsProperties.register(item, location, getter);
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world));
+            ItemModelsProperties.register(item,location,getter);
         }
-        return new Item1_16_5(item);
+        return WrapperHelper.wrapItem(item);
     }
 }

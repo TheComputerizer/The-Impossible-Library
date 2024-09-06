@@ -3,8 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.world;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
 
-import javax.annotation.Nullable;
-
 public interface PosHelperAPI<P> {
 
     BlockPosAPI<P> getPos(P pos);

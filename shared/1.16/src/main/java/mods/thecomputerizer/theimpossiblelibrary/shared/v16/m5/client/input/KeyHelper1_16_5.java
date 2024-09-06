@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.input;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
@@ -8,17 +7,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifie
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class KeyHelper1_16_5 implements KeyHelperAPI<KeyBinding> {
-
-    @Override
-    public KeyAPI<KeyBinding> create(String id, String category, int keyCode) {
-        return new Key1_16_5(new KeyBinding(id,keyCode,category));
-    }
+public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
 
     @Override
     public int getKeyCode(Action actionKey) {
@@ -188,10 +180,5 @@ public class KeyHelper1_16_5 implements KeyHelperAPI<KeyBinding> {
     @Override
     public int applyModifier(int keyCode, Modifier modifier) { //TODO
         return keyCode;
-    }
-
-    @Override
-    public void register(KeyAPI<KeyBinding> key) {
-        ClientRegistry.registerKeyBinding(key.getKeybind());
     }
 }

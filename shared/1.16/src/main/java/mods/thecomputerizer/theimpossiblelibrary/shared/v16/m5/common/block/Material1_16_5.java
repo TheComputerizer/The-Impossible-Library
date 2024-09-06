@@ -16,48 +16,39 @@ public class Material1_16_5 extends MaterialAPI<Material> {
         super(material);
     }
 
-    @Override
-    public boolean hasCollider() {
-        return this.material.blocksMotion();
+    @Override public boolean hasCollider() {
+        return this.wrapped.blocksMotion();
     }
 
-    @Override
-    public boolean isAir() {
-        return this.material==AIR;
+    @Override public boolean isAir() {
+        return this.wrapped==AIR;
     }
 
-    @Override
-    public boolean isDestroyedByPiston() {
-        return this.material.getPushReaction()==DESTROY;
+    @Override public boolean isDestroyedByPiston() {
+        return this.wrapped.getPushReaction()==DESTROY;
     }
 
-    @Override
-    public boolean isFlammable() {
-        return this.material.isFlammable();
+    @Override public boolean isFlammable() {
+        return this.wrapped.isFlammable();
     }
 
-    @Override
-    public boolean isLiquid() {
-        return this.material.isLiquid();
+    @Override public boolean isLiquid() {
+        return this.wrapped.isLiquid();
     }
 
-    @Override
-    public boolean isPushable() {
-        return this.material.getPushReaction()!=BLOCK;
+    @Override public boolean isPushable() {
+        return this.wrapped.getPushReaction()!=BLOCK;
     }
 
-    @Override
-    public boolean isReplaceable() {
-        return this.material.isReplaceable();
+    @Override public boolean isReplaceable() {
+        return this.wrapped.isReplaceable();
     }
 
-    @Override
-    public boolean isSolid() {
-        return this.material.isSolid();
+    @Override public boolean isSolid() {
+        return this.wrapped.isSolid();
     }
 
-    @Override
-    public boolean isUnderwater() {
-        return this.material==WATER || this.material==WATER_PLANT || this.material==REPLACEABLE_WATER_PLANT;
+    @Override public boolean isUnderwater() {
+        return this.wrapped==WATER || this.wrapped==WATER_PLANT || this.wrapped==REPLACEABLE_WATER_PLANT;
     }
 }

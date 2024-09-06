@@ -2,8 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -14,31 +16,35 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
-@SuppressWarnings("unused") @Getter
-public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
+import static java.lang.Double.MAX_VALUE;
+
+@Getter
+public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements RegistryEntryAPI<V> {
 
     protected E entity;
-    protected V type;
 
     protected EntityAPI(E entity, V type) {
+        super(type);
         this.entity = entity;
-        this.type = type;
     }
 
-    public abstract Collection<? extends EffectInstanceAPI<?>> getActiveEffects();
+    public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
     public abstract Box getBoundingBox();
     public abstract DimensionAPI<?> getDimension();
 
+    @IndirectCallers
     public double getDistanceTo(EntityAPI<?,?> entity) {
-        return Objects.nonNull(entity) ? getPos().distanceTo(entity.getPos()) : Double.MAX_VALUE;
+        return Objects.nonNull(entity) ? getPos().distanceTo(entity.getPos()) : MAX_VALUE;
     }
-
+    
+    @IndirectCallers
     public double getDistanceTo(BlockPosAPI<?> pos) {
-        return Objects.nonNull(pos) ? getPos().distanceTo(pos) : Double.MAX_VALUE;
+        return Objects.nonNull(pos) ? getPos().distanceTo(pos) : MAX_VALUE;
     }
-
+    
+    @IndirectCallers
     public double getDistanceTo(Vector3i pos) {
-        return Objects.nonNull(pos) ? getPos().distanceTo(pos) : Double.MAX_VALUE;
+        return Objects.nonNull(pos) ? getPos().distanceTo(pos) : MAX_VALUE;
     }
 
     public abstract String getName();
@@ -47,29 +53,16 @@ public abstract class EntityAPI<E,V> implements RegistryEntryAPI<V> {
     public Vector3d getPosExact() {
         return new Vector3d(x(),y(),z());
     }
-
-    public abstract BlockPosAPI<?> getPosRounded();
+    
+    @IndirectCallers public abstract BlockPosAPI<?> getPosRounded();
     public abstract EntityAPI<?,?> getRootVehicle();
-
-    @Override
-    public V getValue() {
-        return this.type;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class<? extends V> getValueClass() {
-        return (Class<? extends V>)this.type.getClass();
-    }
-
     public abstract @Nullable EntityAPI<?,?> getVehicle();
     public abstract WorldAPI<?> getWorld();
-
-    public abstract boolean isAlive();
-    public abstract boolean isAnimal();
+    @IndirectCallers public abstract boolean isAlive();
+    @IndirectCallers public abstract boolean isAnimal();
     public abstract boolean isLiving();
     public abstract boolean isPlayer();
-    public abstract boolean isOwnedBy(EntityAPI<?,?> owner);
+    @IndirectCallers public abstract boolean isOwnedBy(EntityAPI<?,?> owner);
     
     public void setPosition(BlockPosAPI<?> pos) {
         setPosition(pos.x(),pos.y(),pos.z());

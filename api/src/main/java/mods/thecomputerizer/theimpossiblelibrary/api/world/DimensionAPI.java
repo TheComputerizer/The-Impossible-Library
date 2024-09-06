@@ -1,19 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class DimensionAPI<D> {
-
-    protected final D dimension;
+public abstract class DimensionAPI<D> extends AbstractWrapped<D> {
 
     /**
-     * The world is needed for any versions past 1.12.2 to access the dynamic registries
+     * The world is necessary for any versions past 1.12.2 to access the dynamic registries
      */
     @SuppressWarnings("unused")
     protected DimensionAPI(WorldAPI<?> world, D dimension) {
-        this.dimension = dimension;
+        super(dimension);
     }
 
     public abstract String getName();

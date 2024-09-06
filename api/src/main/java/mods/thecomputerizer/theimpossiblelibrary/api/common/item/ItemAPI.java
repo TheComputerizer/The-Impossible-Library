@@ -1,24 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.item;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class ItemAPI<I> implements RegistryEntryAPI<I> {
-
-    protected final I item;
+public abstract class ItemAPI<I> extends AbstractWrapped<I> implements RegistryEntryAPI<I> {
 
     protected ItemAPI(I item) {
-        this.item = item;
-    }
-
-    @Override
-    public I getValue() {
-        return this.item;
-    }
-
-    @SuppressWarnings("unchecked")
-    public Class<? extends I> getValueClass() {
-        return (Class<? extends I>)this.item.getClass();
+        super(item);
     }
 }

@@ -15,8 +15,8 @@ import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI.ArgType;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text.Text1_16_5;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -29,11 +29,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
 public class WrappedCommand1_16_5 {
     
-    @SuppressWarnings("unchecked")  public static void register(Object dispatcherObj, CommandAPI wrapped) {
+    @SuppressWarnings("unchecked")
+    public static void register(Object dispatcherObj, CommandAPI wrapped) {
         CommandDispatcher<CommandSource> dispatcher = (CommandDispatcher<CommandSource>)dispatcherObj;
         LiteralArgumentBuilder<CommandSource> root = Commands.literal(wrapped.getName());
         for(CommandAPI subcmd : wrapped.getSubCommands()) {
@@ -64,11 +64,11 @@ public class WrappedCommand1_16_5 {
         exKey = Objects.nonNull(exKey) ? exKey : "";
         Object[] exArgs = wrapped.getExceptionArgs();
         try {
-            wrapped.execute(new MinecraftServer1_16_5(),new CommandSender1_16_5(ctx),args);
+            wrapped.execute(ServerHelper.getAPI(),new CommandSender1_16_5(ctx),args);
             return 1;
         } catch(Exception ex) {
             TILRef.logError("Caught exception for command {}! Rethrowing as CommandException",baseName,ex);
-            throw new CommandException(((Text1_16_5)TextHelper.getTranslated(exKey, exArgs)).getComponent());
+            throw new CommandException(TextHelper.getTranslated(exKey,exArgs).getAsComponent());
         }
     }
 

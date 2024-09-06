@@ -12,30 +12,22 @@ public class VertexWrapper1_12_2 extends VertexWrapper {
 
     private final VertexFormat format;
     private final BufferBuilder buffer;
+    
     public VertexWrapper1_12_2(int mode, VertexFormat format, int numVertices, int... vertexSizes) {
         super(mode,numVertices,vertexSizes);
         this.format = format;
         this.buffer = Tessellator.getInstance().getBuffer();
     }
 
-    @Override
-    protected void begin() {
+    @Override protected void begin() {
         this.buffer.begin(this.mode,this.format);
     }
 
-    @Override
-    protected void draw() {
+    @Override protected void draw() {
         Tessellator.getInstance().draw();
     }
 
-    @Override
-    protected void onVertexEnded(Number[][] numbers) {
-        //StringJoiner joiner = new StringJoiner(", ");
-        //for(Number[] buf : numbers) {
-        //    for(Number number : buf) joiner.add(String.valueOf(number));
-        //    joiner.add("]");
-        //}
-        //TILDev.logInfo("Ending vertex [ "+joiner);
+    @Override protected void onVertexEnded(Number[][] numbers) {
         for(int i=0; i<numbers.length; i++)
             pushBuffer(this.format.getElement(i),numbers[i]);
         this.buffer.endVertex();

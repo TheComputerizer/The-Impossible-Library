@@ -1,19 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.item;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@SuppressWarnings("unused") @Getter
-public abstract class ToolTierAPI<T> {
-    
-    protected final T tier;
+public abstract class ToolTierAPI<T> extends AbstractWrapped<T> {
     
     protected ToolTierAPI(T tier) {
-        this.tier = tier;
+        super(tier);
     }
     
     public abstract float getDamage();
-    public abstract float getEfficiency();
-    public abstract int getEnchantability();
+    @IndirectCallers public abstract float getEfficiency();
+    @IndirectCallers public abstract int getEnchantability();
     public abstract int getLevel();
-    public abstract int getUses();
+    @IndirectCallers public abstract int getUses();
 }

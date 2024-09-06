@@ -22,6 +22,11 @@ public abstract class AbstractWrapped<W> implements Wrapped<W> { //TODO Switch t
         return this.wrapped;
     }
     
+    @SuppressWarnings("unchecked")
+    public Class<? extends W> getWrappedClass() {
+        return (Class<? extends W>)this.wrapped.getClass();
+    }
+    
     @Override public String toString() {
         return String.valueOf(this.wrapped);
     }

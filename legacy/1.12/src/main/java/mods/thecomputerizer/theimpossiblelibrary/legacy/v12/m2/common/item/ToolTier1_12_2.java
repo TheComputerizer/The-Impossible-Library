@@ -10,22 +10,22 @@ public class ToolTier1_12_2 extends ToolTierAPI<ToolMaterial> {
     }
     
     @Override public float getDamage() {
-        return this.tier.getAttackDamage();
+        return this.wrapped.getAttackDamage();
     }
     
     @Override public float getEfficiency() {
-        return this.tier.getEfficiency();
+        return this.wrapped.getEfficiency();
     }
     
     @Override public int getEnchantability() {
-        return this.tier.getEnchantability();
+        return this.wrapped.getEnchantability();
     }
     
     @Override public int getLevel() {
-        return this.tier.getHarvestLevel();
+        return this.wrapped.getHarvestLevel();
     }
     
     @Override public int getUses() {
-        return this.tier.getMaxUses();
+        return this.wrapped.getMaxUses();
     }
 }

@@ -1,14 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
-@Getter
-public abstract class MaterialColorAPI<C> {
-    
-    protected final C materialColor;
+public abstract class MaterialColorAPI<C> extends AbstractWrapped<C> {
     
     protected MaterialColorAPI(C color) {
-        this.materialColor = color;
+        super(color);
     }
     
     public abstract int getColor();

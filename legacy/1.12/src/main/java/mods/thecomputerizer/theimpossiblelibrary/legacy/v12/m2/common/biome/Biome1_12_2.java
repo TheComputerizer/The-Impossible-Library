@@ -1,11 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.BlockPos1_12_2;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -19,45 +16,25 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
         super(biome);
     }
 
-    @Override
-    public ResourceLocationAPI<?> getRegistryName() {
-        return new ResourceLocation1_12_2(this.biome.getRegistryName());
+    @Override public float getRainfall() {
+        return this.wrapped.getRainfall();
     }
 
-    @Override
-    public float getRainfall() {
-        return this.biome.getRainfall();
-    }
-
-    @Override
-    public Set<String> getTagNames(WorldAPI<?> world) {
+    @Override public Set<String> getTagNames(WorldAPI<?> world) {
         Set<String> tags = new HashSet<>();
-        for(Type type : BiomeDictionary.getTypes(this.biome)) tags.add(type.getName());
+        for(Type type : BiomeDictionary.getTypes(this.wrapped)) tags.add(type.getName());
         return tags;
     }
 
-    @Override
-    public float getTemperatureAt(BlockPosAPI<?> pos) {
-        return this.biome.getTemperature(((BlockPos1_12_2)pos).getPos());
+    @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
+        return this.wrapped.getTemperature(pos.unwrap());
     }
 
-    @Override
-    public boolean canRain() {
-        return this.biome.canRain();
+    @Override public boolean canRain() {
+        return this.wrapped.canRain();
     }
 
-    @Override
-    public boolean canSnow() {
-        return this.biome.isSnowyBiome();
-    }
-
-    @Override
-    public Biome getBiome() {
-        return this.biome;
-    }
-
-    @Override
-    public Class<? extends Biome> getValueClass() {
-        return this.biome.getBiomeClass();
+    @Override public boolean canSnow() {
+        return this.wrapped.isSnowyBiome();
     }
 }

@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
@@ -60,9 +61,9 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
         return this;
     }
     
-    @SuppressWarnings("unchecked") public <V extends Comparable<V>> BlockStateAPI<?> buildDefaultProperty(
+    public <V extends Comparable<V>> BlockStateAPI<?> buildDefaultProperty(
             BlockStateAPI<?> state, BlockPropertyAPI<?,V> property, Comparable<?> value) {
-        return state.withProperty(property,(V)value);
+        return state.withProperty(property,BasicWrapped.cast(value));
     }
     
     public BlockProperties buildProperties() {
@@ -95,8 +96,7 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
         return this;
     }
     
-    @Override
-    public BlockBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public BlockBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }

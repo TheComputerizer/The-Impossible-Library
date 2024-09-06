@@ -15,10 +15,10 @@ public interface RegistryEventFabric1_16_5 {
     }
     
     default <E> void register(RegistryAPI<?> registry, RegistryEntryAPI<E> entry) {
-        register(registry,entry.getRegistryName(),entry.getValue());
+        register(registry,entry.getRegistryName(),entry.unwrap());
     }
     
     default <E> void register(RegistryAPI<?> registry, ResourceLocationAPI<?> name, E entry) {
-        Registry.register(registry.getBackend(),(ResourceLocation)name.getInstance(),entry);
+        Registry.register(registry.getBackend(),(ResourceLocation)name.unwrap(),entry);
     }
 }

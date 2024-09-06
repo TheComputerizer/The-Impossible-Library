@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.InputKeyEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.input.Key1_12_2;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
@@ -13,13 +15,16 @@ public class InputKeyEvent1_12_2 extends InputKeyEventWrapper<KeyInputEvent> {
         KEY_INPUT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override public void setEvent(KeyInputEvent event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
+    }
+    
+    @Override public boolean isKey(KeyAPI<?> key) {
+        return ((Key1_12_2)key).getKeybind().isKeyDown();
     }
 }

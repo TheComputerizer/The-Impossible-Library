@@ -10,10 +10,10 @@ public class MaterialColor1_16_5 extends MaterialColorAPI<MaterialColor> {
     }
     
     @Override public int getColor() {
-        return this.materialColor.col;
+        return this.wrapped.col;
     }
     
     @Override public int getID() {
-        return this.materialColor.id;
+        return this.wrapped.id;
     }
 }

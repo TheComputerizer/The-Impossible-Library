@@ -7,27 +7,23 @@ import net.minecraft.util.ResourceLocation;
 
 public class ResourceLocation1_12_2 extends ResourceLocationAPI<ResourceLocation> {
 
-    public ResourceLocation1_12_2(ResourceLocation instance) {
-        super(instance);
+    public ResourceLocation1_12_2(Object instance) {
+        super((ResourceLocation)instance);
     }
 
-    @Override
-    public void bind(MinecraftAPI mc) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(this.instance);
+    @Override public void bind(MinecraftAPI mc) {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(this.wrapped);
     }
 
-    @Override
-    public int getSpriteFrames() {
+    @Override public int getSpriteFrames() {
         return 0;
     }
 
-    @Override
-    public String getNamespace() {
-        return this.instance.getNamespace();
+    @Override public String getNamespace() {
+        return this.wrapped.getNamespace();
     }
 
-    @Override
-    public String getPath() {
-        return this.instance.getPath();
+    @Override public String getPath() {
+        return this.wrapped.getPath();
     }
 }

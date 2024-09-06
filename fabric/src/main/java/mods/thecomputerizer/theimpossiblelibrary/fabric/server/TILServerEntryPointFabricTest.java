@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.server;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint;
 import net.fabricmc.api.DedicatedServerModInitializer;
 
@@ -9,6 +10,8 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 public class TILServerEntryPointFabricTest implements DedicatedServerModInitializer {
     
     @Override public void onInitializeServer() {
-        TILCommonEntryPoint.getInstance().checkDedicatedServerSetup();
+        CommonEntryPoint entryPoint = TILCommonEntryPoint.getInstance();
+        entryPoint.checkDedicatedServerSetup();
+        entryPoint.onInterModEnqueue();
     }
 }

@@ -27,8 +27,7 @@ public abstract class BlockEntityBuilderAPI extends RegistryEntryBuilder<BlockEn
         }
     }
     
-    @Override
-    public BlockEntityBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public BlockEntityBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }

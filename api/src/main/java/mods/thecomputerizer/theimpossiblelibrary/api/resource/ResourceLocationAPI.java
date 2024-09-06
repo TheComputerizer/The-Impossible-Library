@@ -1,25 +1,22 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.resource;
 
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
 import java.util.Objects;
 
-@Getter
-public abstract class ResourceLocationAPI<R> {
-    
-    protected final R instance;
+public abstract class ResourceLocationAPI<R> extends AbstractWrapped<R> {
     
     protected ResourceLocationAPI(R instance) {
-        this.instance = instance;
+        super(instance);
     }
 
-    public abstract void bind(MinecraftAPI mc);
+    @IndirectCallers public abstract void bind(MinecraftAPI mc);
     
-    @Override
-    public boolean equals(Object other) {
+    @Override public boolean equals(Object other) {
         return other instanceof ResourceLocationAPI<?> &&
-               String.valueOf(this.instance).equals(String.valueOf(((ResourceLocationAPI<?>)other).getInstance()));
+               String.valueOf(this.wrapped).equals(String.valueOf(((ResourceLocationAPI<?>)other).getWrapped()));
     }
     
     /**
@@ -29,9 +26,8 @@ public abstract class ResourceLocationAPI<R> {
     public abstract String getNamespace();
     public abstract String getPath();
     
-    @Override
-    public String toString() {
-        return Objects.nonNull(this.instance) ? this.instance.toString() : null;
+    @Override public String toString() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.toString() : null;
     }
 
     /**
@@ -43,21 +39,17 @@ public abstract class ResourceLocationAPI<R> {
             super(value);
         }
 
-        @Override
-        public void bind(MinecraftAPI mc) {}
+        @Override public void bind(MinecraftAPI mc) {}
 
-        @Override
-        public int getSpriteFrames() {
+        @Override public int getSpriteFrames() {
             return 0;
         }
 
-        @Override
-        public String getNamespace() {
+        @Override public String getNamespace() {
             return "";
         }
 
-        @Override
-        public String getPath() {
+        @Override public String getPath() {
             return toString();
         }
     }

@@ -6,10 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.item.ItemStack1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text.Text1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.BlockPos1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.IItemTier;
@@ -25,11 +21,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILCustomTool1_16_5 extends ToolItem implements WithItemProperties {
     
     private final ItemProperties properties;
@@ -37,28 +31,24 @@ public class TILCustomTool1_16_5 extends ToolItem implements WithItemProperties 
     public TILCustomTool1_16_5(IItemTier tier, float damage, float speed, Set<Block> blocks, ItemProperties properties) {
         super(damage,speed,tier,blocks,new Properties().stacksTo(properties.getStackSize()));
         this.properties = properties;
-        setRegistryName((ResourceLocation)properties.getRegistryName().getInstance());
+        setRegistryName((ResourceLocation)properties.getRegistryName().unwrap());
     }
     
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> components, ITooltipFlag flag) {
-        getTooltipLines(() -> new ItemStack1_16_5(stack), () -> Objects.nonNull(world) ? new World1_16_5(world) : null)
-                .forEach(text -> components.add(((Text1_16_5)text).getComponent()));
+    @Override public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> components, ITooltipFlag flag) {
+        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),() -> WrapperHelper.wrapWorld(world))
+                .forEach(text -> components.add(text.getAsComponent()));
     }
     
-    @Override
-    public ActionResultType useOn(ItemUseContext ctx) {
+    @Override public ActionResultType useOn(ItemUseContext ctx) {
         return EventHelper.setActionResult(getUseResult(() -> {
-            TILItemUseContext tilCtx = new TILItemUseContext(
-                    WrapperHelper.wrapPlayer(ctx.getPlayer()),new World1_16_5(ctx.getLevel()),
-                    new BlockPos1_16_5(ctx.getClickedPos()),null,EventHelper.getHand(ctx.getHand()),
-                    EventHelper.getFacing(ctx.getClickedFace()));
+            TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
+                    null,ctx.getHand(),ctx.getClickedFace());
             tilCtx.setSuperResult(EventHelper.getActionResult(super.useOn(ctx)));
             return tilCtx;
         }));
     }
     
-    @Nonnull @Override public ItemProperties getProperties() {
+    @Override public @Nonnull ItemProperties getProperties() {
         return this.properties;
     }
 }

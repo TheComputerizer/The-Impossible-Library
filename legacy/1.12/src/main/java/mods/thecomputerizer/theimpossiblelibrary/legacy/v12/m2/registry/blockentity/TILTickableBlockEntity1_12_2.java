@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockentity.BlockEntity1_12_2;
@@ -23,19 +24,18 @@ public class TILTickableBlockEntity1_12_2 extends TILBasicBlockEntity1_12_2 impl
     @SuppressWarnings("unused") public TILTickableBlockEntity1_12_2() {}
     
     public TILTickableBlockEntity1_12_2(ResourceLocationAPI<?> api, Consumer<BlockEntityAPI<?,?>> onTick) {
-        ResourceLocation name = (ResourceLocation)api.getInstance();
+        ResourceLocation name = api.unwrap();
         onTickMap.put(name,onTick);
         this.registryName = name;
     }
     
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
+    @Override public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         this.registryName = new ResourceLocation(tag.getString("id"));
     }
     
     @Override public void update() {
         if(Objects.nonNull(this.registryName) && onTickMap.containsKey(this.registryName))
-            onTickMap.get(this.registryName).accept(new BlockEntity1_12_2(this));
+            onTickMap.get(this.registryName).accept(WrapperHelper.wrapBlockEntity(this));
     }
 }

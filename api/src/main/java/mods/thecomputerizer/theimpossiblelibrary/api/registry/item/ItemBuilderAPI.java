@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
@@ -21,7 +22,7 @@ import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ItemType.BASIC;
 
-@SuppressWarnings("unused") public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
+public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
     
     protected CreativeTabAPI creativeTab;
     protected BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc;
@@ -47,8 +48,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
         this.itemType = BASIC;
     }
     
-    public ItemBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> properyGetter) {
-        this.propertyMap.put(key,properyGetter);
+    @IndirectCallers
+    public ItemBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
+        this.propertyMap.put(key,propertyGetter);
         return this;
     }
     
@@ -56,11 +58,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
         return new ItemProperties(this.creativeTab,this.stackSize,this.registryName,this.descFunc,this.useFunc);
     }
     
+    @IndirectCallers
     public ItemBuilderAPI setCreativeTab(CreativeTabAPI tab) {
         this.creativeTab = tab;
         return this;
     }
     
+    @IndirectCallers
     public ItemBuilderAPI setItemType(ItemType type) {
         this.itemType = type;
         return this;
@@ -72,20 +76,24 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
         return this;
     }
     
+    @IndirectCallers
     public ItemBuilderAPI setStackSize(int size) {
         this.stackSize = Math.max(1,size);
         return this;
     }
     
-    public ItemBuilderAPI setTootltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
+    @IndirectCallers
+    public ItemBuilderAPI setTooltipFunction(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc) {
         this.descFunc = descFunc;
         return this;
     }
     
+    @IndirectCallers
     public ToolBuilderAPI setToolType(ToolType tool) {
         return RegistryHelper.makeToolBuilder(this,tool);
     }
     
+    @IndirectCallers
     public ItemBuilderAPI setUseFunc(Function<TILItemUseContext,ActionResult> func) {
         this.useFunc = func;
         return this;

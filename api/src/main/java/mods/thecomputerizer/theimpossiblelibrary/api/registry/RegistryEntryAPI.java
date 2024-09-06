@@ -1,13 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
 
-public interface RegistryEntryAPI<V> {
+public interface RegistryEntryAPI<V> extends Wrapped<V> {
 
     default RegistryAPI<?> getRegistry() {
-        return RegistryHelper.getRegistry(getValueClass());
+        return RegistryHelper.getRegistry(getWrappedClass());
     }
-    ResourceLocationAPI<?> getRegistryName();
-    V getValue();
-    Class<? extends V> getValueClass();
+    
+    default ResourceLocationAPI<?> getRegistryName() {
+        return getRegistry().getKey(unwrap());
+    }
 }

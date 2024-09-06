@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.TILClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
@@ -26,7 +27,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     private static TILCommonEntryPoint INSTANCE;
     
     private static void devTrace(String msg, Object ... args) {
-        TILDev.logDebug("[TILCommonEntryPoint Trace]: "+msg,args);
+        TILRef.logInfo("[TILCommonEntryPoint Trace]: "+msg, args);
     }
 
     public static TILCommonEntryPoint getInstance() {
@@ -39,11 +40,10 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     public TILCommonEntryPoint() {
         devTrace("constructor");
         TagHelper.initGlobal();
-        this.versionHandler = CoreAPI.INSTANCE.getCommonVersionHandler();
+        this.versionHandler = CoreAPI.getInstance().getCommonVersionHandler();
     }
 
-    @Override
-    public @Nullable ClientEntryPoint delegatedClientEntry() {
+    @Override public @Nullable ClientEntryPoint delegatedClientEntry() {
         return TILClientEntryPoint.getInstance();
     }
 

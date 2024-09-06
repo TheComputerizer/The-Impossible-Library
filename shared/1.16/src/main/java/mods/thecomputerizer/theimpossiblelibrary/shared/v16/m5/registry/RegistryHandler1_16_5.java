@@ -5,25 +5,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.DiscBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ToolType;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block.BlockBuilder1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.blockentity.BlockEntityBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.entity.EntityBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.DiscBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.ItemBlockBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.ItemBuilder1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.ToolBulder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.ToolBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.sound.SoundBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.tab.CreativeTabBuilder1_16_5;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.Potion;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.biome.Biome;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -50,50 +48,40 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
     
     protected abstract void collectRegistries(Set<? super Registry1_16_5<?>> registries);
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
-        RegistryAPI<V> reg = (RegistryAPI<V>)getRegistry(registryKey);
-        return reg.hasKey(entryKey) ? reg.getValue(entryKey) : null;
+    @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
+        RegistryAPI<?> reg = getRegistry(registryKey);
+        return reg.hasKey(entryKey) ? BasicWrapped.cast(reg.getValue(entryKey)) : null;
     }
 
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<Biome> getBiomeRegistry() {
-        return (Registry1_16_5<Biome>)this.biome;
+    @Override public RegistryAPI<?> getBiomeRegistry() {
+        return this.biome;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<Block> getBlockRegistry() {
-        return (Registry1_16_5<Block>)this.block;
+    @Override public RegistryAPI<?> getBlockRegistry() {
+        return this.block;
     }
     
-    @Override
-    public Registry1_16_5<?> getBlockEntityRegistry() {
+    @Override public RegistryAPI<?> getBlockEntityRegistry() {
         return this.blockEntity;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<Effect> getEffectRegistry() {
-        return (Registry1_16_5<Effect>)this.effect;
+    @Override public RegistryAPI<?> getEffectRegistry() {
+        return this.effect;
     }
     
-    @Override
-    public Registry1_16_5<?> getEntityRegistry() {
+    @Override public RegistryAPI<?> getEntityRegistry() {
         return this.entity;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<Item> getItemRegistry() {
-        return (Registry1_16_5<Item>)this.item;
+    @Override public RegistryAPI<?> getItemRegistry() {
+        return this.item;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<Potion> getPotionRegistry() {
-        return (Registry1_16_5<Potion>)this.potion;
+    @Override public RegistryAPI<?> getPotionRegistry() {
+        return this.potion;
     }
 
-    @Override
-    public Registry1_16_5<?> getRegistry(ResourceLocationAPI<?> registryKey) {
+    @Override public RegistryAPI<?> getRegistry(ResourceLocationAPI<?> registryKey) {
         switch(registryKey.getPath()) {
             case "biome": return this.biome;
             case "block": return this.block;
@@ -107,53 +95,49 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
         }
     }
 
-    @Override
-    public Registry1_16_5<?> getRegistry(Class<?> type) {
+    @Override public RegistryAPI<?> getRegistry(Class<?> type) {
         for(Object element : this.registries) {
-            Registry1_16_5<?> registry = (Registry1_16_5<?>)element;
+            RegistryAPI<?> registry = (RegistryAPI<?>)element;
             if(registry.getType().isAssignableFrom(type)) return registry;
         }
         return null;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public Registry1_16_5<SoundEvent> getSoundRegistry() {
-        return (Registry1_16_5<SoundEvent>)this.sound;
+    @Override public RegistryAPI<?> getSoundRegistry() {
+        return this.sound;
     }
     
-    @Override public BlockBuilder1_16_5 makeBlockBuilder(@Nullable BlockBuilderAPI parent) {
+    @Override public BlockBuilderAPI makeBlockBuilder(@Nullable BlockBuilderAPI parent) {
         return new BlockBuilder1_16_5(parent);
     }
     
-    @Override public BlockEntityBuilder1_16_5 makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
-        return new BlockEntityBuilder1_16_5(parent);
-    }
+    @Override public abstract BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent);
     
-    @Override public CreativeTabBuilder1_16_5 makeCreativeTabBuilder() {
+    @Override public CreativeTabBuilderAPI makeCreativeTabBuilder() {
         return new CreativeTabBuilder1_16_5();
     }
     
-    @Override public DiscBuilder1_16_5 makeDiscBuilder(@Nullable ItemBuilderAPI parent) {
+    @Override public DiscBuilderAPI makeDiscBuilder(@Nullable ItemBuilderAPI parent) {
         return new DiscBuilder1_16_5(parent);
     }
     
-    @Override public EntityBuilder1_16_5 makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
+    @Override public EntityBuilderAPI makeEntityBuilder(@Nullable EntityBuilderAPI parent) {
         return new EntityBuilder1_16_5(parent);
     }
     
-    @Override public ItemBlockBuilder1_16_5 makeItemBlockBuilder(@Nullable ItemBuilderAPI parent) {
+    @Override public ItemBlockBuilderAPI makeItemBlockBuilder(@Nullable ItemBuilderAPI parent) {
         return new ItemBlockBuilder1_16_5(parent);
     }
     
-    @Override public ItemBuilder1_16_5 makeItemBuilder(@Nullable ItemBuilderAPI parent) {
+    @Override public ItemBuilderAPI makeItemBuilder(@Nullable ItemBuilderAPI parent) {
         return new ItemBuilder1_16_5(parent);
     }
     
-    @Override public SoundBuilder1_16_5 makeSoundBuilder(@Nullable SoundBuilderAPI parent) {
+    @Override public SoundBuilderAPI makeSoundBuilder(@Nullable SoundBuilderAPI parent) {
         return new SoundBuilder1_16_5(parent);
     }
     
-    @Override public ToolBulder1_16_5 makeToolBuilder(@Nullable ItemBuilderAPI parent, ToolType tool) {
-        return new ToolBulder1_16_5(parent,tool);
+    @Override public ToolBuilderAPI makeToolBuilder(@Nullable ItemBuilderAPI parent, ToolType tool) {
+        return new ToolBuilder1_16_5(parent,tool);
     }
 }

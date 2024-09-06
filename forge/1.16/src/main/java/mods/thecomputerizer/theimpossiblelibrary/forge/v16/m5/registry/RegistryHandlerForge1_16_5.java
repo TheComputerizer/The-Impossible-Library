@@ -1,6 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.resource.ResourceLocation1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.blockentity.BlockEntityBuilderForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.Registry1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.RegistryHandler1_16_5;
 import net.minecraft.block.Block;
@@ -15,6 +18,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 import static net.minecraftforge.registries.ForgeRegistries.*;
@@ -35,9 +39,13 @@ public class RegistryHandlerForge1_16_5 extends RegistryHandler1_16_5 {
     @SuppressWarnings("unchecked")
     private <V extends IForgeRegistryEntry<V>> RegistryForge1_16_5<V> getRegistry(
             Set<? super Registry1_16_5<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
-        ResourceLocation1_16_5 key = new ResourceLocation1_16_5(new ResourceLocation(name));
-        RegistryForge1_16_5<V> registry = new RegistryForge1_16_5<>(forgeRegistry,key, (Class<V>)type);
+        ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
+        RegistryForge1_16_5<V> registry = new RegistryForge1_16_5<>(forgeRegistry,key.unwrap(),(Class<V>)type);
         registries.add(registry);
         return registry;
+    }
+    
+    @Override public BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
+        return new BlockEntityBuilderForge1_16_5(parent);
     }
 }

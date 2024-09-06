@@ -1,9 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block.BlockState1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -14,18 +15,22 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class TILBlockEntityProvider1_16_5 extends TILBasicBlock1_16_5 {
     
-    public TILBlockEntityProvider1_16_5(BlockProperties properties) {
-        super(properties);
+    public static TILBlockEntityProvider1_16_5 tileFrom(BlockProperties properties) {
+        Material material = properties.getMaterial().unwrap();
+        MaterialColor color = properties.getMaterialColor().unwrap();
+        return new TILBlockEntityProvider1_16_5(Properties.of(material,color),properties);
     }
     
-    @Nullable @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return (TileEntity)this.properties.createBlockEntity(world instanceof IWorld ? new World1_16_5((IWorld)world) : null,
-                new BlockState1_16_5(state)).getEntity();
+    public TILBlockEntityProvider1_16_5(Properties vanillaProperties, BlockProperties properties) {
+        super(vanillaProperties,properties);
     }
     
-    @Override
-    public boolean hasTileEntity(BlockState state) {
+    @Override public @Nullable TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return this.properties.createBlockEntity(world instanceof IWorld ? WrapperHelper.wrapWorld((IWorld)world) : null,
+                WrapperHelper.wrapState(state)).unwrap();
+    }
+    
+    @Override public boolean hasTileEntity(BlockState state) {
         return true;
     }
 }

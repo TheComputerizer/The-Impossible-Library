@@ -1,9 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.entity.ServerPlayer1_12_2;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -18,27 +19,25 @@ import java.util.UUID;
 
 public class MinecraftServer1_12_2 extends MinecraftServerAPI<MinecraftServer> {
 
-    @Override
-    public void registerCommand(CommandAPI cmd) {
+    @Override public void registerCommand(CommandAPI cmd) {
         ((CommandHandler)getServer().commandManager).registerCommand(new WrappedCommand1_12_2(cmd));
     }
 
-    @Override
-    public void executeCommandLiteral(String command) {
+    @Override public void executeCommandLiteral(String command) {
         MinecraftServer server = getServer();
         if(Objects.nonNull(server)) server.commandManager.executeCommand(server,command);
     }
     
-    @SuppressWarnings({"ConstantValue","UnreachableCode"}) @Nullable @Override
-    public ServerPlayer1_12_2 getPlayerByUUID(String uuid) {
+    @SuppressWarnings({"ConstantValue","UnreachableCode"})
+    @Override public @Nullable PlayerAPI<?,?> getPlayerByUUID(String uuid) {
         EntityPlayerMP player = getServer().getPlayerList().getPlayerByUUID(UUID.fromString(uuid));
-        return Objects.nonNull(player) ? new ServerPlayer1_12_2(player) : null;
+        return Objects.nonNull(player) ? WrapperHelper.wrapPlayer(player) : null;
     }
     
-    @Override public List<ServerPlayer1_12_2> getPlayers() {
-        List<ServerPlayer1_12_2> players = new ArrayList<>();
+    @Override public List<PlayerAPI<?,?>> getPlayers() {
+        List<PlayerAPI<?,?>> players = new ArrayList<>();
         for(EntityPlayerMP player : getServer().getPlayerList().getPlayers())
-            players.add(new ServerPlayer1_12_2(player));
+            players.add(WrapperHelper.wrapPlayer(player));
         return players;
     }
     
@@ -52,8 +51,7 @@ public class MinecraftServer1_12_2 extends MinecraftServerAPI<MinecraftServer> {
         return server.getWorld(0).getSaveHandler().getWorldDirectory();
     }
     
-    @Override
-    public MinecraftServer getServer() {
+    @Override public MinecraftServer getServer() {
         return FMLCommonHandler.instance().getMinecraftServerInstance();
     }
 }

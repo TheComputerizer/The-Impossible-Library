@@ -253,7 +253,7 @@ public abstract class CoreAPI {
             return;
         }
         if(this.injectedMods.contains(modid)) TILRef.logInfo("Skipping extra entrypoint for `{}` in `{}`",modid,pkg);
-        else if(modConstructed(modid,ClassHelper.findClassFrom(pkg,name+"Generated"+entryType+"Mod")))
+        else if(modConstructed(modid,verifyGeneratedClass(pkg,name,entryType)))
             this.injectedMods.add(modid);
     }
 
@@ -264,6 +264,10 @@ public abstract class CoreAPI {
     
     @Override public String toString() {
         return getClass().getName()+" "+this.version+" "+this.modLoader+" "+this.side;
+    }
+    
+    protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
+        return ClassHelper.findClassFrom(pkg,name+"Generated"+entryType+"Mod");
     }
 
     public void writeModContainers(ClassLoader classLoader) {
