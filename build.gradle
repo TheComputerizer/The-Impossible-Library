@@ -8,16 +8,30 @@
 apply from: rootProject.file('buildSrc\\shared.gradle')
 java.toolchain.languageVersion = JavaLanguageVersion.of(22)
 
+def api = project(':api')
+def fabric = project(':fabric')
+def legacy_1_12_2 = project(':legacy:legacy.1_12')
+def fabric_1_16_5 = project(':fabric:fabric.1_16')
+def forge_1_16_5 = project(':forge:forge.1_16')
+def shared_1_16_5 = project(':shared:shared.1_16')
+
+processResources {
+    fabric.afterEvaluate { from(it.processResources.outputs) }
+}
+
+processTestResources {
+    fabric.afterEvaluate { from(it.processTestResources.outputs) }
+}
+
 jar {
-    def api = project(':api')
-    def legacy_1_12 = project(':legacy:legacy.1_12')
-    def forge_1_16 = project(':forge:forge.1_16')
-    legacy_1_12.afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
-    forge_1_16.afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
+    legacy_1_12_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
+    fabric_1_16_5.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree(it) }) }
+    forge_1_16_5.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
+    shared_1_16_5.afterEvaluate { from(it.jar.archiveFile.collect { zipTree(it) }) }
     manifest {
         attributes([
                 'FMLAT': 'theimpossiblelibrary_at.cfg',
-                'FMLCorePlugin': "${legacy_1_12.mod_plugin}1_12_2",
+                'FMLCorePlugin': "${legacy_1_12_2.mod_plugin}1_12_2",
                 'ForceLoadAsMod': true,
                 'Implementation-Title': name,
                 'Implementation-Version': version,
@@ -26,5 +40,5 @@ jar {
     }
 }
 
-tasks.jar.dependsOn(':legacy:legacy.1_12:build')
-tasks.jar.dependsOn(':forge:forge.1_16:build')
+[ ':legacy:legacy.1_12:build', ':fabric:fabric.1_16:build', ':forge:forge.1_16:build',
+  ':shared:shared.1_16:build' ].forEach { tasks.jar.dependsOn(it) }

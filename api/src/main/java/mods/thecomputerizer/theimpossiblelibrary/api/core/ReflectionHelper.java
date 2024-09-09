@@ -73,10 +73,14 @@ import static java.lang.reflect.Modifier.FINAL;
     public static @Nullable Field getField(@Nullable Class<?> clazz, String fieldName) {
         return Misc.applyNullable(clazz, c -> {
             try {
-                return c.getDeclaredField(fieldName);
-            } catch(NoSuchFieldException ex) {
-                TILRef.logError("Could not find field of name {} in class {}!",fieldName,c);
-                return null;
+                return c.getField(fieldName);
+            } catch(NoSuchFieldException ignored) {
+                try {
+                    return c.getDeclaredField(fieldName);
+                } catch(NoSuchFieldException ex) {
+                    TILRef.logError("Could not find field of name {} in class {}!",fieldName,c,ex);
+                    return null;
+                }
             }
         });
     }
@@ -186,6 +190,27 @@ import static java.lang.reflect.Modifier.FINAL;
         if(isFinal) setFieldModifiers(field,modifiers & ~FINAL); //Yep, you can do that
         setFieldValue(parent,field,value);
         if(isFinal) setFieldModifiers(field,modifiers); //Change it back since fields are usually final for a reason
+    }
+    
+    public static void setFieldInstance(Class<?> clazz, String name, Object instance, Object value) {
+        setFieldInstance(false,clazz,name,instance,value);
+    }
+    
+    public static void setFieldInstance(boolean isFinal, Class<?> clazz, String name, Object instance, Object value) {
+        Field field = getField(clazz,name);
+        if(isFinal) modifyFinalField(instance,field,value);
+        else setFieldInstance(field,instance,value);
+    }
+    
+    public static void setFieldInstance(@Nullable Field field, Object instance, Object value) {
+        if(Objects.nonNull(field)) {
+            if(!field.isAccessible()) field.setAccessible(true);
+            try {
+                field.set(instance,value);
+            } catch(IllegalAccessException ex) {
+                TILRef.logError("Failed to set value of field to {}",value,ex);
+            }
+        } else TILRef.logError("Cannot set value of null field!");
     }
     
     public static void setFieldModifiers(@Nullable Field field, int modifiers) {

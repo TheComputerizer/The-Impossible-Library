@@ -33,7 +33,7 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java8-module.gradle')
+apply from: rootProject.file('gradle\\java17-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 
 plugins.apply('fabric-loom')
@@ -77,6 +77,7 @@ processTestResources {
 }
 
 jar {
+    archiveBaseName = mod_id
     manifest {
         attributes([
                 'Implementation-Title': name,
@@ -89,4 +90,4 @@ artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn(':api:build')
+//tasks.jar.dependsOn(':api:build')

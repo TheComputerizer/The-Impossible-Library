@@ -5,12 +5,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public abstract class ChampionsAPI implements ModAPI {
 
     public static final String MODID = "champions";
@@ -20,17 +20,15 @@ public abstract class ChampionsAPI implements ModAPI {
 
     public abstract @Nullable ChampionData getChampionData(EntityAPI<?,?> entity);
 
-    @Override
-    public String getID() {
+    @Override public String getID() {
         return MODID;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return NAME;
     }
-
-    public boolean isChampion(EntityAPI<?,?> entity) {
+    
+    @IndirectCallers public boolean isChampion(EntityAPI<?,?> entity) {
         return Objects.nonNull(getChampionData(entity));
     }
 

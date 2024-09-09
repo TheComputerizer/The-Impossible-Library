@@ -1,5 +1,5 @@
 /**
- * Passthrough parent module for shared version modules
+ * Pass through parent module for shared version modules
  */
 
 apply from: rootProject.file('buildSrc\\shared.gradle')

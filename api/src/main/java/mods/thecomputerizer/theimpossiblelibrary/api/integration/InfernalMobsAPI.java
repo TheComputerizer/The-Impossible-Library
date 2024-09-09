@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -15,7 +16,6 @@ import java.util.function.BiFunction;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
 
-@SuppressWarnings("unused")
 public abstract class InfernalMobsAPI implements ModAPI {
 
     public static final String MODID = "infernalmobs";
@@ -23,23 +23,21 @@ public abstract class InfernalMobsAPI implements ModAPI {
 
     protected InfernalMobsAPI() {}
 
-    @Override
-    public String getID() {
+    @Override public String getID() {
         return MODID;
     }
 
     public abstract @Nullable InfernalData<?> getInfernalData(EntityAPI<?,?> entity);
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return NAME;
     }
 
-    @Override
-    public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
+    @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         return loader.isForge() || (loader.isNeoForge() && (version.isV21() || (version.isV20() && version!=V20_1)));
     }
-
+    
+    @IndirectCallers
     public boolean isInfernal(EntityAPI<?,?> entity) {
         return Objects.nonNull(getInfernalData(entity));
     }
@@ -60,7 +58,8 @@ public abstract class InfernalMobsAPI implements ModAPI {
             this.size = size;
             this.modClassChecker = modClassChecker;
         }
-
+        
+        @IndirectCallers
         public boolean hasModifierClass(Class<?> clazz) {
             return this.modClassChecker.apply(this.instance,clazz);
         }

@@ -75,7 +75,6 @@ public abstract class ModWriterForge extends ModWriter {
         mapEntryPointMethod(redirects,types,"commonSetup",getEventMethod("FMLCommonSetupEvent"),
                             "onCommonSetup");
         mapEntryPointMethod(redirects,types,"dedicatedServerSetup",getEventMethod("FMLDedicatedServerSetupEvent"),
-                            "onCommonSetup",
                             "checkDedicatedServerSetup");
         mapEntryPointMethod(redirects,types,"interModEnqueue",getEventMethod("InterModEnqueueEvent"),
                             "onInterModEnqueue");

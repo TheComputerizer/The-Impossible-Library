@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ChampionsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Entity1_16_5;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Tuple;
 import top.theillusivec4.champions.api.IAffix;
@@ -20,9 +19,9 @@ import java.util.stream.Collectors;
 
 public class ChampionsForge1_16_5 extends ChampionsAPI {
 
+    @SuppressWarnings("DataFlowIssue")
     public @Nullable IChampion getCapability(EntityAPI<?,?> api) {
-        Entity entity = ((Entity1_16_5)api).getEntity();
-        return ChampionCapability.getCapability(entity).orElse(null);
+        return ChampionCapability.getCapability((Entity)api.unwrap()).orElse(null);
     }
 
     @Override
@@ -38,9 +37,7 @@ public class ChampionsForge1_16_5 extends ChampionsAPI {
 
     private ChampionData getServer(@Nonnull IChampion cap) {
         Server server = cap.getServer();
-        Set<String> affixes = server.getAffixes().stream()
-                .map(IAffix::getIdentifier)
-                .filter(Objects::nonNull)
+        Set<String> affixes = server.getAffixes().stream().map(IAffix::getIdentifier).filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         return new ChampionData(null,affixes,server.getRank().map(Rank::getTier).orElse(-1));
     }

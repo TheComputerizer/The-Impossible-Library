@@ -9,7 +9,6 @@ import corgitaco.enhancedcelestials.lunarevent.HarvestMoon;
 import corgitaco.enhancedcelestials.lunarevent.Moon;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelestialsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -17,17 +16,14 @@ import java.util.Objects;
 public class EnhancedCelestialsForge1_16_5 extends EnhancedCelestialsAPI {
 
     public @Nullable LunarContext getContext(WorldAPI<?> api) {
-        Object world = api.getWorld();
-        return world instanceof World ? ((EnhancedCelestialsWorldData)world).getLunarContext() : null;
+        return ((EnhancedCelestialsWorldData)api.unwrap()).getLunarContext();
     }
 
-    @Override
-    public boolean isBloodMoon(WorldAPI<?> world) {
+    @Override public boolean isBloodMoon(WorldAPI<?> world) {
         return isEvent(world,BloodMoon.class);
     }
 
-    @Override
-    public boolean isBlueMoon(WorldAPI<?> world) {
+    @Override public boolean isBlueMoon(WorldAPI<?> world) {
         return isEvent(world,BlueMoon.class);
     }
 
@@ -40,13 +36,11 @@ public class EnhancedCelestialsForge1_16_5 extends EnhancedCelestialsAPI {
         return false;
     }
 
-    @Override
-    public boolean isHarvestMoon(WorldAPI<?> world) {
+    @Override public boolean isHarvestMoon(WorldAPI<?> world) {
         return isEvent(world,HarvestMoon.class);
     }
 
-    @Override
-    public boolean isMoon(WorldAPI<?> world) {
+    @Override public boolean isMoon(WorldAPI<?> world) {
         return isEvent(world,Moon.class);
     }
 }

@@ -10,12 +10,17 @@ import java.lang.reflect.Field;
 
 public class MinecraftServerForge1_16_5 extends MinecraftServer1_16_5 {
     
+    @SuppressWarnings("unchecked")
+    <T> @Nullable Field getField(Class<?> cls, String name) {
+        return ObfuscationReflectionHelper.findField((Class<? super T>)cls,name);
+    }
+    
     @Override protected @Nullable Field getLevelPathField(Object save) {
-        return ObfuscationReflectionHelper.findField(save.getClass(),"field_237279_c_");
+        return getField(save.getClass(),"field_237279_c_");
     }
     
     @Override protected @Nullable Field getLevelSaveField(Object server) {
-       return ObfuscationReflectionHelper.findField(server.getClass(),"field_71310_m");
+       return getField(server.getClass(),"field_71310_m");
     }
     
     @Override public MinecraftServer getServer() {

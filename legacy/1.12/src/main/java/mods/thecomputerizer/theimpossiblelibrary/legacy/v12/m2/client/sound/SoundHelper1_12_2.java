@@ -29,7 +29,7 @@ public class SoundHelper1_12_2 implements SoundHelperAPI<ISound> {
     }
     
     @Override public void play(SoundEventAPI<?> event) {
-        PositionedSoundRecord sound = new PositionedSoundRecord(((SoundEvent)event.getSound()).getSoundName(),MASTER,
+        PositionedSoundRecord sound = new PositionedSoundRecord(((SoundEvent)event.getWrapped()).getSoundName(),MASTER,
                 1f,1f,false,0,NONE,0f,0f,0f);
         Minecraft.getMinecraft().getSoundHandler().playSound(sound);
     }

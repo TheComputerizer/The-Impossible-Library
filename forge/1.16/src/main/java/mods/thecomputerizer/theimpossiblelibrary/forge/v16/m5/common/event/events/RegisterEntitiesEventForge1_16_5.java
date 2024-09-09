@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.RegisterEntitiesEventForge;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Entity1_16_5;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,6 +16,6 @@ public class RegisterEntitiesEventForge1_16_5 extends RegisterEntitiesEventForge
     }
     
     @Override public void register(EntityAPI<?,?> entry) {
-        this.event.getRegistry().register(((Entity1_16_5)entry).getValue());
+        this.event.getRegistry().register(entry.unwrap());
     }
 }

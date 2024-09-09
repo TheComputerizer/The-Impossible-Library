@@ -16,8 +16,7 @@ public class Champions1_12_2 extends ChampionsAPI {
         return entity instanceof EntityLiving ? CapabilityChampionship.getChampionship((EntityLiving)entity) : null;
     }
 
-    @Override
-    public @Nullable ChampionData getChampionData(EntityAPI<?,?> entity) {
+    @Override public @Nullable ChampionData getChampionData(EntityAPI<?,?> entity) {
         IChampionship cap = getCapability(entity);
         return Objects.nonNull(cap) ? new ChampionData(cap.getName(),cap.getAffixes(),cap.getRank().getTier()) : null;
     }

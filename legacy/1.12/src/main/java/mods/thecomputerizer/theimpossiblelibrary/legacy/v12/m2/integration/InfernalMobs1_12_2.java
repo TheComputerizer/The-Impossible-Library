@@ -11,8 +11,7 @@ import java.util.Objects;
 
 public class InfernalMobs1_12_2 extends InfernalMobsAPI {
 
-    @Override
-    public @Nullable InfernalData<MobModifier> getInfernalData(EntityAPI<?,?> entity) {
+    @Override public @Nullable InfernalData<MobModifier> getInfernalData(EntityAPI<?,?> entity) {
         MobModifier mod = getModifier(entity);
         return Objects.nonNull(mod) ? new InfernalData<>(mod,mod.getModName(),mod.getDisplayNames(),mod.getModSize(),
                 MobModifier::containsModifierClass) : null;

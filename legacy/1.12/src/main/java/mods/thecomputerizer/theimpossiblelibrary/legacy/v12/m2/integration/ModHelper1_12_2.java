@@ -18,8 +18,7 @@ public class ModHelper1_12_2 extends ModHelperAPI {
         super(V12_2, LEGACY, side);
     }
 
-    @Override
-    protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
+    @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
         addMod(map,new Bloodmoon1_12_2());
         addMod(map,new Champions1_12_2());
         addMod(map,new DynamicSurrounding1_12_2());
@@ -31,8 +30,7 @@ public class ModHelper1_12_2 extends ModHelperAPI {
         return Collections.unmodifiableMap(map);
     }
     
-    @Override
-    public String getModName(String modid) {
+    @Override public String getModName(String modid) {
         String name = super.getModName(modid);
         if(name.equals(modid) && isModLoaded(modid)) {
             for(ModContainer container : Loader.instance().getActiveModList()) {
@@ -45,8 +43,7 @@ public class ModHelper1_12_2 extends ModHelperAPI {
         return name;
     }
 
-    @Override
-    public boolean isModLoaded(String modid) {
+    @Override public boolean isModLoaded(String modid) {
         return Loader.isModLoaded(modid);
     }
 }

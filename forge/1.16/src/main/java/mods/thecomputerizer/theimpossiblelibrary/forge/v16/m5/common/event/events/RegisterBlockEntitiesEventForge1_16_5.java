@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.RegisterBlockEntitiesEventForge;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.blockentity.BlockEntity1_16_5;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,6 +16,6 @@ public class RegisterBlockEntitiesEventForge1_16_5 extends RegisterBlockEntities
     }
     
     @Override public void register(BlockEntityAPI<?,?> entry) {
-        this.event.getRegistry().register(((BlockEntity1_16_5)entry).getValue());
+        this.event.getRegistry().register(entry.unwrap());
     }
 }

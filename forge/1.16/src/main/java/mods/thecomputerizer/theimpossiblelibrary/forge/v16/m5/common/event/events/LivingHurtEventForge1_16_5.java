@@ -16,8 +16,7 @@ public class LivingHurtEventForge1_16_5 extends LivingHurtEventForge {
         LIVING_HURT.invoke(event);
     }
     
-    @Override
-    public void setAmount(float amount) {
+    @Override public void setAmount(float amount) {
         this.event.setAmount(amount);
         this.damage.set(this.event,new Damage1_16_5(this.event.getSource(), amount));
     }

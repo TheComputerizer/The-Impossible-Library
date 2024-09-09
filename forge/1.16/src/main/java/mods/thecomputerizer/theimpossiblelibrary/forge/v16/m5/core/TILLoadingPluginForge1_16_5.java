@@ -9,7 +9,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.TILModFileForge1_16_5;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -36,7 +35,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANC
 /**
  Targeted version of ClasspathLocator
  */
-@EventBusSubscriber
 public class TILLoadingPluginForge1_16_5 extends AbstractJarFileLocator {
     
     static {
@@ -98,7 +96,6 @@ public class TILLoadingPluginForge1_16_5 extends AbstractJarFileLocator {
         }
         if(filter.test(path)) {
             TILRef.logInfo("Found classpath mod candidate: {}",path);
-            //if(addToClassLoader) CoreAPI.getInstance().addURLToClassLoader(ClassLoader.getSystemClassLoader(),url);
             loader.addPotentialModPath(path);
         }
     }
@@ -107,8 +104,8 @@ public class TILLoadingPluginForge1_16_5 extends AbstractJarFileLocator {
         return "multiversionloader";
     }
     
-    @Override
-    public List<IModFile> scanMods() {
+    @SuppressWarnings("resource")
+    @Override public List<IModFile> scanMods() {
         TILRef.logDebug("Scanning for mods in multiversion jars");
         List<IModFile> mods = new ArrayList<>();
         Map<String,MultiVersionModData> data = INSTANCE.getModData(new File("."));

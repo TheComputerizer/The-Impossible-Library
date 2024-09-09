@@ -16,8 +16,7 @@ public class LivingAttackedEventForge1_16_5 extends LivingAttackedEventForge {
         LIVING_ATTACKED.invoke(event);
     }
     
-    @Override
-    protected EventFieldWrapper<LivingAttackEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingAttackEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_16_5(event.getSource(),1f),null);
     }
 }

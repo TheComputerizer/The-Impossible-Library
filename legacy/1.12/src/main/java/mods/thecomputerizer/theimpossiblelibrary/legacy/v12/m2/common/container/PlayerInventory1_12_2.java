@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
@@ -16,13 +17,11 @@ public class PlayerInventory1_12_2 extends PlayerInventoryAPI<InventoryPlayer> {
         super(inventory);
     }
 
-    @Override
-    public Collection<ItemStackAPI<?>> getArmorStacks() {
-        return this.inventory.armorInventory.stream().map(ItemStack1_12_2::new).collect(Collectors.toList());
+    @Override public Collection<ItemStackAPI<?>> getArmorStacks() {
+        return this.wrapped.armorInventory.stream().map(WrapperHelper::wrapItemStack).collect(Collectors.toList());
     }
 
-    @Override
-    public Collection<ItemStackAPI<?>> getHotbarStacks() {
+    @Override public Collection<ItemStackAPI<?>> getHotbarStacks() {
         List<ItemStackAPI<?>> stacks = new ArrayList<>();
         for(int i=0;i<9;i++) {
             ItemStackAPI<?> stack = getStack(i);
@@ -31,33 +30,27 @@ public class PlayerInventory1_12_2 extends PlayerInventoryAPI<InventoryPlayer> {
         return stacks;
     }
 
-    @Override
-    public Collection<ItemStackAPI<?>> getMainStacks() {
-        return this.inventory.mainInventory.stream().map(ItemStack1_12_2::new).collect(Collectors.toList());
+    @Override public Collection<ItemStackAPI<?>> getMainStacks() {
+        return this.wrapped.mainInventory.stream().map(WrapperHelper::wrapItemStack).collect(Collectors.toList());
     }
 
-    @Override
-    public Collection<ItemStackAPI<?>> getOffHandStacks() {
-        return this.inventory.offHandInventory.stream().map(ItemStack1_12_2::new).collect(Collectors.toList());
+    @Override public Collection<ItemStackAPI<?>> getOffHandStacks() {
+        return this.wrapped.offHandInventory.stream().map(WrapperHelper::wrapItemStack).collect(Collectors.toList());
     }
 
-    @Override
-    public ItemStackAPI<?> getStack(int slot) {
-        return new ItemStack1_12_2(this.inventory.getStackInSlot(slot));
+    @Override public ItemStackAPI<?> getStack(int slot) {
+        return new ItemStack1_12_2(this.wrapped.getStackInSlot(slot));
     }
 
-    @Override
-    public int getSlots() {
-        return this.inventory.getSizeInventory();
+    @Override public int getSlots() {
+        return this.wrapped.getSizeInventory();
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this.inventory.isEmpty();
+    @Override public boolean isEmpty() {
+        return this.wrapped.isEmpty();
     }
 
-    @Override
-    public void setStack(ItemStackAPI<?> stack, int slot) {
-        this.inventory.setInventorySlotContents(slot,((ItemStack1_12_2)stack).getStack());
+    @Override public void setStack(ItemStackAPI<?> stack, int slot) {
+        this.wrapped.setInventorySlotContents(slot,stack.unwrap());
     }
 }

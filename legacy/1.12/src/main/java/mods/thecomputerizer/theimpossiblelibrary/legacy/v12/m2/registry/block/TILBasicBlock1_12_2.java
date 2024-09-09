@@ -6,8 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseConte
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;

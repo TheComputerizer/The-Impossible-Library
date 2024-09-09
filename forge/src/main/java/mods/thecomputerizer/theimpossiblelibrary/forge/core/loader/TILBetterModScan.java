@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
@@ -30,7 +31,8 @@ public class TILBetterModScan extends ModFileScanData {
     /**
      * Called via reflection from TILLanguageLoader
      */
-    @SuppressWarnings("unused") public void defineClasses(ClassLoader ... loaders) {
+    @IndirectCallers
+    public void defineClasses(ClassLoader ... loaders) {
         TILRef.logInfo("This is being called from {} and being synced to {}",getClass().getClassLoader(),loaders);
         loadSources(loaders);
         for(Entry<String,byte[]> entry : this.writtenClasses.entrySet()) {

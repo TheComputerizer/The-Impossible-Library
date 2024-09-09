@@ -3,9 +3,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.integration;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-@SuppressWarnings("unused")
 public abstract class EnhancedCelestialsAPI implements ModAPI {
 
     public static final String MODID = "enhancedcelestials";
@@ -13,24 +13,21 @@ public abstract class EnhancedCelestialsAPI implements ModAPI {
 
     protected EnhancedCelestialsAPI() {}
 
-    @Override
-    public String getID() {
+    @Override public String getID() {
         return MODID;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return NAME;
     }
 
-    public abstract boolean isBloodMoon(WorldAPI<?> world);
-    public abstract boolean isBlueMoon(WorldAPI<?> world);
+    @IndirectCallers public abstract boolean isBloodMoon(WorldAPI<?> world);
+    @IndirectCallers public abstract boolean isBlueMoon(WorldAPI<?> world);
 
-    @Override
-    public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
+    @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         return version.isCompatibleModernForge() && (loader.isFabric() || loader.isModernForge());
     }
 
-    public abstract boolean isHarvestMoon(WorldAPI<?> world);
-    public abstract boolean isMoon(WorldAPI<?> world);
+    @IndirectCallers public abstract boolean isHarvestMoon(WorldAPI<?> world);
+    @IndirectCallers public abstract boolean isMoon(WorldAPI<?> world);
 }

@@ -19,8 +19,7 @@ public class ModHelperForge1_16_5 extends ModHelperAPI {
         super(V16_5,FORGE,side);
     }
 
-    @Override
-    protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
+    @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
         addMod(map,new BetterWeatherForge1_16_5());
         addMod(map,new ChampionsForge1_16_5());
         addMod(map,new DynamicSurroundingsForge1_16_5());
@@ -30,8 +29,7 @@ public class ModHelperForge1_16_5 extends ModHelperAPI {
         return Collections.unmodifiableMap(map);
     }
     
-    @Override
-    public String getModName(String modid) {
+    @Override public String getModName(String modid) {
         String name = super.getModName(modid);
         ModList mods = ModList.get();
         if(Objects.nonNull(mods) && name.equals(modid) && mods.isLoaded(modid)) {
@@ -45,8 +43,7 @@ public class ModHelperForge1_16_5 extends ModHelperAPI {
         return name;
     }
 
-    @Override
-    public boolean isModLoaded(String modid) {
+    @Override public boolean isModLoaded(String modid) {
         ModList mods = ModList.get();
         return Objects.nonNull(mods) && mods.isLoaded(modid);
     }

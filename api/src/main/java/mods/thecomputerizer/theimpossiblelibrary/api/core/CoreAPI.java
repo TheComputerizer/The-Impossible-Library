@@ -190,6 +190,10 @@ public abstract class CoreAPI {
                 this.version,this.side);
     }
     
+    public void addSources(Set<String> sources) {
+        ClassHelper.addSource(sources,CoreAPI.class);
+    }
+    
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public abstract boolean addURLToClassLoader(ClassLoader loader, URL url);
     public abstract CommonEntryPoint getClientVersionHandler();
@@ -201,18 +205,18 @@ public abstract class CoreAPI {
         TILRef.logInfo("Parsing data for {} mod candidate(s)",this.modInfo.size());
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> entry : this.modInfo.entrySet())
             for(MultiVersionModInfo info : entry.getValue())
-                map.putIfAbsent(info.getModID(),new MultiVersionModData(root,entry.getKey(),getModWriter(info)));
+                map.putIfAbsent(info.getModID(),getModData(root,entry.getKey(),info));
         return map;
+    }
+    
+    public MultiVersionModData getModData(File root, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
+        return new MultiVersionModData(root,candidate,getModWriter(info));
     }
     
     protected abstract ModWriter getModWriter(MultiVersionModInfo info);
     
     public String getPackageName(String base) {
         return getVersion().getPackageName(getModLoader().getPackageName(base));
-    }
-    
-    public void addSources(Set<String> sources) {
-        ClassHelper.addSource(sources,CoreAPI.class);
     }
 
     public abstract void initAPI();
@@ -235,6 +239,14 @@ public abstract class CoreAPI {
                 }
             }
         }
+    }
+    
+    public boolean isClientSide() {
+        return getSide().isClient();
+    }
+    
+    public boolean isServerSide() {
+        return getSide().isServer();
     }
 
     public void loadCoreModInfo(ClassLoader classLoader) {

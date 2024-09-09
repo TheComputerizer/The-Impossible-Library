@@ -5,8 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.integration.BloodmoonAPI;
 
 public class Bloodmoon1_12_2 extends BloodmoonAPI {
 
-    @Override
-    public boolean isBloodMoon() {
+    @Override public boolean isBloodMoon() {
         return Bloodmoon.proxy.isBloodmoon();
     }
 }

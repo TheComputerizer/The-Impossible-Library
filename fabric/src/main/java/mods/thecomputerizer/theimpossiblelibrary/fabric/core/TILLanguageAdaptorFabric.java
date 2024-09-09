@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
@@ -13,19 +14,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.client.TILClientEntryPointFabricTest;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.loader.TILModInjectorFabric;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.server.TILServerEntryPointFabricTest;
 import net.fabricmc.loader.api.LanguageAdapter;
 import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.ModContainerImpl;
 import net.fabricmc.loader.impl.discovery.ModCandidateImpl;
 import net.fabricmc.loader.impl.entrypoint.EntrypointStorage;
+import net.fabricmc.loader.impl.launch.FabricLauncher;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
-import net.fabricmc.loader.impl.launch.knot.Knot;
 import net.fabricmc.loader.impl.metadata.DependencyOverrides;
 import net.fabricmc.loader.impl.metadata.EntrypointMetadata;
 import net.fabricmc.loader.impl.metadata.LoaderModMetadata;
@@ -33,9 +30,9 @@ import net.fabricmc.loader.impl.metadata.ModMetadataParser;
 import net.fabricmc.loader.impl.metadata.ParseMetadataException;
 import net.fabricmc.loader.impl.metadata.VersionOverrides;
 import net.fabricmc.loader.impl.util.UrlUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -65,39 +62,54 @@ import static net.fabricmc.loader.impl.FabricLoaderImpl.INSTANCE;
 @IndirectCallers
 public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
-    private final List<Path> loaderSources;
     private final CoreAPI core;
     Collection<ModContainerImpl> queuedContainers;
     
     public TILLanguageAdaptorFabric() {
-        this.loaderSources = new ArrayList<>();
-        if(INSTANCE.isDevelopmentEnvironment()) {
-            String sources = System.getProperty("til.dev.sources");
-            if(Objects.nonNull(sources)) {
-                Logger log = LogManager.getLogger("TIL Source Loader");
-                log.debug("Attempting to load sources from {}",sources);
-                Path source = UrlUtil.getCodeSource(TILLanguageAdaptorFabric.class);
-                Path root = source.getParent().getParent().getParent().getParent();
-                for(String sourcePath : sources.split(File.pathSeparator)) {
-                    Path path = root.resolve(sourcePath);
-                    log.debug("Adding source path {}",path);
-                    if(path.toFile().exists()) {
-                        Knot.getLauncher().addToClassPath(path);
-                        this.loaderSources.add(path);
-                    } else log.error("Failed to add nonexistent file from path");
-                }
+        FabricLauncher launcher = FabricLauncherBase.getLauncher();
+        String target = addCoreSources(launcher);
+        Class<?> pairCls = ClassHelper.findClass("org.apache.commons.lang3.tuple.Pair",ClassLoader.getSystemClassLoader());
+        if(Objects.nonNull(pairCls)) launcher.addToClassPath(UrlUtil.getCodeSource(pairCls));
+        else TILRef.logFatal("Failed to load Pair class! Mod writing will likely break");
+        this.core = initializeCore(launcher.getTargetClassLoader(),target);
+        scheduleContainers();
+        TILDev.logInfo("Instantiated multiversionAdaptor");
+    }
+    
+    String addCoreSources(FabricLauncher launcher) {
+        String coreAPI = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
+        try {
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(coreAPI);
+            launcher.addToClassPath(Path.of(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()));
+        } catch(Exception ex) {
+            throw new RuntimeException("Failed to load CoreAPI at "+coreAPI,ex);
+        }
+        return addMoreSources(launcher);
+    }
+    
+    String addMoreSources(FabricLauncher launcher) {
+        GameVersion version = CoreAPI.parseVersion(INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0]);
+        if(Objects.isNull(version)) throw new RuntimeException("Failed to parse game version???");
+        String versionName = version.getName().replace('.','_');
+        String className = version.getPackageName(FABRIC,BASE_PACKAGE)+".core.TILCoreFabric"+versionName;
+        Class<?> clazz = ClassHelper.findClass(className,ClassLoader.getSystemClassLoader());
+        while(Objects.nonNull(clazz) && clazz!=Object.class) {
+            addSource(launcher,ClassHelper.getSourceURL(clazz));
+            clazz = clazz.getSuperclass();
+            if(CoreAPI.class.getName().equals(clazz.getName())) break;
+        }
+        return className;
+    }
+    
+    void addSource(FabricLauncher launcher, @Nullable URL url) {
+        if(Objects.nonNull(url)) {
+            try {
+                launcher.addToClassPath(Path.of(url.toURI()));
+                TILDev.logDebug("Added loader source {}",url);
+            } catch(URISyntaxException ex) {
+                TILRef.logError("Failed to add {} to the classpath",url,ex);
             }
         }
-        GameVersion version = CoreAPI.parseVersion(INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0]);
-        if(Objects.nonNull(version)) {
-            String versionName = version.getName().replace('.','_');
-            String className = version.getPackageName(FABRIC,BASE_PACKAGE)+".core.TILCoreFabric"+versionName;
-            ClassLoader classLoader = FabricLauncherBase.getLauncher().getTargetClassLoader();
-            Class<?> clazz = ClassHelper.findClass(className,classLoader);
-            this.core = initializeCore(classLoader,clazz);
-            scheduleContainer();
-        } else this.core = null;
-        TILDev.logInfo("Instantiated multiversionAdaptor");
     }
     
     JsonObject buildDependencies(String modid) {
@@ -125,18 +137,19 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         JsonObject json = new JsonObject();
         String mainClasspath = info.getModClasspath();
         buildEntryPoint(json,"main",mainClasspath);
-        if(core.getSide().isClient())
-            buildEntryPoint(json,"client",mainClasspath.replace("CommonMod","ClientMod"));
-        else buildEntryPoint(json,"server",mainClasspath.replace("CommonMod","ServerMod"));
+        if(core.isClientSide() && info.isClient())
+            buildEntryPoint(json,"client",mainClasspath+"$LoaderClient");
+        else if(core.isServerSide() && info.isServer())
+            buildEntryPoint(json,"server",mainClasspath+"$LoaderServer");
         return json;
     }
     
     JsonObject buildEntryPointTests(CoreAPI core) {
         JsonObject json = new JsonObject();
-        buildEntryPoint(json,"main",TILCommonEntryPointFabricTest.class.getName());
-        if(core.getSide().isClient())
-            buildEntryPoint(json,"client",TILClientEntryPointFabricTest.class.getName());
-        else buildEntryPoint(json,"server",TILServerEntryPointFabricTest.class.getName());
+        String mainClasspath = TILCommonEntryPointFabricTest.class.getName();
+        buildEntryPoint(json,"main",mainClasspath);
+        if(core.isClientSide()) buildEntryPoint(json,"client",mainClasspath+"$LoaderClient");
+        else if(core.isServerSide()) buildEntryPoint(json,"server",mainClasspath+"$LoaderServer");
         return json;
     }
     
@@ -157,6 +170,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         if(Objects.nonNull(System.getProperty("til.dev.testModLoading")))
             json.add("entrypoints",buildEntryPointTests(core));
         else json.add("entrypoints",buildEntryPoints(core,info));
+        buildModClasses(core,candidate,info);
         try(InputStream stream = new ByteArrayInputStream(gson.toJson(json).getBytes(UTF_8))) {
             Path path = candidate.getFile().toPath();
             return ModMetadataParser.parseMetadata(stream,path.toString(),null,versionOverrides,
@@ -169,10 +183,29 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         return null;
     }
     
+    @SneakyThrows
+    void buildModClasses(CoreAPI core, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
+        ByteClassLoader loader = new ByteClassLoader(FabricLauncherBase.getLauncher().getTargetClassLoader());
+        for(Pair<String,byte[]> classBytes : core.getModData(new File("."),candidate,info).writeModClass()) {
+            Class<?> clazz = loader.defineClass(classBytes.getLeft(),classBytes.getRight());
+            loader.resolvePublicly(clazz);
+            TILDev.logInfo("Built mod entrypoint {}",clazz);
+            //String classpath = classBytes.getLeft();
+            //byte[] bytes = classBytes.getRight();
+            //try {
+            //    Lookup caller = MethodHandles.privateLookupIn(ClassLoader.class,MethodHandles.lookup());
+            //    //Lookup lookup = constructor.newInstance(ClassLoader.class,null,PRIVATE|PROTECTED|PACKAGE|MODULE);
+            //    Class<?> clazz = caller.defineClass(bytes);
+            //    TILDev.logInfo("Built mod entrypoint {}",clazz);
+            //} catch(IllegalAccessException ex) {
+            //    throw new RuntimeException("Failed to define class",ex);
+            //}
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     @Override public <T> T create(ModContainer mod, String value, Class<T> type) {
-        ClassLoader loader = FabricLauncherBase.getLauncher().getTargetClassLoader();
-        Object instance = ClassHelper.initialize(ClassHelper.findClass(value,loader));
+        Object instance = ClassHelper.initialize(ClassHelper.findClass(value,ByteClassLoader.INSTANCE));
         if(instance instanceof TILModInjectorFabric && Objects.nonNull(this.queuedContainers)) {
             TILDev.logInfo("Queuing {} new mod containers",this.queuedContainers.size());
             ((TILModInjectorFabric)instance).setContainers(this.queuedContainers);
@@ -181,8 +214,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         
     }
     
-    CoreAPI initializeCore(ClassLoader classLoader, Class<?> clazz) {
-        CoreAPI core = (CoreAPI)ClassHelper.initialize(clazz);
+    CoreAPI initializeCore(ClassLoader classLoader, String classname) {
+        CoreAPI core = (CoreAPI)ClassHelper.initialize(ClassHelper.findClass(classname,classLoader));
         if(Objects.nonNull(core)) {
             core.loadCoreModInfo(classLoader,false);
             core.instantiateCoreMods();
@@ -227,11 +260,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         else this.queuedContainers.addAll(containers);
     }
     
-    /**
-     * The adaptor is initialized during an iteration, but we need to add a container to the list being iterated over.
-     * Ideally, this can synchronize with the loader and wait for the iteration to finish...
-     */
-    void scheduleContainer() {
+    void scheduleContainers() {
         Collection<ModContainerImpl> containers = loadCandidateInfos(this.core);
         Object modMapObj = ReflectionHelper.getFieldInstance(INSTANCE,INSTANCE.getClass(),"modMap");
         Object storageObj = ReflectionHelper.getFieldInstance(INSTANCE,INSTANCE.getClass(),"entrypointStorage");
@@ -258,5 +287,40 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         } else TILDev.logError("modMap is {} and storage is {}",modMapObj,storageObj);
         TILRef.logDebug("Adding {} mod containers to the queue",containers.size());
         queueContainers(containers);
+    }
+    
+    static class ByteClassLoader extends ClassLoader {
+        
+        static ByteClassLoader INSTANCE;
+        
+        final Map<String,Class<?>> asmDefinedClasses;
+        
+        ByteClassLoader(ClassLoader parent) {
+            super(parent);
+            this.asmDefinedClasses = new HashMap<>();
+            INSTANCE = this;
+        }
+        
+        public Class<?> defineClass(String name, byte[] b) {
+            Class<?> cls = defineClass(name,b,0,b.length);
+            this.asmDefinedClasses.put(name,cls);
+            return cls;
+        }
+        
+        @Override public Class<?> findClass(String name) throws ClassNotFoundException {
+            return this.asmDefinedClasses.containsKey(name) ? this.asmDefinedClasses.get(name) : super.findClass(name);
+        }
+        
+        @Override public Class<?> findClass(String module, String name) {
+            return this.asmDefinedClasses.containsKey(name) ? this.asmDefinedClasses.get(name) : super.findClass(module,name);
+        }
+        
+        @Override public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            return this.asmDefinedClasses.containsKey(name) ? this.asmDefinedClasses.get(name) : super.loadClass(name,resolve);
+        }
+        
+        public void resolvePublicly(Class<?> clazz) {
+            resolveClass(clazz);
+        }
     }
 }

@@ -4,11 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-@SuppressWarnings("unused")
 public abstract class GameStagesAPI implements ModAPI {
 
     public static final String MODID = "gamestages";
@@ -16,13 +16,11 @@ public abstract class GameStagesAPI implements ModAPI {
 
     protected GameStagesAPI() {}
 
-    @Override
-    public String getID() {
+    @Override public String getID() {
         return MODID;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return NAME;
     }
 
@@ -31,7 +29,8 @@ public abstract class GameStagesAPI implements ModAPI {
     public boolean hasStage(PlayerAPI<?,?> player, String stage) {
         return getStages(player).contains(stage);
     }
-
+    
+    @IndirectCallers
     public boolean hasAllStages(PlayerAPI<?,?> player, String ... stages) {
         return hasAllStages(player,Arrays.asList(stages));
     }
@@ -42,7 +41,8 @@ public abstract class GameStagesAPI implements ModAPI {
             if(!playerStages.contains(stage)) return false;
         return true;
     }
-
+    
+    @IndirectCallers
     public boolean hasAnyStage(PlayerAPI<?,?> player, String ... stages) {
         return hasAnyStage(player,Arrays.asList(stages));
     }
@@ -54,15 +54,16 @@ public abstract class GameStagesAPI implements ModAPI {
         return false;
     }
 
-    @Override
-    public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
+    @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         return version.isCompatibleForge() && loader.isForge();
     }
-
+    
+    @IndirectCallers
     public boolean missingStage(PlayerAPI<?,?> player, String stage) {
         return !hasStage(player,stage);
     }
-
+    
+    @IndirectCallers
     public boolean missingAllStages(PlayerAPI<?,?> player, String ... stages) {
         return missingAllStages(player,Arrays.asList(stages));
     }
@@ -70,7 +71,8 @@ public abstract class GameStagesAPI implements ModAPI {
     public boolean missingAllStages(PlayerAPI<?,?> player, Iterable<String> stages) {
         return !hasAnyStage(player,stages);
     }
-
+    
+    @IndirectCallers
     public boolean missingAnyStage(PlayerAPI<?,?> player, String ... stages) {
         return missingAnyStage(player,Arrays.asList(stages));
     }

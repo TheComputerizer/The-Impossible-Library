@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.RegisterSoundsEventForge;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.sound.SoundEvent1_16_5;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,6 +16,6 @@ public class RegisterSoundsEventForge1_16_5 extends RegisterSoundsEventForge {
     }
     
     @Override public void register(SoundEventAPI<?> entry) {
-        this.event.getRegistry().register(((SoundEvent1_16_5)entry).getValue());
+        this.event.getRegistry().register(entry.unwrap());
     }
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import org.joml.Vector3d;
@@ -13,7 +14,6 @@ import javax.annotation.Nullable;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.integration.Weather2API.WeatherType.*;
 
-@SuppressWarnings("unused")
 public abstract class Weather2API implements ModAPI {
 
     public static final String MODID = "weather2remaster";
@@ -21,25 +21,22 @@ public abstract class Weather2API implements ModAPI {
 
     protected Weather2API() {}
 
-    public abstract @Nullable WeatherData getClosestBlizzard(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
-    public abstract @Nullable WeatherData getClosestCloud(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
-    public abstract @Nullable WeatherData getClosestHurricane(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
-    public abstract @Nullable WeatherData getClosestSandStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
-    public abstract @Nullable WeatherData getClosestStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
-    public abstract @Nullable WeatherData getClosestTornado(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
+    @IndirectCallers public abstract @Nullable WeatherData getClosestBlizzard(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
+    @IndirectCallers public abstract @Nullable WeatherData getClosestCloud(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
+    @IndirectCallers public abstract @Nullable WeatherData getClosestHurricane(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
+    @IndirectCallers public abstract @Nullable WeatherData getClosestSandStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
+    @IndirectCallers public abstract @Nullable WeatherData getClosestStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
+    @IndirectCallers public abstract @Nullable WeatherData getClosestTornado(WorldAPI<?> world, BlockPosAPI<?> pos, double distance);
 
-    @Override
-    public String getID() {
+    @Override public String getID() {
         return MODID;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return NAME;
     }
 
-    @Override
-    public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
+    @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         return version.isV12() && loader.isLegacyForge();
     }
 
@@ -55,23 +52,28 @@ public abstract class Weather2API implements ModAPI {
             this.pos = pos;
             this.level = level;
         }
-
+        
+        @IndirectCallers
         public boolean isBlizzard() {
             return this.type==BLIZZARD;
         }
-
+        
+        @IndirectCallers
         public boolean isHurricane() {
             return this.type==HURRICANE;
         }
-
+        
+        @IndirectCallers
         public boolean isSandstorm() {
             return this.type==SANDSTORM;
         }
-
+        
+        @IndirectCallers
         public boolean isTornado() {
             return this.type==TORNADO;
         }
-
+        
+        @IndirectCallers
         public boolean isTropical() {
             return this.type==TROPICAL_DEPRESSION || this.type==TROPICAL_DISTURBANCE || this.type==TROPICAL_STORM;
         }

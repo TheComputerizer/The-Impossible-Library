@@ -9,7 +9,6 @@ import corgitaco.betterweather.weather.event.Cloudy;
 import corgitaco.betterweather.weather.event.Rain;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.BetterWeatherAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -17,22 +16,18 @@ import java.util.Objects;
 public class BetterWeatherForge1_16_5 extends BetterWeatherAPI {
 
     public @Nullable BWWeatherEventContext getContext(WorldAPI<?> api) {
-        Object world = api.getWorld();
-        return world instanceof World ? ((BetterWeatherWorldData)world).getWeatherEventContext() : null;
+        return ((BetterWeatherWorldData)api.unwrap()).getWeatherEventContext();
     }
 
-    @Override
-    public boolean isAcidRaining(WorldAPI<?> world) {
+    @Override public boolean isAcidRaining(WorldAPI<?> world) {
         return isEvent(world,AcidRain.class);
     }
 
-    @Override
-    public boolean isBlizzard(WorldAPI<?> world) {
+    @Override public boolean isBlizzard(WorldAPI<?> world) {
         return isEvent(world, Blizzard.class);
     }
 
-    @Override
-    public boolean isCloudy(WorldAPI<?> world) {
+    @Override public boolean isCloudy(WorldAPI<?> world) {
         return isEvent(world,Cloudy.class);
     }
 
@@ -45,8 +40,7 @@ public class BetterWeatherForge1_16_5 extends BetterWeatherAPI {
         return false;
     }
 
-    @Override
-    public boolean isRaining(WorldAPI<?> world) {
+    @Override public boolean isRaining(WorldAPI<?> world) {
         return isEvent(world,Rain.class);
     }
 }

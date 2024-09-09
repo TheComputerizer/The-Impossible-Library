@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.integration;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.Weather2API;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.world.World;
 import net.mrbt0907.weather2.api.WeatherAPI;
 import net.mrbt0907.weather2.api.weather.WeatherEnum.Type;
 import net.mrbt0907.weather2.util.Maths.Vec3;
@@ -38,13 +37,11 @@ public class Weather21_12_2 extends Weather2API {
         }
     }
 
-    @Override
-    public @Nullable WeatherData getClosestBlizzard(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
+    @Override public @Nullable WeatherData getClosestBlizzard(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
         return getClosestData(world,pos,distance,BLIZZARD);
     }
 
-    @Override
-    public @Nullable WeatherData getClosestCloud(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
+    @Override public @Nullable WeatherData getClosestCloud(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
         return getClosestData(world,pos,distance,CLOUD);
     }
 
@@ -53,13 +50,11 @@ public class Weather21_12_2 extends Weather2API {
         return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos),weather.getStage()) : null;
     }
 
-    @Override
-    public @Nullable WeatherData getClosestHurricane(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
+    @Override public @Nullable WeatherData getClosestHurricane(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
         return getClosestData(world,pos,distance,HURRICANE);
     }
 
-    @Override
-    public @Nullable WeatherData getClosestSandStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
+    @Override public @Nullable WeatherData getClosestSandStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
         WeatherManager manager = getManager(world);
         if(Objects.nonNull(manager)) {
             SandstormObject storm = manager.getClosestSandstorm(toVec(pos),distance);
@@ -68,8 +63,7 @@ public class Weather21_12_2 extends Weather2API {
         return null;
     }
 
-    @Override
-    public @Nullable WeatherData getClosestStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
+    @Override public @Nullable WeatherData getClosestStorm(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
         WeatherManager manager = getManager(world);
         if(Objects.nonNull(manager)) {
             WeatherObject weather = manager.getClosestWeather(toVec(pos),distance);
@@ -78,8 +72,7 @@ public class Weather21_12_2 extends Weather2API {
         return null;
     }
 
-    @Override
-    public @Nullable WeatherData getClosestTornado(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
+    @Override public @Nullable WeatherData getClosestTornado(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
         return getClosestData(world,pos,distance,TORNADO);
     }
 
@@ -98,9 +91,8 @@ public class Weather21_12_2 extends Weather2API {
         return ret;
     }
 
-    public @Nullable WeatherManager getManager(WorldAPI<?> api) {
-        Object world = api.getWorld();
-        return world instanceof World ? WeatherAPI.getManager((World)world) : null;
+    public @Nullable WeatherManager getManager(WorldAPI<?> world) {
+        return WeatherAPI.getManager(world.unwrap());
     }
 
     public Map<WeatherObject,Integer> getWeatherTypeAround(WorldAPI<?> world, BlockPosAPI<?> pos, double distance, WeatherType type) {

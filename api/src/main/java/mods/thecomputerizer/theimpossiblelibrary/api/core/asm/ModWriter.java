@@ -66,7 +66,7 @@ public abstract class ModWriter {
             if(isStatic) visitor.visitFieldInsn(GETSTATIC,this.modTypeInternal,"INSTANCE",this.modTypeDesc);
             else visitor.visitVarInsn(ALOAD,0);
             visitor.visitFieldInsn(GETFIELD,this.modTypeInternal,"entryPoint",this.entryPointDesc);
-            visitor.visitMethodInsn(INVOKEVIRTUAL, this.entryPointInternal,entryMethod, EMPTY_METHOD_DESC,false);
+            visitor.visitMethodInsn(INVOKEVIRTUAL,this.entryPointInternal,entryMethod,EMPTY_METHOD_DESC,false);
         }
     }
     
@@ -77,8 +77,13 @@ public abstract class ModWriter {
     
     protected Pair<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,
             Consumer<ClassVisitor> innerWriter) {
+        return addInnerClass(outerClass,innerName,innerWriter,true,true);
+    }
+    
+    protected Pair<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,
+            Consumer<ClassVisitor> innerWriter, boolean client, boolean server) {
         Type innerType = TypeHelper.inner(this.modType,innerName);
-        ClassWriter writer = ASMHelper.getWriter(this.javaVersion,PUBLIC_STATIC_FINAL,innerType);
+        ClassWriter writer = ASMHelper.getWriter(this.javaVersion,PUBLIC_STATIC_FINAL,innerType,modInterfaces(client,server));
         writer.visitOuterClass(this.modTypeInternal,null,null);
         outerClass.visitInnerClass(innerType.getInternalName(),this.modTypeInternal,innerName,PUBLIC_STATIC_FINAL);
         innerWriter.accept(writer);
@@ -87,7 +92,7 @@ public abstract class ModWriter {
     
     public final List<Pair<String,byte[]>> buildModClass() {
         List<Pair<String,byte[]>> classBytes = new ArrayList<>();
-        ClassWriter writer = ASMHelper.getWriter(this.javaVersion,PUBLIC,this.modType);
+        ClassWriter writer = ASMHelper.getWriter(this.javaVersion,PUBLIC,this.modType,modInterfaces(true,true));
         writeMod(writer,classBytes);
         finishWritingClass(writer,this.modType,(classpath,bytes) -> {
             TILRef.logDebug("Wrote bytecode for `{}` entrypoint to `{}`",this.info.getModID(),classpath);
@@ -135,6 +140,10 @@ public abstract class ModWriter {
             String ... methods) {
         redirects.put(name,methods);
         types.put(name,type);
+    }
+    
+    protected String[] modInterfaces(boolean client, boolean server) {
+        return new String[]{};
     }
     
     protected final void writeAnnotationArray(AnnotationVisitor annotation, String name,

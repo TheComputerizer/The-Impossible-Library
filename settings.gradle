@@ -1,21 +1,10 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        maven {
-            name = 'Forge'
-            url = uri('https://maven.minecraftforge.net/')
-        }
-        maven {
-            name = 'NeoForged'
-            url = uri('https://maven.neoforged.net/releases')
-        }
-        maven {
-            name = 'ParchmentMC'
-            url = uri('https://maven.parchmentmc.org')
-        }
-        maven {
-            name = 'Garden of Fancy'
-            url = uri('https://maven.gofancy.wtf/releases')
+        gradlePluginPortal() {
+            content {
+                [ 'com.google.code.gson', 'org.gradle.toolchains',
+                  'org.gradle.toolchains.foojay-resolver-convention' ].forEach { includeGroup it }
+            }
         }
     }
 }
@@ -25,34 +14,17 @@ plugins {
 }
 
 rootProject.name = 'The_Impossible_Library'
-include 'api'
-include 'fabric'
-include 'forge'
-include 'legacy'
-include 'neoforge'
-include 'shared'
-include 'legacy:1.12'
-include 'fabric:1.16'
-include 'forge:1.16'
-include 'shared:1.16'
-include 'fabric:1.18'
-include 'forge:1.18'
-include 'fabric:1.19'
-include 'forge:1.19'
-include 'fabric:1.20'
-include 'neoforge:1.20'
-include 'fabric:1.21'
-include 'neoforge:1.21'
-findProject(':fabric:1.16')?.name = 'fabric.1_16'
-findProject(':fabric:1.18')?.name = 'fabric.1_18'
-findProject(':fabric:1.19')?.name = 'fabric.1_19'
-findProject(':fabric:1.20')?.name = 'fabric.1_20'
-findProject(':fabric:1.21')?.name = 'fabric.1_21'
-findProject(':forge:1.19')?.name = 'forge.1_19'
-findProject(':forge:1.18')?.name = 'forge.1_18'
-findProject(':forge:1.16')?.name = 'forge.1_16'
-findProject(':legacy:1.12')?.name = 'legacy.1_12'
-findProject(':neoforge:1.20')?.name = 'neoforge.1_20'
-findProject(':neoforge:1.21')?.name = 'neoforge.1_21'
-findProject(':shared:1.16')?.name = 'shared.1_16'
 
+[ 'api', 'fabric', 'forge', 'legacy', 'neoforge', 'shared',
+  'legacy:1.12',
+  'fabric:1.16', 'forge:1.16', 'shared:1.16',
+  'fabric:1.18', 'forge:1.18',
+  'fabric:1.19', 'forge:1.19',
+  'fabric:1.20', 'neoforge:1.20',
+  'fabric:1.21', 'neoforge:1.21'].forEach { include it }
+
+[ ':fabric:1.16', ':fabric:1.18', ':fabric:1.19', ':fabric:1.20', ':fabric:1.21',
+  ':forge:1.19', ':forge:1.18', ':forge:1.16',
+  ':legacy:1.12',
+  ':neoforge:1.20', ':neoforge:1.21',
+  ':shared:1.16' ].forEach {findProject(it)?.name = it.substring(1).replace('.','_').replace(':','.') }

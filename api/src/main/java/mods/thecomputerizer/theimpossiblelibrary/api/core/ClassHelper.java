@@ -13,23 +13,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-@IndirectCallers
 public class ClassHelper {
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
         if(Objects.nonNull(url)) sources.add(url.toString());
         else TILRef.logError("Failed to add source for {}",clazz);
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static <T> T castToOtherClassLoader(Object obj, String className, ClassLoader loader) {
-        try {
-            return ((Class<T>)loader.loadClass(className)).cast(obj);
-        } catch(ClassNotFoundException | ClassCastException ex) {
-            TILRef.logError("Failed to do a stupid cast",ex);
-        }
-        return (T)obj; // Give up and try casting anyway if it doesn't work
     }
 
     /**
@@ -66,7 +55,7 @@ public class ClassHelper {
     @SneakyThrows
     public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
         return (Class<?>)ReflectionHelper.invokeMethod(ClassLoader.class,"defineClass",classLoader,new Class<?>[]{
-                String.class,String.class,byte[].class,int.class,int.class},classpath,bytes,0,bytes.length);
+                String.class,byte[].class,int.class,int.class},classpath,bytes,0,bytes.length);
     }
 
     public static String descriptor(Class<?> clazz) {
@@ -77,10 +66,12 @@ public class ClassHelper {
         return StringUtils.isNotBlank(classpath) ? "L"+internalName(classpath)+";" : "";
     }
     
+    @IndirectCallers
     public static @Nullable String getResourcePath(@Nullable Class<?> clazz) {
         return Objects.nonNull(clazz) ? clazz.getName().replace('.','/')+".class" : null;
     }
     
+    @IndirectCallers
     public static @Nullable URL getSourceURL(@Nullable String className, ClassLoader loader) {
         if(StringUtils.isNotBlank(className)) {
             try {
@@ -127,8 +118,8 @@ public class ClassHelper {
      * Set initialize to false if you don't want the Class to be loaded in case it doesn't exist.
      * Returns null if the class does not exist.
      */
-    public static @Nullable Class<?> findClass(String name, boolean inititalize) {
-        return findClass(name,inititalize,ClassHelper.class.getClassLoader());
+    public static @Nullable Class<?> findClass(String name, boolean initialize) {
+        return findClass(name,initialize,ClassHelper.class.getClassLoader());
     }
 
     /**
@@ -136,36 +127,41 @@ public class ClassHelper {
      * Set initialize to false if you don't want the Class to be loaded in case it doesn't exist.
      * Returns null if the class does not exist.
      */
-    public static @Nullable Class<?> findClass(String name, boolean inititalize, ClassLoader classLoader) {
+    public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader) {
         if(Objects.isNull(name) || name.isEmpty()) {
             TILRef.logError("Cannot find class from null or blank name!");
             return null;
         }
         try {
-            return Class.forName(name,inititalize,classLoader);
+            return Class.forName(name,initialize,classLoader);
         } catch(ClassNotFoundException ex) {
             TILRef.logError("Unable to find class with name `{}` using ClassLoader of type `{}`",name,
-                    classLoader.getClass().getName());
+                    classLoader.getClass().getName(),ex);
             return null;
         }
     }
     
+    @IndirectCallers
     public static @Nullable Class<?>[] findClasses(String ... names) {
         return ArrayHelper.mapTo(names,Class.class,ClassHelper::findClass);
     }
     
+    @IndirectCallers
     public static @Nullable Class<?>[] findClasses(ClassLoader classLoader, String ... names) {
         return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,classLoader));
     }
     
-    public static @Nullable Class<?>[] findClasses(boolean inititalize, String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,inititalize));
+    @IndirectCallers
+    public static @Nullable Class<?>[] findClasses(boolean initialize, String ... names) {
+        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,initialize));
     }
     
-    public static @Nullable Class<?>[] findClasses(boolean inititalize, ClassLoader classLoader, String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,inititalize,classLoader));
+    @IndirectCallers
+    public static @Nullable Class<?>[] findClasses(boolean initialize, ClassLoader classLoader, String ... names) {
+        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,initialize,classLoader));
     }
-
+    
+    @IndirectCallers
     public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName) {
         return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName);
     }
@@ -173,7 +169,8 @@ public class ClassHelper {
     public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName) {
         return findClass(withPkgName(pkg,simpleName));
     }
-
+    
+    @IndirectCallers
     public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, ClassLoader classLoader) {
         return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,classLoader);
     }
@@ -181,23 +178,25 @@ public class ClassHelper {
     public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, ClassLoader classLoader) {
         return findClass(withPkgName(pkg,simpleName),classLoader);
     }
-
-    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, boolean inititalize) {
-        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,inititalize);
+    
+    @IndirectCallers
+    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, boolean initialize) {
+        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,initialize);
     }
 
-    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean inititalize) {
-        return findClass(withPkgName(pkg,simpleName),inititalize);
+    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean initialize) {
+        return findClass(withPkgName(pkg,simpleName),initialize);
     }
-
-    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, boolean inititalize,
+    
+    @IndirectCallers
+    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, boolean initialize,
                                                    ClassLoader classLoader) {
-        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,inititalize,classLoader);
+        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,initialize,classLoader);
     }
 
-    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean inititalize,
+    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean initialize,
                                                    ClassLoader classLoader) {
-        return findClass(withPkgName(pkg,simpleName),inititalize,classLoader);
+        return findClass(withPkgName(pkg,simpleName),initialize,classLoader);
     }
     
     public static <T> @Nullable T initialize(@Nullable Class<T> clazz) {
@@ -210,7 +209,8 @@ public class ClassHelper {
         } else TILRef.logError("Cannot initialize null class");
         return null;
     }
-
+    
+    @IndirectCallers
     public static String internalName(Class<?> clazz) {
         return internalName(clazz.getName());
     }
@@ -218,7 +218,8 @@ public class ClassHelper {
     public static String internalName(String classpath) {
         return classpath.replace('.','/');
     }
-
+    
+    @IndirectCallers
     public static void loadClass(String classpath, byte[] bytes) {
         loadClass(ClassLoader.getSystemClassLoader(),classpath,bytes);
     }
@@ -226,7 +227,8 @@ public class ClassHelper {
     public static void loadClass(ClassLoader classLoader, String classpath, byte[] bytes) {
         loadClass(classLoader,defineClass(classLoader,classpath,bytes));
     }
-
+    
+    @IndirectCallers
     public static void loadClass(Class<?> clazz) {
         loadClass(ClassLoader.getSystemClassLoader(),clazz);
     }
@@ -242,7 +244,8 @@ public class ClassHelper {
         ReflectionHelper.invokeMethod(URLClassLoader.class,"addURL",classLoader,new Class<?>[]{URL.class},url);
         return true;
     }
-
+    
+    @IndirectCallers
     public static String packageName(@Nullable Class<?> clazz) {
         return Objects.nonNull(clazz) ? clazz.getPackage().getName() : "";
     }
@@ -250,6 +253,7 @@ public class ClassHelper {
     /**
      * Defines and resolves a class from byteCode
      */
+    @SuppressWarnings("UnusedReturnValue")
     @SneakyThrows
     public static Class<?> resolveClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
         if(Objects.nonNull(clazz))
@@ -262,6 +266,7 @@ public class ClassHelper {
     /**
      * Builds a signature via classes
      */
+    @IndirectCallers
     public static String signature(Class<?> clazz, Class<?> ... parameters) {
         return signatureDesc(descriptor(clazz),ArrayHelper.mapTo(parameters,String.class,ClassHelper::descriptor));
     }
@@ -269,6 +274,7 @@ public class ClassHelper {
     /**
      * Builds a signature via classpaths
      */
+    @IndirectCallers
     public static String signatureClasspath(String classpath, String ... parameterPaths) {
         return signatureDesc(descriptor(classpath),ArrayHelper.mapTo(parameterPaths,String.class,ClassHelper::descriptor));
     }
@@ -287,6 +293,7 @@ public class ClassHelper {
     /**
      * Builds a signature via internal names
      */
+    @IndirectCallers
     public static String signatureInternal(String name, String ... parameterNames) {
         if(StringUtils.isBlank(name)) return "";
         return signatureDesc("L"+name+";",ArrayHelper.mapTo(parameterNames,String.class,p -> "L"+p+";"));
@@ -296,6 +303,7 @@ public class ClassHelper {
         syncSourcesForClass(syncFrom,syncTo,className,className);
     }
     
+    @IndirectCallers
     public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
             BiFunction<ClassLoader,URL,Boolean> urlLoader) {
         syncSourcesForClass(syncFrom,syncTo,className,urlLoader,className);
@@ -329,6 +337,7 @@ public class ClassHelper {
      * Returns the classpath of a class via another class in the same package and its simple name or the simple name
      * if the reference class is null
      */
+    @IndirectCallers
     public static String withPkgName(@Nullable Class<?> ref, String simpleName) {
         return withPkgName(Objects.nonNull(ref) ? ref.getPackage() : null,simpleName);
     }

@@ -155,19 +155,16 @@ processTestResources {
 
 compileJava {
     source(project(':api').sourceSets.main.allJava,
-            shared.sourceSets.main.allJava,
             project(':forge').sourceSets.main.allJava)
 }
 
 compileTestJava {
     source(project(':api').sourceSets.test.allJava,
-            shared.sourceSets.test.allJava,
             project(':forge').sourceSets.test.allJava)
 }
 
 jar {
     from(project(':forge').jar.archiveFile.collect { zipTree(it) })
-    //from(project(':shared:shared.1_16').jar.archiveFile.collect { zipTree(it) })
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
@@ -187,5 +184,4 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
 tasks.jar.finalizedBy('reobfJar')
-tasks.jar.dependsOn(':shared:shared.1_16:build')
 tasks.jar.dependsOn(':forge:build')

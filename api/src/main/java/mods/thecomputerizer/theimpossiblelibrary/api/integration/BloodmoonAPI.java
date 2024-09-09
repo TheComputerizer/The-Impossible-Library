@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.integration;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
-@SuppressWarnings("unused")
 public abstract class BloodmoonAPI implements ModAPI {
 
     public static final String MODID = "bloodmoon";
@@ -12,20 +12,17 @@ public abstract class BloodmoonAPI implements ModAPI {
 
     protected BloodmoonAPI() {}
 
-    @Override
-    public String getID() {
+    @Override public String getID() {
         return MODID;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return NAME;
     }
+    
+    @IndirectCallers public abstract boolean isBloodMoon();
 
-    public abstract boolean isBloodMoon();
-
-    @Override
-    public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
+    @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         return version.isV12() && loader.isLegacyForge();
     }
 }

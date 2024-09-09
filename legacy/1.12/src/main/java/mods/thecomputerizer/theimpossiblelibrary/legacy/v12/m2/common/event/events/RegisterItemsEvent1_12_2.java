@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterItemsEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -22,8 +21,7 @@ public class RegisterItemsEvent1_12_2 extends RegisterItemsEventWrapper<Register
         REGISTER_ITEMS.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -33,7 +31,7 @@ public class RegisterItemsEvent1_12_2 extends RegisterItemsEventWrapper<Register
     }
     
     @Override public void register(ItemAPI<?> entry) {
-        Item item = ((Item1_12_2)entry).getValue();
+        Item item = entry.unwrap();
         this.event.getRegistry().register(item);
         if(CoreAPI.INSTANCE.getSide().isClient()) {
             ResourceLocation registryName = item.getRegistryName();
