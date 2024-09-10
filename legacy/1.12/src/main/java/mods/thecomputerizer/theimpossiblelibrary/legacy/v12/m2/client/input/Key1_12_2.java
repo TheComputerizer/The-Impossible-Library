@@ -9,8 +9,7 @@ public class Key1_12_2 extends KeyAPI<KeyBinding> {
         super(key);
     }
 
-    @Override
-    public boolean isDown() {
-        return this.keybind.isKeyDown();
+    @Override public boolean isDown() {
+        return getWrapped().isKeyDown();
     }
 }

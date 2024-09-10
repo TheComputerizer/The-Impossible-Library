@@ -7,12 +7,11 @@ import net.minecraft.client.KeyMapping;
 
 public class KeyHelperFabric1_16_5 extends KeyHelper1_16_5<KeyMapping> {
     
-    @Override
-    public KeyAPI<KeyMapping> create(String id, String category, int keyCode) {
+    @Override public KeyAPI<KeyMapping> create(String id, String category, int keyCode) {
         return new KeyFabric1_16_5(new KeyMapping(id,keyCode,category));
     }
     
     @Override public void register(KeyAPI<KeyMapping> key) {
-        KeyBindingHelper.registerKeyBinding(key.getKeybind());
+        KeyBindingHelper.registerKeyBinding(key.unwrap());
     }
 }

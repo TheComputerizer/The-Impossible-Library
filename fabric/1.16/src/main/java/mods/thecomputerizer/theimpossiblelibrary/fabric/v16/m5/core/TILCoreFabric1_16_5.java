@@ -16,9 +16,10 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.CommonFabr
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core.asm.ModWriterFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.core.TILCore1_16_5;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.impl.launch.FabricLauncherBase;
+import net.fabricmc.loader.impl.util.UrlUtil;
 
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
@@ -42,9 +43,8 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
     }
     
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
-        if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
-        TILRef.logError("Loader doesn't seem to be URLClassLoader {} (url = {})",loader,url);
-        return false;
+        FabricLauncherBase.getLauncher().addToClassPath(UrlUtil.asPath(url));
+        return true;
     }
     
     @Override public CommonEntryPoint getClientVersionHandler() {

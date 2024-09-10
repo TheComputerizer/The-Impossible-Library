@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.server;
+package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.server;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -11,16 +11,15 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI.ArgType;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.commands.CommandRuntimeException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -29,22 +28,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
-public class WrappedCommand1_16_5 {
+@ParametersAreNonnullByDefault
+public class WrappedCommandFabric1_16_5 {
     
     @SuppressWarnings("unchecked")
     public static void register(Object dispatcherObj, CommandAPI wrapped) {
-        CommandDispatcher<CommandSource> dispatcher = (CommandDispatcher<CommandSource>)dispatcherObj;
-        LiteralArgumentBuilder<CommandSource> root = Commands.literal(wrapped.getName());
+        CommandDispatcher<CommandSourceStack> dispatcher = (CommandDispatcher<CommandSourceStack>)dispatcherObj;
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(wrapped.getName());
         for(CommandAPI subcmd : wrapped.getSubCommands()) {
-            RequiredArgumentBuilder<CommandSource,?> arg = getArg(subcmd);
+            RequiredArgumentBuilder<CommandSourceStack,?> arg = getArg(subcmd);
             if(Objects.nonNull(arg)) root.then(arg);
         }
         if(wrapped.isExecutionNode()) root.executes(ctx -> execute(ctx,wrapped));
         dispatcher.register(root);
     }
 
-    public static int execute(CommandContext<CommandSource> ctx, CommandAPI wrapped) throws CommandException {
+    public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandRuntimeException {
         List<CommandAPI> cmdStack = new ArrayList<>();
         cmdStack.add(wrapped);
         wrapped = wrapped.getParent();
@@ -64,18 +63,18 @@ public class WrappedCommand1_16_5 {
         exKey = Objects.nonNull(exKey) ? exKey : "";
         Object[] exArgs = wrapped.getExceptionArgs();
         try {
-            wrapped.execute(ServerHelper.getAPI(),new CommandSender1_16_5(ctx),args);
+            wrapped.execute(ServerHelper.getAPI(), new CommandSenderFabric1_16_5(ctx),args);
             return 1;
         } catch(Exception ex) {
             TILRef.logError("Caught exception for command {}! Rethrowing as CommandException",baseName,ex);
-            throw new CommandException(TextHelper.getTranslated(exKey,exArgs).getAsComponent());
+            throw new CommandRuntimeException(TextHelper.getTranslated(exKey,exArgs).getAsComponent());
         }
     }
 
-    private static @Nullable RequiredArgumentBuilder<CommandSource,?> getArg(CommandAPI command) {
+    private static @Nullable RequiredArgumentBuilder<CommandSourceStack,?> getArg(CommandAPI command) {
         ArgumentType<?> type = getType(command.getType());
         if(Objects.isNull(type)) return null;
-        RequiredArgumentBuilder<CommandSource,?> arg = Commands.argument(command.getName(),type);
+        RequiredArgumentBuilder<CommandSourceStack,?> arg = Commands.argument(command.getName(),type);
         for(CommandAPI subcmd : command.getSubCommands()) arg.then(getArg(subcmd));
         if(command.isExecutionNode()) arg.executes(ctx -> execute(ctx,command));
         return arg;

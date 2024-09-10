@@ -62,7 +62,7 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
 
     @Override public void onClientSetup() {
         devTrace("onClientSetup");
-        KeyHelper.register(TEST_KEY);
+        if(DEV) KeyHelper.register(TEST_KEY);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }
 }

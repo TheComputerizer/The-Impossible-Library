@@ -12,73 +12,59 @@ public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
         super(tag);
     }
     
-    @Override
-    public CompoundTag1_16_5 asCompoundTag() {
+    @Override public CompoundTag1_16_5 asCompoundTag() {
         return this;
     }
     
-    @Override
-    public ListTag1_16_5 asListTag() {
+    @Override public ListTag1_16_5 asListTag() {
         return null;
     }
     
-    @Override
-    public PrimitiveTag1_16_5 asPrimitiveTag() {
+    @Override public PrimitiveTag1_16_5 asPrimitiveTag() {
         return null;
     }
     
-    @Override
-    public StringTag1_16_5 asStringTag() {
+    @Override public StringTag1_16_5 asStringTag() {
         return null;
     }
 
-    @Override
-    public boolean contains(String key) {
+    @Override public boolean contains(String key) {
         return this.wrapped.contains(key);
     }
 
-    @Override
-    public CompoundTag1_16_5 getCompoundTag(String key) {
+    @Override public CompoundTag1_16_5 getCompoundTag(String key) {
         return new CompoundTag1_16_5(this.wrapped.getCompound(key));
     }
 
-    @Override
-    public ListTag1_16_5 getListTag(String key) {
+    @Override public ListTag1_16_5 getListTag(String key) {
         return (ListTag1_16_5)getTag(key).asListTag();
     }
 
-    @Override
-    public PrimitiveTag1_16_5 getPrimitiveTag(String key) {
+    @Override public PrimitiveTag1_16_5 getPrimitiveTag(String key) {
         return (PrimitiveTag1_16_5)getTag(key).asPrimitiveTag();
     }
 
-    @Override
-    public String getString(String key) {
+    @Override public String getString(String key) {
         return this.wrapped.getString(key);
     }
 
-    @Override
-    public BaseTagAPI<?> getTag(String key) {
+    @Override public BaseTagAPI<?> getTag(String key) {
         return TagHelper.getWrapped(this.wrapped.get(key));
     }
     
-    @Override
-    public boolean isCompound() {
+    @Override public boolean isCompound() {
         return true;
     }
     
-    @Override
-    public boolean isList() {
+    @Override public boolean isList() {
         return false;
     }
     
-    @Override
-    public boolean isPrimitive() {
+    @Override public boolean isPrimitive() {
         return false;
     }
     
-    @Override
-    public boolean isString() {
+    @Override public boolean isString() {
         return false;
     }
     
@@ -98,8 +84,7 @@ public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
         this.wrapped.putFloat(key,f);
     }
     
-    @Override
-    public void putInt(String key, int value) {
+    @Override public void putInt(String key, int value) {
         this.wrapped.putInt(key,value);
     }
     
@@ -111,13 +96,11 @@ public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
         this.wrapped.putShort(key,s);
     }
     
-    @Override
-    public void putString(String key, String value) {
+    @Override public void putString(String key, String value) {
         this.wrapped.putString(key,value);
     }
 
-    @Override
-    public void putTag(String key, BaseTagAPI<?> tag) {
+    @Override public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.put(key,(INBT)tag.getWrapped());
     }
 }

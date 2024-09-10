@@ -10,6 +10,6 @@ public class KeyForge1_16_5 extends Key1_16_5<KeyBinding> {
     }
     
     @Override public boolean isDown() {
-        return this.keybind.isDown();
+        return this.getWrapped().isDown();
     }
 }

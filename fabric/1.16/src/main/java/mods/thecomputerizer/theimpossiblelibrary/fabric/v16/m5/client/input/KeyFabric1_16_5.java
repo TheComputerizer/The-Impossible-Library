@@ -10,6 +10,6 @@ public class KeyFabric1_16_5 extends Key1_16_5<KeyMapping> {
     }
     
     @Override public boolean isDown() {
-        return this.keybind.isDown();
+        return getWrapped().isDown();
     }
 }

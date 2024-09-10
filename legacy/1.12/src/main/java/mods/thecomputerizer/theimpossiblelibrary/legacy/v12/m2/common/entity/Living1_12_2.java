@@ -15,7 +15,6 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 
@@ -67,11 +66,6 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
 
     @Override public BlockPosAPI<?> getPos() {
         return PosHelper.getPos(this.entity.getPosition());
-    }
-
-    @Override public BlockPosAPI<?> getPosRounded() {
-        return PosHelper.getPos(new BlockPos((int)(Math.round(this.entity.posX*2d)/2d),
-                (int)(Math.round(this.entity.posY*2d)/2d),(int)(Math.round(this.entity.posZ*2d)/2d)));
     }
 
     @Override public EntityAPI<?,?> getRootVehicle() {

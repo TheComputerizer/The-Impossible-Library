@@ -15,8 +15,7 @@ public class InputKeyEventForge extends InputKeyEventWrapper<KeyInputEvent> {
         KEY_INPUT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,6 +25,6 @@ public class InputKeyEventForge extends InputKeyEventWrapper<KeyInputEvent> {
     }
     
     @Override public boolean isKey(KeyAPI<?> key) {
-        return ((KeyBinding)key.getKeybind()).matches(this.event.getKey(),this.event.getScanCode());
+        return ((KeyBinding)key.unwrap()).matches(this.event.getKey(),this.event.getScanCode());
     }
 }

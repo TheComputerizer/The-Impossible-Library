@@ -3,12 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.api.util;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 @SuppressWarnings("unused") @Getter
 public class CustomTick {
@@ -18,8 +20,13 @@ public class CustomTick {
     private static void addCustomTick(final CustomTick ticker) {
         CommonEventsAPI api = EventHelper.getEventsAPI(false);
         if(Objects.isNull(api) || isRegistered(ticker)) return;
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() ->
-                api.postCustomTick(ticker),0,ticker.millis,TimeUnit.MILLISECONDS);
+        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
+            try {
+                api.postCustomTick(ticker);
+            } catch(Throwable t) {
+                TILRef.logError("Failed to post custom tick",t);
+            }
+        },0,ticker.millis,MILLISECONDS);
         registeredTickEvents.add(ticker);
     }
 

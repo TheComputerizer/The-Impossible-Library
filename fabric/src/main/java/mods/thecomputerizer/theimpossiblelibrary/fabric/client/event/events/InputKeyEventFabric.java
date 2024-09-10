@@ -15,6 +15,6 @@ public class InputKeyEventFabric extends InputKeyEventWrapper<Object[]> implemen
     }
     
     @Override public boolean isKey(KeyAPI<?> key) {
-        return ((KeyMapping)key.getKeybind()).matches((Integer)this.event[0],(Integer)this.event[1]);
+        return ((KeyMapping)key.unwrap()).matches((Integer)this.event[0],(Integer)this.event[1]);
     }
 }

@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabri
 import net.fabricmc.fabric.api.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.BOSSHEALTH;
 
 public class RenderOverlayBossEventFabric extends RenderOverlayBossEventWrapper<Object[]> implements ClientFabricEvent {
     
@@ -23,7 +23,7 @@ public class RenderOverlayBossEventFabric extends RenderOverlayBossEventWrapper<
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(wrapArrayGetter(0),ALL);
+        return wrapGenericGetter(ev -> BOSSHEALTH,BOSSHEALTH);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapIncrementField() {

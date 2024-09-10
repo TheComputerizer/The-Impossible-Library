@@ -107,5 +107,5 @@ jar {
 artifacts {
     dev jar
 }
-
+tasks.jar.setFinalizedBy(new ArrayList<>())
 tasks.jar.dependsOn(':shared:build')

@@ -116,7 +116,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:${shared.minecraft_version}-${shared.forge_version}")
 
     implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
-    implementation(shared)
+    implementation(project(path: ':shared:shared.1_16', configuration: 'dev'))
     implementation(project(':forge'))
 
     //mod support dependencies
@@ -179,6 +179,10 @@ jar {
 
 shadowJar {
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
+    shared.afterEvaluate {
+        from(shared.jar.archiveFile.collect { zipTree(it) })
+        relocate "${shared.shared_base_package}", "${forge_base_package}"
+    }
 }
 
 tasks.assemble.dependsOn(shadowJar)

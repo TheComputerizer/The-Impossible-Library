@@ -1,5 +1,6 @@
 {
   "client": [
+    "MixinDebugScreenOverlay",
     "MixinKeyboardHandler"
   ],
   "compatibilityLevel": "JAVA_8",

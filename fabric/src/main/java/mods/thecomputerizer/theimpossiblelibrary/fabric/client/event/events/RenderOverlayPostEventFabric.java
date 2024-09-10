@@ -10,11 +10,12 @@ import net.fabricmc.fabric.api.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
+import static net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback.EVENT;
 
 public class RenderOverlayPostEventFabric extends RenderOverlayPostEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return EVENT;
     }
     
     @SuppressWarnings("NullableProblems") 
@@ -23,6 +24,6 @@ public class RenderOverlayPostEventFabric extends RenderOverlayPostEventWrapper<
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(wrapArrayGetter(0),ALL);
+        return wrapGenericGetter(ev -> ALL,ALL);
     }
 }

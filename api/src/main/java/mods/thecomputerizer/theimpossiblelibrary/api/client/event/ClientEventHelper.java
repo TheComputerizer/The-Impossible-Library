@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -26,7 +27,7 @@ public class ClientEventHelper {
         EventHelper.addListener(RENDER_OVERLAY_POST,wrapper -> {
             if(wrapper.isType(ALL)) RenderHelper.renderAllBackgroundStuff(wrapper.getRenderer());
         });
-        if(test) {
+        if(test && Objects.nonNull(TEST_KEY)) {
             TILDev.logInfo("Registering keybind test");
             EventHelper.addListener(KEY_INPUT,wrapper -> {
                 if(TEST_KEY.isDown()) ClientTests.runTests();

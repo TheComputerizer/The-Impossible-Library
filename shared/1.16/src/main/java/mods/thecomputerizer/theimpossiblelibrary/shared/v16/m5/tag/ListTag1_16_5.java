@@ -15,53 +15,43 @@ public class ListTag1_16_5 extends ListTagAPI<ListNBT> {
         super(tag);
     }
 
-    @Override
-    public void addTag(BaseTagAPI<?> tag) {
+    @Override public void addTag(BaseTagAPI<?> tag) {
         this.wrapped.add((INBT)tag.getWrapped());
     }
     
-    @Override
-    public CompoundTag1_16_5 asCompoundTag() {
+    @Override public CompoundTag1_16_5 asCompoundTag() {
         return null;
     }
     
-    @Override
-    public ListTag1_16_5 asListTag() {
+    @Override public ListTag1_16_5 asListTag() {
         return this;
     }
     
-    @Override
-    public PrimitiveTag1_16_5 asPrimitiveTag() {
+    @Override public PrimitiveTag1_16_5 asPrimitiveTag() {
         return null;
     }
     
-    @Override
-    public StringTag1_16_5 asStringTag() {
+    @Override public StringTag1_16_5 asStringTag() {
         return null;
     }
     
-    @Override
-    public boolean isCompound() {
+    @Override public boolean isCompound() {
         return false;
     }
     
-    @Override
-    public boolean isList() {
+    @Override public boolean isList() {
         return true;
     }
     
-    @Override
-    public boolean isPrimitive() {
+    @Override public boolean isPrimitive() {
         return false;
     }
     
-    @Override
-    public boolean isString() {
+    @Override public boolean isString() {
         return false;
     }
     
-    @Override
-    public Iterable<BaseTagAPI<?>> iterable() {
+    @Override public Iterable<BaseTagAPI<?>> iterable() {
         List<BaseTagAPI<?>> tags = new ArrayList<>();
         this.wrapped.forEach(based -> tags.add(TagHelper.getWrapped(based)));
         return tags;

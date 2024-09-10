@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;

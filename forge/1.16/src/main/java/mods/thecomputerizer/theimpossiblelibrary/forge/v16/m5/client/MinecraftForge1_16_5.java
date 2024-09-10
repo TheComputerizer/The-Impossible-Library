@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.entity.ClientPlayerForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.font.FontForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.render.RenderForge1_16_5;
@@ -49,6 +51,10 @@ public class MinecraftForge1_16_5 extends Minecraft1_16_5 {
             return new MinecraftWindow(1d,1d,0);
         }
         return new MinecraftWindow(window.getGuiScaledWidth(),window.getGuiScaledHeight(),(int)window.getGuiScale());
+    }
+    
+    @Override public @Nullable WorldAPI<?> getWorld() {
+        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.level) ? WrapperHelper.wrapWorld(this.mc.level) : null;
     }
     
     @Override public boolean isFullScreen() {

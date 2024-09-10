@@ -2,11 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block.BlockState1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.BlockPos1_16_5;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;

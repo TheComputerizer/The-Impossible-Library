@@ -68,34 +68,48 @@ public class FabricHelper {
         return CURRENT_SERVER;
     }
     
-    public static String getMappingNamespace() {
-        return FabricLauncherBase.getLauncher().getTargetNamespace();
+    @IndirectCallers
+    public static String getCurrentNamespace() {
+        return getResolver().getCurrentRuntimeNamespace();
     }
     
     @IndirectCallers
-    public static Field getObfField(String srgName, Class<?> owner, Object instance) {
-        return getObfField(srgName,owner,instance.getClass());
+    public static Field getObfField(String name, Class<?> owner, Object instance) {
+        return getObfField("named",name,owner,instance);
     }
     
-    public static Field getObfField(String srgName, Class<?> owner, Class<?> instanceClass) {
-        return ReflectionHelper.getField(owner,getObfFieldName(srgName,owner,instanceClass));
+    public static Field getObfField(String namespace, String name, Class<?> owner, Object instance) {
+        return getObfField(namespace,name,owner,instance.getClass());
+    }
+    
+    public static Field getObfField(String name, Class<?> owner, Class<?> instanceClass) {
+        return ReflectionHelper.getField(owner,getObfFieldName("named",name,owner,instanceClass));
+    }
+    
+    public static Field getObfField(String namespace, String srgName, Class<?> owner, Class<?> instanceClass) {
+        return ReflectionHelper.getField(owner,getObfFieldName(namespace,srgName,owner,instanceClass));
     }
     
     @IndirectCallers
-    public static String getObfFieldName(String srgName, Class<?> owner, Object instance) {
-        return getObfFieldName(srgName,owner,instance.getClass());
+    public static String getObfFieldName(String namespace, String srgName, Class<?> owner, Object instance) {
+        return getObfFieldName(namespace,srgName,owner,instance.getClass());
     }
     
-    public static String getObfFieldName(String srgName, Class<?> owner, Class<?> instanceClass) {
-        return getObfFieldName(srgName,owner.getName(),Type.getDescriptor(instanceClass));
+    public static String getObfFieldName(String namespace, String name, Class<?> owner, Class<?> instanceClass) {
+        return getObfFieldName(namespace,name,owner.getName(),Type.getDescriptor(instanceClass));
     }
     
-    public static String getObfFieldName(String srgName, String owner, String desc) {
-        return getResolver().mapFieldName(getMappingNamespace(),owner,srgName,desc);
+    public static String getObfFieldName(String namespace, String name, String owner, String desc) {
+        return getResolver().mapFieldName(namespace,owner,name,desc);
     }
     
     public static MappingResolver getResolver() {
         return FabricLoader.getInstance().getMappingResolver();
+    }
+    
+    @IndirectCallers
+    public static String getTargetNamespace() {
+        return FabricLauncherBase.getLauncher().getTargetNamespace();
     }
     
     public static void registerServerHooks() {

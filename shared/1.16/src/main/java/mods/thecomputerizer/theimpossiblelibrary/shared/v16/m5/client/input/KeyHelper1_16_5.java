@@ -12,8 +12,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
 
-    @Override
-    public int getKeyCode(Action actionKey) {
+    @Override public int getKeyCode(Action actionKey) {
         switch(actionKey) {
             case BACKSPACE: return GLFW_KEY_BACKSLASH;
             case CAPS_LOCK: return GLFW_KEY_CAPS_LOCK;
@@ -47,8 +46,7 @@ public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
         }
     }
 
-    @Override
-    public int getKeyCode(AlphaNum alphaNumKey) {
+    @Override public int getKeyCode(AlphaNum alphaNumKey) {
         switch(alphaNumKey) {
             case N0: return GLFW_KEY_0;
             case N1: return GLFW_KEY_1;
@@ -90,8 +88,7 @@ public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
         }
     }
 
-    @Override
-    public int getKeyCode(FNKeys fnKey) {
+    @Override public int getKeyCode(FNKeys fnKey) {
         switch(fnKey) {
             case F1: return GLFW_KEY_F1;
             case F2: return GLFW_KEY_F2;
@@ -122,8 +119,7 @@ public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
         }
     }
 
-    @Override
-    public int getKeyCode(Modifier modKey) {
+    @Override public int getKeyCode(Modifier modKey) {
         switch(modKey) {
             case ALT: return GLFW_MOD_ALT;
             case CTRL: return GLFW_MOD_CONTROL;
@@ -132,8 +128,7 @@ public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
         }
     }
 
-    @Override
-    public int getKeyCode(NumberPad numPadKey) {
+    @Override public int getKeyCode(NumberPad numPadKey) {
         switch(numPadKey) {
             case N0: return GLFW_KEY_KP_0;
             case N1: return GLFW_KEY_KP_1;
@@ -156,8 +151,7 @@ public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
         }
     }
 
-    @Override
-    public int getKeyCode(Symbol symbolKey) {
+    @Override public int getKeyCode(Symbol symbolKey) {
         switch(symbolKey) {
             case APOSTROPHE: return GLFW_KEY_APOSTROPHE;
             case BACKSLASH: return GLFW_KEY_BACKSLASH;
@@ -177,8 +171,7 @@ public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
         }
     }
 
-    @Override
-    public int applyModifier(int keyCode, Modifier modifier) { //TODO
+    @Override public int applyModifier(int keyCode, Modifier modifier) { //TODO
         return keyCode;
     }
 }

@@ -24,8 +24,7 @@ public abstract class RenderOverlayTextEventWrapper<E> extends ClientOverlayEven
         return this.right.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.left = wrapLeftField();
         this.right = wrapRightField();

@@ -11,28 +11,29 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.TEXT;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.RENDER_DEBUG_INFO;
 
 public class RenderOverlayTextEventFabric extends RenderOverlayTextEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return RENDER_DEBUG_INFO;
     }
     
     @SuppressWarnings("NullableProblems") 
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
-        return EventHelper.initRenderer(ctx -> {});
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event[0]));
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(wrapArrayGetter(0),ALL);
+        return wrapGenericGetter(e -> TEXT,TEXT);
     }
 
     @Override protected EventFieldWrapper<Object[],List<String>> wrapLeftField() {
-        return wrapGenericGetter(wrapArrayGetter(0),new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(1),new ArrayList<>());
     }
 
     @Override protected EventFieldWrapper<Object[],List<String>> wrapRightField() {
-        return wrapGenericGetter(wrapArrayGetter(0),new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(2),new ArrayList<>());
     }
 }

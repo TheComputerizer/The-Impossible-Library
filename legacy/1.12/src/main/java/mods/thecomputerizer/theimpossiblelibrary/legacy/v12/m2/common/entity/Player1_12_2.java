@@ -89,11 +89,6 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
         return PosHelper.getPos(this.entity.getPosition());
     }
 
-    @Override public BlockPosAPI<?> getPosRounded() {
-        return PosHelper.getPos(new BlockPos((int)(Math.round(this.entity.posX*2d)/2d),
-                (int)(Math.round(this.entity.posY*2d)/2d),(int)(Math.round(this.entity.posZ*2d)/2d)));
-    }
-
     @Override public EntityAPI<?,?> getRootVehicle() {
         return WrapperHelper.wrapEntity(this.entity.getLowestRidingEntity());
     }

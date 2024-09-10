@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -329,7 +330,10 @@ public class ClassHelper {
                     for(String classToLoad : classesToLoad) findClass(classToLoad,syncTo);
             } else TILRef.logDebug("Not syncing null URL");
         } catch(ClassNotFoundException ex) {
-            TILRef.logError("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo,ex);
+            ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
+            if(Misc.equalsAny(systemLoader,syncFrom,syncTo))
+                TILRef.logError("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo,ex);
+            else syncSourcesForClass(systemLoader,syncTo,className,urlLoader,classesToLoad);
         }
     }
 

@@ -62,7 +62,7 @@ dependencies {
 loom.mixin.add(sourceSets.main,'theimpossiblelibrary.refmap.json')
 
 processResources {
-    def core = "${fabric_package}.core."
+    def core = "${fabric_base_package}.core."
     def replacements = [ 'adaptor': "${core}TILLanguageAdaptorFabric", 'injector': "${core}loader.TILModInjectorFabric",
                          'version': version ]
     inputs.properties replacements

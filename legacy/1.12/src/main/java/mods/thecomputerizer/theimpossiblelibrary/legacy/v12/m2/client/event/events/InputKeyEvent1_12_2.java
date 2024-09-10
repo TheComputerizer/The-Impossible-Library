@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.InputKeyEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.input.Key1_12_2;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 
@@ -25,6 +25,6 @@ public class InputKeyEvent1_12_2 extends InputKeyEventWrapper<KeyInputEvent> {
     }
     
     @Override public boolean isKey(KeyAPI<?> key) {
-        return ((Key1_12_2)key).getKeybind().isKeyDown();
+        return ((KeyBinding)key.unwrap()).isKeyDown();
     }
 }

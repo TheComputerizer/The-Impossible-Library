@@ -1,14 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.input;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 
 @Getter
-public abstract class KeyAPI<K> {
+public abstract class KeyAPI<K> extends AbstractWrapped<K> {
 
-    protected final K keybind;
 
     protected KeyAPI(K keybind) {
-        this.keybind = keybind;
+        super(keybind);
     }
 
     public abstract boolean isDown();

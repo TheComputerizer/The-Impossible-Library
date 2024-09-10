@@ -107,6 +107,71 @@ jar {
     }
 }
 
+//Due to the shared forge base we need to remap some stuff so the version specific code can stay centralized
+def remapThese = [ "block.AbstractBlock": "world.level.block.state.BlockBehaviour",
+                   "block.BlockState": "world.level.block.state.BlockState",
+                   "block.Block": "world.level.block.Block",
+                   "block.material.MaterialColor": "world.level.material.MaterialColor",
+                   "block.material.Material": "world.level.material.Material",
+                   "client.util.ITooltipFlag": "world.item.TooltipFlag",
+                   "command.CommandSource": "commands.CommandSourceStack",
+                   "command.": "commands.",
+                   "entity.player.PlayerEntity": "world.entity.player.Player",
+                   "entity.player.ServerPlayerEntity": "server.level.ServerPlayer",
+                   "entity": "world.entity",
+                   "item.AxeItem": "world.item.AxeItem",
+                   "item.BlockItem": "world.item.BlockItem",
+                   "item.HoeItem": "world.item.HoeItem",
+                   "item.IItemPropertyGetter": "client.renderer.item.ItemPropertyFunction",
+                   "item.IItemTier": "world.item.Tier",
+                   "item.ItemStack": "world.item.ItemStack",
+                   "item.ItemTier": "world.item.Tiers",
+                   "item.ItemUseContext": "world.item.context.UseOnContext",
+                   "item.ItemModelsProperties": "client.renderer.item.ItemProperties",
+                   "item.Item": "world.item.Item",
+                   "item.MusicDiscItem": "world.item.RecordItem",
+                   "item.PickaxeItem": "world.item.PickaxeItem",
+                   "item.ShovelItem": "world.item.ShovelItem",
+                   "item.SwordItem": "world.item.SwordItem",
+                   "item.ToolItem": "world.item.TieredItem",
+                   "nbt.CompoundNBT": "nbt.CompoundTag",
+                   "nbt.CompressedStreamTools": "nbt.NbtIo",
+                   "nbt.INBT": "nbt.Tag",
+                   "nbt.ListNBT": "nbt.ListTag",
+                   "nbt.NBTSizeTracker": "nbt.NbtAccounter",
+                   "nbt.NumberNBT": "nbt.NumericTag",
+                   "nbt.StringNBT": "nbt.StringTag",
+                   "server.management.PlayerList": "server.players.PlayerList",
+                   "state.Property": "world.level.block.state.properties.Property",
+                   "state.StateContainer": "world.level.block.state.StateDefinition",
+                   "tileentity.TileEntity": "world.level.block.entity.BlockEntity",
+                   "util.ActionResultType": "world.InteractionResult",
+                   "util.Direction": "core.Direction",
+                   "util.Hand": "world.InteractionHand",
+                   "util.RegistryKey": "resources.ResourceKey",
+                   "util.ResourceLocation": "resources.ResourceLocation",
+                   "util.SoundEvent": "sounds.SoundEvent",
+                   "util.math.AxisAlignedBB": "world.phys.AABB",
+                   "util.math.BlockPos": "core.BlockPos",
+                   "util.math.BlockRayTraceResult": "world.phys.BlockHitResult",
+                   "util.registry.DynamicRegistries": "core.RegistryAccess",
+                   "util.registry.MutableRegistry": "core.WritableRegistry",
+                   "util.registry.Registry": "core.Registry",
+                   "util.text.ITextComponent": "network.chat.Component",
+                   "world.Explosion": "world.level.Explosion",
+                   "world.IBlockReader": "world.level.BlockGetter",
+                   "world.IWorld": "world.level.LevelAccessor",
+                   "world.World": "world.level.Level" ]
+
+shadowJar {
+    shared.afterEvaluate {
+        from(shared.jar.archiveFile.collect { zipTree(it) })
+        //noinspection GroovyAssignabilityCheck
+        relocate shared.shared_base_package, fabric_base_package
+        remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
+    }
+}
+
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.finalizedBy('remapJar')
 tasks.jar.finalizedBy('shadowJar')

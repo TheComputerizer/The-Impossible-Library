@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import org.joml.Vector3d;
 import org.joml.Vector3i;
@@ -54,7 +55,9 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         return new Vector3d(x(),y(),z());
     }
     
-    @IndirectCallers public abstract BlockPosAPI<?> getPosRounded();
+    @IndirectCallers public BlockPosAPI<?> getPosRounded() {
+        return PosHelper.getPos(Math.round(x()*2d)/2d,Math.round(y()*2d)/2d,Math.round(z()*2d)/2d);
+    }
     public abstract EntityAPI<?,?> getRootVehicle();
     public abstract @Nullable EntityAPI<?,?> getVehicle();
     public abstract WorldAPI<?> getWorld();

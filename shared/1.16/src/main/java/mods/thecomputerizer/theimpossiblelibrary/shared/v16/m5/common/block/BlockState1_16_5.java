@@ -15,6 +15,7 @@ public class BlockState1_16_5 extends BlockStateAPI<BlockState> {
 
     public BlockState1_16_5(Object state) {
         super((BlockState)state);
+        
     }
 
     @Override public BlockAPI<Block> getBlock() {

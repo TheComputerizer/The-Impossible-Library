@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabri
 import net.fabricmc.fabric.api.event.Event;
 import org.jetbrains.annotations.NotNull;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.CHAT;
 
 public class RenderOverlayChatEventFabric extends RenderOverlayChatEventWrapper<Object[]> implements ClientFabricEvent {
     
@@ -23,7 +23,7 @@ public class RenderOverlayChatEventFabric extends RenderOverlayChatEventWrapper<
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(wrapArrayGetter(0),ALL);
+        return wrapGenericGetter(ev -> CHAT,CHAT);
     }
 
     @Override protected EventFieldWrapper<Object[],Integer> wrapPosXField() {

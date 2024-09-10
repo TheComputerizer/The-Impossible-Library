@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -12,7 +13,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
 import java.util.*;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
@@ -70,14 +70,15 @@ public class MultiVersionModCandidate {
 
     private @Nullable Class<?> findClass(ClassLoader classLoader, String name, boolean loadSources) {
         TILRef.logInfo("Locating loader class {}",name);
-        if(!loadSources) this.loaded = true;
+        //if(!loadSources) this.loaded = true;
         if(!this.loaded) {
             TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
             try {
-                if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, this.file.toURI().toURL()))
+                Class<?> systemClass = ClassHelper.findClass(name,ClassLoader.getSystemClassLoader());
+                if(!CoreAPI.getInstance().addURLToClassLoader(classLoader,ClassHelper.getSourceURL(systemClass)))
                     TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name, classLoader);
-            } catch(MalformedURLException|ClassCastException ex) {
-                TILRef.logError("Error getting URL for source file `{}`!", this.file.getPath(), ex);
+            } catch(ClassCastException ex) {
+                TILRef.logError("Error getting URL for {}!",name,ex);
                 return null;
             }
             this.loaded = true;

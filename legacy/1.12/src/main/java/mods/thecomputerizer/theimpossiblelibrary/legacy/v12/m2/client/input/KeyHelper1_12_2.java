@@ -1,8 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.input;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifier;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -11,13 +15,11 @@ import static org.lwjgl.input.Keyboard.*;
 
 public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
 
-    @Override
-    public KeyAPI<KeyBinding> create(String id, String category, int keyCode) {
+    @Override public KeyAPI<KeyBinding> create(String id, String category, int keyCode) {
         return new Key1_12_2(new KeyBinding(id,keyCode,category));
     }
 
-    @Override
-    public int getKeyCode(KeyAPI.Action actionKey) {
+    @Override public int getKeyCode(Action actionKey) {
         switch(actionKey) {
             case BACKSPACE: return KEY_BACKSLASH;
             case CAPS_LOCK: return KEY_CAPITAL;
@@ -51,8 +53,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
         }
     }
 
-    @Override
-    public int getKeyCode(KeyAPI.AlphaNum alphaNumKey) {
+    @Override public int getKeyCode(AlphaNum alphaNumKey) {
         switch(alphaNumKey) {
             case N0: return KEY_0;
             case N1: return KEY_1;
@@ -94,8 +95,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
         }
     }
 
-    @Override
-    public int getKeyCode(FNKeys fnKey) {
+    @Override public int getKeyCode(FNKeys fnKey) {
         switch(fnKey) {
             case F1: return KEY_F1;
             case F2: return KEY_F2;
@@ -120,8 +120,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
         }
     }
 
-    @Override
-    public int getKeyCode(Modifier modKey) {// TODO
+    @Override public int getKeyCode(Modifier modKey) {// TODO
         return KEY_NONE;
         /*
         switch(modKey) {
@@ -133,8 +132,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
          */
     }
 
-    @Override
-    public int getKeyCode(KeyAPI.NumberPad numPadKey) {
+    @Override public int getKeyCode(NumberPad numPadKey) {
         switch(numPadKey) {
             case N0: return KEY_NUMPAD0;
             case N1: return KEY_NUMPAD1;
@@ -157,8 +155,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
         }
     }
 
-    @Override
-    public int getKeyCode(KeyAPI.Symbol symbolKey) {
+    @Override public int getKeyCode(Symbol symbolKey) {
         switch(symbolKey) {
             case APOSTROPHE: return KEY_APOSTROPHE;
             case BACKSLASH: return KEY_BACKSLASH;
@@ -178,13 +175,11 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
         }
     }
 
-    @Override
-    public int applyModifier(int keyCode, Modifier modifier) { //TODO
+    @Override public int applyModifier(int keyCode, Modifier modifier) { //TODO
         return keyCode;
     }
 
-    @Override
-    public void register(KeyAPI<KeyBinding> key) {
-        ClientRegistry.registerKeyBinding(key.getKeybind());
+    @Override public void register(KeyAPI<KeyBinding> key) {
+        ClientRegistry.registerKeyBinding(key.unwrap());
     }
 }

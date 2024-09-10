@@ -1,13 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.font.Font1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.render.Render1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Player1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5;
 import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
@@ -36,10 +32,6 @@ public abstract class Minecraft1_16_5 implements MinecraftAPI {
 
     @Override public Render1_16_5 getRenderer() {
         return this.render;
-    }
-
-    @Override public @Nullable World1_16_5<?> getWorld() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.level) ? (World1_16_5<?>)WrapperHelper.wrapWorld(this.mc.level) : null;
     }
 
     @Override public <S> boolean isCurrentScreen(S screen) {

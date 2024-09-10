@@ -16,7 +16,6 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -69,11 +68,6 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
 
     @Override public BlockPosAPI<?> getPos() {
         return PosHelper.getPos(this.entity.getPosition());
-    }
-
-    @Override public BlockPosAPI<?> getPosRounded() {
-        return PosHelper.getPos(new BlockPos((int)(Math.round(x()*2d)/2d),(int)(Math.round(y()*2d)/2d),
-                (int)(Math.round(z()*2d)/2d)));
     }
 
     @Override public EntityAPI<?,?> getRootVehicle() {

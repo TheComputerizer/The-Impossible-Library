@@ -185,7 +185,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
     @SneakyThrows
     void buildModClasses(CoreAPI core, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
-        ByteClassLoader loader = new ByteClassLoader(FabricLauncherBase.getLauncher().getTargetClassLoader());
+        ByteClassLoader loader = ByteClassLoader.getOrInit(FabricLauncherBase.getLauncher().getTargetClassLoader());
         for(Pair<String,byte[]> classBytes : core.getModData(new File("."),candidate,info).writeModClass()) {
             Class<?> clazz = loader.defineClass(classBytes.getLeft(),classBytes.getRight());
             loader.resolvePublicly(clazz);
@@ -293,12 +293,18 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         
         static ByteClassLoader INSTANCE;
         
+        static ByteClassLoader getOrInit(ClassLoader parent) {
+            if(Objects.isNull(INSTANCE)) INSTANCE = new ByteClassLoader(parent);
+            return INSTANCE;
+        }
+        
         final Map<String,Class<?>> asmDefinedClasses;
         
         ByteClassLoader(ClassLoader parent) {
             super(parent);
             this.asmDefinedClasses = new HashMap<>();
             INSTANCE = this;
+            TILDev.logDebug("Instantiated {}",getClass());
         }
         
         public Class<?> defineClass(String name, byte[] b) {
