@@ -26,8 +26,8 @@ public class TILBlockEntityProvider1_16_5 extends TILBasicBlock1_16_5 {
     }
     
     @Override public @Nullable TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return this.properties.createBlockEntity(world instanceof IWorld ? WrapperHelper.wrapWorld((IWorld)world) : null,
-                WrapperHelper.wrapState(state)).unwrap();
+        return (TileEntity)this.properties.createBlockEntity(world instanceof IWorld ? WrapperHelper.wrapWorld((IWorld)world) : null,
+                WrapperHelper.wrapState(state)).getEntity();
     }
     
     @Override public boolean hasTileEntity(BlockState state) {

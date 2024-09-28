@@ -90,7 +90,12 @@ public class Wrapper1_12_2 implements WrapperAPI {
     }
 
     @Override public @Nullable <BE> BlockEntityAPI<BE,?> wrapBlockEntity(@Nullable BE blockentity) {
-        return Objects.nonNull(blockentity) ? (BlockEntityAPI<BE,?>)new BlockEntity1_12_2((TileEntity)blockentity) : null;
+        BlockEntity1_12_2 wrapped = null;
+        if(blockentity instanceof TileEntity)
+            wrapped = new BlockEntity1_12_2((TileEntity)blockentity);
+        else if(blockentity instanceof Class<?>)
+            wrapped = new BlockEntity1_12_2((Class<? extends TileEntity>)blockentity);
+        return Objects.nonNull(wrapped) ? (BlockEntityAPI<BE,?>)wrapped : null;
     }
 
     @Override public @Nullable <D> DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable D dimension) {

@@ -17,7 +17,7 @@ public class TILBlockEntityProvider1_12_2 extends TILBasicBlock1_12_2 implements
     }
     
     @Override public @Nullable TileEntity createNewTileEntity(World world, int meta) {
-        return this.properties.createBlockEntity(WrapperHelper.wrapWorld(world),
-                WrapperHelper.wrapState(getStateFromMeta(meta))).unwrap();
+        return (TileEntity)this.properties.createBlockEntity(WrapperHelper.wrapWorld(world),
+                WrapperHelper.wrapState(getStateFromMeta(meta))).getEntity();
     }
 }

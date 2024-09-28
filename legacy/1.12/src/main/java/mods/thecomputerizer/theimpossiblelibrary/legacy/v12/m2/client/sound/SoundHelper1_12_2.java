@@ -22,7 +22,6 @@ public class SoundHelper1_12_2 implements SoundHelperAPI<ISound> {
         return new Sound1_12_2(sound);
     }
     
-    
     @Override public float getCategoryVolume(String name) {
         SoundCategory category = SoundCategory.getByName(name);
         return Objects.nonNull(category) ? Minecraft.getMinecraft().gameSettings.getSoundLevel(category) : 0f;
