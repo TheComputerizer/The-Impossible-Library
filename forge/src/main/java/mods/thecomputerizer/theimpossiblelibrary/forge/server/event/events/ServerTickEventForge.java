@@ -20,8 +20,7 @@ public class ServerTickEventForge extends ServerTickEventWrapper<ServerTickEvent
         TICK_SERVER.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -30,8 +29,7 @@ public class ServerTickEventForge extends ServerTickEventWrapper<ServerTickEvent
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
     }
 }

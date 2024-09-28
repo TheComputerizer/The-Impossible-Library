@@ -15,8 +15,7 @@ public class WorldSaveEvent1_12_2 extends WorldSaveEventWrapper<Save> {
         WORLD_SAVE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class WorldSaveEvent1_12_2 extends WorldSaveEventWrapper<Save> {
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Save,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Save,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Save::getWorld);
     }
 }

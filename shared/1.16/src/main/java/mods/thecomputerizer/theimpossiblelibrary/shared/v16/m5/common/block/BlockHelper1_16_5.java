@@ -23,8 +23,7 @@ import static net.minecraft.block.material.MaterialColor.GRASS;
 @SuppressWarnings("unused")
 public class BlockHelper1_16_5 implements BlockHelperAPI {
     
-    @SuppressWarnings("unchecked") @Override
-    public <V extends Comparable<V>> BlockPropertyAPI<?,V> createProperty(String name, V defVal) {
+    @SuppressWarnings("unchecked") @Override public <V extends Comparable<V>> BlockPropertyAPI<?,V> createProperty(String name, V defVal) {
         if(defVal instanceof Boolean) return new BlockProperty1_16_5<>((Property<V>)BooleanProperty.create(name));
         if(defVal instanceof Enum<?>) return new BlockProperty1_16_5<>((Property<V>)createPropertyEnum(name, defVal.getClass()));
         if(defVal instanceof Number) return new BlockProperty1_16_5<>((Property<V>)IntegerProperty.create(name, 0, ((Number)defVal).intValue()));

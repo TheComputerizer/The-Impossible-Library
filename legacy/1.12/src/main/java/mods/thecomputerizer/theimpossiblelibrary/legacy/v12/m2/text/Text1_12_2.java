@@ -14,8 +14,7 @@ public abstract class Text1_12_2 implements TextAPI<Style> {
         return applied.endsWith(resetStr) ? applied.substring(0,applied.length()-resetStr.length()) : applied;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public ITextComponent getAsComponent() {
+    @SuppressWarnings("unchecked") @Override public ITextComponent getAsComponent() {
         return getComponent();
     }
     

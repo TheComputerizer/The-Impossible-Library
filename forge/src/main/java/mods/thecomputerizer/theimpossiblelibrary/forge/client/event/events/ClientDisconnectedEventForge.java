@@ -13,8 +13,7 @@ public class ClientDisconnectedEventForge extends ClientDisconnectedEventWrapper
         CLIENT_DISCONNECTED.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

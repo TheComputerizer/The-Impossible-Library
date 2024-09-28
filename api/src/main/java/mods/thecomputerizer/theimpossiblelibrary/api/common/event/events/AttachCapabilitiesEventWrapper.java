@@ -10,6 +10,5 @@ public abstract class AttachCapabilitiesEventWrapper<E> extends CommonEventWrapp
         super(ATTACH_CAPABILITIES);
     }
 
-    @Override
-    public void populate() {}
+    @Override public void populate() {}
 }

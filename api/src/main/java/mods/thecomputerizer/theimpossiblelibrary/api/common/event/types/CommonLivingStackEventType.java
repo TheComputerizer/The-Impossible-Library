@@ -15,8 +15,7 @@ public abstract class CommonLivingStackEventType<E> extends CommonLivingEventTyp
         return this.stack.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.stack = wrapStackField();
     }

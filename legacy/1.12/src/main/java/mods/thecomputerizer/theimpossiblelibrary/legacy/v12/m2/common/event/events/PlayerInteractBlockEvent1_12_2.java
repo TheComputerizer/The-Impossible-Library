@@ -28,8 +28,7 @@ public class PlayerInteractBlockEvent1_12_2 extends PlayerInteractBlockEventWrap
         PLAYER_INTERACT_BLOCK.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -38,56 +37,46 @@ public class PlayerInteractBlockEvent1_12_2 extends PlayerInteractBlockEventWrap
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected ItemStackAPI<?> getStackInHand() {
+    @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(RightClickBlock::getItemStack);
     }
 
-    @Override
-    protected WorldAPI<?> getWorld() {
+    @Override protected WorldAPI<?> getWorld() {
         return wrapWorld(RightClickBlock::getWorld);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,Result> wrapBlockResultField() {
+    @Override protected EventFieldWrapper<RightClickBlock,Result> wrapBlockResultField() {
         return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseBlock()),
                                (event,result) -> event.setUseBlock(EventHelper.setEventResult(result)),DEFAULT);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,ActionResult> wrapCancelResultField() {
+    @Override protected EventFieldWrapper<RightClickBlock,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
                                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,Facing> wrapFacingField() {
+    @Override protected EventFieldWrapper<RightClickBlock,Facing> wrapFacingField() {
         return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),UP);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,Hand> wrapHandField() {
+    @Override protected EventFieldWrapper<RightClickBlock,Hand> wrapHandField() {
         return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,Vector3d> wrapHitVecField() {
+    @Override protected EventFieldWrapper<RightClickBlock,Vector3d> wrapHitVecField() {
         return wrapGenericGetter(event -> EventHelper.getVec3d(event.getHitVec()),VectorHelper.zero3D());
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,Result> wrapItemResultField() {
+    @Override protected EventFieldWrapper<RightClickBlock,Result> wrapItemResultField() {
         return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseItem()),
                                (event,result) -> event.setUseItem(EventHelper.setEventResult(result)),DEFAULT);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<RightClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(RightClickBlock::getEntityPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<RightClickBlock,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<RightClickBlock,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(RightClickBlock::getPos);
     }
 }

@@ -16,8 +16,7 @@ public class PlayerCraftedItemEvent1_12_2 extends PlayerCraftedItemEventWrapper<
         PLAYER_ITEM_CRAFTED.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class PlayerCraftedItemEvent1_12_2 extends PlayerCraftedItemEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<ItemCraftedEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<ItemCraftedEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> event.player);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemCraftedEvent,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<ItemCraftedEvent,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(event -> event.crafting);
     }
 }

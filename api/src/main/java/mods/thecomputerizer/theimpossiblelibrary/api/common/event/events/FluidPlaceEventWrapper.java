@@ -29,8 +29,7 @@ public abstract class FluidPlaceEventWrapper<E> extends CommonBlockStateEventTyp
         return this.originalState.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.fluidPos = wrapFluidPosField();
         this.newState = wrapNewStateField();

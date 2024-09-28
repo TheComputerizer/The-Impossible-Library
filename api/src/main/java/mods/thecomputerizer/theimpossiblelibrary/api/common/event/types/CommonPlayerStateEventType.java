@@ -15,8 +15,7 @@ public abstract class CommonPlayerStateEventType<E> extends CommonPlayerEventTyp
         return this.state.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.state = wrapStateField();
     }

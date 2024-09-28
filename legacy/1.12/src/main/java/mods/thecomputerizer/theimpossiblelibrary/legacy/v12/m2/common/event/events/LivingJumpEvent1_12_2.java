@@ -15,8 +15,7 @@ public class LivingJumpEvent1_12_2 extends LivingJumpEventWrapper<LivingJumpEven
         LIVING_JUMP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class LivingJumpEvent1_12_2 extends LivingJumpEventWrapper<LivingJumpEven
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingJumpEvent::getEntityLiving);
     }
 }

@@ -17,21 +17,18 @@ public abstract class CustomTickEventWrapper<E> extends CommonTickableEventType<
         super(CUSTOM_TICK);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.ticker = wrapTicker();
     }
 
     protected abstract CustomTick wrapTicker();
 
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return DEFAULT;
     }
 
-    @Override
-    protected TickType wrapTickType() {
+    @Override protected TickType wrapTickType() {
         return CUSTOM;
     }
 }

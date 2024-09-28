@@ -15,8 +15,7 @@ public class PlayerVisibilityEvent1_12_2 extends PlayerVisibilityEventWrapper<Vi
         PLAYER_VISIBILITY.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class PlayerVisibilityEvent1_12_2 extends PlayerVisibilityEventWrapper<Vi
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Visibility,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Visibility,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(Visibility::getEntityPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<Visibility,Double> wrapVisibilityModifierField() {
+    @Override protected EventFieldWrapper<Visibility,Double> wrapVisibilityModifierField() {
         return wrapGenericBoth(Visibility::getVisibilityModifier,Visibility::modifyVisibility,1d);
     }
 }

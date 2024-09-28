@@ -15,8 +15,7 @@ public abstract class CommonBlockStatePlayerEventType<E> extends CommonBlockStat
         return this.player.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.player = wrapPlayerField();
     }

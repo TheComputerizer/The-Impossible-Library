@@ -14,8 +14,7 @@ public abstract class TextFabric1_16_5 extends Text1_16_5<Style> {
         return applied.endsWith(resetStr) ? applied.substring(0,applied.length()-resetStr.length()) : applied;
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public MutableComponent getAsComponent() {
+    @SuppressWarnings("unchecked") @Override public MutableComponent getAsComponent() {
         return getComponent();
     }
     

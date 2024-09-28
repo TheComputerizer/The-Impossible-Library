@@ -16,8 +16,7 @@ public abstract class ClientSoundEventType<E,S> extends ClientEventWrapper<E> {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void populate() {
+    @Override public void populate() {
         this.soundHelper = (SoundHelperAPI<S>)TILRef.getClientSubAPI(ClientAPI::getSoundHelper);
     }
 }

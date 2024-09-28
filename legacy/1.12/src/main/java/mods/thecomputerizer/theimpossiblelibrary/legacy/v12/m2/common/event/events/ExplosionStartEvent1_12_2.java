@@ -16,8 +16,7 @@ public class ExplosionStartEvent1_12_2 extends ExplosionStartEventWrapper<Start>
         EXPLOSION_START.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class ExplosionStartEvent1_12_2 extends ExplosionStartEventWrapper<Start>
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Start,ExplosionAPI<?>> wrapExplosionField() {
+    @Override protected EventFieldWrapper<Start,ExplosionAPI<?>> wrapExplosionField() {
         return wrapExplosionGetter(Start::getExplosion);
     }
 
-    @Override
-    protected EventFieldWrapper<Start,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Start,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Start::getWorld);
     }
 }

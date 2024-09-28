@@ -37,8 +37,7 @@ public class CommonEvents1_12_2 implements CommonEventsAPI {
         this.defined = false;
     }
 
-    @Override
-    public void defineEvents() {
+    @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEvent1_12_2());
         BLOCK_BREAK.setConnector(new BlockBreakEvent1_12_2());
         BLOCK_CREATE_FLUID.setConnector(new FluidCreateSourceEvent1_12_2());

@@ -39,8 +39,7 @@ public class TILFileConfigForge1_16_5 implements IConfigurable {
         }
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public <T> Optional<T> getConfigElement(String ... keys) {
+    @SuppressWarnings("unchecked") @Override public <T> Optional<T> getConfigElement(String ... keys) {
         if(Objects.isNull(keys) || keys.length==0) return Optional.empty();
         String key = keys[0];
         T value = (T)this.infoMap.get(key);

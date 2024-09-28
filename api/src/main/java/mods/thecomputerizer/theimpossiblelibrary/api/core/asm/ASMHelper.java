@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import org.apache.logging.log4j.core.net.UrlConnectionFactory;
 import org.objectweb.asm.*;
@@ -15,13 +16,14 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.function.Consumer;
 
 import static java.io.File.separatorChar;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DATA_DIRECTORY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
-@SuppressWarnings("unused") public class ASMHelper {
+public class ASMHelper {
 
     public static void addField(ClassVisitor visitor, int access, String name, Type type, String signature, Object value) {
         visitor.visitField(access,name,type.getDescriptor(),signature,value).visitEnd();
@@ -30,25 +32,83 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     public static void addSuperConstructor(MethodVisitor constructor, String name, String desc, boolean isInterface) {
         constructor.visitCode();
         constructor.visitVarInsn(ALOAD,0);
-        invokeInit(constructor,name,desc,isInterface);
+        callInit(constructor,name,desc,isInterface);
     }
     
     public static void addNewInstance(MethodVisitor method, String name, String desc, boolean isInterface) {
         method.visitTypeInsn(NEW,name);
         method.visitInsn(DUP);
-        invokeInit(method,name,desc,isInterface);
+        callInit(method,name,desc,isInterface);
     }
 
+    @IndirectCallers
     public static String buildSignature(Type base, Type ... innerTypes) {
         return ClassHelper.signatureDesc(base.getDescriptor(),ArrayHelper.mapTo(innerTypes,String.class,Type::getDescriptor));
     }
-
+    
+    @IndirectCallers
     public static String buildSignature(Type base, String ... innerSignatures) {
         return ClassHelper.signatureDesc(base.getDescriptor(),innerSignatures);
     }
-
+    
+    @IndirectCallers
     public static String buildSignature(Type base, String inner) {
         return ClassHelper.signatureDesc(base.getDescriptor(),inner);
+    }
+    
+    @IndirectCallers
+    public static void call(MethodVisitor method, int opcode, Class<?> clazz, String methodName, String desc) {
+        call(method,opcode,clazz,methodName,desc,false);
+    }
+    
+    @IndirectCallers
+    public static void call(MethodVisitor method, int opcode, String className, String methodName, String desc) {
+        call(method,opcode,className,methodName,desc,false);
+    }
+    
+    public static void call(MethodVisitor method, int opcode, Class<?> clazz, String methodName, String desc,
+            boolean isInterface) {
+        call(method,opcode,Type.getInternalName(clazz),methodName,desc,isInterface);
+    }
+    
+    public static void call(MethodVisitor method, int opcode, String className, String methodName, String desc,
+            boolean isInterface) {
+        method.visitMethodInsn(opcode,className,methodName,desc,isInterface);
+    }
+    
+    @IndirectCallers
+    public static void callEmpty(MethodVisitor method, int opcode, String name, String methodName) {
+        callEmpty(method,opcode,name,methodName,false);
+    }
+    
+    public static void callEmpty(MethodVisitor method, int opcode, String name, String methodName,
+            boolean isInterface) {
+        call(method,opcode,name,methodName,EMPTY_METHOD.getDescriptor(),isInterface);
+    }
+    
+    public static void callInit(MethodVisitor method, String name, String desc, boolean isInterface) {
+        call(method,INVOKESPECIAL,name,"<init>",desc,isInterface);
+    }
+    
+    @IndirectCallers
+    public static byte[] editClass(String className, Consumer<ClassWriter> consumer) throws IOException {
+        return editClass(new ClassReader(className),consumer);
+    }
+    
+    @IndirectCallers
+    public static byte[] editClass(InputStream stream, Consumer<ClassWriter> consumer) throws IOException {
+        return editClass(new ClassReader(stream),consumer);
+    }
+    
+    @IndirectCallers
+    public static byte[] editClass(byte[] byteCode, Consumer<ClassWriter> consumer) {
+        return editClass(new ClassReader(byteCode),consumer);
+    }
+    
+    public static byte[] editClass(ClassReader reader, Consumer<ClassWriter> consumer) {
+        ClassWriter writer = getWriter(reader);
+        consumer.accept(writer);
+        return writer.toByteArray();
     }
 
     public static void finishMethod(MethodVisitor visitor) {
@@ -66,11 +126,13 @@ import static org.objectweb.asm.Type.VOID_TYPE;
         if(debugOutput) writeDebugByteCode(name,bytes);
         return bytes;
     }
-
+    
+    @IndirectCallers
     public static AnnotationVisitor getAnnotation(ClassVisitor visitor, Class<?> clazz) {
         return getAnnotation(visitor,clazz,true);
     }
-
+    
+    @IndirectCallers
     public static AnnotationVisitor getAnnotation(MethodVisitor visitor, Class<?> clazz) {
         return getAnnotation(visitor,clazz,true);
     }
@@ -107,6 +169,7 @@ import static org.objectweb.asm.Type.VOID_TYPE;
         return visitor.visitAnnotation(type.getDescriptor(),runtime);
     }
     
+    @IndirectCallers
     public static byte[] getBytes(URL url) throws IOException {
         return getBytes(UrlConnectionFactory.createConnection(url));
     }
@@ -124,35 +187,41 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     }
 
     public static MethodVisitor getClassInit(ClassVisitor visitor) {
-        return getMethod(visitor, STATIC, "<clinit>", null, new String[]{}, VOID_TYPE);
+        return getMethod(visitor,STATIC,"<clinit>",null,new String[]{},VOID_TYPE);
     }
 
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, Type ... argTypes) {
-        return getMethod(visitor, access, "<init>", null, new String[]{}, VOID_TYPE, argTypes);
+        return getMethod(visitor,access,"<init>",null,new String[]{},VOID_TYPE,argTypes);
     }
     
+    @IndirectCallers
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, Type returnType, Type ... argTypes) {
         return getMethod(visitor,access,"<init>",null,new String[]{},returnType,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String signature, Type ... argTypes) {
-        return getMethod(visitor, access, "<init>", signature, new String[]{}, VOID_TYPE, argTypes);
+        return getMethod(visitor,access,"<init>",signature,new String[]{},VOID_TYPE,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String[] exceptions, Type ... argTypes) {
-        return getMethod(visitor, access, "<init>", null, exceptions, VOID_TYPE, argTypes);
+        return getMethod(visitor,access,"<init>",null,exceptions,VOID_TYPE,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String signature, Type returnType,
                                                Type ... argTypes) {
         return getMethod(visitor,access,"<init>",signature,new String[]{},returnType,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String[] exceptions, Type returnType,
                                                Type ... argTypes) {
         return getMethod(visitor,access,"<init>",null,exceptions,returnType,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getConstructor(ClassVisitor visitor, int access, String signature,
                                                String[] exceptions, Type returnType, Type ... argTypes) {
         return getMethod(visitor,access,"<init>",signature,exceptions,returnType,argTypes);
@@ -161,16 +230,19 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, Type ... argTypes) {
         return getMethod(visitor,access,name,null,new String[]{},VOID_TYPE,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, String[] exceptions, Type ... argTypes) {
         return getMethod(visitor,access,name,null,exceptions,VOID_TYPE,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, String signature,
                                           Type returnType, Type ... argTypes) {
         return getMethod(visitor,access,name,signature,new String[]{},returnType,argTypes);
     }
-
+    
+    @IndirectCallers
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, String[] exceptions,
                                           Type returnType, Type ... argTypes) {
         return getMethod(visitor,access,name,null,exceptions,returnType,argTypes);
@@ -178,9 +250,10 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 
     public static MethodVisitor getMethod(ClassVisitor visitor, int access, String name, String signature,
                                           String[] exceptions, Type returnType, Type ... argTypes) {
-        return visitor.visitMethod(access,name,Type.getMethodDescriptor(returnType,argTypes),null,exceptions);
+        return visitor.visitMethod(access,name,Type.getMethodDescriptor(returnType,argTypes),signature,exceptions);
     }
-
+    
+    @IndirectCallers
     public static ClassReader getReader(Class<?> clazz) throws IOException {
         return getReader(Type.getType(clazz));
     }
@@ -188,7 +261,8 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     public static ClassReader getReader(Type type) throws IOException {
         return new ClassReader(type.getClassName());
     }
-
+    
+    @IndirectCallers
     public static ClassWriter getWriter(int javaVer, int access, Type type) {
         return getWriter(javaVer,access,type,null,OBJECT_TYPE,new String[]{});
     }
@@ -196,7 +270,8 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     public static ClassWriter getWriter(int javaVer, int access, Type type, String[] interfaces) {
         return getWriter(javaVer,access,type,null,OBJECT_TYPE,interfaces);
     }
-
+    
+    @IndirectCallers
     public static ClassWriter getWriter(int javaVer, int access, Type type, String signature, String[] interfaces) {
         return getWriter(javaVer,access,type,signature,OBJECT_TYPE,interfaces);
     }
@@ -204,7 +279,8 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     public static ClassWriter getWriter(int javaVer, int access, Type type, Type superType) {
         return getWriter(javaVer,access,type,null,superType,new String[]{});
     }
-
+    
+    @IndirectCallers
     public static ClassWriter getWriter(int javaVer, int access, Type type, String signature, Type superType) {
         return getWriter(javaVer,access,type,signature,superType,new String[]{});
     }
@@ -218,10 +294,6 @@ import static org.objectweb.asm.Type.VOID_TYPE;
     
     public static ClassWriter getWriter(ClassReader reader) {
         return new ClassWriter(reader,COMPUTE_FRAMES);
-    }
-    
-    public static void invokeInit(MethodVisitor method, String name, String desc, boolean isInterface) {
-        method.visitMethodInsn(INVOKESPECIAL,name,"<init>",desc,isInterface);
     }
 
     public static void writeDebugByteCode(String classpath, byte[] bytes) {

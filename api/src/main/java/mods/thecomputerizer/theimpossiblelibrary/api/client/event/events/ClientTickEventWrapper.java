@@ -12,8 +12,7 @@ public abstract class ClientTickEventWrapper<E> extends ClientTickableEventType<
         super(TICK_CLIENT);
     }
 
-    @Override
-    protected TickType wrapTickType() {
+    @Override protected TickType wrapTickType() {
         return CLIENT;
     }
 }

@@ -12,8 +12,7 @@ public abstract class ServerTickEventWrapper<E> extends ServerTickableEventType<
         super(TICK_SERVER);
     }
 
-    @Override
-    protected TickType wrapTickType() {
+    @Override protected TickType wrapTickType() {
         return SERVER;
     }
 }

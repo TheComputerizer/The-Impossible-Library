@@ -10,8 +10,7 @@ public abstract class InputMouseEventWrapper<E> extends ClientEventWrapper<E> { 
         super(MOUSE_INPUT);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
 
     }
 }

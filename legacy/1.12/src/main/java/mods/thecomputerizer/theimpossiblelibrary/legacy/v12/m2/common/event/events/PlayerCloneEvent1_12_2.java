@@ -15,8 +15,7 @@ public class PlayerCloneEvent1_12_2 extends PlayerCloneEventWrapper<Clone> {
         PLAYER_CLONE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,18 +24,15 @@ public class PlayerCloneEvent1_12_2 extends PlayerCloneEventWrapper<Clone> {
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Clone,Boolean> wrapDeathField() {
+    @Override protected EventFieldWrapper<Clone,Boolean> wrapDeathField() {
         return wrapGenericGetter(Clone::isWasDeath,true);
     }
 
-    @Override
-    protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapOriginalField() {
+    @Override protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapOriginalField() {
         return wrapPlayerGetter(Clone::getOriginal);
     }
 
-    @Override
-    protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(Clone::getEntityPlayer);
     }
 }

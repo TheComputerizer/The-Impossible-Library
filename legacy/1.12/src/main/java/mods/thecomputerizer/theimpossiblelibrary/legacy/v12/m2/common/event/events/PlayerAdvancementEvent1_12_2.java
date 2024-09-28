@@ -16,8 +16,7 @@ public class PlayerAdvancementEvent1_12_2 extends PlayerAdvancementEventWrapper<
         PLAYER_ADVANCEMENT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class PlayerAdvancementEvent1_12_2 extends PlayerAdvancementEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<AdvancementEvent,AdvancementAPI<?>> wrapAdvancementField() {
+    @Override protected EventFieldWrapper<AdvancementEvent,AdvancementAPI<?>> wrapAdvancementField() {
         return wrapAdvancementGetter(AdvancementEvent::getAdvancement);
     }
 
-    @Override
-    protected EventFieldWrapper<AdvancementEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<AdvancementEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(AdvancementEvent::getEntityPlayer);
     }
 }

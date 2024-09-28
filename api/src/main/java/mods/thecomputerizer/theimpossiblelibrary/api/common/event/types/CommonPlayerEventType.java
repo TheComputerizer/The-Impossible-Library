@@ -16,8 +16,7 @@ public abstract class CommonPlayerEventType<E> extends CommonEventWrapper<E> {
         return this.player.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         this.player = wrapPlayerField();
     }
 

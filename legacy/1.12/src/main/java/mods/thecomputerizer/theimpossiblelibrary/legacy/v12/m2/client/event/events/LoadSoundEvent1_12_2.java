@@ -14,8 +14,7 @@ public class LoadSoundEvent1_12_2 extends LoadSoundEventWrapper<SoundLoadEvent,I
         SOUND_LOAD.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

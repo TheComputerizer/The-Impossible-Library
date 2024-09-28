@@ -13,23 +13,19 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public final class TILCommonEntryPoint1_12_2 extends CommonEntryPoint {
 
-    @Override
-    public @Nullable ClientEntryPoint delegatedClientEntry() {
+    @Override public @Nullable ClientEntryPoint delegatedClientEntry() {
         return null;
     }
 
-    @Override
-    protected String getModID() {
+    @Override protected String getModID() {
         return MODID;
     }
 
-    @Override
-    protected String getModName() {
+    @Override protected String getModName() {
         return NAME;
     }
 
-    @Override
-    public void onServerStarting() {
+    @Override public void onServerStarting() {
         EVENT_BUS.post(new RegisterCommands1_12_2(FMLCommonHandler.instance().getMinecraftServerInstance()));
     }
 }

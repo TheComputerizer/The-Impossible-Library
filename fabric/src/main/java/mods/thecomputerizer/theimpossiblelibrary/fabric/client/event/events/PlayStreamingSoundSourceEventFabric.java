@@ -13,18 +13,15 @@ public class PlayStreamingSoundSourceEventFabric extends PlayStreamingSoundSourc
         return null;
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],String> wrapNameField() {
+    @Override protected EventFieldWrapper<Object[],String> wrapNameField() {
         return wrapGenericGetter(wrapArrayGetter(0),"");
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],SoundAPI<SoundInstance>> wrapSoundField() {
+    @Override protected EventFieldWrapper<Object[],SoundAPI<SoundInstance>> wrapSoundField() {
         return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],String> wrapUUIDField() { //TODO
+    @Override protected EventFieldWrapper<Object[],String> wrapUUIDField() { //TODO
         return wrapGenericGetter(wrapArrayGetter(0),"");
     }
 }

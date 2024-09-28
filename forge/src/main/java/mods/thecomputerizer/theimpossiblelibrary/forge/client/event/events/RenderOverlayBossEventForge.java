@@ -40,13 +40,11 @@ public class RenderOverlayBossEventForge extends RenderOverlayBossEventWrapper<B
         return wrapGenericBoth(BossInfo::getIncrement,BossInfo::setIncrement,0);
     }
 
-    @Override
-    protected EventFieldWrapper<BossInfo,Integer> wrapXField() {
+    @Override protected EventFieldWrapper<BossInfo,Integer> wrapXField() {
         return wrapGenericGetter(BossInfo::getX,0);
     }
 
-    @Override
-    protected EventFieldWrapper<BossInfo,Integer> wrapYField() {
+    @Override protected EventFieldWrapper<BossInfo,Integer> wrapYField() {
         return wrapGenericGetter(BossInfo::getY,0);
     }
 }

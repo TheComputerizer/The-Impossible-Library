@@ -28,8 +28,7 @@ public abstract class CommonPlayerInteractBlockEventType<E> extends CommonPlayer
         return this.itemResult.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.blockResult = wrapBlockResultField();
         this.hitVec = wrapHitVecField();
@@ -40,8 +39,7 @@ public abstract class CommonPlayerInteractBlockEventType<E> extends CommonPlayer
         this.blockResult.set(this.event,isCanceled() ? DENY : result);
     }
 
-    @Override
-    public void setCanceled(boolean canceled) {
+    @Override public void setCanceled(boolean canceled) {
         super.setCanceled(canceled);
         if(isCanceled()) {
             setBlockResult(DENY);

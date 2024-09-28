@@ -8,18 +8,15 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
         super(type);
     }
 
-    @Override
-    public boolean isClient() {
+    @Override public boolean isClient() {
         return false;
     }
 
-    @Override
-    public boolean isCommon() {
+    @Override public boolean isCommon() {
         return true;
     }
 
-    @Override
-    public boolean isServer() {
+    @Override public boolean isServer() {
         return false;
     }
 
@@ -108,18 +105,15 @@ public abstract class CommonEventWrapper<E> extends EventWrapper<E> {
             super(cancelable,hasResult);
         }
 
-        @Override
-        public boolean isClient() {
+        @Override     public boolean isClient() {
             return false;
         }
 
-        @Override
-        public boolean isCommon() {
+        @Override     public boolean isCommon() {
             return true;
         }
 
-        @Override
-        public boolean isServer() {
+        @Override     public boolean isServer() {
             return false;
         }
     }

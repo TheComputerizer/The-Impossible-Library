@@ -54,8 +54,7 @@ public class TILLanguageLoader implements IModLanguageLoader {
     /**
      * Make all the local variables final like how FML does it.
      */
-    @SuppressWarnings("unchecked") @Override
-    public <T> T loadMod(IModInfo info, ClassLoader classLoader, ModFileScanData scanResults) {
+    @SuppressWarnings("unchecked") @Override public <T> T loadMod(IModInfo info, ClassLoader classLoader, ModFileScanData scanResults) {
         final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
             final Class<?> container = Class.forName(MOD_CONTAINER,true,contextLoader);

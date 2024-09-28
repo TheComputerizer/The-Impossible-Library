@@ -25,8 +25,7 @@ public class HarvestBlockDropsEvent1_12_2 extends HarvestBlockDropsEventWrapper<
         BLOCK_HARVEST.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -35,46 +34,38 @@ public class HarvestBlockDropsEvent1_12_2 extends HarvestBlockDropsEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,List<ItemStackAPI<?>>> wrapDropsField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,List<ItemStackAPI<?>>> wrapDropsField() {
         return wrapGenericGetter(event -> event.getDrops().stream()
                 .map(WrapperHelper::wrapItemStack)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()),new ArrayList<>());
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,Float> wrapDropChanceField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,Float> wrapDropChanceField() {
         return wrapGenericBoth(HarvestDropsEvent::getDropChance,HarvestDropsEvent::setDropChance,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,Integer> wrapFortuneLevelField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,Integer> wrapFortuneLevelField() {
         return wrapGenericGetter(HarvestDropsEvent::getFortuneLevel,0);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,Boolean> wrapSilkTouchingField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,Boolean> wrapSilkTouchingField() {
         return wrapGenericGetter(HarvestDropsEvent::isSilkTouching,false);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(HarvestDropsEvent::getHarvester);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(HarvestDropsEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(HarvestDropsEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<HarvestDropsEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<HarvestDropsEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(HarvestDropsEvent::getWorld);
     }
 }

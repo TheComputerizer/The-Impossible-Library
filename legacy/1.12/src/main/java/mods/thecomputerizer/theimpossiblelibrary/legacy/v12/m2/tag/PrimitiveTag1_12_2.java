@@ -12,13 +12,11 @@ public class PrimitiveTag1_12_2 extends PrimitiveTagAPI<NBTPrimitive> {
         super(tag);
     }
     
-    @Override
-    public boolean asBoolean() {
+    @Override public boolean asBoolean() {
         return this.wrapped.getByte()==(byte)1;
     }
 
-    @Override
-    public byte asByte() {
+    @Override public byte asByte() {
         return this.wrapped.getByte();
     }
     
@@ -26,18 +24,15 @@ public class PrimitiveTag1_12_2 extends PrimitiveTagAPI<NBTPrimitive> {
         return null;
     }
 
-    @Override
-    public double asDouble() {
+    @Override public double asDouble() {
         return this.wrapped.getDouble();
     }
 
-    @Override
-    public float asFloat() {
+    @Override public float asFloat() {
         return this.wrapped.getFloat();
     }
 
-    @Override
-    public int asInt() {
+    @Override public int asInt() {
         return this.wrapped.getInt();
     }
     
@@ -45,8 +40,7 @@ public class PrimitiveTag1_12_2 extends PrimitiveTagAPI<NBTPrimitive> {
         return null;
     }
 
-    @Override
-    public long asLong() {
+    @Override public long asLong() {
         return this.wrapped.getLong();
     }
     
@@ -54,8 +48,7 @@ public class PrimitiveTag1_12_2 extends PrimitiveTagAPI<NBTPrimitive> {
         return this;
     }
 
-    @Override
-    public short asShort() {
+    @Override public short asShort() {
         return this.wrapped.getShort();
     }
     

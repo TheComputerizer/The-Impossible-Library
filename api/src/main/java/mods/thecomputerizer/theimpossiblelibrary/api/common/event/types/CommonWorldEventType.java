@@ -16,8 +16,7 @@ public abstract class CommonWorldEventType<E> extends CommonEventWrapper<E> {
         return this.world.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.world = wrapWorldField();
     }
 

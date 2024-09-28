@@ -20,8 +20,7 @@ public abstract class ClientSoundSourceEventType<E,S> extends ClientSoundEventTy
         return this.sound.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.name = wrapNameField();
         this.sound = wrapSoundField();

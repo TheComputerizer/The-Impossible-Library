@@ -18,8 +18,7 @@ public abstract class SpawnPortalEventWrapper<E> extends CommonBlockStateEventTy
         return this.size.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.size = wrapSizeField();
     }

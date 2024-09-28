@@ -26,8 +26,7 @@ public abstract class PotentialSpawnsEventWrapper<E> extends CommonWorldEventTyp
         return this.spawns.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.pos = wrapPosField();
         this.spawns = wrapSpawnsField();

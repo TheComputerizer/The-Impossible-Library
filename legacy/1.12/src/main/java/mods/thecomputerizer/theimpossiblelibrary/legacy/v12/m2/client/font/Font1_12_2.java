@@ -26,13 +26,11 @@ public class Font1_12_2 implements FontAPI {
 
     private FontRenderer font;
 
-    @Override
-    public void draw(RenderAPI renderer, String text, float x, float y, int color) {
+    @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
         getFont().drawString(text,x,y,color,false);
     }
 
-    @Override
-    public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
+    @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
         getFont().drawStringWithShadow(text,x,y,color);
     }
 
@@ -41,26 +39,22 @@ public class Font1_12_2 implements FontAPI {
         return this.font;
     }
 
-    @Override
-    public int getCharWidth(char c) {
+    @Override public int getCharWidth(char c) {
         return getFont().getCharWidth(c);
     }
 
-    @Override
-    public int getFontHeight() {
+    @Override public int getFontHeight() {
         return getFont().FONT_HEIGHT;
     }
 
-    @Override
-    public int getStringWidth(String str) {
+    @Override public int getStringWidth(String str) {
         return getFont().getStringWidth(str);
     }
     
     /**
      * GuiUtils$drawHoveringText implementation from Forge but without disabling lighting
      */
-    @Override
-    public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
+    @Override public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
         List<String> textLines = new ArrayList<>();
         for(TextAPI<?> text : lines) {
             String asLine = text.getApplied();

@@ -44,8 +44,7 @@ public class RenderableText extends Renderable {
                 .build();
     }
 
-    @Override
-    public void initializeTimers() {
+    @Override public void initializeTimers() {
         super.initializeTimers();
         if(!this.potentialText.isEmpty())
             this.text = String.valueOf(RandomHelper.getBasicRandomEntry(this.potentialText));

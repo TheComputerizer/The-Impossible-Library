@@ -11,8 +11,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 
 public class ServerTickEventForge1_16_5 extends ServerTickEventWrapper<ServerTickEvent> {
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -21,8 +20,7 @@ public class ServerTickEventForge1_16_5 extends ServerTickEventWrapper<ServerTic
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
     }
 }

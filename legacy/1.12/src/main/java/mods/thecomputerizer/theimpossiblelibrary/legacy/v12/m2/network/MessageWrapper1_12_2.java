@@ -13,21 +13,18 @@ public class MessageWrapper1_12_2 extends MessageWrapperAPI<EntityPlayerMP,Messa
 
     public MessageWrapper1_12_2() {}
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
+    @Override public void fromBytes(ByteBuf buf) {
         this.info = NetworkHandler.getDirectionInfo(NetworkHelper.readDir(buf));
         decode(buf);
     }
 
-    @Override
-    public void toBytes(ByteBuf buf) {
+    @Override public void toBytes(ByteBuf buf) {
         encode(buf);
     }
 
     public static class Handler implements IMessageHandler<MessageWrapper1_12_2,IMessage> {
 
-        @Override
-        public IMessage onMessage(MessageWrapper1_12_2 message, MessageContext ctx) {
+        @Override     public IMessage onMessage(MessageWrapper1_12_2 message, MessageContext ctx) {
             return (MessageWrapper1_12_2)message.handle(ctx);
         }
     }

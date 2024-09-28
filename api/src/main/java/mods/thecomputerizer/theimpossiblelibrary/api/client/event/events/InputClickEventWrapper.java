@@ -10,8 +10,7 @@ public abstract class InputClickEventWrapper<E> extends ClientEventWrapper<E> { 
         super(CLICK_INPUT);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
 
     }
 }

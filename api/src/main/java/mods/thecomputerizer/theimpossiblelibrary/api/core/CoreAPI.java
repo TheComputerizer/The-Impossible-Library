@@ -362,8 +362,7 @@ public abstract class CoreAPI {
             return this==V21_1;
         }
 
-        @Override
-        public String toString() {
+        @Override     public String toString() {
             return this.name;
         }
     }
@@ -409,8 +408,7 @@ public abstract class CoreAPI {
             return this==NEOFORGE;
         }
 
-        @Override
-        public String toString() {
+        @Override     public String toString() {
             return this.name;
         }
     }
@@ -437,8 +435,7 @@ public abstract class CoreAPI {
             this.logical = logical;
         }
 
-        @Override
-        public String toString() {
+        @Override     public String toString() {
             if(this==ALL) return "all";
             String side = this.client && this.server ? "both" : (this.client ? "client" : "server");
             return (this.dedicated ? "dedicated" : "logical")+"_"+side;

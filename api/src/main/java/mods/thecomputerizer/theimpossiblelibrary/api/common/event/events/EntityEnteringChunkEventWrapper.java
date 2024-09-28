@@ -32,8 +32,7 @@ public abstract class EntityEnteringChunkEventWrapper<E> extends CommonEntityEve
         return this.oldZ.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.newX = wrapNewXField();
         this.newZ = wrapNewZField();

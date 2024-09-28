@@ -24,8 +24,7 @@ public class CameraSetupEvent1_12_2 extends CameraSetupEventWrapper<CameraSetup>
         this.event.setCanceled(true);
     }
     
-    @Override
-    protected RenderContext initRenderer(@Nonnull CameraSetup event) {
+    @Override protected RenderContext initRenderer(@Nonnull CameraSetup event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     
@@ -34,28 +33,23 @@ public class CameraSetupEvent1_12_2 extends CameraSetupEventWrapper<CameraSetup>
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,Float> wrapPitchField() {
+    @Override protected EventFieldWrapper<CameraSetup,Float> wrapPitchField() {
         return wrapGenericGetter(CameraSetup::getPitch,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,Float> wrapRollField() {
+    @Override protected EventFieldWrapper<CameraSetup,Float> wrapRollField() {
         return wrapGenericGetter(CameraSetup::getRoll,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,Float> wrapYawField() {
+    @Override protected EventFieldWrapper<CameraSetup,Float> wrapYawField() {
         return wrapGenericGetter(CameraSetup::getYaw,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<CameraSetup,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(CameraSetup::getEntity);
     }
 
-    @Override
-    protected EventFieldWrapper<CameraSetup,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<CameraSetup,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(CameraSetup::getState);
     }
 }

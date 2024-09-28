@@ -23,8 +23,7 @@ public class ExplosionDetonateEvent1_12_2 extends ExplosionDetonateEventWrapper<
         EXPLOSION_DETONATE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -33,21 +32,18 @@ public class ExplosionDetonateEvent1_12_2 extends ExplosionDetonateEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Detonate,List<EntityAPI<?,?>>> wrapAffectedEntitiesField() {
+    @Override protected EventFieldWrapper<Detonate,List<EntityAPI<?,?>>> wrapAffectedEntitiesField() {
         return wrapGenericGetter(event -> event.getAffectedEntities().stream()
                 .map(WrapperHelper::wrapEntity)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()),new ArrayList<>());
     }
 
-    @Override
-    protected EventFieldWrapper<Detonate,ExplosionAPI<?>> wrapExplosionField() {
+    @Override protected EventFieldWrapper<Detonate,ExplosionAPI<?>> wrapExplosionField() {
         return wrapExplosionGetter(Detonate::getExplosion);
     }
 
-    @Override
-    protected EventFieldWrapper<Detonate,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Detonate,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Detonate::getWorld);
     }
 }

@@ -15,8 +15,7 @@ public class SpawnEntry1_12_2 extends SpawnEntryAPI<EntityLiving> {
         super(clazz,weight,maxGroup,minGroup);
     }
 
-    @Override
-    public EntityLiving newInstance(WorldAPI<?> worldAPI) throws Exception {
+    @Override public EntityLiving newInstance(WorldAPI<?> worldAPI) throws Exception {
         World world = worldAPI.unwrap();
         EntityEntry entry = EntityRegistry.getEntry(this.entityClass);
         return Objects.nonNull(entry) ? (EntityLiving)entry.newInstance(world) :

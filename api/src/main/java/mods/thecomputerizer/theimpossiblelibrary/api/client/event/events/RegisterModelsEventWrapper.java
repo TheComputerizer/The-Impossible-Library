@@ -10,8 +10,7 @@ public abstract class RegisterModelsEventWrapper<E> extends ClientEventWrapper<E
         super(REGISTER_MODELS);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
 
     }
 }

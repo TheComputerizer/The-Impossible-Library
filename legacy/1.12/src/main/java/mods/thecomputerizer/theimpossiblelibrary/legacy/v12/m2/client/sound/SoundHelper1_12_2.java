@@ -17,8 +17,7 @@ import static net.minecraft.util.SoundCategory.MASTER;
 @SuppressWarnings({"ConstantValue","UnreachableCode"})
 public class SoundHelper1_12_2 implements SoundHelperAPI<ISound> {
 
-    @Override
-    public SoundAPI<ISound> getAPI(ISound sound) {
+    @Override public SoundAPI<ISound> getAPI(ISound sound) {
         return new Sound1_12_2(sound);
     }
     

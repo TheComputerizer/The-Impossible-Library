@@ -16,8 +16,7 @@ public class PlayerSmeltedItemEvent1_12_2 extends PlayerSmeltedItemEventWrapper<
         PLAYER_ITEM_SMELTED.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class PlayerSmeltedItemEvent1_12_2 extends PlayerSmeltedItemEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<ItemSmeltedEvent,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<ItemSmeltedEvent,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(event -> event.smelting);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemSmeltedEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<ItemSmeltedEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> event.player);
     }
 }

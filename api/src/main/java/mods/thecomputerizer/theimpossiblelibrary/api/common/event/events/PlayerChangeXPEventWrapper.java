@@ -17,8 +17,7 @@ public abstract class PlayerChangeXPEventWrapper<E> extends CommonPlayerEventTyp
         return this.amount.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.amount = wrapAmountField();
     }

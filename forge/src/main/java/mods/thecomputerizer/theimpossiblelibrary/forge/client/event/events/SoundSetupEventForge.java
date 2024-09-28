@@ -14,8 +14,7 @@ public class SoundSetupEventForge extends SoundSetupEventWrapper<SoundSetupEvent
         SOUND_SETUP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

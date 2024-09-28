@@ -17,8 +17,7 @@ public class ClientTickEventFabric extends ClientTickEventWrapper<Object[]> impl
         return END_CLIENT_TICK;
     }
     
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? END : DEFAULT;
     }
 }

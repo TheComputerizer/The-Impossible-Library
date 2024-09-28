@@ -12,19 +12,16 @@ public class MessageHandlerDefault implements MessageHandlerAPI {
         this.messageDecoder = messageDecoder;
     }
 
-    @Override
-    public <M extends MessageAPI<?>> void encode(M message, ByteBuf buf) {
+    @Override public <M extends MessageAPI<?>> void encode(M message, ByteBuf buf) {
         message.encode(buf);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    @Override @SuppressWarnings("unchecked")
     public <M extends MessageAPI<?>> M decode(ByteBuf buf) {
         return (M)this.messageDecoder.apply(buf);
     }
 
-    @Override
-    public <CTX,M extends MessageAPI<CTX>> MessageAPI<CTX> handle(M message, CTX context) {
+    @Override public <CTX,M extends MessageAPI<CTX>> MessageAPI<CTX> handle(M message, CTX context) {
         return message.handle(context);
     }
 }

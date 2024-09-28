@@ -18,8 +18,7 @@ public abstract class ClientOverlayEventType<E> extends ClientRenderEventType<E>
         return getOverlayType()==type;
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.overlayType = wrapOverlayType();
     }

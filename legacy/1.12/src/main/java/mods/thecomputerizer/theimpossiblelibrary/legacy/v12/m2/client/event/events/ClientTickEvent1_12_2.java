@@ -18,8 +18,7 @@ public class ClientTickEvent1_12_2 extends ClientTickEventWrapper<ClientTickEven
         TICK_CLIENT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,8 +27,7 @@ public class ClientTickEvent1_12_2 extends ClientTickEventWrapper<ClientTickEven
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
     }
 }

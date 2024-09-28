@@ -18,8 +18,7 @@ public abstract class EntityJoinWorldEventWrapper<E> extends CommonEntityEventTy
         return this.world.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.world = wrapWorld();
     }

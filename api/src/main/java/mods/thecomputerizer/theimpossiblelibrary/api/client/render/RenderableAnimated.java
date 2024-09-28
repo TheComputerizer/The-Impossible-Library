@@ -42,8 +42,7 @@ public class RenderableAnimated extends RenderablePNG {
         }
     }
 
-    @Override
-    public void render(RenderContext ctx) {
+    @Override public void render(RenderContext ctx) {
         if(this.startedRendering) renderTick();
         if(canRender()) {
             if(!this.startedRendering) {
@@ -64,8 +63,7 @@ public class RenderableAnimated extends RenderablePNG {
         this.texture.draw(ctx,VectorHelper.zero3D(),0d,0d);
     }
 
-    @Override
-    public void stop() {
+    @Override public void stop() {
         super.stop();
         this.startedRendering = false;
     }

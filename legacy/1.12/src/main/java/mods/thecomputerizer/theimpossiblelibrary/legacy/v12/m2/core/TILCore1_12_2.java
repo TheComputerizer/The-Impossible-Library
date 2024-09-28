@@ -50,18 +50,15 @@ public class TILCore1_12_2 extends CoreAPI {
         return ClassHelper.loadURL((URLClassLoader)loader,url);
     }
     
-    @Override
-    public CommonEntryPoint getClientVersionHandler() {
+    @Override public CommonEntryPoint getClientVersionHandler() {
         return new TILClientEntryPoint1_12_2();
     }
     
-    @Override
-    public CommonEntryPoint getCommonVersionHandler() {
+    @Override public CommonEntryPoint getCommonVersionHandler() {
         return new TILCommonEntryPoint1_12_2();
     }
 
-    @Override
-    public MultiVersionLoaderAPI getLoader() {
+    @Override public MultiVersionLoaderAPI getLoader() {
         return this.loader;
     }
     
@@ -69,18 +66,15 @@ public class TILCore1_12_2 extends CoreAPI {
         return new ModWriter1_12_2(this,info);
     }
 
-    @Override
-    public void initAPI() {
+    @Override public void initAPI() {
         TILRef.setAPI(getSide().isClient() ? new Client1_12_2() : new Common1_12_2());
     }
 
-    @Override
-    public void injectWrittenMod(Class<?> containerClass, String modid) {
+    @Override public void injectWrittenMod(Class<?> containerClass, String modid) {
 
     }
 
-    @Override
-    protected boolean modConstructed(String modid, Class<?> clazz) {
+    @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Attempting to inject `{}` for `{}` into the ASMDataTable",clazz,modid);
         ASMDataTable table = ModContainerWriter1_12_2.findASMTable(Loader.instance());
         if(Objects.nonNull(table)) {

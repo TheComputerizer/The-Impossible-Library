@@ -27,8 +27,7 @@ public abstract class RenderOverlayBossEventWrapper<E> extends ClientOverlayEven
         return this.y.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.increment = wrapIncrementField();
         this.x = wrapXField();

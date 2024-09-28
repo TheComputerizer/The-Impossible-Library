@@ -40,8 +40,7 @@ public class MultiVersionCoreModInfo {
         return null;
     }
     
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.modid+"-"+this.version;
     }
 }

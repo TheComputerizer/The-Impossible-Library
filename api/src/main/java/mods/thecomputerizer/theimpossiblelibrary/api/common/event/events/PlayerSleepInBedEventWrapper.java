@@ -18,8 +18,7 @@ public abstract class PlayerSleepInBedEventWrapper<E> extends CommonPlayerEventT
         return this.pos.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.pos = wrapPosField();
     }

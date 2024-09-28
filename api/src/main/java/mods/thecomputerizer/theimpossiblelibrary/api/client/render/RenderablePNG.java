@@ -39,8 +39,7 @@ public class RenderablePNG extends Renderable {
         scale(ctx);
     }
     
-    @Override
-    void render(RenderContext ctx) {
+    @Override void render(RenderContext ctx) {
         if(canRender()) {
             preRender(ctx,Math.max(0.1f,getOpacity()));
             this.texture.draw(ctx,zero3D(),0d,0d);

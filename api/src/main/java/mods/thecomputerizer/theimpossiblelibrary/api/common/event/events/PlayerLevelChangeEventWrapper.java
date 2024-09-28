@@ -17,8 +17,7 @@ public abstract class PlayerLevelChangeEventWrapper<E> extends CommonPlayerEvent
         return this.levels.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
     }
 

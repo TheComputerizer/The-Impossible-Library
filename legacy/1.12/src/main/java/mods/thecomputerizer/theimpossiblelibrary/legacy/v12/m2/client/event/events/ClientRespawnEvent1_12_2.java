@@ -6,13 +6,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 
 public class ClientRespawnEvent1_12_2 extends ClientRespawnEventWrapper<Object> { //TODO Find or make a suitable replacement
 
-    @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapOldPlayerField() {
+    @Override protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapOldPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 }

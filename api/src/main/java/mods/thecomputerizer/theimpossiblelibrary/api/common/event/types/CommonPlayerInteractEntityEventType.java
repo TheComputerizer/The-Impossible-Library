@@ -15,8 +15,7 @@ public abstract class CommonPlayerInteractEntityEventType<E> extends CommonPlaye
         return this.target.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.target = wrapTargetField();
     }

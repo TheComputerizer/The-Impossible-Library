@@ -30,13 +30,11 @@ public class RenderOverlayBossEventFabric extends RenderOverlayBossEventWrapper<
         return wrapGenericBoth(wrapArrayGetter(0),(args,increment) -> {},0);
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],Integer> wrapXField() {
+    @Override protected EventFieldWrapper<Object[],Integer> wrapXField() {
         return wrapGenericGetter(wrapArrayGetter(0),0);
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],Integer> wrapYField() {
+    @Override protected EventFieldWrapper<Object[],Integer> wrapYField() {
         return wrapGenericGetter(wrapArrayGetter(0),0);
     }
 }

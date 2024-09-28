@@ -25,13 +25,11 @@ public class ServerEventsForge1_16_5 extends ServerEvents1_16_5 {
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
     }
     
-    @Override
-    public void postCustomTick(CustomTick ticker) {
+    @Override public void postCustomTick(CustomTick ticker) {
         EVENT_BUS.post(new CustomTickForge(ticker));
     }
     
-    @Override
-    public <E extends EventWrapper<?>> void register(E wrapper) {
+    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
         EVENT_BUS.register(wrapper.getClass());
     }
     

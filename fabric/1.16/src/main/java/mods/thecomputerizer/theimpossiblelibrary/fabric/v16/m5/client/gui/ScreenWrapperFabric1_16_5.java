@@ -56,8 +56,7 @@ public class ScreenWrapperFabric1_16_5 extends Screen implements Wrapped<ScreenA
         return Objects.isNull(this.wrapped) || this.wrapped.shouldPauseGame();
     }
     
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int mod) {
+    @Override public boolean keyPressed(int keyCode, int scanCode, int mod) {
         if(Objects.nonNull(this.wrapped)) {
             if(keyCode==GLFW_KEY_ESCAPE) {
                 if(this.wrapped.onCloseRequested(true)) onClose();

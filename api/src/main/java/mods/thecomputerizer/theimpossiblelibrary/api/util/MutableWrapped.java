@@ -10,8 +10,7 @@ public abstract class MutableWrapped<W> implements Wrapped<W> {
         this.wrapped = wrapped;
     }
     
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass") @Override
-    public boolean equals(Object other) {
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass") @Override public boolean equals(Object other) {
         if(Objects.isNull(this.wrapped)) return Objects.isNull(other);
         Object otherWrapped = other;
         while(otherWrapped instanceof Wrapped<?>) otherWrapped = ((Wrapped<?>)otherWrapped).getWrapped();

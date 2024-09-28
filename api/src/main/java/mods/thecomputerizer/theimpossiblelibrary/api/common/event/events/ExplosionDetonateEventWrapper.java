@@ -20,8 +20,7 @@ public abstract class ExplosionDetonateEventWrapper<E> extends CommonExplosionEv
         return this.affectedEntities.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.affectedEntities = wrapAffectedEntitiesField();
     }

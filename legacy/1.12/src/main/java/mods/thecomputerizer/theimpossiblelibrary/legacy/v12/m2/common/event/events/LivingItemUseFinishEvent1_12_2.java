@@ -16,8 +16,7 @@ public class LivingItemUseFinishEvent1_12_2 extends LivingItemUseFinishEventWrap
         LIVING_ITEM_USE_FINISH.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,23 +25,19 @@ public class LivingItemUseFinishEvent1_12_2 extends LivingItemUseFinishEventWrap
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Finish,Integer> wrapDurationField() {
+    @Override protected EventFieldWrapper<Finish,Integer> wrapDurationField() {
         return wrapGenericBoth(Finish::getDuration,Finish::setDuration,0);
     }
 
-    @Override
-    protected EventFieldWrapper<Finish,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<Finish,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(Finish::getEntityLiving);
     }
 
-    @Override
-    protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackResultField() {
+    @Override protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackResultField() {
         return wrapItemStackBoth(Finish::getResultStack,Finish::setResultStack);
     }
 
-    @Override
-    protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Finish::getItem);
     }
 }

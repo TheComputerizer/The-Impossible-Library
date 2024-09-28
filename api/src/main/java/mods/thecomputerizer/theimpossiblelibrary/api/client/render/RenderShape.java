@@ -137,8 +137,7 @@ public class RenderShape extends MutableWrapped<Shape> {
         }
     }
     
-    @Override
-    public RenderShape setWrapped(Shape shape) {
+    @Override public RenderShape setWrapped(Shape shape) {
         return (RenderShape)super.setWrapped(shape);
     }
 }

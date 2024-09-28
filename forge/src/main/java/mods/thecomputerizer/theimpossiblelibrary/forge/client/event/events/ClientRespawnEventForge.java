@@ -15,8 +15,7 @@ public class ClientRespawnEventForge extends ClientRespawnEventWrapper<RespawnEv
         CLIENT_RESPAWN.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class ClientRespawnEventForge extends ClientRespawnEventWrapper<RespawnEv
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<RespawnEvent,PlayerAPI<?,?>> wrapOldPlayerField() {
+    @Override protected EventFieldWrapper<RespawnEvent,PlayerAPI<?,?>> wrapOldPlayerField() {
         return wrapPlayerGetter(RespawnEvent::getOldPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<RespawnEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<RespawnEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(RespawnEvent::getNewPlayer);
     }
 }

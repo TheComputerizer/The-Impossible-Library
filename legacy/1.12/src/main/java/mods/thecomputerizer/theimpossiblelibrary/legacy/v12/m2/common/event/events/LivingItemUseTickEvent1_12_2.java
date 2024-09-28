@@ -16,8 +16,7 @@ public class LivingItemUseTickEvent1_12_2 extends LivingItemUseTickEventWrapper<
         LIVING_ITEM_USE_TICK.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,18 +25,15 @@ public class LivingItemUseTickEvent1_12_2 extends LivingItemUseTickEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Tick,Integer> wrapDurationField() {
+    @Override protected EventFieldWrapper<Tick,Integer> wrapDurationField() {
         return wrapGenericBoth(Tick::getDuration, Tick::setDuration,0);
     }
 
-    @Override
-    protected EventFieldWrapper<Tick,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<Tick,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(Tick::getEntityLiving);
     }
 
-    @Override
-    protected EventFieldWrapper<Tick,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<Tick,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(Tick::getItem);
     }
 }

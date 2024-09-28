@@ -1,5 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -19,6 +22,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return new Mappable<>(supplier.get(),false);
     }
 
+    @IndirectCallers
     public static <K,V> Mappable<K,V> make(Supplier<Map<K,V>> supplier, Consumer<Mappable<K,V>> settings) {
         Mappable<K,V> mappable = make(supplier);
         settings.accept(mappable);
@@ -28,7 +32,8 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
     public static <K,V> Mappable<K,V> makeSynchronized(Supplier<Map<K,V>> supplier) {
         return new Mappable<>(supplier.get(),true);
     }
-
+    
+    @IndirectCallers
     public static <K,V> Mappable<K,V> makeSynchronized(Supplier<Map<K,V>> supplier, Consumer<Mappable<K,V>> settings) {
         Mappable<K,V> mappable = make(supplier);
         settings.accept(mappable);
@@ -41,59 +46,52 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         this.map = isSynchronized ? Collections.synchronizedMap(map) : map;
     }
 
-    @Override
-    public void clear() {
+    @Override public void clear() {
         this.map.clear();
     }
 
-    @Override
-    public @Nullable V compute(@Nullable K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    @Override public @Nullable V compute(@Nullable K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
         if(Objects.isNull(key)) return null;
         return this.map.computeIfPresent(key,remappingFunc);
     }
 
-    @Override
-    public @Nullable V computeIfAbsent(@Nullable K key, Function<? super K, ? extends V> mappingFunc) {
+    @Override public @Nullable V computeIfAbsent(@Nullable K key, Function<? super K, ? extends V> mappingFunc) {
         if(Objects.isNull(key)) return null;
         return this.map.computeIfAbsent(key,mappingFunc);
     }
 
-    @Override
-    public @Nullable V computeIfPresent(@Nullable K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    @Override public @Nullable V computeIfPresent(@Nullable K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
         if(Objects.isNull(key)) return null;
         return this.map.computeIfPresent(key,remappingFunc);
     }
 
-    @Override
-    public boolean containsKey(@Nullable Object key) {
+    @Override public boolean containsKey(@Nullable Object key) {
         return Objects.nonNull(key) && this.map.containsKey(key);
     }
 
-    @Override
-    public boolean containsValue(Object value) {
+    @Override public boolean containsValue(Object value) {
         return this.map.containsValue(value);
     }
 
-    @Override
-    public Set<Entry<K,V>> entrySet() {
+    @Override public @Nonnull Set<Entry<K,V>> entrySet() {
         return this.map.entrySet();
     }
 
-    @Override
-    public void forEach(Consumer<? super Entry<K,V>> action) {
+    @Override public void forEach(Consumer<? super Entry<K,V>> action) {
         entrySet().forEach(action);
     }
-
+    
+    @IndirectCallers
     public void forEachKey(Consumer<? super K> action) {
         keySet().forEach(action);
     }
-
+    
+    @IndirectCallers
     public void forEachValue(Consumer<? super V> action) {
         values().forEach(action);
     }
 
-    @Override
-    public @Nullable V get(@Nullable Object key) {
+    @Override public @Nullable V get(@Nullable Object key) {
         return Objects.nonNull(key) ? this.map.get(key) : null;
     }
 
@@ -104,8 +102,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return defVal;
     }
 
-    @Override
-    public boolean isEmpty() {
+    @Override public boolean isEmpty() {
         return this.map.isEmpty();
     }
 
@@ -113,52 +110,46 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return !isEmpty();
     }
 
-    @Override
-    public Iterator<Entry<K,V>> iterator() {
+    @Override public @Nonnull Iterator<Entry<K,V>> iterator() {
         return entrySet().iterator();
     }
-
+    
+    @IndirectCallers
     public boolean keyAbsent(@Nullable Object key) {
         return Objects.isNull(key) || !containsKey(key);
     }
 
-    @Override
-    public Set<K> keySet() {
+    @Override public @Nonnull Set<K> keySet() {
         return this.map.keySet();
     }
-
+    
+    @IndirectCallers
     public Stream<Entry<K,V>> parallelStream() {
         return entrySet().parallelStream();
     }
 
-    @Override
-    public @Nullable V put(@Nullable K key, V value) {
+    @Override public @Nullable V put(@Nullable K key, V value) {
         return Objects.nonNull(key) ? this.map.put(key,value) : null;
     }
 
-    @Override
-    public void putAll(Map<? extends K, ? extends V> otherMap) {
+    @Override public void putAll(Map<? extends K, ? extends V> otherMap) {
         this.map.putAll(otherMap);
     }
 
-    @Override
-    public @Nullable V putIfAbsent(@Nullable K key, V value) {
+    @Override public @Nullable V putIfAbsent(@Nullable K key, V value) {
         if(Objects.isNull(key)) return null;
         return this.map.putIfAbsent(key,value);
     }
 
-    @Override
-    public @Nullable V remove(@Nullable Object key) {
+    @Override public @Nullable V remove(@Nullable Object key) {
         return Objects.nonNull(key) ? this.map.remove(key) : null;
     }
 
-    @Override
-    public int size() {
+    @Override public int size() {
         return this.map.size();
     }
 
-    @Override
-    public Spliterator<Entry<K,V>> spliterator() {
+    @Override public Spliterator<Entry<K,V>> spliterator() {
         return entrySet().spliterator();
     }
 
@@ -166,13 +157,11 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return entrySet().stream();
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.map.toString();
     }
 
-    @Override
-    public Collection<V> values() {
+    @Override public @Nonnull Collection<V> values() {
         return this.map.values();
     }
 }

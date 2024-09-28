@@ -23,8 +23,7 @@ public abstract class ClientEntityViewEventType<E> extends ClientRenderEventType
         return this.state.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.entity = wrapEntityField();
         this.state = wrapStateField();

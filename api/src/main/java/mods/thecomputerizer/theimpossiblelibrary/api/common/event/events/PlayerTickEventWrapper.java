@@ -11,8 +11,7 @@ public abstract class PlayerTickEventWrapper<E> extends CommonTickableEventType<
         super(TICK_PLAYER);
     }
 
-    @Override
-    protected TickType wrapTickType() {
+    @Override protected TickType wrapTickType() {
         return PLAYER;
     }
 }

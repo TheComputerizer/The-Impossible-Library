@@ -39,8 +39,7 @@ public class AnnotationPrinter extends AnnotationVisitor implements BytecodePrin
         return new AnnotationPrinter(this.api,this.parent,pkgPair.getRight());
     }
 
-    @Override
-    public void toLines(Collection<String> lines, int tabs) {
+    @Override public void toLines(Collection<String> lines, int tabs) {
         StringJoiner valueJoiner = new StringJoiner(", ");
         if(Objects.nonNull(this.values))
             for(Entry<String,Object> value : this.values.entrySet())
@@ -49,13 +48,11 @@ public class AnnotationPrinter extends AnnotationVisitor implements BytecodePrin
         lines.add(TextHelper.withTabs("@"+this.name+(values.isEmpty() ? "" : "("+values+")"),tabs));
     }
 
-    @Override
-    public void visit(String name, Object value) {
+    @Override public void visit(String name, Object value) {
         addValue(name,value);
     }
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String name, String descriptor) {
+    @Override public AnnotationVisitor visitAnnotation(String name, String descriptor) {
         AnnotationPrinter printer = parseAnnotation(descriptor);
         addValue(name,printer);
         return printer;

@@ -631,8 +631,7 @@ import java.util.Map.Entry;
             this.comments = ArrayHelper.fromIterable(comments,String.class);
         }
         
-        @Override
-        public String toString() {
+        @Override     public String toString() {
             return "<"+this.key+" = "+writeValue()+">";
         }
         

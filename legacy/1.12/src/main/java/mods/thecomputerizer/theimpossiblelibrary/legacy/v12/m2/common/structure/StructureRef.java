@@ -72,8 +72,7 @@ public class StructureRef {
                 world.getChunkProvider().isInsideStructure(world,this.name,pos);
     }
 
-    @Override
-    public boolean equals(Object other) {
+    @Override public boolean equals(Object other) {
         if(super.equals(other)) return true;
         if(other instanceof StructureRef) {
             StructureRef otherRef = (StructureRef)other;

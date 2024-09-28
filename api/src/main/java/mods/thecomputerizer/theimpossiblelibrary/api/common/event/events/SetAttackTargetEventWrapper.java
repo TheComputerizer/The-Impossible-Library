@@ -18,8 +18,7 @@ public abstract class SetAttackTargetEventWrapper<E> extends CommonLivingEventTy
         return this.target.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.target = wrapTargetField();
     }

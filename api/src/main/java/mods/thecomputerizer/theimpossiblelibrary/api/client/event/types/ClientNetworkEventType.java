@@ -12,8 +12,7 @@ public abstract class ClientNetworkEventType<E> extends ClientEventWrapper<E> {
         super(type);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.network = NetworkHelper.getNetworkAPI();
     }
 }

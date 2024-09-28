@@ -46,8 +46,7 @@ public abstract class CommonPlayerInteractEventType<E> extends CommonPlayerEvent
         return getHand()==hand;
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.cancelResult = wrapCancelResultField();
         this.facing = wrapFacingField();

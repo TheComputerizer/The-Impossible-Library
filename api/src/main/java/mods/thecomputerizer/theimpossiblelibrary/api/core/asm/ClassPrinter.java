@@ -218,8 +218,7 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
         return lines;
     }
 
-    @Override
-    public void toLines(Collection<String> lines, int tabs) {
+    @Override public void toLines(Collection<String> lines, int tabs) {
         if(Objects.isNull(this.parent)) getPackageLines(lines);
         if(Objects.isNull(this.parent)) getImportLines(lines);
         getAnnotationLines(lines,tabs);
@@ -230,16 +229,14 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
         lines.add("}");
     }
 
-    @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+    @Override public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         this.access = parseClassAccess(access);
         parseName(getClassPath(name));
         parseSuper(getClassPath(superName));
         parseInterfaces(interfaces);
     }
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
+    @Override public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         return parseAnnotation(descriptor);
     }
 
@@ -251,13 +248,11 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
         return parseMethod(access,name,descriptor,exceptions);
     }
 
-    @Override
-    public void visitInnerClass(String name, String outerName, String innerName, int access) {
+    @Override public void visitInnerClass(String name, String outerName, String innerName, int access) {
         parseInnerClass(access,innerName,name);
     }
 
-    @Override
-    public void visitEnd() {
+    @Override public void visitEnd() {
         TILRef.logWarn("Printing written class with name `{}`",this.name);
         TILRef.logWarn("----------------------------------------------------------------------------------------------------");
         int lineNum = 1;

@@ -32,8 +32,7 @@ public abstract class ChampionsAPI implements ModAPI {
         return Objects.nonNull(getChampionData(entity));
     }
 
-    @Override
-    public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
+    @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
         return loader.isLegacyForge() ? version.isV12() :
                 (loader.isModernForge() && (version.isV16() || version.isV18()));
     }

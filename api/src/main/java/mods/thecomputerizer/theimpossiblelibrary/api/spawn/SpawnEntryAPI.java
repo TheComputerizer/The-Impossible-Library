@@ -19,20 +19,17 @@ public abstract class SpawnEntryAPI<E> implements WeightedEntry {
         this.minGroupCount = minGroup;
     }
     
-    @Override
-    public int getWeight() {
+    @Override public int getWeight() {
         return this.weight;
     }
 
     public abstract E newInstance(WorldAPI<?> worldAPI) throws Exception;
     
-    @Override
-    public void setWeight(int weight) {
+    @Override public void setWeight(int weight) {
         this.weight = weight;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.entityClass.getSimpleName()+"*("+this.minGroupCount+"-"+this.maxGroupCount+"):"+this.weight;
     }
 }

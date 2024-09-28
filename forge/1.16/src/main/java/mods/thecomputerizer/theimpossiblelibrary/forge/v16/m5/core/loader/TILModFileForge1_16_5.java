@@ -53,8 +53,7 @@ public class TILModFileForge1_16_5 extends ModFile {
         for(MultiVersionModInfo info : infos) this.infos.put(info,null);
     }
     
-    @Override
-    public ModFileScanData compileContent() {
+    @Override public ModFileScanData compileContent() {
         TILRef.logDebug("Starting multiversion mod scan");
         TILBetterModScan scan = new TILBetterModScan();
         scan.addModFileInfo(getModFileInfo());
@@ -132,15 +131,13 @@ public class TILModFileForge1_16_5 extends ModFile {
         return this.fileInfo;
     }
     
-    @Override
-    public void identifyLanguage() {
+    @Override public void identifyLanguage() {
         IModFileInfo info = getModFileInfo();
         LanguageLoadingProvider provider =  FMLLoader.getLanguageLoadingProvider();
         this.loader = provider.findLanguage(this,info.getModLoader(),info.getModLoaderVersion());
     }
     
-    @Override
-    public boolean identifyMods() {
+    @Override public boolean identifyMods() {
         TILRef.logDebug("Loading mod file {} with language {}",getFilePath(),getModFileInfo().getModLoader());
         //this.coreMods = ModFileParser.getCoreMods(this); //TODO Coremod support
         this.accessTransformer = getLocator().findPath(this,"META-INF","accesstransformer.cfg");

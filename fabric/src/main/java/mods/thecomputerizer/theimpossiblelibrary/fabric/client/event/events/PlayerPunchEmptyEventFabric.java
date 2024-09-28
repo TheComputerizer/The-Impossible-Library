@@ -27,23 +27,19 @@ public class PlayerPunchEmptyEventFabric extends PlayerPunchEmptyEventWrapper<Ob
         return wrapWorld(wrapArrayGetter(0));
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],ActionResult> wrapCancelResultField() {
+    @Override protected EventFieldWrapper<Object[],ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(wrapArrayGetter(0),(event,result) -> {},PASS);
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],Facing> wrapFacingField() {
+    @Override protected EventFieldWrapper<Object[],Facing> wrapFacingField() {
         return wrapGenericGetter(wrapArrayGetter(0),Facing.UP);
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(wrapArrayGetter(0));
     }
 }

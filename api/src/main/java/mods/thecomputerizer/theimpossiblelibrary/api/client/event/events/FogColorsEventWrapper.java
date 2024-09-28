@@ -27,8 +27,7 @@ public abstract class FogColorsEventWrapper<E> extends ClientEntityViewEventType
         return this.red.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.blue = wrapBlue();
         this.green = wrapGreen();

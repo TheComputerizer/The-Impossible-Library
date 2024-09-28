@@ -15,8 +15,7 @@ public abstract class CommonExplosionEventType<E> extends CommonWorldEventType<E
         return this.explosion.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.explosion = wrapExplosionField();
     }

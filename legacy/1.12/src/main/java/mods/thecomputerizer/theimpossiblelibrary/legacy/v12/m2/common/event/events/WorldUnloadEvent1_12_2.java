@@ -15,8 +15,7 @@ public class WorldUnloadEvent1_12_2 extends WorldUnloadEventWrapper<Unload> {
         WORLD_UNLOAD.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class WorldUnloadEvent1_12_2 extends WorldUnloadEventWrapper<Unload> {
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Unload,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Unload,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Unload::getWorld);
     }
 }

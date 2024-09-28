@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_CLONE;
 
 public abstract class PlayerCloneEventWrapper<E> extends CommonPlayerEventType<E> {
-    ;
+    
     protected EventFieldWrapper<E,Boolean> fromDeath;
     protected EventFieldWrapper<E,PlayerAPI<?,?>> original;
 
@@ -19,8 +19,7 @@ public abstract class PlayerCloneEventWrapper<E> extends CommonPlayerEventType<E
         return this.original.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.fromDeath = wrapDeathField();
         this.original = wrapOriginalField();

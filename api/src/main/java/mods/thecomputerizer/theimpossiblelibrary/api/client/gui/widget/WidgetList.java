@@ -110,8 +110,7 @@ public class WidgetList extends ScrollableWidgetGroup {
         calculateScrollBar();
     }
     
-    @Override
-    public boolean scrollDown(double scroll) {
+    @Override public boolean scrollDown(double scroll) {
         if(super.scrollDown(scroll)) {
             setScrollBarPos();
             return true;
@@ -119,8 +118,7 @@ public class WidgetList extends ScrollableWidgetGroup {
         return false;
     }
     
-    @Override
-    public boolean scrollUp(double scroll) {
+    @Override public boolean scrollUp(double scroll) {
         if(super.scrollUp(scroll)) {
             setScrollBarPos();
             return true;

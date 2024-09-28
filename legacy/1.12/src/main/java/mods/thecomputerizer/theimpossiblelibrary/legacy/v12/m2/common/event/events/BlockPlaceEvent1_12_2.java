@@ -19,8 +19,7 @@ public class BlockPlaceEvent1_12_2 extends BlockPlaceEventWrapper<EntityPlaceEve
         BLOCK_PLACE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -29,38 +28,31 @@ public class BlockPlaceEvent1_12_2 extends BlockPlaceEventWrapper<EntityPlaceEve
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityPlaceEvent::getEntity);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapPlacedAgainstField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapPlacedAgainstField() {
         return wrapStateGetter(EntityPlaceEvent::getPlacedAgainst);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapPlacedField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapPlacedField() {
         return wrapStateGetter(EntityPlaceEvent::getPlacedBlock);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,BlockSnapshotAPI<?>> wrapSnapshotField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,BlockSnapshotAPI<?>> wrapSnapshotField() {
         return wrapSnapshotGetter(EntityPlaceEvent::getBlockSnapshot);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(EntityPlaceEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(EntityPlaceEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityPlaceEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<EntityPlaceEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(EntityPlaceEvent::getWorld);
     }
 }

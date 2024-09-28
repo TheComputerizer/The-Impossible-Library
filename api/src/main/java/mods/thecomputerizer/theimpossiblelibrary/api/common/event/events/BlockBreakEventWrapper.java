@@ -17,8 +17,7 @@ public abstract class BlockBreakEventWrapper<E> extends CommonBlockStatePlayerEv
         return this.xp.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.xp = wrapXPField();
     }

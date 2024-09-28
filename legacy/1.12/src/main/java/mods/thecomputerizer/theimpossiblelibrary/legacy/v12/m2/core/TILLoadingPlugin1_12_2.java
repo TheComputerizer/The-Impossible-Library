@@ -28,23 +28,19 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
     public TILLoadingPlugin1_12_2() {
     }
 
-    @Override
-    public String[] getASMTransformerClass() {
+    @Override public String[] getASMTransformerClass() {
         return new String[0];
     }
 
-    @Override
-    public String getModContainerClass() {
+    @Override public String getModContainerClass() {
         return null;
     }
 
-    @Override
-    public @Nullable String getSetupClass() {
+    @Override public @Nullable String getSetupClass() {
         return null;
     }
 
-    @Override
-    public void injectData(Map<String,Object> data) {
+    @Override public void injectData(Map<String,Object> data) {
         TILDev.logDebug("Beginning core injection with coremod data: {}", data);
         URLClassLoader loader = classLoader;
         CoreAPI core = INSTANCE;
@@ -53,8 +49,7 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
         core.writeModContainers(loader);
     }
 
-    @Override
-    public String getAccessTransformerClass() {
+    @Override public String getAccessTransformerClass() {
         return null;
     }
 }

@@ -18,13 +18,11 @@ public class Tag1_12_2 implements TagAPI {
         return null;
     }
 
-    @Override
-    public CompoundTag1_12_2 makeCompoundTag() {
+    @Override public CompoundTag1_12_2 makeCompoundTag() {
         return new CompoundTag1_12_2(new NBTTagCompound());
     }
 
-    @Override
-    public ListTag1_12_2 makeListTag() {
+    @Override public ListTag1_12_2 makeListTag() {
         return new ListTag1_12_2(new NBTTagList());
     }
     
@@ -60,13 +58,11 @@ public class Tag1_12_2 implements TagAPI {
         return new StringTag1_12_2(new NBTTagString(value));
     }
     
-    @Override
-    public CompoundTag1_12_2 readFromFile(File file) throws IOException {
+    @Override public CompoundTag1_12_2 readFromFile(File file) throws IOException {
         return new CompoundTag1_12_2(CompressedStreamTools.read(file));
     }
 
-    @Override
-    public void writeToFile(CompoundTagAPI<?> tag, File file) throws IOException {
+    @Override public void writeToFile(CompoundTagAPI<?> tag, File file) throws IOException {
         CompressedStreamTools.write((NBTTagCompound)tag.getWrapped(),file);
     }
 }

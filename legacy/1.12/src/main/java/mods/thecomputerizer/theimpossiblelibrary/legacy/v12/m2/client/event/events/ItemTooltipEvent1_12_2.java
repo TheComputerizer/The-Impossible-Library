@@ -19,8 +19,7 @@ public class ItemTooltipEvent1_12_2 extends ItemTooltipEventWrapper<ItemTooltipE
         ITEM_TOOLTIP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -29,18 +28,15 @@ public class ItemTooltipEvent1_12_2 extends ItemTooltipEventWrapper<ItemTooltipE
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(ItemTooltipEvent::getEntityPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(ItemTooltipEvent::getItemStack);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() {
+    @Override protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() {
         return wrapGenericGetter(ItemTooltipEvent::getToolTip,new ArrayList<>());
     }
 }

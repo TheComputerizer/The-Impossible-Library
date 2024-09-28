@@ -7,13 +7,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 
 public class PlayerPushOutOfBlocksEventForge extends PlayerPushOutOfBlocksEventWrapper<Object> {
 
-    @Override
-    protected Box wrapEntityBB() {
+    @Override protected Box wrapEntityBB() {
         return Box.ZERO;
     }
 
-    @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 }

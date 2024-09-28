@@ -17,8 +17,7 @@ public class LivingDeathEvent1_12_2 extends LivingDeathEventWrapper<LivingDeathE
         LIVING_DEATH.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,13 +26,11 @@ public class LivingDeathEvent1_12_2 extends LivingDeathEventWrapper<LivingDeathE
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LivingDeathEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingDeathEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_12_2(event.getSource(),1f),null);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingDeathEvent::getEntityLiving);
     }
 }

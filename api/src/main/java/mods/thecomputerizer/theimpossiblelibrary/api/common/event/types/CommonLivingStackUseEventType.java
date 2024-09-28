@@ -14,8 +14,7 @@ public abstract class CommonLivingStackUseEventType<E> extends CommonLivingStack
         return this.duration.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.duration = wrapDurationField();
     }

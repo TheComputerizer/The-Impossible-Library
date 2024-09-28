@@ -21,8 +21,7 @@ public abstract class CommonTickableEventType<E> extends CommonEventWrapper<E> {
         return getTickType()==type;
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         this.tickPhase = wrapTickPhase();
         this.tickType = wrapTickType();
     }

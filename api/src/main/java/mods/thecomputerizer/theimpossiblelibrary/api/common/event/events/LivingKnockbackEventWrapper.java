@@ -53,8 +53,7 @@ public abstract class LivingKnockbackEventWrapper<E> extends CommonLivingEventTy
         return this.strength.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.attacker = wrapAttackerField();
         this.originalAttacker = wrapOriginalAttackerField();

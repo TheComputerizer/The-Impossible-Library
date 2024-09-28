@@ -174,8 +174,7 @@ public class Wrapperable<E> implements Iterable<E> {
         return next;
     }
 
-    @Override
-    public void forEach(Consumer<? super E> action) {
+    @Override public void forEach(Consumer<? super E> action) {
         this.iterable.forEach(action);
     }
 
@@ -315,8 +314,7 @@ public class Wrapperable<E> implements Iterable<E> {
         return !isList() && !isSet();
     }
 
-    @Override
-    public @Nonnull Iterator<E> iterator() {
+    @Override public @Nonnull Iterator<E> iterator() {
         return this.iterable.iterator();
     }
 
@@ -437,8 +435,7 @@ public class Wrapperable<E> implements Iterable<E> {
         return sizeCounter.getValue();
     }
 
-    @Override
-    public Spliterator<E> spliterator() {
+    @Override public Spliterator<E> spliterator() {
         return this.iterable.spliterator();
     }
 
@@ -451,8 +448,7 @@ public class Wrapperable<E> implements Iterable<E> {
         return (E[])Array.newInstance(getElementClass(),size());
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return this.iterable.toString();
     }
 }

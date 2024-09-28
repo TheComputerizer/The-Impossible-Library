@@ -10,8 +10,7 @@ public abstract class PlayerChangedDimensionsEventWrapper<E> extends CommonPlaye
         super(PLAYER_CHANGED_DIMENSIONS);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
     }
 }

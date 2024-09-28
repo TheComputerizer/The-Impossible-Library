@@ -19,8 +19,7 @@ public abstract class PlayerInteractEntitySpecificEventWrapper<E> extends Common
         return this.localPos.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.localPos = wrapLocalPosField();
     }

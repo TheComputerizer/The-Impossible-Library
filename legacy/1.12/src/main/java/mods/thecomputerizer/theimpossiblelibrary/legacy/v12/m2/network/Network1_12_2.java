@@ -33,82 +33,68 @@ public class Network1_12_2 implements NetworkAPI<SimpleNetworkWrapper,Side> { //
 
     private SimpleNetworkWrapper network;
 
-    @Override
-    public Side getDirFromName(String name) {
+    @Override public Side getDirFromName(String name) {
         return name.equalsIgnoreCase("SERVER") ? SERVER : CLIENT;
     }
 
-    @Override
-    public String getNameFromDir(Side side) {
+    @Override public String getNameFromDir(Side side) {
         return side.name();
     }
 
-    @Override
-    public Side getDirToClient() {
+    @Override public Side getDirToClient() {
         return CLIENT;
     }
 
-    @Override
-    public Side getDirToClientLogin() {
+    @Override public Side getDirToClientLogin() {
         return CLIENT;
     }
 
-    @Override
-    public Side getDirToServer() {
+    @Override public Side getDirToServer() {
         return SERVER;
     }
 
-    @Override
-    public Side getDirToServerLogin() {
+    @Override public Side getDirToServerLogin() {
         return SERVER;
     }
 
-    @Override
-    public Side getOppositeDir(Side side) {
+    @Override public Side getOppositeDir(Side side) {
         return side==CLIENT ? SERVER : CLIENT;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Side side, MessageAPI<CTX> message) {
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Side side, MessageAPI<CTX> message) {
         MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)new MessageWrapper1_12_2();
         wrapper.setMessage(side,message);
         return wrapper;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Side side, MessageAPI<CTX> ... messages) {
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Side side, MessageAPI<CTX> ... messages) {
         MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)new MessageWrapper1_12_2();
         wrapper.setMessages(side,messages);
         return wrapper;
     }
 
-    @Override
-    public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Side side, Collection<MessageAPI<CTX>> messages) {
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Side side, Collection<MessageAPI<CTX>> messages) {
         @SuppressWarnings("unchecked") MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)new MessageWrapper1_12_2();
         wrapper.setMessages(side,messages);
         return wrapper;
     }
 
-    @Override
-    public SimpleNetworkWrapper getNetwork() {
+    @Override public SimpleNetworkWrapper getNetwork() {
         if(Objects.isNull(this.network)) this.network = NetworkRegistry.INSTANCE.newSimpleChannel(TILRef.MODID);
         return this.network;
     }
 
-    @Override
-    public boolean isDirToClient(Side side) {
+    @Override public boolean isDirToClient(Side side) {
         return side.isClient();
     }
 
-    @Override
-    public boolean isDirLogin(Side d) {
+    @Override public boolean isDirLogin(Side d) {
         return true;
     }
     
-    @Override
-    public ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
+    @Override public ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
         return new ResourceLocation1_12_2(new ResourceLocation(NetworkHelper.readString(buf)));
     }
     
@@ -121,18 +107,15 @@ public class Network1_12_2 implements NetworkAPI<SimpleNetworkWrapper,Side> { //
         return TagHelper.makeCompoundTag();
     }
 
-    @Override
-    public void registerMessage(MessageDirectionInfo<Side> dir, int id) {
+    @Override public void registerMessage(MessageDirectionInfo<Side> dir, int id) {
         getNetwork().registerMessage(new Handler(),MessageWrapper1_12_2.class,id,dir.getDirection());
     }
 
-    @Override
-    public <P, M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
+    @Override public <P, M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
         getNetwork().sendTo((MessageWrapper1_12_2)message,(EntityPlayerMP)player);
     }
 
-    @Override
-    public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
+    @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
         getNetwork().sendToServer((MessageWrapper1_12_2)message);
     }
     

@@ -15,8 +15,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 @SuppressWarnings("unused") public class CommonEventsForge1_16_5 extends CommonEvents1_16_5 {
 
-    @Override
-    public void defineEvents() {
+    @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventForge());
         BLOCK_BREAK.setConnector(new BlockBreakEventForge());
         BLOCK_CREATE_FLUID.setConnector(new FluidCreateSourceEventForge());
@@ -102,13 +101,11 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
     }
 
-    @Override
-    public void postCustomTick(CustomTick ticker) {
+    @Override public void postCustomTick(CustomTick ticker) {
         EVENT_BUS.post(new CustomTickForge(ticker));
     }
 
-    @Override
-    public <E extends EventWrapper<?>> void register(E wrapper) {
+    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
         EVENT_BUS.register(wrapper.getClass());
     }
     

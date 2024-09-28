@@ -17,8 +17,7 @@ public abstract class PlayStreamingSoundSourceEventWrapper<E,S> extends ClientSo
         return this.uuid.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.uuid = wrapUUIDField();
     }

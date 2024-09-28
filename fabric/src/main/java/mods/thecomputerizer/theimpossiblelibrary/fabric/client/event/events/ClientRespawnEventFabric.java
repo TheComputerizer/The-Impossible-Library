@@ -12,13 +12,11 @@ public class ClientRespawnEventFabric extends ClientRespawnEventWrapper<Object[]
         return null;
     }
     
-    @Override
-    protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapOldPlayerField() {
+    @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapOldPlayerField() {
         return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
-    @Override
-    protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(wrapArrayGetter(0));
     }
 }

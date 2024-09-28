@@ -10,8 +10,7 @@ public class SpawnEntry1_16_5 extends SpawnEntryAPI<LivingEntity> { //TODO
         super(clazz,weight,maxGroup,minGroup);
     }
 
-    @Override
-    public LivingEntity newInstance(WorldAPI<?> worldAPI) throws Exception {
+    @Override public LivingEntity newInstance(WorldAPI<?> worldAPI) throws Exception {
         return null;
     }
 }

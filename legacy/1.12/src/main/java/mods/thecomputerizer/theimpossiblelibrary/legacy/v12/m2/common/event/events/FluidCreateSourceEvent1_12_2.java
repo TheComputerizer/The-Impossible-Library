@@ -17,8 +17,7 @@ public class FluidCreateSourceEvent1_12_2 extends FluidCreateSourceEventWrapper<
         BLOCK_CREATE_FLUID.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,18 +26,15 @@ public class FluidCreateSourceEvent1_12_2 extends FluidCreateSourceEventWrapper<
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<CreateFluidSourceEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<CreateFluidSourceEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(CreateFluidSourceEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<CreateFluidSourceEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<CreateFluidSourceEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(CreateFluidSourceEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<CreateFluidSourceEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<CreateFluidSourceEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(CreateFluidSourceEvent::getWorld);
     }
 }

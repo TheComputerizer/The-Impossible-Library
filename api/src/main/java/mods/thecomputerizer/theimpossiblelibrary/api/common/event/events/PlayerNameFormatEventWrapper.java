@@ -22,8 +22,7 @@ public abstract class PlayerNameFormatEventWrapper<E> extends CommonPlayerEventT
         return this.username.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.displayName = wrapDisplayNameField();
         this.username = wrapUsernameField();

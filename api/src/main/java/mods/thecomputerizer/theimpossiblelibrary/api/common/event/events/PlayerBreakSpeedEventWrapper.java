@@ -28,8 +28,7 @@ public abstract class PlayerBreakSpeedEventWrapper<E> extends CommonPlayerStateE
         return this.speed.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.originalSpeed = wrapOriginalSpeedField();
         this.pos = wrapPosField();

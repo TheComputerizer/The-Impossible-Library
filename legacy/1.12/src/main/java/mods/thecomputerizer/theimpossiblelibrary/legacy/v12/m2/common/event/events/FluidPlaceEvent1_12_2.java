@@ -17,8 +17,7 @@ public class FluidPlaceEvent1_12_2 extends FluidPlaceEventWrapper<FluidPlaceBloc
         BLOCK_PLACE_FLUID.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,33 +26,27 @@ public class FluidPlaceEvent1_12_2 extends FluidPlaceEventWrapper<FluidPlaceBloc
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<FluidPlaceBlockEvent,BlockPosAPI<?>> wrapFluidPosField() {
+    @Override protected EventFieldWrapper<FluidPlaceBlockEvent,BlockPosAPI<?>> wrapFluidPosField() {
         return wrapPosGetter(FluidPlaceBlockEvent::getLiquidPos);
     }
 
-    @Override
-    protected EventFieldWrapper<FluidPlaceBlockEvent,BlockStateAPI<?>> wrapNewStateField() {
+    @Override protected EventFieldWrapper<FluidPlaceBlockEvent,BlockStateAPI<?>> wrapNewStateField() {
         return wrapStateBoth(FluidPlaceBlockEvent::getNewState,FluidPlaceBlockEvent::setNewState);
     }
 
-    @Override
-    protected EventFieldWrapper<FluidPlaceBlockEvent,BlockStateAPI<?>> wrapOriginalStateField() {
+    @Override protected EventFieldWrapper<FluidPlaceBlockEvent,BlockStateAPI<?>> wrapOriginalStateField() {
         return wrapStateGetter(FluidPlaceBlockEvent::getOriginalState);
     }
 
-    @Override
-    protected EventFieldWrapper<FluidPlaceBlockEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<FluidPlaceBlockEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(FluidPlaceBlockEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<FluidPlaceBlockEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<FluidPlaceBlockEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(FluidPlaceBlockEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<FluidPlaceBlockEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<FluidPlaceBlockEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(FluidPlaceBlockEvent::getWorld);
     }
 }

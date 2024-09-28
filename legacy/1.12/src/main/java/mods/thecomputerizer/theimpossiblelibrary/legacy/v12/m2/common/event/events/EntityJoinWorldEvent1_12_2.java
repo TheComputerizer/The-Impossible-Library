@@ -16,8 +16,7 @@ public class EntityJoinWorldEvent1_12_2 extends EntityJoinWorldEventWrapper<Enti
         ENTITY_JOIN_WORLD.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class EntityJoinWorldEvent1_12_2 extends EntityJoinWorldEventWrapper<Enti
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<EntityJoinWorldEvent,WorldAPI<?>> wrapWorld() {
+    @Override protected EventFieldWrapper<EntityJoinWorldEvent,WorldAPI<?>> wrapWorld() {
         return wrapWorldGetter(EntityJoinWorldEvent::getWorld);
     }
 
-    @Override
-    protected EventFieldWrapper<EntityJoinWorldEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<EntityJoinWorldEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(EntityJoinWorldEvent::getEntity);
     }
 }

@@ -7,13 +7,11 @@ import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 
 public class PlayerChangeXPEvent1_12_2 extends PlayerChangeXPEventWrapper<PlayerPickupXpEvent> { //TODO This is wrong
 
-    @Override
-    protected EventFieldWrapper<PlayerPickupXpEvent,Integer> wrapAmountField() {
+    @Override protected EventFieldWrapper<PlayerPickupXpEvent,Integer> wrapAmountField() {
         return wrapGenericBoth(event -> 0,(event,amount) -> {},0);
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerPickupXpEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerPickupXpEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
     

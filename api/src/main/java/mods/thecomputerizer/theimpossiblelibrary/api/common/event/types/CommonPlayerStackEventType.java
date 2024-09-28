@@ -11,8 +11,7 @@ public abstract class CommonPlayerStackEventType<E> extends CommonPlayerEventTyp
         super(type);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.stack = wrapStackField();
     }

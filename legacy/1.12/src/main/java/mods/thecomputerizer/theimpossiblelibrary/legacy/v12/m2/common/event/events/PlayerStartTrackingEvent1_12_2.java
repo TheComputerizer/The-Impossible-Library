@@ -16,8 +16,7 @@ public class PlayerStartTrackingEvent1_12_2 extends PlayerStartTrackingEventWrap
         PLAYER_START_TRACKING.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class PlayerStartTrackingEvent1_12_2 extends PlayerStartTrackingEventWrap
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(StartTracking::getTarget);
     }
 
-    @Override
-    protected EventFieldWrapper<StartTracking,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<StartTracking,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(StartTracking::getEntityPlayer);
     }
 }

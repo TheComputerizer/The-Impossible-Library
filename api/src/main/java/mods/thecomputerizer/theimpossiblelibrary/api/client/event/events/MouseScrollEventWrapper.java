@@ -10,8 +10,7 @@ public abstract class MouseScrollEventWrapper<E> extends ClientEventWrapper<E> {
         super(MOUSE_SCROLL);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
 
     }
 }

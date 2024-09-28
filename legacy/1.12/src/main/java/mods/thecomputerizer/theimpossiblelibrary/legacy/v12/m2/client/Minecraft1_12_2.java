@@ -70,8 +70,7 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         return this.mc.displayWidth;
     }
     
-    @Override
-    public FontAPI getFont() {
+    @Override public FontAPI getFont() {
         return this.font;
     }
     
@@ -80,13 +79,11 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         return scale==0 ? 4 : scale;
     }
     
-    @Override
-    public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
+    @Override public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
         return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_12_2(this.mc.player) : null;
     }
 
-    @Override
-    public RenderAPI getRenderer() {
+    @Override public RenderAPI getRenderer() {
         return this.render;
     }
     
@@ -102,8 +99,7 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     /**
      * TODO Cache this?
      */
-    @Override
-    public MinecraftWindow getWindow() {
+    @Override public MinecraftWindow getWindow() {
         ScaledResolution res = Objects.nonNull(this.mc) ? new ScaledResolution(this.mc) : null;
         if(Objects.isNull(res)) {
             TILRef.logFatal("Unable to get MinecraftWidnow since the Minecraft is null?");
@@ -112,23 +108,19 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         return new MinecraftWindow(res.getScaledWidth(),res.getScaledHeight(),res.getScaleFactor());
     }
 
-    @Override
-    public @Nullable WorldAPI<World> getWorld() {
+    @Override public @Nullable WorldAPI<World> getWorld() {
         return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.world) ? new World1_12_2(this.mc.world) : null;
     }
 
-    @Override
-    public <S> boolean isCurrentScreen(S screen) {
+    @Override public <S> boolean isCurrentScreen(S screen) {
         return Objects.nonNull(this.mc) && this.mc.currentScreen==screen;
     }
 
-    @Override
-    public boolean isCurrentScreenAPI() {
+    @Override public boolean isCurrentScreenAPI() {
         return false;
     }
 
-    @Override
-    public boolean isDisplayFocused() {
+    @Override public boolean isDisplayFocused() {
         if(Objects.isNull(this.mc)) {
             TILRef.logError("Unable to determine display focus state for null Minecraft instance");
             return false;
@@ -141,24 +133,20 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         }
     }
 
-    @Override
-    public boolean isFinishedLoading() {
+    @Override public boolean isFinishedLoading() {
         return !FMLClientHandler.instance().isLoading() && Objects.nonNull(this.mc) &&
                 Objects.nonNull(this.mc.currentScreen);
     }
 
-    @Override
-    public boolean isFullScreen() {
+    @Override public boolean isFullScreen() {
         return Objects.nonNull(this.mc) && this.mc.isFullScreen();
     }
 
-    @Override
-    public boolean isLoading() {
+    @Override public boolean isLoading() {
         return FMLClientHandler.instance().isLoading();
     }
 
-    @Override
-    public boolean isPaused() {
+    @Override public boolean isPaused() {
         return Objects.nonNull(this.mc) && this.mc.isGamePaused();
     }
 }

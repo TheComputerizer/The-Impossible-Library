@@ -18,8 +18,7 @@ public class ListTag1_12_2 extends ListTagAPI<NBTTagList> {
         super(tag);
     }
     
-    @Override
-    public void addTag(BaseTagAPI<?> tag) {
+    @Override public void addTag(BaseTagAPI<?> tag) {
         this.wrapped.appendTag((NBTBase)tag.getWrapped());
     }
     
@@ -55,8 +54,7 @@ public class ListTag1_12_2 extends ListTagAPI<NBTTagList> {
         return false;
     }
     
-    @Override
-    public Iterable<BaseTagAPI<?>> iterable() {
+    @Override public Iterable<BaseTagAPI<?>> iterable() {
         List<BaseTagAPI<?>> tags = new ArrayList<>();
         this.wrapped.forEach(based -> tags.add(TagHelper.getWrapped(based)));
         return tags;

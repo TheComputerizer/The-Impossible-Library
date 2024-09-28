@@ -17,8 +17,7 @@ public abstract class LootingLevelEventWrapper<E> extends CommonLivingDamageEven
         return this.lootingLevel.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.lootingLevel = wrapLootingLevelField();
     }

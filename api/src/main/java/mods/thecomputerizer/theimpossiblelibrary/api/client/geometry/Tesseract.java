@@ -15,30 +15,26 @@ public class Tesseract extends ShapeHolder {
         this.innerShape = new Convex3D(shape);
     }
 
-    @Override
-    public ShapeHolder setRotations(double x, double y, double z) {
+    @Override public ShapeHolder setRotations(double x, double y, double z) {
         this.shape.setRotationSpeed(x,y,z);
         this.innerShape.setRotationSpeed(x,y,z);
         return this;
     }
 
-    @Override
-    public ShapeHolder setScale(float x, float y, float z) {
+    @Override public ShapeHolder setScale(float x, float y, float z) {
         this.maxScale = new Vector3d(x,y,z);
         this.shape.setScale(x,y,z);
         this.innerShape.setScale(x/2f,y/2f,z/2f);
         return this;
     }
 
-    @Override
-    public ShapeHolder setColor(float ... colors) {
+    @Override public ShapeHolder setColor(float ... colors) {
         this.shape.setColor(colors);
         this.innerShape.setColor(colors);
         return this;
     }
 
-    @Override
-    public void render(RenderContext ctx, Vector3d relativeCenter) {
+    @Override public void render(RenderContext ctx, Vector3d relativeCenter) {
         if(this.scaleCounter>=200) this.counterReversal = true;
         else if(this.scaleCounter<0) this.counterReversal = false;
         if(this.counterReversal) this.scaleCounter--;
@@ -47,8 +43,7 @@ public class Tesseract extends ShapeHolder {
         this.innerShape.render(ctx,relativeCenter.add(this.relativePosVec));
     }
 
-    @Override
-    public void renderScaledRelative(RenderContext ctx, Vector3d relativeCenter, float s) {
+    @Override public void renderScaledRelative(RenderContext ctx, Vector3d relativeCenter, float s) {
         if(this.scaleCounter>=200) this.counterReversal = true;
         else if(this.scaleCounter<0) this.counterReversal = false;
         if(this.counterReversal) this.scaleCounter--;

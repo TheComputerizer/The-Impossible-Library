@@ -19,13 +19,11 @@ public class ModHelperFabric1_16_5 extends ModHelperAPI {
         super(V16_5,FABRIC,side);
     }
 
-    @Override
-    protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
+    @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
         return Collections.unmodifiableMap(map);
     }
     
-    @Override
-    public String getModName(String modid) {
+    @Override public String getModName(String modid) {
         String name = super.getModName(modid);
         if(name.equals(modid) && isModLoaded(modid)) {
             ModContainer container = INSTANCE.getModContainer(modid).orElse(null);
@@ -34,8 +32,7 @@ public class ModHelperFabric1_16_5 extends ModHelperAPI {
         return name;
     }
 
-    @Override
-    public boolean isModLoaded(String modid) {
+    @Override public boolean isModLoaded(String modid) {
         return Objects.nonNull(INSTANCE) && INSTANCE.isModLoaded(modid);
     }
 }

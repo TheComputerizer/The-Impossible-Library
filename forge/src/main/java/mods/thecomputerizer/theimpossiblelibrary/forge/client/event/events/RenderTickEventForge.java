@@ -21,8 +21,7 @@ public class RenderTickEventForge extends RenderTickEventWrapper<RenderTickEvent
         TICK_RENDER.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -31,13 +30,11 @@ public class RenderTickEventForge extends RenderTickEventWrapper<RenderTickEvent
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected TickPhase wrapTickPhase() {
+    @Override protected TickPhase wrapTickPhase() {
         return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
     }
 
-    @Override
-    protected EventFieldWrapper<RenderTickEvent,Float> wrapTickTimeField() {
+    @Override protected EventFieldWrapper<RenderTickEvent,Float> wrapTickTimeField() {
         return wrapGenericGetter(ev -> ev.renderTickTime,0f);
     }
 }

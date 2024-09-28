@@ -9,23 +9,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 public class BlockInteractEvent1_12_2 extends BlockInteractEventWrapper<Object> { //TODO
 
-    @Override
-    protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<Object,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<Object,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<Object,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(event -> null);
     }
 
-    @Override
-    protected EventFieldWrapper<Object,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Object,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(event -> null);
     }
 }

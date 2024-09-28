@@ -13,8 +13,7 @@ public abstract class PlayerPunchEmptyEventWrapper<E> extends ClientPlayerIntera
         super(PLAYER_PUNCH_EMPTY);
     }
 
-    @Override
-    protected EventFieldWrapper<E,Hand> wrapHandField() {
+    @Override protected EventFieldWrapper<E,Hand> wrapHandField() {
         return wrapGenericGetter(e -> MAINHAND,MAINHAND);
     }
 }

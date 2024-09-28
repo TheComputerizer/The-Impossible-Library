@@ -16,8 +16,7 @@ public class CustomTickEvent1_12_2 extends CustomTickEventWrapper<CustomTick1_12
         CUSTOM_TICK.invoke(event);
     }
 
-    @Override
-    protected CustomTick wrapTicker() {
+    @Override protected CustomTick wrapTicker() {
         return Objects.nonNull(this.event) ? this.event.getTicker() : null;
     }
 }

@@ -15,8 +15,7 @@ public class RegisterCommandsEvent1_12_2 extends RegisterCommandsEventWrapper<Re
         REGISTER_COMMANDS.invoke(event);
     }
 
-    @Override
-    public void registerCommand(CommandAPI command) {
+    @Override public void registerCommand(CommandAPI command) {
         getEvent().registerCommand(new WrappedCommand1_12_2(command));
     }
 }

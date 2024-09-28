@@ -27,8 +27,7 @@ public abstract class CameraSetupEventWrapper<E> extends ClientEntityViewEventTy
         return this.yaw.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.roll = wrapRollField();
         this.pitch = wrapPitchField();

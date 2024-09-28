@@ -42,8 +42,7 @@ public abstract class BlockPlaceMultiEventWrapper<E> extends CommonBlockStateEnt
         return this.world.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.placed = wrapPlacedField();
         this.placedAgainst = wrapPlacedAgainstField();

@@ -46,8 +46,7 @@ public abstract class ClientPlayerInteractEventType<E> extends ClientPlayerEvent
         return getHand()==hand;
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.cancelResult = wrapCancelResultField();
         this.facing = wrapFacingField();

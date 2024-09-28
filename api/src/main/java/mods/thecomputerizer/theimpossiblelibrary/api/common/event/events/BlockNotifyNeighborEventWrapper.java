@@ -22,8 +22,7 @@ public abstract class BlockNotifyNeighborEventWrapper<E> extends CommonEventWrap
         return this.forceRedstoneUpdate.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.forceRedstoneUpdate = wrapForceRedstoneUpdateField();
         this.sides = wrapSidesField();
     }

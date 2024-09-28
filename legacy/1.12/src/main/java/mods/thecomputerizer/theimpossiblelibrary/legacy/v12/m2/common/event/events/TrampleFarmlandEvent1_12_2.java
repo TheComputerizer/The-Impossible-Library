@@ -18,8 +18,7 @@ public class TrampleFarmlandEvent1_12_2 extends TrampleFarmlandEventWrapper<Farm
         BLOCK_TRAMPLE_FARMLAND.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,28 +27,23 @@ public class TrampleFarmlandEvent1_12_2 extends TrampleFarmlandEventWrapper<Farm
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<FarmlandTrampleEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<FarmlandTrampleEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(FarmlandTrampleEvent::getEntity);
     }
 
-    @Override
-    protected EventFieldWrapper<FarmlandTrampleEvent,Float> wrapFallDistanceField() {
+    @Override protected EventFieldWrapper<FarmlandTrampleEvent,Float> wrapFallDistanceField() {
         return wrapGenericGetter(FarmlandTrampleEvent::getFallDistance,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<FarmlandTrampleEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<FarmlandTrampleEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(FarmlandTrampleEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<FarmlandTrampleEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<FarmlandTrampleEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(FarmlandTrampleEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<FarmlandTrampleEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<FarmlandTrampleEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(FarmlandTrampleEvent::getWorld);
     }
 }

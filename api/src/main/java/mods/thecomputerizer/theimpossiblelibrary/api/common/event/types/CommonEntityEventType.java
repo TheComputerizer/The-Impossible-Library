@@ -16,8 +16,7 @@ public abstract class CommonEntityEventType<E> extends CommonEventWrapper<E> {
         return this.entity.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.entity = wrapEntityField();
     }
 

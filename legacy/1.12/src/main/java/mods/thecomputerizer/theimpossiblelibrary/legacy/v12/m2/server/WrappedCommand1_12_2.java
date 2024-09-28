@@ -25,18 +25,15 @@ public class WrappedCommand1_12_2 extends CommandBase {
         this.wrapped = wrapped;
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return this.wrapped.getName();
     }
 
-    @Override
-    public String getUsage(ICommandSender sender) {
+    @Override public String getUsage(ICommandSender sender) {
         return "";
     }
 
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    @Override public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         this.wrapped.prepareExceptionInfo();
         String exKey = this.wrapped.getExceptionKey();
         exKey = Objects.nonNull(exKey) ? exKey : "";
@@ -49,8 +46,7 @@ public class WrappedCommand1_12_2 extends CommandBase {
         }
     }
     
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+    @Override public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos pos) {
         return this.wrapped.getTabCompletions(ServerHelper.getAPI(),new CommandSender1_12_2(sender),args);
     }

@@ -17,8 +17,7 @@ public abstract class CommonLivingDamageEventType<E> extends CommonLivingEventTy
         return this.damage.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.damage = wrapDamageField();
     }

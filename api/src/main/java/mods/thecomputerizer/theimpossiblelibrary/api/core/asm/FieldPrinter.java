@@ -41,15 +41,13 @@ public class FieldPrinter extends FieldVisitor implements BytecodePrinter {
         return printer;
     }
 
-    @Override
-    public void toLines(Collection<String> lines, int tabs) {
+    @Override public void toLines(Collection<String> lines, int tabs) {
         getAnnotationLines(lines,tabs);
         lines.add(TextHelper.withTabs(this.access+" "+this.typeName+" "+this.name+
                 (Objects.nonNull(this.value) ? " = "+this.value : "")+";",tabs));
     }
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+    @Override public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         return parseAnnotation(desc);
     }
 }

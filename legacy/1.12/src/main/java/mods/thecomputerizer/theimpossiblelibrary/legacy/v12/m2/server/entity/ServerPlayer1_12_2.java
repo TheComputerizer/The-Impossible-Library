@@ -12,14 +12,12 @@ public class ServerPlayer1_12_2 extends Player1_12_2<EntityPlayerMP> {
         super(player);
     }
 
-    @Override
-    public int getGamemodeOrdinal() {
+    @Override public int getGamemodeOrdinal() {
         PlayerInteractionManager manager = this.entity.interactionManager;
         return Objects.nonNull(manager) ? manager.getGameType().getID() : 0;
     }
 
-    @Override
-    public boolean isClientPlayer() {
+    @Override public boolean isClientPlayer() {
         return false;
     }
 }

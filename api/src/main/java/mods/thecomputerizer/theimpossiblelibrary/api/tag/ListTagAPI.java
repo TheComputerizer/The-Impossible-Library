@@ -12,8 +12,7 @@ public abstract class ListTagAPI<T> extends BaseTagAPI<T> implements Iterable<Ba
     public abstract void addTag(BaseTagAPI<?> tag);
     public abstract Iterable<BaseTagAPI<?>> iterable();
     
-    @SuppressWarnings("NullableProblems") @Override
-    public Iterator<BaseTagAPI<?>> iterator() {
+    @SuppressWarnings("NullableProblems") @Override public Iterator<BaseTagAPI<?>> iterator() {
         return iterable().iterator();
     }
 }

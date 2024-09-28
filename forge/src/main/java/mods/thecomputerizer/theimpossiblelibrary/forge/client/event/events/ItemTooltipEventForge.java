@@ -19,8 +19,7 @@ public class ItemTooltipEventForge extends ItemTooltipEventWrapper<ItemTooltipEv
         ITEM_TOOLTIP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -29,18 +28,15 @@ public class ItemTooltipEventForge extends ItemTooltipEventWrapper<ItemTooltipEv
         setCanceled(event.isCanceled());
     }
     
-    @Override
-    protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(ItemTooltipEvent::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(ItemTooltipEvent::getItemStack);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() { //TODO Adjust for text components
+    @Override protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() { //TODO Adjust for text components
         return wrapGenericGetter(event -> new ArrayList<>(),new ArrayList<>());
     }
 }

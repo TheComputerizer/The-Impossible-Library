@@ -15,8 +15,7 @@ public class WorldCreateSpawnPosEvent1_12_2 extends WorldCreateSpawnPosEventWrap
         WORLD_CREATE_SPAWN_POS.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class WorldCreateSpawnPosEvent1_12_2 extends WorldCreateSpawnPosEventWrap
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<CreateSpawnPosition,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<CreateSpawnPosition,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(CreateSpawnPosition::getWorld);
     }
 }

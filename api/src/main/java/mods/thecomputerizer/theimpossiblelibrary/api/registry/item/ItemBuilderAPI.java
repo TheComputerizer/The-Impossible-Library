@@ -70,8 +70,7 @@ public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
         return this;
     }
     
-    @Override
-    public ItemBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public ItemBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }

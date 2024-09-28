@@ -12,8 +12,7 @@ public abstract class CommonLivingEventType<E> extends CommonEventWrapper<E> {
         super(type);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         this.living = wrapLivingField();
     }
 

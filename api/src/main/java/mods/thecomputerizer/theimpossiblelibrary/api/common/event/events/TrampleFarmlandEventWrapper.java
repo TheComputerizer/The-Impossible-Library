@@ -17,8 +17,7 @@ public abstract class TrampleFarmlandEventWrapper<E> extends CommonBlockStateEnt
         return this.fallDistance.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.fallDistance = wrapFallDistanceField();
     }

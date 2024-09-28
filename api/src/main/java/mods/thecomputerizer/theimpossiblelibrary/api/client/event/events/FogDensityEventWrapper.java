@@ -17,8 +17,7 @@ public abstract class FogDensityEventWrapper<E> extends ClientEntityViewEventTyp
         return this.density.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.density = wrapDensityField();
     }

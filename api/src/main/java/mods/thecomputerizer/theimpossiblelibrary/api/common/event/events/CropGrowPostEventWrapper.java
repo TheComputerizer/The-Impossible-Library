@@ -18,8 +18,7 @@ public abstract class CropGrowPostEventWrapper<E> extends CommonBlockStateEventT
         return this.originalState.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.originalState = wrapOriginalStateField();
     }

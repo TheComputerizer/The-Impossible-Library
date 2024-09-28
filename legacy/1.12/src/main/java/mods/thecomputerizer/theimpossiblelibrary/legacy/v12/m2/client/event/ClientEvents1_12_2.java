@@ -47,8 +47,7 @@ public class ClientEvents1_12_2 implements ClientEventsAPI {
         this.defined = false;
     }
 
-    @Override
-    public void defineEvents() {
+    @Override public void defineEvents() {
         CAMERA_SETUP.setConnector(new CameraSetupEvent1_12_2());
         CLICK_INPUT.setConnector(new InputClickEvent1_12_2());
         CLIENT_CONNECTED.setConnector(new ClientConnectedEvent1_12_2());
@@ -159,18 +158,15 @@ public class ClientEvents1_12_2 implements ClientEventsAPI {
         return ctx;
     }
 
-    @Override
-    public boolean isDefined() {
+    @Override public boolean isDefined() {
         return this.defined;
     }
 
-    @Override
-    public void postCustomTick(CustomTick ticker) {
+    @Override public void postCustomTick(CustomTick ticker) {
         EVENT_BUS.post(new CustomTick1_12_2(ticker));
     }
 
-    @Override
-    public <E extends EventWrapper<?>> void register(E wrapper) {
+    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
         EVENT_BUS.register(wrapper.getClass());
     }
     

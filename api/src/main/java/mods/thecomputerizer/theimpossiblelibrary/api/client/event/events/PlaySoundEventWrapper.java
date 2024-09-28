@@ -18,8 +18,7 @@ public abstract class PlaySoundEventWrapper<E,S> extends ClientSoundSourceEventT
         return this.soundResult.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.soundResult = wrapSoundResultField();
     }

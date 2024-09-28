@@ -14,8 +14,7 @@ public class ClientConnectedEventForge extends ClientConnectedEventWrapper<Logge
         CLIENT_CONNECTED.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -24,13 +23,11 @@ public class ClientConnectedEventForge extends ClientConnectedEventWrapper<Logge
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LoggedInEvent,Boolean> wrapLocalField() {
+    @Override protected EventFieldWrapper<LoggedInEvent,Boolean> wrapLocalField() {
         return wrapGenericGetter(event -> true,true);
     }
 
-    @Override
-    protected EventFieldWrapper<LoggedInEvent,String> wrapConnectionTypeField() {
+    @Override protected EventFieldWrapper<LoggedInEvent,String> wrapConnectionTypeField() {
         return wrapGenericGetter(event -> "","");
     }
 }

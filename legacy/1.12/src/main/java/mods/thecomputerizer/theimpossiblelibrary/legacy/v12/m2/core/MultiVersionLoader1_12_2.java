@@ -27,20 +27,17 @@ public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
         super(parent);
     }
 
-    @Override
-    protected File findCoreModRoot() { //TODO Figure out how to get around classpath injection
+    @Override protected File findCoreModRoot() { //TODO Figure out how to get around classpath injection
         //return (File)ReflectionHelper.getFieldInstance(null,CoreModManager.class,"mcDir");
         return new File("mods");
     }
 
-    @Override
-    public File findModRoot() {//TODO Figure out how to get around classpath injection
+    @Override public File findModRoot() {//TODO Figure out how to get around classpath injection
         //return (File)ReflectionHelper.getFieldInstance(null,Loader.class,"minecraftDir");
         return new File("mods");
     }
 
-    @Override
-    protected List<File> gatherCandidateModFiles(File root) { //TODO support dev env :(
+    @Override protected List<File> gatherCandidateModFiles(File root) { //TODO support dev env :(
         TILRef.logDebug("Gathering mod candidates from `{}`",root);
         File[] files = root.listFiles(file -> file.isFile() && file.getName().endsWith(".jar"));
         Set<File> set = new HashSet<>(Objects.nonNull(files) ? Arrays.asList(files) : Collections.emptyList());
@@ -51,8 +48,7 @@ public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
         return Collections.unmodifiableList(new ArrayList<>(set));
     }
 
-    @Override
-    protected @Nullable Attributes getFileAttributes(File file) {
+    @Override protected @Nullable Attributes getFileAttributes(File file) {
         if(Objects.isNull(file) || !file.exists()) return null;
         File manifest = new File(file.getAbsolutePath()+".meta");
         if(DISABLE_EXTERNAL_MANIFEST || !manifest.exists()) {
@@ -71,8 +67,7 @@ public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
         }
     }
 
-    @Override
-    protected MultiVersionModInfo loadModInfo(
+    @Override protected MultiVersionModInfo loadModInfo(
             ClassLoader classLoader, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
         containers.add(ModContainerWriter1_12_2.writeModContainer((LaunchClassLoader)classLoader,info.getModID(),
                 info.getContainerClasspath()));

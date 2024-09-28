@@ -35,8 +35,7 @@ public abstract class HarvestBlockDropsEventWrapper<E> extends CommonBlockStateP
         return this.silkTouching.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.drops = wrapDropsField();
         this.dropChance = wrapDropChanceField();

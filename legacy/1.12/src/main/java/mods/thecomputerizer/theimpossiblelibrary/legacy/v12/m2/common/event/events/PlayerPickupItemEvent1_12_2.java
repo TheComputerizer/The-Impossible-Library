@@ -17,8 +17,7 @@ public class PlayerPickupItemEvent1_12_2 extends PlayerPickupItemEventWrapper<It
         PLAYER_ITEM_PICKUP.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,18 +26,15 @@ public class PlayerPickupItemEvent1_12_2 extends PlayerPickupItemEventWrapper<It
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapEntityField() {
         return wrapEntityGetter(ItemPickupEvent::getOriginalEntity);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemPickupEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<ItemPickupEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> event.player);
     }
 
-    @Override
-    protected EventFieldWrapper<ItemPickupEvent,ItemStackAPI<?>> wrapStackField() {
+    @Override protected EventFieldWrapper<ItemPickupEvent,ItemStackAPI<?>> wrapStackField() {
         return wrapItemStackGetter(ItemPickupEvent::getStack);
     }
 }

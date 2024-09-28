@@ -49,14 +49,12 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    @Override
-    public ToolBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
+    @Override public ToolBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
         this.propertyMap.put(key,propertyGetter);
         return this;
     }
     
-    @Override
-    public ToolBuilderAPI setCreativeTab(CreativeTabAPI tab) {
+    @Override public ToolBuilderAPI setCreativeTab(CreativeTabAPI tab) {
         this.creativeTab = tab;
         return this;
     }
@@ -76,8 +74,7 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    @Override
-    public ToolBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
+    @Override public ToolBuilderAPI setRegistryName(ResourceLocationAPI<?> name) {
         this.registryName = name;
         return this;
     }

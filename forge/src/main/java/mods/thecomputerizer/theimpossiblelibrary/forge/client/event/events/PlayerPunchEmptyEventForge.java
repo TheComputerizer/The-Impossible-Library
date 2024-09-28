@@ -39,24 +39,20 @@ public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<Lef
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LeftClickEmpty,ActionResult> wrapCancelResultField() {
+    @Override protected EventFieldWrapper<LeftClickEmpty,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
                 (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
     }
 
-    @Override
-    protected EventFieldWrapper<LeftClickEmpty,Facing> wrapFacingField() {
+    @Override protected EventFieldWrapper<LeftClickEmpty,Facing> wrapFacingField() {
         return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),Facing.UP);
     }
 
-    @Override
-    protected EventFieldWrapper<LeftClickEmpty,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<LeftClickEmpty,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(LeftClickEmpty::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<LeftClickEmpty,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<LeftClickEmpty,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(LeftClickEmpty::getPos);
     }
 }

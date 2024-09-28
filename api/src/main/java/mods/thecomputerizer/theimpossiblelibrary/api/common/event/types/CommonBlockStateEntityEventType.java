@@ -15,8 +15,7 @@ public abstract class CommonBlockStateEntityEventType<E> extends CommonBlockStat
         return this.entity.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.entity = wrapEntityField();
     }

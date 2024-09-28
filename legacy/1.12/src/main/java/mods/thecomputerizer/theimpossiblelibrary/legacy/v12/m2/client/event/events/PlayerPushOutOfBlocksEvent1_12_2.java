@@ -29,13 +29,11 @@ public class PlayerPushOutOfBlocksEvent1_12_2 extends PlayerPushOutOfBlocksEvent
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected Box wrapEntityBB() {
+    @Override protected Box wrapEntityBB() {
         return Objects.nonNull(this.event) ? EventHelper.getAABB(this.event.getEntityBoundingBox()) : ZERO;
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerSPPushOutOfBlocksEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerSPPushOutOfBlocksEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(PlayerSPPushOutOfBlocksEvent::getEntityPlayer);
     }
 }

@@ -18,8 +18,7 @@ public class PlaySoundSourceEventForge extends PlaySoundSourceEventWrapper<PlayS
         SOUND_PLAY_SOURCE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,18 +27,15 @@ public class PlaySoundSourceEventForge extends PlaySoundSourceEventWrapper<PlayS
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<PlaySoundSourceEvent,String> wrapNameField() {
+    @Override protected EventFieldWrapper<PlaySoundSourceEvent,String> wrapNameField() {
         return wrapGenericGetter(PlaySoundSourceEvent::getName,"");
     }
 
-    @Override
-    protected EventFieldWrapper<PlaySoundSourceEvent,SoundAPI<ISound>> wrapSoundField() {
+    @Override protected EventFieldWrapper<PlaySoundSourceEvent,SoundAPI<ISound>> wrapSoundField() {
         return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
     }
 
-    @Override
-    protected EventFieldWrapper<PlaySoundSourceEvent,String> wrapUUIDField() { //TODO
+    @Override protected EventFieldWrapper<PlaySoundSourceEvent,String> wrapUUIDField() { //TODO
         return wrapGenericGetter(event -> "","");
     }
 }

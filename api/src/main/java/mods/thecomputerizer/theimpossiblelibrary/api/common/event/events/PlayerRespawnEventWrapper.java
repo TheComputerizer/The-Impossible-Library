@@ -17,8 +17,7 @@ public abstract class PlayerRespawnEventWrapper<E> extends CommonPlayerEventType
         return this.endConquered.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.endConquered = wrapEndConqueredField();
     }

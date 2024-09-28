@@ -57,18 +57,15 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
         return false;
     }
     
-    @Override
-    public CommonEntryPoint getClientVersionHandler() {
+    @Override public CommonEntryPoint getClientVersionHandler() {
         return null;
     }
     
-    @Override
-    public CommonEntryPoint getCommonVersionHandler() {
+    @Override public CommonEntryPoint getCommonVersionHandler() {
         return null;
     }
 
-    @Override
-    public MultiVersionLoaderAPI getLoader() {
+    @Override public MultiVersionLoaderAPI getLoader() {
         return this.loader;
     }
     
@@ -76,16 +73,13 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
         return new ModWriterForge1_16_5(this, info);
     }
     
-    @Override
-    public void initAPI() {
+    @Override public void initAPI() {
         TILRef.setAPI(this.side.isClient() ? new ClientForge1_16_5() : new CommonForge1_16_5());
     }
 
-    @Override
-    public void injectWrittenMod(Class<?> containerClass, String modid) {}
+    @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
     
-    @Override
-    protected boolean modConstructed(String modid, Class<?> clazz) {
+    @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
         return true;
     }

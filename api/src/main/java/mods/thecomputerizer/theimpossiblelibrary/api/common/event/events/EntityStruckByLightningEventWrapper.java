@@ -18,8 +18,7 @@ public abstract class EntityStruckByLightningEventWrapper<E> extends CommonEntit
         return this.lightningEntity.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.lightningEntity = wrapLightningEntityField();
     }

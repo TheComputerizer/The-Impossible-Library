@@ -106,8 +106,7 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return this.scrollSpeed*Math.abs(scrollAmount);
     }
     
-    @Override
-    public boolean scrollDown(double scroll) {
+    @Override public boolean scrollDown(double scroll) {
         if(doesNotRequireHoverToScroll() || isHoveringForScroll()) {
             double height = getHeight();
             double elementsHeight = getElementsHeight();
@@ -119,8 +118,7 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return false;
     }
     
-    @Override
-    public boolean scrollUp(double scroll) {
+    @Override public boolean scrollUp(double scroll) {
         if(doesNotRequireHoverToScroll() || isHoveringForScroll()) {
             if(this.scrollOffset>0d) {
                 this.scrollOffset = Math.max(this.scrollOffset-(scroll(scroll)),0d);

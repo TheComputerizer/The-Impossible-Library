@@ -17,8 +17,7 @@ public class CropGrowPostEvent1_12_2 extends CropGrowPostEventWrapper<Post> {
         CROP_GROW_POST.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,23 +26,19 @@ public class CropGrowPostEvent1_12_2 extends CropGrowPostEventWrapper<Post> {
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<Post,BlockStateAPI<?>> wrapOriginalStateField() {
+    @Override protected EventFieldWrapper<Post,BlockStateAPI<?>> wrapOriginalStateField() {
         return wrapStateGetter(Post::getOriginalState);
     }
 
-    @Override
-    protected EventFieldWrapper<Post,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<Post,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(Post::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<Post,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<Post,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(Post::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<Post,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<Post,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(Post::getWorld);
     }
 }

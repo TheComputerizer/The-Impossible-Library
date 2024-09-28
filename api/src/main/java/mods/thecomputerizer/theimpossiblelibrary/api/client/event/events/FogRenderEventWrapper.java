@@ -22,8 +22,7 @@ public abstract class FogRenderEventWrapper<E> extends ClientEntityViewEventType
         return this.fogMode.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.farplane = wrapFarplaneField();
         this.fogMode = wrapFogModeField();

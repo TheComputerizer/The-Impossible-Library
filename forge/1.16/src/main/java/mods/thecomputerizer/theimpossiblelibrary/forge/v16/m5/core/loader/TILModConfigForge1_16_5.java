@@ -23,8 +23,7 @@ public class TILModConfigForge1_16_5 implements IConfigurable {
         this.infoMap.put("logoFile","logo.png");
     }
     
-    @SuppressWarnings("unchecked") @Override
-    public <T> Optional<T> getConfigElement(String ... key) {
+    @SuppressWarnings("unchecked") @Override public <T> Optional<T> getConfigElement(String ... key) {
         if(Objects.isNull(key) || key.length==0) return Optional.empty();
         T value = (T)this.infoMap.get(key[0]);
         return Objects.nonNull(value) ? Optional.of(value) : Optional.empty();

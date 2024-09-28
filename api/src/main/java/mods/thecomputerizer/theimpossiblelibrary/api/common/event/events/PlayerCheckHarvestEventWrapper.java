@@ -17,8 +17,7 @@ public abstract class PlayerCheckHarvestEventWrapper<E> extends CommonPlayerStat
         return this.success.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.success = wrapSuccessField();
     }

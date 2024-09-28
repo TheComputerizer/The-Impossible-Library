@@ -70,8 +70,7 @@ public class CustomTick {
         this.tps = tps;
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if(obj instanceof CustomTick) return this.millis==((CustomTick)obj).millis;
         return obj instanceof Number && (obj instanceof Long ? this.millis == (Long) obj :
                 this.tps==((Number)obj).intValue());

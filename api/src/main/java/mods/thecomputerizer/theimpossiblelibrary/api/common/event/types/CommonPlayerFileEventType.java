@@ -31,8 +31,7 @@ public abstract class CommonPlayerFileEventType<E> extends CommonPlayerEventType
         return this.uuid.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.directory = wrapDirectoryField();
         this.uuid = wrapUUIDField();

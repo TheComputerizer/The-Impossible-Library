@@ -16,23 +16,19 @@ public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
         super(type);
     }
 
-    @Override
-    public boolean isClient() {
+    @Override public boolean isClient() {
         return true;
     }
 
-    @Override
-    public boolean isCommon() {
+    @Override public boolean isCommon() {
         return false;
     }
 
-    @Override
-    public boolean isServer() {
+    @Override public boolean isServer() {
         return false;
     }
     
-    @Override
-    public void setEvent(E event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         this.minecraft = TILRef.getClientSubAPI(ClientAPI::getMinecraft);
     }
@@ -76,18 +72,15 @@ public abstract class ClientEventWrapper<E> extends EventWrapper<E> {
             super(cancelable,hasResult);
         }
 
-        @Override
-        public boolean isClient() {
+        @Override     public boolean isClient() {
             return true;
         }
 
-        @Override
-        public boolean isCommon() {
+        @Override     public boolean isCommon() {
             return false;
         }
 
-        @Override
-        public boolean isServer() {
+        @Override     public boolean isServer() {
             return false;
         }
     }

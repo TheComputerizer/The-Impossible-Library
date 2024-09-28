@@ -31,33 +31,27 @@ public class CompoundTag1_12_2 extends CompoundTagAPI<NBTTagCompound> {
         return null;
     }
     
-    @Override
-    public boolean contains(String key) {
+    @Override public boolean contains(String key) {
         return this.wrapped.hasKey(key);
     }
 
-    @Override
-    public CompoundTag1_12_2 getCompoundTag(String key) {
+    @Override public CompoundTag1_12_2 getCompoundTag(String key) {
         return new CompoundTag1_12_2(this.wrapped.getCompoundTag(key));
     }
 
-    @Override
-    public ListTag1_12_2 getListTag(String key) {
+    @Override public ListTag1_12_2 getListTag(String key) {
         return (ListTag1_12_2)getTag(key).asListTag();
     }
 
-    @Override
-    public PrimitiveTag1_12_2 getPrimitiveTag(String key) {
+    @Override public PrimitiveTag1_12_2 getPrimitiveTag(String key) {
         return (PrimitiveTag1_12_2)getTag(key).asPrimitiveTag();
     }
 
-    @Override
-    public String getString(String key) {
+    @Override public String getString(String key) {
         return this.wrapped.getString(key);
     }
 
-    @Override
-    public BaseTagAPI<?> getTag(String key) {
+    @Override public BaseTagAPI<?> getTag(String key) {
         return TagHelper.getWrapped(this.wrapped.getTag(key));
     }
     
@@ -93,8 +87,7 @@ public class CompoundTag1_12_2 extends CompoundTagAPI<NBTTagCompound> {
         this.wrapped.setDouble(key,d);
     }
     
-    @Override
-    public void putInt(String key, int value) {
+    @Override public void putInt(String key, int value) {
         this.wrapped.setInteger(key,value);
     }
     
@@ -106,13 +99,11 @@ public class CompoundTag1_12_2 extends CompoundTagAPI<NBTTagCompound> {
         this.wrapped.setShort(key,s);
     }
     
-    @Override
-    public void putString(String key, String value) {
+    @Override public void putString(String key, String value) {
         this.wrapped.setString(key,value);
     }
 
-    @Override
-    public void putTag(String key, BaseTagAPI<?> tag) {
+    @Override public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.setTag(key,(NBTBase)tag.getWrapped());
     }
 }

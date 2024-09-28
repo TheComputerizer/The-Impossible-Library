@@ -28,8 +28,7 @@ public abstract class CommonBlockStateEventType<E> extends CommonEventWrapper<E>
         return this.world.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.pos = wrapPosField();
         this.state = wrapStateField();
         this.world = wrapWorldField();

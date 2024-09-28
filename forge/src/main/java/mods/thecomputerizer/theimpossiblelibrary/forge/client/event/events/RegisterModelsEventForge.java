@@ -13,8 +13,7 @@ public class RegisterModelsEventForge extends RegisterModelsEventWrapper<ModelRe
         REGISTER_MODELS.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     

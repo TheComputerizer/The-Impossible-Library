@@ -162,8 +162,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
             this.info = info;
         }
 
-        @Override
-        public ModMetadata getMetadataForId(String modId, Map<String,Object> extraData) {
+        @Override     public ModMetadata getMetadataForId(String modId, Map<String,Object> extraData) {
             ModMetadata meta = new ModMetadata();
             meta.modId = this.info.getModID();
             meta.name = this.info.getName();

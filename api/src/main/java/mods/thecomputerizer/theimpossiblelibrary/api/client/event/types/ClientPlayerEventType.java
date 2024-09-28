@@ -18,8 +18,7 @@ public abstract class ClientPlayerEventType<E> extends ClientEventWrapper<E> {
         return this.player.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         this.player = wrapPlayerField();
     }
 

@@ -22,8 +22,7 @@ public abstract class LivingFallEventWrapper<E> extends CommonLivingEventType<E>
         return this.distance.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.damageMultiplier = wrapDamageMultiplierField();
         this.distance = wrapDistanceField();

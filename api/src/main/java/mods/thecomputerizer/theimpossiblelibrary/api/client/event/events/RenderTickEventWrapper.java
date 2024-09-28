@@ -19,14 +19,12 @@ public abstract class RenderTickEventWrapper<E> extends ClientTickableEventType<
         return this.tickTime.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.tickTime = wrapTickTimeField();
     }
 
-    @Override
-    protected TickType wrapTickType() {
+    @Override protected TickType wrapTickType() {
         return RENDER;
     }
 

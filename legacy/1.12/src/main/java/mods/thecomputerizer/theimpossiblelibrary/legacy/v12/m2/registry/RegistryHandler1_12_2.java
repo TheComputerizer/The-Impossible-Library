@@ -72,8 +72,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
+    @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
         RegistryAPI<V> reg = (RegistryAPI<V>)getRegistry(registryKey);
         return reg.hasKey(entryKey) ? reg.getValue(entryKey) : null;
     }

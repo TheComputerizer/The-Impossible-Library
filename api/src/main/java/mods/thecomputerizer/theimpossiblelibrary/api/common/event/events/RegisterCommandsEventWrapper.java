@@ -13,6 +13,5 @@ public abstract class RegisterCommandsEventWrapper<E> extends CommonEventWrapper
 
     public abstract void registerCommand(CommandAPI command);
 
-    @Override
-    public void populate() {}
+    @Override public void populate() {}
 }

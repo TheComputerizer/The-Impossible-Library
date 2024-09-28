@@ -17,8 +17,7 @@ public class LootingLevelEvent1_12_2 extends LootingLevelEventWrapper<LootingLev
         LIVING_LOOTING_LEVEL.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,18 +26,15 @@ public class LootingLevelEvent1_12_2 extends LootingLevelEventWrapper<LootingLev
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {
+    @Override protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {
         return wrapGenericBoth(LootingLevelEvent::getLootingLevel,LootingLevelEvent::setLootingLevel,1);
     }
 
-    @Override
-    protected EventFieldWrapper<LootingLevelEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LootingLevelEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_12_2(event.getDamageSource(),1f),null);
     }
 
-    @Override
-    protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LootingLevelEvent::getEntityLiving);
     }
 }

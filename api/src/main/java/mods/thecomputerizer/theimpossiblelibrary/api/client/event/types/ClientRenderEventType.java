@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 
 import javax.annotation.Nonnull;
@@ -23,8 +22,7 @@ public abstract class ClientRenderEventType<E> extends ClientEventWrapper<E> {
 
     protected abstract RenderContext initRenderer(@Nonnull E event);
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.renderer = Objects.nonNull(this.event) ? initRenderer(this.event) : null;
     }
 }

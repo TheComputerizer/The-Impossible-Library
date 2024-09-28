@@ -13,8 +13,7 @@ public class ClientPlayer1_12_2 extends Player1_12_2<EntityPlayerSP> {
         super(player);
     }
 
-    @Override
-    public int getGamemodeOrdinal() {
+    @Override public int getGamemodeOrdinal() {
         NetworkPlayerInfo info = getNetworkInfo();
         return Objects.nonNull(info) ? info.getGameType().getID() : 0;
     }
@@ -24,8 +23,7 @@ public class ClientPlayer1_12_2 extends Player1_12_2<EntityPlayerSP> {
                 this.entity.connection.getPlayerInfo(this.entity.getGameProfile().getId()) : null;
     }
 
-    @Override
-    public boolean isClientPlayer() {
+    @Override public boolean isClientPlayer() {
         return true;
     }
 }

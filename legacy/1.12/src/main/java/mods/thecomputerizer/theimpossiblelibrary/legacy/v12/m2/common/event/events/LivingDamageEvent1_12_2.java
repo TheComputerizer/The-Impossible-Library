@@ -17,8 +17,7 @@ public class LivingDamageEvent1_12_2 extends LivingDamageEventWrapper<LivingDama
         LIVING_DAMAGE.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -27,19 +26,16 @@ public class LivingDamageEvent1_12_2 extends LivingDamageEventWrapper<LivingDama
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    public void setAmount(float amount) {
+    @Override public void setAmount(float amount) {
         this.event.setAmount(amount);
         this.damage.set(this.event,new Damage1_12_2(this.event.getSource(),amount));
     }
 
-    @Override
-    protected EventFieldWrapper<LivingDamageEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingDamageEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_12_2(event.getSource(),this.event.getAmount()),null);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingDamageEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingDamageEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingDamageEvent::getEntityLiving);
     }
 }

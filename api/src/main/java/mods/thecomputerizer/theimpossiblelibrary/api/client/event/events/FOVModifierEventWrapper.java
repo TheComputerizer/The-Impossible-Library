@@ -17,8 +17,7 @@ public abstract class FOVModifierEventWrapper<E> extends ClientEntityViewEventTy
         return this.fov.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.fov = wrapFOVField();
     }

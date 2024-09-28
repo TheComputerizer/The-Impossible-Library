@@ -16,8 +16,7 @@ public class LivingHealEvent1_12_2 extends LivingHealEventWrapper<LivingHealEven
         LIVING_HEAL.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -26,13 +25,11 @@ public class LivingHealEvent1_12_2 extends LivingHealEventWrapper<LivingHealEven
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<LivingHealEvent,Float> wrapAmountField() {
+    @Override protected EventFieldWrapper<LivingHealEvent,Float> wrapAmountField() {
         return wrapGenericBoth(LivingHealEvent::getAmount,LivingHealEvent::setAmount,0f);
     }
 
-    @Override
-    protected EventFieldWrapper<LivingHealEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+    @Override protected EventFieldWrapper<LivingHealEvent,LivingEntityAPI<?,?>> wrapLivingField() {
         return wrapLivingGetter(LivingEvent::getEntityLiving);
     }
 }

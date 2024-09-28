@@ -12,8 +12,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static org.objectweb.asm.Type.VOID;
-
 public class MethodPrinter extends MethodVisitor implements BytecodePrinter {
 
     protected final ClassPrinter parent;
@@ -91,15 +89,13 @@ public class MethodPrinter extends MethodVisitor implements BytecodePrinter {
         return new String[]{};
     }
 
-    @Override
-    public void toLines(Collection<String> lines, int tabs) { //TODO Print code? Might be too much effort
+    @Override public void toLines(Collection<String> lines, int tabs) { //TODO Print code? Might be too much effort
         getAnnotationLines(lines,tabs);
         lines.add(TextHelper.withTabs(getMethodHeader()+" {}",tabs));
         lines.add("");
     }
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+    @Override public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         return parseAnnotation(desc);
     }
 }

@@ -107,8 +107,7 @@ public class ColorCache {
         this.colorI = ColorHelper.makeRGBAInt(this.colorVI);
     }
     
-    @Override
-    public boolean equals(Object other) {
+    @Override public boolean equals(Object other) {
         return other instanceof ColorCache && this.colorI==((ColorCache)other).colorI;
     }
 

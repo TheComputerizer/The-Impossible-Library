@@ -41,108 +41,87 @@ public class TextStyle1_12_2 implements TextStyleAPI<Style> {
         return style;
     }
 
-    @Override
-    public Style aqua() {
+    @Override public Style aqua() {
         return AQUA;
     }
 
-    @Override
-    public Style black() {
+    @Override public Style black() {
         return BLACK;
     }
 
-    @Override
-    public Style blue() {
+    @Override public Style blue() {
         return BLUE;
     }
 
-    @Override
-    public Style bold() {
+    @Override public Style bold() {
         return BOLD;
     }
 
-    @Override
-    public Style darkAqua() {
+    @Override public Style darkAqua() {
         return DARK_AQUA;
     }
 
-    @Override
-    public Style darkBlue() {
+    @Override public Style darkBlue() {
         return DARK_BLUE;
     }
 
-    @Override
-    public Style darkGray() {
+    @Override public Style darkGray() {
         return DARK_GRAY;
     }
 
-    @Override
-    public Style darkGreen() {
+    @Override public Style darkGreen() {
         return DARK_GREEN;
     }
 
-    @Override
-    public Style darkPurple() {
+    @Override public Style darkPurple() {
         return DARK_PURPLE;
     }
 
-    @Override
-    public Style darkRed() {
+    @Override public Style darkRed() {
         return DARK_RED;
     }
 
-    @Override
-    public Style gold() {
+    @Override public Style gold() {
         return GOLD;
     }
 
-    @Override
-    public Style gray() {
+    @Override public Style gray() {
         return GRAY;
     }
 
-    @Override
-    public Style green() {
+    @Override public Style green() {
         return GREEN;
     }
 
-    @Override
-    public Style italics() {
+    @Override public Style italics() {
         return ITALICS;
     }
 
-    @Override
-    public Style lightPurple() {
+    @Override public Style lightPurple() {
         return LIGHT_PURPLE;
     }
 
-    @Override
-    public Style obfuscated() {
+    @Override public Style obfuscated() {
         return OBFUSCATED;
     }
 
-    @Override
-    public Style red() {
+    @Override public Style red() {
         return RED;
     }
 
-    @Override
-    public Style strikethrough() {
+    @Override public Style strikethrough() {
         return STRIKETHROUGH;
     }
 
-    @Override
-    public Style underline() {
+    @Override public Style underline() {
         return UNDERLINE;
     }
 
-    @Override
-    public Style white() {
+    @Override public Style white() {
         return WHITE;
     }
 
-    @Override
-    public Style yellow() {
+    @Override public Style yellow() {
         return YELLOW;
     }
 

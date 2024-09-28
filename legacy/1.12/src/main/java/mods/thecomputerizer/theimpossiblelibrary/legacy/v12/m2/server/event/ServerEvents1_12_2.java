@@ -41,8 +41,7 @@ public class ServerEvents1_12_2 implements ServerEventsAPI {
         this.defined = false;
     }
 
-    @Override
-    public void defineEvents() {
+    @Override public void defineEvents() {
         TICK_SERVER.setConnector(new ServerTickEvent1_12_2());
         this.defined = true;
     }

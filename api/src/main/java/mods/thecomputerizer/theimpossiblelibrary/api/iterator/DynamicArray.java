@@ -68,8 +68,7 @@ public class DynamicArray {
         return Objects.nonNull(ref) ? ref.getClass() : Object.class;
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
         if(getClass()==o.getClass()) {
             DynamicArray d = (DynamicArray)o;
             return this.typeClass==d.typeClass && this.bracketCount==d.bracketCount;
@@ -77,8 +76,7 @@ public class DynamicArray {
         return false;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return (this.isOptional ? "@" : "")+this.typeClass.getName();
     }
 }

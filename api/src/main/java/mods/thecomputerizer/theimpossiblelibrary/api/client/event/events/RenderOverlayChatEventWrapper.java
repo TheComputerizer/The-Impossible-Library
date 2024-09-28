@@ -22,8 +22,7 @@ public abstract class RenderOverlayChatEventWrapper<E> extends ClientOverlayEven
         return this.posY.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.posX = wrapPosXField();
         this.posY = wrapPosYField();

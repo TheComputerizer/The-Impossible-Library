@@ -17,8 +17,7 @@ public abstract class PlayerVisibilityEventWrapper<E> extends CommonPlayerEventT
         return this.visibilityModifier.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.visibilityModifier = wrapVisibilityModifierField();
     }

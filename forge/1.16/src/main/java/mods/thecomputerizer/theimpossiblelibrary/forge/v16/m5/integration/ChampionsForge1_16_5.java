@@ -24,8 +24,7 @@ public class ChampionsForge1_16_5 extends ChampionsAPI {
         return ChampionCapability.getCapability((Entity)api.unwrap()).orElse(null);
     }
 
-    @Override
-    public @Nullable ChampionData getChampionData(EntityAPI<?,?> entity) {
+    @Override public @Nullable ChampionData getChampionData(EntityAPI<?,?> entity) {
         IChampion cap = getCapability(entity);
         return Objects.nonNull(cap) ? (entity.getWorld().isServer() ? getServer(cap) : getClient(cap)) : null;
     }

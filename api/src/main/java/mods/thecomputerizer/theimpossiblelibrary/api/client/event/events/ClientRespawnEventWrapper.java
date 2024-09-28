@@ -18,8 +18,7 @@ public abstract class ClientRespawnEventWrapper<E> extends ClientPlayerEventType
         return this.oldPlayer.get(this.event);
     }
 
-    @Override
-    public void populate() {
+    @Override public void populate() {
         super.populate();
         this.oldPlayer = wrapOldPlayerField();
     }

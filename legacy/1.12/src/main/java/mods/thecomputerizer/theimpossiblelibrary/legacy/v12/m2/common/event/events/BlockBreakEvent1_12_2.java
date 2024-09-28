@@ -18,8 +18,7 @@ public class BlockBreakEvent1_12_2 extends BlockBreakEventWrapper<BreakEvent> {
         BLOCK_BREAK.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -28,28 +27,23 @@ public class BlockBreakEvent1_12_2 extends BlockBreakEventWrapper<BreakEvent> {
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<BreakEvent,Integer> wrapXPField() {
+    @Override protected EventFieldWrapper<BreakEvent,Integer> wrapXPField() {
         return wrapGenericBoth(BreakEvent::getExpToDrop,BreakEvent::setExpToDrop,0);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<BreakEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BreakEvent::getPlayer);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakEvent,BlockPosAPI<?>> wrapPosField() {
+    @Override protected EventFieldWrapper<BreakEvent,BlockPosAPI<?>> wrapPosField() {
         return wrapPosGetter(BreakEvent::getPos);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakEvent,BlockStateAPI<?>> wrapStateField() {
+    @Override protected EventFieldWrapper<BreakEvent,BlockStateAPI<?>> wrapStateField() {
         return wrapStateGetter(BreakEvent::getState);
     }
 
-    @Override
-    protected EventFieldWrapper<BreakEvent,WorldAPI<?>> wrapWorldField() {
+    @Override protected EventFieldWrapper<BreakEvent,WorldAPI<?>> wrapWorldField() {
         return wrapWorldGetter(BreakEvent::getWorld);
     }
 }

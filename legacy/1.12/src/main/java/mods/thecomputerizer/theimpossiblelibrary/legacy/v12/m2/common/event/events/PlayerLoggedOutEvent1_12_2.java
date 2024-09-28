@@ -15,8 +15,7 @@ public class PlayerLoggedOutEvent1_12_2 extends PlayerLoggedOutEventWrapper<Play
         PLAYER_LOGGED_OUT.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class PlayerLoggedOutEvent1_12_2 extends PlayerLoggedOutEventWrapper<Play
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerLoggedOutEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerLoggedOutEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> event.player);
     }
 }

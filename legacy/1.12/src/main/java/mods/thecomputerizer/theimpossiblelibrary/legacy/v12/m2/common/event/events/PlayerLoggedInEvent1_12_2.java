@@ -15,8 +15,7 @@ public class PlayerLoggedInEvent1_12_2 extends PlayerLoggedInEventWrapper<Player
         PLAYER_LOGGED_IN.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,8 +24,7 @@ public class PlayerLoggedInEvent1_12_2 extends PlayerLoggedInEventWrapper<Player
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerLoggedInEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerLoggedInEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> event.player);
     }
 }

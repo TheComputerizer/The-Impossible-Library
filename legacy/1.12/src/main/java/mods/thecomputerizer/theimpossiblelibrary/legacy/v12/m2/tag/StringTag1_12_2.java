@@ -44,8 +44,7 @@ public class StringTag1_12_2 extends StringTagAPI<NBTTagString> {
         return true;
     }
     
-    @Override
-    public String getValue() {
+    @Override public String getValue() {
         return this.wrapped.getString();
     }
 }

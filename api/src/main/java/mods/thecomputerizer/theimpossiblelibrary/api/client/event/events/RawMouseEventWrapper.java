@@ -10,8 +10,7 @@ public abstract class RawMouseEventWrapper<E> extends ClientEventWrapper<E> {
         super(MOUSE_RAW);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
 
     }
 }

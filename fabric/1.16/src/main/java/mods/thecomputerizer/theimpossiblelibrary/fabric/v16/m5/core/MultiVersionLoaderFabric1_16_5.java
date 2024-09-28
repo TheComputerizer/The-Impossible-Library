@@ -24,18 +24,15 @@ public class MultiVersionLoaderFabric1_16_5 extends MultiVersionLoaderAPI {
         super(parent);
     }
     
-    @Override
-    protected File findCoreModRoot() {
+    @Override protected File findCoreModRoot() {
         return new File("mods");
     }
     
-    @Override
-    public File findModRoot() {
+    @Override public File findModRoot() {
         return new File("mods");
     }
     
-    @Override
-    protected List<File> gatherCandidateModFiles(File root) {
+    @Override protected List<File> gatherCandidateModFiles(File root) {
         Set<File> set = new HashSet<>();
         for(Path path : this.potentialModPaths) {
             File file = path.toFile();
@@ -44,8 +41,7 @@ public class MultiVersionLoaderFabric1_16_5 extends MultiVersionLoaderAPI {
         return Collections.unmodifiableList(new ArrayList<>(set));
     }
     
-    @Override
-    protected @Nullable Attributes getFileAttributes(File file) {
+    @Override protected @Nullable Attributes getFileAttributes(File file) {
         try(JarFile jar = new JarFile(file)) {
             return jar.getManifest().getMainAttributes();
         } catch(IOException ex) {
@@ -54,8 +50,7 @@ public class MultiVersionLoaderFabric1_16_5 extends MultiVersionLoaderAPI {
         return null;
     }
     
-    @Override
-    protected MultiVersionModInfo loadModInfo(
+    @Override protected MultiVersionModInfo loadModInfo(
             ClassLoader classLoader, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
         return info;
     }

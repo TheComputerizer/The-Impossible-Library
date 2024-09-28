@@ -23,8 +23,7 @@ public abstract class ServerTickableEventType<E> extends ServerEventWrapper<E> {
         return getTickType()==type;
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         this.tickPhase = wrapTickPhase();
         this.tickType = wrapTickType();
     }

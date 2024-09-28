@@ -15,8 +15,7 @@ public class PlayerRespawnEvent1_12_2 extends PlayerRespawnEventWrapper<PlayerRe
         PLAYER_RESPAWN.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -25,13 +24,11 @@ public class PlayerRespawnEvent1_12_2 extends PlayerRespawnEventWrapper<PlayerRe
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerRespawnEvent,Boolean> wrapEndConqueredField() {
+    @Override protected EventFieldWrapper<PlayerRespawnEvent,Boolean> wrapEndConqueredField() {
         return wrapGenericGetter(PlayerRespawnEvent::isEndConquered,false);
     }
 
-    @Override
-    protected EventFieldWrapper<PlayerRespawnEvent,PlayerAPI<?,?>> wrapPlayerField() {
+    @Override protected EventFieldWrapper<PlayerRespawnEvent,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> event.player);
     }
 }

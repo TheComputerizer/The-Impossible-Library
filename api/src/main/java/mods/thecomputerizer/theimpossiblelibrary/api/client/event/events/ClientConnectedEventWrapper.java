@@ -22,8 +22,7 @@ public abstract class ClientConnectedEventWrapper<E> extends ClientNetworkEventT
         return this.local.get(this.event);
     }
 
-    @Override
-    protected void populate() {
+    @Override protected void populate() {
         super.populate();
         this.local = wrapLocalField();
         this.connectionType = wrapConnectionTypeField();

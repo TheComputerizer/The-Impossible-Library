@@ -11,8 +11,7 @@ public abstract class WorldTickEventWrapper<E> extends CommonTickableEventType<E
         super(TICK_WORLD);
     }
 
-    @Override
-    protected TickType wrapTickType() {
+    @Override protected TickType wrapTickType() {
         return WORLD;
     }
 }

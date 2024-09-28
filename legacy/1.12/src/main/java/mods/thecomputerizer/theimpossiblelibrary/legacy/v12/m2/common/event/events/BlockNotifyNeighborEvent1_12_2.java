@@ -23,8 +23,7 @@ public class BlockNotifyNeighborEvent1_12_2 extends BlockNotifyNeighborEventWrap
         BLOCK_NOTIFY_NEIGHBOR.invoke(event);
     }
     
-    @Override
-    public void cancel() {
+    @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
@@ -33,13 +32,11 @@ public class BlockNotifyNeighborEvent1_12_2 extends BlockNotifyNeighborEventWrap
         setCanceled(event.isCanceled());
     }
 
-    @Override
-    protected EventFieldWrapper<NeighborNotifyEvent,Boolean> wrapForceRedstoneUpdateField() {
+    @Override protected EventFieldWrapper<NeighborNotifyEvent,Boolean> wrapForceRedstoneUpdateField() {
         return wrapGenericGetter(NeighborNotifyEvent::getForceRedstoneUpdate,false);
     }
 
-    @Override
-    protected EnumSet<Facing> wrapSidesField() {
+    @Override protected EnumSet<Facing> wrapSidesField() {
         if(Objects.isNull(this.event)) return EnumSet.of(UP);
         List<Facing> list = new ArrayList<>();
         for(EnumFacing facing : this.event.getNotifiedSides()) list.add(EventHelper.getFacing(facing));
