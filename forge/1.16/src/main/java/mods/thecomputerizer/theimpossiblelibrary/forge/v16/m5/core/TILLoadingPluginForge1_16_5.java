@@ -54,7 +54,7 @@ public class TILLoadingPluginForge1_16_5 extends AbstractJarFileLocator {
     public void loadCandidateInfos(Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap) {
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> fileEntry : infoMap.entrySet()) {
             MultiVersionModCandidate candidate = fileEntry.getKey();
-            this.candidateMap.put(candidate,new TILModFileForge1_16_5(candidate.getFile().toPath(), this, fileEntry.getValue()));
+            this.candidateMap.put(candidate,new TILModFileForge1_16_5(candidate.getFile().toPath(),this,fileEntry.getValue()));
         }
     }
     

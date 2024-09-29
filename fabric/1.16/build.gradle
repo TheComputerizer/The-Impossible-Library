@@ -39,7 +39,8 @@ def classes = 'build\\classes\\java\\main'
 def sources = "-Dtil.dev.sources=api\\${file};shared\\1.16\\${file};fabric\\1.16\\${classes}"
 def args = [
         '-Dfabric.log.level=debug', '-Dtil.dev=true', sources, //'-Dtil.dev.testModLoading=true',
-        '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+        '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint',
+        '-Dtil.classpath.coremods=mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
 ]
 
 [ runClient, runServer ].forEach { it.jvmArgs args}

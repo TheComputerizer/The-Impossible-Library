@@ -55,7 +55,8 @@ minecraft {
     runs {
         def args = [
                 '-Dtil.dev=true',
-                '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint',
+                '-Dtil.classpath.coremods=mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
         ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path

@@ -14,6 +14,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static org.apache.logging.log4j.Level.*;
+
 /**
  * Base reference API for global constants specific to this library
  */
@@ -78,19 +80,19 @@ public class TILRef {
     }
 
     public static void logDebug(String msg, Object ... args) {
-        logNullable(Level.DEBUG,msg,args);
+        logNullable(DEBUG,msg,args);
     }
 
     public static void logError(String msg, Object ... args) {
-        logNullable(Level.ERROR,msg,args);
+        logNullable(ERROR,msg,args);
     }
 
     public static void logFatal(String msg, Object ... args) {
-        logNullable(Level.FATAL,msg,args);
+        logNullable(FATAL,msg,args);
     }
 
     public static void logInfo(String msg, Object ... args) {
-        logNullable(Level.INFO,msg,args);
+        logNullable(INFO,msg,args);
     }
 
     private static void logNullable(Level level, String msg, Object ... args) {
@@ -99,11 +101,11 @@ public class TILRef {
     }
 
     public static void logTrace(String msg, Object ... args) {
-        logNullable(Level.TRACE,msg,args);
+        logNullable(TRACE,msg,args);
     }
 
     public static void logWarn(String msg, Object ... args) {
-        logNullable(Level.WARN,msg,args);
+        logNullable(WARN,msg,args);
     }
 
     public static @Nullable ResourceLocationAPI<?> res(String path) {

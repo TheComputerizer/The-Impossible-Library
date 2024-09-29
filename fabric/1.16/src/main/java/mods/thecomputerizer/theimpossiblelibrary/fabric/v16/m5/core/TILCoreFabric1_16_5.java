@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -53,6 +54,10 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
         return new TILCommonEntryPointFabric();
+    }
+    
+    @Override public CoreEntryPoint getCoreVersionHandler() {
+        return null;
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {

@@ -1,16 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILBetterModScan;
+import net.minecraftforge.coremod.CoreModEngine;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LanguageLoadingProvider;
 import net.minecraftforge.fml.loading.moddiscovery.CoreModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
 import net.minecraftforge.fml.loading.moddiscovery.Scanner;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -36,16 +39,19 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 
 public class TILModFileForge1_16_5 extends ModFile {
     
+    static boolean fixedCoreMods;
     static boolean loadedProvider;
     
     private final Map<MultiVersionModInfo,MultiVersionModData> infos;
     protected IModFileInfo fileInfo;
     protected IModLanguageProvider loader;
     protected Path accessTransformer;
+    protected List<CoreModFile> coreMods;
     
     public TILModFileForge1_16_5(Path path, IModLocator locator, Collection<MultiVersionModInfo> infos) {
         super(path,locator,null);
@@ -91,12 +97,42 @@ public class TILModFileForge1_16_5 extends ModFile {
         return scan;
     }
     
+    @SuppressWarnings("unchecked")
+    private List<CoreModFile> findCoreMods() {
+        Object list = ReflectionHelper.invokeMethod(ModFileParser.class,"getCoreMods",null,new Class<?>[]{
+                ModFile.class},this);
+        return list instanceof List<?> ? (List<CoreModFile>)list : Collections.emptyList();
+    }
+    
+    /**
+     * No easy way for generic core mods? Fine, I'll do it myself
+     */
+    @SuppressWarnings("unchecked")
+    private void fixCoreModPackages(String ... extensions) {
+        Object allowed = ReflectionHelper.getFieldInstance(CoreModEngine.class,"ALLOWED_PACKAGES");
+        if(allowed instanceof Set<?>) fixCoreModPackages((Set<String>)allowed,extensions);
+        else TILRef.logError("Failed to fix coremods (allowed packages = {})",allowed);
+    }
+    
+    private void fixCoreModPackages(Set<String> allowed, String ... extensions) {
+        for(String extension : extensions) allowed.add(BASE_PACKAGE+"."+extension+".core");
+        TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
+    }
+    
     @Override public Optional<Path> getAccessTransformer() {
         return Optional.ofNullable(Files.exists(this.accessTransformer) ? this.accessTransformer : null);
     }
     
     @Override public List<CoreModFile> getCoreMods() {
-        return Collections.emptyList();
+        if(Objects.isNull(this.coreMods)) {
+            this.coreMods = findCoreMods();
+            if(!this.coreMods.isEmpty() && !fixedCoreMods) {
+                fixCoreModPackages("api","fabric","forge","legacy","fabric.v16.m5","forge.v16.m5");
+                fixedCoreMods = true;
+            }
+        }
+        TILRef.logInfo("Found coremods {}",this.coreMods);
+        return this.coreMods;
     }
     
     @Override public IModLanguageProvider getLoader() {

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
@@ -63,6 +64,10 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
         return null;
+    }
+    
+    @Override public CoreEntryPoint getCoreVersionHandler() {
+        return new TILCoreEntryPointForge1_16_5();
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {

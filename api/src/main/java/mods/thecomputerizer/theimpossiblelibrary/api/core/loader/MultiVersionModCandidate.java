@@ -98,7 +98,7 @@ public class MultiVersionModCandidate {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(classLoader,name,loadSources);
-            if(canBeLoaded(clazz, CoreEntryPoint.class, MultiVersionCoreMod.class)) {
+            if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CoreEntryPoint>)clazz);
             }

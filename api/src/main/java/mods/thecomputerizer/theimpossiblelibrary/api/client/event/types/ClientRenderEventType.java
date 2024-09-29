@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -15,7 +16,8 @@ public abstract class ClientRenderEventType<E> extends ClientEventWrapper<E> {
     protected ClientRenderEventType(ClientType<?> type) {
         super(type);
     }
-
+    
+    @IndirectCallers
     public float getPartialTicks() {
         return Objects.nonNull(this.renderer) ? this.renderer.getPartialTicks() : 0f;
     }

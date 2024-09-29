@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -54,6 +55,7 @@ public class MultiVersionLoaderForge1_16_5 extends MultiVersionLoaderAPI {
         return null;
     }
     
+    @IndirectCallers
     public FMLModContainer getModContainer(String modid) {
         ModList list = ModList.get();
         TILRef.logInfo("MOD LIST IS {}",list);

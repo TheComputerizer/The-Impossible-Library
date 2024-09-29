@@ -57,6 +57,10 @@ public class TILCore1_12_2 extends CoreAPI {
     @Override public CommonEntryPoint getCommonVersionHandler() {
         return new TILCommonEntryPoint1_12_2();
     }
+    
+    @Override public CoreEntryPoint getCoreVersionHandler() {
+        return null;
+    }
 
     @Override public MultiVersionLoaderAPI getLoader() {
         return this.loader;

@@ -198,6 +198,7 @@ public abstract class CoreAPI {
     public abstract boolean addURLToClassLoader(ClassLoader loader, URL url);
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
+    public abstract CoreEntryPoint getCoreVersionHandler();
     public abstract MultiVersionLoaderAPI getLoader();
 
     public Map<String,MultiVersionModData> getModData(File root) {
@@ -273,6 +274,13 @@ public abstract class CoreAPI {
      * Mod class
      */
     protected abstract boolean modConstructed(String modid, Class<?> clazz);
+    
+    /**
+     * Coremod pass-through stuff. Returns a new map.
+     */
+    public Map<?,?> newMap() {
+        return new HashMap<>();
+    }
     
     @Override public String toString() {
         return getClass().getName()+" "+this.version+" "+this.modLoader+" "+this.side;

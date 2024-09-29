@@ -32,10 +32,14 @@ public class ASMRef {
     public static final int FINAL = ACC_FINAL;
     public static final int GETFIELD = Opcodes.GETFIELD;
     public static final int GETSTATIC = Opcodes.GETSTATIC;
+    public static final int GREATER_THAN = IFGT;
+    public static final int GREATER_OR_EQUAL = IFGE;
     public static final int HANDLE_INVOKEINTERFACE = H_INVOKEINTERFACE;
     public static final int HANDLE_INVOKESPECIAL = H_INVOKESPECIAL;
     public static final int HANDLE_INVOKESTATIC = H_INVOKESTATIC;
     public static final int HANDLE_INVOKEVIRTUAL = H_INVOKEVIRTUAL;
+    public static final int IF_EQUAL = IFEQ;
+    public static final int IF_NULL = IFNULL;
     public static final int INTERFACE = ACC_INTERFACE;
     public static final int INVOKEDYNAMIC = Opcodes.INVOKEDYNAMIC;
     public static final int INVOKEINTERFACE = Opcodes.INVOKEINTERFACE;
@@ -46,8 +50,12 @@ public class ASMRef {
     public static final int JAVA17 = 0<<16|61;      // ASM5 does not have Java 17 or 21 constants
     public static final int JAVA21 = 0<<16|65;
     public static final int LDC = Opcodes.LDC;
+    public static final int LESS_THAN = IFLT;
+    public static final int LESS_OR_EQUAL = IFLE;
     public static final int NATIVE = ACC_NATIVE;
     public static final int NEW = Opcodes.NEW;
+    public static final int NOT_EQUAL = IFNE;
+    public static final int NOT_NULL = IFNONNULL;
     public static final Type OBJECT_TYPE = Type.getType(Object.class);
     public static final int PRIVATE = ACC_PRIVATE;
     public static final int PRIVATE_ABSTRACT = ACC_PRIVATE+ACC_ABSTRACT;
