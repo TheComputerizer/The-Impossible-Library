@@ -20,6 +20,9 @@
         "adapter": "multiversionAdaptor",
         "value": "${injector}"
       }
+    ],
+    "mm:early_risers": [
+      "${coremods}"
     ]
   },
   "environment": "*",
@@ -29,6 +32,7 @@
     "multiversionAdaptor": "${adaptor}"
   },
   "mixins": [
+    "mixins.mm.json",
     "theimpossiblelibrary.mixins.json"
   ],
   "name": "The Impossible Loader",

@@ -4,5 +4,5 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 dependencies {
     compileOnly(project(':api'))
-    compileOnly(project(':fabric'))
+    compileOnly(project(':shared'))
 }

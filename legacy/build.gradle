@@ -1,5 +1,9 @@
 apply from: rootProject.file('buildSrc\\shared.gradle')
 
+dependencies {
+    compileOnly(project(':api'))
+}
+
 jar {
     from(project(':api').jar.archiveFile.collect {
         include 'mods/**'

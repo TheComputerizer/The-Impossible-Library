@@ -2,9 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.*;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.core.TILCoreEntryPointLegacy;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.core.TILCoreLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Client1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.TILClientEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12_2;
@@ -25,16 +28,16 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_CLIENT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side.DEDICATED_SERVER;
 
-public class TILCore1_12_2 extends CoreAPI {
+public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
 
     public static final Reference LEGACY_REF = TILRef.instance(FMLLaunchHandler.side()::isClient,"");
 
-    @SuppressWarnings("unused") //Accessed via ASM
+    @IndirectCallers
     public static ModContainer getFMLModContainer(String modid) {
         return InjectedModCandidate1_12_2.findModContainer(modid);
     }
     
-    @SuppressWarnings("unused") //Accessed via ASM
+    @IndirectCallers
     public static File getModSource(String modid) {
         return InjectedModCandidate1_12_2.findSource(modid);
     }
@@ -59,7 +62,7 @@ public class TILCore1_12_2 extends CoreAPI {
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {
-        return null;
+        return new TILCoreEntryPointLegacy();
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {

@@ -40,7 +40,6 @@ public final class TILCoreEntryPoint extends CoreEntryPoint {
     }
     
     @Override public ClassNode editClass(ClassNode classNode) {
-        TILRef.logInfo("editClass TIL thing");
         return Objects.nonNull(this.versionHandler) ? this.versionHandler.editClass(classNode) : classNode;
     }
     

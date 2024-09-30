@@ -11,17 +11,14 @@ function initializeCoreMod() {
     var ret = {};
     for each(var entryPoint in instance.getCoreInstances()) {
         var id = entryPoint.getCoreID();
-        log("Initializing coremod "+id);
+        log("Initializing "+id);
         var targets = entryPoint.classTargets();
-        log("Adding class targets "+targets);
         ret[id] = {
             "target": {
             "type": "CLASS",
             "names": function(classMap) {
-                    log("Calling names function for map "+classMap);
                     var names = [];
                     for each(var target in targets) { names.push(target) }
-                    log("Pushing target names "+names);
                     return names;
                 }
             },

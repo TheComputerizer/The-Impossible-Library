@@ -2,5 +2,6 @@ apply from: rootProject.file('gradle\\shadow.gradle')
 
 shadowJar {
     //relocate shaded dependencies to the shadow package to prevent library conflicts
-    [ 'com.moandjiezana.toml', 'org.joml' ].forEach { pkg -> { relocate pkg, "${shadow_package}.${pkg}" } }
+    [ 'com.chocohead.mm', 'com.moandjiezana.toml', 'org.joml' ].forEach {
+        pkg -> {relocate pkg, "${shadow_package}.${pkg}" } }
 }

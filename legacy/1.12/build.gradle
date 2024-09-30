@@ -105,6 +105,7 @@ dependencies {
     compileOnly(fg.deobf("curse.maven:orelib-307806:${orelib_version}"))
 
     implementation(project(':api'))
+    implementation(project(':legacy')) { transitive = false }
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))

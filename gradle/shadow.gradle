@@ -10,6 +10,6 @@ shadowJar {
     setArchiveBaseName(mod_id)
     setArchiveClassifier('')
     mergeServiceFiles()
-    exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFSET.MF', 'META-INF/maven/**', 'META-INF/*.RSA',
+    exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA',
             'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
 }

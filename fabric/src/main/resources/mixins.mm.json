@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.chocohead.gen.mixin.",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "mods.thecomputerizer.shadow.com.chocohead.mm.Plugin",
+  "mixins": [],
+  "refmap": "mixins.mm.refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
+package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -6,9 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
-public class TILCoreEntryPointForge1_16_5 extends CoreEntryPoint {
+public class TILCoreEntryPointForge extends CoreEntryPoint {
     
-    public TILCoreEntryPointForge1_16_5() {
+    public TILCoreEntryPointForge() {
         TILRef.logInfo("Initialized core version handler {}",getClass());
     }
     

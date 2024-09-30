@@ -15,16 +15,12 @@ plugins {
 
 rootProject.name = 'The_Impossible_Library'
 
-[ 'api', 'fabric', 'forge', 'legacy', 'neoforge', 'shared',
-  'legacy:1.12',
-  'fabric:1.16', 'forge:1.16', 'shared:1.16',
-  'fabric:1.18', 'forge:1.18',
-  'fabric:1.19', 'forge:1.19',
-  'fabric:1.20', 'neoforge:1.20',
-  'fabric:1.21', 'neoforge:1.21'].forEach { include it }
-
-[ ':fabric:1.16', ':fabric:1.18', ':fabric:1.19', ':fabric:1.20', ':fabric:1.21',
-  ':forge:1.19', ':forge:1.18', ':forge:1.16',
-  ':legacy:1.12',
-  ':neoforge:1.20', ':neoforge:1.21',
-  ':shared:1.16' ].forEach {findProject(it)?.name = it.substring(1).replace('.','_').replace(':','.') }
+[ 'api', 'legacy', ':legacy:1.12',
+  'fabric', ':fabric:1.16', ':fabric:1.18', ':fabric:1.19', ':fabric:1.20',     ':fabric:1.21',
+  'forge',  ':forge:1.16',  ':forge:1.18',  ':forge:1.19',  ':forge:1.20',      ':forge:1.21',
+  'neoforge',                                               ':neoforge:1.20',   ':neoforge:1.21',
+  'shared', ':shared:1.16', ':shared:1.18', ':shared:1.19', ':shared:1.20',     ':shared:1.21'
+].forEach {
+    include it
+    findProject(it)?.name = it.substring(1).replace('.','_').replace(':','.')
+}

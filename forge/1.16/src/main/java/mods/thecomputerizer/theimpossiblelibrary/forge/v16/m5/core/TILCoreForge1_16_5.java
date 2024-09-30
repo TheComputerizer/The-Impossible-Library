@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoa
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreEntryPointForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.ClientForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.CommonForge1_16_5;
@@ -44,7 +45,7 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
         if(loader instanceof TransformingClassLoader) {
-            Field field = ReflectionHelper.getField(TransformingClassLoader.class, "delegatedClassLoader");
+            Field field = ReflectionHelper.getField(TransformingClassLoader.class,"delegatedClassLoader");
             if(Objects.nonNull(field)) {
                 Object instance = ReflectionHelper.getFieldInstance(loader,field);
                 if(instance instanceof URLClassLoader) {
@@ -67,7 +68,7 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {
-        return new TILCoreEntryPointForge1_16_5();
+        return new TILCoreEntryPointForge();
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {
