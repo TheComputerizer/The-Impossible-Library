@@ -32,8 +32,7 @@
     "multiversionAdaptor": "${adaptor}"
   },
   "mixins": [
-    "mixins.mm.json",
-    "theimpossiblelibrary.mixins.json"
+    "mixins.mm.json"
   ],
   "name": "The Impossible Loader",
   "version": "${version}"

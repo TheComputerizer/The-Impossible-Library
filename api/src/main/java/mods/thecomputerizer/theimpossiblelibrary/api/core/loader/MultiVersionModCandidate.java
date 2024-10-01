@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
@@ -13,8 +14,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
 import java.util.*;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
@@ -70,26 +73,24 @@ public class MultiVersionModCandidate {
 
     private @Nullable Class<?> findClass(ClassLoader classLoader, String name, boolean loadSources) {
         TILRef.logInfo("Locating loader class {}",name);
-        //if(!loadSources) this.loaded = true;
         if(!this.loaded) {
             TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
             try {
-                Class<?> systemClass = ClassHelper.findClass(name,ClassLoader.getSystemClassLoader());
-                if(!CoreAPI.getInstance().addURLToClassLoader(classLoader,ClassHelper.getSourceURL(systemClass)))
-                    TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name, classLoader);
-            } catch(ClassCastException ex) {
-                TILRef.logError("Error getting URL for {}!",name,ex);
+                CoreAPI core = CoreAPI.getInstance();
+                if(DEV) {
+                    Class<?> systemClass = ClassHelper.findClass(name, ClassLoader.getSystemClassLoader());
+                    if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, ClassHelper.getSourceURL(systemClass)))
+                        TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name,
+                                        classLoader);
+                } else core.addURLToClassLoader(classLoader,this.file.toURI().toURL());
+            } catch(ClassCastException|MalformedURLException ex) {
+                TILRef.logError("Error getting source URL for {}!",name,ex);
                 return null;
             }
             this.loaded = true;
         }
-        TILRef.logInfo("Successfully added source! Reattempting to locate loader class");
-        try {
-            return Class.forName(name,true,classLoader);
-        } catch(ClassNotFoundException ex) {
-            TILRef.logInfo("Debug stacktrace",ex);
-        }
-        return null;
+        TILDev.logInfo("Successfully added source! Reattempting to locate loader class");
+        return ClassHelper.findClass(name,classLoader);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,7 +119,7 @@ public class MultiVersionModCandidate {
         }
     }
     
-    @SuppressWarnings("unused") public boolean hasCoreMods() {
+    public boolean hasCoreMods() {
         return !this.coreClassNames.isEmpty();
     }
 

@@ -13,6 +13,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersio
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.Attributes;
@@ -80,12 +82,12 @@ public abstract class MultiVersionLoaderAPI {
     public void loadCoreMods(Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap,
             ClassLoader loader, boolean loadSources) {
         File root = findCoreModRoot();
-        TILDev.logInfo("Finding multiversion coremods from root `{}`", root);
+        TILRef.logInfo("Finding multiversion coremods from root `{}`", root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes = new HashMap<>();
         this.candidates = MultiVersionModFinder.discover(this,root,true);
         for(MultiVersionModCandidate candidate : this.candidates)
             candidate.findCoreClasses(classes,candidate,loader,loadSources);
-        TILRef.logDebug("{} coremods will attempt to be loaded",classes.size());
+        TILRef.logInfo("{} coremods will attempt to be loaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
             if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());

@@ -17,28 +17,29 @@ public class MultiVersionModFinder {
     public static final Name MULTIVERSION_MODS = new Name("TILMultiversionMods");
 
     public static Set<MultiVersionModCandidate> discover(MultiVersionLoaderAPI loader, File root, boolean isCore) {
-        TILRef.logDebug("Attempting to find multiversion mod candidates from root `{}`",root);
+        TILRef.logInfo("Attempting to find multiversion mod candidates from root `{}`",root);
         Set<MultiVersionModCandidate> candidates = new HashSet<>();
         Set<String> foundCoreMods = new HashSet<>();
         Set<String> foundMods = new HashSet<>();
         addClasspathMods(candidates,isCore,foundCoreMods,foundMods);
         for(File file : loader.gatherCandidateModFiles(root)) {
             MultiVersionModCandidate candidate = getCandidate(loader,file,isCore,foundCoreMods,foundMods);
-            if(Objects.nonNull(candidate) && candidate.hasMods()) candidates.add(candidate);
+            if(Objects.nonNull(candidate) && ((!isCore && candidate.hasMods()) || (isCore && candidate.hasCoreMods())))
+                candidates.add(candidate);
         }
         return candidates;
     }
 
     private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file,
             boolean isCore, Set<String> foundCoreMods, Set<String> foundMods) {
-        TILRef.logDebug("Examining candidate file`{}`",file);
+        TILRef.logInfo("Examining candidate file`{}`",file);
         Attributes attributes = loader.getFileAttributes(file);
         if(Objects.nonNull(attributes)) {
             MultiVersionModCandidate candidate = new MultiVersionModCandidate(file);
             if(isCore) candidate.addCoreClasses(foundCoreMods,parseClasses(attributes,MULTIVERSION_COREMODS));
             else candidate.addModClasses(foundMods,parseClasses(attributes,MULTIVERSION_MODS));
             return candidate;
-        } else TILRef.logDebug("File did not contain any attributes to check");
+        } else TILRef.logInfo("File did not contain any attributes to check");
         return null;
     }
     

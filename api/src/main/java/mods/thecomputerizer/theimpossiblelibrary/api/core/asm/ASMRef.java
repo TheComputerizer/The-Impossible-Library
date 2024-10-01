@@ -40,6 +40,7 @@ public class ASMRef {
     public static final int HANDLE_INVOKEVIRTUAL = H_INVOKEVIRTUAL;
     public static final int IF_EQUAL = IFEQ;
     public static final int IF_NULL = IFNULL;
+    public static final int ILOAD = Opcodes.ILOAD;
     public static final int INTERFACE = ACC_INTERFACE;
     public static final int INVOKEDYNAMIC = Opcodes.INVOKEDYNAMIC;
     public static final int INVOKEINTERFACE = Opcodes.INVOKEINTERFACE;

@@ -66,9 +66,14 @@ public class TILLoadingPluginForge1_16_5 extends AbstractJarFileLocator {
             Predicate<Path> filter = path -> findManifest(path).map(Manifest::getMainAttributes)
                     .map(attributes -> MultiVersionModFinder.hasMods(attributes) ? attributes : null).isPresent();
             while(manifests.hasMoreElements()) loadURL(loader,manifests.nextElement(),filter);
-            File[] mods = core.getLoader().findModRoot().listFiles(file -> file.isFile() && file.getName().endsWith(".jar"));
-            if(Objects.nonNull(mods))
-                for(File mod : mods) loadURL(loader,mod.toURI().toURL(),mod.toPath(),filter,true);
+            File[] mods = loader.findModRoot().listFiles(file -> file.isFile() && file.getName().endsWith(".jar"));
+            if(Objects.nonNull(mods)) {
+                TILRef.logDebug("Loading {} mod files",mods.length);
+                for(File mod : mods) {
+                    TILDev.logDebug("Loading mod file at path",mod.toPath());
+                    loadURL(loader,mod.toURI().toURL(),mod.toPath(),filter,true);
+                }
+            } else TILRef.logDebug("Loading 0 mod files");
             
         } catch(IOException ex) {
             TILRef.logError("Error finding multiversion mods to load",ex);

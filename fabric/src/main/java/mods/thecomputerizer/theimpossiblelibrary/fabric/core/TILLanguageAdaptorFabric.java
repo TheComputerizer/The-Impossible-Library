@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.core;
 
+import com.chocohead.mm.api.ClassTinkerers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -77,12 +78,14 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     }
     
     String addCoreSources(FabricLauncher launcher) {
-        String coreAPI = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
-        try {
-            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(coreAPI);
-            launcher.addToClassPath(Path.of(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()));
-        } catch(Exception ex) {
-            throw new RuntimeException("Failed to load CoreAPI at "+coreAPI,ex);
+        if(Boolean.parseBoolean(System.getProperty("til.dev"))) {
+            String coreAPI = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
+            try {
+                Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(coreAPI);
+                launcher.addToClassPath(Paths.get(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()));
+            } catch(Exception ex) {
+                throw new RuntimeException("Failed to load CoreAPI at "+coreAPI, ex);
+            }
         }
         return addMoreSources(launcher);
     }
@@ -92,7 +95,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         if(Objects.isNull(version)) throw new RuntimeException("Failed to parse game version???");
         String versionName = version.getName().replace('.','_');
         String className = version.getPackageName(FABRIC,BASE_PACKAGE)+".core.TILCoreFabric"+versionName;
-        Class<?> clazz = ClassHelper.findClass(className,ClassLoader.getSystemClassLoader());
+        ClassLoader loader = DEV ? ClassLoader.getSystemClassLoader() : launcher.getTargetClassLoader();
+        Class<?> clazz = ClassHelper.findClass(className,loader);
         while(Objects.nonNull(clazz) && clazz!=Object.class) {
             addSource(launcher,ClassHelper.getSourceURL(clazz));
             clazz = clazz.getSuperclass();
@@ -104,7 +108,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     void addSource(FabricLauncher launcher, @Nullable URL url) {
         if(Objects.nonNull(url)) {
             try {
-                launcher.addToClassPath(Path.of(url.toURI()));
+                launcher.addToClassPath(Paths.get(url.toURI()));
                 TILDev.logDebug("Added loader source {}",url);
             } catch(URISyntaxException ex) {
                 TILRef.logError("Failed to add {} to the classpath",url,ex);
@@ -185,40 +189,33 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
     @SneakyThrows
     void buildModClasses(CoreAPI core, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
-        ByteClassLoader loader = ByteClassLoader.getOrInit(FabricLauncherBase.getLauncher().getTargetClassLoader());
         for(Pair<String,byte[]> classBytes : core.getModData(new File("."),candidate,info).writeModClass()) {
-            Class<?> clazz = loader.defineClass(classBytes.getLeft(),classBytes.getRight());
-            loader.resolvePublicly(clazz);
-            TILDev.logInfo("Built mod entrypoint {}",clazz);
-            //String classpath = classBytes.getLeft();
-            //byte[] bytes = classBytes.getRight();
-            //try {
-            //    Lookup caller = MethodHandles.privateLookupIn(ClassLoader.class,MethodHandles.lookup());
-            //    //Lookup lookup = constructor.newInstance(ClassLoader.class,null,PRIVATE|PROTECTED|PACKAGE|MODULE);
-            //    Class<?> clazz = caller.defineClass(bytes);
-            //    TILDev.logInfo("Built mod entrypoint {}",clazz);
-            //} catch(IllegalAccessException ex) {
-            //    throw new RuntimeException("Failed to define class",ex);
-            //}
+            String name = classBytes.getLeft();
+            if(ClassTinkerers.define(name,classBytes.getRight()))
+                TILDev.logInfo("Built mod entrypoint at {}",name);
+            else TILRef.logError("Failed to define class {}");
         }
     }
     
     @SuppressWarnings("unchecked")
     @Override public <T> T create(ModContainer mod, String value, Class<T> type) {
-        Object instance = ClassHelper.initialize(ClassHelper.findClass(value,ByteClassLoader.INSTANCE));
+        ClassLoader loader = //DEV ? ClassLoader.getSystemClassLoader() :
+                FabricLauncherBase.getLauncher().getTargetClassLoader();
+        Object instance = ClassHelper.initialize(ClassHelper.findClass(value,loader));
         if(instance instanceof TILModInjectorFabric && Objects.nonNull(this.queuedContainers)) {
             TILDev.logInfo("Queuing {} new mod containers",this.queuedContainers.size());
             ((TILModInjectorFabric)instance).setContainers(this.queuedContainers);
         }
         return (T)instance;
-        
     }
     
     CoreAPI initializeCore(ClassLoader classLoader, String classname) {
         CoreAPI core = (CoreAPI)ClassHelper.initialize(ClassHelper.findClass(classname,classLoader));
         if(Objects.nonNull(core)) {
+            TILRef.logInfo("Loading core mods");
             core.loadCoreModInfo(classLoader,false);
             core.instantiateCoreMods();
+            TILRef.logInfo("Writing mods");
             core.writeModContainers(classLoader,false);
         } else TILRef.logFatal("Failed in instantiate CoreAPI!");
         return core;
@@ -228,8 +225,10 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         Collection<ModContainerImpl> candidates = new HashSet<>();
         VersionOverrides versionOverrides = new VersionOverrides();
         DependencyOverrides dependencyOverrides = new DependencyOverrides(INSTANCE.getConfigDir());
+        TILRef.logInfo("Finding multiversion mod candidates");
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> fileEntry : core.getModInfo().entrySet()) {
             MultiVersionModCandidate candidate = fileEntry.getKey();
+            TILRef.logInfo("Candidate at {} has {} mods",candidate.getFile().toPath(),fileEntry.getValue().size());
             for(MultiVersionModInfo info : fileEntry.getValue()) {
                 LoaderModMetadata metadata = buildMetaData(core,candidate,info,versionOverrides,dependencyOverrides);
                 List<Path> paths = new ArrayList<>();
@@ -240,12 +239,12 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
                     TILRef.logError("Failed to get path for {}",core.getClass());
                 }
                 //if(MODID.equals(info.getModID())) paths.addAll(this.loaderSources);
-                TILDev.logDebug("Source paths for {} are {}",info.getModID(),paths);
-                TILDev.logInfo("Successfully built mod metadata! Attempting some reflection magic");
+                TILRef.logInfo("Source paths for {} are {}",info.getModID(),paths);
+                TILRef.logInfo("Successfully built mod metadata! Attempting some reflection magic");
                 Object mod = ReflectionHelper.invokeStaticMethod(ModCandidateImpl.class,"createPlain",
                         new Class<?>[]{List.class,LoaderModMetadata.class,boolean.class,Collection.class},
                         paths,metadata,INSTANCE.isDevelopmentEnvironment(),Collections.emptyList());
-                TILDev.logInfo("Successfully performed reflection magic",info);
+                TILRef.logInfo("Successfully performed reflection magic",info);
                 if(mod instanceof ModCandidateImpl) {
                     candidates.add(new ModContainerImpl((ModCandidateImpl)mod));
                     TILRef.logInfo("Successfully collected mod candidate for {}",info);
@@ -287,46 +286,5 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         } else TILDev.logError("modMap is {} and storage is {}",modMapObj,storageObj);
         TILRef.logDebug("Adding {} mod containers to the queue",containers.size());
         queueContainers(containers);
-    }
-    
-    static class ByteClassLoader extends ClassLoader {
-        
-        static ByteClassLoader INSTANCE;
-        
-        static ByteClassLoader getOrInit(ClassLoader parent) {
-            if(Objects.isNull(INSTANCE)) INSTANCE = new ByteClassLoader(parent);
-            return INSTANCE;
-        }
-        
-        final Map<String,Class<?>> asmDefinedClasses;
-        
-        ByteClassLoader(ClassLoader parent) {
-            super(parent);
-            this.asmDefinedClasses = new HashMap<>();
-            INSTANCE = this;
-            TILDev.logDebug("Instantiated {}",getClass());
-        }
-        
-        public Class<?> defineClass(String name, byte[] b) {
-            Class<?> cls = defineClass(name,b,0,b.length);
-            this.asmDefinedClasses.put(name,cls);
-            return cls;
-        }
-        
-        @Override public Class<?> findClass(String name) throws ClassNotFoundException {
-            return this.asmDefinedClasses.containsKey(name) ? this.asmDefinedClasses.get(name) : super.findClass(name);
-        }
-        
-        @Override public Class<?> findClass(String module, String name) {
-            return this.asmDefinedClasses.containsKey(name) ? this.asmDefinedClasses.get(name) : super.findClass(module,name);
-        }
-        
-        @Override public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-            return this.asmDefinedClasses.containsKey(name) ? this.asmDefinedClasses.get(name) : super.loadClass(name,resolve);
-        }
-        
-        public void resolvePublicly(Class<?> clazz) {
-            resolveClass(clazz);
-        }
     }
 }

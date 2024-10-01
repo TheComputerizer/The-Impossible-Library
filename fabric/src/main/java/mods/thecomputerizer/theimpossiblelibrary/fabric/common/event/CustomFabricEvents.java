@@ -28,7 +28,9 @@ public interface CustomFabricEvents {
     
     interface CustomTickFabric { void onTick(CustomTick ticker); }
     
-    interface KeyPressed { void onKeyPressed(int key, int scanCode, int action, int modifiers); }
+    interface KeyPressed {
+        void onKeyPressed(int key, int scanCode, int action, int modifiers);
+    }
     
     interface RenderDebugInfo { void onRenderDebug(PoseStack matrix, List<String> left, List<String> right); }
 }

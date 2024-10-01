@@ -8,7 +8,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import org.apache.logging.log4j.core.net.UrlConnectionFactory;
 import org.objectweb.asm.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.LabelNode;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +20,14 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static java.io.File.separatorChar;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DATA_DIRECTORY;
@@ -109,6 +120,41 @@ public class ASMHelper {
         ClassWriter writer = getWriter(reader);
         consumer.accept(writer);
         return writer.toByteArray();
+    }
+    
+    public static AbstractInsnNode findLabel(InsnList code, int ordinal) {
+        return findNodeOrLast(code,LabelNode.class::isInstance,ordinal);
+    }
+    
+    public static @Nullable AbstractInsnNode findNode(InsnList code, Function<AbstractInsnNode,Boolean> compare, int ordinal) {
+        int count = 0;
+        AbstractInsnNode matched = null;
+        for(AbstractInsnNode node : code) {
+            if(compare.apply(node)) {
+                if(count<0 || count<=ordinal) matched = node;
+                count++;
+                if(ordinal>=0 && count>ordinal) break;
+            }
+        }
+        return matched;
+    }
+    
+    public static AbstractInsnNode findNodeOrFirst(InsnList code, Function<AbstractInsnNode,Boolean> compare, int ordinal) {
+        AbstractInsnNode node = findNode(code,compare,ordinal);
+        return Objects.nonNull(node) ? node : code.getFirst();
+    }
+    
+    public static AbstractInsnNode findNodeOrLast(InsnList code, Function<AbstractInsnNode,Boolean> compare, int ordinal) {
+        AbstractInsnNode node = findNode(code,compare,ordinal);
+        return Objects.nonNull(node) ? node : code.getLast();
+    }
+    
+    public static AbstractInsnNode findReturn(InsnList code) {
+        return findReturn(code,-1);
+    }
+    
+    public static AbstractInsnNode findReturn(InsnList code, int ordinal) {
+        return findNodeOrLast(code,node -> node.getOpcode()==RETURN,ordinal);
     }
 
     public static void finishMethod(MethodVisitor visitor) {
@@ -294,6 +340,64 @@ public class ASMHelper {
     
     public static ClassWriter getWriter(ClassReader reader) {
         return new ClassWriter(reader,COMPUTE_FRAMES);
+    }
+    
+    public static boolean isValidReplacement(AbstractInsnNode node, @Nullable AbstractInsnNode replacement) {
+        return Objects.isNull(replacement) || node!=replacement;
+    }
+    
+    public static boolean isValidReplacement(AbstractInsnNode node, @Nullable InsnList replacement) {
+        if(Objects.isNull(replacement)) return true;
+        if(replacement.size()!=1) return true;
+        for(AbstractInsnNode element : replacement)
+            if(node==element) return false;
+        return true;
+    }
+    
+    /**
+     * Set replacements to null to remove nodes
+     */
+    public static void replaceNode(InsnList code, Function<AbstractInsnNode,AbstractInsnNode> replacer, int min, int max) {
+        Map<AbstractInsnNode,AbstractInsnNode> replacements = new HashMap<>();
+        int count = 0;
+        for(AbstractInsnNode node : code) {
+            AbstractInsnNode replacement = replacer.apply(node);
+            if(isValidReplacement(node,replacement)) {
+                if(count>=min && (max<0 || count<=max)) replacements.put(node,replacement);
+                count++;
+                if(count>max && max>0) break;
+            }
+        }
+        for(Entry<AbstractInsnNode,AbstractInsnNode> replacement : replacements.entrySet()) {
+            AbstractInsnNode removal = replacement.getKey();
+            int i = code.indexOf(removal);
+            code.remove(removal);
+            AbstractInsnNode replaceWith = replacement.getValue();
+            if(Objects.nonNull(replaceWith)) code.insertBefore(code.get(i),replaceWith);
+        }
+    }
+    
+    /**
+     * Set replacements to null or an empty lists to remove nodes
+     */
+    public static void replaceNodes(InsnList code, Function<AbstractInsnNode,InsnList> replacer, int min, int max) {
+        Map<AbstractInsnNode,InsnList> replacements = new HashMap<>();
+        int count = 0;
+        for(AbstractInsnNode node : code) {
+            InsnList replacement = replacer.apply(node);
+            if(isValidReplacement(node,replacement)) {
+                if(count>=min && (max<0 || count<=max)) replacements.put(node,replacement);
+                count++;
+                if(count>max && max>0) break;
+            }
+        }
+        for(Entry<AbstractInsnNode,InsnList> replacement : replacements.entrySet()) {
+            AbstractInsnNode removal = replacement.getKey();
+            int i = code.indexOf(removal);
+            code.remove(removal);
+            InsnList replaceWith = replacement.getValue();
+            if(Objects.nonNull(replaceWith)) code.insertBefore(code.get(i),replaceWith);
+        }
     }
 
     public static void writeDebugByteCode(String classpath, byte[] bytes) {
