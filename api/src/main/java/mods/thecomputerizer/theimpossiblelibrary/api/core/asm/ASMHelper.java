@@ -20,9 +20,7 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -129,7 +127,7 @@ public class ASMHelper {
     public static @Nullable AbstractInsnNode findNode(InsnList code, Function<AbstractInsnNode,Boolean> compare, int ordinal) {
         int count = 0;
         AbstractInsnNode matched = null;
-        for(AbstractInsnNode node : code) {
+        for(AbstractInsnNode node : code.toArray()) { //InsnList didn't extend Iterable in ASM 5.2
             if(compare.apply(node)) {
                 if(count<0 || count<=ordinal) matched = node;
                 count++;
@@ -139,6 +137,7 @@ public class ASMHelper {
         return matched;
     }
     
+    @IndirectCallers
     public static AbstractInsnNode findNodeOrFirst(InsnList code, Function<AbstractInsnNode,Boolean> compare, int ordinal) {
         AbstractInsnNode node = findNode(code,compare,ordinal);
         return Objects.nonNull(node) ? node : code.getFirst();
@@ -149,6 +148,7 @@ public class ASMHelper {
         return Objects.nonNull(node) ? node : code.getLast();
     }
     
+    @IndirectCallers
     public static AbstractInsnNode findReturn(InsnList code) {
         return findReturn(code,-1);
     }
@@ -347,11 +347,7 @@ public class ASMHelper {
     }
     
     public static boolean isValidReplacement(AbstractInsnNode node, @Nullable InsnList replacement) {
-        if(Objects.isNull(replacement)) return true;
-        if(replacement.size()!=1) return true;
-        for(AbstractInsnNode element : replacement)
-            if(node==element) return false;
-        return true;
+        return Objects.isNull(replacement) || replacement.size()!=1 || replacement.get(0)!=node;
     }
     
     /**
@@ -360,7 +356,7 @@ public class ASMHelper {
     public static void replaceNode(InsnList code, Function<AbstractInsnNode,AbstractInsnNode> replacer, int min, int max) {
         Map<AbstractInsnNode,AbstractInsnNode> replacements = new HashMap<>();
         int count = 0;
-        for(AbstractInsnNode node : code) {
+        for(AbstractInsnNode node : code.toArray()) { //InsnList didn't extend Iterable in ASM 5.2
             AbstractInsnNode replacement = replacer.apply(node);
             if(isValidReplacement(node,replacement)) {
                 if(count>=min && (max<0 || count<=max)) replacements.put(node,replacement);
@@ -380,10 +376,11 @@ public class ASMHelper {
     /**
      * Set replacements to null or an empty lists to remove nodes
      */
+    @IndirectCallers
     public static void replaceNodes(InsnList code, Function<AbstractInsnNode,InsnList> replacer, int min, int max) {
         Map<AbstractInsnNode,InsnList> replacements = new HashMap<>();
         int count = 0;
-        for(AbstractInsnNode node : code) {
+        for(AbstractInsnNode node : code.toArray()) { //InsnList didn't extend Iterable in ASM 5.2
             InsnList replacement = replacer.apply(node);
             if(isValidReplacement(node,replacement)) {
                 if(count>=min && (max<0 || count<=max)) replacements.put(node,replacement);
