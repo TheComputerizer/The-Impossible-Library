@@ -27,7 +27,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVO
 @SuppressWarnings("unused") @Getter
 public abstract class CoreAPI {
 
-    public static CoreAPI INSTANCE;
+    public static Object INSTANCE;
+    static String BINARY = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
+    static String DESC = "Lmods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;";
     static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
     static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
     
@@ -64,13 +66,12 @@ public abstract class CoreAPI {
     }
     
     public static @Nullable Object findInstance(ClassLoader loader) {
-        try {
-            Class<?> coreClass = loader.loadClass(OWNER.replace('/','.'));
-            return ReflectionHelper.invokeStaticMethod(coreClass,"getInstance",new Class<?>[]{});
-        } catch(ClassNotFoundException ex) {
-            TILRef.logError("Unable to get CoreAPI class from {}",loader,ex);
+        Class<?> coreClass = ClassHelper.findClass(BINARY,loader);
+        if(Objects.isNull(coreClass)) {
+            TILRef.logError("Unable to get CoreAPI class from {}",loader);
             return null;
         }
+        return ReflectionHelper.invokeStaticMethod(coreClass,"getInstance",new Class<?>[]{});
     }
     
     public static String findLoadingClass() {
@@ -80,13 +81,21 @@ public abstract class CoreAPI {
     public static CoreAPI getInstance(ClassLoader loader) {
         if(Objects.isNull(INSTANCE))
             syncInstanceClassLoader(CoreAPI.class.getClassLoader(),loader);
-        return INSTANCE;
+        return (CoreAPI)INSTANCE;
     }
     
     public static CoreAPI getInstance() {
         if(Objects.isNull(INSTANCE))
             syncInstanceClassLoader(CoreAPI.class.getClassLoader(),MultiVersionModFinder.class.getClassLoader());
-        return INSTANCE;
+        return (CoreAPI)INSTANCE;
+    }
+    
+    public static Object invoke(Object instance, String name) {
+        return invoke(instance,name,new Class<?>[]{});
+    }
+    
+    public static Object invoke(Object instance, String name, Class<?>[] argClasses, Object ... args) {
+        return ReflectionHelper.invokeMethod(instance.getClass(),name,instance,argClasses,args);
     }
     
     public static boolean isClient() {
@@ -113,7 +122,7 @@ public abstract class CoreAPI {
         return getInstance().getSide().isServer();
     }
     
-    public static CoreAPI parseFrom(String unparsed, ClassLoader loader) {
+    public static Object parseFrom(String unparsed, ClassLoader loader) {
         try {
             String className = unparsed.split(" ")[0];
             Method method = ReflectionHelper.getMethod(ClassLoader.class,"findResource",String.class);
@@ -121,7 +130,7 @@ public abstract class CoreAPI {
                 String classResource = className.replace('.','/')+".class";
                 Object obj = ReflectionHelper.invokeMethod(method,loader,classResource);
             } else TILRef.logError("Why doesn't the findResource method exist??");
-            return (CoreAPI)loader.loadClass(className).newInstance();
+            return loader.loadClass(className).newInstance();
         } catch(ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
             TILRef.logError("Unable to parse CoreAPI instance from {}",unparsed,ex);
         }
@@ -151,22 +160,22 @@ public abstract class CoreAPI {
     public static void setInstance(Class<?> clazz) {
         if(Objects.nonNull(INSTANCE)) return;
         try {
-            INSTANCE = (CoreAPI)clazz.newInstance();
+            INSTANCE = clazz.newInstance();
         } catch(IllegalAccessException | InstantiationException ex) {
             TILRef.logError("Failed to set CoreAPI instance using {}",clazz,ex);
         }
     }
     
     public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom) {
-        try {
-            TILRef.logInfo("Trying to sync CoreAPI instance from {} to {} in the context of {}",loadFrom,loader,Thread.currentThread().getContextClassLoader());
-            Class<?> systemClass = loadFrom.loadClass(OWNER.replace('/','.'));
+        TILRef.logInfo("Trying to sync CoreAPI instance from {} to {} in the context of {}",loadFrom,loader,Thread.currentThread().getContextClassLoader());
+        Class<?> systemClass = ClassHelper.findClass(BINARY,loadFrom);
+        if(Objects.nonNull(systemClass)) {
             Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
+            ReflectionHelper.invokeMethod(systemClass,"addURLToClassLoader",instance,new Class<?>[]{
+                    ClassLoader.class,URL.class},loader,ClassHelper.getSourceURL(systemClass));
             INSTANCE = parseFrom(String.valueOf(instance),loader);
             TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
-        } catch(ClassNotFoundException ex) {
-            TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader",ex);
-        }
+        } else TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader");
     }
 
     protected final GameVersion version;
@@ -223,7 +232,7 @@ public abstract class CoreAPI {
     public abstract void initAPI();
     
     public void injectGetLoader(MethodVisitor visitor) {
-        visitor.visitFieldInsn(GETSTATIC,OWNER,"INSTANCE","L"+OWNER+";");
+        visitor.visitFieldInsn(GETSTATIC,OWNER,"INSTANCE",DESC);
         visitor.visitMethodInsn(INVOKEVIRTUAL,OWNER,"getLoader",Type.getMethodDescriptor(LOADER),false);
     }
     
@@ -257,6 +266,10 @@ public abstract class CoreAPI {
     public void loadCoreModInfo(ClassLoader classLoader, boolean loadSources) {
         getLoader().loadCoreMods(this.coreInfo,classLoader,loadSources);
     }
+    
+    public abstract String mapClassName(String unmapped);
+    public abstract String mapFieldName(String unmappedClass, String unmappedField, String desc);
+    public abstract String mapMethodName(String unmappedClass, String unmappedMethod, String desc);
 
     @SneakyThrows
     public void modConstructed(Package pkg, String modid, String name, String entryType) {

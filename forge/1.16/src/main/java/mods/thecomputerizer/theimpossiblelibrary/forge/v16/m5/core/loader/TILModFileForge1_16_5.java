@@ -53,10 +53,10 @@ public class TILModFileForge1_16_5 extends ModFile {
     protected Path accessTransformer;
     protected List<CoreModFile> coreMods;
     
-    public TILModFileForge1_16_5(Path path, IModLocator locator, Collection<MultiVersionModInfo> infos) {
+    public TILModFileForge1_16_5(Path path, IModLocator locator, Collection<?> infos) {
         super(path,locator,null);
         this.infos = new HashMap<>();
-        for(MultiVersionModInfo info : infos) this.infos.put(info,null);
+        for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
     }
     
     @Override public ModFileScanData compileContent() {
@@ -93,7 +93,8 @@ public class TILModFileForge1_16_5 extends ModFile {
             TILRef.logDebug("Injecting scan data into the language loader");
             loader.getFileVisitor().accept(scan);
         } else TILRef.logError("Why is the language loader missing??");
-        TILRef.logDebug("Finishing multiversion mod scan",Thread.currentThread());
+        TILRef.logInfo("Finishing multiversion mod scan",Thread.currentThread());
+        scan.addFilePath(getFilePath());
         return scan;
     }
     
@@ -147,6 +148,7 @@ public class TILModFileForge1_16_5 extends ModFile {
     @Override public IModFileInfo getModFileInfo() {
         if(Objects.isNull(this.fileInfo)) {
             if(!loadedProvider) {
+                TILRef.logWarn("Invalid? We'll see about that, Forge");
                 TILRef.logInfo("Loading multiversion language provider");
                 LanguageLoadingProvider provider =  FMLLoader.getLanguageLoadingProvider();
                 provider.addAdditionalLanguages(Collections.singletonList(new TILLanguageProviderLoader(getFilePath(),getLocator())));
@@ -174,7 +176,7 @@ public class TILModFileForge1_16_5 extends ModFile {
     }
     
     @Override public boolean identifyMods() {
-        TILRef.logDebug("Loading mod file {} with language {}",getFilePath(),getModFileInfo().getModLoader());
+        TILRef.logInfo("Loading mod file {} with language {}",getFilePath(),getModFileInfo().getModLoader());
         //this.coreMods = ModFileParser.getCoreMods(this); //TODO Coremod support
         this.accessTransformer = getLocator().findPath(this,"META-INF","accesstransformer.cfg");
         return true;
@@ -191,7 +193,7 @@ public class TILModFileForge1_16_5 extends ModFile {
     }
     
     private void scanReflectively(Scanner scanner, Path path, ModFileScanData scan, MethodHandle handle) {
-        TILRef.logTrace("Attempting to scan multiversion jar path {}",path);
+        TILDev.logTrace("Attempting to scan multiversion jar path {}",path);
         try {
             handle.invoke(scanner,path,scan);
         } catch(Throwable ex) {

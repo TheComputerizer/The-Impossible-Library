@@ -24,7 +24,7 @@ public class MessageWrapper1_12_2 extends MessageWrapperAPI<EntityPlayerMP,Messa
 
     public static class Handler implements IMessageHandler<MessageWrapper1_12_2,IMessage> {
 
-        @Override     public IMessage onMessage(MessageWrapper1_12_2 message, MessageContext ctx) {
+        @Override public IMessage onMessage(MessageWrapper1_12_2 message, MessageContext ctx) {
             return (MessageWrapper1_12_2)message.handle(ctx);
         }
     }

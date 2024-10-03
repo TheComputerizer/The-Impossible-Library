@@ -33,7 +33,8 @@ jar {
                 'ForceLoadAsMod': true,
                 'Implementation-Title': name,
                 'Implementation-Version': version,
-                'TILMultiversionMods': api.common_entrypoint
+                'TILMultiversionMods': api.common_entrypoint,
+                'TILMultiversionCoreMods': api.core_entrypoint
         ])
     }
 }

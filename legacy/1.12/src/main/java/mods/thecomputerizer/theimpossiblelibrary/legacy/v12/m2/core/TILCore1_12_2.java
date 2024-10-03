@@ -15,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonE
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModWriter1_12_2;
 import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
@@ -77,10 +78,23 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
         TILRef.setAPI(getSide().isClient() ? new Client1_12_2() : new Common1_12_2());
     }
 
-    @Override public void injectWrittenMod(Class<?> containerClass, String modid) {
-
+    @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
+    
+    @Override public String mapClassName(String unmapped) {
+        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
+        return remapper.map(unmapped.replace('.','/')).replace('/','.');
     }
-
+    
+    @Override public String mapFieldName(String unmappedClass, String unmappedField, String desc) {
+        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
+        return remapper.mapFieldName(unmappedClass,unmappedField,desc);
+    }
+    
+    @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
+        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
+        return remapper.mapMethodName(unmappedClass,unmappedMethod,desc);
+    }
+    
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Attempting to inject `{}` for `{}` into the ASMDataTable",clazz,modid);
         ASMDataTable table = ModContainerWriter1_12_2.findASMTable(Loader.instance());

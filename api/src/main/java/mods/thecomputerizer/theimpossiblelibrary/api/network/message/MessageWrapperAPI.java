@@ -87,7 +87,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
             MessageAPI<CTX> reply = this.info.handle(message,context);
             if(Objects.nonNull(reply)) replies.add(reply);
         }
-        return (MessageWrapperAPI<PLAYER,CTX>)NetworkHelper.wrapMessages(NetworkHelper.getOppositeDir(this.info.getDirection()),replies);
+        return replies.isEmpty() ? null : (MessageWrapperAPI<PLAYER,CTX>)NetworkHelper.wrapMessages(NetworkHelper.getOppositeDir(this.info.getDirection()),replies);
     }
 
     public void send() {

@@ -2,25 +2,36 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 public class TILBetterModScan extends ModFileScanData {
     
     private final Map<String,MultiVersionModInfo> modInfos;
     private final Map<String,byte[]> writtenClasses;
+    private final Set<Path> paths;
     
     public TILBetterModScan() {
         super();
         this.modInfos = new HashMap<>();
         this.writtenClasses = new HashMap<>();
+        this.paths = new HashSet<>();
+    }
+    
+    public void addFilePath(Path path) {
+        this.paths.add(path);
     }
     
     public void addWrittenClass(String classpath, MultiVersionModInfo info, byte[] bytecode) {
@@ -48,6 +59,35 @@ public class TILBetterModScan extends ModFileScanData {
                 ClassHelper.resolveClass(loader,ClassHelper.defineClass(loader,classpath,entry.getValue()));
                 TILRef.logDebug("Successfully defined and resolved class {} for {}",classpath,loader);
             }
+        }
+        for(ClassLoader loader : loaders) {
+            if(loader==ClassLoader.getSystemClassLoader()) continue;
+            Class<?> loaderClass = ClassHelper.findClass("net.minecraftforge.fml.ModLoader",loader);
+            fixBrokenMods(ReflectionHelper.invokeStaticMethod(loaderClass,"get",new Class<?>[]{}));
+            break;
+        }
+    }
+    
+    /**
+     * Yeah, this is kinda necessary when trying to work with classes on the wrong class loader
+     */
+    public void fixBrokenMods(Object modLoader) {
+        List<?> warnings = (List<?>)ReflectionHelper.getFieldInstance(modLoader,modLoader.getClass(),"loadingWarnings");
+        if(Objects.isNull(warnings)) TILRef.logWarn("You win this round, Forge");
+        else {
+            warnings.removeIf(warning -> {
+                Object msg = ReflectionHelper.invokeMethod(warning.getClass(),"formatToString",warning,new Class<?>[]{});
+                String[] split = String.valueOf(msg).split(" ");
+                if(split.length>1) {
+                    for(Path path : this.paths) {
+                        if(path.toString().endsWith(split[1])) {
+                            TILRef.logWarn("{} is a perfectly valid mod file thanks",path);
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
         }
     }
     

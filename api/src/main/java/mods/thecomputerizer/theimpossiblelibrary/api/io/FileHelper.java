@@ -1,11 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.io;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public class FileHelper {
 
@@ -35,7 +38,17 @@ public class FileHelper {
         }
         return file;
     }
+    
+    public static File[] list(File root) {
+        return list(root,file -> true);
+    }
+    
+    public static File[] list(File root, Predicate<File> filter) {
+        File[] files = Objects.nonNull(root) ? root.listFiles(filter::test) : null;
+        return Objects.nonNull(files) ? files : new File[]{};
+    }
 
+    @IndirectCallers
     public static void writeLine(String path, String text, boolean append) {
         writeLine(new File(path),text,append);
     }
@@ -50,7 +63,8 @@ public class FileHelper {
             TILRef.logError("Failed to write line {} to file {}",text,file.getAbsolutePath(),ex);
         }
     }
-
+    
+    @IndirectCallers
     public static void writeLines(String path, List<String> text, boolean append) {
         writeLines(new File(path),text,append);
     }
@@ -65,7 +79,8 @@ public class FileHelper {
             TILRef.logError("Failed to write lines {} to file {}",text,file.getAbsolutePath(),ex);
         }
     }
-
+    
+    @IndirectCallers
     public static void writeLines(BufferedWriter writer, String path, List<String> text, boolean append) {
         writeLines(writer,new File(path),text,append);
     }

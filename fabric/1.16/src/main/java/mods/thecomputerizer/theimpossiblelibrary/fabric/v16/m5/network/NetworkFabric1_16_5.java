@@ -94,7 +94,7 @@ public class NetworkFabric1_16_5 extends Network1_16_5<Object,Object> {
         ClientPlayNetworking.registerGlobalReceiver(registryName,(mc,handler,buf,sender) -> {
             MessageWrapperFabric1_16_5 wrapper = MessageWrapperFabric1_16_5.getInstance(dir,buf);
             MessageWrapperFabric1_16_5 response = (MessageWrapperFabric1_16_5)wrapper.handle(sender);
-            if(Objects.nonNull(response)) wrapper.send();
+            if(Objects.nonNull(response)) response.send();
         });
     }
     
@@ -106,7 +106,7 @@ public class NetworkFabric1_16_5 extends Network1_16_5<Object,Object> {
             MessageWrapperFabric1_16_5 response = (MessageWrapperFabric1_16_5)wrapper.handle(sender);
             if(Objects.nonNull(response)) {
                 response.setPlayer(player);
-                wrapper.send();
+                response.send();
             }
         });
     }

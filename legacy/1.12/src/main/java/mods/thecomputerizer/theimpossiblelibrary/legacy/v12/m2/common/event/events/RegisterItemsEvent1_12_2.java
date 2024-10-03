@@ -33,7 +33,7 @@ public class RegisterItemsEvent1_12_2 extends RegisterItemsEventWrapper<Register
     @Override public void register(ItemAPI<?> entry) {
         Item item = entry.unwrap();
         this.event.getRegistry().register(item);
-        if(CoreAPI.INSTANCE.getSide().isClient()) {
+        if(CoreAPI.getInstance().getSide().isClient()) {
             ResourceLocation registryName = item.getRegistryName();
             if(Objects.nonNull(registryName)) {
                 ModelResourceLocation model = new ModelResourceLocation(registryName,"inventory");

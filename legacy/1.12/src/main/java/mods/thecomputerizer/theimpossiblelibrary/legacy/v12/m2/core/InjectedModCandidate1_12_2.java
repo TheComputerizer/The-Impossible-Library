@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.INSTANCE;
 import static net.minecraft.launchwrapper.Launch.classLoader;
 import static net.minecraftforge.fml.common.discovery.ContainerType.JAR;
 
@@ -46,7 +45,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
     private static Map<String,MultiVersionModData> getModData() {
         if(Objects.nonNull(DATA_MAP)) return DATA_MAP;
         File root = (File)ReflectionHelper.getFieldInstance(null,Loader.class,"minecraftDir");
-        DATA_MAP = INSTANCE.getModData(root);
+        DATA_MAP = CoreAPI.getInstance().getModData(root);
         return DATA_MAP;
     }
 

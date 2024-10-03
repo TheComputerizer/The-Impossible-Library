@@ -17,7 +17,7 @@ public class MultiVersionModFinder {
     public static final Name MULTIVERSION_MODS = new Name("TILMultiversionMods");
 
     public static Set<MultiVersionModCandidate> discover(MultiVersionLoaderAPI loader, File root, boolean isCore) {
-        TILRef.logInfo("Attempting to find multiversion mod candidates from root `{}`",root);
+        TILRef.logInfo("Attempting to find multiversion {} candidates from root `{}`",isCore ? "coremod" : "mod",root);
         Set<MultiVersionModCandidate> candidates = new HashSet<>();
         Set<String> foundCoreMods = new HashSet<>();
         Set<String> foundMods = new HashSet<>();

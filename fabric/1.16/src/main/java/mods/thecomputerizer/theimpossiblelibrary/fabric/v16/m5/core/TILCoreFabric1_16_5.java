@@ -18,6 +18,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.CommonFabr
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core.asm.ModWriterFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.core.TILCore1_16_5;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.fabricmc.loader.impl.util.UrlUtil;
 
@@ -74,6 +75,22 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
+    
+    MappingResolver mapper() {
+        return FabricLoader.getInstance().getMappingResolver();
+    }
+    
+    @Override public String mapClassName(String unmapped) {
+        return mapper().mapClassName("intermediary",unmapped.replace('.','/'));
+    }
+    
+    @Override public String mapFieldName(String unmappedClass, String unmappedField, String desc) {
+        return mapper().mapFieldName("intermediary",unmappedClass,unmappedField,desc);
+    }
+    
+    @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
+        return mapper().mapMethodName("intermediary",unmappedClass,unmappedMethod,desc);
+    }
     
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);

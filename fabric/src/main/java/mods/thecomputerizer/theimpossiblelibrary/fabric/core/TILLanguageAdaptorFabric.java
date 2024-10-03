@@ -232,12 +232,14 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
             for(MultiVersionModInfo info : fileEntry.getValue()) {
                 LoaderModMetadata metadata = buildMetaData(core,candidate,info,versionOverrides,dependencyOverrides);
                 List<Path> paths = new ArrayList<>();
-                try {
-                    URL url = ClassHelper.getSourceURL(CoreAPI.class);
-                    if(Objects.nonNull(url)) paths.add(Paths.get(url.toURI()));
-                } catch(URISyntaxException ex) {
-                    TILRef.logError("Failed to get path for {}",core.getClass());
-                }
+                if(DEV) {
+                    try {
+                        URL url = ClassHelper.getSourceURL(CoreAPI.class);
+                        if(Objects.nonNull(url)) paths.add(Paths.get(url.toURI()));
+                    } catch(URISyntaxException ex) {
+                        TILRef.logError("Failed to get path for {}", core.getClass());
+                    }
+                } else paths.add(candidate.getFile().toPath());
                 //if(MODID.equals(info.getModID())) paths.addAll(this.loaderSources);
                 TILRef.logInfo("Source paths for {} are {}",info.getModID(),paths);
                 TILRef.logInfo("Successfully built mod metadata! Attempting some reflection magic");

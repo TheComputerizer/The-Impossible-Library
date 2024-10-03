@@ -1,10 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
+import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
@@ -24,16 +26,18 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this up once it works as intended
     
     static final String ARRAYLIST_OWNER = "java/util/ArrayList";
-    static final String COLLECTION_OWNER = "java/util/Collection";
-    static final String DEBUG_OWNER = DEV ? "net/minecraft/client/gui/components/DebugScreenOverlay" : "net/minecraft/class_340";
+    static final String DEBUG_OWNER = FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary",
+            DEV ? "net/minecraft/client/gui/components/DebugScreenOverlay" : "net/minecraft/class_340");
     static final String EVENTS_OWNER = "mods/thecomputerizer/theimpossiblelibrary/fabric/common/event/CustomFabricEvents";
     static final String EVENT_OWNER  = "net/fabricmc/fabric/api/event/Event";
     static final String EVENT_DESC = "Lnet/fabricmc/fabric/api/event/Event;";
-    static final String KEYBOARD_OWNER = DEV ? "net/minecraft/client/KeyboardHandler" : "net/minecraft/class_309";
+    static final String KEYBOARD_OWNER = FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary",
+            DEV ? "net/minecraft/client/KeyboardHandler" : "net/minecraft/class_309");
     static final String INVOKER_DESC = TypeHelper.method(OBJECT_TYPE,new Type[]{}).getDescriptor();
     static final String LIST_DESC = "Ljava/util/List;";
     static final String LIST_OWNER = "java/util/List";
-    static final String POSESTACK_OWNER = DEV ? "com/mojang/blaze3d/vertex/PoseStack" : "net/minecraft/class_4587";
+    static final String POSESTACK_OWNER = FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary",
+            DEV ? "com/mojang/blaze3d/vertex/PoseStack" : "net/minecraft/class_4587");
     static final String STRING_LIST_SIGNATURE = "Ljava/util/List<Ljava/lang/String;>;";
    
     public TILCoreEntryPointFabric() {
@@ -60,7 +64,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this 
         return list;
     }
     
-    InsnList buildRenderDebugInvoker() {
+    InsnList buildRenderDebugInvoker(ClassNode node) {
         String renderDebugOwner = customEventOwner("RenderDebugInfo");
         Type listType = Type.getType(List.class);
         Type poseStackType = Type.getType("L"+POSESTACK_OWNER+";");
@@ -77,6 +81,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this 
             list.add(new FieldInsnNode(GETFIELD,DEBUG_OWNER,name,LIST_DESC));
             list.add(new VarInsnNode(ALOAD,0));
             String methodName = game ? (DEV ? "getGameInformation" : "method_1835") : (DEV ? "getSystemInformation" : "method_1839");
+            methodName = CoreAPI.getInstance().mapMethodName(node.name,methodName,getInfoDesc);
             list.add(new MethodInsnNode(INVOKEVIRTUAL,DEBUG_OWNER,methodName,getInfoDesc));
             list.add(new MethodInsnNode(INVOKEINTERFACE,LIST_OWNER,"addAll",addAllDesc,true));
             game = false;
@@ -102,25 +107,29 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this 
     }
     
     @Override public ClassNode editClass(ClassNode classNode) {
+        TILRef.logInfo("Editing class node for {}",classNode.name);
         if(isTarget(classNode)) {
-            String name = classNode.name;
+            String name = getClassName(classNode);
+            TILRef.logInfo("Editing mapped class node {}",name);
             boolean screenOverlay = name.endsWith("class_340") || name.endsWith("DebugScreenOverlay");
             boolean keyboard = name.endsWith("class_309") || name.endsWith("KeyboardHandler");
             if(screenOverlay) addRenderFields(classNode.fields);
             for(MethodNode method : classNode.methods) {
                 InsnList code = method.instructions;
-                if(keyboard && Misc.equalsAny(method.name,"keyPress","method_25404")) {
+                String methodName = getMethodName(classNode,method);
+                TILRef.logInfo("Editing method node {}({})",method.name,methodName);
+                if(keyboard && Misc.equalsAny(methodName,"keyPress","method_1466")) {
                     TILRef.logInfo("Building KEY_PRESSED invoker");
                     code.insert(ASMHelper.findLabel(code,38),buildKeyPressInvoker());
                 }
                 else if(screenOverlay) {
-                    if(method.name.equals("<init>")) code.insert(ASMHelper.findNode(code,node ->
+                    if(methodName.equals("<init>")) code.insert(ASMHelper.findNode(code,node ->
                                     node.getOpcode()==INVOKESPECIAL,0),initRenderFields());
-                    else if(Misc.equalsAny(method.name,"drawGameInformation","method_1847")) {
+                    else if(Misc.equalsAny(methodName,"drawGameInformation","method_1847")) {
                         replace(code,"theimpossiblelibrary$left");
                         TILRef.logInfo("Building RENDER_DEBUG_INFO invoker");
-                        code.insertBefore(code.getFirst(),buildRenderDebugInvoker());
-                    } else if(Misc.equalsAny(method.name,"drawSystemInformation","method_1848"))
+                        code.insertBefore(code.getFirst(),buildRenderDebugInvoker(classNode));
+                    } else if(Misc.equalsAny(methodName,"drawSystemInformation","method_1848"))
                         replace(code,"theimpossiblelibrary$right");
                 }
             }

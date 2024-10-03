@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
@@ -40,7 +40,7 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
     }
 
     @Override public String[] getASMTransformerClass() {
-        TILDev.logDebug("Coremod shenanigans");
+        TILRef.logInfo("Coremod shenanigans");
         CoreAPI core = CoreAPI.getInstance();
         core.loadCoreModInfo(classLoader);
         core.instantiateCoreMods();
@@ -62,7 +62,7 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
     }
 
     @Override public void injectData(Map<String,Object> data) {
-        TILDev.logDebug("Beginning injection with coremod data: {}", data);
+        TILRef.logInfo("Beginning injection with coremod data: {}", data);
         CoreAPI.getInstance().writeModContainers(classLoader);
     }
 

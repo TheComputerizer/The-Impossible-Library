@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 
+@IndirectCallers
 public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
 
     public static final Reference FORGE_REF = TILRef.instance(FMLLoader.getDist()::isClient,"");
@@ -84,6 +86,18 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
+    
+    @Override public String mapClassName(String unmapped) {
+        return unmapped;
+    }
+    
+    @Override public String mapFieldName(String unmappedClass, String unmappedField, String desc) {
+        return unmappedField;
+    }
+    
+    @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
+        return unmappedMethod;
+    }
     
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);

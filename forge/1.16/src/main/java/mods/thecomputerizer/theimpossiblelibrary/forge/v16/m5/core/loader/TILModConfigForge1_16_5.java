@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import net.minecraftforge.forgespi.language.IConfigurable;
 
 import java.util.Collections;
@@ -14,13 +14,17 @@ public class TILModConfigForge1_16_5 implements IConfigurable {
     
     private final Map<String,Object> infoMap;
     
-    public TILModConfigForge1_16_5(MultiVersionModInfo info) {
+    public TILModConfigForge1_16_5(Object info) {
         this.infoMap = new HashMap<>();
-        this.infoMap.put("description",info.getDescription());
-        this.infoMap.put("displayName",info.getName());
-        this.infoMap.put("modId",info.getModID());
-        this.infoMap.put("version",info.getVersion());
+        this.infoMap.put("description",genericMethod(info,"getDescription"));
+        this.infoMap.put("displayName",genericMethod(info,"getName"));
+        this.infoMap.put("modId",genericMethod(info,"getModID"));
+        this.infoMap.put("version",genericMethod(info,"getVersion"));
         this.infoMap.put("logoFile","logo.png");
+    }
+    
+    String genericMethod(Object generic, String name) {
+        return (String)ReflectionHelper.invokeMethod(generic.getClass(),name,generic,new Class<?>[]{});
     }
     
     @SuppressWarnings("unchecked") @Override public <T> Optional<T> getConfigElement(String ... key) {
