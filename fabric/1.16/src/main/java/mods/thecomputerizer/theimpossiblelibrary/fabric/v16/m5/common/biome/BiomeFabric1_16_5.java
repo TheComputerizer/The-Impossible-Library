@@ -12,8 +12,8 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
 
 public class BiomeFabric1_16_5 extends Biome1_16_5<Biome> {
     
-    public BiomeFabric1_16_5(Biome biome) {
-        super(biome);
+    public BiomeFabric1_16_5(Object biome) {
+        super((Biome)biome);
     }
     
     @Override public boolean canRain() {

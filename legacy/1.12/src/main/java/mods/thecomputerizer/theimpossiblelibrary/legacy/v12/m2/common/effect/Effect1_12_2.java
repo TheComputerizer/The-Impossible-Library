@@ -5,7 +5,7 @@ import net.minecraft.potion.Potion;
 
 public class Effect1_12_2 extends EffectAPI<Potion> {
 
-    public Effect1_12_2(Potion effect) {
-        super(effect);
+    public Effect1_12_2(Object effect) {
+        super((Potion)effect);
     }
 }

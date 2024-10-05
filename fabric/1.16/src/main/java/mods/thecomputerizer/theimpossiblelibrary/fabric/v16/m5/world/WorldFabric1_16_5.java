@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.world;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
@@ -41,8 +41,8 @@ import static net.minecraft.world.level.LightLayer.SKY;
 
 public class WorldFabric1_16_5 extends World1_16_5<LevelAccessor> {
     
-    public WorldFabric1_16_5(LevelAccessor world) {
-        super(world);
+    public WorldFabric1_16_5(Object world) {
+        super((LevelAccessor)world);
     }
     
     @Override public boolean canSnowAt(BlockPosAPI<?> api) {

@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class ClientPlayer1_12_2 extends Player1_12_2<EntityPlayerSP> {
 
-    public ClientPlayer1_12_2(EntityPlayerSP player) {
-        super(player);
+    public ClientPlayer1_12_2(Object player) {
+        super((EntityPlayerSP)player);
     }
 
     @Override public int getGamemodeOrdinal() {

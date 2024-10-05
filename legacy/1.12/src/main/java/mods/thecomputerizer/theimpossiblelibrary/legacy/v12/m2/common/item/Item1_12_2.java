@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 
 public class Item1_12_2 extends ItemAPI<Item> {
 
-    public Item1_12_2(Item item) {
-        super(item);
+    public Item1_12_2(Object item) {
+        super((Item)item);
     }
 }

@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.util;
+package mods.thecomputerizer.theimpossiblelibrary.api.wrappers;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 

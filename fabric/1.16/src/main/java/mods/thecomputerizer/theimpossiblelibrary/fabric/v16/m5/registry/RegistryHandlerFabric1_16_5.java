@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.registry.blockentity.BlockEntityBuilderFabric1_16_5;

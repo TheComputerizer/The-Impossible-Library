@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.structure;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.structure.Structure1_16_5;
 import net.minecraft.world.gen.feature.structure.Structure;

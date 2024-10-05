@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.biome;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.biome.Biome1_16_5;
 import net.minecraft.world.biome.Biome;
@@ -17,8 +17,8 @@ import static net.minecraft.world.biome.Biome.RainType.SNOW;
 
 public class BiomeForge1_16_5 extends Biome1_16_5<Biome> {
     
-    public BiomeForge1_16_5(Biome biome) {
-        super(biome);
+    public BiomeForge1_16_5(Object biome) {
+        super((Biome)biome);
     }
     
     @Override public boolean canRain() {

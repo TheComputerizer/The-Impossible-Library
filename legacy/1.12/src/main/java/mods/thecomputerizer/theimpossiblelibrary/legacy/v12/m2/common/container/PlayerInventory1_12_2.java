@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class PlayerInventory1_12_2 extends PlayerInventoryAPI<InventoryPlayer> {
 
-    public PlayerInventory1_12_2(InventoryPlayer inventory) {
-        super(inventory);
+    public PlayerInventory1_12_2(Object inventory) {
+        super((InventoryPlayer)inventory);
     }
 
     @Override public Collection<ItemStackAPI<?>> getArmorStacks() {

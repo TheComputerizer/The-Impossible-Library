@@ -1,12 +1,12 @@
-package mods.thecomputerizer.theimpossiblelibrary.api.util;
+package mods.thecomputerizer.theimpossiblelibrary.api.wrappers;
 
 import java.util.Objects;
 
-public abstract class MutableWrapped<W> implements Wrapped<W> {
+public abstract class AbstractWrapped<W> implements Wrapped<W> {
     
-    protected W wrapped;
+    protected final W wrapped;
     
-    protected MutableWrapped(W wrapped) {
+    protected AbstractWrapped(W wrapped) {
         this.wrapped = wrapped;
     }
     
@@ -21,9 +21,9 @@ public abstract class MutableWrapped<W> implements Wrapped<W> {
         return this.wrapped;
     }
     
-    public MutableWrapped<W> setWrapped(W wrapped) {
-        this.wrapped = wrapped;
-        return this;
+    @SuppressWarnings("unchecked")
+    public Class<? extends W> getWrappedClass() {
+        return (Class<? extends W>)this.wrapped.getClass();
     }
     
     @Override public String toString() {

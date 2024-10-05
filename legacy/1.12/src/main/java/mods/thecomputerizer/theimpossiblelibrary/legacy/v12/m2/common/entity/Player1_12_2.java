@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
@@ -10,7 +10,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,EntityEntry> {
 
     protected Player1_12_2(P player) {
-        super(player, Entity1_12_2.getEntry(player));
+        super(player,(EntityEntry)Entity1_12_2.getEntry(player));
     }
 
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
@@ -46,7 +45,7 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     @SuppressWarnings({"UnreachableCode","ConstantValue"})
     @Override public BlockPosAPI<?> getBedPos(DimensionAPI<?> dimension) {
         BlockPos pos = this.entity.getBedLocation(((DimensionType)dimension.unwrap()).getId());
-        return Objects.nonNull(pos) ? PosHelper.getPos(pos) : null;
+        return Objects.nonNull(pos) ? WrapperHelper.wrapPosition(pos) : null;
     }
 
     @Override public Box getBoundingBox() {
@@ -86,7 +85,7 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     }
 
     @Override public BlockPosAPI<?> getPos() {
-        return PosHelper.getPos(this.entity.getPosition());
+        return WrapperHelper.wrapPosition(this.entity.getPosition());
     }
 
     @Override public EntityAPI<?,?> getRootVehicle() {

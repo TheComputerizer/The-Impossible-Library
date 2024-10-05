@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.MutableWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
 import org.joml.Vector3d;
 
 import java.util.Objects;

@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 
 @SuppressWarnings("unused")
 public class MaterialHelper {

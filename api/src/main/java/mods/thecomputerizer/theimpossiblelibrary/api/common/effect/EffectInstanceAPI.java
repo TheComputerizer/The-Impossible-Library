@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.effect;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class EffectInstanceAPI<I> extends AbstractWrapped<I> {
 

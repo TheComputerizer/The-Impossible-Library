@@ -6,8 +6,8 @@ import net.minecraft.block.Block;
 
 public class Block1_16_5 extends BlockAPI<Block> {
 
-    public Block1_16_5(Block block) {
-        super(block);
+    public Block1_16_5(Object block) {
+        super((Block)block);
     }
 
     @Override public BlockStateAPI<?> getDefaultState() {

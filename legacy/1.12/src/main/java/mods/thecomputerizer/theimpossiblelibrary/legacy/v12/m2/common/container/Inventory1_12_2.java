@@ -1,14 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.InventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraft.inventory.IInventory;
 
 public class Inventory1_12_2 extends InventoryAPI<IInventory> {
 
-    public Inventory1_12_2(IInventory inventory) {
-        super(inventory);
+    public Inventory1_12_2(Object inventory) {
+        super((IInventory)inventory);
     }
 
     @Override public ItemStackAPI<?> getStack(int slot) {

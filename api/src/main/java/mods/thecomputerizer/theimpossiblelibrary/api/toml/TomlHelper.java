@@ -7,7 +7,7 @@ public class TomlHelper {
     
     /**
      Returns the input table name encapsulated in brackets.
-     The array input determines whether single or double brakcets are used.
+     The array input determines whether single or double brackets are used.
      */
     public static String tableDef(String name, boolean array) {
         return (array ? "[[" : "[")+name+(array ? "]]" : "]");
@@ -17,7 +17,7 @@ public class TomlHelper {
      Builds a table path from an ordered list of names.
      Names with illegal characters will automatically be encapsulated in quotes.
      Returns the fully qualified table path encapsulated in brackets.
-     The array input determines whether single or double brakcets are used.
+     The array input determines whether single or double brackets are used.
      */
     public static String tableDef(List<String> names, boolean array) {
         StringJoiner joiner = new StringJoiner(".");

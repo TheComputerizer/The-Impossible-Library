@@ -1,15 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Player1_16_5;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -74,7 +73,7 @@ public abstract class PlayerFabric1_16_5<P extends Player> extends Player1_16_5<
     }
     
     @Override public BlockPosAPI<?> getPos() {
-        return PosHelper.getPos(this.entity.blockPosition());
+        return WrapperHelper.wrapPosition(this.entity.blockPosition());
     }
     
     @Override public EntityAPI<?,?> getRootVehicle() {

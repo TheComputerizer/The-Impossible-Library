@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
@@ -35,8 +35,8 @@ import static net.minecraft.world.EnumSkyBlock.SKY;
 
 public class World1_12_2 extends WorldAPI<World> {
 
-    public World1_12_2(World world) {
-        super(world);
+    public World1_12_2(Object world) {
+        super((World)world);
     }
 
     @Override public boolean canSnowAt(BlockPosAPI<?> pos) {

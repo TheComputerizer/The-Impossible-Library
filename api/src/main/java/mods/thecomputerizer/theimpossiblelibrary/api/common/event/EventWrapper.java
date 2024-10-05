@@ -3,12 +3,11 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
@@ -200,7 +199,7 @@ public abstract class EventWrapper<E> {
 
     protected <V> BlockPosAPI<?> wrapPos(@Nullable Function<E,V> posFunc) {
         return Objects.nonNull(this.event) && Objects.nonNull(posFunc) ?
-                PosHelper.getPos(posFunc.apply(this.event)) : null;
+                WrapperHelper.wrapPosition(posFunc.apply(this.event)) : null;
     }
 
     protected <V> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosBoth(Function<E,V> getter, BiConsumer<E,V> setter) {

@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.blockentity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
@@ -19,14 +19,36 @@ import java.util.Objects;
 
 public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends TileEntity>> {
     
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntity1_12_2 entity(Object tile) {
+        return new BlockEntity1_12_2((TileEntity)tile);
+    }
+    
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntity1_12_2 get(Object obj) {
+        return obj instanceof TileEntity ? entity(obj) : type(obj);
+    }
+    
+    /**
+     * Assumes the input object will never be null
+     */
+    @SuppressWarnings("unchecked")
+    public static BlockEntity1_12_2 type(Object type) {
+        return new BlockEntity1_12_2((Class<? extends TileEntity>)type);
+    }
+    
     private ResourceLocation registryName;
     
-    public BlockEntity1_12_2(TileEntity tile) {
+    private BlockEntity1_12_2(TileEntity tile) {
         super(tile,tile.getClass());
         this.registryName = TileEntity.getKey(this.wrapped);
     }
     
-    public BlockEntity1_12_2(Class<? extends TileEntity> tileClass) {
+    private BlockEntity1_12_2(Class<? extends TileEntity> tileClass) {
         super(null,tileClass);
         this.registryName = TileEntity.getKey(this.wrapped);
     }

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.input;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 @Getter
 public abstract class KeyAPI<K> extends AbstractWrapped<K> {

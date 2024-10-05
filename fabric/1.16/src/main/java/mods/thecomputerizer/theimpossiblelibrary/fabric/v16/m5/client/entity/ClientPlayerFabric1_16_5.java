@@ -14,8 +14,8 @@ import static net.minecraft.world.level.GameType.NOT_SET;
 
 public class ClientPlayerFabric1_16_5 extends PlayerFabric1_16_5<LocalPlayer> {
 
-    public ClientPlayerFabric1_16_5(LocalPlayer player) {
-        super(player);
+    public ClientPlayerFabric1_16_5(Object player) {
+        super((LocalPlayer)player);
     }
 
     private GameType getGamemode(@Nullable ClientPacketListener handler, GameProfile profile) {

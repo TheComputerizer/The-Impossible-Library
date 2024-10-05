@@ -12,8 +12,8 @@ import java.util.Set;
 
 public class Biome1_12_2 extends BiomeAPI<Biome> {
 
-    public Biome1_12_2(Biome biome) {
-        super(biome);
+    public Biome1_12_2(Object biome) {
+        super((Biome)biome);
     }
 
     @Override public float getRainfall() {

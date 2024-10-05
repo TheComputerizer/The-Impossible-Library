@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.resource;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 import java.util.Objects;
 

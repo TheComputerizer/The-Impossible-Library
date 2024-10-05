@@ -5,6 +5,18 @@ import net.minecraft.util.math.BlockPos;
 import org.joml.Vector3i;
 
 public class BlockPos1_16_5 extends BlockPosAPI<BlockPos> {
+    
+    public static BlockPos1_16_5 get(Object obj) {
+        return obj instanceof BlockPos ? pos(obj) : vec(obj);
+    }
+    
+    public static BlockPos1_16_5 pos(Object pos) {
+        return new BlockPos1_16_5((BlockPos)pos);
+    }
+    
+    public static BlockPos1_16_5 vec(Object pos) {
+        return new BlockPos1_16_5((Vector3i)pos);
+    }
 
     public BlockPos1_16_5(BlockPos pos) {
         this(pos,new Vector3i(pos.getX(),pos.getY(),pos.getZ()));

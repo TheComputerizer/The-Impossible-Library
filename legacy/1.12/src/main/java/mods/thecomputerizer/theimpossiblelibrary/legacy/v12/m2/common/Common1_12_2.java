@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
@@ -16,7 +16,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.CommonEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ToolHelper1_12_2;
@@ -30,7 +29,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.event.Serv
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn.SpawnHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.Tag1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.text.TextHelper1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.PosHelper1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.wrappers.Wrapper1_12_2;
 
 import java.util.function.Supplier;
 
@@ -54,10 +53,6 @@ public class Common1_12_2 extends CommonAPI {
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {
         return Network1_12_2::new;
-    }
-    
-    @Override public Supplier<PosHelperAPI<?>> initPosHelper() {
-        return PosHelper1_12_2::new;
     }
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {

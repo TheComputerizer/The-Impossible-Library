@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import org.joml.Vector3d;
 
 import java.util.Objects;

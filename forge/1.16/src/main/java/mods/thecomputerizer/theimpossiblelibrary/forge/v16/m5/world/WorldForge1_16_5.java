@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.world;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
@@ -40,8 +40,8 @@ import static net.minecraftforge.registries.ForgeRegistries.STRUCTURE_FEATURES;
 
 public class WorldForge1_16_5 extends World1_16_5<IWorld> {
     
-    public WorldForge1_16_5(IWorld world) {
-        super(world);
+    public WorldForge1_16_5(Object world) {
+        super((IWorld)world);
     }
     
     @Override public boolean canSnowAt(BlockPosAPI<?> api) {

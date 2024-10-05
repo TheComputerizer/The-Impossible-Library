@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
@@ -18,7 +18,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.event.Clie
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.gui.ScreenHelperFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.input.KeyHelperFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.sound.SoundHelperFabric1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.WrapperFabric1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.wrappers.WrapperFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.event.CommonEventsFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.integration.ModHelperFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.network.NetworkFabric1_16_5;

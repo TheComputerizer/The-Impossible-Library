@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
@@ -14,8 +14,8 @@ import java.util.Objects;
 
 public class CommandSender1_12_2 extends CommandSenderAPI<ICommandSender> {
 
-    public CommandSender1_12_2(ICommandSender sender) {
-        super(sender);
+    public CommandSender1_12_2(Object sender) {
+        super((ICommandSender)sender);
     }
 
     @Override public @Nullable EntityAPI<?,?> getEntity() {

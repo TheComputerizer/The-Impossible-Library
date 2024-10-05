@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

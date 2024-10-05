@@ -1,12 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.blockentity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.blockentity.BlockEntity1_16_5;
 import net.minecraft.nbt.CompoundTag;
@@ -17,6 +16,27 @@ import java.util.Objects;
 
 public class BlockEntityFabric1_16_5 extends BlockEntity1_16_5<BlockEntity,BlockEntityType<?>> {
     
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntityFabric1_16_5 entity(Object tile) {
+        return new BlockEntityFabric1_16_5((BlockEntity)tile);
+    }
+    
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntityFabric1_16_5 get(Object obj) {
+        return obj instanceof BlockEntity ? entity(obj) : type(obj);
+    }
+    
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntityFabric1_16_5 type(Object type) {
+        return new BlockEntityFabric1_16_5((BlockEntityType<?>)type);
+    }
+    
     public BlockEntityFabric1_16_5(BlockEntity tile) {
         super(tile,tile.getType());
     }
@@ -26,7 +46,7 @@ public class BlockEntityFabric1_16_5 extends BlockEntity1_16_5<BlockEntity,Block
     }
     
     @Override public BlockPosAPI<?> getPos() {
-        return Objects.nonNull(this.entity) ? PosHelper.getPos(entity.getBlockPos()) : null;
+        return Objects.nonNull(this.entity) ? WrapperHelper.wrapPosition(entity.getBlockPos()) : null;
     }
     
     @Override public WorldAPI<?> getWorld() {

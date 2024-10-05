@@ -5,7 +5,7 @@ import net.minecraft.potion.PotionType;
 
 public class Potion1_12_2 extends PotionAPI<PotionType> {
 
-    public Potion1_12_2(PotionType potion) {
-        super(potion);
+    public Potion1_12_2(Object potion) {
+        super((PotionType)potion);
     }
 }

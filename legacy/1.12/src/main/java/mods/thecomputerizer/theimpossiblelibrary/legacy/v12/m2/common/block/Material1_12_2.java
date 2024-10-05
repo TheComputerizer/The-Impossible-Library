@@ -10,8 +10,8 @@ import static net.minecraft.block.material.Material.WATER;
 
 public class Material1_12_2 extends MaterialAPI<Material> {
 
-    public Material1_12_2(Material material) {
-        super(material);
+    public Material1_12_2(Object material) {
+        super((Material)material);
     }
 
     @Override public boolean hasCollider() {

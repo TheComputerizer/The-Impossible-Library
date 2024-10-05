@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.Minecraft1_12_2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;

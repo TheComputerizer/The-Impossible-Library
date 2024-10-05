@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
@@ -13,8 +13,8 @@ import java.util.Objects;
 
 public class ItemStack1_12_2 extends ItemStackAPI<ItemStack> {
 
-    public ItemStack1_12_2(ItemStack stack) {
-        super(stack);
+    public ItemStack1_12_2(Object stack) {
+        super((ItemStack)stack);
     }
 
     @Override public int getCount() {

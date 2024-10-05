@@ -5,7 +5,7 @@ import net.minecraft.potion.Effect;
 
 public class EffectForge1_16_5 extends Effect1_16_5<Effect> {
     
-    public EffectForge1_16_5(Effect effect) {
-        super(effect);
+    public EffectForge1_16_5(Object effect) {
+        super((Effect)effect);
     }
 }

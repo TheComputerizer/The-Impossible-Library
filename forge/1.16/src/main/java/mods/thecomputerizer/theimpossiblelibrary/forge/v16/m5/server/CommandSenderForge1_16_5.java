@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.server;
 
 import com.mojang.brigadier.context.CommandContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -14,8 +14,9 @@ import java.util.Objects;
 
 public class CommandSenderForge1_16_5 extends CommandSender1_16_5<CommandContext<CommandSource>> {
 
-    public CommandSenderForge1_16_5(CommandContext<CommandSource> sender) {
-        super(sender);
+    @SuppressWarnings("unchecked")
+    public CommandSenderForge1_16_5(Object sender) {
+        super((CommandContext<CommandSource>)sender);
     }
 
     @Override public @Nullable EntityAPI<?,?> getEntity() {

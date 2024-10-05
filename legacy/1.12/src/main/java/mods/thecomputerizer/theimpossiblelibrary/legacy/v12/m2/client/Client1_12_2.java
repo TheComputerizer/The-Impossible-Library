@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
@@ -21,12 +21,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui.ScreenHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.input.KeyHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.sound.SoundHelper1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Wrapper1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.wrappers.Wrapper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.CommonEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ToolHelper1_12_2;
@@ -40,7 +39,6 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.event.Serv
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.spawn.SpawnHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.Tag1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.text.TextHelper1_12_2;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.PosHelper1_12_2;
 
 import java.util.function.Supplier;
 
@@ -76,10 +74,6 @@ public class Client1_12_2 extends ClientAPI {
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {
         return Network1_12_2::new;
-    }
-    
-    @Override public Supplier<PosHelperAPI<?>> initPosHelper() {
-        return PosHelper1_12_2::new;
     }
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {

@@ -5,8 +5,8 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class ServerPlayerFabric1_16_5 extends PlayerFabric1_16_5<ServerPlayer> {
     
-    public ServerPlayerFabric1_16_5(ServerPlayer player) {
-        super(player);
+    public ServerPlayerFabric1_16_5(Object player) {
+        super((ServerPlayer)player);
     }
     
     @Override public int getGamemodeOrdinal() {

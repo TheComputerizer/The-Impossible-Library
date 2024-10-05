@@ -12,8 +12,8 @@ import static net.minecraft.block.material.PushReaction.DESTROY;
 
 public class Material1_16_5 extends MaterialAPI<Material> {
 
-    public Material1_16_5(Material material) {
-        super(material);
+    public Material1_16_5(Object material) {
+        super((Material)material);
     }
 
     @Override public boolean hasCollider() {

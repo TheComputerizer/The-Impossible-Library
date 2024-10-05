@@ -185,21 +185,21 @@ import java.util.Map.Entry;
     public void addEntryComment(String key, String comment) {
         TomlEntry<?> entry = getEntry(key);
         if(Objects.nonNull(entry)) entry.addComment(comment);
-        else TILRef.logWarn("Tried to add comment to non existant entry {} (comment -> `{}`)",key,comment);
+        else TILRef.logWarn("Tried to add comment to non existent entry {} (comment -> `{}`)",key,comment);
     }
     
     public void addEntryComments(String key, Iterable<String> comments) {
         TomlEntry<?> entry = getEntry(key);
         if(Objects.nonNull(entry)) {
             for(String comment : comments) entry.addComment(comment);
-        } else TILRef.logWarn("Tried to add {} comments to non existant entry {}",IterableHelper.count(comments),key);
+        } else TILRef.logWarn("Tried to add {} comments to non existent entry {}",IterableHelper.count(comments),key);
     }
     
     public void addEntryComments(String key, String ... comments) {
         TomlEntry<?> entry = getEntry(key);
         if(Objects.nonNull(entry)) {
             for(String comment : comments) entry.addComment(comment);
-        } else TILRef.logWarn("Tried to add {} comments to non existant entry {}",comments.length,key);
+        } else TILRef.logWarn("Tried to add {} comments to non existent entry {}",comments.length,key);
     }
     
     public Toml addTable(String name, boolean array) throws TomlWritingException {
@@ -391,7 +391,7 @@ import java.util.Map.Entry;
     }
     
     /**
-     Removes all tables with the given name regardless of whether they are singluar or in an array
+     Removes all tables with the given name regardless of whether they are singular or in an array
      */
     public void removeTables(String name) {
         removeTable(name,-1);

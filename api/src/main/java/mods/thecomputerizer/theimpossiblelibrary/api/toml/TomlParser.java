@@ -17,7 +17,7 @@ public class TomlParser {
     }
     
     public static boolean isCharBinary(char c) {
-        return Misc.equalsAny(c,'_','0','1');
+        return Misc.equalsAny(c, '_', '0', '1');
     }
     
     public static boolean isCharBool(char c) {
@@ -85,7 +85,7 @@ public class TomlParser {
         int i = 0;
         for(StringBuilder builder : builders) {
             String built = builder.toString();
-            if(Patterns.isEncapsulatedBy(built,'\'') || Patterns.isEncapsulatedBy(built,'"'))
+            if(Patterns.isEncapsulatedBy(built, '\'') || Patterns.isEncapsulatedBy(built, '"'))
                 built = built.substring(1,built.length()-1);
             if(i<builders.size()-1) path.add(built);
             else name = built;

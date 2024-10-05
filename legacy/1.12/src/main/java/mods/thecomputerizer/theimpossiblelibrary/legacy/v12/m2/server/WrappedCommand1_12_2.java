@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server;
 import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -14,9 +13,9 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
 public class WrappedCommand1_12_2 extends CommandBase {
 
     private final CommandAPI wrapped;
@@ -39,7 +38,8 @@ public class WrappedCommand1_12_2 extends CommandBase {
         exKey = Objects.nonNull(exKey) ? exKey : "";
         Object[] exArgs = this.wrapped.getExceptionArgs();
         try {
-            this.wrapped.execute(new MinecraftServer1_12_2(),new CommandSender1_12_2(sender),args);
+            String remaining = args.length>0 ? args[args.length-1] : "";
+            this.wrapped.execute(sender,rebuildInput(args),remaining);
         } catch(Exception ex) {
             TILRef.logError("Caught exception for command {}! Rethrowing as CommandException",getName(),ex);
             throw new CommandException(exKey,exArgs);
@@ -48,6 +48,13 @@ public class WrappedCommand1_12_2 extends CommandBase {
     
     @Override public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos pos) {
-        return this.wrapped.getTabCompletions(ServerHelper.getAPI(),new CommandSender1_12_2(sender),args);
+        String remaining = args.length>0 ? args[args.length-1] : "";
+        return this.wrapped.getTabCompletions(sender,rebuildInput(args),remaining);
+    }
+    
+    private String rebuildInput(String ... args) {
+        StringJoiner joiner = new StringJoiner(" ");
+        for(int i=0;i<args.length-1;i++) joiner.add(args[i]);
+        return joiner.toString();
     }
 }

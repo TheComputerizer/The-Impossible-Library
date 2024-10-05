@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.RegisterCommandsEventForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.server.WrappedCommandForge1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.server.WrappedCommand1_16_5;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,6 +16,6 @@ public class RegisterCommandsEventForge1_16_5 extends RegisterCommandsEventForge
     }
     
     @Override public void registerCommand(CommandAPI command) {
-        WrappedCommandForge1_16_5.register(getEvent().getDispatcher(), command);
+        WrappedCommand1_16_5.register(getEvent().getDispatcher(), command);
     }
 }

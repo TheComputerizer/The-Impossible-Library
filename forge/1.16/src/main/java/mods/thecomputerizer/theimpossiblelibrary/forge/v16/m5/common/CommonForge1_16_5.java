@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
@@ -16,6 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.RegistryH
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.server.MinecraftServerForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.server.event.ServerEventsForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.text.TextHelperForge1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.wrappers.WrapperForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.Common1_16_5;
 
 import java.util.function.Supplier;

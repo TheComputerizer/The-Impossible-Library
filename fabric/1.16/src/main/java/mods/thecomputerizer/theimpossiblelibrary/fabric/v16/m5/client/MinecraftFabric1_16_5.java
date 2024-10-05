@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client;
 
 import com.mojang.blaze3d.platform.Window;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.entity.ClientPlayerFabric1_16_5;

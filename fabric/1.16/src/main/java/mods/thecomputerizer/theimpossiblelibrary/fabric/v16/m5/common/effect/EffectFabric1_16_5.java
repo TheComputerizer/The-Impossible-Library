@@ -5,7 +5,7 @@ import net.minecraft.world.effect.MobEffect;
 
 public class EffectFabric1_16_5 extends Effect1_16_5<MobEffect> {
     
-    public EffectFabric1_16_5(MobEffect effect) {
-        super(effect);
+    public EffectFabric1_16_5(Object effect) {
+        super((MobEffect)effect);
     }
 }

@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;

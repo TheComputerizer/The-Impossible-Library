@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.tag;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 /**
  * Stores types for base, list, and compound tags

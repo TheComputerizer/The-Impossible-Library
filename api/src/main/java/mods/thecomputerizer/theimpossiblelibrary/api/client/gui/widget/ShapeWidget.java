@@ -12,7 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Wrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3d;

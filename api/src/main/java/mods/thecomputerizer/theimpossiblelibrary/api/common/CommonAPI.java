@@ -13,7 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -25,7 +25,6 @@ public abstract class CommonAPI {
     private CommonEventsAPI commonEvents;
     private ModHelperAPI modHelper;
     private NetworkAPI<?,?> network;
-    private PosHelperAPI<?> posHelper;
     private RegistryHandlerAPI registry;
     private ResourceAPI resource;
     private MinecraftServerAPI<?> server;
@@ -59,11 +58,6 @@ public abstract class CommonAPI {
     public NetworkAPI<?,?> getNetwork() {
         if(Objects.isNull(this.network)) this.network = initNetwork().get();
         return this.network;
-    }
-    
-    public PosHelperAPI<?> getPosHelper() {
-        if(Objects.isNull(this.posHelper)) this.posHelper = initPosHelper().get();
-        return this.posHelper;
     }
     
     public RegistryHandlerAPI getRegistryHandler() {
@@ -116,7 +110,6 @@ public abstract class CommonAPI {
     public abstract Supplier<CommonEventsAPI> initCommonEvents();
     public abstract Supplier<ModHelperAPI> initModHelper();
     public abstract Supplier<NetworkAPI<?,?>> initNetwork();
-    public abstract Supplier<PosHelperAPI<?>> initPosHelper();
     public abstract Supplier<RegistryHandlerAPI> initRegistryHandler();
     public abstract Supplier<ResourceAPI> initResource();
     public abstract Supplier<MinecraftServerAPI<?>> initServer();

@@ -5,8 +5,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 
 public class ServerPlayerForge1_16_5 extends PlayerForge1_16_5<ServerPlayerEntity> {
     
-    public ServerPlayerForge1_16_5(ServerPlayerEntity player) {
-        super(player);
+    public ServerPlayerForge1_16_5(Object player) {
+        super((ServerPlayerEntity)player);
     }
     
     @Override public int getGamemodeOrdinal() {

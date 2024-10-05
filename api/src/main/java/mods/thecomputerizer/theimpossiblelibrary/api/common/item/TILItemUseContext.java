@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.item;
 
 import lombok.Getter;
 import lombok.Setter;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;

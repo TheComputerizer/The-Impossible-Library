@@ -14,8 +14,8 @@ import static net.minecraft.world.GameType.NOT_SET;
 
 public class ClientPlayerForge1_16_5 extends PlayerForge1_16_5<ClientPlayerEntity> {
 
-    public ClientPlayerForge1_16_5(ClientPlayerEntity player) {
-        super(player);
+    public ClientPlayerForge1_16_5(Object player) {
+        super((ClientPlayerEntity)player);
     }
 
     private GameType getGamemode(@Nullable ClientPlayNetHandler handler, GameProfile profile) {

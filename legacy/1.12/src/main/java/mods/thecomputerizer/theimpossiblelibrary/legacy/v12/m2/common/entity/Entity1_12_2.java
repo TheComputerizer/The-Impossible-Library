@@ -1,12 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -31,17 +30,17 @@ import static net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES;
 
 public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
 
-    public static @Nullable EntityEntry getEntry(Entity entity) {
-        ResourceLocation key = EntityList.getKey(entity);
+    public static @Nullable Object getEntry(Object entity) {
+        ResourceLocation key = EntityList.getKey((Entity)entity);
         return Objects.nonNull(key) ? ENTITIES.getValue(key) : null;
     }
 
-    public Entity1_12_2(Entity entity) {
+    public Entity1_12_2(Object entity) {
         this(entity,getEntry(entity));
     }
 
-    public Entity1_12_2(Entity entity, EntityEntry entry) {
-        super(entity,entry);
+    public Entity1_12_2(Object entity, Object entry) {
+        super((Entity)entity,(EntityEntry)entry);
     }
 
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
@@ -67,7 +66,7 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     }
 
     @Override public BlockPosAPI<?> getPos() {
-        return PosHelper.getPos(this.entity.getPosition());
+        return WrapperHelper.wrapPosition(this.entity.getPosition());
     }
 
     @Override public EntityAPI<?,?> getRootVehicle() {

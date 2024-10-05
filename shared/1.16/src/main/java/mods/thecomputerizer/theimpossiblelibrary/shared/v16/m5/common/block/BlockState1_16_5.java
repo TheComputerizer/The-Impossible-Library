@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
@@ -15,7 +15,6 @@ public class BlockState1_16_5 extends BlockStateAPI<BlockState> {
 
     public BlockState1_16_5(Object state) {
         super((BlockState)state);
-        
     }
 
     @Override public BlockAPI<Block> getBlock() {

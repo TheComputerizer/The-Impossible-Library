@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class ItemAPI<I> extends AbstractWrapped<I> implements RegistryEntryAPI<I> {
 

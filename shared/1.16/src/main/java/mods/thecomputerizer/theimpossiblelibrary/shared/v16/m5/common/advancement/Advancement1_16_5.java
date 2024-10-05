@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.advancement;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementDisplayInfoAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -10,9 +10,9 @@ public class Advancement1_16_5 extends AdvancementAPI<Advancement> {
 
     private final AdvancementDisplayInfo1_16_5 display;
 
-    public Advancement1_16_5(Advancement advancement) {
-        super(advancement);
-        this.display = new AdvancementDisplayInfo1_16_5(advancement.getDisplay());
+    public Advancement1_16_5(Object advancement) {
+        super((Advancement)advancement);
+        this.display = new AdvancementDisplayInfo1_16_5(((Advancement)advancement).getDisplay());
     }
 
     @Override public AdvancementDisplayInfoAPI getDisplayInfo() {

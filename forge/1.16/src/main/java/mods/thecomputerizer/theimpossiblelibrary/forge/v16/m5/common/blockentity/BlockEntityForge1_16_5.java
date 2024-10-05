@@ -1,10 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.blockentity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.blockentity.BlockEntity1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
@@ -17,6 +16,27 @@ import java.util.Objects;
 
 public class BlockEntityForge1_16_5 extends BlockEntity1_16_5<TileEntity,TileEntityType<?>> {
     
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntityForge1_16_5 entity(Object tile) {
+        return new BlockEntityForge1_16_5((TileEntity)tile);
+    }
+    
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntityForge1_16_5 get(Object obj) {
+        return obj instanceof TileEntity ? entity(obj) : type(obj);
+    }
+    
+    /**
+     * Assumes the input object will never be null
+     */
+    public static BlockEntityForge1_16_5 type(Object type) {
+        return new BlockEntityForge1_16_5((TileEntityType<?>)type);
+    }
+    
     public BlockEntityForge1_16_5(TileEntity tile) {
         super(tile,tile.getType());
     }
@@ -26,7 +46,7 @@ public class BlockEntityForge1_16_5 extends BlockEntity1_16_5<TileEntity,TileEnt
     }
     
     @Override public BlockPosAPI<?> getPos() {
-        return Objects.nonNull(this.entity) ? PosHelper.getPos(this.entity.getBlockPos()) : null;
+        return Objects.nonNull(this.entity) ? WrapperHelper.wrapPosition(this.entity.getBlockPos()) : null;
     }
     
     @Override public WorldAPI<?> getWorld() {

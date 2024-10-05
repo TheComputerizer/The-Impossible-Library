@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.util.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class MaterialAPI<M> extends AbstractWrapped<M> {
 

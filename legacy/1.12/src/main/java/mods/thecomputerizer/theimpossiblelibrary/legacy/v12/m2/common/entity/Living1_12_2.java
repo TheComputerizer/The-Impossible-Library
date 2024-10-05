@@ -1,13 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,12 +26,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.ZERO;
 
 public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> {
 
-    public Living1_12_2(EntityLivingBase living) {
-        this(living, Entity1_12_2.getEntry(living));
-    }
-
-    public Living1_12_2(EntityLivingBase living, EntityEntry entry) {
-        super(living,entry);
+    public Living1_12_2(Object living) {
+        super((EntityLivingBase)living,(EntityEntry)Entity1_12_2.getEntry(living));
     }
 
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
@@ -65,7 +60,7 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
     }
 
     @Override public BlockPosAPI<?> getPos() {
-        return PosHelper.getPos(this.entity.getPosition());
+        return WrapperHelper.wrapPosition(this.entity.getPosition());
     }
 
     @Override public EntityAPI<?,?> getRootVehicle() {

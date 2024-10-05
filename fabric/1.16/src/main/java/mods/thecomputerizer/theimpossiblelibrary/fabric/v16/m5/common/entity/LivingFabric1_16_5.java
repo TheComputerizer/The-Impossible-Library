@@ -1,12 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Living1_16_5;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,8 +22,8 @@ import java.util.stream.Collectors;
 
 public class LivingFabric1_16_5 extends Living1_16_5<LivingEntity,EntityType<?>> {
     
-    public LivingFabric1_16_5(LivingEntity living) {
-        super(living,living.getType());
+    public LivingFabric1_16_5(Object living) {
+        super((LivingEntity)living,((LivingEntity)living).getType());
     }
     
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
@@ -58,7 +57,7 @@ public class LivingFabric1_16_5 extends Living1_16_5<LivingEntity,EntityType<?>>
     }
     
     @Override public BlockPosAPI<?> getPos() {
-        return PosHelper.getPos(this.entity.blockPosition());
+        return WrapperHelper.wrapPosition(this.entity.blockPosition());
     }
     
     @Override public EntityAPI<?,?> getRootVehicle() {
