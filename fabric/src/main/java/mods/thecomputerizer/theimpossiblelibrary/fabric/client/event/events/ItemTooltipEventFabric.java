@@ -10,14 +10,16 @@ import net.fabricmc.fabric.api.event.Event;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback.EVENT;
+
 public class ItemTooltipEventFabric extends ItemTooltipEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return EVENT;
     }
     
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(wrapArrayGetter(0));
+        return wrapPlayerGetter(args -> null);
     }
 
     @Override protected EventFieldWrapper<Object[],ItemStackAPI<?>> wrapStackField() {
@@ -25,6 +27,6 @@ public class ItemTooltipEventFabric extends ItemTooltipEventWrapper<Object[]> im
     }
 
     @Override protected EventFieldWrapper<Object[],List<String>> wrapTooltipField() { //TODO Adjust for text components
-        return wrapGenericGetter(wrapArrayGetter(0),new ArrayList<>());
+        return wrapGenericGetter(wrapArrayGetter(2),new ArrayList<>());
     }
 }

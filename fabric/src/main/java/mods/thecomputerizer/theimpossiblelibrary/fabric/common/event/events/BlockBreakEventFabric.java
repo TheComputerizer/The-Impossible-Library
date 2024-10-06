@@ -9,10 +9,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
 
+import static net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents.BEFORE;
+
 public class BlockBreakEventFabric extends BlockBreakEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return BEFORE;
     }
     
     @Override protected EventFieldWrapper<Object[],Integer> wrapXPField() {
@@ -20,15 +22,15 @@ public class BlockBreakEventFabric extends BlockBreakEventWrapper<Object[]> impl
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(wrapArrayGetter(0));
+        return wrapPlayerGetter(wrapArrayGetter(1));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(wrapArrayGetter(0));
+        return wrapPosGetter(wrapArrayGetter(2));
     }
 
     @Override protected EventFieldWrapper<Object[],BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(wrapArrayGetter(0));
+        return wrapStateGetter(wrapArrayGetter(3));
     }
 
     @Override protected EventFieldWrapper<Object[],WorldAPI<?>> wrapWorldField() {

@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabricEvent;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +18,13 @@ public class RenderOverlayBossEventFabric extends RenderOverlayBossEventWrapper<
         return null;
     }
     
-    @SuppressWarnings("NullableProblems") 
+    @SuppressWarnings("NullableProblems")
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
-        return EventHelper.initRenderer(ctx -> {});
+        return EventHelper.initRenderer(ctx -> {
+            WorldRenderContext worldRender = (WorldRenderContext)event[0];
+            ctx.getRenderer().setMatrix(worldRender.matrixStack());
+            ctx.setPartialTicks(worldRender.tickDelta());
+        });
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {

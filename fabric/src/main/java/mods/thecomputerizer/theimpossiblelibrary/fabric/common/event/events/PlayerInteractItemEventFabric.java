@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerInteractItemEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
@@ -15,19 +16,20 @@ import net.fabricmc.fabric.api.event.Event;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
+import static net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT;
 
 public class PlayerInteractItemEventFabric extends PlayerInteractItemEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return EVENT;
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(wrapArrayGetter(0));
+        return wrapItemStack(args -> getPlayer().getStackInHand(getHand()));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(wrapArrayGetter(0));
+        return wrapWorld(wrapArrayGetter(1));
     }
     
     @Override protected EventFieldWrapper<Object[],ActionResult> wrapCancelResultField() {
@@ -39,7 +41,7 @@ public class PlayerInteractItemEventFabric extends PlayerInteractItemEventWrappe
     }
     
     @Override protected EventFieldWrapper<Object[],Hand> wrapHandField() {
-        return wrapGenericGetter(wrapArrayGetter(0),MAINHAND);
+        return wrapGenericGetter(args -> EventHelper.getCommonEventsAPI().getHand(args[2]), MAINHAND);
     }
 
     @Override protected EventFieldWrapper<Object[],PlayerAPI<?,?>> wrapPlayerField() {

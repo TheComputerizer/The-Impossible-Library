@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.event.Event;
 public class ClientRespawnEventFabric extends ClientRespawnEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
+        
         return null;
     }
     

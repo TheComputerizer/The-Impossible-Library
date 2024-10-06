@@ -18,11 +18,12 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
+import static net.fabricmc.fabric.api.event.player.AttackBlockCallback.EVENT;
 
 public class PlayerPunchBlockEventFabric extends PlayerPunchBlockEventWrapper<Object[]> implements CommonFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return EVENT;
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
@@ -30,7 +31,7 @@ public class PlayerPunchBlockEventFabric extends PlayerPunchBlockEventWrapper<Ob
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(wrapArrayGetter(0));
+        return wrapWorld(wrapArrayGetter(1));
     }
     
     @Override protected EventFieldWrapper<Object[],Result> wrapBlockResultField() {
@@ -46,7 +47,7 @@ public class PlayerPunchBlockEventFabric extends PlayerPunchBlockEventWrapper<Ob
     }
     
     @Override protected EventFieldWrapper<Object[],Hand> wrapHandField() {
-        return wrapGenericGetter(wrapArrayGetter(0),MAINHAND);
+        return wrapGenericGetter(wrapArrayGetter(2),MAINHAND);
     }
 
     @Override protected EventFieldWrapper<Object[],Vector3d> wrapHitVecField() {
@@ -62,6 +63,6 @@ public class PlayerPunchBlockEventFabric extends PlayerPunchBlockEventWrapper<Ob
     }
 
     @Override protected EventFieldWrapper<Object[],BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(wrapArrayGetter(0));
+        return wrapPosGetter(wrapArrayGetter(3));
     }
 }

@@ -6,20 +6,26 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabricEvent;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.CHAT;
+import static net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback.EVENT;
 
 public class RenderOverlayChatEventFabric extends RenderOverlayChatEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
-        return null;
+        return EVENT;
     }
     
-    @SuppressWarnings("NullableProblems") 
+    @SuppressWarnings("NullableProblems")
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
-        return EventHelper.initRenderer(ctx -> {});
+        return EventHelper.initRenderer(ctx -> {
+            WorldRenderContext worldRender = (WorldRenderContext)event[0];
+            ctx.getRenderer().setMatrix(worldRender.matrixStack());
+            ctx.setPartialTicks(worldRender.tickDelta());
+        });
     }
 
     @Override protected EventFieldWrapper<Object[],OverlayType> wrapOverlayType() {
