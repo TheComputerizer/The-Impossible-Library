@@ -55,6 +55,10 @@ public class CompoundTag1_12_2 extends CompoundTagAPI<NBTTagCompound> {
         return TagHelper.getWrapped(this.wrapped.getTag(key));
     }
     
+    @Override public boolean isEmpty() {
+        return this.wrapped.isEmpty();
+    }
+    
     @Override public boolean isCompound() {
         return true;
     }

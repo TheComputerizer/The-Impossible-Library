@@ -398,7 +398,7 @@ public class ASMHelper {
     }
 
     public static void writeDebugByteCode(String classpath, byte[] bytes) {
-        File debugDir = new File(DATA_DIRECTORY,"asm_debug");
+        File debugDir = new File("/"+DATA_DIRECTORY,"asm_debug");
         String filepath = classpath.replace('.',separatorChar)+".class";
         writeByteCodeToFile(FileHelper.get(new File(debugDir,filepath),false),bytes);
     }

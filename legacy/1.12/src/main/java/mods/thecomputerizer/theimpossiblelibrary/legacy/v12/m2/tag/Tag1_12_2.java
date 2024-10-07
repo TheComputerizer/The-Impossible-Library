@@ -1,12 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import net.minecraft.nbt.*;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Tag1_12_2 implements TagAPI {
     
@@ -59,10 +62,17 @@ public class Tag1_12_2 implements TagAPI {
     }
     
     @Override public CompoundTag1_12_2 readFromFile(File file) throws IOException {
-        return new CompoundTag1_12_2(CompressedStreamTools.read(file));
+        NBTTagCompound tag = null;
+        try {
+            tag = CompressedStreamTools.read(file);
+        } catch(EOFException ex) {
+            TILRef.logWarn("Empty data file {}",file.toPath(),ex.getMessage());
+        }
+        if(Objects.isNull(tag)) tag = new NBTTagCompound();
+        return new CompoundTag1_12_2(tag);
     }
 
     @Override public void writeToFile(CompoundTagAPI<?> tag, File file) throws IOException {
-        CompressedStreamTools.write((NBTTagCompound)tag.getWrapped(),file);
+        if(!tag.isEmpty()) CompressedStreamTools.write(tag.unwrap(),file);
     }
 }

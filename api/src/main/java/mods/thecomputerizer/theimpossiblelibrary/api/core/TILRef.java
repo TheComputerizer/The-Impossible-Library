@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -21,7 +20,7 @@ import static org.apache.logging.log4j.Level.*;
  */
 public class TILRef {
 
-    public static final File DATA_DIRECTORY = new File("./impossible_data");
+    public static final String DATA_DIRECTORY = "impossible_data";
     public static final Logger LOGGER = LogManager.getLogger("The Impossible Library");
     public static final String BASE_PACKAGE = "mods.thecomputerizer.theimpossiblelibrary";
     public static final String DESCRIPTION = "Multiversion API & mod loader with helpers to do things deemed impossible";

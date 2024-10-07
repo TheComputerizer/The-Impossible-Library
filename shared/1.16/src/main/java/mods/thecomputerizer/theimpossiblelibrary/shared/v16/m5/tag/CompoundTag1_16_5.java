@@ -56,6 +56,10 @@ public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
         return true;
     }
     
+    @Override public boolean isEmpty() {
+        return this.wrapped.isEmpty();
+    }
+    
     @Override public boolean isList() {
         return false;
     }

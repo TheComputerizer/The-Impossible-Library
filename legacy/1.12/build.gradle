@@ -137,14 +137,17 @@ processTestResources {
 }
 
 compileJava {
-    source(project(':api').sourceSets.main.allJava)
+    source(project(':api').sourceSets.main.allJava,
+            project(':legacy').sourceSets.main.allJava)
 }
 
 compileTestJava {
-    source(project(':api').sourceSets.test.allJava)
+    source(project(':api').sourceSets.test.allJava,
+            project(':legacy').sourceSets.test.allJava)
 }
 
 jar {
+    from(project(':legacy').jar.archiveFile.collect { zipTree(it) })
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
@@ -159,7 +162,7 @@ jar {
 }
 
 shadowJar {
-    from(project(':legacy').jar.archiveFile.collect { zipTree(it) })
+    from(project(':api').jar.archiveFile.collect { zipTree(it) })
 }
 
 tasks.assemble.dependsOn(shadowJar)

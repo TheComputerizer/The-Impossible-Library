@@ -11,16 +11,30 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class FileHelper {
+    
+    public static File get(String path) {
+        return get(new File(path),false);
+    }
 
     public static File get(String path, boolean overrideExisting) {
-        return get(new File(path), overrideExisting);
+        return get(new File(path),overrideExisting);
+    }
+    
+    public static File get(File parent, String path) {
+        return get(parent,path,false);
+    }
+    
+    public static File get(File parent, String path, boolean overrideExisting) {
+        return get(parent.toPath()+"/"+path,overrideExisting);
     }
 
     public static File get(File file, boolean overrideExisting) {
         boolean canProceed = !file.exists();
-        if(!canProceed && overrideExisting) {
-            canProceed = file.delete();
-            if(!canProceed) TILRef.logError("Failed to delete existing file at path {}",file.getAbsolutePath());
+        if(!canProceed) {
+            if(overrideExisting) {
+                canProceed = file.delete();
+                if(!canProceed) TILRef.logError("Failed to delete existing file at path {}", file.getAbsolutePath());
+            }
         }
         if(canProceed) {
             boolean success = true;

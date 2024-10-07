@@ -13,6 +13,7 @@ public abstract class CompoundTagAPI<T> extends BaseTagAPI<T> {
     public abstract PrimitiveTagAPI<?> getPrimitiveTag(String key);
     public abstract String getString(String key);
     public abstract BaseTagAPI<?> getTag(String key);
+    public abstract boolean isEmpty();
     public abstract void putBoolean(String key, boolean b);
     public abstract void putByte(String key, byte b);
     public abstract void putDouble(String key, double d);
