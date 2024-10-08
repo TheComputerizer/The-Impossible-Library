@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -20,7 +21,7 @@ import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 
 @SuppressWarnings("deprecation")
-public class Render1_16_5 extends RenderAPI<MatrixStack> {
+public class Render1_16_5 extends RenderAPI {
     
     public Render1_16_5() {
         super(new GL1_16_5());
@@ -70,15 +71,15 @@ public class Render1_16_5 extends RenderAPI<MatrixStack> {
         RenderSystem.disableTexture();
     }
 
-    @Override public void drawCenteredString(FontAPI font, String str, Number x, Number y, int color) {
+    @Override public void drawCenteredString(FontAPI<?> font, String str, Number x, Number y, int color) {
         font.drawWithShadow(this,str,x.floatValue()-font.getStringWidth(str)/2f,y.floatValue(),color);
     }
 
-    @Override public void drawString(FontAPI font, String str, Number left, Number top, int color) {
+    @Override public void drawString(FontAPI<?> font, String str, Number left, Number top, int color) {
         font.draw(this,str,left.intValue(),top.intValue(),color);
     }
     
-    @Override public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
+    @Override public void drawTooltip(FontAPI<?> font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
             Number height, Number maxWidth) {
         font.renderToolTip(this,lines,x.intValue(),y.intValue(),width.intValue(),height.intValue(),maxWidth.intValue());
     }
@@ -118,22 +119,30 @@ public class Render1_16_5 extends RenderAPI<MatrixStack> {
     @Override public double getDirectMouseY() {
         return Minecraft.getInstance().mouseHandler.ypos();
     }
+    
+    @Override public FontRenderer getFont() {
+        return unwrapFont();
+    }
 
     @Override public GLAPI getGLAPI() {
         return this.gl;
     }
+    
+    @Override public MatrixStack getMatrix() {
+        return unwrapMatrix();
+    }
 
-    @Override public RenderAPI<?> init(Object context) {
+    @Override public RenderAPI init(Object context) {
         setMatrix(context);
         return this;
     }
     
     @Override public void popMatrix() {
-        this.matrix.popPose();
+        getMatrix().popPose();
     }
     
     @Override public void pushMatrix() {
-        this.matrix.pushPose();
+        getMatrix().pushPose();
     }
 
     @Override public void resetTextureMatrix() {}
@@ -143,15 +152,11 @@ public class Render1_16_5 extends RenderAPI<MatrixStack> {
     }
     
     @Override public void scale(float x, float y, float z) {
-        if(Objects.nonNull(this.matrix)) this.matrix.scale(x, y, z);
+        if(Objects.nonNull(this.matrix)) getMatrix().scale(x, y, z);
     }
 
     @Override public void setColor(float r, float g, float b, float a) {
         RenderSystem.color4f(r,g,b,a);
-    }
-    
-    @Override public void setMatrix(Object matrix) {
-        this.matrix = matrix instanceof MatrixStack ? (MatrixStack)matrix : null;
     }
 
     @Override public void setPosColorShader() {}

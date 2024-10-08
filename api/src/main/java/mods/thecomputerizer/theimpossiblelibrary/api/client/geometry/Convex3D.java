@@ -103,7 +103,7 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
         this.showOutlines = showOutlines;
     }
 
-    private void preRender(RenderAPI<?> renderer) {
+    private void preRender(RenderAPI renderer) {
         if(this.pushMatrix) renderer.pushMatrix();
         renderer.enableBlend();
         renderer.disableTexture();
@@ -114,7 +114,7 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
         renderer.disableLighting();
     }
 
-    private void postRender(RenderAPI<?> renderer) {
+    private void postRender(RenderAPI renderer) {
         renderer.enableTexture();
         renderer.disableBlend();
         renderer.enableLighting();
@@ -129,7 +129,7 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
     }
 
     public void render(RenderContext ctx, Vector3d pos) {
-        RenderAPI<?> renderer = ctx.getRenderer();
+        RenderAPI renderer = ctx.getRenderer();
         preRender(renderer);
         renderer.setColor(this.color[0],this.color[1],this.color[2],this.color[3]);
         renderer.scale(this.scale[0],this.scale[1],this.scale[2]);
@@ -145,7 +145,7 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
         postRender(renderer);
     }
 
-    private void setTranslation(RenderAPI<?> renderer, Vector3d initialPos) {
+    private void setTranslation(RenderAPI renderer, Vector3d initialPos) {
         if(Objects.isNull(this.previousRenderPos)) this.previousRenderPos = initialPos;
         if(Objects.isNull(this.orbit)) renderer.translate(initialPos.x+this.translationOffset[0],
                 initialPos.y+this.translationOffset[1],initialPos.z+this.translationOffset[2]);
@@ -170,7 +170,7 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
         return Math.max(current,0f);
     }
 
-    public void renderTriangle(RenderAPI<?> renderer, TriangleMapper triangle) {
+    public void renderTriangle(RenderAPI renderer, TriangleMapper triangle) {
         VertexWrapper buffer = renderer.getBufferBuilderPC(renderer.getGLAPI().triangleFan(),3);
         buffer.start();
         for(int i=0; i<triangle.length; i++) {

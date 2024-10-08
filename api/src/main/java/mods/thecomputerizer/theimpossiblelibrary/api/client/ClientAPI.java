@@ -14,6 +14,7 @@ public abstract class ClientAPI extends CommonAPI {
     private ClientEventsAPI clientEvents;
     private KeyHelperAPI keyHelper;
     private ScreenHelperAPI screenHelper;
+    private SharedHandlesClient sharedHandles;
     private SoundHelperAPI soundHelper;
 
     public ClientEventsAPI getClientEvents() {
@@ -26,11 +27,16 @@ public abstract class ClientAPI extends CommonAPI {
         return this.keyHelper;
     }
     
-    public abstract MinecraftAPI getMinecraft();
+    public abstract MinecraftAPI<?> getMinecraft();
     
     public ScreenHelperAPI getScreenHelper() {
         if(Objects.isNull(this.screenHelper)) this.screenHelper = initScreenHelper().get();
         return this.screenHelper;
+    }
+    
+    public SharedHandlesClient getSharedHandlesClient() {
+        if(Objects.isNull(this.sharedHandles)) this.sharedHandles = initSharedHandlesClient().get();
+        return this.sharedHandles;
     }
     
     public SoundHelperAPI getSoundHelper() {
@@ -41,5 +47,6 @@ public abstract class ClientAPI extends CommonAPI {
     protected abstract Supplier<ClientEventsAPI> initClientEvents();
     protected abstract Supplier<KeyHelperAPI> initKeyHelper();
     protected abstract Supplier<ScreenHelperAPI> initScreenHelper();
+    protected abstract Supplier<SharedHandlesClient> initSharedHandlesClient();
     protected abstract Supplier<SoundHelperAPI> initSoundHelper();
 }

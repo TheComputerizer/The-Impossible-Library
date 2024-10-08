@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
@@ -16,6 +17,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.LegacyHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.BlockHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.CommonEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ToolHelper1_12_2;
@@ -69,6 +71,10 @@ public class Common1_12_2 extends CommonAPI {
     
     @Override public Supplier<ServerEventsAPI> initServerEvents() {
         return ServerEvents1_12_2::new;
+    }
+    
+    @Override public Supplier<SharedHandlesCommon> initSharedHandlesCommon() {
+        return LegacyHandlesCommon::new;
     }
     
     @Override public Supplier<SpawnHelperAPI<?>> initSpawnHelper() {

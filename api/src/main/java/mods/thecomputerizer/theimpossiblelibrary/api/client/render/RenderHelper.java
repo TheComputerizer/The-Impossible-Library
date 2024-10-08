@@ -22,7 +22,7 @@ public class RenderHelper {
     }
     
     public static RenderContext getContext() {
-        MinecraftAPI mc = ClientHelper.getMinecraft();
+        MinecraftAPI<?> mc = ClientHelper.getMinecraft();
         return Objects.nonNull(mc) ? new RenderContext(mc) : null;
     }
     
@@ -32,12 +32,12 @@ public class RenderHelper {
     }
     
     public static double getDirectMouseX() {
-        RenderAPI<?> renderer = ClientHelper.getRenderer();
+        RenderAPI renderer = ClientHelper.getRenderer();
         return Objects.nonNull(renderer) ? renderer.getDirectMouseX() : 0d;
     }
     
     public static double getDirectMouseY() {
-        RenderAPI<?> renderer = ClientHelper.getRenderer();
+        RenderAPI renderer = ClientHelper.getRenderer();
         return Objects.nonNull(renderer) ? renderer.getDirectMouseY() : 0d;
     }
     

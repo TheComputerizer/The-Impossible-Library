@@ -23,10 +23,10 @@ public class TextStyle1_16_5 implements TextStyleAPI<Style> {
     private static final Style GREEN = EMPTY.withColor(TextFormatting.GREEN);
     private static final Style ITALICS = EMPTY.withItalic(true);
     private static final Style LIGHT_PURPLE = EMPTY.withColor(TextFormatting.LIGHT_PURPLE);
-    private static final Style OBFUSCATED = EMPTY.setObfuscated(true);
+    private static final Style OBFUSCATED = EMPTY.applyFormat(TextFormatting.OBFUSCATED);
     private static final Style RED = EMPTY.withColor(TextFormatting.RED);
-    private static final Style STRIKETHROUGH = EMPTY.setStrikethrough(true);
-    private static final Style UNDERLINE = EMPTY.setUnderlined(true);
+    private static final Style STRIKETHROUGH = EMPTY.applyFormat(TextFormatting.STRIKETHROUGH);
+    private static final Style UNDERLINE = EMPTY.applyFormat(TextFormatting.UNDERLINE);
     private static final Style WHITE = EMPTY.withColor(TextFormatting.WHITE);
     private static final Style YELLOW = EMPTY.withColor(TextFormatting.YELLOW);
 

@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import org.apache.logging.log4j.Level;
@@ -64,6 +66,14 @@ public class TILRef {
 
     public static String getNetworkVersion() {
         return MODID+VERSION.replace('.','_');
+    }
+    
+    public static SharedHandlesClient getClientHandles() {
+        return getClientSubAPI(ClientAPI::getSharedHandlesClient);
+    }
+    
+    public static SharedHandlesCommon getCommonHandles() {
+        return getCommonSubAPI(CommonAPI::getSharedHandlesCommon);
     }
     
     /**

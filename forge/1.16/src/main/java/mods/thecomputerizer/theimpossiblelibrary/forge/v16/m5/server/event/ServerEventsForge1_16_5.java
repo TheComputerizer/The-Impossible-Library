@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.server.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.forge.server.event.events.ServerTickEventForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.server.event.events.ServerTickEventForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.server.event.ServerEvents1_16_5;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -17,7 +17,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 public class ServerEventsForge1_16_5 extends ServerEvents1_16_5 {
     
     @Override public void defineEvents() {
-        TICK_SERVER.setConnector(new ServerTickEventForge1_16_5());
+        TICK_SERVER.setConnector(new ServerTickEventForge());
         super.defineEvents();
     }
     

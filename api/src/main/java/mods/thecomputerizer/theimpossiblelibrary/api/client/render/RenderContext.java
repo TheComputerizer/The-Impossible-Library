@@ -28,17 +28,17 @@ import java.util.function.Function;
 @SuppressWarnings("unused") @Getter
 public final class RenderContext {
     
-    public static RenderContext get(MinecraftAPI mc) {
+    public static RenderContext get(MinecraftAPI<?> mc) {
         return new RenderContext(mc);
     }
     
-    private final MinecraftAPI mc;
-    private final FontAPI font;
-    private final RenderAPI<?> renderer;
+    private final MinecraftAPI<?> mc;
+    private final FontAPI<?> font;
+    private final RenderAPI renderer;
     private final RenderScale scale;
     @Setter private float partialTicks;
     
-    RenderContext(MinecraftAPI mc) {
+    RenderContext(MinecraftAPI<?> mc) {
         this.mc = mc;
         this.font = mc.getFont();
         this.renderer = mc.getRenderer();
@@ -62,12 +62,12 @@ public final class RenderContext {
             }
             case UP:
             case NORTH:
-            default: {
-                drawArrow2D(center,0d,height,width,0d,lineWidth,withTail);
-                break;
-            }
             case WEST: {
                 drawArrow2D(center,-width,0d,0d,height,lineWidth,withTail);
+                break;
+            }
+            default: {
+                drawArrow2D(center,0d,height,width,0d,lineWidth,withTail);
                 break;
             }
         }

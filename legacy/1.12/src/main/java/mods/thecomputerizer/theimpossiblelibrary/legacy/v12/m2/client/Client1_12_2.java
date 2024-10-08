@@ -2,10 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
@@ -21,6 +23,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.client.LegacyHandlesClient;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.common.LegacyHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.ClientEvents1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.gui.ScreenHelper1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.input.KeyHelper1_12_2;
@@ -44,7 +48,7 @@ import java.util.function.Supplier;
 
 public class Client1_12_2 extends ClientAPI {
 
-    @Override public MinecraftAPI getMinecraft() {
+    @Override public MinecraftAPI<?> getMinecraft() {
         return Minecraft1_12_2.getInstance();
     }
     
@@ -94,6 +98,14 @@ public class Client1_12_2 extends ClientAPI {
     
     @Override public Supplier<MinecraftServerAPI<?>> initServer() {
         return MinecraftServer1_12_2::new;
+    }
+    
+    @Override public Supplier<SharedHandlesClient> initSharedHandlesClient() {
+        return LegacyHandlesClient::new;
+    }
+    
+    @Override public Supplier<SharedHandlesCommon> initSharedHandlesCommon() {
+        return LegacyHandlesCommon::new;
     }
     
     @Override public Supplier<SpawnHelperAPI<?>> initSpawnHelper() {

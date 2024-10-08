@@ -11,12 +11,13 @@ import org.joml.Vector4f;
 import java.util.Collection;
 
 @Getter
-public abstract class RenderAPI<M> {
+public abstract class RenderAPI {
     
     protected final GLAPI gl;
     @Setter protected int mouseX;
     @Setter protected int mouseY;
-    protected M matrix;
+    @Setter protected Object matrix;
+    @Setter protected Object font;
     
     protected RenderAPI(GLAPI gl) {
         this.gl = gl;
@@ -35,29 +36,30 @@ public abstract class RenderAPI<M> {
     public abstract void disableTexture();
     
     @IndirectCallers
-    public void drawCenteredString(FontAPI font, TextBuffer text, Number x, Number y) {
+    public void drawCenteredString(FontAPI<?> font, TextBuffer text, Number x, Number y) {
         drawCenteredString(font,text.getText().getApplied(),x,y,text.getColor().getColorI());
     }
     
     @IndirectCallers
-    public void drawCenteredString(FontAPI font, TextAPI<?> text, Number x, Number y, ColorCache color) {
+    public void drawCenteredString(FontAPI<?> font, TextAPI<?> text, Number x, Number y, ColorCache color) {
         drawCenteredString(font,text.getApplied(),x,y,color.getColorI());
     }
     
-    public abstract void drawCenteredString(FontAPI font, String str, Number x, Number y, int color);
+    public abstract void drawCenteredString(FontAPI<?> font, String str, Number x, Number y, int color);
     
     @IndirectCallers
-    public void drawString(FontAPI font, TextBuffer text, Number left, Number top) {
+    public void drawString(FontAPI<?> font, TextBuffer text, Number left, Number top) {
         drawString(font,text.getText().getApplied(),left,top,text.getColor().getColorI());
     }
     
     @IndirectCallers
-    public void drawString(FontAPI font, TextAPI<?> text, Number left, Number top, ColorCache color) {
+    public void drawString(FontAPI<?> font, TextAPI<?> text, Number left, Number top, ColorCache color) {
         drawString(font,text.getApplied(),left,top,color.getColorI());
     }
     
-    public abstract void drawString(FontAPI font, String str, Number left, Number top, int color);
-    public abstract void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, Number x, Number y, Number width, Number height, Number maxWidth);
+    public abstract void drawString(FontAPI<?> font, String str, Number left, Number top, int color);
+    public abstract void drawTooltip(FontAPI<?> font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
+            Number height, Number maxWidth);
     public abstract void enableAlpha();
     public abstract void enableBlend();
     public abstract void enableCull();
@@ -74,7 +76,7 @@ public abstract class RenderAPI<M> {
     public abstract double getDirectMouseX();
     public abstract double getDirectMouseY();
     public abstract GLAPI getGLAPI();
-    public abstract RenderAPI<?> init(Object context);
+    public abstract RenderAPI init(Object context);
     public abstract void popMatrix();
     public abstract void pushMatrix();
     @IndirectCallers public abstract void resetTextureMatrix();
@@ -87,11 +89,20 @@ public abstract class RenderAPI<M> {
     }
     
     public abstract void setColor(float r, float g, float b, float a);
-    /**
-     * Unused in 1.12.2
-     */
-    public abstract void setMatrix(Object matrix);
+    
     @IndirectCallers public abstract void setPosColorShader();
     public abstract void translate(double x, double y, double z);
     public abstract void translate(float x, float y, float z);
+    
+    @IndirectCallers
+    @SuppressWarnings("unchecked")
+    public <F> F unwrapFont() {
+        return (F)this.font;
+    }
+    
+    @IndirectCallers
+    @SuppressWarnings("unchecked")
+    public <M> M unwrapMatrix() {
+        return (M)this.matrix;
+    }
 }

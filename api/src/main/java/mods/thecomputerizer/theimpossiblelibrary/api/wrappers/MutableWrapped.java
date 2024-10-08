@@ -6,6 +6,10 @@ public abstract class MutableWrapped<W> implements Wrapped<W> {
     
     protected W wrapped;
     
+    protected MutableWrapped() {
+        this(null);
+    }
+    
     protected MutableWrapped(W wrapped) {
         this.wrapped = wrapped;
     }

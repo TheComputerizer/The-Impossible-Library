@@ -16,52 +16,52 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import static net.minecraft.item.ItemStack.EMPTY;
 import static net.minecraft.util.text.TextFormatting.RESET;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-public class Font1_12_2 implements FontAPI {
+public class Font1_12_2 extends FontAPI<FontRenderer> {
 
-    private FontRenderer font;
-
-    @Override public void draw(RenderAPI<?> renderer, String text, float x, float y, int color) {
-        getFont().drawString(text,x,y,color,false);
+    public Font1_12_2() {
+        super(mc -> ((Minecraft)mc.unwrap()).fontRenderer);
     }
 
-    @Override public void drawWithShadow(RenderAPI<?> renderer, String text, float x, float y, int color) {
-        getFont().drawStringWithShadow(text,x,y,color);
+    @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
+        renderer.setFont(this.wrapped);
+        getWrapped().drawString(text,x,y,color,false);
     }
 
-    private FontRenderer getFont() {
-        if(Objects.isNull(this.font)) this.font = Minecraft.getMinecraft().fontRenderer;
-        return this.font;
+    @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
+        renderer.setFont(this.wrapped);
+        getWrapped().drawStringWithShadow(text,x,y,color);
     }
 
     @Override public int getCharWidth(char c) {
-        return getFont().getCharWidth(c);
+        return getWrapped().getCharWidth(c);
     }
 
     @Override public int getFontHeight() {
-        return getFont().FONT_HEIGHT;
+        return getWrapped().FONT_HEIGHT;
     }
 
     @Override public int getStringWidth(String str) {
-        return getFont().getStringWidth(str);
+        return getWrapped().getStringWidth(str);
     }
     
     /**
      * GuiUtils$drawHoveringText implementation from Forge but without disabling lighting
      */
-    @Override public void renderToolTip(RenderAPI<?> renderer, Collection<TextAPI<?>> lines, int x, int y, int width, int height, int maxWidth) {
+    @Override public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width,
+            int height, int maxWidth) {
+        renderer.setFont(this.wrapped);
         List<String> textLines = new ArrayList<>();
         for(TextAPI<?> text : lines) {
             String asLine = text.getApplied();
             if(StringUtils.isNotBlank(asLine)) textLines.add(asLine);
         }
         if(!textLines.isEmpty()) {
-            FontRenderer font = getFont();
+            FontRenderer font = getWrapped();
             Pre event = new Pre(EMPTY,textLines,x,y,width,height,maxWidth,font);
             if(EVENT_BUS.post(event)) return;
             x = event.getX();
@@ -158,7 +158,7 @@ public class Font1_12_2 implements FontAPI {
     }
     
     @Override public String trimStringTo(String str, int width, boolean withReset) {
-        String trimmed = getFont().trimStringToWidth(str,width);
+        String trimmed = getWrapped().trimStringToWidth(str, width);
         String reset = RESET.toString();
         return !withReset && trimmed.endsWith(reset) ? trimmed.substring(0,trimmed.length()-reset.length()) : trimmed;
     }

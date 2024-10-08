@@ -114,9 +114,14 @@ def remapThese = [ "block.AbstractBlock": "world.level.block.state.BlockBehaviou
                    "client.audio.ISound": "client.resources.sounds.SoundInstance",
                    "client.audio.SimpleSound": "client.resources.sounds.SimpleSoundInstance",
                    "client.entity.player.ClientPlayerEntity": "client.player.LocalPlayer",
+                   "client.gui.FontRenderer": "client.gui.Font",
+                   "client.gui.fonts.TextInputUtil": "client.gui.font.TextFieldHelper",
+                   "client.gui.screen.Screen": "client.gui.screens.Screen",
                    "client.network.play.ClientPlayNetHandler": "client.multiplayer.ClientPacketListener",
                    "client.network.play.NetworkPlayerInfo": "client.multiplayer.PlayerInfo",
+                   "client.settings.KeyBinding": "client.KeyMapping",
                    "client.util.ITooltipFlag": "world.item.TooltipFlag",
+                   "client.world.ClientWorld": "client.multiplayer.ClientLevel",
                    "command.CommandException": "commands.CommandRuntimeException",
                    "command.CommandSource": "commands.CommandSourceStack",
                    "command.ISuggestionProvider": "commands.SharedSuggestionProvider",
@@ -142,18 +147,30 @@ def remapThese = [ "block.AbstractBlock": "world.level.block.state.BlockBehaviou
                    "item.ShovelItem": "world.item.ShovelItem",
                    "item.SwordItem": "world.item.SwordItem",
                    "item.ToolItem": "world.item.TieredItem",
+                   "nbt.ByteArrayNBT": "nbt.ByteArrayTag",
+                   "nbt.ByteNBT": "nbt.ByteTag",
+                   "nbt.CollectionNBT": "nbt.CollectionTag",
                    "nbt.CompoundNBT": "nbt.CompoundTag",
                    "nbt.CompressedStreamTools": "nbt.NbtIo",
+                   "nbt.DoubleNBT": "nbt.DoubleTag",
+                   "nbt.EndNBT": "nbt.EndTag",
+                   "nbt.FloatNBT": "nbt.FloatTag",
+                   "nbt.IntArrayNBT": "nbt.IntArrayTag",
+                   "nbt.IntNBT": "nbt.IntTag",
                    "nbt.INBT": "nbt.Tag",
                    "nbt.ListNBT": "nbt.ListTag",
+                   "nbt.LongArrayNBT": "nbt.LongArrayTag",
+                   "nbt.LongNBT": "nbt.LongTag",
                    "nbt.NBTSizeTracker": "nbt.NbtAccounter",
                    "nbt.NumberNBT": "nbt.NumericTag",
+                   "nbt.ShortNBT": "nbt.ShortTag",
                    "nbt.StringNBT": "nbt.StringTag",
                    "potion.Effect": "world.effect.MobEffect",
                    "potion.EffectInstance": "world.effect.MobEffectInstance",
                    "server.management.PlayerList": "server.players.PlayerList",
                    "state.Property": "world.level.block.state.properties.Property",
                    "state.StateContainer": "world.level.block.state.StateDefinition",
+                   "tileentity.ITickableTileEntity": "world.level.block.entity.TickableBlockEntity",
                    "tileentity.TileEntity": "world.level.block.entity.BlockEntity",
                    "util.ActionResultType": "world.InteractionResult",
                    "util.Direction": "core.Direction",
@@ -165,6 +182,7 @@ def remapThese = [ "block.AbstractBlock": "world.level.block.state.BlockBehaviou
                    "util.math.AxisAlignedBB": "world.phys.AABB",
                    "util.math.BlockPos": "core.BlockPos",
                    "util.math.BlockRayTraceResult": "world.phys.BlockHitResult",
+                   "util.math.vector.Vector3d": "world.phys.Vec3",
                    "util.registry.DynamicRegistries": "core.RegistryAccess",
                    "util.registry.MutableRegistry": "core.WritableRegistry",
                    "util.registry.Registry": "core.Registry",
@@ -175,15 +193,27 @@ def remapThese = [ "block.AbstractBlock": "world.level.block.state.BlockBehaviou
                    "util.text.TextFormatting": "ChatFormatting",
                    "util.text.TranslationTextComponent": "network.chat.TranslatableComponent",
                    "world.biome.Biome.RainType": "world.level.biome.Biome.Precipitation",
-                   "world.gen.feature.structure.StructureManager": "world.level.levelgen.feature.StructureManager",
+                   "world.gen.feature.structure.StructureManager": "world.level.StructureFeatureManager",
                    "world.gen.feature.structure.Structure": "world.level.levelgen.feature.StructureFeature",
-                   "world.server.ServerWorld": "world.level.ServerLevel",
+                   "world.lighting.WorldLightManager": "world.level.lighting.LevelLightEngine",
+                   "world.server.ServerWorld": "server.level.ServerLevel",
+                   "world.biome.Biome": "world.level.biome.Biome",
                    "world.DimensionType": "world.level.dimension.DimensionType",
+                   "world.Explosion": "world.level.Explosion",
+                   "world.GameType": "world.level.GameType",
                    "world.IBlockReader": "world.level.BlockGetter",
                    "world.IWorld": "world.level.LevelAccessor",
                    "world.LightType": "world.level.LightLayer",
-                   "world.World": "world.level.Level",
-                   "world": "world.level"
+                   "world.World": "world.level.Level"
+]
+
+//These need to be remapped to the com.mojang.blaze3d package
+def renderRemaps = [ "net.minecraft.client.MainWindow": "platform.Window",
+                     "net.minecraft.client.renderer.BufferBuilder": "vertex.BufferBuilder",
+                     "net.minecraft.client.renderer.Tessellator": "vertex.Tesselator",
+                     "net.minecraft.client.renderer.vertex.DefaultVertexFormats": "vertex.DefaultVertexFormat",
+                     "net.minecraft.client.renderer.vertex.Vertex": "vertex.Vertex",
+                     "com.mojang.blaze3d.matrix.MatrixStack": "vertex.PoseStack"
 ]
 
 shadowJar {
@@ -192,6 +222,7 @@ shadowJar {
         //noinspection GroovyAssignabilityCheck
         relocate shared.shared_base_package, fabric_base_package
         remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
+        renderRemaps.forEach((key,value) -> relocate key, "com.mojang.blaze3d.${value}")
     }
 }
 

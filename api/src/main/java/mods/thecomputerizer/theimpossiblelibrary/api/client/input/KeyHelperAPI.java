@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifier;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 public interface KeyHelperAPI {
 
@@ -45,5 +46,7 @@ public interface KeyHelperAPI {
         return key;
     }
 
-    void register(KeyAPI<?> key);
+    default void register(KeyAPI<?> key) {
+        TILRef.getClientHandles().registerKeyBinding(key);
+    }
 }

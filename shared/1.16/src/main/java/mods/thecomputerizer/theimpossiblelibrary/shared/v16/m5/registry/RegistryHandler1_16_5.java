@@ -111,7 +111,7 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
     }
     
     @Override public RegistryAPI<?> getStructureRegistry() {
-        return this.sound;
+        return this.structure;
     }
     
     @Override public BlockBuilderAPI makeBlockBuilder(@Nullable BlockBuilderAPI parent) {

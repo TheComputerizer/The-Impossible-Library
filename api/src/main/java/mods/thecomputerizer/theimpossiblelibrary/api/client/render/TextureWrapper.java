@@ -123,7 +123,7 @@ public class TextureWrapper {
         if(Objects.nonNull(this.texture)) ctx.getRenderer().bindTexture(this.texture);
     }
     
-    public void bind(RenderAPI<?> renderer) {
+    public void bind(RenderAPI renderer) {
         if(Objects.nonNull(this.texture)) renderer.bindTexture(this.texture);
     }
     

@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 
-public class Render1_12_2 extends RenderAPI<Object> {
+public class Render1_12_2 extends RenderAPI{
 
     public Render1_12_2() {
         super(new GL1_12_2());
@@ -70,15 +70,15 @@ public class Render1_12_2 extends RenderAPI<Object> {
         GlStateManager.disableTexture2D();
     }
 
-    @Override public void drawCenteredString(FontAPI font, String str, Number x, Number y, int color) {
+    @Override public void drawCenteredString(FontAPI<?> font, String str, Number x, Number y, int color) {
         font.drawWithShadow(this,str,x.floatValue()-font.getStringWidth(str)/2f,y.floatValue(),color);
     }
 
-    @Override public void drawString(FontAPI font, String str, Number left, Number top, int color) {
+    @Override public void drawString(FontAPI<?> font, String str, Number left, Number top, int color) {
         font.draw(this,str,left.intValue(),top.intValue(),color);
     }
     
-    @Override public void drawTooltip(FontAPI font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
+    @Override public void drawTooltip(FontAPI<?> font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
             Number height, Number maxWidth) {
         font.renderToolTip(this,lines,x.intValue(),y.intValue(),width.intValue(),height.intValue(),maxWidth.intValue());
     }
@@ -123,7 +123,7 @@ public class Render1_12_2 extends RenderAPI<Object> {
         return this.gl;
     }
 
-    @Override public RenderAPI<?> init(Object context) {
+    @Override public RenderAPI init(Object context) {
         return this;
     }
 
@@ -148,8 +148,6 @@ public class Render1_12_2 extends RenderAPI<Object> {
     @Override public void setColor(float r, float g, float b, float a) {
         GlStateManager.color(r,g,b,a);
     }
-
-    @Override public void setMatrix(Object matrix) {}
 
     @Override public void setPosColorShader() {}
 

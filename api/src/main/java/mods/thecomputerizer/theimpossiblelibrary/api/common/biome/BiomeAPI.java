@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.biome;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
@@ -17,6 +18,11 @@ public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements Registry
     @IndirectCallers public abstract boolean canRain();
     @IndirectCallers public abstract boolean canSnow();
     @IndirectCallers public abstract float getRainfall();
-    @IndirectCallers public abstract Set<String> getTagNames(WorldAPI<?> world);
+    
+    @IndirectCallers
+    public Set<String> getTagNames(WorldAPI<?> world) {
+        return TILRef.getCommonHandles().biomeTagNames(world,unwrap());
+    }
+    
     @IndirectCallers public abstract float getTemperatureAt(BlockPosAPI<?> pos);
 }

@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
@@ -7,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.ForgeHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.CommonEventsForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.integration.ModHelperForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network.NetworkForge1_16_5;
@@ -41,5 +43,9 @@ public class CommonForge1_16_5 extends Common1_16_5 {
     
     @Override public Supplier<ServerEventsAPI> initServerEvents() {
         return ServerEventsForge1_16_5::new;
+    }
+    
+    @Override public Supplier<SharedHandlesCommon> initSharedHandlesCommon() {
+        return ForgeHandlesCommon::new;
     }
 }

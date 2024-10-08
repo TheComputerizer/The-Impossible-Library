@@ -162,7 +162,7 @@ public class TextBuffer {
         else if(isRightAligned()) center.x = left-getWidth(ctx, width);
         else center.x = left+(width/2d);
         center.add(this.translateX,this.translateY-offset,0d);
-        RenderAPI<?> renderer = ctx.getRenderer();
+        RenderAPI renderer = ctx.getRenderer();
         double scaledX = ctx.withScreenScaledX(center.x);
         double scaledY = ctx.withScreenScaledY(center.y);
         if(isLeftAligned() || isRightAligned())
@@ -225,7 +225,7 @@ public class TextBuffer {
         else center.x = left+(width/2d)-(lineWidth/2d);
         center.add(this.translateX,this.translateY-offset,0d);
         if(x>=center.x && x<center.x+ctx.getScaledStringWidth(line+"|") && y<=center.y && y>center.y-lineHeight) {
-            FontAPI font = ctx.getFont();
+            FontAPI<?> font = ctx.getFont();
             String trimmed = font.trimStringTo(line,font.getStringWidth(line)*((x-center.x)/lineWidth));
             return trimmed.length();
         }

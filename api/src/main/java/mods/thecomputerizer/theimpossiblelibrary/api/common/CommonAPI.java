@@ -29,6 +29,7 @@ public abstract class CommonAPI {
     private ResourceAPI resource;
     private MinecraftServerAPI<?> server;
     private ServerEventsAPI serverEvents;
+    private SharedHandlesCommon sharedHandles;
     private SpawnHelperAPI<?> spawnHelper;
     private TagAPI tag;
     private TextHelperAPI<?> textHelper;
@@ -80,6 +81,11 @@ public abstract class CommonAPI {
         return this.serverEvents;
     }
     
+    public SharedHandlesCommon getSharedHandlesCommon() {
+        if(Objects.isNull(this.sharedHandles)) this.sharedHandles = initSharedHandlesCommon().get();
+        return this.sharedHandles;
+    }
+    
     public SpawnHelperAPI<?> getSpawnHelper() {
         if(Objects.isNull(this.spawnHelper)) this.spawnHelper = initSpawnHelper().get();
         return this.spawnHelper;
@@ -114,6 +120,7 @@ public abstract class CommonAPI {
     public abstract Supplier<ResourceAPI> initResource();
     public abstract Supplier<MinecraftServerAPI<?>> initServer();
     public abstract Supplier<ServerEventsAPI> initServerEvents();
+    public abstract Supplier<SharedHandlesCommon> initSharedHandlesCommon();
     public abstract Supplier<SpawnHelperAPI<?>> initSpawnHelper();
     public abstract Supplier<TagAPI> initTag();
     public abstract Supplier<TextHelperAPI<?>> initTextHelper();

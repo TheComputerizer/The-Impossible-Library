@@ -1,9 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -31,7 +29,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
-public class Minecraft1_12_2 implements MinecraftAPI {
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+
+public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     
     private static final List<String> MCMETA_LINES = Arrays.asList(
             "{","\t\"pack\": {","\t\t\"pack_format\": 3,",
@@ -41,50 +41,36 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         return new Minecraft1_12_2(Minecraft.getMinecraft());
     }
 
-    private final Minecraft mc;
-    private final FontAPI font;
-    private final RenderAPI<?> render;
-
-    private Minecraft1_12_2(Minecraft mc) {
-        this.mc = mc;
-        this.font = new Font1_12_2();
-        this.render = new Render1_12_2();
+    private Minecraft1_12_2(Object mc) {
+        super((Minecraft)mc,new Font1_12_2(),new Render1_12_2());
     }
     
     @Override public void addResourcePackFolder(File dir) {
-        if(TILDev.DEV) {
-            TILDev.logInfo("Attmpting to manually define dev resources");
+        if(DEV) {
+            TILDev.logInfo("Attempting to manually define dev resources");
             if(dir.exists() && dir.isDirectory()) {
                 FileHelper.writeLines(new File(dir,"pack.mcmeta"),MCMETA_LINES,false);
-                List<IResourcePack> defaultPacks = getResourcePacks(Minecraft.getMinecraft());
+                List<IResourcePack> defaultPacks = getResourcePacks(this.wrapped);
                 if(Objects.nonNull(defaultPacks)) defaultPacks.add(new FolderResourcePack(dir));
             } else TILDev.logError("The TILResources directory doesn't seem to exist. Were the resources copied correctly?");
         }
     }
     
     @Override public int getDisplayHeight() {
-        return this.mc.displayHeight;
+        return this.wrapped.displayHeight;
     }
     
     @Override public int getDisplayWidth() {
-        return this.mc.displayWidth;
-    }
-    
-    @Override public FontAPI getFont() {
-        return this.font;
+        return this.wrapped.displayWidth;
     }
     
     @Override public int getGUIScale() {
-        int scale = Objects.nonNull(this.mc) && Objects.nonNull(this.mc.gameSettings) ? this.mc.gameSettings.guiScale : 0;
+        int scale = Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.gameSettings) ? this.wrapped.gameSettings.guiScale : 0;
         return scale==0 ? 4 : scale;
     }
     
     @Override public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_12_2(this.mc.player) : null;
-    }
-
-    @Override public RenderAPI<?> getRenderer() {
-        return this.render;
+        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.player) ? new ClientPlayer1_12_2(this.wrapped.player) : null;
     }
     
     private @Nullable List<IResourcePack> getResourcePacks(Minecraft mc) {
@@ -100,20 +86,20 @@ public class Minecraft1_12_2 implements MinecraftAPI {
      * TODO Cache this?
      */
     @Override public MinecraftWindow getWindow() {
-        ScaledResolution res = Objects.nonNull(this.mc) ? new ScaledResolution(this.mc) : null;
+        ScaledResolution res = Objects.nonNull(this.wrapped) ? new ScaledResolution(this.wrapped) : null;
         if(Objects.isNull(res)) {
-            TILRef.logFatal("Unable to get MinecraftWidnow since the Minecraft is null?");
+            TILRef.logFatal("Unable to get MinecraftWindow since the Minecraft is null?");
             return new MinecraftWindow(1d,1d,0);
         }
         return new MinecraftWindow(res.getScaledWidth(),res.getScaledHeight(),res.getScaleFactor());
     }
 
     @Override public @Nullable WorldAPI<World> getWorld() {
-        return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.world) ? new World1_12_2(this.mc.world) : null;
+        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.world) ? new World1_12_2(this.wrapped.world) : null;
     }
 
     @Override public <S> boolean isCurrentScreen(S screen) {
-        return Objects.nonNull(this.mc) && this.mc.currentScreen==screen;
+        return Objects.nonNull(this.wrapped) && this.wrapped.currentScreen==screen;
     }
 
     @Override public boolean isCurrentScreenAPI() {
@@ -121,12 +107,12 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     }
 
     @Override public boolean isDisplayFocused() {
-        if(Objects.isNull(this.mc)) {
+        if(Objects.isNull(this.wrapped)) {
             TILRef.logError("Unable to determine display focus state for null Minecraft instance");
             return false;
         }
         try {
-            return this.mc.addScheduledTask(() -> Display.isCreated() && Display.isActive()).get();
+            return this.wrapped.addScheduledTask(() -> Display.isCreated() && Display.isActive()).get();
         } catch(ExecutionException | InterruptedException ex) {
             TILRef.logWarn("Unable to determine display focus state",ex);
             return false;
@@ -134,12 +120,12 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     }
 
     @Override public boolean isFinishedLoading() {
-        return !FMLClientHandler.instance().isLoading() && Objects.nonNull(this.mc) &&
-                Objects.nonNull(this.mc.currentScreen);
+        return !FMLClientHandler.instance().isLoading() && Objects.nonNull(this.wrapped) &&
+                Objects.nonNull(this.wrapped.currentScreen);
     }
 
     @Override public boolean isFullScreen() {
-        return Objects.nonNull(this.mc) && this.mc.isFullScreen();
+        return Objects.nonNull(this.wrapped) && this.wrapped.isFullScreen();
     }
 
     @Override public boolean isLoading() {
@@ -147,6 +133,6 @@ public class Minecraft1_12_2 implements MinecraftAPI {
     }
 
     @Override public boolean isPaused() {
-        return Objects.nonNull(this.mc) && this.mc.isGamePaused();
+        return Objects.nonNull(this.wrapped) && this.wrapped.isGamePaused();
     }
 }

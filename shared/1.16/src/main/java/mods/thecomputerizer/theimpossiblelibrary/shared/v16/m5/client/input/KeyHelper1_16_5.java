@@ -12,7 +12,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public abstract class KeyHelper1_16_5 implements KeyHelperAPI {
+public class KeyHelper1_16_5 implements KeyHelperAPI {
     
     @Override public KeyAPI<?> create(String id, String category, int keyCode) {
         return new Key1_16_5(new KeyBinding(id,keyCode,category));
