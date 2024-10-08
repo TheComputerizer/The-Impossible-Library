@@ -3,15 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlaySoundSourceEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import net.minecraft.client.audio.ISound;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.util.Objects;
-
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_PLAY_SOURCE;
 
-public class PlaySoundSourceEventForge extends PlaySoundSourceEventWrapper<PlaySoundSourceEvent,ISound> {
+public class PlaySoundSourceEventForge extends PlaySoundSourceEventWrapper<PlaySoundSourceEvent> {
     
     @SubscribeEvent
     public static void onEvent(PlaySoundSourceEvent event) {
@@ -31,8 +29,8 @@ public class PlaySoundSourceEventForge extends PlaySoundSourceEventWrapper<PlayS
         return wrapGenericGetter(PlaySoundSourceEvent::getName,"");
     }
 
-    @Override protected EventFieldWrapper<PlaySoundSourceEvent,SoundAPI<ISound>> wrapSoundField() {
-        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
+    @Override protected EventFieldWrapper<PlaySoundSourceEvent,SoundAPI<?>> wrapSoundField() {
+        return wrapGenericGetter(event -> WrapperHelper.wrapSoundInstance(event.getSound()),null);
     }
 
     @Override protected EventFieldWrapper<PlaySoundSourceEvent,String> wrapUUIDField() { //TODO

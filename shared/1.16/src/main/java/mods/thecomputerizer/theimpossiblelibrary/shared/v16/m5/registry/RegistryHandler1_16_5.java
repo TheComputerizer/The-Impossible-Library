@@ -15,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBui
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block.BlockBuilder1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.blockentity.BlockEntityBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.entity.EntityBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.DiscBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.ItemBlockBuilder1_16_5;
@@ -117,7 +118,9 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
         return new BlockBuilder1_16_5(parent);
     }
     
-    @Override public abstract BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent);
+    @Override public BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
+        return new BlockEntityBuilder1_16_5(parent);
+    }
     
     @Override public CreativeTabBuilderAPI makeCreativeTabBuilder() {
         return new CreativeTabBuilder1_16_5();

@@ -34,7 +34,7 @@ public final class RenderContext {
     
     private final MinecraftAPI mc;
     private final FontAPI font;
-    private final RenderAPI renderer;
+    private final RenderAPI<?> renderer;
     private final RenderScale scale;
     @Setter private float partialTicks;
     

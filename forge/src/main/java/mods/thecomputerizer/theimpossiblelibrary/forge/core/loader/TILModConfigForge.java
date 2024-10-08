@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
+package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import net.minecraftforge.forgespi.language.IConfigurable;
@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class TILModConfigForge1_16_5 implements IConfigurable {
+public class TILModConfigForge implements IConfigurable {
     
     private final Map<String,Object> infoMap;
     
-    public TILModConfigForge1_16_5(Object info) {
+    public TILModConfigForge(Object info) {
         this.infoMap = new HashMap<>();
         this.infoMap.put("description",genericMethod(info,"getDescription"));
         this.infoMap.put("displayName",genericMethod(info,"getName"));

@@ -3,15 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.event.eve
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlaySoundEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import net.minecraft.client.audio.ISound;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.Objects;
-
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_PLAY;
 
-public class PlaySoundEvent1_12_2 extends PlaySoundEventWrapper<PlaySoundEvent,ISound> {
+public class PlaySoundEvent1_12_2 extends PlaySoundEventWrapper<PlaySoundEvent> {
 
     @SubscribeEvent
     public static void onEvent(PlaySoundEvent event) {
@@ -31,11 +29,11 @@ public class PlaySoundEvent1_12_2 extends PlaySoundEventWrapper<PlaySoundEvent,I
         return wrapGenericGetter(PlaySoundEvent::getName,"");
     }
 
-    @Override protected EventFieldWrapper<PlaySoundEvent,SoundAPI<ISound>> wrapSoundField() {
-        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getSound()) : null,null);
+    @Override protected EventFieldWrapper<PlaySoundEvent,SoundAPI<?>> wrapSoundField() {
+        return wrapGenericGetter(event -> WrapperHelper.wrapSoundInstance(event.getSound()),null);
     }
 
-    @Override protected EventFieldWrapper<PlaySoundEvent,SoundAPI<ISound>> wrapSoundResultField() {
-        return wrapGenericGetter(event -> Objects.nonNull(this.soundHelper) ? this.soundHelper.getAPI(event.getResultSound()) : null,null);
+    @Override protected EventFieldWrapper<PlaySoundEvent,SoundAPI<?>> wrapSoundResultField() {
+        return wrapGenericGetter(event -> WrapperHelper.wrapSoundInstance(event.getResultSound()),null);
     }
 }

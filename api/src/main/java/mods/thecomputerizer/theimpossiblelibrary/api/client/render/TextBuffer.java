@@ -162,7 +162,7 @@ public class TextBuffer {
         else if(isRightAligned()) center.x = left-getWidth(ctx, width);
         else center.x = left+(width/2d);
         center.add(this.translateX,this.translateY-offset,0d);
-        RenderAPI renderer = ctx.getRenderer();
+        RenderAPI<?> renderer = ctx.getRenderer();
         double scaledX = ctx.withScreenScaledX(center.x);
         double scaledY = ctx.withScreenScaledY(center.y);
         if(isLeftAligned() || isRightAligned())

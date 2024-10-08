@@ -21,6 +21,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
 
@@ -76,6 +77,14 @@ public abstract class CoreAPI {
     
     public static String findLoadingClass() {
         return String.valueOf(findInstance(CoreAPI.class.getClassLoader())).split(" ")[0];
+    }
+    
+    public static String findLoadingClass(ModLoader loader, String versionStr) {
+        GameVersion version = parseVersion(versionStr);
+        if(Objects.isNull(version))
+            throw new RuntimeException("Failed to parse "+loader+" game version from "+versionStr);
+        String versionName = version.getName().replace('.','_');
+        return version.getPackageName(loader,BASE_PACKAGE)+".core.TILCore"+loader+versionName;
     }
     
     public static CoreAPI getInstance(ClassLoader loader) {
@@ -383,7 +392,7 @@ public abstract class CoreAPI {
             return this==V21_1;
         }
 
-        @Override     public String toString() {
+        @Override public String toString() {
             return this.name;
         }
     }
@@ -429,7 +438,7 @@ public abstract class CoreAPI {
             return this==NEOFORGE;
         }
 
-        @Override     public String toString() {
+        @Override public String toString() {
             return this.name;
         }
     }
@@ -456,7 +465,7 @@ public abstract class CoreAPI {
             this.logical = logical;
         }
 
-        @Override     public String toString() {
+        @Override public String toString() {
             if(this==ALL) return "all";
             String side = this.client && this.server ? "both" : (this.client ? "client" : "server");
             return (this.dedicated ? "dedicated" : "logical")+"_"+side;

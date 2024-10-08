@@ -13,9 +13,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import static org.lwjgl.input.Keyboard.*;
 
-public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
+public class KeyHelper1_12_2 implements KeyHelperAPI {
 
-    @Override public KeyAPI<KeyBinding> create(String id, String category, int keyCode) {
+    @Override public KeyAPI<?> create(String id, String category, int keyCode) {
         return new Key1_12_2(new KeyBinding(id,keyCode,category));
     }
 
@@ -179,7 +179,7 @@ public class KeyHelper1_12_2 implements KeyHelperAPI<KeyBinding> {
         return keyCode;
     }
 
-    @Override public void register(KeyAPI<KeyBinding> key) {
+    @Override public void register(KeyAPI<?> key) {
         ClientRegistry.registerKeyBinding(key.unwrap());
     }
 }

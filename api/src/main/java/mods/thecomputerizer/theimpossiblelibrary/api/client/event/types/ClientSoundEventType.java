@@ -7,16 +7,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWra
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 
 @Getter
-public abstract class ClientSoundEventType<E,S> extends ClientEventWrapper<E> {
+public abstract class ClientSoundEventType<E> extends ClientEventWrapper<E> {
 
-    protected SoundHelperAPI<S> soundHelper;
+    protected SoundHelperAPI soundHelper;
 
     protected ClientSoundEventType(ClientType<?> type) {
         super(type);
     }
 
-    @SuppressWarnings("unchecked")
     @Override public void populate() {
-        this.soundHelper = (SoundHelperAPI<S>)TILRef.getClientSubAPI(ClientAPI::getSoundHelper);
+        this.soundHelper = TILRef.getClientSubAPI(ClientAPI::getSoundHelper);
     }
 }

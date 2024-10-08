@@ -28,7 +28,7 @@ public class RenderablePNG extends Renderable {
         this.texture.setY(getAllignmentY()+getParameterAs("y",0d));
     }
     
-    protected void postRender(RenderAPI renderer) {
+    protected void postRender(RenderAPI<?> renderer) {
         renderer.popMatrix();
     }
     

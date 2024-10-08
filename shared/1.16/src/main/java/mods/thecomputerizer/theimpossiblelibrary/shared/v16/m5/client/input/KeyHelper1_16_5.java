@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.input;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.AlphaNum;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.FNKeys;
@@ -7,11 +8,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifie
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
+import net.minecraft.client.settings.KeyBinding;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public abstract class KeyHelper1_16_5<B> implements KeyHelperAPI<B> {
-
+public abstract class KeyHelper1_16_5 implements KeyHelperAPI {
+    
+    @Override public KeyAPI<?> create(String id, String category, int keyCode) {
+        return new Key1_16_5(new KeyBinding(id,keyCode,category));
+    }
+    
     @Override public int getKeyCode(Action actionKey) {
         switch(actionKey) {
             case BACKSPACE: return GLFW_KEY_BACKSLASH;

@@ -12,16 +12,16 @@ import java.util.function.Supplier;
 public abstract class ClientAPI extends CommonAPI {
     
     private ClientEventsAPI clientEvents;
-    private KeyHelperAPI<?> keyHelper;
+    private KeyHelperAPI keyHelper;
     private ScreenHelperAPI screenHelper;
-    private SoundHelperAPI<?> soundHelper;
+    private SoundHelperAPI soundHelper;
 
     public ClientEventsAPI getClientEvents() {
         if(Objects.isNull(this.clientEvents)) this.clientEvents = initClientEvents().get();
         return this.clientEvents;
     }
     
-    public KeyHelperAPI<?> getKeyHelper() {
+    public KeyHelperAPI getKeyHelper() {
         if(Objects.isNull(this.keyHelper)) this.keyHelper = initKeyHelper().get();
         return this.keyHelper;
     }
@@ -33,13 +33,13 @@ public abstract class ClientAPI extends CommonAPI {
         return this.screenHelper;
     }
     
-    public SoundHelperAPI<?> getSoundHelper() {
+    public SoundHelperAPI getSoundHelper() {
         if(Objects.isNull(this.soundHelper)) this.soundHelper = initSoundHelper().get();
         return this.soundHelper;
     }
     
     protected abstract Supplier<ClientEventsAPI> initClientEvents();
-    protected abstract Supplier<KeyHelperAPI<?>> initKeyHelper();
+    protected abstract Supplier<KeyHelperAPI> initKeyHelper();
     protected abstract Supplier<ScreenHelperAPI> initScreenHelper();
-    protected abstract Supplier<SoundHelperAPI<?>> initSoundHelper();
+    protected abstract Supplier<SoundHelperAPI> initSoundHelper();
 }

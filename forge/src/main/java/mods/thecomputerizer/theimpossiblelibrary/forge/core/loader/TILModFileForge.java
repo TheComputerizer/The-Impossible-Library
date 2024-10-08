@@ -1,11 +1,10 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
+package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILBetterModScan;
 import net.minecraftforge.coremod.CoreModEngine;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LanguageLoadingProvider;
@@ -42,7 +41,7 @@ import java.util.Set;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 
-public class TILModFileForge1_16_5 extends ModFile {
+public class TILModFileForge extends ModFile {
     
     static boolean fixedCoreMods;
     static boolean loadedProvider;
@@ -53,7 +52,7 @@ public class TILModFileForge1_16_5 extends ModFile {
     protected Path accessTransformer;
     protected List<CoreModFile> coreMods;
     
-    public TILModFileForge1_16_5(Path path, IModLocator locator, Collection<?> infos) {
+    public TILModFileForge(Path path, IModLocator locator, Collection<?> infos) {
         super(path,locator,null);
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
@@ -159,7 +158,7 @@ public class TILModFileForge1_16_5 extends ModFile {
             if(Objects.nonNull(infoConstructor)) {
                 if(!infoConstructor.isAccessible()) infoConstructor.setAccessible(true);
                 try {
-                    this.fileInfo = (ModFileInfo)infoConstructor.newInstance(this,new TILFileConfigForge1_16_5(this.infos.keySet()));
+                    this.fileInfo = (ModFileInfo)infoConstructor.newInstance(this,new TILFileConfigForge(this.infos.keySet()));
                     TILRef.logDebug("Successfully captured multiversion mods for {}",getFileName());
                 } catch(ReflectiveOperationException ex) {
                     TILRef.logFatal("Failed to capture mod file for {}! A crash may be imminent",getFileName(),ex);
@@ -177,7 +176,6 @@ public class TILModFileForge1_16_5 extends ModFile {
     
     @Override public boolean identifyMods() {
         TILRef.logInfo("Loading mod file {} with language {}",getFilePath(),getModFileInfo().getModLoader());
-        //this.coreMods = ModFileParser.getCoreMods(this); //TODO Coremod support
         this.accessTransformer = getLocator().findPath(this,"META-INF","accesstransformer.cfg");
         return true;
     }

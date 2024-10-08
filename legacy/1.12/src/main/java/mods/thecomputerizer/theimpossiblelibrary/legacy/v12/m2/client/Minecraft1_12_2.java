@@ -43,7 +43,7 @@ public class Minecraft1_12_2 implements MinecraftAPI {
 
     private final Minecraft mc;
     private final FontAPI font;
-    private final RenderAPI render;
+    private final RenderAPI<?> render;
 
     private Minecraft1_12_2(Minecraft mc) {
         this.mc = mc;
@@ -83,7 +83,7 @@ public class Minecraft1_12_2 implements MinecraftAPI {
         return Objects.nonNull(this.mc) && Objects.nonNull(this.mc.player) ? new ClientPlayer1_12_2(this.mc.player) : null;
     }
 
-    @Override public RenderAPI getRenderer() {
+    @Override public RenderAPI<?> getRenderer() {
         return this.render;
     }
     

@@ -1,23 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.sound;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.util.SoundCategory;
 
 import java.util.Objects;
 
-public class SoundHelper1_16_5 implements SoundHelperAPI<ISound> {
-
-    @Override public SoundAPI<ISound> getAPI(Object sound) {
-        return WrapperHelper.wrapSoundInstance(sound);
-    }
+public class SoundHelper1_16_5 implements SoundHelperAPI {
     
     @SuppressWarnings("ConstantValue")
     @Override public float getCategoryVolume(String name) {

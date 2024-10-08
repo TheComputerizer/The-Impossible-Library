@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_PLAY_SOURCE;
 
-public abstract class PlaySoundSourceEventWrapper<E,S> extends ClientSoundSourceEventType<E,S> {
+public abstract class PlaySoundSourceEventWrapper<E> extends ClientSoundSourceEventType<E> {
 
     protected EventFieldWrapper<E,String> uuid;
 

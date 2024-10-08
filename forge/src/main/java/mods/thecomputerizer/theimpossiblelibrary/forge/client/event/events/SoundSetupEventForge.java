@@ -1,13 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.SoundSetupEventWrapper;
-import net.minecraft.client.audio.ISound;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_SETUP;
 
-public class SoundSetupEventForge extends SoundSetupEventWrapper<SoundSetupEvent,ISound> {
+public class SoundSetupEventForge extends SoundSetupEventWrapper<SoundSetupEvent> {
     
     @SubscribeEvent
     public static void onEvent(SoundSetupEvent event) {

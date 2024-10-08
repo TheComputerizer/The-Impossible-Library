@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.gui;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
@@ -6,14 +6,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-import static net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK;
+import static net.minecraft.util.SoundEvents.UI_BUTTON_CLICK;
 
-public class ScreenHelperFabric1_16_5 implements ScreenHelperAPI {
+public class ScreenHelper1_16_5 implements ScreenHelperAPI {
     
     private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation("textures/gui/widgets.png");
     
@@ -21,7 +21,7 @@ public class ScreenHelperFabric1_16_5 implements ScreenHelperAPI {
     private final TextureWrapper hoveredButton;
     private final TextureWrapper disabledButton;
     
-    public ScreenHelperFabric1_16_5() {
+    public ScreenHelper1_16_5() {
         this.normalButton = new TextureWrapper()
                 .setTexture(WrapperHelper.wrapResourceLocation(BUTTON_TEXTURE))
                 .setU(0d,25d/32d).setV(33d/128d,43d/128d);
@@ -40,7 +40,7 @@ public class ScreenHelperFabric1_16_5 implements ScreenHelperAPI {
     @Override public void open(@Nullable ScreenAPI screen) {
         Minecraft mc = Minecraft.getInstance();
         if(Objects.isNull(screen)) mc.setScreen(null);
-        else mc.setScreen(new ScreenWrapperFabric1_16_5(screen));
+        else mc.setScreen(new ScreenWrapper1_16_5(screen));
     }
     
     @Override public void playVanillaClickSound() {

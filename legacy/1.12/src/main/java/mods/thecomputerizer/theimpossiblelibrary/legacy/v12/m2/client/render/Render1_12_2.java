@@ -20,12 +20,10 @@ import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 
-public class Render1_12_2 implements RenderAPI {
-
-    private final GL1_12_2 gl;
+public class Render1_12_2 extends RenderAPI<Object> {
 
     public Render1_12_2() {
-        this.gl = new GL1_12_2();
+        super(new GL1_12_2());
     }
 
     @Override public void alphaFuncEqual(float alpha) {
@@ -125,7 +123,7 @@ public class Render1_12_2 implements RenderAPI {
         return this.gl;
     }
 
-    @Override public RenderAPI init(Object context) {
+    @Override public RenderAPI<?> init(Object context) {
         return this;
     }
 

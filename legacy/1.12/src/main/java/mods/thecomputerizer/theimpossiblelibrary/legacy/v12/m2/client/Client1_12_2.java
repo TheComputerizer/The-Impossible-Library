@@ -64,7 +64,7 @@ public class Client1_12_2 extends ClientAPI {
         return CommonEvents1_12_2::new;
     }
     
-    @Override protected Supplier<KeyHelperAPI<?>> initKeyHelper() {
+    @Override protected Supplier<KeyHelperAPI> initKeyHelper() {
         return KeyHelper1_12_2::new;
     }
     
@@ -100,7 +100,7 @@ public class Client1_12_2 extends ClientAPI {
         return SpawnHelper1_12_2::new;
     }
     
-    @Override protected Supplier<SoundHelperAPI<?>> initSoundHelper() {
+    @Override protected Supplier<SoundHelperAPI> initSoundHelper() {
         return SoundHelper1_12_2::new;
     }
     

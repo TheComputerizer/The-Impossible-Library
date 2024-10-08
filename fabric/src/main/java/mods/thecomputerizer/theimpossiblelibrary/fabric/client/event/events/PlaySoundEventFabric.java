@@ -5,9 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
-import net.minecraft.client.resources.sounds.SoundInstance;
 
-public class PlaySoundEventFabric extends PlaySoundEventWrapper<Object[],SoundInstance> implements ClientFabricEvent {
+public class PlaySoundEventFabric extends PlaySoundEventWrapper<Object[]> implements ClientFabricEvent {
     
     @Override public Event<?> getEventInstance() {
         return null;
@@ -17,11 +16,11 @@ public class PlaySoundEventFabric extends PlaySoundEventWrapper<Object[],SoundIn
         return wrapGenericGetter(wrapArrayGetter(0),"");
     }
 
-    @Override protected EventFieldWrapper<Object[],SoundAPI<SoundInstance>> wrapSoundField() {
+    @Override protected EventFieldWrapper<Object[],SoundAPI<?>> wrapSoundField() {
         return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 
-    @Override protected EventFieldWrapper<Object[],SoundAPI<SoundInstance>> wrapSoundResultField() {
+    @Override protected EventFieldWrapper<Object[],SoundAPI<?>> wrapSoundResultField() {
         return wrapGenericGetter(wrapArrayGetter(0),null);
     }
 }

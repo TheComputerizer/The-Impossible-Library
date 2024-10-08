@@ -181,28 +181,28 @@ public class ColorHelper {
     /**
      * Sets the global state color
      */
-    public static void setStateColor(RenderAPI renderer, Vector4f color) {
+    public static void setStateColor(RenderAPI<?> renderer, Vector4f color) {
         setStateColor(renderer,color.x,color.y,color.z,color.w);
     }
 
     /**
      * Sets the global state color
      */
-    public static void setStateColor(RenderAPI renderer, Vector4i color) {
+    public static void setStateColor(RenderAPI<?> renderer, Vector4i color) {
         setStateColor(renderer,color.x,color.y,color.z,color.w);
     }
 
     /**
      * Sets the global state color
      */
-    public static void setStateColor(RenderAPI renderer, int r, int g, int b, int a) {
+    public static void setStateColor(RenderAPI<?> renderer, int r, int g, int b, int a) {
         setStateColor(renderer,((float)r)/255f,((float)g)/255f,((float)b)/255f,((float)a)/255f);
     }
 
     /**
      * Sets the global state color
      */
-    public static void setStateColor(RenderAPI renderer, float r, float g, float b, float a) {
+    public static void setStateColor(RenderAPI<?> renderer, float r, float g, float b, float a) {
         renderer.setColor(r,g,b,a);
     }
 }

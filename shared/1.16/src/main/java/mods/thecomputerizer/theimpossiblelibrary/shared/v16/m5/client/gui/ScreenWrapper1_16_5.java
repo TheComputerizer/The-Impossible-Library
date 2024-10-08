@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.gui;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
@@ -20,12 +20,12 @@ import java.util.Objects;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
-public class ScreenWrapperForge1_16_5 extends Screen implements Wrapped<ScreenAPI> {
+public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
     
     private final ScreenAPI wrapped;
     private boolean isOpen;
 
-    public ScreenWrapperForge1_16_5(ScreenAPI wrapped) {
+    public ScreenWrapper1_16_5(ScreenAPI wrapped) {
         super(wrapped.getTitle().getAsComponent());
         this.wrapped = wrapped;
     }

@@ -1,18 +1,18 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.blockentity;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.blockentity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class TILTickableBlockEntityForge1_16_5 extends TILBasicBlockEntityForge1_16_5 implements ITickableTileEntity {
+public class TILTickableBlockEntity1_16_5 extends TILBasicBlockEntity1_16_5 implements ITickableTileEntity {
     
     protected final Consumer<BlockEntityAPI<?,?>> onTick;
     
-    public TILTickableBlockEntityForge1_16_5(TileEntityType<?> type, Consumer<BlockEntityAPI<?,?>> onTick) {
+    public TILTickableBlockEntity1_16_5(TileEntityType<?> type, Consumer<BlockEntityAPI<?,?>> onTick) {
         super(type);
         this.onTick = onTick;
     }

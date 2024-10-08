@@ -21,7 +21,7 @@ public interface MinecraftAPI {
     FontAPI getFont();
     int getGUIScale();
     @Nullable PlayerAPI<?,?> getPlayer();
-    RenderAPI getRenderer();
+    RenderAPI<?> getRenderer();
     MinecraftWindow getWindow();
     @Nullable WorldAPI<?> getWorld();
 

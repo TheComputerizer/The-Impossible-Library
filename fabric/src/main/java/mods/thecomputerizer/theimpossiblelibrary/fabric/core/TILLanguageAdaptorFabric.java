@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -55,7 +54,6 @@ import java.util.Objects;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static net.fabricmc.loader.impl.FabricLoaderImpl.INSTANCE;
@@ -91,10 +89,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     }
     
     String addMoreSources(FabricLauncher launcher) {
-        GameVersion version = CoreAPI.parseVersion(INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0]);
-        if(Objects.isNull(version)) throw new RuntimeException("Failed to parse game version???");
-        String versionName = version.getName().replace('.','_');
-        String className = version.getPackageName(FABRIC,BASE_PACKAGE)+".core.TILCoreFabric"+versionName;
+        String version = INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0];
+        String className = CoreAPI.findLoadingClass(FABRIC,version);
         ClassLoader loader = DEV ? ClassLoader.getSystemClassLoader() : launcher.getTargetClassLoader();
         Class<?> clazz = ClassHelper.findClass(className,loader);
         while(Objects.nonNull(clazz) && clazz!=Object.class) {

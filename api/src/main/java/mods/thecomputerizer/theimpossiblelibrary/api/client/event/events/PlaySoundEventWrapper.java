@@ -6,15 +6,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_PLAY;
 
-public abstract class PlaySoundEventWrapper<E,S> extends ClientSoundSourceEventType<E,S> {
+public abstract class PlaySoundEventWrapper<E> extends ClientSoundSourceEventType<E> {
 
-    protected EventFieldWrapper<E,SoundAPI<S>> soundResult;
+    protected EventFieldWrapper<E,SoundAPI<?>> soundResult;
 
     protected PlaySoundEventWrapper() {
         super(SOUND_PLAY);
     }
 
-    public SoundAPI<S> getSoundResult() {
+    public SoundAPI<?> getSoundResult() {
         return this.soundResult.get(this.event);
     }
 
@@ -23,9 +23,9 @@ public abstract class PlaySoundEventWrapper<E,S> extends ClientSoundSourceEventT
         this.soundResult = wrapSoundResultField();
     }
 
-    public void setResult(SoundAPI<S> sound) {
+    public void setResult(SoundAPI<?> sound) {
         this.soundResult.set(this.event,sound);
     }
 
-    protected abstract EventFieldWrapper<E,SoundAPI<S>> wrapSoundResultField();
+    protected abstract EventFieldWrapper<E,SoundAPI<?>> wrapSoundResultField();
 }

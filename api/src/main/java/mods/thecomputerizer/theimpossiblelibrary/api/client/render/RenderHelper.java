@@ -32,12 +32,12 @@ public class RenderHelper {
     }
     
     public static double getDirectMouseX() {
-        RenderAPI renderer = ClientHelper.getRenderer();
+        RenderAPI<?> renderer = ClientHelper.getRenderer();
         return Objects.nonNull(renderer) ? renderer.getDirectMouseX() : 0d;
     }
     
     public static double getDirectMouseY() {
-        RenderAPI renderer = ClientHelper.getRenderer();
+        RenderAPI<?> renderer = ClientHelper.getRenderer();
         return Objects.nonNull(renderer) ? renderer.getDirectMouseY() : 0d;
     }
     

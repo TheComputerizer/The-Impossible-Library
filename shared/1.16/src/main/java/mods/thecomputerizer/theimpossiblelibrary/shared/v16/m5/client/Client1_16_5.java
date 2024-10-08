@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
@@ -10,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.gui.ScreenHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.sound.SoundHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block.BlockHelper1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.item.ToolHelper1_16_5;
@@ -36,7 +38,11 @@ public abstract class Client1_16_5 extends ClientAPI {
         return Resource1_16_5::new;
     }
     
-    @Override protected Supplier<SoundHelperAPI<?>> initSoundHelper() {
+    @Override protected Supplier<ScreenHelperAPI> initScreenHelper() {
+        return ScreenHelper1_16_5::new;
+    }
+    
+    @Override protected Supplier<SoundHelperAPI> initSoundHelper() {
         return SoundHelper1_16_5::new;
     }
     

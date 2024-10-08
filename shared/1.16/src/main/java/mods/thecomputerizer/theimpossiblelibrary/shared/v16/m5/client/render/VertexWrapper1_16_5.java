@@ -1,29 +1,44 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
+import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
 
-public abstract class VertexWrapper1_16_5<F,B> extends VertexWrapper {
+public class VertexWrapper1_16_5 extends VertexWrapper {
     
-    protected final F format;
-    protected final B buffer;
+    protected final VertexFormat format;
+    protected final BufferBuilder buffer;
     
-    protected VertexWrapper1_16_5(int mode, F format, B buffer, int numVertices, int ... vertexSizes) {
+    public VertexWrapper1_16_5(int mode, VertexFormat format, int numVertices, int ... vertexSizes) {
         super(mode,numVertices,vertexSizes);
         this.format = format;
-        this.buffer = buffer;
+        this.buffer = Tessellator.getInstance().getBuilder();
     }
     
-    protected abstract <E> BiFunction<F,Integer,E> elementGetter();
+    @Override protected void begin() {
+        this.buffer.begin(this.mode,this.format);
+    }
+    
+    @Override protected void draw() {
+        Tessellator.getInstance().end();
+    }
 
     @Override protected void onVertexEnded(Number[][] numbers) {
         for(int i=0; i<numbers.length; i++)
-            pushBuffer(elementGetter().apply(this.format,i),numbers[i]);
-        vertexEnder().accept(this.buffer);
+            pushBuffer(this.format.getElements().get(i),numbers[i]);
+        this.buffer.endVertex();
     }
-
-    protected abstract <E> void pushBuffer(E element, Number[] numbers);
-    protected abstract Consumer<B> vertexEnder();
+    
+    protected void pushBuffer(VertexFormatElement element, Number[] numbers) {
+        if(element==ELEMENT_POSITION)
+            this.buffer.vertex(numbers[0].doubleValue(),numbers[1].doubleValue(),numbers[2].doubleValue());
+        else if(element==ELEMENT_COLOR)
+            this.buffer.color(numbers[0].floatValue(),numbers[1].floatValue(),numbers[2].floatValue(),numbers[3].floatValue());
+        else if(element==ELEMENT_UV0 || element==ELEMENT_UV1 || element==ELEMENT_UV2)
+            this.buffer.uv(numbers[0].floatValue(),numbers[1].floatValue());
+    }
 }

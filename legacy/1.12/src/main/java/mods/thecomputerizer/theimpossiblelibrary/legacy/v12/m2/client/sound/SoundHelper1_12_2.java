@@ -1,10 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.sound;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
@@ -15,11 +13,7 @@ import static net.minecraft.client.audio.ISound.AttenuationType.NONE;
 import static net.minecraft.util.SoundCategory.MASTER;
 
 @SuppressWarnings({"ConstantValue","UnreachableCode"})
-public class SoundHelper1_12_2 implements SoundHelperAPI<ISound> {
-
-    @Override public SoundAPI<ISound> getAPI(ISound sound) {
-        return new Sound1_12_2(sound);
-    }
+public class SoundHelper1_12_2 implements SoundHelperAPI {
     
     @Override public float getCategoryVolume(String name) {
         SoundCategory category = SoundCategory.getByName(name);

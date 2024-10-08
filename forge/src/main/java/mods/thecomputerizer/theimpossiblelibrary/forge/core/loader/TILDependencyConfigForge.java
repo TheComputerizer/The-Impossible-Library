@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
+package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import net.minecraftforge.forgespi.language.IConfigurable;
 
@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class TILDependencyConfigForge1_16_5 implements IConfigurable {
+public class TILDependencyConfigForge implements IConfigurable {
     
     private final Map<String,Object> infoMap;
     
-    public TILDependencyConfigForge1_16_5(String modid, String version, String order, String side, boolean mandatory) {
+    public TILDependencyConfigForge(String modid, String version, String order, String side, boolean mandatory) {
         this.infoMap = new HashMap<>();
         this.infoMap.put("mandatory",mandatory);
         this.infoMap.put("modId",modid);

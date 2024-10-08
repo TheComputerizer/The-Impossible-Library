@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
+package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import net.minecraftforge.forgespi.language.IConfigurable;
@@ -14,13 +14,13 @@ import java.util.Optional;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
-public class TILFileConfigForge1_16_5 implements IConfigurable {
+public class TILFileConfigForge implements IConfigurable {
     
     private final Map<String,Object> infoMap;
     private final Map<String,List<IConfigurable>> childConfigs;
     private final Map<String,List<IConfigurable>> dependencies;
     
-    public TILFileConfigForge1_16_5(Collection<?> infos) {
+    public TILFileConfigForge(Collection<?> infos) {
         this.infoMap = new HashMap<>();
         this.infoMap.put("modLoader","multiversionprovider");
         this.infoMap.put("loaderVersion","[0.4.0,)");
@@ -29,11 +29,11 @@ public class TILFileConfigForge1_16_5 implements IConfigurable {
         this.dependencies = new HashMap<>();
         this.childConfigs.put("mods",new ArrayList<>());
         for(Object info : infos) {
-            this.childConfigs.get("mods").add(new TILModConfigForge1_16_5(info));
+            this.childConfigs.get("mods").add(new TILModConfigForge(info));
             String modid = getModID(info);
             if(!modid.equals(MODID)) {
                 this.dependencies.put(modid,new ArrayList<>());
-                this.dependencies.get(modid).add(new TILDependencyConfigForge1_16_5(
+                this.dependencies.get(modid).add(new TILDependencyConfigForge(
                         MODID,"[0.4.0,)","AFTER","BOTH",true));
             }
         }
