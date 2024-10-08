@@ -80,7 +80,9 @@ public abstract class CoreAPI {
     }
     
     public static String findLoadingClass(ModLoader loader, String versionStr) {
+        TILRef.logInfo("Parsing version from {}",versionStr);
         GameVersion version = parseVersion(versionStr);
+        TILRef.logInfo("Parsed version is {}",version);
         if(Objects.isNull(version))
             throw new RuntimeException("Failed to parse "+loader+" game version from "+versionStr);
         String versionName = version.getName().replace('.','_');

@@ -29,8 +29,6 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
-import static cpw.mods.modlauncher.Launcher.INSTANCE;
-import static cpw.mods.modlauncher.api.IEnvironment.Keys.VERSION;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 
 @IndirectCallers
@@ -42,7 +40,8 @@ public class MultiversionModLocator extends AbstractJarFileLocator {
     static {
         URL source = ClassHelper.getSourceURL(MultiversionModLocator.class);
         ClassLoader pluginLoader = MultiversionModLocator.class.getClassLoader();
-        String coreName = CoreAPI.findLoadingClass(FORGE,INSTANCE.blackboard().get(VERSION.get()).orElse(""));
+        String version = System.getenv("MC_VERSION");//INSTANCE.environment().getProperty(VERSION.get()).orElse("no version map");
+        String coreName = CoreAPI.findLoadingClass(FORGE,version);
         for(ClassLoader loader : LOADERS) {
             if(loader!=pluginLoader) {
                 if(addURL(loader,source)) TILRef.logInfo("Added {} to {}", source, loader);
