@@ -39,6 +39,7 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
     protected Registry1_16_5<?> item;
     protected Registry1_16_5<?> potion;
     protected Registry1_16_5<?> sound;
+    protected Registry1_16_5<?> structure;
 
     public RegistryHandler1_16_5() {
         Set<? super Registry1_16_5<?>> registries = new HashSet<>();
@@ -91,6 +92,7 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
             case "item": return this.item;
             case "potion": return this.potion;
             case "sound": return this.sound;
+            case "structure": return this.structure;
             default: return null;
         }
     }
@@ -104,6 +106,10 @@ public abstract class RegistryHandler1_16_5 implements RegistryHandlerAPI {
     }
     
     @Override public RegistryAPI<?> getSoundRegistry() {
+        return this.sound;
+    }
+    
+    @Override public RegistryAPI<?> getStructureRegistry() {
         return this.sound;
     }
     

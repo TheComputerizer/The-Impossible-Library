@@ -21,36 +21,36 @@ import java.util.function.Function;
 
 public class RegistryHelper {
     
-    static <R extends RegistryEntryAPI<?>> RegistryAPI<R> get(Function<RegistryHandlerAPI,RegistryAPI<?>> getter) {
+    static <R> RegistryAPI<R> get(Function<RegistryHandlerAPI,RegistryAPI<?>> getter) {
         return BasicWrapped.cast(getter.apply(getHandler()));
     }
 
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBiomeRegistry() {
+    public static <R> RegistryAPI<R> getBiomeRegistry() {
         return get(RegistryHandlerAPI::getBiomeRegistry);
     }
     
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBlockRegistry() {
+    public static <R> RegistryAPI<R> getBlockRegistry() {
         return get(RegistryHandlerAPI::getBlockRegistry);
     }
 
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getBlockEntityRegistry() {
+    public static <R> RegistryAPI<R> getBlockEntityRegistry() {
         return get(RegistryHandlerAPI::getBlockEntityRegistry);
     }
     
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getEffectRegistry() {
+    public static <R> RegistryAPI<R> getEffectRegistry() {
         return get(RegistryHandlerAPI::getEffectRegistry);
     }
     
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getEntityRegistry() {
+    public static <R> RegistryAPI<R> getEntityRegistry() {
         return get(RegistryHandlerAPI::getEntityRegistry);
     }
     
     @IndirectCallers
-    public static <E extends RegistryEntryAPI<?>> E getEntryIfPresent(
+    public static <E> E getEntryIfPresent(
             ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
         return getHandler().getEntryIfPresent(registryKey,entryKey);
     }
@@ -60,12 +60,12 @@ public class RegistryHelper {
     }
     
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getItemRegistry() {
+    public static <R> RegistryAPI<R> getItemRegistry() {
         return get(RegistryHandlerAPI::getItemRegistry);
     }
     
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getPotionRegistry() {
+    public static <R> RegistryAPI<R> getPotionRegistry() {
         return get(RegistryHandlerAPI::getPotionRegistry);
     }
 
@@ -78,8 +78,12 @@ public class RegistryHelper {
     }
     
     @IndirectCallers
-    public static <R extends RegistryEntryAPI<?>> RegistryAPI<R> getSoundRegistry() {
+    public static <R> RegistryAPI<R> getSoundRegistry() {
         return get(RegistryHandlerAPI::getSoundRegistry);
+    }
+    
+    public static <R> RegistryAPI<R> getStructureRegistry() {
+        return get(RegistryHandlerAPI::getStructureRegistry);
     }
     
     @IndirectCallers

@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.registry.blockentity.BlockEntityBuilderForge1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.resource.ResourceLocationForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.Registry1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.RegistryHandler1_16_5;
 import net.minecraft.block.Block;
@@ -16,6 +15,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -35,13 +35,14 @@ public class RegistryHandlerForge1_16_5 extends RegistryHandler1_16_5 {
         this.item = getRegistry(registries,ITEMS,"item",Item.class);
         this.potion = getRegistry(registries,POTION_TYPES,"potion",Potion.class);
         this.sound = getRegistry(registries,SOUND_EVENTS,"sound",SoundEvent.class);
+        this.structure = getRegistry(registries,STRUCTURE_FEATURES,"structure",Structure.class);
     }
     
     @SuppressWarnings("unchecked")
     private <V extends IForgeRegistryEntry<V>> RegistryForge1_16_5<V> getRegistry(
             Set<? super Registry1_16_5<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryForge1_16_5<V> registry = new RegistryForge1_16_5<>(forgeRegistry,(ResourceLocationForge1_16_5)key,(Class<V>)type);
+        RegistryForge1_16_5<V> registry = new RegistryForge1_16_5<>(forgeRegistry,key,(Class<V>)type);
         registries.add(registry);
         return registry;
     }

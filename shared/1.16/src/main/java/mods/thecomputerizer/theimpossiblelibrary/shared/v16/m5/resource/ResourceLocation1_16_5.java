@@ -1,11 +1,26 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.resource;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 
-public abstract class ResourceLocation1_16_5<R> extends ResourceLocationAPI<R> {
+public class ResourceLocation1_16_5 extends ResourceLocationAPI<ResourceLocation> {
     
-    protected ResourceLocation1_16_5(R instance) {
-        super(instance);
+    public ResourceLocation1_16_5(Object instance) {
+        super((ResourceLocation)instance);
+    }
+    
+    @Override public void bind(MinecraftAPI mc) {
+        Minecraft.getInstance().getTextureManager().bind(this.wrapped);
+    }
+    
+    @Override public String getNamespace() {
+        return this.wrapped.getNamespace();
+    }
+    
+    @Override public String getPath() {
+        return this.wrapped.getPath();
     }
 
     @Override public int getSpriteFrames() {

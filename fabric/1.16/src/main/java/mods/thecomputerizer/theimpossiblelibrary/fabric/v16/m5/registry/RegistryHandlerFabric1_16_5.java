@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.registry.blockentity.BlockEntityBuilderFabric1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.resource.ResourceLocationFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.Registry1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.RegistryHandler1_16_5;
 import net.minecraft.core.Registry;
@@ -35,13 +34,14 @@ public class RegistryHandlerFabric1_16_5 extends RegistryHandler1_16_5 {
         this.item = getRegistry(registries,ITEM,"item",Item.class);
         this.potion = getRegistry(registries,MOB_EFFECT,"potion",MobEffect.class);
         this.sound = getRegistry(registries,SOUND_EVENT,"sound",SoundEvent.class);
+        this.structure = getRegistry(registries,STRUCTURE_FEATURE,"structure",SoundEvent.class);
     }
     
     @SuppressWarnings("unchecked")
     private <V> Registry1_16_5<V> getRegistry(
             Set<? super Registry1_16_5<?>> registries, Registry<V> forgeRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryFabric1_16_5<V> registry = new RegistryFabric1_16_5<>(forgeRegistry,(ResourceLocationFabric1_16_5)key,(Class<V>)type);
+        RegistryFabric1_16_5<V> registry = new RegistryFabric1_16_5<>(forgeRegistry,key,(Class<V>)type);
         registries.add(registry);
         return registry;
     }

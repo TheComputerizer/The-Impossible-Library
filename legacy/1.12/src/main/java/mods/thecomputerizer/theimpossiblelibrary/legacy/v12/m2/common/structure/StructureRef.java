@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -8,6 +9,8 @@ import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -42,17 +45,33 @@ public class StructureRef {
         addVanillaRef(refs,"village","Village",null);
         return refs;
     }
+    
+    public static Collection<StructureRef> getRegisteredStructures() {
+        return Collections.unmodifiableSet(REFS);
+    }
+    
+    public static @Nullable StructureRef getStructure(ResourceLocation id) {
+        for(StructureRef ref : REFS)
+            if(ref.id.equals(id)) return ref;
+        return null;
+    }
 
     public static @Nullable StructureRef getStructureAt(WorldServer world, BlockPos pos) {
         for(StructureRef ref : REFS)
             if(ref.isPosInside(world,pos)) return ref;
         return null;
     }
+    
+    public static boolean isRegistered(StructureRef ref) {
+        return REFS.contains(ref);
+    }
 
+    @IndirectCallers
     public static void register(ResourceLocation id, String name) {
         REFS.add(new StructureRef(id,name,null));
     }
-
+    
+    @IndirectCallers
     public static void register(ResourceLocation id, String name, BiFunction<WorldServer,BlockPos,Boolean> posCheck) {
         REFS.add(new StructureRef(id,name,posCheck));
     }

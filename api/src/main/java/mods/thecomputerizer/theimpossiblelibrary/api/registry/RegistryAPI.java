@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 public abstract class RegistryAPI<V> {
 
@@ -24,6 +25,8 @@ public abstract class RegistryAPI<V> {
     }
 
     public abstract ResourceLocationAPI<?> getKey(V value);
+    @IndirectCallers
+    public abstract Collection<ResourceLocationAPI<?>> getKeys();
 
     @IndirectCallers
     public @Nullable ResourceLocationAPI<?> getKeyNullable(V value) {
@@ -31,6 +34,7 @@ public abstract class RegistryAPI<V> {
     }
 
     public abstract V getValue(ResourceLocationAPI<?> key);
+    public abstract Collection<V> getValues();
     
     @IndirectCallers
     public @Nullable V getValueNullable(ResourceLocationAPI<?> key) {
