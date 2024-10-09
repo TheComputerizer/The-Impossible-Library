@@ -139,7 +139,7 @@ public abstract class CommandAPI {
         return true;
     }
     
-    protected boolean isValidInput(String input) {
+    public boolean isValidInput(String input) {
         switch(getType()) {
             case BOOLEAN: return Misc.equalsAny(input,"true","false");
             case BYTE: return isValidNumber(input,Byte::parseByte);
