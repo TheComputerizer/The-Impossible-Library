@@ -134,7 +134,7 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
     
     @Override public void resize(@Nonnull Minecraft mc, int width, int height) {
         super.resize(mc,width,height);
-        MinecraftAPI minecraft = ClientHelper.getMinecraft();
+        MinecraftAPI<?> minecraft = ClientHelper.getMinecraft();
         if(Objects.nonNull(this.wrapped) && Objects.nonNull(minecraft))
             this.wrapped.onResolutionUpdated(minecraft.getWindow());
     }

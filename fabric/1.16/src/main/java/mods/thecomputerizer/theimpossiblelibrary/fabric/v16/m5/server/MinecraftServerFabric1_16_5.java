@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.server;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.server.MinecraftServer1_16_5;
 import net.minecraft.server.MinecraftServer;
@@ -16,13 +18,20 @@ public class MinecraftServerFabric1_16_5 extends MinecraftServer1_16_5 {
     static String saveField = DEV ? "storageSource" : "field_23784";
     static String levelPathField = DEV ? "levelPath" : "field_23768";
     
+    Field getField(Object parent, String name, Class<?> descType) {
+        Class<?> parentClass = parent instanceof MinecraftServer ? MinecraftServer.class : parent.getClass();
+        CoreAPI core = CoreAPI.getInstance();
+        String clsName = core.mapClassName(parentClass.getName());
+        name = core.mapFieldName(clsName,name,"L"+descType.getName()+";");
+        return ReflectionHelper.getField(parentClass,name);
+    }
     
     @Override protected @Nullable Field getLevelPathField(Object save) {
-        return FabricHelper.getObfField(levelPathField,save.getClass(),Path.class);
+        return getField(save,levelPathField,Path.class);
     }
     
     @Override protected @Nullable Field getLevelSaveField(Object server) {
-        return FabricHelper.getObfField(saveField,server.getClass(),LevelStorageAccess.class);
+        return getField(server,saveField,LevelStorageAccess.class);
     }
     
     @Override public MinecraftServer getServer() {

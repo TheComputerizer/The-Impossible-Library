@@ -35,6 +35,7 @@ public abstract class FontAPI<F> extends MutableWrapped<F> {
     
     public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width,
             int height, int maxWidth) {
+        renderer.setFont(getWrapped());
         List<?> components = lines.stream().map(text -> text.getAsComponent()).collect(Collectors.toList());
         TILRef.getClientHandles().renderToolTip(renderer,components,x,y,width,height,maxWidth);
     }

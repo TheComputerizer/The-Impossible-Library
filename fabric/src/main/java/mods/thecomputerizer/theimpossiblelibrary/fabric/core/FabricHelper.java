@@ -75,7 +75,7 @@ public class FabricHelper {
     
     @IndirectCallers
     public static Field getObfField(String name, Class<?> owner, Object instance) {
-        return getObfField("named",name,owner,instance);
+        return getObfField("intermediary",name,owner,instance);
     }
     
     public static Field getObfField(String namespace, String name, Class<?> owner, Object instance) {
@@ -83,7 +83,7 @@ public class FabricHelper {
     }
     
     public static Field getObfField(String name, Class<?> owner, Class<?> instanceClass) {
-        return ReflectionHelper.getField(owner,getObfFieldName("named",name,owner,instanceClass));
+        return ReflectionHelper.getField(owner,getObfFieldName("intermediary",name,owner,instanceClass));
     }
     
     public static Field getObfField(String namespace, String srgName, Class<?> owner, Class<?> instanceClass) {

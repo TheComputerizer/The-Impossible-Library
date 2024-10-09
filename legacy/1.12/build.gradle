@@ -121,21 +121,6 @@ dependencies {
     runtimeOnly(fg.deobf("curse.maven:hei-557549:${hei_version}"))
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
-processResources {
-    from(project(':legacy').processResources.outputs)
-}
-
-processTestResources {
-    from(project(':legacy').processTestResources.outputs)
-}
-
 compileJava {
     source(project(':api').sourceSets.main.allJava,
             project(':legacy').sourceSets.main.allJava)
@@ -144,6 +129,14 @@ compileJava {
 compileTestJava {
     source(project(':api').sourceSets.test.allJava,
             project(':legacy').sourceSets.test.allJava)
+}
+
+processResources {
+    from(project(':legacy').processResources.outputs)
+}
+
+processTestResources {
+    from(project(':legacy').processTestResources.outputs)
 }
 
 jar {
@@ -158,6 +151,13 @@ jar {
                 "Implementation-Version": version,
                 'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
         ])
+    }
+}
+
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
     }
 }
 

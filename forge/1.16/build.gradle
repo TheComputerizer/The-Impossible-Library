@@ -116,7 +116,7 @@ dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("net.minecraftforge:forge:${shared.minecraft_version}-${shared.forge_version}")
 
-    implementation(project(':api')) //TODO Figure out why this needs implementation while 1.12.2 can be runtimeOnly
+    implementation(project(':api'))
     implementation(project(path: ':shared:shared.1_16', configuration: 'dev'))
     implementation(project(':forge'))
 
@@ -139,21 +139,6 @@ mixin {
     add sourceSets.main, mod_refmap
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
-processResources {
-    from(project(':forge').processResources.outputs)
-}
-
-processTestResources {
-    from(project(':forge').processTestResources.outputs)
-}
-
 compileJava {
     source(project(':api').sourceSets.main.allJava,
             project(':forge').sourceSets.main.allJava)
@@ -162,6 +147,14 @@ compileJava {
 compileTestJava {
     source(project(':api').sourceSets.test.allJava,
             project(':forge').sourceSets.test.allJava)
+}
+
+processResources {
+    from(project(':forge').processResources.outputs)
+}
+
+processTestResources {
+    from(project(':forge').processTestResources.outputs)
 }
 
 jar {
@@ -175,6 +168,13 @@ jar {
                 'TweakClass': mod_tweakclass,
                 'TweakOrder': 0
         ])
+    }
+}
+
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
     }
 }
 

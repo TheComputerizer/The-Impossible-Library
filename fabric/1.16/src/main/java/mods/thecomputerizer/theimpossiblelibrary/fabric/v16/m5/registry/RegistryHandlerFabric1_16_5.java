@@ -23,7 +23,7 @@ import static net.minecraft.data.BuiltinRegistries.BIOME;
 public class RegistryHandlerFabric1_16_5 extends RegistryHandler1_16_5 {
     
     @Override protected void collectRegistries(Set<? super Registry1_16_5<?>> registries) {
-        this.biome = getRegistry(registries,BIOME,"biome",Biome.class);
+        this.biome = getRegistry(registries,BIOME,"biome", Biome.class);
         this.block = getRegistry(registries,BLOCK,"block", Block.class);
         this.blockEntity = getRegistry(registries,BLOCK_ENTITY_TYPE,"block_entity",BlockEntityType.class);
         this.effect = getRegistry(registries,POTION,"effect",Potion.class);

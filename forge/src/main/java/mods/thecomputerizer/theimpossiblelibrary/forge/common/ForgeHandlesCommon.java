@@ -15,12 +15,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static net.minecraft.util.registry.Registry.BIOME_REGISTRY;
+import static net.minecraft.world.biome.Biome.RainType.RAIN;
+import static net.minecraft.world.biome.Biome.RainType.SNOW;
 
 public class ForgeHandlesCommon implements SharedHandlesCommon {
     
     @Override public Set<String> biomeTagNames(WorldAPI<?> world, Object biome) {
         RegistryKey<Biome> key = getBiomeKey(((IWorld)world.getWrapped()).registryAccess(),(Biome)biome);
         return BiomeDictionary.getTypes(key).stream().map(Type::getName).collect(Collectors.toSet());
+    }
+    
+    @Override public boolean canBiomeRain(Object biome) {
+        return ((Biome)biome).getPrecipitation()==RAIN;
+    }
+    
+    @Override public boolean canBiomeSnow(Object biome) {
+        return ((Biome)biome).getPrecipitation()==SNOW;
     }
     
     public @Nullable RegistryKey<Biome> getBiomeKey(DynamicRegistries registries, Biome biome) {

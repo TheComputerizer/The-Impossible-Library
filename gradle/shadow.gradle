@@ -7,7 +7,7 @@ configurations {
 shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     configurations = [project.configurations.shadow]
-    setArchiveBaseName(mod_id)
+    setArchiveBaseName("${mod_id}_shadow")
     setArchiveClassifier('')
     mergeServiceFiles()
     exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA',

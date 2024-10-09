@@ -11,4 +11,12 @@ public class LegacyHandlesCommon implements SharedHandlesCommon {
     @Override public Set<String> biomeTagNames(WorldAPI<?> world, Object biome) {
         return Collections.emptySet();
     }
+    
+    @Override public boolean canBiomeRain(Object biome) {
+        return false;
+    }
+    
+    @Override public boolean canBiomeSnow(Object biome) {
+        return false;
+    }
 }
