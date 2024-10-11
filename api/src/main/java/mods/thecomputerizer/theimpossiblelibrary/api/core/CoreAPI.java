@@ -105,8 +105,11 @@ public abstract class CoreAPI {
         return invoke(instance,name,new Class<?>[]{});
     }
     
+    @SuppressWarnings("DataFlowIssue")
     public static Object invoke(Object instance, String name, Class<?>[] argClasses, Object ... args) {
-        return ReflectionHelper.invokeMethod(instance.getClass(),name,instance,argClasses,args);
+        Class<?> clazz = Objects.nonNull(instance) ? instance.getClass() :
+                findInstance(Thread.currentThread().getContextClassLoader()).getClass();
+        return ReflectionHelper.invokeMethod(clazz,name,instance,argClasses,args);
     }
     
     public static boolean isClient() {

@@ -122,7 +122,11 @@ public class World1_12_2 extends WorldAPI<World> {
     @Override public int getMoonPhase() {
         return this.wrapped.getMoonPhase();
     }
-
+    
+    @Override public int getRaidWave(BlockPosAPI<?> pos) {
+        return -1;
+    }
+    
     @Override public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
         return WrapperHelper.wrapState(this.wrapped.getBlockState(pos.unwrap()));
     }

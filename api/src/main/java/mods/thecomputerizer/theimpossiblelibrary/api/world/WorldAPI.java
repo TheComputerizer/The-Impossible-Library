@@ -44,6 +44,7 @@ public abstract class WorldAPI<W> extends AbstractWrapped<W> {
     }
     
     @IndirectCallers public abstract int getMoonPhase();
+    @IndirectCallers public abstract int getRaidWave(BlockPosAPI<?> pos);
     public abstract BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos);
     @IndirectCallers public abstract StructureAPI<?> getStructureAt(BlockPosAPI<?> pos);
     public abstract long getTimeDay();

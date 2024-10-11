@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.server;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
@@ -26,6 +27,13 @@ public abstract class MinecraftServer1_16_5 extends MinecraftServerAPI<Minecraft
         if(Objects.nonNull(server)) server.getCommands().performCommand(server.createCommandSourceStack(),command);
     }
     
+    protected @Nullable Field getField(Object parent, String name, Class<?> descType) {
+        Class<?> parentClass = parent instanceof MinecraftServer ? MinecraftServer.class : parent.getClass();
+        CoreAPI core = CoreAPI.getInstance();
+        String clsName = core.mapClassName(parentClass.getName());
+        name = core.mapFieldName(clsName,name,"L"+descType.getName()+";");
+        return ReflectionHelper.getField(parentClass,name);
+    }
     
     @Override public @Nullable PlayerAPI<?,?> getPlayerByUUID(String uuid) {
         Object player = getServer().getPlayerList().getPlayer(UUID.fromString(uuid));

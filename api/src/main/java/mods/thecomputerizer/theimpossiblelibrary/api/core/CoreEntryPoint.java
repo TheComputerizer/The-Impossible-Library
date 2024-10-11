@@ -26,7 +26,7 @@ public abstract class CoreEntryPoint {
     public abstract String getCoreName();
     
     protected final String getClassName(ClassNode node) {
-        return CoreAPI.getInstance().mapClassName(node.name);
+        return CoreAPI.getInstance().mapClassName(node.name).replace('.','/');
     }
     
     @IndirectCallers

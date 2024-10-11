@@ -25,6 +25,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureManager;
+import net.minecraft.world.raid.Raid;
 import net.minecraft.world.server.ServerWorld;
 import org.joml.Vector3d;
 
@@ -127,6 +128,11 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     
     @Override public int getMoonPhase() {
         return this.wrapped.getMoonPhase();
+    }
+    
+    @Override public int getRaidWave(BlockPosAPI<?> pos) {
+        Raid raid = this.wrapped.isClientSide() ? null : ((ServerWorld)this.wrapped).getRaidAt(pos.unwrap());
+        return Objects.nonNull(raid) ? raid.getGroupsSpawned() : -1;
     }
     
     @Override public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {

@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
+import cpw.mods.modlauncher.ArgumentHandler;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
@@ -29,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
+import static cpw.mods.modlauncher.Launcher.INSTANCE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 
 @IndirectCallers
@@ -40,7 +42,7 @@ public class MultiversionModLocator extends AbstractJarFileLocator {
     static {
         URL source = ClassHelper.getSourceURL(MultiversionModLocator.class);
         ClassLoader pluginLoader = MultiversionModLocator.class.getClassLoader();
-        String version = System.getenv("MC_VERSION");//INSTANCE.environment().getProperty(VERSION.get()).orElse("no version map");
+        String version = getVersionStr();
         String coreName = CoreAPI.findLoadingClass(FORGE,version);
         for(ClassLoader loader : LOADERS) {
             if(loader!=pluginLoader) {
@@ -70,6 +72,33 @@ public class MultiversionModLocator extends AbstractJarFileLocator {
             } else TILRef.logError("Unable to find delegatedClassLoader field??");
         }
         return false;
+    }
+    
+    static String getVersionStr() {
+        Object args = ReflectionHelper.getFieldInstance(INSTANCE,INSTANCE.getClass(),"argumentHandler");
+        if(!(args instanceof ArgumentHandler)) {
+            TILRef.logError("Failed to find argument handler!");
+            return null;
+        }
+        ArgumentHandler handler = (ArgumentHandler)args;
+        String[] rawArgs = (String[])ReflectionHelper.getFieldInstance(handler,handler.getClass(),"args");
+        if(Objects.isNull(rawArgs)) {
+            TILRef.logError("Failed to find version using handler {}",handler);
+            return null;
+        }
+        int versionIndex = -1;
+        for(int i=0;i<rawArgs.length;i++) {
+            if(rawArgs[i].equals("--fml.mcVersion")) {
+                versionIndex = i+1;
+                break;
+            }
+        }
+        if(versionIndex>=0) {
+            TILRef.logInfo("Found version arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
+            return rawArgs[versionIndex];
+        }
+        TILRef.logError("Failed to find version from {}",Arrays.toString(rawArgs));
+        return null;
     }
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
@@ -159,14 +188,16 @@ public class MultiversionModLocator extends AbstractJarFileLocator {
         return "multiversionloader";
     }
     
-    @SuppressWarnings("resource")
+    @SuppressWarnings({"resource","unchecked"})
     @Override public List<IModFile> scanMods() {
         TILRef.logDebug("Scanning for mods in multiversion jars");
         List<IModFile> mods = new ArrayList<>();
-        Map<String,MultiVersionModData> data = CoreAPI.getInstance().getModData(new File("."));
+        Object instance = CoreAPI.invoke(null,"getInstance");
+        if(Objects.isNull(instance)) TILRef.logError("Failed to get CoreAPI instance :(");
+        Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
         for(TILModFileForge candidate : this.candidateMap.values()) {
             this.modJars.compute(candidate,(file,system) -> createFileSystem(file));
-            candidate.populateMultiversionData(data);
+            candidate.populateMultiversionData((Map<String,MultiVersionModData>)data);
             mods.add(candidate);
         }
         return Collections.unmodifiableList(mods);
