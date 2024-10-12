@@ -46,7 +46,7 @@ plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
     runs {
         def args = [ '-Dtil.dev=true' ]
         configureEach {
@@ -80,7 +80,7 @@ configurations {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft("net.minecraftforge:forge:${minecraft_1_16_5}-${forge_1_16_5}")
     compileOnly(project(':api'))
     compileOnly(project(':shared'))
 }
@@ -94,12 +94,8 @@ processTestResources {
 }
 
 jar {
-    manifest {
-        attributes([
-                'Implementation-Title': name,
-                'Implementation-Version': version
-        ])
-    }
+    setArchiveBaseName(mod_id)
+    //from(project(':shared').jar.archiveFile.collect { zipTree(it) })
 }
 
 

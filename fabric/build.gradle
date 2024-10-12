@@ -46,25 +46,23 @@ configurations {
 }
 
 dependencies {
-    def shared = project(':shared:shared.1_16')
-    minecraft("com.mojang:minecraft:${shared.minecraft_version}")
+    minecraft("com.mojang:minecraft:${minecraft_1_16_5}")
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${shared.minecraft_version}:${shared.parchment_version}@zip")
+        parchment("org.parchmentmc.data:parchment-${minecraft_1_16_5}:${parchment_1_16_5}@zip")
     }
 
     compileOnly(project(':api'))
 
-    modImplementation("net.fabricmc:fabric-loader:${loader_version}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${shared.fabric_version}+1.16")
+    modImplementation("net.fabricmc:fabric-loader:${fabric_loader}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_1_16_5}+1.16")
 }
 
-loom.mixin.add(sourceSets.main,'theimpossiblelibrary.refmap.json')
+loom.mixin.add(sourceSets.main,mod_refmap)
 
 processResources {
-    def core = "${fabric_base_package}.core."
-    def replacements = [ 'adaptor': "${core}TILLanguageAdaptorFabric", 'coremods': "${core}asm.TILCoreModLoader",
-                         'injector': "${core}loader.TILModInjectorFabric", 'version': version ]
+    def replacements = [ 'adaptor': fabric_adaptor, 'coremods': fabric_coremods, 'injector': fabric_injector,
+                         'version': version ]
     inputs.properties replacements
     filesMatching("fabric.mod.json") { expand replacements }
     from(project(':api').processResources.outputs)
@@ -75,17 +73,9 @@ processTestResources {
 }
 
 jar {
-    archiveBaseName = mod_id
-    manifest {
-        attributes([
-                'Implementation-Title': name,
-                'Implementation-Version': version
-        ])
-    }
+    setArchiveBaseName(mod_id)
 }
 
 artifacts {
     dev jar
 }
-
-//tasks.jar.dependsOn(':api:build')

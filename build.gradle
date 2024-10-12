@@ -8,7 +8,6 @@
 apply from: rootProject.file('buildSrc\\shared.gradle')
 java.toolchain.languageVersion = JavaLanguageVersion.of(23)
 
-def api = project(':api')
 def fabric = project(':fabric')
 def legacy_1_12_2 = project(':legacy:legacy.1_12')
 def fabric_1_16_5 = project(':fabric:fabric.1_16')
@@ -28,13 +27,10 @@ jar {
     forge_1_16_5.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
     manifest {
         attributes([
-                'FMLAT': 'theimpossiblelibrary_at.cfg',
-                'FMLCorePlugin': "${legacy_1_12_2.mod_plugin}1_12_2",
-                'ForceLoadAsMod': true,
-                'Implementation-Title': name,
-                'Implementation-Version': version,
-                'TILMultiversionMods': api.common_entrypoint,
-                'TILMultiversionCoreMods': api.core_entrypoint
+                'Implementation-Title': mod_name,
+                'Implementation-Version': mod_version,
+                'TILMultiversionCoreMods': core_entrypoint,
+                'TILMultiversionMods': common_entrypoint
         ])
     }
 }

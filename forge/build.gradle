@@ -44,19 +44,18 @@ buildscript {
 }
 
 apply from: rootProject.file('gradle\\java8-module.gradle')
-//apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_base_version}-${minecraft_base_version}"
+    mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
         def args = [
                 '-Dtil.dev=true',
-                '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint',
-                '-Dtil.classpath.coremods=mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
+                "-Dtil.classpath.mods=${common_entrypoint}",
+                "-Dtil.classpath.coremods=${core_entrypoint}"
         ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
@@ -82,7 +81,7 @@ minecraft {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_base_version}-${forge_base_version}")
+    minecraft("net.minecraftforge:forge:${minecraft_1_16_5}-${forge_1_16_5}")
 
     compileOnly(project(':api'))
 }
@@ -99,8 +98,8 @@ jar {
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
-                'Implementation-Title': name,
-                'Implementation-Version': version
+                'Implementation-Title': mod_name,
+                'Implementation-Version': mod_version
         ])
     }
 }

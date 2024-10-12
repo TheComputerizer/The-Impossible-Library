@@ -53,12 +53,13 @@ sourceSets {
 }
 
 minecraft {
-    mappings channel: 'stable', version: mappings_version
+    mappings channel: 'stable', version: legacy_mappings_1_12_2
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
         def args = [
                 '-Dtil.dev=true',
-                '-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                "-Dtil.classpath.mods=${common_entrypoint}",
+                "-Dtil.classpath.coremods=${core_entrypoint}"
         ]
         client {
             workingDirectory file('run_client')
@@ -95,7 +96,7 @@ repositories {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft("net.minecraftforge:forge:${minecraft_1_12_2}-${forge_1_12_2}")
 
     annotationProcessor("com.google.code.gson:gson:${gson_annotation}")
     annotationProcessor("com.google.guava:guava:${guava_annotation}")
@@ -109,10 +110,10 @@ dependencies {
 
     //mod support dependencies
     implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))
-    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_version}:${bookshelf_version}"))
+    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_1_12_2}:${bookshelf_version}"))
     implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
     implementation(fg.deobf("curse.maven:coroutil-237749:${coroutil_version}"))
-    implementation(fg.deobf("net.darkhax.gamestages:GameStages-${minecraft_version}:${gamestages_version}"))
+    implementation(fg.deobf("net.darkhax.gamestages:GameStages-${minecraft_1_12_2}:${gamestages_version}"))
     implementation(fg.deobf("curse.maven:infernalmobs-227875:${infernal_version}"))
     implementation(fg.deobf("curse.maven:nyx-349214:${nyx_version}"))
     implementation(fg.deobf("curse.maven:sereneseasons-291874:$seasons_version}"))
@@ -144,12 +145,9 @@ jar {
     manifest {
         attributes([
                 'FMLAT': mod_accesstransformer,
-                'FMLCorePlugin': "${mod_plugin}1_12_2",
+                'FMLCorePlugin': legacy_entrypoint,
                 'FMLCorePluginContainsFMLMod': true,
-                'ForceLoadAsMod': true,
-                "Implementation-Title": name,
-                "Implementation-Version": version,
-                'TILMultiversionMods': 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                'ForceLoadAsMod': true
         ])
     }
 }

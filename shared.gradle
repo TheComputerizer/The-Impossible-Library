@@ -22,7 +22,6 @@ repositories {
 dependencies {
     annotationProcessor("org.projectlombok:lombok:${lombok_version}")
 
-    compileOnly("com.moandjiezana.toml:toml4j:${toml4j_version}") { transitive = false }
     compileOnly("org.joml:joml:${joml_version}") { transitive = false }
     compileOnly("org.projectlombok:lombok:${lombok_version}")
 }
