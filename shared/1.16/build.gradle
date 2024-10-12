@@ -94,8 +94,7 @@ processTestResources {
 }
 
 jar {
-    setArchiveBaseName(mod_id)
-    //from(project(':shared').jar.archiveFile.collect { zipTree(it) })
+    //setArchiveBaseName(mod_id)
 }
 
 

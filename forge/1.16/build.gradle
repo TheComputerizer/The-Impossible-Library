@@ -44,8 +44,6 @@ apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
-def shared = project(':shared:shared.1_16')
-
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
     accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
@@ -115,7 +113,7 @@ dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_1_16_5}-${forge_1_16_5}")
 
     implementation(project(':api'))
-    implementation(project(path: ':shared:shared.1_16', configuration: 'dev'))
+    implementation(project(path: ':shared:1.16', configuration: 'dev'))
     implementation(project(':forge'))
 
     //mod support dependencies
@@ -163,6 +161,7 @@ reobf {
 }
 
 shadowJar {
+    def shared = project(':shared:1.16')
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
     shared.afterEvaluate {
         from(shared.jar.archiveFile.collect { zipTree(it) })

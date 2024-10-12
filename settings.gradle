@@ -2,7 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal() {
             content {
-                [ 'com.google.code.gson', 'org.gradle.toolchains',
+                [ 'com.google.code.gson', 'com.gradle', 'org.gradle.toolchains',
                   'org.gradle.toolchains.foojay-resolver-convention' ].forEach { includeGroup it }
             }
         }
@@ -16,13 +16,9 @@ plugins {
 rootProject.name = 'The_Impossible_Library'
 
 [                                                  'api',
-  'fabric',              'forge',                 'legacy',                 'neoforge',              'shared',
                                                ':legacy:1.12',
   ':fabric:1.16',        ':forge:1.16',                                                        ':shared:1.16',
   ':fabric:1.18',        ':forge:1.18',                                                        ':shared:1.18',
-  ':fabric:1.19',        ':forge:1.19',                                                        ':shared:1.19',
-  ':fabric:1.20',        ':forge:1.20',                               ':neoforge:1.20',        ':shared:1.20',
-  ':fabric:1.21',        ':forge:1.21',                               ':neoforge:1.21',        ':shared:1.21',
   ':fabric:1.19:1.19.2', ':forge:1.19:1.19.2',                                          ':shared:1.19:1.19.2',
   ':fabric:1.19:1.19.4', ':forge:1.19:1.19.4',                                          ':shared:1.19:1.19.4',
   ':fabric:1.20:1.20.1', ':forge:1.20:1.20.1',                 ':neoforge:1.20:1.20.1', ':shared:1.20:1.20.1',
@@ -31,5 +27,12 @@ rootProject.name = 'The_Impossible_Library'
   ':fabric:1.21:1.21.1', ':forge:1.21:1.21.1',                 ':neoforge:1.21:1.21.1', ':shared:1.21:1.21.1'
 ].forEach {
     include it
-    findProject(it)?.name = it.substring(1).replace('.','_').replace(':','.')
+    String[] split = (it.startsWith(':') ? it.substring(1) : it).split(':')
+    String name = split.first()
+    if(split.length>1) {
+        String last = split.last()
+        if(name=='legacy' || name=='shared') name = last
+        else name = name+"_"+last
+    }
+    findProject(it)?.name = name
 }
