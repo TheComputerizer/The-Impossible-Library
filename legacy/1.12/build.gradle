@@ -27,9 +27,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('wtf.gofancy.fancygradle:wtf.gofancy.fancygradle.gradle.plugin:1.+')
+        classpath("${shadow_plugin}:${shadow_version}")
+        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
+        classpath("${fancy_gradle_plugin}:${fancy_gradle_version}")
     }
 }
 
@@ -49,28 +49,26 @@ fancyGradle {
 }
 
 sourceSets {
-    main.output.resourcesDir = rootProject.file('legacy\\1.12\\run_client\\TILResources')
+    main.output.resourcesDir = rootProject.file('legacy/1.12/run_client/TILResources')
 }
 
 minecraft {
     mappings channel: 'stable', version: legacy_mappings_1_12_2
-    accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
+    accessTransformer = file("${meta_inf_path}/${mod_accesstransformer}")
     runs {
-        def args = [
-                '-Dtil.dev=true',
-                "-Dtil.classpath.mods=${common_entrypoint}",
-                "-Dtil.classpath.coremods=${core_entrypoint}"
-        ]
+        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', forge_log_level
+            //noinspection GroovyAssignabilityCheck
             jvmArgs args
         }
         server {
             workingDirectory file('run_server')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', forge_log_level
+            //noinspection GroovyAssignabilityCheck
             jvmArgs args
         }
     }
@@ -88,38 +86,44 @@ repositories {
         name = 'BlameJared'
         url = uri('https://maven.blamejared.com')
         content {
-            includeGroup 'net.darkhax.bookshelf'
-            includeGroup 'net.darkhax.gamestages'
+            [ 'bookshelf', 'gamestages' ].forEach {includeGroup "net.darkhax.${it}"}
+        }
+    }
+    maven {
+        name = 'ModMaven'
+        url = uri('https://modmaven.dev')
+        content {
+            includeGroup( 'mezz.jei')
         }
     }
 }
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_1_12_2}-${forge_1_12_2}")
+    minecraft("${forge_mc}:${forge_1_12_2}")
 
-    annotationProcessor("com.google.code.gson:gson:${gson_annotation}")
-    annotationProcessor("com.google.guava:guava:${guava_annotation}")
+    annotationProcessor("${gson_artifact}:${gson_annotation}")
+    annotationProcessor("${guava_artifact}:${guava_annotation}")
 
     //TODO Figure out if this works in dev
-    compileOnly(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
-    compileOnly(fg.deobf("curse.maven:orelib-307806:${orelib_version}"))
+    compileOnly(fg.deobf("${dynamic_surroundings_artifact}:${dynamic_surroundings_1_12_2}"))
+    compileOnly(fg.deobf("${orelib_artifact}:${orelib_1_12_2}"))
 
     implementation(project(':api'))
     implementation(project(':legacy'))
 
     //mod support dependencies
-    implementation(fg.deobf("curse.maven:bloodmoon-226321:${bloodmoon_version}"))
-    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_1_12_2}:${bookshelf_version}"))
-    implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
-    implementation(fg.deobf("curse.maven:coroutil-237749:${coroutil_version}"))
-    implementation(fg.deobf("net.darkhax.gamestages:GameStages-${minecraft_1_12_2}:${gamestages_version}"))
-    implementation(fg.deobf("curse.maven:infernalmobs-227875:${infernal_version}"))
-    implementation(fg.deobf("curse.maven:nyx-349214:${nyx_version}"))
-    implementation(fg.deobf("curse.maven:sereneseasons-291874:$seasons_version}"))
-    implementation(fg.deobf("curse.maven:weather2-695602:${weather_version}"))
+    implementation(fg.deobf("${bloodmoon_artifact}:${bloodmoon_1_12_2}"))
+    implementation(fg.deobf("${bookshelf_artifact}-${bookshelf_1_12_2}"))
+    implementation(fg.deobf("${champions_artifact}:${champions_1_12_2}"))
+    implementation(fg.deobf("${coroutil_artifact}:${coroutil_1_12_2}"))
+    implementation(fg.deobf("${game_stages_artifact}-${game_stages_1_12_2}"))
+    implementation(fg.deobf("${infernal_mobs_artifact}:${infernal_mobs_1_12_2}"))
+    implementation(fg.deobf("${nyx_artifact}:${nyx_1_12_2}"))
+    implementation(fg.deobf("${serene_seasons_artifact}:$serene_seasons_1_12_2}"))
+    implementation(fg.deobf("${weather2_remastered_artifact}:${weather2_1_12_2}"))
 
-    runtimeOnly(fg.deobf("curse.maven:hei-557549:${hei_version}"))
+    runtimeOnly(fg.deobf("${jei_artifact}:${jei_1_12_2}"))
 }
 
 compileJava {

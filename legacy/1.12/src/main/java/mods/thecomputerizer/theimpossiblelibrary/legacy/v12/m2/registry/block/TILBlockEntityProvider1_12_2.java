@@ -9,6 +9,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI.ZERO;
+
 @ParametersAreNonnullByDefault
 public class TILBlockEntityProvider1_12_2 extends TILBasicBlock1_12_2 implements ITileEntityProvider {
     
@@ -17,7 +19,7 @@ public class TILBlockEntityProvider1_12_2 extends TILBasicBlock1_12_2 implements
     }
     
     @Override public @Nullable TileEntity createNewTileEntity(World world, int meta) {
-        return (TileEntity)this.properties.createBlockEntity(WrapperHelper.wrapWorld(world),
+        return (TileEntity)this.properties.createBlockEntity(WrapperHelper.wrapWorld(world),ZERO,
                 WrapperHelper.wrapState(getStateFromMeta(meta))).getEntity();
     }
 }

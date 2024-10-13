@@ -23,8 +23,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath('fabric-loom:fabric-loom.gradle.plugin:1.+')
-        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
+        classpath("${loom_plugin}:${loom_version}")
+        classpath("${shadow_plugin}:${shadow_version}")
     }
 }
 
@@ -52,19 +52,17 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${minecraft_1_20_1}")
+    minecraft("${fabric_mc}:${minecraft_1_20_1}")
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraft_1_20_1}:${parchment_1_20_1}@zip")
+        parchment("${parchment_data}-${minecraft_1_20_1}:${parchment_1_20_1}@zip")
     }
     implementation(project(path: ':api', configuration: 'dev'))
     implementation(project(path: ':fabric', configuration: 'dev'))
     implementation(project(path: ':shared:1.20', configuration: 'dev'))
 
-    modImplementation("net.fabricmc:fabric-loader:${fabric_loader}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_1_20_1}+${minecraft_1_20_1}")
-    //modImplementation("maven.modrinth:cloth-config:${cloth_version}")
-    //modImplementation("maven.modrinth:modmenu:${modmenu_version}")
+    modImplementation("${fabric_loader_artifact}:${fabric_loader}")
+    modImplementation("${fabric_api_artifact}:${fabric_1_20_1}")
 }
 
 remapJar {

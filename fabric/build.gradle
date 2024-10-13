@@ -29,7 +29,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath('fabric-loom:fabric-loom.gradle.plugin:1.+')
+        classpath("${loom_plugin}:${loom_version}")
     }
 }
 
@@ -46,16 +46,16 @@ configurations {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${minecraft_1_16_5}")
+    minecraft("${fabric_mc}:${minecraft_1_16_5}")
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraft_1_16_5}:${parchment_1_16_5}@zip")
+        parchment("${parchment_data}-${minecraft_1_16_5}:${parchment_1_16_5}@zip")
     }
 
     compileOnly(project(':api'))
 
-    modImplementation("net.fabricmc:fabric-loader:${fabric_loader}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_1_16_5}+1.16")
+    modImplementation("${fabric_loader_artifact}:${fabric_loader}")
+    modImplementation("${fabric_api_artifact}:${fabric_1_16_5}")
 }
 
 loom.mixin.add(sourceSets.main,mod_refmap)
@@ -64,8 +64,9 @@ processResources {
     def replacements = [ 'adaptor': fabric_adaptor, 'coremods': fabric_coremods, 'injector': fabric_injector,
                          'version': version ]
     inputs.properties replacements
-    filesMatching("fabric.mod.json") { expand replacements }
-    from(project(':api').processResources.outputs)
+    from(project(':api').processResources.outputs) {
+        filesMatching('fabric.mod.json') { expand replacements }
+    }
 }
 
 processTestResources {

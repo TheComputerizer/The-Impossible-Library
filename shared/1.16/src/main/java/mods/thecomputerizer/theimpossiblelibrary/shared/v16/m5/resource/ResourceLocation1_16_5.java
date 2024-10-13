@@ -11,7 +11,7 @@ public class ResourceLocation1_16_5 extends ResourceLocationAPI<ResourceLocation
         super((ResourceLocation)instance);
     }
     
-    @Override public void bind(MinecraftAPI mc) {
+    @Override public void bind(MinecraftAPI<?> mc) {
         Minecraft.getInstance().getTextureManager().bind(this.wrapped);
     }
     

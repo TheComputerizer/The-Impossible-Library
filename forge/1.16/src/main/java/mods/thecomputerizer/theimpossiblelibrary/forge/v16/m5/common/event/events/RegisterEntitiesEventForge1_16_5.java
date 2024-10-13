@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_ENTITIES;
 
-public class RegisterEntitiesEventForge1_16_5 extends RegisterEntitiesEventForge {
+public class RegisterEntitiesEventForge1_16_5 extends RegisterEntitiesEventForge<EntityType<?>> {
     
     @SubscribeEvent
     public static void onEvent(Register<EntityType<?>> event) {

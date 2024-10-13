@@ -7,20 +7,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialColorA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI.BlockEntityCreator;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 
 public class BlockProperties {
     
-    private final BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> blockEntityCreator;
+    private final BlockEntityCreator blockEntityCreator;
     @Getter private final Map<String,Integer> effectiveTools;
     @Getter private final MaterialAPI<?> material;
     @Getter private final MaterialColorAPI<?> materialColor;
@@ -32,7 +33,7 @@ public class BlockProperties {
             Map<String,Integer> effectiveTools, ResourceLocationAPI<?> registryName,
             @Nullable Function<BlockStateAPI<?>,BlockStateAPI<?>> stateTransformer,
             @Nullable Function<TILItemUseContext,ActionResult> useFunc,
-            @Nullable BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> blockEntityCreator) {
+            @Nullable BlockEntityCreator blockEntityCreator) {
         this.blockEntityCreator = blockEntityCreator;
         this.effectiveTools = effectiveTools;
         this.material = material;
@@ -42,8 +43,8 @@ public class BlockProperties {
         this.useFunc = useFunc;
     }
     
-    public BlockEntityAPI<?,?> createBlockEntity(WorldAPI<?> world, BlockStateAPI<?> state) {
-        return Objects.nonNull(this.blockEntityCreator) ? this.blockEntityCreator.apply(world,state) : null;
+    public BlockEntityAPI<?,?> createBlockEntity(WorldAPI<?> world, BlockPosAPI<?> pos, BlockStateAPI<?> state) {
+        return Objects.nonNull(this.blockEntityCreator) ? this.blockEntityCreator.create(world,pos,state) : null;
     }
     
     public BlockStateAPI<?> getDefaultState(BlockStateAPI<?> state) {

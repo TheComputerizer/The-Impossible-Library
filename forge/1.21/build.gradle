@@ -35,9 +35,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+        classpath("${shadow_plugin}:${shadow_version}")
+        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
+        classpath("${parchment_plugin}:${parchment_plugin_version}")
     }
 }
 
@@ -62,7 +62,7 @@ def shared = project(':shared:1.21')
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_1_21_1}-${forge_1_21_1}")
+    minecraft("${forge_mc}:${forge_1_21_1}")
 
     implementation(project(':api'))
     implementation(project(path: ':forge', configuration: 'dev'))

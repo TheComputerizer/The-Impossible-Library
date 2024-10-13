@@ -35,9 +35,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+        classpath("${shadow_plugin}:${shadow_version}")
+        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
+        classpath("${parchment_plugin}:${parchment_plugin_version}")
     }
 }
 
@@ -50,11 +50,7 @@ plugins.apply('org.parchmentmc.librarian.forgegradle')
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_18_2}-${minecraft_1_18_2}"
     runs {
-        def args = [
-                '-Dtil.dev=true',
-                "-Dtil.classpath.mods=${common_entrypoint}",
-                "-Dtil.classpath.coremods=${core_entrypoint}"
-        ]
+        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
             property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
@@ -64,7 +60,7 @@ minecraft {
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'trace'
+            property 'forge.logging.console.level', forge_log_level
             jvmArgs args
             mods {
                 theimpossiblelibrary {
@@ -75,7 +71,7 @@ minecraft {
         server {
             workingDirectory file('run_server')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', forge_log_level
             jvmArgs args
             mods {
                 theimpossiblelibrary {
@@ -86,15 +82,53 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        name = 'BlameJared'
+        url = uri('https://maven.blamejared.com')
+        content {
+            [ 'bookshelf', 'gamestages' ].forEach {includeGroup "net.darkhax.${it}"}
+        }
+    }
+    maven {
+        name = 'CurseMaven'
+        url = uri('https://www.cursemaven.com')
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven {
+        name = 'ModMaven'
+        url = uri('https://modmaven.dev')
+        content {
+            includeGroup( 'mezz.jei')
+        }
+    }
+}
+
 def shared = project(':shared:1.18')
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_1_18_2}-${forge_1_18_2}")
+    minecraft("${forge_mc}:${forge_1_18_2}")
 
     implementation(project(':api'))
     implementation(project(path: ':forge', configuration: 'dev'))
     implementation(shared)
+
+    //mod support dependencies
+    implementation(fg.deobf("${blueskies_artifact}:${blueskies_1_18_2}"))
+    implementation(fg.deobf("${bookshelf_artifact}-${bookshelf_forge_1_18_2}"))
+    implementation(fg.deobf("${champions_artifact}:${champions_1_18_2}"))
+    implementation(fg.deobf("${configured_artifact}:${configured_1_18_2}"))
+    implementation(fg.deobf("${enhanced_celestials_artifact}:${enhanced_celestials_1_18_2}"))
+    implementation(fg.deobf("${infernal_mobs_artifact}:${infernal_mobs_1_18_2}"))
+    implementation(fg.deobf("${game_stages_artifact}-${game_stages_1_18_2}"))
+    implementation(fg.deobf("${serene_seasons_artifact}:${serene_seasons_1_18_2}"))
+    implementation(fg.deobf("${structure_gel_api_artifact}:${structure_gel_api_1_18_2}"))
+    implementation(fg.deobf("${weather2_artifact}:${weather2_1_18_2}"))
+
+    runtimeOnly(fg.deobf("${jei_artifact}:${jei_forge_1_18_2}"))
 }
 
 compileJava {

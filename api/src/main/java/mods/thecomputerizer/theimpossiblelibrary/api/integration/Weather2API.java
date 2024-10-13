@@ -37,7 +37,8 @@ public abstract class Weather2API implements ModAPI {
     }
 
     @Override public boolean isCompatible(ModLoader loader, Side side, GameVersion version) {
-        return version.isV12() && loader.isLegacyForge();
+        return (version.isV12() && loader.isLegacyForge()) ||
+               (loader.isModernForge() && (version.isV18() || version.isV20()));
     }
 
     @Getter

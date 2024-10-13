@@ -3,7 +3,9 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.blocken
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI.BlockEntityCreator;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.blockentity.BlockEntity1_16_5;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -26,10 +28,11 @@ public class BlockEntityBuilder1_16_5 extends BlockEntityBuilderAPI {
     
     @Override public BlockEntityAPI<?,?> build() { //Stupid backwards reference
         final Block[] blocks = buildBlockArray(this.validBlocks.get(), Block.class);
-        final Function<TileEntityType<?>,Supplier<TileEntity>> creatorFunc = buildCreatorFunc();
+        final Function<TileEntityType<?>,BlockEntityCreator> creatorFunc = buildCreatorFunc();
         final Supplier<TileEntityType<?>> typeSupplier = () -> TILE_ENTITIES.getValue(this.registryName.unwrap());
-        BlockEntityAPI<?,?> entity = BlockEntity1_16_5.get(buildType(() -> creatorFunc.apply(typeSupplier.get()).get(),blocks));
-        entity.setCreator(t -> BlockEntity1_16_5.get(creatorFunc.apply((TileEntityType<?>)t).get()));
+        BlockEntityAPI<?,?> entity = BlockEntity1_16_5.get(buildType(() -> (TileEntity)creatorFunc.apply(typeSupplier.get())
+                .create(null,null,null).getEntity(),blocks));
+        entity.setCreator(creatorFunc.apply(entity.unwrap()));
         entity.setRegistryName(this.registryName);
         return entity;
     }
@@ -49,8 +52,8 @@ public class BlockEntityBuilder1_16_5 extends BlockEntityBuilderAPI {
         return Builder.of(() -> (T)supplier.get(), blocks).build(null);
     }
     
-    Function<TileEntityType<?>,Supplier<TileEntity>> buildCreatorFunc() {
-        return type -> () -> (Objects.nonNull(this.onTick) ?
+    Function<TileEntityType<?>,BlockEntityCreator> buildCreatorFunc() {
+        return type -> (world,pos,state) -> WrapperHelper.wrapBlockEntity(Objects.nonNull(this.onTick) ?
                 new TILTickableBlockEntity1_16_5(type,this.onTick) : new TILBasicBlockEntity1_16_5(type));
     }
 }

@@ -35,8 +35,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
+        classpath("${parchment_plugin}:${parchment_plugin_version}")
     }
 }
 
@@ -47,38 +47,6 @@ plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_20_1}-${minecraft_1_20_1}"
-    runs {
-        def args = [ '-Dtil.dev=true' ]
-        configureEach {
-            def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
-            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', srgToMcpFile
-        }
-
-        client {
-            workingDirectory file('run_client')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'trace'
-            jvmArgs args
-            mods {
-                theimpossiblelibrary {
-                    source sourceSets.main
-                }
-            }
-        }
-        server {
-            workingDirectory file('run_server')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            jvmArgs args
-            mods {
-                theimpossiblelibrary {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
 }
 
 configurations {
@@ -90,7 +58,7 @@ configurations {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_1_20_1}-${forge_1_20_1}")
+    minecraft("${forge_mc}:${forge_1_20_1}")
     implementation(project(':api'))
     implementation(project(':shared'))
     implementation(project(':shared:1.20'))

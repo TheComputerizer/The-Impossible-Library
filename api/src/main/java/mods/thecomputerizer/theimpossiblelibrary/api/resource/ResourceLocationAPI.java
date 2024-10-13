@@ -12,7 +12,7 @@ public abstract class ResourceLocationAPI<R> extends AbstractWrapped<R> {
         super(instance);
     }
 
-    @IndirectCallers public abstract void bind(MinecraftAPI mc);
+    @IndirectCallers public abstract void bind(MinecraftAPI<?> mc);
     
     @Override public boolean equals(Object other) {
         return other instanceof ResourceLocationAPI<?> &&
@@ -39,7 +39,7 @@ public abstract class ResourceLocationAPI<R> extends AbstractWrapped<R> {
             super(value);
         }
 
-        @Override public void bind(MinecraftAPI mc) {}
+        @Override public void bind(MinecraftAPI<?> mc) {}
 
         @Override public int getSpriteFrames() {
             return 0;

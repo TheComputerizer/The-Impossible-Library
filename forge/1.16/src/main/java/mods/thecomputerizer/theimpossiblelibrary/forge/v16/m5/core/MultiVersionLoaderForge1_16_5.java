@@ -58,7 +58,6 @@ public class MultiVersionLoaderForge1_16_5 extends MultiVersionLoaderAPI {
     @IndirectCallers
     public FMLModContainer getModContainer(String modid) {
         ModList list = ModList.get();
-        TILRef.logInfo("MOD LIST IS {}",list);
         Optional<? extends ModContainer> container = list.getModContainerById(modid);
         return (FMLModContainer)container.orElse(null);
     }

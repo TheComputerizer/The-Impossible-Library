@@ -35,8 +35,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
+        classpath("${parchment_plugin}:${parchment_plugin_version}")
     }
 }
 
@@ -58,7 +58,7 @@ configurations {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_1_20_4}-${forge_1_20_4}")
+    minecraft("${forge_mc}:${forge_1_20_4}")
     implementation(project(':api'))
     implementation(project(':shared'))
     implementation(project(path: ':shared:1.20', configuration: 'dev'))

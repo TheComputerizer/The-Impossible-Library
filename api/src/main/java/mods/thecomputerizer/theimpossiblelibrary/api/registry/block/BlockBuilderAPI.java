@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -20,13 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> {
     
-    protected BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> blockEntityCreator;
+    protected BlockEntityCreator blockEntityCreator;
     protected Map<BlockPropertyAPI<?,?>,Comparable<?>> defaultProperties;
     protected Map<String,Integer> effectiveTools;
     protected MaterialAPI<?> material;
@@ -81,7 +81,7 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
         };
     }
     
-    public BlockBuilderAPI setBlockEntityCreator(BiFunction<WorldAPI<?>,BlockStateAPI<?>,BlockEntityAPI<?,?>> creator) {
+    public BlockBuilderAPI setBlockEntityCreator(BlockEntityCreator creator) {
         this.blockEntityCreator = creator;
         return this;
     }
@@ -104,5 +104,11 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
     public BlockBuilderAPI setUseFunc(Function<TILItemUseContext,ActionResult> func) {
         this.useFunc = func;
         return this;
+    }
+    
+    @FunctionalInterface
+    public interface BlockEntityCreator {
+        
+        BlockEntityAPI<?,?> create(WorldAPI<?> world, BlockPosAPI<?> pos, BlockStateAPI<?> state);
     }
 }

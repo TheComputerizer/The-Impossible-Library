@@ -32,9 +32,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+        classpath("${shadow_plugin}:${shadow_version}")
+        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
+        classpath("${parchment_plugin}:${parchment_plugin_version}")
     }
 }
 
@@ -46,24 +46,18 @@ plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
-    accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
     runs {
-        def args = [
-                '-Dtil.dev=true',
-                "-Dtil.classpath.mods=${common_entrypoint}",
-                "-Dtil.classpath.coremods=${core_entrypoint}"
-        ]
+        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
             property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', srgToMcpFile
         }
-
         client {
             workingDirectory file('run_client')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', forge_log_level
             jvmArgs args
             mods {
                 theimpossiblelibrary {
@@ -74,7 +68,7 @@ minecraft {
         server {
             workingDirectory file('run_server')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
+            property 'forge.logging.console.level', forge_log_level
             jvmArgs args
             mods {
                 theimpossiblelibrary {
@@ -97,8 +91,7 @@ repositories {
         name = 'BlameJared'
         url = uri('https://maven.blamejared.com')
         content {
-            includeGroup 'net.darkhax.bookshelf'
-            includeGroup 'net.darkhax.gamestages'
+            [ 'bookshelf', 'gamestages' ].forEach {includeGroup "net.darkhax.${it}"}
         }
     }
     maven {
@@ -108,37 +101,38 @@ repositories {
             includeGroup 'com.legacy'
         }
     }
-
     maven {
-        name = 'Progwml6 Maven'
-        url = uri('https://dvs1.progwml6.com/files/maven/')
+        name = 'ModMaven'
+        url = uri('https://modmaven.dev')
         content {
-            includeGroup 'mezz.jei'
+            includeGroup( 'mezz.jei')
         }
     }
 }
 
+def shared = project(':shared:1.16')
+
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("net.minecraftforge:forge:${minecraft_1_16_5}-${forge_1_16_5}")
+    minecraft("${forge_mc}:${forge_1_16_5}")
 
     implementation(project(':api'))
-    implementation(project(path: ':shared:1.16', configuration: 'dev'))
+    implementation(shared)
     implementation(project(':forge'))
 
     //mod support dependencies
-    implementation(fg.deobf("curse.maven:betterweather-400714:${betterweather_version}"))
-    implementation(fg.deobf("curse.maven:blueskies-312918:${blueskies_version}"))
-    implementation(fg.deobf("curse.maven:champions-307152:${champions_version}"))
-    implementation(fg.deobf("curse.maven:configured-457570:${configured_version}"))
-    implementation(fg.deobf("curse.maven:dsurround-238891:${dsurround_version}"))
-    implementation(fg.deobf("curse.maven:enhancedcelestials-438447:${enhancedcelestials_version}"))
-    implementation(fg.deobf("curse.maven:sereneseasons-291874:${seasons_version}"))
-    implementation(fg.deobf("curse.maven:structure-gel-378802:${structuregel_version}"))
-    implementation(fg.deobf("net.darkhax.bookshelf:Bookshelf-${minecraft_1_16_5}:${bookshelf_version}"))
-    implementation(fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_1_16_5}:${gamestages_version}"))
+    implementation(fg.deobf("${betterweather_artifact}:${betterweather_1_16_5}"))
+    implementation(fg.deobf("${blueskies_artifact}:${blueskies_1_16_5}"))
+    implementation(fg.deobf("${bookshelf_artifact}-${bookshelf_1_16_5}"))
+    implementation(fg.deobf("${champions_artifact}:${champions_1_16_5}"))
+    implementation(fg.deobf("${configured_artifact}:${configured_1_16_5}"))
+    implementation(fg.deobf("${dynamic_surroundings_artifact}:${dynamic_surroundings_1_16_5}"))
+    implementation(fg.deobf("${enhanced_celestials_artifact}:${enhanced_celestials_1_16_5}"))
+    implementation(fg.deobf("${game_stages_artifact}-${game_stages_1_16_5}"))
+    implementation(fg.deobf("${serene_seasons_artifact}:${serene_seasons_1_16_5}"))
+    implementation(fg.deobf("${structure_gel_api_artifact}:${structure_gel_api_1_16_5}"))
 
-    runtimeOnly(fg.deobf("mezz.jei:jei-${minecraft_1_16_5}:${jei_version}"))
+    runtimeOnly(fg.deobf("${jei_artifact}:${jei_1_16_5}"))
 }
 
 compileJava {
@@ -171,7 +165,6 @@ reobf {
 }
 
 shadowJar {
-    def shared = project(':shared:1.16')
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
     shared.afterEvaluate {
         from(shared.jar.archiveFile.collect { zipTree(it) })

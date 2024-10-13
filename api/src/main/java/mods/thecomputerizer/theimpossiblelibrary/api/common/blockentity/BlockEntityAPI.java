@@ -5,6 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI.BlockEntityCreator;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
@@ -12,23 +13,22 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 @Getter
 public abstract class BlockEntityAPI<E,T> extends AbstractWrapped<T> implements RegistryEntryAPI<T> {
     
     protected final E entity;
-    @Setter protected Function<T,BlockEntityAPI<?,?>> creator;
+    @Setter protected BlockEntityCreator creator;
 
     protected BlockEntityAPI(E entity, T type) {
         super(type);
         this.entity = entity;
-        if(Objects.nonNull(this.entity)) this.creator = t -> this;
+        if(Objects.nonNull(this.entity)) this.creator = (world,pos,state) -> this;
     }
     
     @IndirectCallers
-    public BlockEntityAPI<?,?> createFromReference() {
-        return Objects.nonNull(this.creator) ? this.creator.apply(this.wrapped) : null;
+    public BlockEntityAPI<?,?> createFromReference(WorldAPI<?> world, BlockPosAPI<?> pos, BlockStateAPI<?> state) {
+        return Objects.nonNull(this.creator) ? this.creator.create(world,pos,state) : null;
     }
     
     public abstract BlockPosAPI<?> getPos();

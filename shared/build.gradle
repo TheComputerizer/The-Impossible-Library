@@ -4,6 +4,13 @@
 
 apply from: rootProject.file('buildSrc\\shared.gradle')
 
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
 jar {
     from(project(':api').jar.archiveFile.collect {
         include 'mods/**'
@@ -17,6 +24,10 @@ processResources {
 
 processTestResources {
     from(project(':api').processTestResources.outputs)
+}
+
+artifacts {
+    dev jar
 }
 
 tasks.jar.dependsOn(':api:build')

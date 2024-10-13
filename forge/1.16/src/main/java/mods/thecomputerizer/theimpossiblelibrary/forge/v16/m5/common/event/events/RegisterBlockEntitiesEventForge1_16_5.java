@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_BLOCK_ENTITIES;
 
-public class RegisterBlockEntitiesEventForge1_16_5 extends RegisterBlockEntitiesEventForge {
+public class RegisterBlockEntitiesEventForge1_16_5 extends RegisterBlockEntitiesEventForge<TileEntityType<?>> {
     
     @SubscribeEvent
     public static void onEvent(Register<TileEntityType<?>> event) {

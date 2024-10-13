@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_BLOCKS;
 
-public class RegisterBlocksEventForge1_16_5 extends RegisterBlocksEventForge {
+public class RegisterBlocksEventForge1_16_5 extends RegisterBlocksEventForge<Block> {
     
     @SubscribeEvent
     public static void onEvent(Register<Block> event) {

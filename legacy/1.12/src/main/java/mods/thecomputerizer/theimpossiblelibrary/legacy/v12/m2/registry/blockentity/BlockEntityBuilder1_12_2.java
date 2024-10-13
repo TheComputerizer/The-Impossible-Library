@@ -16,7 +16,7 @@ public class BlockEntityBuilder1_12_2 extends BlockEntityBuilderAPI {
     @Override public BlockEntityAPI<?,?> build() {
         BlockEntityAPI<?,?> entity = WrapperHelper.wrapBlockEntity(
                 Objects.nonNull(this.onTick) ? TILTickableBlockEntity1_12_2.class : TILBasicBlockEntity1_12_2.class);
-        entity.setCreator(clazz -> WrapperHelper.wrapBlockEntity(Objects.nonNull(this.onTick) ?
+        entity.setCreator((world,pos,state) -> WrapperHelper.wrapBlockEntity(Objects.nonNull(this.onTick) ?
                         new TILTickableBlockEntity1_12_2(this.registryName,this.onTick) : new TILBasicBlockEntity1_12_2()));
         entity.setRegistryName(this.registryName);
         return entity;
