@@ -47,28 +47,6 @@ plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
-    runs {
-        def args = [ '-Dtil.dev=true' ]
-        configureEach {
-            def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
-            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', srgToMcpFile
-        }
-
-        client {
-            workingDirectory file('run_client')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'trace'
-            jvmArgs args
-        }
-        server {
-            workingDirectory file('run_server')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            jvmArgs args
-        }
-    }
 }
 
 configurations {
@@ -94,9 +72,8 @@ processTestResources {
 }
 
 jar {
-    //setArchiveBaseName(mod_id)
+    setArchiveBaseName(mod_id)
 }
-
 
 artifacts {
     dev jar

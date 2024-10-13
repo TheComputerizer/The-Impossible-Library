@@ -79,6 +79,13 @@ minecraft {
     }
 }
 
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
 dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("net.minecraftforge:forge:${minecraft_1_16_5}-${forge_1_16_5}")
@@ -102,6 +109,10 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+}
+
+artifacts {
+    dev jar
 }
 
 tasks.jar.dependsOn(':api:build')

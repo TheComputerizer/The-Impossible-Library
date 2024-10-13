@@ -53,9 +53,6 @@ repositories {
     }
 }
 
-
-def shared = project(':shared:1.16')
-
 dependencies {
     minecraft("com.mojang:minecraft:${minecraft_1_16_5}")
     mappings loom.layered() {
@@ -67,9 +64,9 @@ dependencies {
     implementation(project(path: ':shared:1.16', configuration: 'dev'))
 
     modImplementation("net.fabricmc:fabric-loader:${fabric_loader}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_1_16_5}+1.16")
-    modImplementation("maven.modrinth:cloth-config:${cloth_version}")
-    modImplementation("maven.modrinth:modmenu:${modmenu_version}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_1_16_5}+${minecraft_1_16}")
+    modImplementation("maven.modrinth:cloth-config:${cloth_1_16_5}")
+    modImplementation("maven.modrinth:modmenu:${modmenu_1_16_5}")
 }
 
 remapJar {
@@ -220,6 +217,7 @@ def renderRemaps = [ 'net.minecraft.client.MainWindow': 'platform.Window',
 ]
 
 shadowJar {
+    def shared = project(':shared:1.16')
     shared.afterEvaluate {
         from(shared.jar.archiveFile.collect { zipTree(it) })
         //noinspection GroovyAssignabilityCheck

@@ -1,8 +1,111 @@
-apply from: rootProject.file('shared.gradle')
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                [ 'com.fasterxml.woodstox', 'com.fasterxml.jackson.core', 'com.fasterxml.jackson', 'com.fasterxml',
+                  'com.google.code.findbugs', 'com.google.code.gson', 'com.google.errorprone', 'com.google.guava',
+                  'com.google.j2objc', 'commons-io', 'io.fabric8', 'io.github.goooler.shadow', 'io.netty',
+                  'jakarta.platform', 'me.jamiemansfield', 'org.apache', 'org.apache.ant', 'org.apache.commons',
+                  'org.apache.logging', 'org.apache.logging.log4j', 'org.apache.maven', 'org.benf', 'org.cadixdev',
+                  'org.checkerframework', 'org.codehaus.groovy', 'org.codehaus.plexus', 'org.codehaus.woodstox',
+                  'org.eclipse.ee4j', 'org.eclipse.jdt', 'org.eclipse.jetty', 'org.eclipse.platform', 'org.jdom',
+                  'org.jetbrains', 'org.jetbrains.kotlinx', 'org.junit', 'org.mockito', 'org.ow2', 'org.ow2.asm',
+                  'org.slf4j', 'org.sonatype.oss', 'org.springframework', 'org.vafer',
+                  'org.zeroturnaround'].forEach { includeGroup it }
+            }
+        }
+        maven {
+            name = 'Fabric'
+            url = uri('https://maven.fabricmc.net/')
+            content {
+                [ 'fabric-loom', 'net.fabricmc', 'net.fabricmc.fabric-api' ].forEach { includeGroup it }
+            }
+        }
+    }
+    dependencies {
+        classpath('fabric-loom:fabric-loom.gradle.plugin:1.+')
+        classpath('io.github.goooler.shadow:shadow-gradle-plugin:8.+')
+    }
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+apply from: rootProject.file('gradle\\java21-module.gradle')
+apply from: rootProject.file('gradle\\fabric.gradle')
+apply from: rootProject.file('gradle\\shadow-relocate.gradle')
+
+plugins.apply('fabric-loom')
+
+def file = "build\\libs\\${mod_id}-${mod_version}.jar"
+def classes = 'build\\classes\\java\\main'
+def sources = "-Dtil.dev.sources=api\\${file};shared\\1.20\\${file};shared\\1.20\\1.20.6\\${file}"+
+        ";fabric\\1.20\\${classes};fabric\\1.20\\1.20.6\\${classes}"
+def args = [ '-Dfabric.log.level=debug', '-Dtil.dev=true', sources,
+             "-Dtil.classpath.mods=${common_entrypoint}",
+             "-Dtil.classpath.coremods=${core_entrypoint}" ]
+
+[ runClient, runServer ].forEach { it.jvmArgs args}
+
+repositories {
+    maven {
+        name 'Modrinth'
+        url = uri('https://api.modrinth.com/maven')
+        content {
+            includeGroup 'maven.modrinth'
+        }
+    }
+}
 
 dependencies {
-    compileOnly(project(':api'))
-    compileOnly(project(':shared'))
+    minecraft("com.mojang:minecraft:${minecraft_1_20_6}")
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${minecraft_1_20_6}:${parchment_1_20_6}@zip")
+    }
+    implementation(project(path: ':api', configuration: 'dev'))
+    implementation(project(path: ':fabric:1.20', configuration: 'dev'))
+    implementation(project(path: ':shared:1.20:1.20.6', configuration: 'dev'))
+
+    modImplementation("net.fabricmc:fabric-loader:${fabric_loader}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_1_20_6}+${minecraft_1_20_6}")
+    modImplementation("maven.modrinth:cloth-config:${cloth_1_20_6}")
+    modImplementation("maven.modrinth:modmenu:${modmenu_1_20_6}")
 }
+
+remapJar {
+    setArchiveBaseName("${mod_id}_remapped")
+    inputFile = tasks.shadowJar.archiveFile
+}
+
+processResources {
+    from(project(':api').processResources.outputs)
+}
+
+processTestResources {
+    from(project(':api').processTestResources.outputs)
+}
+
+compileJava {
+    source(project(':fabric').sourceSets.main.allJava)
+}
+
+compileTestJava {
+    source(project(':fabric').sourceSets.test.allJava)
+}
+
+jar {
+    setArchiveBaseName(mod_id)
+    from(project(':fabric').jar.archiveFile.collect { zipTree(it) })
+}
+
+shadowJar {
+    def shared = project(':shared:1.20:1.20.6')
+    from(project(':api').jar.archiveFile.collect { zipTree(it) })
+    shared.afterEvaluate {
+        from(shared.jar.archiveFile.collect { zipTree(it) })
+        relocate "${shared_base_package}", "${fabric_base_package}"
+    }
+}
+
+tasks.assemble.dependsOn(shadowJar)
+tasks.shadowJar.finalizedBy('remapJar')
+tasks.jar.finalizedBy('shadowJar')
+tasks.jar.dependsOn(':fabric:1.20:build')

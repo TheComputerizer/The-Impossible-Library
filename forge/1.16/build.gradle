@@ -65,12 +65,22 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             jvmArgs args
+            mods {
+                theimpossiblelibrary {
+                    source sourceSets.main
+                }
+            }
         }
         server {
             workingDirectory file('run_server')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             jvmArgs args
+            mods {
+                theimpossiblelibrary {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
