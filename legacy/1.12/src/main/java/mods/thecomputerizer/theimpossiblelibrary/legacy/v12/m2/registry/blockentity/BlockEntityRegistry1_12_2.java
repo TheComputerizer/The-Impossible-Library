@@ -1,11 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespaced;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,11 +15,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static net.minecraft.tileentity.TileEntity.REGISTRY;
-
 public class BlockEntityRegistry1_12_2 extends RegistryAPI<Class<? extends TileEntity>> {
     
+    public static final RegistryNamespaced<ResourceLocation,Class<? extends TileEntity>> REGISTRY = findRegistry();
     private static final ResourceLocation1_12_2 REGISTRY_KEY = new ResourceLocation1_12_2(new ResourceLocation("tile_entity"));
+    
+    @SuppressWarnings("unchecked")
+    public static RegistryNamespaced<ResourceLocation,Class<? extends TileEntity>> findRegistry() {
+        Object registry = ReflectionHelper.getMappedFieldInstance(TileEntity.class,
+                "REGISTRY","field_190562_f",RegistryNamespaced.class);
+        return(RegistryNamespaced<ResourceLocation,Class<? extends TileEntity>>)registry;
+    }
 
     public BlockEntityRegistry1_12_2() {
         super(REGISTRY,null,REGISTRY_KEY);

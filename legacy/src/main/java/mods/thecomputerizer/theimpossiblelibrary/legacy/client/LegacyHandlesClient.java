@@ -9,6 +9,8 @@ import java.util.List;
 //TODO Maybe abstract 1.12.2 stuff here?
 public class LegacyHandlesClient implements SharedHandlesClient {
     
+    @Override public void endRenderTypeBatch(Object source, Object type) {}
+    
     @Override public boolean isLoading(Object minecraft) {
         return false;
     }

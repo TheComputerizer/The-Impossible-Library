@@ -23,6 +23,8 @@ public abstract class FontAPI<F> extends MutableWrapped<F> {
     }
 
     public abstract void draw(RenderAPI renderer, String text, float x, float y, int color);
+    public abstract void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
+            Object source, boolean transparent, int bgColor, int light);
     public abstract void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color);
     @IndirectCallers public abstract int getCharWidth(char c);
     public abstract int getFontHeight();

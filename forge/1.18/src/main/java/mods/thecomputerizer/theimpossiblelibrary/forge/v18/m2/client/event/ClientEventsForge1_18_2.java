@@ -5,6 +5,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.FOVModifierEventForge1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.FOVUpdateEventForge1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.InputKeyEventForge1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.RenderWorldLastEventForge1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.event.ClientEvents1_18_2;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -25,10 +29,10 @@ public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 {
         FOG_COLORS.setConnector(new FogColorsEventForge());
         FOG_DENSITY.setConnector(new FogDensityEventForge());
         FOG_RENDER.setConnector(new FogRenderEventForge());
-        FOV_MODIFIER.setConnector(new FOVModifierEventForge());
-        FOV_UPDATE.setConnector(new FOVUpdateEventForge());
+        FOV_MODIFIER.setConnector(new FOVModifierEventForge1_18_2());
+        FOV_UPDATE.setConnector(new FOVUpdateEventForge1_18_2());
         ITEM_TOOLTIP.setConnector(new ItemTooltipEventForge());
-        KEY_INPUT.setConnector(new InputKeyEventForge());
+        KEY_INPUT.setConnector(new InputKeyEventForge1_18_2());
         MOUSE_INPUT.setConnector(new InputMouseEventForge());
         MOUSE_RAW.setConnector(new RawMouseEventForge());
         MOUSE_SCROLL.setConnector(new MouseScrollEventForge());
@@ -41,7 +45,7 @@ public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 {
         RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge());
         RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge());
         RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge());
-        RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge());
+        RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_18_2());
         SOUND_LOAD.setConnector(new LoadSoundEventForge());
         SOUND_PLAY.setConnector(new PlaySoundEventForge());
         SOUND_PLAY_SOURCE.setConnector(new PlaySoundSourceEventForge());

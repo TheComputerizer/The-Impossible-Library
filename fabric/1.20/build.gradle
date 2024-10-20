@@ -59,7 +59,7 @@ dependencies {
     }
     implementation(project(path: ':api', configuration: 'dev'))
     implementation(project(path: ':fabric', configuration: 'dev'))
-    implementation(project(path: ':shared:1.20', configuration: 'dev'))
+    //implementation(project(path: ':shared:1.20', configuration: 'dev'))
 
     modImplementation("${fabric_loader_artifact}:${fabric_loader}")
     modImplementation("${fabric_api_artifact}:${fabric_1_20_1}")

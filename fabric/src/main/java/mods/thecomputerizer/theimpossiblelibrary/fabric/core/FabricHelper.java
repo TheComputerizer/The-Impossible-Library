@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.math.Matrix4f;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
@@ -13,10 +13,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
+import org.lwjgl.opengl.GL11;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Field;
@@ -34,6 +33,7 @@ import static net.minecraft.network.chat.Style.EMPTY;
 import static org.lwjgl.opengl.GL11.GL_FLAT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL12.GL_RESCALE_NORMAL;
 
 public class FabricHelper {
     
@@ -82,10 +82,6 @@ public class FabricHelper {
         return getObfField(namespace,name,owner,instance.getClass());
     }
     
-    public static Field getObfField(String name, Class<?> owner, Class<?> instanceClass) {
-        return ReflectionHelper.getField(owner,getObfFieldName("intermediary",name,owner,instanceClass));
-    }
-    
     public static Field getObfField(String namespace, String srgName, Class<?> owner, Class<?> instanceClass) {
         return ReflectionHelper.getField(owner,getObfFieldName(namespace,srgName,owner,instanceClass));
     }
@@ -126,12 +122,12 @@ public class FabricHelper {
     /**
      * The equivalent of GuiUtils#drawHoveringText from forge
      */
-    @SuppressWarnings("deprecation")
     public static void renderTooltip(PoseStack matrix, List<? extends FormattedText> textLines, int mouseX, int mouseY,
             int screenWidth, int screenHeight, int maxTextWidth, int backgroundColor, int borderColorStart,
             int borderColorEnd, Font font) {
-        if(!textLines.isEmpty()) {
-            RenderSystem.disableRescaleNormal();
+        RenderAPI renderer = ClientHelper.getRenderer();
+        if(!textLines.isEmpty() && Objects.nonNull(renderer)) {
+            GL11.glDisable(GL_RESCALE_NORMAL); //Only used to compile
             RenderSystem.disableDepthTest();
             int tooltipTextWidth = 0;
             for(FormattedText textLine : textLines) {
@@ -153,7 +149,7 @@ public class FabricHelper {
                 tooltipTextWidth = maxTextWidth;
                 needsWrap = true;
             }
-            if (needsWrap) {
+            if(needsWrap) {
                 int wrappedTooltipWidth = 0;
                 List<FormattedText> wrappedTextLines = new ArrayList<>();
                 for(int i=0; i<textLines.size(); i++) {
@@ -181,49 +177,53 @@ public class FabricHelper {
             else if (tooltipY+tooltipHeight+4>screenHeight) tooltipY = screenHeight-tooltipHeight-4;
             final int zLevel = 400;
             matrix.pushPose();
-            Matrix4f mat = matrix.last().pose();
-            drawGradientRect(mat,zLevel,tooltipX-3,tooltipY-4,tooltipX+tooltipTextWidth+3,
+            Object mat = matrix.last().pose();
+            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-4,tooltipX+tooltipTextWidth+3,
                              tooltipY-3,backgroundColor,backgroundColor);
-            drawGradientRect(mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+3,tooltipX+tooltipTextWidth+3,
-                             tooltipY+tooltipHeight+4,backgroundColor,backgroundColor);
-            drawGradientRect(mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
+            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+3,
+                             tooltipX+tooltipTextWidth+3,tooltipY+tooltipHeight+4,backgroundColor,
+                             backgroundColor);
+            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
                              tooltipY+tooltipHeight+3,backgroundColor,backgroundColor);
-            drawGradientRect(mat,zLevel,tooltipX-4,tooltipY-3,tooltipX-3,tooltipY+tooltipHeight+3,
-                             backgroundColor,backgroundColor);
-            drawGradientRect(mat,zLevel,tooltipX+tooltipTextWidth+3,tooltipY-3,
+            drawGradientRect(renderer,mat,zLevel,tooltipX-4,tooltipY-3,tooltipX-3,
+                             tooltipY+tooltipHeight+3,backgroundColor,backgroundColor);
+            drawGradientRect(renderer,mat,zLevel,tooltipX+tooltipTextWidth+3,tooltipY-3,
                              tooltipX+tooltipTextWidth+4,tooltipY+tooltipHeight+3,backgroundColor,
                              backgroundColor);
-            drawGradientRect(mat,zLevel,tooltipX-3,tooltipY-3+1,tooltipX-3+1,
+            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-3+1,tooltipX-3+1,
                              tooltipY+tooltipHeight+3-1,borderColorStart,borderColorEnd);
-            drawGradientRect(mat,zLevel,tooltipX+tooltipTextWidth+2,tooltipY-3+1,
+            drawGradientRect(renderer,mat,zLevel,tooltipX+tooltipTextWidth+2,tooltipY-3+1,
                              tooltipX+tooltipTextWidth+3,tooltipY+tooltipHeight+3-1,borderColorStart,
                              borderColorEnd);
-            drawGradientRect(mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
+            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
                              tooltipY-3+1,borderColorStart,borderColorStart);
-            drawGradientRect(mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+2,tooltipX+tooltipTextWidth+3,
-                             tooltipY+tooltipHeight+3,borderColorEnd,borderColorEnd);
-            BufferSource renderType = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
+            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+2,
+                             tooltipX+tooltipTextWidth+3,tooltipY+tooltipHeight+3,borderColorEnd,
+                             borderColorEnd);
+            Object renderType = renderer.renderSourceImmediate();
             matrix.translate(0d,0d,zLevel);
             for(int lineNumber=0; lineNumber<textLines.size(); lineNumber++) {
                 FormattedText line = textLines.get(lineNumber);
-                if(Objects.nonNull(line))
-                    font.drawInBatch(Language.getInstance().getVisualOrder(line),(float)tooltipX,(float)tooltipY,-1,true,mat,renderType,false,0,15728880);
+                FontAPI<?> api = ClientHelper.getFont();
+                if(Objects.nonNull(line) && Objects.nonNull(api))
+                    api.drawInBatch(Language.getInstance().getVisualOrder(line),tooltipX,tooltipY,-1,true,
+                                    mat,renderType,false,0,15728880);
                 if(lineNumber+1==titleLinesCount) tooltipY+=2;
                 tooltipY += 10;
             }
-            renderType.endBatch();
+            renderer.endBatch(renderType);
             matrix.popPose();
             RenderSystem.enableDepthTest();
-            RenderSystem.enableRescaleNormal();
+            GL11.glEnable(GL_RESCALE_NORMAL); //Only used to compile
         }
     }
     
     /**
      * The equivalent of GuiUtils#drawGradientRect from forge
      */
-    @SuppressWarnings("deprecation")
-    public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom,
-            int startColor, int endColor) {
+    public static void drawGradientRect(RenderAPI renderer, Object mat, int zLevel, int left, int top, int right,
+            int bottom,int startColor, int endColor) {
+        if(Objects.isNull(renderer)) return;
         float startAlpha = (float)(startColor>>24&255)/255f;
         float startRed = (float)(startColor>>16&255)/255f;
         float startGreen = (float)(startColor>>8&255)/255f;
@@ -233,20 +233,24 @@ public class FabricHelper {
         float endGreen = (float)(endColor>>8&255)/255f;
         float endBlue = (float)(endColor&255)/255f;
         RenderSystem.enableDepthTest();
-        RenderSystem.disableTexture();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.shadeModel(GL_SMOOTH);
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder buffer = tesselator.getBuilder();
-        buffer.begin(GL_QUADS,POSITION_COLOR);
-        buffer.vertex(mat,right,top,zLevel).color(startRed,startGreen,startBlue,startAlpha).endVertex();
-        buffer.vertex(mat,left,top,zLevel).color(startRed,startGreen,startBlue,startAlpha).endVertex();
-        buffer.vertex(mat,left,bottom,zLevel).color(endRed,endGreen,endBlue,endAlpha).endVertex();
-        buffer.vertex(mat,right,bottom,zLevel).color(endRed,endGreen,endBlue,endAlpha).endVertex();
-        tesselator.end();
-        RenderSystem.shadeModel(GL_FLAT);
-        RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
+        renderer.disableTexture();
+        renderer.enableBlend();
+        renderer.defaultBlendFunc();
+        GL11.glShadeModel(GL_SMOOTH); //Only used to compile
+        Object buffer = renderer.getBufferBuilder();
+        renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
+        drawVertex(renderer,buffer,mat,right,top,zLevel,startRed,startGreen,startBlue,startAlpha);
+        drawVertex(renderer,buffer,mat,left,top,zLevel,startRed,startGreen,startBlue,startAlpha);
+        drawVertex(renderer,buffer,mat,right,bottom,zLevel,endRed,endGreen,endBlue,endAlpha);
+        drawVertex(renderer,buffer,mat,left,bottom,zLevel,endRed,endGreen,endBlue,endAlpha);
+        renderer.endBuffer();
+        GL11.glShadeModel(GL_FLAT); //Only used to compile
+        renderer.disableBlend();
+        renderer.enableTexture();
+    }
+    
+    private static void drawVertex(RenderAPI renderer, Object buffer, Object mat, float x, float y, float z,
+            float r, float g,float b, float a) {
+        renderer.endVertex(renderer.vertexColor(renderer.vertexWithMatrix(buffer,mat,x,y,z),r,g,b,a));
     }
 }

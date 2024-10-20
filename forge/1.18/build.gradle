@@ -160,8 +160,20 @@ reobf {
     }
 }
 
+//This is what I get for basing forge in 1.16.5
+def remapThese = [
+                   'util.RegistryKey': 'resources.ResourceKey',
+                   'util.registry.DynamicRegistries': 'core.RegistryAccess',
+                   'util.registry.Registry': 'core.Registry',
+                   'util.text.ITextComponent': 'network.chat.Component',
+                   'world.IWorld': 'world.level.LevelAccessor',
+                   'world.biome.Biome': 'world.level.biome.Biome',
+]
+
 shadowJar {
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
+    from(project(':forge').jar.archiveFile.collect { zipTree(it) })
+    remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
     shared.afterEvaluate {
         from(shared.jar.archiveFile.collect { zipTree(it) })
         relocate "${shared_base_package}", "${forge_base_package}"

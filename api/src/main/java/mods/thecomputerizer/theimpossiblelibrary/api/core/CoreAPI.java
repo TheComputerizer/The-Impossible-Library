@@ -281,9 +281,27 @@ public abstract class CoreAPI {
         getLoader().loadCoreMods(this.coreInfo,classLoader,loadSources);
     }
     
+    protected String mapAsBinary(String mapped, boolean asBinary) {
+        return asBinary ? mapped.replace('/','.') : mapped.replace('.','/');
+    }
+    
     public abstract String mapClassName(String unmapped);
+    
+    public String mapClassName(String unmapped, boolean asBinary) {
+        return mapAsBinary(mapClassName(unmapped),asBinary);
+    }
+    
     public abstract String mapFieldName(String unmappedClass, String unmappedField, String desc);
+    
+    public String mapFieldName(String unmappedClass, String unmappedField, String desc, boolean asBinary) {
+        return mapAsBinary(mapFieldName(unmappedClass,unmappedField,desc),asBinary);
+    }
+    
     public abstract String mapMethodName(String unmappedClass, String unmappedMethod, String desc);
+    
+    public String mapMethodName(String unmappedClass, String unmappedMethod, String desc, boolean asBinary) {
+        return mapAsBinary(mapMethodName(unmappedMethod,unmappedMethod,desc),asBinary);
+    }
 
     @SneakyThrows
     public void modConstructed(Package pkg, String modid, String name, String entryType) {

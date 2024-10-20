@@ -202,14 +202,15 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'world.World': 'world.level.Level'
 ]
 
-//These need to be remapped to the com.mojang.blaze3d package
-def renderRemaps = [ 'net.minecraft.client.MainWindow': 'platform.Window',
-                     'net.minecraft.client.renderer.BufferBuilder': 'vertex.BufferBuilder',
-                     'net.minecraft.client.renderer.Tessellator': 'vertex.Tesselator',
-                     'net.minecraft.client.renderer.vertex.DefaultVertexFormats': 'vertex.DefaultVertexFormat',
-                     'net.minecraft.client.renderer.vertex.Vertex': 'vertex.Vertex',
-                     'com.mojang.blaze3d.matrix.MatrixStack': 'vertex.PoseStack',
-                     'com.mojang.blaze3d.vertex.IVertexBuilder': 'vertex.VertexConsumer'
+//These need to be remapped to the com.mojang package
+def renderRemaps = [ 'net.minecraft.client.MainWindow': 'blaze3d.platform.Window',
+                     'net.minecraft.client.renderer.BufferBuilder': 'blaze3d.vertex.BufferBuilder',
+                     'net.minecraft.client.renderer.Tessellator': 'blaze3d.vertex.Tesselator',
+                     'net.minecraft.client.renderer.vertex.DefaultVertexFormats': 'blaze3d.vertex.DefaultVertexFormat',
+                     'net.minecraft.client.renderer.vertex.Vertex': 'blaze3d.vertex.Vertex',
+                     'net.minecraft.util.math.vector.Matrix4f': 'math.Matrix4f',
+                     'com.mojang.blaze3d.matrix.MatrixStack': 'blaze3d.vertex.PoseStack',
+                     'com.mojang.blaze3d.vertex.IVertexBuilder': 'blaze3d.vertex.VertexConsumer'
 ]
 
 shadowJar {
@@ -219,7 +220,7 @@ shadowJar {
         //noinspection GroovyAssignabilityCheck
         relocate shared_base_package, fabric_base_package
         remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
-        renderRemaps.forEach((key,value) -> relocate key, "com.mojang.blaze3d.${value}")
+        renderRemaps.forEach((key,value) -> relocate key, "com.mojang.${value}")
     }
 }
 

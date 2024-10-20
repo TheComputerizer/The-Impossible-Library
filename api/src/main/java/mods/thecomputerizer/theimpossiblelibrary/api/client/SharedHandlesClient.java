@@ -11,6 +11,11 @@ import java.util.List;
  */
 public interface SharedHandlesClient {
     
+    default void endRenderTypeBatch(Object source) {
+        endRenderTypeBatch(source,null);
+    }
+    
+    void endRenderTypeBatch(Object source, @Nullable Object type);
     boolean isLoading(@Nullable Object minecraft);
     void registerKeyBinding(KeyAPI<?> key);
     void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height, int maxWidth);

@@ -10,33 +10,44 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.math.vector.Matrix4f;
 
 import java.util.Collection;
 import java.util.Objects;
 
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
-import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX_COLOR;
 import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 
-@SuppressWarnings("deprecation")
 public class Render1_16_5 extends RenderAPI {
     
     public Render1_16_5() {
         super(new GL1_16_5());
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void alphaFuncEqual(float alpha) {
         RenderSystem.alphaFunc(GL_EQUAL,alpha);
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void alphaFuncGreater(float alpha) {
         RenderSystem.alphaFunc(GL_GREATER,alpha);
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void alphaFuncLesser(float alpha) {
         RenderSystem.alphaFunc(GL_LESS,alpha);
+    }
+    
+    @Override public void beginBuffer(Object buffer, int mode, Object vertexFormat) {
+        ((BufferBuilder)buffer).begin(mode,(VertexFormat)vertexFormat);
     }
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {
@@ -50,7 +61,8 @@ public class Render1_16_5 extends RenderAPI {
     @Override public void depthMask(boolean mask) {
         RenderSystem.depthMask(mask);
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void disableAlpha() {
         RenderSystem.disableAlphaTest();
     }
@@ -62,7 +74,8 @@ public class Render1_16_5 extends RenderAPI {
     @Override public void disableCull() {
         RenderSystem.disableCull();
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void disableLighting() {
         RenderSystem.disableLighting();
     }
@@ -83,7 +96,8 @@ public class Render1_16_5 extends RenderAPI {
             Number height, Number maxWidth) {
         font.renderToolTip(this,lines,x.intValue(),y.intValue(),width.intValue(),height.intValue(),maxWidth.intValue());
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void enableAlpha() {
         RenderSystem.enableAlphaTest();
     }
@@ -95,7 +109,8 @@ public class Render1_16_5 extends RenderAPI {
     @Override public void enableCull() {
         RenderSystem.enableCull();
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void enableLighting() {
         RenderSystem.enableLighting();
     }
@@ -104,12 +119,26 @@ public class Render1_16_5 extends RenderAPI {
         RenderSystem.enableTexture();
     }
     
+    @Override public void endBuffer() {
+        Tessellator.getInstance().end();
+    }
+    
+    @Override public void endVertex(Object buffer) {
+        ((BufferBuilder)buffer).endVertex();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override public <B> B getBufferBuilder() {
+        return (B)Tessellator.getInstance().getBuilder();
+    }
+    
     @Override public VertexWrapper getBufferBuilderPC(int mode, int vertices) {
         return new VertexWrapper1_16_5(mode,POSITION_COLOR,vertices,3,4);
     }
     
+    @SuppressWarnings("deprecation")
     @Override public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
-        return new VertexWrapper1_16_5(mode,POSITION_TEX_COLOR,vertices,3,2,4);
+        return new VertexWrapper1_16_5(mode,DefaultVertexFormats.POSITION_TEX_COLOR,vertices,3,2,4);
     }
     
     @Override public double getDirectMouseX() {
@@ -144,9 +173,14 @@ public class Render1_16_5 extends RenderAPI {
     @Override public void pushMatrix() {
         getMatrix().pushPose();
     }
-
+    
+    @Override public Object renderSourceImmediate() {
+        return IRenderTypeBuffer.immediate(getBufferBuilder());
+    }
+    
     @Override public void resetTextureMatrix() {}
     
+    @SuppressWarnings("deprecation")
     @Override public void rotate(float angle, float x, float y, float z) {
         RenderSystem.rotatef(angle,x,y,z);
     }
@@ -154,18 +188,31 @@ public class Render1_16_5 extends RenderAPI {
     @Override public void scale(float x, float y, float z) {
         if(Objects.nonNull(this.matrix)) getMatrix().scale(x, y, z);
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void setColor(float r, float g, float b, float a) {
         RenderSystem.color4f(r,g,b,a);
     }
 
     @Override public void setPosColorShader() {}
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void translate(double x, double y, double z) {
         RenderSystem.translated(x,y,z);
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public void translate(float x, float y, float z) {
         RenderSystem.translatef(x,y,z);
+    }
+    
+    @Override public <B> B vertexWithMatrix(B buffer, Object matrix, float x, float y, float z) {
+        ((BufferBuilder)buffer).vertex((Matrix4f)matrix,x,y,z);
+        return buffer;
+    }
+    
+    @Override public <B> B vertexColor(B buffer, float red, float green, float blue, float alpha) {
+        ((BufferBuilder)buffer).color(red,green,blue,alpha);
+        return buffer;
     }
 }

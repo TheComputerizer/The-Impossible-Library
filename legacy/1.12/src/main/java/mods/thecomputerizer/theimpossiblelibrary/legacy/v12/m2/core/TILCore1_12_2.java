@@ -81,18 +81,19 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
     
     @Override public String mapClassName(String unmapped) {
-        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
-        return remapper.map(unmapped.replace('.','/')).replace('/','.');
+        return FMLDeobfuscatingRemapper.INSTANCE.map(unmapped.replace('.','/'));
     }
     
     @Override public String mapFieldName(String unmappedClass, String unmappedField, String desc) {
-        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
-        return remapper.mapFieldName(unmappedClass,unmappedField,desc);
+        unmappedClass = unmappedClass.replace('.','/');
+        desc = desc.replace('.','/');
+        return FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(unmappedClass,unmappedField,desc);
     }
     
     @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
-        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
-        return remapper.mapMethodName(unmappedClass,unmappedMethod,desc);
+        unmappedClass = unmappedClass.replace('.','/');
+        desc = desc.replace('.','/');
+        return FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(unmappedClass,unmappedMethod,desc);
     }
     
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {

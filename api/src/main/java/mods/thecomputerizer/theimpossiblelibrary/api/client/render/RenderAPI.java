@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
@@ -26,6 +27,7 @@ public abstract class RenderAPI {
     @IndirectCallers public abstract void alphaFuncEqual(float alpha);
     public abstract void alphaFuncGreater(float alpha);
     @IndirectCallers public abstract void alphaFuncLesser(float alpha);
+    public abstract void beginBuffer(Object buffer, int mode, Object vertexFormat);
     public abstract void bindTexture(ResourceLocationAPI<?> location);
     public abstract void defaultBlendFunc();
     public abstract void depthMask(boolean mask);
@@ -65,6 +67,19 @@ public abstract class RenderAPI {
     public abstract void enableCull();
     public abstract void enableLighting();
     public abstract void enableTexture();
+    
+    public void endBatch(Object source) {
+        TILRef.getClientHandles().endRenderTypeBatch(source);
+    }
+    
+    @IndirectCallers
+    public void endBatch(Object source, Object type) {
+        TILRef.getClientHandles().endRenderTypeBatch(source,type);
+    }
+    
+    public abstract void endBuffer();
+    public abstract void endVertex(Object buffer);
+    public abstract <B> B getBufferBuilder();
     /**
      * POSITION_COLOR
      */
@@ -79,6 +94,7 @@ public abstract class RenderAPI {
     public abstract RenderAPI init(Object context);
     public abstract void popMatrix();
     public abstract void pushMatrix();
+    public abstract Object renderSourceImmediate();
     @IndirectCallers public abstract void resetTextureMatrix();
     public abstract void rotate(float angle, float x, float y, float z);
     public abstract void scale(float x, float y, float z);
@@ -105,4 +121,7 @@ public abstract class RenderAPI {
     public <M> M unwrapMatrix() {
         return (M)this.matrix;
     }
+    
+    public abstract <B> B vertexWithMatrix(B buffer, Object matrix, float x, float y, float z);
+    public abstract <B> B vertexColor(B buffer, float red, float green, float blue, float alpha);
 }

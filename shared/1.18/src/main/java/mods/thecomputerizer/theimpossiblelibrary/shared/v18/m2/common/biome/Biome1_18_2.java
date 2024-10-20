@@ -8,15 +8,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
 import java.lang.invoke.MethodHandle;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static net.minecraft.core.Registry.BIOME_REGISTRY;
+import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
+import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
 
 public class Biome1_18_2 extends BiomeAPI<Biome> {
     
@@ -28,14 +32,31 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
                 ReflectionHelper.findMethodHandle(Biome.class,"getTemperature",BlockPos.class) : null;
     }
     
+    @Override public boolean canRain() {
+        return this.wrapped.getPrecipitation()==RAIN;
+    }
+    
+    @Override public boolean canSnow() {
+        return this.wrapped.getPrecipitation()==SNOW;
+    }
+    
     @Override public float getRainfall() {
         return this.wrapped.getDownfall();
     }
     
+    Registry<Biome> getRegistry(LevelAccessor world) {
+        return world.registryAccess().registryOrThrow(BIOME_REGISTRY);
+    }
+    
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        RegistryAccess registries = ((LevelAccessor)world.unwrap()).registryAccess();
-        Registry<Biome> registry = registries.registry(BIOME_REGISTRY).orElse(null);
+        Registry<Biome> registry = getRegistry((LevelAccessor)world);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
+    }
+    
+    @Override public Set<String> getTagNames(WorldAPI<?> world) {
+        Registry<Biome> registry = getRegistry((LevelAccessor)world);
+        Holder<Biome> holder = registry.getOrCreateHolder(registry.getResourceKey(this.wrapped).orElseThrow());
+        return holder.tags().map(key -> key.location().toString()).collect(Collectors.toSet());
     }
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {

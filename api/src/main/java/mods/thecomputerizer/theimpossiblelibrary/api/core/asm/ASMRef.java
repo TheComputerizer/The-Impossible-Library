@@ -28,6 +28,7 @@ public class ASMRef {
     public static final int COMPUTE_MAXS = ClassWriter.COMPUTE_MAXS;
     public static final int DUP = Opcodes.DUP;
     public static final Type EMPTY_METHOD = Type.getMethodType(VOID_TYPE);
+    public static final String EMPTY_METHOD_DESC = EMPTY_METHOD.getDescriptor();
     public static final Type FILE_TYPE = Type.getType(File.class);
     public static final int FINAL = ACC_FINAL;
     public static final int GETFIELD = Opcodes.GETFIELD;

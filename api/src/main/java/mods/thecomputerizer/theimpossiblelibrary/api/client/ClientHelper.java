@@ -52,7 +52,7 @@ public class ClientHelper {
         return Objects.nonNull(api) ? api.getPlayer() : null;
     }
     
-    public static @Nullable RenderAPI getRenderer() {
+    public static RenderAPI getRenderer() {
         MinecraftAPI<?> api = getMinecraft();
         return Objects.nonNull(api) ? api.getRenderer() : null;
     }

@@ -7,7 +7,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import org.lwjgl.input.Mouse;
 
 import java.util.Collection;
@@ -20,7 +23,7 @@ import static org.lwjgl.opengl.GL11.GL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 
-public class Render1_12_2 extends RenderAPI{
+public class Render1_12_2 extends RenderAPI {
 
     public Render1_12_2() {
         super(new GL1_12_2());
@@ -37,7 +40,11 @@ public class Render1_12_2 extends RenderAPI{
     @Override public void alphaFuncLesser(float alpha) {
         GlStateManager.alphaFunc(GL_LESS,alpha);
     }
-
+    
+    @Override public void beginBuffer(Object buffer, int mode, Object vertexFormat) {
+        ((BufferBuilder)buffer).begin(mode,(VertexFormat)vertexFormat);
+    }
+    
     @Override public void bindTexture(ResourceLocationAPI<?> location) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(location.unwrap());
     }
@@ -102,7 +109,20 @@ public class Render1_12_2 extends RenderAPI{
     @Override public void enableTexture() {
         GlStateManager.enableTexture2D();
     }
-
+    
+    @Override public void endBuffer() {
+        Tessellator.getInstance().draw();
+    }
+    
+    @Override public void endVertex(Object buffer) {
+        ((BufferBuilder)buffer).endVertex();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override public <B> B getBufferBuilder() {
+        return (B)Tessellator.getInstance().getBuffer();
+    }
+    
     @Override public VertexWrapper getBufferBuilderPC(int mode, int vertices) {
         return new VertexWrapper1_12_2(mode,POSITION_COLOR,vertices,3,4);
     }
@@ -134,7 +154,11 @@ public class Render1_12_2 extends RenderAPI{
     @Override public void pushMatrix() {
         GlStateManager.pushMatrix();
     }
-
+    
+    @Override public Object renderSourceImmediate() {
+        return null;
+    }
+    
     @Override public void resetTextureMatrix() {}
 
     @Override public void rotate(float angle, float x, float y, float z) {
@@ -157,5 +181,15 @@ public class Render1_12_2 extends RenderAPI{
 
     @Override public void translate(float x, float y, float z) {
         GlStateManager.translate(x,y,z);
+    }
+    
+    @Override public <B> B vertexWithMatrix(B buffer, Object matrix, float x, float y, float z) {
+        ((BufferBuilder)buffer).pos(x,y,z);
+        return buffer;
+    }
+    
+    @Override public <B> B vertexColor(B buffer, float red, float green, float blue, float alpha) {
+        ((BufferBuilder)buffer).color(red,green,blue,alpha);
+        return buffer;
     }
 }

@@ -106,7 +106,7 @@ dependencies {
     minecraft("${forge_mc}:${forge_1_20_6}")
 
     implementation(project(':api'))
-    implementation(project(path: ':forge', configuration: 'dev'))
+    //implementation(project(path: ':forge', configuration: 'dev'))
     implementation(project(path: ':forge:1.20', configuration: 'dev'))
     implementation(shared)
 
@@ -118,25 +118,25 @@ dependencies {
 }
 
 compileJava {
-    source(project(':api').sourceSets.main.allJava,
-            project(':forge').sourceSets.main.allJava)
+    source(project(':api').sourceSets.main.allJava/*,
+            project(':forge').sourceSets.main.allJava*/)
 }
 
 compileTestJava {
-    source(project(':api').sourceSets.test.allJava,
-            project(':forge').sourceSets.test.allJava)
+    source(project(':api').sourceSets.test.allJava/*,
+            project(':forge').sourceSets.test.allJava*/)
 }
 
 processResources {
-    from(project(':forge').processResources.outputs)
+    //from(project(':forge').processResources.outputs)
 }
 
 processTestResources {
-    from(project(':forge').processTestResources.outputs)
+    //from(project(':forge').processTestResources.outputs)
 }
 
 jar {
-    from(project(':forge').jar.archiveFile.collect { zipTree(it) })
+    //from(project(':forge').jar.archiveFile.collect { zipTree(it) })
 }
 
 reobf {

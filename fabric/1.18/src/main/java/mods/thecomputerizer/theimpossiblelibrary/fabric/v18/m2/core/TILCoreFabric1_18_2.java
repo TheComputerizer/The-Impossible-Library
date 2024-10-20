@@ -81,14 +81,16 @@ public class TILCoreFabric1_18_2 extends TILCore1_18_2 implements TILCoreFabric 
     }
     
     @Override public String mapClassName(String unmapped) {
-        return mapper().mapClassName("intermediary",unmapped);
+        return mapper().mapClassName("intermediary",unmapped.replace('/','.'));
     }
     
     @Override public String mapFieldName(String unmappedClass, String unmappedField, String desc) {
+        unmappedClass = unmappedClass.replace('/','.');
         return mapper().mapFieldName("intermediary",unmappedClass,unmappedField,desc);
     }
     
     @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
+        unmappedClass = unmappedClass.replace('/','.');
         return mapper().mapMethodName("intermediary",unmappedClass,unmappedMethod,desc);
     }
     

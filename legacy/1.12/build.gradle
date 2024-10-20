@@ -54,7 +54,6 @@ sourceSets {
 
 minecraft {
     mappings channel: 'stable', version: legacy_mappings_1_12_2
-    accessTransformer = file("${meta_inf_path}/${mod_accesstransformer}")
     runs {
         def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
         client {
@@ -148,7 +147,6 @@ jar {
     from(project(':legacy').jar.archiveFile.collect { zipTree(it) })
     manifest {
         attributes([
-                'FMLAT': mod_accesstransformer,
                 'FMLCorePlugin': legacy_entrypoint,
                 'FMLCorePluginContainsFMLMod': true,
                 'ForceLoadAsMod': true

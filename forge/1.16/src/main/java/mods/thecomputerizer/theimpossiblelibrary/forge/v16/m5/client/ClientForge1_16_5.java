@@ -10,7 +10,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.forge.client.ForgeHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.ForgeHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.ClientEventsForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.CommonEventsForge1_16_5;
@@ -54,7 +53,7 @@ public class ClientForge1_16_5 extends Client1_16_5 {
     }
     
     @Override protected Supplier<SharedHandlesClient> initSharedHandlesClient() {
-        return ForgeHandlesClient::new;
+        return ForgeHandlesClient1_16_5::new;
     }
     
     @Override public Supplier<SharedHandlesCommon> initSharedHandlesCommon() {

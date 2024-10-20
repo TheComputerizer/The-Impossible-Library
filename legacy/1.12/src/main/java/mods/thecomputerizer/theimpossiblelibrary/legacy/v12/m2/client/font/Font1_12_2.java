@@ -31,7 +31,12 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
         renderer.setFont(this.wrapped);
         getWrapped().drawString(text,x,y,color,false);
     }
-
+    
+    @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
+            Object source, boolean transparent, int bgColor, int light) {
+        getWrapped().drawString(String.valueOf(text),x,y,color,shadow);
+    }
+    
     @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
         renderer.setFont(this.wrapped);
         getWrapped().drawStringWithShadow(text,x,y,color);

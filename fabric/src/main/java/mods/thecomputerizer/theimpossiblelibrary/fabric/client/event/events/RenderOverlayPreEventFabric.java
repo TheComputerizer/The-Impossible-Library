@@ -24,7 +24,7 @@ public class RenderOverlayPreEventFabric extends RenderOverlayPreEventWrapper<Ob
         return EventHelper.initRenderer(ctx -> {
             WorldRenderContext worldRender = (WorldRenderContext)event[0];
             ctx.getRenderer().setMatrix(worldRender.matrixStack());
-            ctx.setPartialTicks(worldRender.tickDelta());
+            //ctx.setPartialTicks(worldRender.tickDelta());
         });
     }
 

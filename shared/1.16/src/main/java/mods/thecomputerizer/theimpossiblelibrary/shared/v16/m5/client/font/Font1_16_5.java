@@ -5,6 +5,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.text.ITextComponent;
 
 import static net.minecraft.util.text.TextFormatting.RESET;
 
@@ -17,6 +20,12 @@ public class Font1_16_5 extends FontAPI<FontRenderer> {
     @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
         renderer.setFont(this.wrapped);
         getWrapped().draw(getMatrix(renderer),text,x,y,color);
+    }
+    
+    @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
+            Object source, boolean transparent, int bgColor, int light) {
+        getWrapped().drawInBatch((ITextComponent)text,x,y,color,shadow,(Matrix4f)matrix,(IRenderTypeBuffer)source,
+                                 transparent,bgColor,light);
     }
     
     @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {

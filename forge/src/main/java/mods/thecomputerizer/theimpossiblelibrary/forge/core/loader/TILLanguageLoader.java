@@ -16,7 +16,6 @@ import java.util.Objects;
 
 /**
  * Basically the same as FMLJavaModLanguageProvider$FMLModTarget but since it's private, we can't use it...
- * TODO Might not be needed
  */
 public class TILLanguageLoader implements IModLanguageLoader {
     

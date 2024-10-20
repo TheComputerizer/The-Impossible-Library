@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static java.lang.reflect.Modifier.FINAL;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 @SuppressWarnings("unused") public class ReflectionHelper {
 
@@ -117,6 +118,37 @@ import static java.lang.reflect.Modifier.FINAL;
                 if(categoryClass.getSimpleName().matches(s)) return categoryClass;
             return null;
         });
+    }
+    
+    public static @Nullable Field getMappedField(@Nullable Class<?> clazz, String named, String intermediary,
+            @Nullable Class<?> desc) {
+        return getMappedField(clazz,DEV ? named : intermediary,desc);
+    }
+    
+    public static @Nullable Field getMappedField(@Nullable Class<?> clazz, String fieldName, @Nullable Class<?> desc) {
+        if(Objects.isNull(clazz) || Objects.isNull(desc)) return null;
+        String descName = "L"+desc.getName().replace('.','/')+";";
+        return getField(clazz,CoreAPI.getInstance().mapFieldName(clazz.getName(),fieldName,descName));
+    }
+    
+    public static @Nullable Object getMappedFieldInstance(@Nullable Class<?> clazz, String named, String intermediary,
+            @Nullable Class<?> desc) {
+        return getMappedFieldInstance(null,clazz,DEV ? named : intermediary,desc);
+    }
+    
+    public static @Nullable Object getMappedFieldInstance(@Nullable Class<?> clazz, String fieldName,
+            @Nullable Class<?> desc) {
+        return getMappedFieldInstance(null,clazz,fieldName,desc);
+    }
+    
+    public static @Nullable Object getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
+            String named, String intermediary, @Nullable Class<?> desc) {
+        return getMappedFieldInstance(parent,clazz,DEV ? named : intermediary,desc);
+    }
+    
+    public static @Nullable Object getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
+            String fieldName, @Nullable Class<?> desc) {
+        return getFieldInstance(parent,getMappedField(clazz,fieldName,desc));
     }
     
     public static @Nullable Method getMethod(@Nullable String className, String name, Class<?> ... argTypes) {

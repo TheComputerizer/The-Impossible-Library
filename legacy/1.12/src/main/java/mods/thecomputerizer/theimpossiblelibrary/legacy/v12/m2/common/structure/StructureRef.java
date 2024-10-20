@@ -1,14 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,6 +22,7 @@ import java.util.function.BiFunction;
 public class StructureRef {
 
     private static final Set<StructureRef> REFS = addVanillaRefs();
+    private static Field featureGenerator;
 
     private static void addVanillaRef(Set<StructureRef> refs, String id, String name,
                                       @Nullable BiFunction<WorldServer, BlockPos,Boolean> posCheck) {
@@ -36,14 +40,26 @@ public class StructureRef {
         addVanillaRef(refs,"swamp_hut","SwampHut",(world,pos) -> {
             if(world.getChunkProvider().isInsideStructure(world,"Temple",pos)) {
                 IChunkGenerator generator = world.getChunkProvider().chunkGenerator;
-                if(generator instanceof ChunkGeneratorOverworld)
-                    return ((ChunkGeneratorOverworld)generator).scatteredFeatureGenerator.isSwampHut(pos);
+                if(generator instanceof ChunkGeneratorOverworld) {
+                    MapGenScatteredFeature features = getFeatureGenerator(generator);
+                    return Objects.nonNull(features) && features.isSwampHut(pos);
+                }
             }
             return false;
         });
         addVanillaRef(refs,"temple","Temple",null);
         addVanillaRef(refs,"village","Village",null);
         return refs;
+    }
+    
+    private static void findFeatureGenerator() {
+        featureGenerator = ReflectionHelper.getMappedField(ChunkGeneratorOverworld.class,
+                "scatteredFeatureGenerator","field_186007_z",MapGenScatteredFeature.class);
+    }
+    
+    private static MapGenScatteredFeature getFeatureGenerator(IChunkGenerator generator) {
+        if(Objects.isNull(featureGenerator)) findFeatureGenerator();
+        return (MapGenScatteredFeature)ReflectionHelper.getFieldInstance(generator,featureGenerator);
     }
     
     public static Collection<StructureRef> getRegisteredStructures() {

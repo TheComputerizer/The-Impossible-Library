@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
@@ -21,89 +20,84 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 import static org.objectweb.asm.Type.INT_TYPE;
-import static org.objectweb.asm.Type.VOID_TYPE;
 
-public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this up once it works as intended
+public class TILCoreEntryPointFabric extends CoreEntryPoint {
     
-    static final String ARRAYLIST_OWNER = "java/util/ArrayList";
-    static final String DEBUG_OWNER = FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary",
-            DEV ? "net/minecraft/client/gui/components/DebugScreenOverlay" : "net/minecraft/class_340");
-    static final String EVENTS_OWNER = "mods/thecomputerizer/theimpossiblelibrary/fabric/common/event/CustomFabricEvents";
-    static final String EVENT_OWNER  = "net/fabricmc/fabric/api/event/Event";
-    static final String EVENT_DESC = "Lnet/fabricmc/fabric/api/event/Event;";
-    static final String KEYBOARD_OWNER = FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary",
-            DEV ? "net/minecraft/client/KeyboardHandler" : "net/minecraft/class_309");
-    static final String INVOKER_DESC = TypeHelper.method(OBJECT_TYPE,new Type[]{}).getDescriptor();
-    static final String LIST_DESC = "Ljava/util/List;";
-    static final String LIST_OWNER = "java/util/List";
-    static final String POSESTACK_OWNER = FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary",
-            DEV ? "com/mojang/blaze3d/vertex/PoseStack" : "net/minecraft/class_4587");
-    static final String STRING_LIST_SIGNATURE = "Ljava/util/List<Ljava/lang/String;>;";
+    static final String ARRAYLIST = "java/util/ArrayList";
+    static final String DEBUG_OVERLAY = mapClass("net.minecraft.client.gui.components.DebugScreenOverlay", "net.minecraft.class_340");
+    static final String[] DEBUG_LIST_FIELDS = new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"};
+    static final String CUSTOM_EVENTS = "mods/thecomputerizer/theimpossiblelibrary/fabric/common/event/CustomFabricEvents";
+    static final String FABRIC_EVENT = "net/fabricmc/fabric/api/event/Event";
+    static final String KEYBOARD_HANDLER = mapClass("net.minecraft.client.KeyboardHandler", "net.minecraft.class_309");
+    static final String INVOKER_DESC = TypeHelper.methodDesc(OBJECT_TYPE);
+    static final String LIST = "java/util/List";
+    static final String POSESTACK = mapClass("com.mojang.blaze3d.vertex.PoseStack", "net.minecraft.class_4587");
+    
+    static String mapClass(String dev, String notDev) {
+        return CoreAPI.getInstance().mapClassName(DEV ? dev : notDev,false);
+    }
+    
+    final CoreAPI core;
    
     public TILCoreEntryPointFabric() {
+        this.core = CoreAPI.getInstance();
         TILRef.logInfo("Initialized core version handler {}",getClass());
     }
     
     void addRenderFields(List<FieldNode> fields) {
+        String signature = toSignature(LIST, String.class.getName());
         for(String name : new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"})
-            fields.add(new FieldNode(PROTECTED_FINAL,name,LIST_DESC,STRING_LIST_SIGNATURE,null));
+            fields.add(new FieldNode(PROTECTED_FINAL,name,toDesc(LIST),signature,null));
     }
     
     InsnList buildKeyPressInvoker() {
         String keyPressedOwner = customEventOwner("KeyPressed");
-        String keyPressedDesc = TypeHelper.method(VOID_TYPE,INT_TYPE,INT_TYPE,INT_TYPE,INT_TYPE).getDescriptor();
-        InsnList list = new InsnList();
-        list.add(new FieldInsnNode(GETSTATIC,EVENTS_OWNER,"KEY_PRESSED",EVENT_DESC));
-        list.add(new MethodInsnNode(INVOKEVIRTUAL,EVENT_OWNER,"invoker",INVOKER_DESC));
-        list.add(new TypeInsnNode(CHECKCAST,keyPressedOwner));
-        list.add(new VarInsnNode(ILOAD,3));
-        list.add(new VarInsnNode(ILOAD,4));
-        list.add(new VarInsnNode(ILOAD,5));
-        list.add(new VarInsnNode(ILOAD,6));
-        list.add(new MethodInsnNode(INVOKEINTERFACE,keyPressedOwner,"onKeyPressed",keyPressedDesc,true));
-        return list;
+        String keyPressedDesc = TypeHelper.voidMethodDesc(INT_TYPE,INT_TYPE,INT_TYPE,INT_TYPE);
+        // get KEY_PRESSED event field
+        beginList(new InsnList()).insField(GETSTATIC,CUSTOM_EVENTS,"KEY_PRESSED",toDesc(FABRIC_EVENT))
+                .insInvokeVirtual(FABRIC_EVENT,"invoker",INVOKER_DESC).insType(CHECKCAST,keyPressedOwner);
+        // load parameters
+        for(int i : new int[]{3,4,5,6}) insVar(ILOAD,i);
+        // invoke event
+        return insInvokeInterface(keyPressedOwner,"onKeyPressed",keyPressedDesc).endList();
     }
     
     InsnList buildRenderDebugInvoker(ClassNode node) {
         String renderDebugOwner = customEventOwner("RenderDebugInfo");
         Type listType = Type.getType(List.class);
-        Type poseStackType = Type.getType("L"+POSESTACK_OWNER+";");
-        String renderDebugDesc = TypeHelper.method(VOID_TYPE,poseStackType,listType,listType).getDescriptor();
-        InsnList list = new InsnList();
-        boolean game = true;
-        String getInfoDesc = TypeHelper.method(List.class,new Type[]{}).getDescriptor();
-        String addAllDesc = TypeHelper.method(BOOLEAN_TYPE,Collection.class).getDescriptor();
-        for(String name : new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"}) {
-            list.add(new VarInsnNode(ALOAD,0));
-            list.add(new FieldInsnNode(GETFIELD,DEBUG_OWNER,name,LIST_DESC));
-            list.add(new MethodInsnNode(INVOKEINTERFACE,LIST_OWNER,"clear",EMPTY_METHOD.getDescriptor(),true));
-            list.add(new VarInsnNode(ALOAD,0));
-            list.add(new FieldInsnNode(GETFIELD,DEBUG_OWNER,name,LIST_DESC));
-            list.add(new VarInsnNode(ALOAD,0));
-            String methodName = game ? (DEV ? "getGameInformation" : "method_1835") : (DEV ? "getSystemInformation" : "method_1839");
-            methodName = CoreAPI.getInstance().mapMethodName(node.name,methodName,getInfoDesc);
-            list.add(new MethodInsnNode(INVOKEVIRTUAL,DEBUG_OWNER,methodName,getInfoDesc));
-            list.add(new MethodInsnNode(INVOKEINTERFACE,LIST_OWNER,"addAll",addAllDesc,true));
-            game = false;
+        String renderDebugDesc = TypeHelper.voidMethodDesc(Type.getType(toDesc(POSESTACK)),listType,listType);
+        String getInfoDesc = TypeHelper.methodDesc(List.class);
+        String addAllDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,Collection.class);
+        beginList(new InsnList());
+        // set up list fields
+        for(String name : DEBUG_LIST_FIELDS) {
+            boolean left = name.endsWith("left");
+            String methodName = this.core.mapMethodName(node.name,left ? (DEV ? "getGameInformation" : "method_1835") :
+                    (DEV ? "getSystemInformation" : "method_1839"),getInfoDesc);
+            // clear lists
+            insThis().insField(GETFIELD,DEBUG_OVERLAY,name,toDesc(LIST)).insInvokeInterface(LIST,"clear");
+            // collect & add to lists
+            insThis().insField(GETFIELD,DEBUG_OVERLAY,name,toDesc(LIST))
+                    .insThis().insInvokeVirtual(DEBUG_OVERLAY,methodName,getInfoDesc)
+                    .insInvokeInterface(LIST, "addAll",addAllDesc);
         }
-        list.add(new FieldInsnNode(GETSTATIC,EVENTS_OWNER,"RENDER_DEBUG_INFO",EVENT_DESC));
-        list.add(new MethodInsnNode(INVOKEVIRTUAL,EVENT_OWNER,"invoker",INVOKER_DESC));
-        list.add(new TypeInsnNode(CHECKCAST,renderDebugOwner));
-        list.add(new VarInsnNode(ALOAD,1));
-        for(String name : new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"}) {
-            list.add(new VarInsnNode(ALOAD,0));
-            list.add(new FieldInsnNode(GETFIELD,DEBUG_OWNER,name,LIST_DESC));
-        }
-        list.add(new MethodInsnNode(INVOKEINTERFACE,renderDebugOwner,"onRenderDebug",renderDebugDesc,true));
-        return list;
+        // get RENDER_DEBUG_INFO event field
+        insField(GETSTATIC,CUSTOM_EVENTS,"RENDER_DEBUG_INFO",toDesc(FABRIC_EVENT))
+                .insInvokeVirtual(FABRIC_EVENT,"invoker",INVOKER_DESC).insType(CHECKCAST,renderDebugOwner);
+        // load PoseStack parameter
+        insVar(ALOAD,1);
+        // load lists
+        for(String name : DEBUG_LIST_FIELDS) insThis().insField(GETFIELD,DEBUG_OVERLAY,name,toDesc(LIST));
+        // invoke event
+        return insInvokeInterface(renderDebugOwner,"onRenderDebug",renderDebugDesc).endList();
     }
     
     @Override public List<String> classTargets() {
-        return Arrays.asList(KEYBOARD_OWNER,DEBUG_OWNER);
+        return Arrays.asList(KEYBOARD_HANDLER, DEBUG_OVERLAY);
     }
     
     String customEventOwner(String name) {
-        return EVENTS_OWNER+"$"+name;
+        return CUSTOM_EVENTS+"$"+name;
     }
     
     @Override public ClassNode editClass(ClassNode classNode) {
@@ -123,8 +117,9 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this 
                     code.insert(ASMHelper.findLabel(code,38),buildKeyPressInvoker());
                 }
                 else if(screenOverlay) {
-                    if(methodName.equals("<init>")) code.insert(ASMHelper.findNode(code,node ->
-                                    node.getOpcode()==INVOKESPECIAL,0),initRenderFields());
+                    if(methodName.equals("<init>"))
+                        code.insert(ASMHelper.findNode(code,node -> node.getOpcode()==INVOKESPECIAL,0),
+                                    initRenderFields());
                     else if(Misc.equalsAny(methodName,"drawGameInformation","method_1847")) {
                         replace(code,"theimpossiblelibrary$left");
                         TILRef.logInfo("Building RENDER_DEBUG_INFO invoker");
@@ -133,7 +128,6 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this 
                         replace(code,"theimpossiblelibrary$right");
                 }
             }
-            
         }
         return classNode;
     }
@@ -147,19 +141,16 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint { //TODO Clean this 
     }
     
     InsnList initRenderFields() {
-        InsnList fields = new InsnList();
-        for(String name : new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"}) {
-            fields.add(new VarInsnNode(ALOAD,0));
-            fields.add(new TypeInsnNode(NEW,ARRAYLIST_OWNER));
-            fields.add(new InsnNode(DUP));
-            fields.add(new MethodInsnNode(INVOKESPECIAL,ARRAYLIST_OWNER,"<init>",EMPTY_METHOD.getDescriptor()));
-            fields.add(new FieldInsnNode(PUTFIELD,DEBUG_OWNER,name,LIST_DESC));
-        }
-        return fields;
+        beginList(new InsnList());
+        // create list fields & initialize them with new ArrayList instances
+        for(String name : new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"})
+            insThis().insType(NEW,ARRAYLIST).insBasic(DUP).insInvokeSpecial(ARRAYLIST,"<init>")
+                    .insField(PUTFIELD,DEBUG_OVERLAY,name,toDesc(LIST));
+        return endList();
     }
     
     void replace(InsnList code, String name) {
-        Supplier<FieldInsnNode> fieldNode = () -> new FieldInsnNode(GETFIELD,DEBUG_OWNER,name,LIST_DESC);
+        Supplier<FieldInsnNode> fieldNode = () -> new FieldInsnNode(GETFIELD,DEBUG_OVERLAY,name,toDesc(LIST));
         ASMHelper.replaceNode(code,node -> node.getOpcode()==INVOKEVIRTUAL ? fieldNode.get() : node,0,0);
     }
 }
