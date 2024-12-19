@@ -91,7 +91,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
         TICK_WORLD.setConnector(new WorldTickEventForge());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventForge());
         WORLD_LOAD.setConnector(new WorldLoadEventForge());
-        WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventForge());
+        WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventForge1_16_5());
         WORLD_SAVE.setConnector(new WorldSaveEventForge());
         WORLD_UNLOAD.setConnector(new WorldUnloadEventForge());
         super.defineEvents();

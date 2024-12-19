@@ -1,19 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FogColorsEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
-
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_COLORS;
 
-public class FogColorsEventForge extends FogColorsEventWrapper<FogColors> {
+public abstract class FogColorsEventForge extends FogColorsEventWrapper<FogColors> {
     
     @SubscribeEvent
     public static void onEvent(FogColors event) {
@@ -22,10 +17,6 @@ public class FogColorsEventForge extends FogColorsEventWrapper<FogColors> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
-    }
-    
-    @Override protected RenderContext initRenderer(@Nonnull FogColors event) {
-        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     
     @Override public void setEvent(FogColors event) {
@@ -43,10 +34,6 @@ public class FogColorsEventForge extends FogColorsEventWrapper<FogColors> {
 
     @Override protected EventFieldWrapper<FogColors,Float> wrapRed() {
         return wrapGenericBoth(FogColors::getRed,FogColors::setRed,0f);
-    }
-
-    @Override protected EventFieldWrapper<FogColors,EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 
     @Override protected EventFieldWrapper<FogColors,BlockStateAPI<?>> wrapStateField() {

@@ -1,19 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.CameraSetupEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
-
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CAMERA_SETUP;
 
-public class CameraSetupEventForge extends CameraSetupEventWrapper<CameraSetup> {
+public abstract class CameraSetupEventForge extends CameraSetupEventWrapper<CameraSetup> {
     
     @SubscribeEvent
     public static void onEvent(CameraSetup event) {
@@ -22,10 +17,6 @@ public class CameraSetupEventForge extends CameraSetupEventWrapper<CameraSetup> 
     
     @Override public void cancel() {
         this.event.setCanceled(true);
-    }
-    
-    @Override protected RenderContext initRenderer(@Nonnull CameraSetup event) {
-        return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     
     @Override public void setEvent(CameraSetup event) {
@@ -43,10 +34,6 @@ public class CameraSetupEventForge extends CameraSetupEventWrapper<CameraSetup> 
 
     @Override protected EventFieldWrapper<CameraSetup,Float> wrapYawField() {
         return wrapGenericGetter(CameraSetup::getYaw,0f);
-    }
-
-    @Override protected EventFieldWrapper<CameraSetup,EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(event -> event.getInfo().getEntity());
     }
 
     @Override protected EventFieldWrapper<CameraSetup,BlockStateAPI<?>> wrapStateField() {

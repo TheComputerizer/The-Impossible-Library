@@ -5,10 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.FOVModifierEventForge1_18_2;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.FOVUpdateEventForge1_18_2;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.InputKeyEventForge1_18_2;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.RenderWorldLastEventForge1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.event.ClientEvents1_18_2;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -21,14 +18,14 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 {
 
     @Override public void defineEvents() {
-        CAMERA_SETUP.setConnector(new CameraSetupEventForge());
+        CAMERA_SETUP.setConnector(new CameraSetupEventForge1_18_2());
         CLICK_INPUT.setConnector(new InputClickEventForge());
         CLIENT_CONNECTED.setConnector(new ClientConnectedEventForge());
         CLIENT_DISCONNECTED.setConnector(new ClientDisconnectedEventForge());
         CLIENT_RESPAWN.setConnector(new ClientRespawnEventForge());
-        FOG_COLORS.setConnector(new FogColorsEventForge());
-        FOG_DENSITY.setConnector(new FogDensityEventForge());
-        FOG_RENDER.setConnector(new FogRenderEventForge());
+        FOG_COLORS.setConnector(new FogColorsEventForge1_18_2());
+        FOG_DENSITY.setConnector(new FogDensityEventForge1_18_2());
+        FOG_RENDER.setConnector(new FogRenderEventForge1_18_2());
         FOV_MODIFIER.setConnector(new FOVModifierEventForge1_18_2());
         FOV_UPDATE.setConnector(new FOVUpdateEventForge1_18_2());
         ITEM_TOOLTIP.setConnector(new ItemTooltipEventForge());
@@ -39,7 +36,7 @@ public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 {
         PLAYER_PUNCH_EMPTY.setConnector(new PlayerPunchEmptyEventForge());
         PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventForge());
-        RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge());
+        RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_18_2());
         RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge());
         RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge());
         RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge());
@@ -47,7 +44,7 @@ public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 {
         RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge());
         RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_18_2());
         SOUND_LOAD.setConnector(new LoadSoundEventForge());
-        SOUND_PLAY.setConnector(new PlaySoundEventForge());
+        SOUND_PLAY.setConnector(new PlaySoundEventForge1_18_2());
         SOUND_PLAY_SOURCE.setConnector(new PlaySoundSourceEventForge());
         SOUND_PLAY_STREAMING.setConnector(new PlayStreamingSoundSourceEventForge());
         SOUND_SETUP.setConnector(new SoundSetupEventForge());
