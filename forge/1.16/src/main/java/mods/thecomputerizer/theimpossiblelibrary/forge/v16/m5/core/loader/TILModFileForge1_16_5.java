@@ -1,10 +1,12 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILBetterModScan;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILFileConfigForge;
 import net.minecraftforge.coremod.CoreModEngine;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LanguageLoadingProvider;
@@ -41,7 +43,7 @@ import java.util.Set;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 
-public class TILModFileForge extends ModFile {
+public class TILModFileForge1_16_5 extends ModFile {
     
     static boolean fixedCoreMods;
     static boolean loadedProvider;
@@ -52,7 +54,7 @@ public class TILModFileForge extends ModFile {
     protected Path accessTransformer;
     protected List<CoreModFile> coreMods;
     
-    public TILModFileForge(Path path, IModLocator locator, Collection<?> infos) {
+    public TILModFileForge1_16_5(Path path, IModLocator locator, Collection<?> infos) {
         super(path,locator,null);
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);

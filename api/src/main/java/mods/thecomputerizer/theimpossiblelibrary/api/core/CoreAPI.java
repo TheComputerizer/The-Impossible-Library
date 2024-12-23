@@ -219,9 +219,17 @@ public abstract class CoreAPI {
     
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public abstract boolean addURLToClassLoader(ClassLoader loader, URL url);
+    
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
     public abstract CoreEntryPoint getCoreVersionHandler();
+    
+    @SuppressWarnings("unchecked")
+    public <T> T getLaunguageProvider() {
+        String name = "TILLaunguageProvider"+this.version.name.replace(".","_");
+        return ClassHelper.initialize((Class<T>)ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name));
+    }
+    
     public abstract MultiVersionLoaderAPI getLoader();
 
     public Map<String,MultiVersionModData> getModData(File root) {
@@ -235,6 +243,12 @@ public abstract class CoreAPI {
     
     public MultiVersionModData getModData(File root, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
         return new MultiVersionModData(root,candidate,getModWriter(info));
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <T> T getModLocator(ClassLoader loader) {
+        String name = "MultiversionModLocator"+this.version.name.replace(".","_");
+        return (T)ClassHelper.initialize(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name,loader));
     }
     
     protected abstract ModWriter getModWriter(MultiVersionModInfo info);
