@@ -44,6 +44,7 @@ jar {
     fabric_1_16_5.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree(it) }) }
     forge_1_16_5.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
     fabric_1_18_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree(it) }) }
+    forge_1_18_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
     manifest {
         attributes([
                 'Implementation-Title': mod_name,
@@ -56,4 +57,4 @@ jar {
 
 [ ':legacy:1.12:build',
   ':fabric:fabric_1.16:build', ':forge:forge_1.16:build',
-  ':fabric:fabric_1.18:build' ].forEach { tasks.jar.dependsOn(it) }
+  ':fabric:fabric_1.18:build', ':forge:forge_1.18:build' ].forEach { tasks.jar.dependsOn(it) }
