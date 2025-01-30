@@ -11,20 +11,22 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * TODO Might not be needed
- */
 public class TILLanguageProvider implements IModLanguageProvider {
     
     static {
-        TILRef.logInfo("Loaded multiversionprovider");
+        if(Objects.isNull(CoreAPI.INSTANCE)) {
+            TILRef.logInfo("Loading CoreAPI for TILLanguageProvider");
+            Object instance = ForgeCoreLoader.initCoreAPI();
+            if(Objects.nonNull(instance)) TILRef.logInfo("Successfully loaded CoreAPI as {}",instance);
+            else TILRef.logError("Failed to load CoreAPI! Things will probably break very soon");
+        }
     }
     
     final TILForgeLanguageProvider versionProvider;
     
     public TILLanguageProvider() {
         this.versionProvider = CoreAPI.getInstance().getLaunguageProvider();
-        TILRef.logInfo("Instantiated multiversionprovider on {}",getClass().getClassLoader());
+        TILRef.logInfo("Successfully instantiated multiversionprovider on {}",getClass().getClassLoader());
     }
     
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {}

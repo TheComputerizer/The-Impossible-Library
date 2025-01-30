@@ -170,11 +170,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         });
     }
 
-    @SuppressWarnings("DataFlowIssue")
     public static @Nullable Object invokeMethod(@Nullable Method method, @Nullable Object invoker, Object ... args) {
+        if(Objects.isNull(method)) TILDev.logInfo("Trying to invoke null method");
         return Misc.applyNullable(method,m -> {
             try {
-                if(!method.isAccessible()) method.setAccessible(true);
+                if(!m.isAccessible()) m.setAccessible(true);
                 return m.invoke(invoker,args);
             } catch(InvocationTargetException | IllegalAccessException | IllegalArgumentException ex) {
                 TILRef.logError("Failed to invoke method {} with invoker {} and args {}",m,invoker,args,ex);

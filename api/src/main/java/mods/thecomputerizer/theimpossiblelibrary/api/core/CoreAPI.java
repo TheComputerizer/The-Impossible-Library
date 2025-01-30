@@ -181,6 +181,10 @@ public abstract class CoreAPI {
     }
     
     public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom) {
+        if(loader==loadFrom) {
+            TILRef.logError("Tried to sync CoreAPI class for the same ClassLoader {} in the context of {}",loader,Thread.currentThread().getContextClassLoader());
+            return;
+        }
         TILRef.logInfo("Trying to sync CoreAPI instance from {} to {} in the context of {}",loadFrom,loader,Thread.currentThread().getContextClassLoader());
         Class<?> systemClass = ClassHelper.findClass(BINARY,loadFrom);
         if(Objects.nonNull(systemClass)) {
@@ -226,7 +230,7 @@ public abstract class CoreAPI {
     
     @SuppressWarnings("unchecked")
     public <T> T getLaunguageProvider() {
-        String name = "TILLaunguageProvider"+this.version.name.replace(".","_");
+        String name = "TILLanguageProvider"+this.version.name.replace(".","_");
         return ClassHelper.initialize((Class<T>)ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name));
     }
     
