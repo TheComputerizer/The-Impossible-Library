@@ -11,13 +11,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoa
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreEntryPointForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.ClientForge1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.common.CommonForge1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.asm.ModWriterForge1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader.MultiVersionLoaderForge1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.core.TILCore1_18_2;
-import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -30,7 +31,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 @IndirectCallers
 public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
 
-    public static final Reference FORGE_REF = TILRef.instance(FMLLoader.getDist()::isClient,"");
+    public static final Reference FORGE_REF = TILRef.instance(ForgeCoreLoader::isClient,"");
     private final MultiVersionLoaderForge1_18_2 loader;
 
     public TILCoreForge1_18_2() {
@@ -87,6 +88,10 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
     
+    @Override public void loadCoreModInfo(ClassLoader loader) {
+        loadCoreModInfo(loader,false);
+    }
+    
     @Override public String mapClassName(String unmapped) {
         return unmapped;
     }
@@ -102,5 +107,9 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
         return true;
+    }
+    
+    @Override public void writeModContainers(ClassLoader loader) {
+        writeModContainers(loader,false);
     }
 }

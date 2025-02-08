@@ -16,6 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.ClientForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.CommonForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.asm.ModWriterForge1_16_5;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.MultiVersionLoaderForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.core.TILCore1_16_5;
 import net.minecraftforge.fml.loading.FMLLoader;
 

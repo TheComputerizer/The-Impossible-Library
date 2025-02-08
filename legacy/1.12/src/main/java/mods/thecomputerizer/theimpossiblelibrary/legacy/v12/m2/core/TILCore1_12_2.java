@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.Common1_12
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.TILCommonEntryPoint1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModWriter1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.loader.MultiVersionLoader1_12_2;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;

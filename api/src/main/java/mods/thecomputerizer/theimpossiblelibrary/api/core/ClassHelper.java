@@ -241,7 +241,7 @@ public class ClassHelper {
 
     @SneakyThrows
     public static boolean loadURL(URLClassLoader classLoader, URL url) {
-        TILRef.logTrace("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
+        TILDev.logDebug("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
         ReflectionHelper.invokeMethod(URLClassLoader.class,"addURL",classLoader,new Class<?>[]{URL.class},url);
         return true;
     }

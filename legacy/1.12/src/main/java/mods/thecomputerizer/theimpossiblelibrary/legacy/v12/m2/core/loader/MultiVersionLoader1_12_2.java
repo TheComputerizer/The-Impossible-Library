@@ -1,10 +1,10 @@
-package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core;
+package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.core.loader.MultiversionLoaderLegacy;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm.ModContainerWriter1_12_2;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
@@ -21,7 +21,7 @@ import java.util.jar.Manifest;
 import static net.minecraftforge.fml.relauncher.FMLInjectionData.containers;
 import static net.minecraftforge.fml.relauncher.libraries.LibraryManager.DISABLE_EXTERNAL_MANIFEST;
 
-public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
+public class MultiVersionLoader1_12_2 extends MultiversionLoaderLegacy {
 
     public MultiVersionLoader1_12_2(CoreAPI parent) {
         super(parent);
@@ -66,7 +66,7 @@ public class MultiVersionLoader1_12_2 extends MultiVersionLoaderAPI {
             return null;
         }
     }
-
+    
     @Override protected MultiVersionModInfo loadModInfo(
             ClassLoader classLoader, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
         containers.add(ModContainerWriter1_12_2.writeModContainer((LaunchClassLoader)classLoader,info.getModID(),

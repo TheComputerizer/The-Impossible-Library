@@ -36,7 +36,7 @@ public class MultiversionModLocator1_16_5 implements TILForgeModLocator {
     private final Map<MultiVersionModCandidate,TILModFileForge1_16_5> candidateMap = new HashMap<>();
     
     public MultiversionModLocator1_16_5() {
-        TILRef.logInfo("Loading plugin loaded with {}",getClass().getClassLoader());
+        TILRef.logInfo("1.16.5 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
     void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {

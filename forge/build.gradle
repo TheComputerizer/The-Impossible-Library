@@ -48,35 +48,10 @@ apply from: rootProject.file('gradle\\java8-module.gradle')
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
+def base = project(':api')
+
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
-    accessTransformer = file("src/main/resources/META-INF/${mod_accesstransformer}")
-    runs {
-        def args = [
-                '-Dtil.dev=true',
-                "-Dtil.classpath.mods=${common_entrypoint}",
-                "-Dtil.classpath.coremods=${core_entrypoint}"
-        ]
-        configureEach {
-            def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
-            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', srgToMcpFile
-        }
-
-        client {
-            workingDirectory file('run_client')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            jvmArgs args
-        }
-        server {
-            workingDirectory file('run_server')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            jvmArgs args
-        }
-    }
 }
 
 configurations {
@@ -90,17 +65,17 @@ dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("${forge_mc}:${forge_1_16_5}")
 
-    compileOnly(project(':api'))
+    api(base)
 }
 
 processResources {
-    from(project(':api').processResources.outputs) {
+    from(base.processResources.outputs) {
         exclude('fabric.mod.json')
     }
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from(base.processTestResources.outputs)
 }
 
 jar {

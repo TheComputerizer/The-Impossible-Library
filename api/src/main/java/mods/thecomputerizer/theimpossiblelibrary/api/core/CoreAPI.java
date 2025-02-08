@@ -80,7 +80,7 @@ public abstract class CoreAPI {
     }
     
     public static String findLoadingClass(ModLoader loader, String versionStr) {
-        TILRef.logInfo("Parsing version from {}",versionStr);
+        TILDev.logDebug("Parsing version from {}",versionStr);
         GameVersion version = parseVersion(versionStr);
         TILRef.logInfo("Parsed version is {}",version);
         if(Objects.isNull(version))
@@ -90,8 +90,11 @@ public abstract class CoreAPI {
     }
     
     public static CoreAPI getInstance(ClassLoader loader) {
-        if(Objects.isNull(INSTANCE))
-            syncInstanceClassLoader(CoreAPI.class.getClassLoader(),loader);
+        if(Objects.isNull(INSTANCE)) {
+            TILRef.logDebug("Attempting to get CoreAPI instance that does not exist yet on loader {}",loader);
+            if(Objects.nonNull(loader)) syncInstanceClassLoader(CoreAPI.class.getClassLoader(),loader);
+            else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
+        }
         return (CoreAPI)INSTANCE;
     }
     
@@ -343,6 +346,14 @@ public abstract class CoreAPI {
      */
     public Map<?,?> newMap() {
         return new HashMap<>();
+    }
+    
+    /**
+     * Returns the input string with the current ModLoader & GameVersion appended
+     */
+    public String qualify(String str) {
+        String qualified = this.modLoader+" "+this.version;
+        return Objects.isNull(str) || str.isEmpty() ? qualified : str+" "+qualified;
     }
     
     @Override public String toString() {

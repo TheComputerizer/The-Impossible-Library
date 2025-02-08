@@ -1,10 +1,10 @@
-package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core;
+package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.core.loader.MultiVersionLoaderFabric;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -20,9 +20,9 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-public class MultiVersionLoaderFabric1_16_5 extends MultiVersionLoaderAPI {
+public class MultiVersionLoaderFabric1_16_5 extends MultiVersionLoaderFabric {
     
-    protected MultiVersionLoaderFabric1_16_5(CoreAPI parent) {
+    public MultiVersionLoaderFabric1_16_5(CoreAPI parent) {
         super(parent);
     }
     

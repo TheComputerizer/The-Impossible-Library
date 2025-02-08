@@ -10,28 +10,23 @@ import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.util.*;
 
-import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.LOADERS;
+import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.coreLoader;
 import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.locator;
 
 @IndirectCallers
 public class MultiversionModLocator extends AbstractJarFileLocator {
     
     static {
-        Object instance = CoreAPI.getInstance();
-        if(Objects.isNull(instance)) {
-            TILRef.logWarn("CoreAPI wasn't loaded before MultiversionModLocator? Rerunning init");
-            instance = ForgeCoreLoader.initCoreAPI();
-        }
-        if(Objects.nonNull(instance)) {
-            Class<?> coreClass = instance.getClass();
-            ClassLoader loader = coreClass.getClassLoader();
-            locator = (TILForgeModLocator)ReflectionHelper.invokeMethod(coreClass,"getModLocator",instance,
-                    new Class<?>[]{ClassLoader.class},loader);
-        } else TILRef.logError("Failed to initialize CoreAPI instance! Things will probably break now");
+        Object instance = ForgeCoreLoader.initCoreAPI(CoreAPI.class.getClassLoader());
+        if(Objects.isNull(instance))
+            throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiversionModLocator");
+        Class<?> coreClass = instance.getClass();
+        locator = (TILForgeModLocator)ReflectionHelper.invokeMethod(coreClass,"getModLocator",instance,
+                new Class<?>[]{ClassLoader.class}, coreClass.getClassLoader());
     }
     
     public MultiversionModLocator() {
-        TILRef.logInfo("Loading plugin loaded with {}",getClass().getClassLoader());
+        TILRef.logInfo("Core Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
     @Override public List<IModFile> scanMods() {
@@ -45,8 +40,7 @@ public class MultiversionModLocator extends AbstractJarFileLocator {
     }
     
     @Override public void initArguments(Map<String,?> arguments) {
-        if(Objects.nonNull(locator)) {
-            for(ClassLoader loader : LOADERS) locator.initFor(loader,this);
-        } else TILRef.logError("Locator is null! Did it fail to initialize?");
+        if(Objects.nonNull(locator)) locator.initFor(coreLoader,this);
+        else TILRef.logError("Locator is null! Did it fail to initialize?");
     }
 }

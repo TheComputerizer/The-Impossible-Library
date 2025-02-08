@@ -74,22 +74,24 @@ public class MultiVersionModCandidate {
     private @Nullable Class<?> findClass(ClassLoader classLoader, String name, boolean loadSources) {
         TILRef.logInfo("Locating loader class {}",name);
         if(!this.loaded) {
-            TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
-            try {
-                CoreAPI core = CoreAPI.getInstance();
-                if(DEV) {
-                    Class<?> systemClass = ClassHelper.findClass(name, ClassLoader.getSystemClassLoader());
-                    if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, ClassHelper.getSourceURL(systemClass)))
-                        TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name,
-                                        classLoader);
-                } else core.addURLToClassLoader(classLoader,this.file.toURI().toURL());
-            } catch(ClassCastException|MalformedURLException ex) {
-                TILRef.logError("Error getting source URL for {}!",name,ex);
-                return null;
-            }
+            if(loadSources) {
+                TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
+                try {
+                    CoreAPI core = CoreAPI.getInstance();
+                    if(DEV) {
+                        Class<?> systemClass = ClassHelper.findClass(name, ClassLoader.getSystemClassLoader());
+                        if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, ClassHelper.getSourceURL(systemClass)))
+                            TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name,
+                                            classLoader);
+                    } else core.addURLToClassLoader(classLoader,this.file.toURI().toURL());
+                    TILDev.logInfo("Successfully added source! Reattempting to locate loader class");
+                } catch(ClassCastException|MalformedURLException ex) {
+                    TILRef.logError("Error getting source URL for {}!",name,ex);
+                    return null;
+                }
+            } else TILDev.logInfo("loadSources disabled");
             this.loaded = true;
         }
-        TILDev.logInfo("Successfully added source! Reattempting to locate loader class");
         return ClassHelper.findClass(name,classLoader);
     }
 

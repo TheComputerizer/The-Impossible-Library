@@ -13,8 +13,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersio
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.Attributes;
@@ -39,6 +37,10 @@ public abstract class MultiVersionLoaderAPI {
     public abstract File findModRoot();
     protected abstract List<File> gatherCandidateModFiles(File root);
     protected abstract @Nullable Attributes getFileAttributes(File file);
+    
+    public String getName() {
+        return this.parent.qualify("Multiversion Loader");
+    }
 
     private boolean isValidContext(MultiVersionCoreMod mod) {
         return isValidSide(mod.client(),mod.server()) &&

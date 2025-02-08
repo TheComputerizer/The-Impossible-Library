@@ -16,6 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.client.ClientFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common.CommonFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.core.asm.ModWriterFabric1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.core.loader.MultiVersionLoaderFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.core.TILCore1_18_2;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;

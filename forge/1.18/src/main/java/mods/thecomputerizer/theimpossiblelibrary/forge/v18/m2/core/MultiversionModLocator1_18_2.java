@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeModLocator;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader.TILModFileForge1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader.TILModFileForge1_18_2.TILLanguageProviderLoader;
 import net.minecraftforge.fml.loading.ClasspathLocatorUtils;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
@@ -27,6 +28,8 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+
 @IndirectCallers
 public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     
@@ -35,42 +38,47 @@ public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     private final Map<MultiVersionModCandidate,TILModFileForge1_18_2> candidateMap = new HashMap<>();
     
     public MultiversionModLocator1_18_2() {
-        TILRef.logInfo("Loading plugin loaded with {}",getClass().getClassLoader());
+        TILRef.logInfo("1.18.2 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
     void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<SecureJar> filter) {
+        String loaderName = loader.getName();
         if(Files.isDirectory(path)) return;
         String fileName = path.getFileName().toString();
-        TILRef.logInfo("Checking if file {} is the loader",fileName);
+        TILDev.logInfo("[{}]: Checking if file {} is the loader",loaderName,fileName);
         if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
-            TILRef.logInfo("File is the loader");
+            TILDev.logInfo("[{}]: File is the loader",loaderName);
             MultiVersionModCandidate.loaderFile = path.toFile();
         }
-        SecureJar sj = SecureJar.from(Manifest::new,jar -> JarMetadata.from(jar,path));
+        SecureJar sj = jarFromPath(path);
         if(filter.test(sj)) {
-            TILRef.logInfo("Found mod candidate at {}",path);
+            TILRef.logInfo("[{}]: Found mod candidate at {}",loaderName,path);
             loader.addPotentialModPath(path);
         }
     }
     
     void checkURL(MultiVersionLoaderAPI loader, URL url, Predicate<SecureJar> filter) {
+        TILRef.logDebug("[{}]: Checking URL {} for MANIFEST {}",loader.getName(),url,MANIFEST);
         Path path = ClasspathLocatorUtils.findJarPathFor(MANIFEST,MANIFEST,url);
         checkPath(loader,path,filter);
     }
     
     void findFiles(MultiVersionLoaderAPI loader, Predicate<SecureJar> filter, File... files) {
-        TILRef.logInfo("Loading {} mod files",files.length);
+        TILRef.logInfo("[{}]: Loading {} mod files",loader.getName(),files.length);
         for(File mod : files) {
-            TILRef.logInfo("Loading mod file at path",mod.toPath());
-            checkPath(loader, mod.toPath(),filter);
+            TILRef.logInfo("[{}]: Loading mod file at path",loader.getName(),mod.toPath());
+            checkPath(loader,mod.toPath(),filter);
         }
     }
     
     void findPaths(ClassLoader classLoader, MultiVersionLoaderAPI loader) {
         Predicate<SecureJar> filter = jar -> {
+            TILDev.logDebug("filter test 1 (pre null check)");
             if(Objects.isNull(jar)) return false;
+            TILDev.logDebug("filter test 2 (jar root = {})",jar.getRootPath());
             Manifest manifest = jar.getManifest();
             if(Objects.isNull(manifest)) return false;
+            TILDev.logDebug("filter test 3 (manifest = {})",manifest);
             return MultiVersionModFinder.hasMods(manifest.getMainAttributes());
         };
         findURLs(loader,classLoader,filter);
@@ -79,10 +87,10 @@ public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     
     void findURLs(MultiVersionLoaderAPI loader, ClassLoader classLoader, Predicate<SecureJar> filter) {
         try {
-            final Enumeration<URL> manifests = classLoader.getResources(MANIFEST);
+            final Enumeration<URL> manifests = ClassLoader.getSystemClassLoader().getResources(MANIFEST);
             while(manifests.hasMoreElements()) checkURL(loader,manifests.nextElement(),filter);
         } catch(IOException ex) {
-            TILRef.logError("Failed to calculate URLs for paths with {} using {}",MANIFEST,classLoader,ex);
+            TILRef.logError("[{}]: Failed to calculate URLs for paths with {} using {}",loader.getName(),MANIFEST,classLoader,ex);
         }
     }
     
@@ -91,7 +99,7 @@ public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     }
     
     @Override public void initFor(ClassLoader loader, IModLocator locator) {
-        Object core = CoreAPI.findInstance(loader);
+        Object core = CoreAPI.getInstance(loader);
         if(Objects.isNull(core))
             throw new RuntimeException("Failed to initialize multiversion mod loader! Cannot find CoreAPI on "+loader);
         findPaths(loader,(MultiVersionLoaderAPI)CoreAPI.invoke(core,"getLoader"));
@@ -99,7 +107,8 @@ public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     }
     
     SecureJar jarFromPath(Path path) {
-        return SecureJar.from(Manifest::new,jar -> JarMetadata.from(jar,path));
+        return SecureJar.from(Manifest::new,jar -> JarMetadata.from(jar,path),
+                              (root,p) -> true,path);
     }
     
     public void loadCandidateInfos(IModLocator locator, Map<?,?> infoMap) {
@@ -123,13 +132,16 @@ public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     
     @SuppressWarnings("unchecked")
     @Override public List<IModFile> scanMods(IModLocator locator) {
-        TILRef.logDebug("Scanning for mods in multiversion jars");
+        TILRef.logDebug("Scanning for mods in multiversion jars (context = {})",Thread.currentThread().getContextClassLoader());
         List<IModFile> mods = new ArrayList<>();
-        Object instance = CoreAPI.invoke(null,"getInstance");
+        TILRef.logDebug("Getting CoreAPI instance on {}",locator.getClass().getClassLoader());
+        CoreAPI instance = CoreAPI.getInstance(locator.getClass().getClassLoader());
         if(Objects.isNull(instance)) TILRef.logError("Failed to get CoreAPI instance :(");
         Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
         for(TILModFileForge1_18_2 candidate : this.candidateMap.values()) {
             candidate.populateMultiversionData((Map<String,MultiVersionModData>)data);
+            if(MODID.equals(candidate.getModFileInfo().moduleName()))
+                mods.add(new TILLanguageProviderLoader(candidate.getSecureJar(),candidate.getLocator()));
             mods.add(candidate);
         }
         return Collections.unmodifiableList(mods);

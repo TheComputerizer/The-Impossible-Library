@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader;
 
+import com.electronwill.nightconfig.core.Config;
 import cpw.mods.jarhandling.SecureJar;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -9,13 +11,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILBetterModScan;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILFileConfigForge;
 import net.minecraftforge.coremod.CoreModEngine;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LanguageLoadingProvider;
 import net.minecraftforge.fml.loading.moddiscovery.CoreModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
+import net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper;
 import net.minecraftforge.fml.loading.moddiscovery.Scanner;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -23,14 +23,14 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
+import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Constructor;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,27 +38,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 
 public class TILModFileForge1_18_2 extends ModFile {
     
     static boolean fixedCoreMods;
-    static boolean loadedProvider;
+    
+    static IModFileInfo getFileInfo(IModFile file, Collection<?> infos) {
+        IConfigurable config = new TILFileConfigForge(infos);
+        return new ModFileInfo((ModFile)file,config,Collections.emptyList());
+    }
     
     private final Map<MultiVersionModInfo,MultiVersionModData> infos;
-    protected IModFileInfo fileInfo;
-    private List<IModLanguageProvider> loaders;
-    protected Path accessTransformer;
-    protected List<CoreModFile> coreMods;
     
     public TILModFileForge1_18_2(SecureJar file, IModLocator locator, Collection<?> infos) {
-        super(file,locator,null);
+        super(file,locator,mod -> getFileInfo(mod,infos),"MOD");
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
+        TILRef.logInfo("Created TILModFileForge1_18_2 in context {}",Thread.currentThread().getContextClassLoader());
     }
     
     @Override public ModFileScanData compileContent() {
@@ -103,21 +105,24 @@ public class TILModFileForge1_18_2 extends ModFile {
         return scan;
     }
     
-    @SuppressWarnings("unchecked")
-    private List<CoreModFile> findCoreMods() {
-        Object list = ReflectionHelper.invokeMethod(ModFileParser.class,"getCoreMods",null,new Class<?>[]{
-                ModFile.class},this);
-        return list instanceof List<?> ? (List<CoreModFile>)list : Collections.emptyList();
-    }
-    
     /**
      * No easy way for generic core mods? Fine, I'll do it myself
      */
     @SuppressWarnings("unchecked")
     private void fixCoreModPackages(String ... extensions) {
         Object allowed = ReflectionHelper.getFieldInstance(CoreModEngine.class,"ALLOWED_PACKAGES");
+        Object classes = ReflectionHelper.getFieldInstance(CoreModEngine.class,"ALLOWED_CLASSES");
         if(allowed instanceof Set<?>) fixCoreModPackages((Set<String>)allowed,extensions);
+        if(allowed instanceof Set<?>) {
+            TILRef.logInfo("Whitelisting CoreAPI class for coremods");
+            fixCoreModClasses((Set<String>)classes,CoreAPI.class.getName(),TILRef.class.getName());
+        }
         else TILRef.logError("Failed to fix coremods (allowed packages = {})",allowed);
+    }
+    
+    private void fixCoreModClasses(Set<String> allowed, String ... classes) {
+        allowed.addAll(Arrays.asList(classes));
+        TILDev.logDebug("Allowed coremod classes have been expanded to {}",allowed);
     }
     
     private void fixCoreModPackages(Set<String> allowed, String ... extensions) {
@@ -125,67 +130,20 @@ public class TILModFileForge1_18_2 extends ModFile {
         TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
     }
     
-    @Override public Optional<Path> getAccessTransformer() {
-        return Optional.ofNullable(Files.exists(this.accessTransformer) ? this.accessTransformer : null);
-    }
-    
-    @Override public List<CoreModFile> getCoreMods() {
-        if(Objects.isNull(this.coreMods)) {
-            this.coreMods = findCoreMods();
-            if(!this.coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","fabric","forge","legacy","fabric.v16.m5","forge.v16.m5");
-                fixedCoreMods = true;
-            }
-        }
-        TILRef.logInfo("Found coremods {}",this.coreMods);
-        return this.coreMods;
-    }
-    
-    @Override public List<IModLanguageProvider> getLoaders() {
-        if(Objects.isNull(this.loaders)) identifyLanguage();
-        return this.loaders;
-    }
-    
     @Override public List<IModInfo> getModInfos() {
         return getModFileInfo().getMods();
     }
     
-    @Override public IModFileInfo getModFileInfo() {
-        if(Objects.isNull(this.fileInfo)) {
-            if(!loadedProvider) {
-                TILRef.logWarn("Invalid? We'll see about that, Forge");
-                TILRef.logInfo("Loading multiversion language provider");
-                LanguageLoadingProvider provider =  FMLLoader.getLanguageLoadingProvider();
-                provider.addAdditionalLanguages(Collections.singletonList(new TILLanguageProviderLoader(getSecureJar(),getLocator())));
-                loadedProvider = true;
-            }
-            TILRef.logInfo("Building IModFileInfo");
-            Constructor<?> infoConstructor = ReflectionHelper.findConstructor(ModFileInfo.class,ModFile.class,IConfigurable.class);
-            if(Objects.nonNull(infoConstructor)) {
-                if(!infoConstructor.canAccess(this)) infoConstructor.setAccessible(true);
-                try {
-                    this.fileInfo = (ModFileInfo)infoConstructor.newInstance(this,new TILFileConfigForge(this.infos.keySet()));
-                    TILRef.logDebug("Successfully captured multiversion mods for {}",getFileName());
-                } catch(ReflectiveOperationException ex) {
-                    TILRef.logFatal("Failed to capture mod file for {}! A crash may be imminent",getFileName(),ex);
-                }
-            } else TILRef.logFatal("Failed to find ModFileInfo constructor???");
-        }
-        return this.fileInfo;
-    }
-    
-    @Override public void identifyLanguage() {
-        IModFileInfo info = getModFileInfo();
-        LanguageLoadingProvider provider =  FMLLoader.getLanguageLoadingProvider();
-        this.loaders = info.requiredLanguageLoaders().stream()
-                .map(spec-> provider.findLanguage(this,spec.languageName(),spec.acceptedVersions()))
-                .toList();
-    }
-    
     @Override public boolean identifyMods() {
-        TILRef.logInfo("Loading mod file {} with languages {}",getFilePath(),this.loaders);
-        this.accessTransformer = findResource("META-INF","accesstransformer.cfg");
-        return true;
+        boolean ret = super.identifyMods();
+        if(ret) {
+            List<CoreModFile> coreMods = getCoreMods();
+            if(!coreMods.isEmpty() && !fixedCoreMods) {
+                fixCoreModPackages("api","forge","legacy","forge.v18.m2");
+                fixedCoreMods = true;
+            }
+        }
+        return ret;
     }
     
     public void populateMultiversionData(Map<String,MultiVersionModData> dataMap) {
@@ -209,8 +167,24 @@ public class TILModFileForge1_18_2 extends ModFile {
     
     public static class TILLanguageProviderLoader extends ModFile {
         
+        public static IModFileInfo getLangFileInfo(IModFile file) {
+            Config config = Config.inMemory();
+            config.set("modLoader","minecraft");
+            config.set("loaderVersion","1");
+            Config mod = Config.inMemory();
+            mod.set("modId","multiversionprovider");
+            mod.set("version",VERSION);
+            mod.set("displayName","Multiversion Language Provider");
+            mod.set("logoFile", "logo.png");
+            mod.set("authors", "The_Computerizer");
+            mod.set("description", "Multiversion language loader for "+NAME);
+            config.set("mods",Collections.singletonList(mod));
+            IConfigurable wrapper = new NightConfigWrapper(config);
+            return new ModFileInfo((ModFile)file,wrapper,Collections.emptyList());
+        }
+        
         public TILLanguageProviderLoader(SecureJar file, IModLocator locator) {
-            super(file,locator,null);
+            super(file,locator,TILLanguageProviderLoader::getLangFileInfo,"LANGPROVIDER");
         }
         
         @Override public Type getType() {
