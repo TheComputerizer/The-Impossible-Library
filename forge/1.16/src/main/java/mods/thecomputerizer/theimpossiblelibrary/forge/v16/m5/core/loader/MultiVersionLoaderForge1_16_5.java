@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.MultiversionLoaderForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.MultiVersionLoaderForge;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
-public class MultiVersionLoaderForge1_16_5 extends MultiversionLoaderForge {
+public class MultiVersionLoaderForge1_16_5 extends MultiVersionLoaderForge {
     
     public MultiVersionLoaderForge1_16_5(CoreAPI parent) {
         super(parent);

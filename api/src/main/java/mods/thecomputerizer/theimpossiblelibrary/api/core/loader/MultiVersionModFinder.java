@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import javax.annotation.Nullable;
@@ -45,7 +44,6 @@ public class MultiVersionModFinder {
     }
     
     public static boolean hasMods(Attributes attributes) {
-        TILDev.logInfo("Checking attributes for multiversion mods {}",attributes);
         return attributes.containsKey(MULTIVERSION_MODS) || attributes.containsKey(MULTIVERSION_COREMODS);
     }
 

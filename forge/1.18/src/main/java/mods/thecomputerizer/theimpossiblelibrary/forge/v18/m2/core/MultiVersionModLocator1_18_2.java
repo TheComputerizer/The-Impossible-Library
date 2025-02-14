@@ -31,13 +31,13 @@ import java.util.jar.Manifest;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 @IndirectCallers
-public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
+public class MultiVersionModLocator1_18_2 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
     private final Map<MultiVersionModCandidate,TILModFileForge1_18_2> candidateMap = new HashMap<>();
     
-    public MultiversionModLocator1_18_2() {
+    public MultiVersionModLocator1_18_2() {
         TILRef.logInfo("1.18.2 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
@@ -73,12 +73,9 @@ public class MultiversionModLocator1_18_2 implements TILForgeModLocator {
     
     void findPaths(ClassLoader classLoader, MultiVersionLoaderAPI loader) {
         Predicate<SecureJar> filter = jar -> {
-            TILDev.logDebug("filter test 1 (pre null check)");
             if(Objects.isNull(jar)) return false;
-            TILDev.logDebug("filter test 2 (jar root = {})",jar.getRootPath());
             Manifest manifest = jar.getManifest();
             if(Objects.isNull(manifest)) return false;
-            TILDev.logDebug("filter test 3 (manifest = {})",manifest);
             return MultiVersionModFinder.hasMods(manifest.getMainAttributes());
         };
         findURLs(loader,classLoader,filter);

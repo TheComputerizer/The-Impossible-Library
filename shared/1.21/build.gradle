@@ -40,7 +40,7 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java21-module.gradle')
+apply from: rootProject.file('gradle\\java23-module.gradle')
 
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')

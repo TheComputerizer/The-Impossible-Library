@@ -32,17 +32,17 @@ buildscript {
         }
     }
     dependencies {
-        classpath("${shadow_plugin}:${shadow_version}")
-        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
-        classpath("${parchment_plugin}:${parchment_plugin_version}")
+        classpath("$shadow_plugin:$shadow_version")
+        classpath("$forge_gradle_plugin:$forge_gradle_version")
+        classpath("$parchment_plugin:$parchment_plugin_version")
     }
 }
 
 apply from: rootProject.file('gradle\\java17-module.gradle')
 apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
-plugins.apply('net.minecraftforge.gradle')
-plugins.apply('org.parchmentmc.librarian.forgegradle')
+plugins.apply 'net.minecraftforge.gradle'
+plugins.apply 'org.parchmentmc.librarian.forgegradle'
 
 def base = project ':api'
 def forge = project ':forge'
@@ -55,7 +55,8 @@ minecraft {
     mappings channel: 'parchment', version: "$parchment_1_18_2-$minecraft_1_18_2"
     runs {
         def runSources = [ sourceSets.main ]
-        def args = [ dev_arg, "$classpath_arg$classpath_file".toString(), common_entrypoint_arg, core_entrypoint_arg ]
+        def args = [ dev_arg, "$classpath_arg$classpath_file".toString(), common_entrypoint_arg, core_entrypoint_arg,
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED' ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -94,7 +95,7 @@ repositories {
         name = 'ModMaven'
         url = uri('https://modmaven.dev')
         content {
-            includeGroup( 'mezz.jei')
+            includeGroup 'mezz.jei'
         }
     }
     flatDir {
@@ -104,27 +105,27 @@ repositories {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("$forge_mc:$forge_1_18_2")
+    minecraft "$forge_mc:$forge_1_18_2"
 
-    compileOnlyApi(base)
-    compileOnlyApi(project(path: ':forge', configuration: 'dev'))
-    compileOnlyApi(shared)
+    compileOnlyApi base
+    compileOnlyApi project(path: ':forge', configuration: 'dev')
+    compileOnlyApi shared
 
     //mod support dependencies
-    implementation(fg.deobf("$blueskies_artifact:$blueskies_1_18_2"))
-    implementation(fg.deobf("$bookshelf_artifact-$bookshelf_forge_1_18_2"))
-    implementation(fg.deobf("$champions_artifact:$champions_1_18_2"))
-    implementation(fg.deobf("$configured_artifact:$configured_1_18_2"))
-    implementation(fg.deobf("$coroutil_artifact:$coroutil_forge_1_18_2"))
-    implementation(fg.deobf("$enhanced_celestials_artifact:$enhanced_celestials_1_18_2"))
-    implementation(fg.deobf("$infernal_mobs_artifact:$infernal_mobs_1_18_2"))
-    implementation(fg.deobf("$game_stages_artifact-$game_stages_1_18_2"))
-    implementation(fg.deobf("$serene_seasons_artifact:$serene_seasons_1_18_2"))
-    implementation(fg.deobf("$structure_gel_api_artifact:$structure_gel_api_1_18_2"))
-    implementation(fg.deobf("$weather2_artifact:$weather2_1_18_2"))
+    implementation fg.deobf("$blueskies_artifact:$blueskies_1_18_2")
+    implementation fg.deobf("$bookshelf_artifact-$bookshelf_forge_1_18_2")
+    implementation fg.deobf("$champions_artifact:$champions_1_18_2")
+    implementation fg.deobf("$configured_artifact:$configured_1_18_2")
+    implementation fg.deobf("$coroutil_artifact:$coroutil_forge_1_18_2")
+    implementation fg.deobf("$enhanced_celestials_artifact:$enhanced_celestials_1_18_2")
+    implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_1_18_2")
+    implementation fg.deobf("$game_stages_artifact-$game_stages_1_18_2")
+    implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_1_18_2")
+    implementation fg.deobf("$structure_gel_api_artifact:$structure_gel_api_1_18_2")
+    implementation fg.deobf("$weather2_artifact:$weather2_1_18_2")
 
-    runtimeOnly(fg.deobf("$jei_artifact:$jei_forge_1_18_2"))
-    runtimeOnly(fg.deobf("mods.thecomputerizer.theimpossiblelibrary:theimpossiblelibrary_shadow:$mod_version"))
+    runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_18_2")
+    runtimeOnly fg.deobf("mods.thecomputerizer.theimpossiblelibrary:theimpossiblelibrary_shadow:$mod_version")
 }
 
 reobf {
@@ -156,14 +157,14 @@ shadowJar {
     [ base, forge ].forEach {
         from(it.jar.archiveFile.collect { zipTree(it) })
     }
-    remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
+    remapThese.forEach((key,value) -> relocate "net.minecraft.$key", "net.minecraft.$value")
     shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
-        relocate "${shared_base_package}", "${forge_base_package}"
+        from(it.jar.archiveFile.collect { zipTree(it) })
+        relocate shared_base_package, forge_base_package
     }
 }
 
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')
-tasks.jar.dependsOn(':forge:build')
+tasks.assemble.dependsOn shadowJar
+tasks.shadowJar.dependsOn 'reobfJar'
+tasks.jar.finalizedBy 'reobfJar'
+tasks.jar.dependsOn ':forge:build'

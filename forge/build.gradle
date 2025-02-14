@@ -38,20 +38,20 @@ buildscript {
         }
     }
     dependencies {
-        classpath('net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin:6.+')
-        classpath('org.parchmentmc.librarian.forgegradle:org.parchmentmc.librarian.forgegradle.gradle.plugin:1.+')
+        classpath "$forge_gradle_plugin:$forge_gradle_version"
+        classpath "$parchment_plugin:$parchment_plugin_version"
     }
 }
 
 apply from: rootProject.file('gradle\\java8-module.gradle')
 
-plugins.apply('net.minecraftforge.gradle')
-plugins.apply('org.parchmentmc.librarian.forgegradle')
+plugins.apply 'net.minecraftforge.gradle'
+plugins.apply 'org.parchmentmc.librarian.forgegradle'
 
-def base = project(':api')
+def base = project ':api'
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_1_16_5}-${minecraft_1_16_5}"
+    mappings channel: 'parchment', version: "$parchment_1_16_5-$minecraft_1_16_5"
 }
 
 configurations {
@@ -63,19 +63,19 @@ configurations {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("${forge_mc}:${forge_1_16_5}")
+    minecraft "${forge_mc}:${forge_1_16_5}"
 
-    api(base)
+    api base
 }
 
 processResources {
     from(base.processResources.outputs) {
-        exclude('fabric.mod.json')
+        exclude 'fabric.mod.json'
     }
 }
 
 processTestResources {
-    from(base.processTestResources.outputs)
+    from base.processTestResources.outputs
 }
 
 jar {
@@ -92,4 +92,4 @@ artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn(':api:build')
+tasks.jar.dependsOn ':api:build'

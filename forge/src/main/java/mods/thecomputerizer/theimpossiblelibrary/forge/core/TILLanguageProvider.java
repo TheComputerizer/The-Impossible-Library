@@ -1,11 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLanguageProvider;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.forgespi.locating.IModLocator;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -13,11 +15,26 @@ import java.util.function.Supplier;
 
 public class TILLanguageProvider implements IModLanguageProvider {
     
+    static CoreAPI findCoreAPI() {
+        TILDev.logInfo("Trying to find CoreAPI instance for TILLanguageProvider... But first a ClassLoader query");
+        TILRef.logInfo("Context = {} | IModLanguageProvider = {} | IModLocator = {} | CoreAPI = {}",
+                       Thread.currentThread().getContextClassLoader(),
+                       IModLanguageProvider.class.getClassLoader(),
+                       IModLocator.class.getClassLoader(),
+                       CoreAPI.class.getClassLoader());
+        Object instance = CoreAPI.getInstance();
+        if(Objects.isNull(instance)) instance = ForgeCoreLoader.initCoreAPI(CoreAPI.class.getClassLoader());
+        TILDev.logInfo("Found CoreAPI? {}",instance);
+        return (CoreAPI)instance;
+    }
+    
     final TILForgeLanguageProvider versionProvider;
     
     public TILLanguageProvider() {
-        this.versionProvider = CoreAPI.getInstance().getLaunguageProvider();
-        TILRef.logInfo("Successfully instantiated multiversionprovider on {}",getClass().getClassLoader());
+        this.versionProvider = findCoreAPI().getLaunguageProvider();
+        if(Objects.nonNull(this.versionProvider))
+            TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
+        else TILRef.logError("Initialized versioned language provider as null");
     }
     
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {}

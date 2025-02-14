@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader;
 
 import com.electronwill.nightconfig.core.Config;
 import cpw.mods.jarhandling.SecureJar;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
@@ -11,12 +12,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILBetterModScan;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILFileConfigForge;
 import net.minecraftforge.coremod.CoreModEngine;
-import net.minecraftforge.fml.loading.moddiscovery.CoreModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper;
 import net.minecraftforge.fml.loading.moddiscovery.Scanner;
+import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -110,13 +111,23 @@ public class TILModFileForge1_18_2 extends ModFile {
      */
     @SuppressWarnings("unchecked")
     private void fixCoreModPackages(String ... extensions) {
-        Object allowed = ReflectionHelper.getFieldInstance(CoreModEngine.class,"ALLOWED_PACKAGES");
-        Object classes = ReflectionHelper.getFieldInstance(CoreModEngine.class,"ALLOWED_CLASSES");
+        TILRef.logInfo("Fixing Coremod packages... after querying some class loaders");
+        TILRef.logInfo("Context = {} | ICoreModProvider = {} | ICoreModProvider Module = {} | CoreAPI = {}",
+                       Thread.currentThread().getContextClassLoader(),
+                       ICoreModProvider.class.getClassLoader(),
+                       ICoreModProvider.class.getModule().getClassLoader(),
+                       CoreAPI.class.getClassLoader());
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        TILRef.logInfo("But the real ICoreModProvider loader is {}",loader);
+        CoreAPI.syncInstanceClassLoader(loader,CoreAPI.class.getClassLoader(),false);
+        Class<?> engineClass = ClassHelper.findClass(CoreModEngine.class.getName(),loader);
+        Object allowed = ReflectionHelper.getFieldInstance(engineClass,"ALLOWED_PACKAGES");
+        //Object classes = ReflectionHelper.getFieldInstance(engineClass,"ALLOWED_CLASSES");
         if(allowed instanceof Set<?>) fixCoreModPackages((Set<String>)allowed,extensions);
-        if(allowed instanceof Set<?>) {
-            TILRef.logInfo("Whitelisting CoreAPI class for coremods");
-            fixCoreModClasses((Set<String>)classes,CoreAPI.class.getName(),TILRef.class.getName());
-        }
+        //if(allowed instanceof Set<?>) {
+        //    TILRef.logInfo("Whitelisting CoreAPI class for coremods");
+        //    fixCoreModClasses((Set<String>)classes,CoreAPI.class.getName(),TILRef.class.getName());
+        //}
         else TILRef.logError("Failed to fix coremods (allowed packages = {})",allowed);
     }
     
@@ -137,11 +148,12 @@ public class TILModFileForge1_18_2 extends ModFile {
     @Override public boolean identifyMods() {
         boolean ret = super.identifyMods();
         if(ret) {
-            List<CoreModFile> coreMods = getCoreMods();
-            if(!coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","forge","legacy","forge.v18.m2");
-                fixedCoreMods = true;
-            }
+            getCoreMods().clear();
+            //List<CoreModFile> coreMods = getCoreMods();
+            //if(!coreMods.isEmpty() && !fixedCoreMods) {
+            //    fixCoreModPackages("api","forge","legacy","forge.v18.m2");
+            //    fixedCoreMods = true;
+            //}
         }
         return ret;
     }

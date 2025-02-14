@@ -29,13 +29,13 @@ import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
 @IndirectCallers
-public class MultiversionModLocator1_16_5 implements TILForgeModLocator {
+public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
     private final Map<MultiVersionModCandidate,TILModFileForge1_16_5> candidateMap = new HashMap<>();
     
-    public MultiversionModLocator1_16_5() {
+    public MultiVersionModLocator1_16_5() {
         TILRef.logInfo("1.16.5 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     

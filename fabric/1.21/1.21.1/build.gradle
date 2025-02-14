@@ -28,7 +28,7 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java21-module.gradle')
+apply from: rootProject.file('gradle\\java23-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 

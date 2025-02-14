@@ -6,6 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -55,6 +58,10 @@ public class ClassHelper {
      */
     @SneakyThrows
     public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
+        if(bytes==null) {
+            TILRef.logError("Tried to define class {} with null byte array!",classpath);
+            return null;
+        }
         return (Class<?>)ReflectionHelper.invokeMethod(ClassLoader.class,"defineClass",classLoader,new Class<?>[]{
                 String.class,byte[].class,int.class,int.class},classpath,bytes,0,bytes.length);
     }
@@ -200,6 +207,17 @@ public class ClassHelper {
         return findClass(withPkgName(pkg,simpleName),initialize,classLoader);
     }
     
+    public static byte[] getClassBytes(Class<?> clazz) {
+        String path = getResourcePath(clazz);
+        try(InputStream stream = clazz.getClassLoader().getResourceAsStream(path)) {
+            if(Objects.isNull(stream)) return null;
+            return streamToBytes(stream);
+        } catch(IOException ex) {
+            TILRef.logError("Failed to get bytes for {} as resource {}",clazz,path,ex);
+        }
+        return null;
+    }
+    
     public static <T> @Nullable T initialize(@Nullable Class<T> clazz) {
         if(Objects.nonNull(clazz)) {
             try {
@@ -235,8 +253,9 @@ public class ClassHelper {
     }
 
     @SneakyThrows
-    public static void loadClass(ClassLoader classLoader, Class<?> clazz) {
-        classLoader.loadClass(clazz.getName());
+    public static void loadClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
+        if(Objects.nonNull(clazz)) classLoader.loadClass(clazz.getName());
+        else TILRef.logError("Tried to load null class to {}",classLoader);
     }
 
     @SneakyThrows
@@ -300,6 +319,16 @@ public class ClassHelper {
         return signatureDesc("L"+name+";",ArrayHelper.mapTo(parameterNames,String.class,p -> "L"+p+";"));
     }
     
+    public static byte[] streamToBytes(InputStream stream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int read;
+        byte[] bytes = new byte[16384];
+        while((read = stream.read(bytes,0,bytes.length))!=-1) {
+            buffer.write(bytes,0,read);
+        }
+        return buffer.toByteArray();
+    }
+    
     public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className) {
         syncSourcesForClass(syncFrom,syncTo,className,className);
     }
@@ -308,6 +337,16 @@ public class ClassHelper {
     public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
             BiFunction<ClassLoader,URL,Boolean> urlLoader) {
         syncSourcesForClass(syncFrom,syncTo,className,urlLoader,className);
+    }
+    
+    @SneakyThrows
+    public static Class<?> syncDirect(ClassLoader loader, Class<?> clazz) {
+        TILDev.logInfo("Attempting direct sync of {} to {}",clazz,loader);
+        if(loader==clazz.getClassLoader()) {
+            TILRef.logError("Tried to sync {} to its own loader",clazz);
+            return clazz;
+        }
+        return resolveClass(loader,defineClass(loader,clazz.getName(),getClassBytes(clazz)));
     }
     
     public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,

@@ -1,5 +1,5 @@
 apply from: rootProject.file('buildSrc\\shared.gradle')
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(23)
 
 apply from: rootProject.file('gradle\\runtime-module.gradle')

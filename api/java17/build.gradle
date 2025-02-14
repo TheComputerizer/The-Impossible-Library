@@ -1,0 +1,22 @@
+apply from: rootProject.file('gradle\\java17-module.gradle')
+
+def base = project ':api'
+
+dependencies {
+    api base
+}
+
+processResources {
+    from sourceSets.main.resources.srcDirs
+}
+
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    dev jar
+}

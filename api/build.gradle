@@ -4,7 +4,7 @@ repositories {
     mavenCentral()
     maven {
         name = 'SonaType'
-        url = uri('https://oss.sonatype.org/content/repositories/public/')
+        url = uri 'https://oss.sonatype.org/content/repositories/public/'
         content {
             includeGroup 'it.unimi.dsi'
         }
@@ -29,7 +29,7 @@ dependencies {
 }
 
 processResources {
-    from(sourceSets.main.resources.srcDirs)
+    from sourceSets.main.resources.srcDirs
 }
 
 artifacts {

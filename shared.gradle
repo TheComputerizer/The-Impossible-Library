@@ -6,8 +6,6 @@ plugins.apply('java-library')
 group = base_package
 version = mod_version
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
-
 idea {
     module {
         downloadJavadoc = true

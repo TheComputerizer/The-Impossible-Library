@@ -139,16 +139,14 @@ public abstract class CoreAPI {
         return getInstance().getSide().isServer();
     }
     
-    public static Object parseFrom(String unparsed, ClassLoader loader) {
+    @SuppressWarnings("DataFlowIssue")
+    public static Object parseFrom(Object unparsed, ClassLoader loader, boolean java8) {
         try {
-            String className = unparsed.split(" ")[0];
-            Method method = ReflectionHelper.getMethod(ClassLoader.class,"findResource",String.class);
-            if(Objects.nonNull(method)) {
-                String classResource = className.replace('.','/')+".class";
-                Object obj = ReflectionHelper.invokeMethod(method,loader,classResource);
-            } else TILRef.logError("Why doesn't the findResource method exist??");
-            return loader.loadClass(className).newInstance();
-        } catch(ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
+            String className = String.valueOf(unparsed).split(" ")[0];
+            Class<?> coreClass = java8 ? ClassHelper.findClass(className,loader) :
+                    ClassHelper.syncDirect(loader,unparsed.getClass());
+            return coreClass.newInstance();
+        } catch(NullPointerException | IllegalAccessException | InstantiationException ex) {
             TILRef.logError("Unable to parse CoreAPI instance from {}",unparsed,ex);
         }
         return null;
@@ -184,6 +182,10 @@ public abstract class CoreAPI {
     }
     
     public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom) {
+        syncInstanceClassLoader(loader,loadFrom,true);
+    }
+    
+    public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom, boolean java8) {
         if(loader==loadFrom) {
             TILRef.logError("Tried to sync CoreAPI class for the same ClassLoader {} in the context of {}",loader,Thread.currentThread().getContextClassLoader());
             return;
@@ -192,9 +194,10 @@ public abstract class CoreAPI {
         Class<?> systemClass = ClassHelper.findClass(BINARY,loadFrom);
         if(Objects.nonNull(systemClass)) {
             Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
-            ReflectionHelper.invokeMethod(systemClass,"addURLToClassLoader",instance,new Class<?>[]{
-                    ClassLoader.class,URL.class},loader,ClassHelper.getSourceURL(systemClass));
-            INSTANCE = parseFrom(String.valueOf(instance),loader);
+            if(java8)
+                ReflectionHelper.invokeMethod(systemClass,"addURLToClassLoader",instance,new Class<?>[]{
+                        ClassLoader.class,URL.class},loader,ClassHelper.getSourceURL(systemClass));
+            INSTANCE = parseFrom(instance,loader,java8);
             TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
         } else TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader");
     }
@@ -218,6 +221,7 @@ public abstract class CoreAPI {
         INSTANCE = this;
         TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
+        TILDev.logDebug("Context ClassLoader is {}",Thread.currentThread().getContextClassLoader());
     }
     
     public void addSources(Set<String> sources) {
@@ -254,7 +258,7 @@ public abstract class CoreAPI {
     
     @SuppressWarnings("unchecked")
     public <T> T getModLocator(ClassLoader loader) {
-        String name = "MultiversionModLocator"+this.version.name.replace(".","_");
+        String name = "MultiVersionModLocator"+this.version.name.replace(".","_");
         return (T)ClassHelper.initialize(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name,loader));
     }
     
