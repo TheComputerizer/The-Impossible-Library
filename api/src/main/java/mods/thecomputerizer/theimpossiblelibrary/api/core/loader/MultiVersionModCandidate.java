@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
@@ -14,12 +13,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
 import java.util.*;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
+import static org.burningwave.core.assembler.StaticComponentContainer.Resources;
 
 @Getter
 public class MultiVersionModCandidate {
@@ -29,7 +27,6 @@ public class MultiVersionModCandidate {
     private final File file;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
-    private boolean loaded;
 
     public MultiVersionModCandidate(String classpath) {
         this(Objects.nonNull(loaderFile) ? loaderFile : new File(Misc.getLastSplit(classpath,'.')+".class"));
@@ -66,41 +63,51 @@ public class MultiVersionModCandidate {
             this.modClassNames.add(className);
         }
     }
-
-    public boolean canBeLoaded(@Nullable Class<?> clazz, Class<?> superClass, Class<? extends Annotation> annotation) {
-        return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) && clazz.isAnnotationPresent(annotation);
+    
+    /**
+     * Deep check to handle ClassLoader issues
+     */
+    private boolean canBeAssigned(Class<?> clazz, Class<?> superClass) {
+        if(superClass.isAssignableFrom(clazz)) return true;
+        String superName = superClass.getName();
+        Class<?> apparentSuper = clazz.getSuperclass();
+        while(Objects.nonNull(apparentSuper)) {
+            if(superName.equals(apparentSuper.getName())) return true;
+            apparentSuper = apparentSuper.getSuperclass();
+            if(Object.class.equals(apparentSuper)) break;
+        }
+        return false;
     }
 
-    private @Nullable Class<?> findClass(ClassLoader classLoader, String name, boolean loadSources) {
-        TILRef.logInfo("Locating loader class {}",name);
-        if(!this.loaded) {
-            if(loadSources) {
-                TILRef.logInfo("Attempting to add source for class that has not yet been loaded");
-                try {
-                    CoreAPI core = CoreAPI.getInstance();
-                    if(DEV) {
-                        Class<?> systemClass = ClassHelper.findClass(name, ClassLoader.getSystemClassLoader());
-                        if(!CoreAPI.getInstance().addURLToClassLoader(classLoader, ClassHelper.getSourceURL(systemClass)))
-                            TILRef.logFatal("Failed to load URL! The class {} will likely be broken for {}", name,
-                                            classLoader);
-                    } else core.addURLToClassLoader(classLoader,this.file.toURI().toURL());
-                    TILDev.logInfo("Successfully added source! Reattempting to locate loader class");
-                } catch(ClassCastException|MalformedURLException ex) {
-                    TILRef.logError("Error getting source URL for {}!",name,ex);
-                    return null;
-                }
-            } else TILDev.logInfo("loadSources disabled");
-            this.loaded = true;
-        }
-        return ClassHelper.findClass(name,classLoader);
+    public boolean canBeLoaded(@Nullable Class<?> clazz, Class<?> superClass, Class<? extends Annotation> annotation) {
+        return Objects.nonNull(clazz) && canBeAssigned(clazz,superClass) && checkAnnotation(clazz,annotation);
+    }
+    
+    /**
+     * Deep check to handle ClassLoader issues
+     */
+    private boolean checkAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
+        if(clazz.isAnnotationPresent(annotation)) return true;
+        String name = annotation.getName();
+        for(Annotation a : clazz.getAnnotations())
+            if(name.equals(a.annotationType().getName())) return true;
+        return false;
+    }
+
+    private @Nullable Class<?> findClass(ClassLoader loader, String name) {
+        ClassLoader coreLoader = CoreAPI.class.getClassLoader();
+        TILRef.logInfo("Locating loader class {} (for = {} | core = {})",name,loader,coreLoader);
+        Class<?> clazz = ClassHelper.existsOn(name,coreLoader);
+        if(Objects.nonNull(clazz)) return clazz;
+        return ClassHelper.defineClass(coreLoader,name,Resources.get(ClassHelper.getResourcePath(name),loader));
     }
 
     @SuppressWarnings("unchecked")
     public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,
-                                MultiVersionModCandidate candidate, ClassLoader classLoader, boolean loadSources) {
+                                MultiVersionModCandidate candidate, ClassLoader classLoader) {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
         for(String name : this.coreClassNames) {
-            Class<?> clazz = findClass(classLoader,name,loadSources);
+            Class<?> clazz = findClass(classLoader,name);
             if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CoreEntryPoint>)clazz);
@@ -110,11 +117,11 @@ public class MultiVersionModCandidate {
     
     @SuppressWarnings("unchecked")
     public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
-                               MultiVersionModCandidate candidate, ClassLoader classLoader, boolean loadSources) {
+                               MultiVersionModCandidate candidate, ClassLoader classLoader) {
         TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
         for(String name : this.modClassNames) {
-            Class<?> clazz = findClass(classLoader,name,loadSources);
-            if(canBeLoaded(clazz, CommonEntryPoint.class, MultiVersionMod.class)) {
+            Class<?> clazz = findClass(classLoader,name);
+            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class)) {
                 classes.putIfAbsent(candidate,new ArrayList<>());
                 classes.get(candidate).add((Class<? extends CommonEntryPoint>)clazz);
             }

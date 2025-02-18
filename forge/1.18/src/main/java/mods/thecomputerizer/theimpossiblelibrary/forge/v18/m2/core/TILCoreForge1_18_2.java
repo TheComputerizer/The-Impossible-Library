@@ -103,10 +103,6 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}
     
-    @Override public void loadCoreModInfo(ClassLoader loader) {
-        loadCoreModInfo(loader,false);
-    }
-    
     @Override public String mapClassName(String unmapped) {
         return unmapped;
     }
@@ -122,9 +118,5 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
         return true;
-    }
-    
-    @Override public void writeModContainers(ClassLoader loader) {
-        writeModContainers(loader,false);
     }
 }

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import cpw.mods.modlauncher.Launcher;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -48,9 +49,10 @@ public class MultiVersionModLocator extends AbstractJarFileLocator {
     
     @Override public void initArguments(Map<String,?> arguments) {
         if(Objects.nonNull(this.localLocator)) {
-            ClassLoader bootLoader = Launcher.class.getClassLoader();
+            ClassLoader loader = getClass().getClassLoader();
+            TILDev.logInfo("Initializing mod locator with {}",loader);
             ReflectionHelper.invokeMethod(this.localLocator.getClass(),"initFor",this.localLocator,
-                    new Class<?>[]{ClassLoader.class,IModLocator.class},bootLoader,this);
+                    new Class<?>[]{ClassLoader.class,IModLocator.class},loader,this);
         } else TILRef.logFatal("Locator is null and cannot load multiversion mods! Did it fail to initialize?");
     }
 }

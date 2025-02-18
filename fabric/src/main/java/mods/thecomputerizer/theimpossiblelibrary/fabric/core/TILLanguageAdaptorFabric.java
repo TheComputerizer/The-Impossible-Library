@@ -209,10 +209,10 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         CoreAPI core = (CoreAPI)ClassHelper.initialize(ClassHelper.findClass(classname,classLoader));
         if(Objects.nonNull(core)) {
             TILRef.logInfo("Loading core mods");
-            core.loadCoreModInfo(classLoader,false);
+            core.loadCoreModInfo(classLoader);
             core.instantiateCoreMods();
             TILRef.logInfo("Writing mods");
-            core.writeModContainers(classLoader,false);
+            core.writeModContainers(classLoader);
         } else TILRef.logFatal("Failed in instantiate CoreAPI!");
         return core;
     }

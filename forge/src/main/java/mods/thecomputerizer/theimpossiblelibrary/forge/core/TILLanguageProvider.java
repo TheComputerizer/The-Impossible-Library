@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLangu
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.forgespi.locating.IModLocator;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -15,13 +14,11 @@ import java.util.function.Supplier;
 
 public class TILLanguageProvider implements IModLanguageProvider {
     
+    static {
+        TILDev.logError("Brooo what");
+    }
+    
     static CoreAPI findCoreAPI() {
-        TILDev.logInfo("Trying to find CoreAPI instance for TILLanguageProvider... But first a ClassLoader query");
-        TILRef.logInfo("Context = {} | IModLanguageProvider = {} | IModLocator = {} | CoreAPI = {}",
-                       Thread.currentThread().getContextClassLoader(),
-                       IModLanguageProvider.class.getClassLoader(),
-                       IModLocator.class.getClassLoader(),
-                       CoreAPI.class.getClassLoader());
         Object instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) instance = ForgeCoreLoader.initCoreAPI(CoreAPI.class.getClassLoader());
         TILDev.logInfo("Found CoreAPI? {}",instance);

@@ -169,6 +169,18 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
             }
         });
     }
+    
+    public static @Nullable Object invokeHandle(@Nullable MethodHandle handle, @Nullable Object invoker, Object ... args) {
+        if(Objects.isNull(handle)) TILDev.logInfo("Trying to invoke null method handle");
+        return Misc.applyNullable(handle,mh -> {
+            try {
+                return mh.invoke(invoker,args);
+            } catch(Throwable t) {
+                TILRef.logError("Failed to invoke method handle {} with invoker {} and args {}",mh,invoker,args,t);
+                return null;
+            }
+        });
+    }
 
     public static @Nullable Object invokeMethod(@Nullable Method method, @Nullable Object invoker, Object ... args) {
         if(Objects.isNull(method)) TILDev.logInfo("Trying to invoke null method");
@@ -196,6 +208,10 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         }
         Class<?> clazz = ClassHelper.findClass(className);
         return invokeMethod(clazz,name,Objects.nonNull(invokerFunc) ? invokerFunc.apply(clazz) : null,argTypes,args);
+    }
+    
+    public static @Nullable Object invokeStaticHandle(@Nullable MethodHandle handle, Object ... args) {
+        return invokeHandle(handle,null,args);
     }
     
     public static <T> @Nullable Object invokeStaticMethod(@Nullable Method method, Object ... args) {

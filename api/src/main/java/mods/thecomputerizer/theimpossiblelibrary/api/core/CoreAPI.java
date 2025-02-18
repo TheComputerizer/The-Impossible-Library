@@ -24,6 +24,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
+import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 
 @SuppressWarnings("unused") @Getter
 public abstract class CoreAPI {
@@ -89,18 +90,16 @@ public abstract class CoreAPI {
         return version.getPackageName(loader,BASE_PACKAGE)+".core.TILCore"+loader+versionName;
     }
     
+    public static CoreAPI getInstance() {
+        return getInstance(CoreAPI.class.getClassLoader());
+    }
+    
     public static CoreAPI getInstance(ClassLoader loader) {
         if(Objects.isNull(INSTANCE)) {
             TILRef.logDebug("Attempting to get CoreAPI instance that does not exist yet on loader {}",loader);
-            if(Objects.nonNull(loader)) syncInstanceClassLoader(CoreAPI.class.getClassLoader(),loader);
+            if(Objects.nonNull(loader)) syncInstanceClassLoader(loader);
             else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
         }
-        return (CoreAPI)INSTANCE;
-    }
-    
-    public static CoreAPI getInstance() {
-        if(Objects.isNull(INSTANCE))
-            syncInstanceClassLoader(CoreAPI.class.getClassLoader(),MultiVersionModFinder.class.getClassLoader());
         return (CoreAPI)INSTANCE;
     }
     
@@ -181,25 +180,13 @@ public abstract class CoreAPI {
         }
     }
     
-    public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom) {
-        syncInstanceClassLoader(loader,loadFrom,true);
-    }
-    
-    public static void syncInstanceClassLoader(ClassLoader loader, ClassLoader loadFrom, boolean java8) {
-        if(loader==loadFrom) {
-            TILRef.logError("Tried to sync CoreAPI class for the same ClassLoader {} in the context of {}",loader,Thread.currentThread().getContextClassLoader());
-            return;
+    public static void syncInstanceClassLoader(ClassLoader loader) {
+        TILRef.logInfo("Trying to sync CoreAPI instance to {} in the context of {}",loader,Thread.currentThread().getContextClassLoader());
+        try {
+            ClassLoaders.loadOrDefine(CoreAPI.class,loader);
+        } catch(Exception ex) {
+            TILRef.logFatal("Failed to sync CoreAPI to loader {}",loader);
         }
-        TILRef.logInfo("Trying to sync CoreAPI instance from {} to {} in the context of {}",loadFrom,loader,Thread.currentThread().getContextClassLoader());
-        Class<?> systemClass = ClassHelper.findClass(BINARY,loadFrom);
-        if(Objects.nonNull(systemClass)) {
-            Object instance = ReflectionHelper.getFieldInstance(systemClass,"INSTANCE");
-            if(java8)
-                ReflectionHelper.invokeMethod(systemClass,"addURLToClassLoader",instance,new Class<?>[]{
-                        ClassLoader.class,URL.class},loader,ClassHelper.getSourceURL(systemClass));
-            INSTANCE = parseFrom(instance,loader,java8);
-            TILRef.logDebug("Synced CoreAPI instance from the system ClassLoader");
-        } else TILRef.logError("Unable to sync CoreAPI instance from the system ClassLoader");
     }
 
     protected final GameVersion version;
@@ -297,13 +284,9 @@ public abstract class CoreAPI {
     public boolean isServerSide() {
         return getSide().isServer();
     }
-
-    public void loadCoreModInfo(ClassLoader classLoader) {
-        loadCoreModInfo(classLoader,true);
-    }
     
-    public void loadCoreModInfo(ClassLoader classLoader, boolean loadSources) {
-        getLoader().loadCoreMods(this.coreInfo,classLoader,loadSources);
+    public void loadCoreModInfo(ClassLoader classLoader) {
+        getLoader().loadCoreMods(this.coreInfo,classLoader);
     }
     
     protected String mapAsBinary(String mapped, boolean asBinary) {
@@ -367,13 +350,9 @@ public abstract class CoreAPI {
     protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
         return ClassHelper.findClassFrom(pkg,name+"Generated"+entryType+"Mod");
     }
-
-    public void writeModContainers(ClassLoader classLoader) {
-        writeModContainers(classLoader,true);
-    }
     
-    public void writeModContainers(ClassLoader classLoader, boolean loadSources) {
-        getLoader().loadMods(this.modInfo,classLoader,loadSources);
+    public void writeModContainers(ClassLoader classLoader) {
+        getLoader().loadMods(this.modInfo,classLoader);
     }
 
     @Getter

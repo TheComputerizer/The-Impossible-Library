@@ -1,23 +1,32 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
+import io.github.toolfactory.jvm.util.BufferHandler;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.lang.invoke.MethodHandle;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.ByteBuffer;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
+import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
+import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
+
 public class ClassHelper {
+    
+    private static final Map<ClassLoader,MethodHandle> DEFINE_CLASS_HANDLES = new HashMap<>();
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
@@ -54,16 +63,36 @@ public class ClassHelper {
     }
     
     /**
+     * Find the byteCode of a class at the given URL defines it on the given ClassLoader.
+     * Returns null if no valud byteCode was found from the URL.
+     */
+    public static @Nullable Class<?> defineClass(ClassLoader loader, String name, URL url) {
+        if(Objects.nonNull(url)) {
+            TILDev.logInfo("Attempting to define class {} from URL {} on loader {}",name,url,loader);
+            try {
+                return defineClass(loader,name,Streams.toByteBuffer(url.openStream()));
+            } catch(IOException ex) {
+                TILRef.logError("Failed to open stream from URL {}",url,ex);
+            }
+        } else TILRef.logError("Cannot define class at null URL on {}",loader);
+        return null;
+    }
+    
+    /**
      * Defines and resolves a class from byteCode
      */
-    @SneakyThrows
-    public static Class<?> defineClass(ClassLoader classLoader, String classpath, byte[] bytes) {
-        if(bytes==null) {
-            TILRef.logError("Tried to define class {} with null byte array!",classpath);
-            return null;
-        }
-        return (Class<?>)ReflectionHelper.invokeMethod(ClassLoader.class,"defineClass",classLoader,new Class<?>[]{
-                String.class,byte[].class,int.class,int.class},classpath,bytes,0,bytes.length);
+    public static Class<?> defineClass(ClassLoader loader, String className, @Nullable byte[] bytes) {
+        return defineClass(loader,className,Objects.nonNull(bytes) ? ByteBuffer.wrap(bytes) : null);
+    }
+    
+    /**
+     * Defines and resolves a class from byteCode
+     */
+    public static Class<?> defineClass(ClassLoader loader, String name, @Nullable ByteBuffer buffer) {
+        if(Objects.isNull(buffer))
+            throw new NullPointerException("Tried to define class with null ByteBuffer: "+name);
+        MethodHandle defineClass = DEFINE_CLASS_HANDLES.computeIfAbsent(loader,ClassLoaders::getDefineClassMethod);
+        return (Class<?>)ReflectionHelper.invokeHandle(defineClass,loader,name,buffer,null);
     }
 
     public static String descriptor(Class<?> clazz) {
@@ -74,9 +103,25 @@ public class ClassHelper {
         return StringUtils.isNotBlank(classpath) ? "L"+internalName(classpath)+";" : "";
     }
     
-    @IndirectCallers
-    public static @Nullable String getResourcePath(@Nullable Class<?> clazz) {
-        return Objects.nonNull(clazz) ? clazz.getName().replace('.','/')+".class" : null;
+    /**
+     * Returns a class of the given name on the given ClassLoader.
+     * Returns null without throwing any errors if the class does not exist.
+     */
+    public static Class<?> existsOn(String name, ClassLoader loader) {
+        if(Objects.isNull(name) || name.isEmpty()) {
+            TILRef.logWarn("Tried to check if class with null or empty name exists on {}",loader);
+            return null;
+        }
+        try {
+            return Class.forName(name,false,loader);
+        } catch(ClassNotFoundException ex) {
+            TILDev.logDebug("Class `{}` does not exist on {}",name,loader);
+        }
+        return null;
+    }
+    
+    public static String getResourcePath(String className) {
+        return className.replace('.','/')+".class";
     }
     
     @IndirectCallers
@@ -208,14 +253,7 @@ public class ClassHelper {
     }
     
     public static byte[] getClassBytes(Class<?> clazz) {
-        String path = getResourcePath(clazz);
-        try(InputStream stream = clazz.getClassLoader().getResourceAsStream(path)) {
-            if(Objects.isNull(stream)) return null;
-            return streamToBytes(stream);
-        } catch(IOException ex) {
-            TILRef.logError("Failed to get bytes for {} as resource {}",clazz,path,ex);
-        }
-        return null;
+        return BufferHandler.toByteArray(Classes.getByteCode(clazz));
     }
     
     public static <T> @Nullable T initialize(@Nullable Class<T> clazz) {
@@ -317,16 +355,6 @@ public class ClassHelper {
     public static String signatureInternal(String name, String ... parameterNames) {
         if(StringUtils.isBlank(name)) return "";
         return signatureDesc("L"+name+";",ArrayHelper.mapTo(parameterNames,String.class,p -> "L"+p+";"));
-    }
-    
-    public static byte[] streamToBytes(InputStream stream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int read;
-        byte[] bytes = new byte[16384];
-        while((read = stream.read(bytes,0,bytes.length))!=-1) {
-            buffer.write(bytes,0,read);
-        }
-        return buffer.toByteArray();
     }
     
     public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className) {
