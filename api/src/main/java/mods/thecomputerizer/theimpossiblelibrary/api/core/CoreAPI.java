@@ -171,6 +171,10 @@ public abstract class CoreAPI {
         }
     }
     
+    public static void setInstance(Object instance) {
+        if(Objects.isNull(INSTANCE)) INSTANCE = instance;
+    }
+    
     public static void setInstance(Class<?> clazz) {
         if(Objects.nonNull(INSTANCE)) return;
         try {
@@ -246,7 +250,7 @@ public abstract class CoreAPI {
     @SuppressWarnings("unchecked")
     public <T> T getModLocator(ClassLoader loader) {
         String name = "MultiVersionModLocator"+this.version.name.replace(".","_");
-        return (T)ClassHelper.initialize(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name,loader));
+        return (T)ClassHelper.initialize(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name,loader),this);
     }
     
     protected abstract ModWriter getModWriter(MultiVersionModInfo info);

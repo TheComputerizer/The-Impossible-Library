@@ -17,11 +17,10 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class TILBetterModScan extends ModFileScanData {
     
-    private static boolean resynced;
+    static boolean alreadyNuked;
     
     private final Map<String,MultiVersionModInfo> modInfos;
     private final Map<String,byte[]> writtenClasses;
@@ -48,22 +47,26 @@ public class TILBetterModScan extends ModFileScanData {
      */
     @IndirectCallers
     public void defineClasses(ClassLoader target) {
-        ClassLoader boot = ForgeCoreLoader.bootLoader();
+        boolean java8 = ForgeCoreLoader.isJava8();
         String pkg = null;
-        Set<Class<?>> defined = new HashSet<>();
         for(Entry<String,byte[]> entry : this.writtenClasses.entrySet()) {
             String className = entry.getKey();
-            Class<?> clazz = ClassHelper.resolveClass(boot,ClassHelper.defineClass(boot,className,entry.getValue()));
-            if(Objects.nonNull(clazz)) {
-                defined.add(clazz);
-                pkg = clazz.getPackage().getName();
-                TILRef.logDebug("Successfully defined and resolved class {} for {}",className,boot);
-            } else TILRef.logError("Class was defined as null?? {}",className);
+            if(Objects.isNull(pkg)) pkg = className.substring(0,className.lastIndexOf('.'));
+            Class<?> clazz = ClassHelper.resolveClass(target,ClassHelper.defineClass(target,className,entry.getValue()));
+            if(Objects.nonNull(clazz))
+                TILRef.logDebug("Successfully defined and resolved class {} for {}",className,target);
+            else TILRef.logError("Class was defined as null?? {}",className);
         }
-        if(ForgeCoreLoader.isJava8()) {
-            Class<?> loaderClass = ClassHelper.findClass("net.minecraftforge.fml.ModLoader",target);
-            fixBrokenMods(ReflectionHelper.invokeStaticMethod(loaderClass,"get",new Class<?>[]{}));
-        } else fixModules(defined,pkg,target);
+        if(!alreadyNuked) {
+            if(java8) {
+                Class<?> loaderClass = ClassHelper.findClass("net.minecraftforge.fml.ModLoader",target);
+                fixBrokenMods(ReflectionHelper.invokeStaticMethod(loaderClass,"get",new Class<?>[]{}));
+                alreadyNuked = true;
+            } else if(Objects.nonNull(pkg)) {
+                ForgeCoreLoader.nukeAndFinalize(pkg);
+                alreadyNuked = true;
+            }
+        }
     }
     
     /**
@@ -87,22 +90,5 @@ public class TILBetterModScan extends ModFileScanData {
                 return false;
             });
         }
-    }
-    
-    /**
-     * Run a final fix to the modules to make sure the generated class is loaded in the context of the GAME layer but
-     * also under the correct module. This works because ModuleClassLoader stores its ResolvedModules.
-     */
-    private void fixModules(Set<Class<?>> defined, String pkg, ClassLoader target) {
-        if(!resynced) {
-            ForgeCoreLoader.resyncModules(ForgeCoreLoader.layerClassLoader("GAME"),"GAME");
-            resynced = true;
-        }
-        Object module = ForgeCoreLoader.getModuleFromPackage(pkg,"BOOT");
-        for(Class<?> generated : defined) {
-            Fields.set(generated,"module",module);
-            Fields.set(generated,"classLoader",target);
-        }
-        ForgeCoreLoader.moveModuleToLayer(target,"GAME","BOOT",ForgeCoreLoader.moduleName(module));
     }
 }

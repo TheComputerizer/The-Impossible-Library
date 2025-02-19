@@ -19,6 +19,7 @@ import java.util.function.BiFunction;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
+import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 public class ClassHelper {
@@ -255,11 +256,11 @@ public class ClassHelper {
         return BufferHandler.toByteArray(Classes.getByteCode(clazz));
     }
     
-    public static <T> @Nullable T initialize(@Nullable Class<T> clazz) {
+    public static <T> @Nullable T initialize(@Nullable Class<T> clazz, Object ... args) {
         if(Objects.nonNull(clazz)) {
             try {
-                return clazz.newInstance();
-            } catch(InstantiationException | IllegalAccessException ex) {
+                return Constructors.newInstanceOf(clazz,args);
+            } catch(Exception ex) {
                 TILRef.logError("Failed to initialize {}",clazz,ex);
             }
         } else TILRef.logError("Cannot initialize null class");

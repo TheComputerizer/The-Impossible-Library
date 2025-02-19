@@ -32,8 +32,10 @@ public class TILLanguageProvider implements IModLanguageProvider {
         try {
             ClassLoader bootLoader = Launcher.class.getClassLoader();
             Class<?> coreClass = Class.forName(CORE_NAME,false,bootLoader);
-            Method method = coreClass.getDeclaredMethod("resyncModules",ClassLoader.class,String.class);
-            method.invoke(null,TILLanguageProvider.class.getClassLoader(),"PLUGIN");
+            Method method = coreClass.getDeclaredMethod("resyncModules",ClassLoader.class,String.class,
+                                                        ClassLoader.class);
+            method.invoke(null,TILLanguageProvider.class.getClassLoader(),"PLUGIN",
+                          Launcher.class.getClassLoader());
         } catch(ClassNotFoundException|NoSuchMethodException|IllegalAccessException|InvocationTargetException ex) {
             LOGGER.error("Failed to resync modules to BOOT layer",ex);
         }
@@ -46,7 +48,7 @@ public class TILLanguageProvider implements IModLanguageProvider {
         return (CoreAPI)instance;
     }
     
-    static Object findVersionProvider() {
+    static Object findVersionProvider(CoreAPI core) {
         ClassLoader pluginLoader = ForgeCoreLoader.layerClassLoader("PLUGIN");
         Class<?> target = findCoreAPI().getLaunguageProvider().getClass();
         try {
@@ -57,10 +59,12 @@ public class TILLanguageProvider implements IModLanguageProvider {
         return null;
     }
     
+    final CoreAPI core; //Might get thrown out by the GC if not stored & passed through
     final TILForgeLanguageProvider versionProvider;
     
     public TILLanguageProvider() {
-        this.versionProvider = (TILForgeLanguageProvider)findVersionProvider();
+        this.core = findCoreAPI();
+        this.versionProvider = (TILForgeLanguageProvider)findVersionProvider(core);
         if(Objects.nonNull(this.versionProvider))
             TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
         else TILRef.logError("Initialized versioned language provider as null");
@@ -69,7 +73,7 @@ public class TILLanguageProvider implements IModLanguageProvider {
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {}
     
     @Override public Consumer<ModFileScanData> getFileVisitor() {
-        if(Objects.nonNull(versionProvider)) return versionProvider.getFileVisitor(this);
+        if(Objects.nonNull(versionProvider)) return versionProvider.getFileVisitor(this.core,this);
         TILRef.logError("Version specific language provider not found! Did it fail to load?");
         return scan -> {};
     }

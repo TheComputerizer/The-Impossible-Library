@@ -35,9 +35,11 @@ public class MultiVersionModLocator1_18_2 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
+    private final CoreAPI core;
     private final Map<MultiVersionModCandidate,TILModFileForge1_18_2> candidateMap = new HashMap<>();
     
-    public MultiVersionModLocator1_18_2() {
+    public MultiVersionModLocator1_18_2(CoreAPI core) {
+        this.core = core;
         TILRef.logInfo("1.18.2 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
