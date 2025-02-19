@@ -13,6 +13,7 @@ import java.util.*;
 public class MultiVersionModLocator extends AbstractJarFileLocator {
     
     static {
+        ForgeCoreLoader.fixIfNotJava8();
         Object instance = ForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
         if(Objects.isNull(instance))
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");

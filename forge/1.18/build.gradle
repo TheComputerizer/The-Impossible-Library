@@ -48,15 +48,14 @@ def base = project ':api'
 def forge = project ':forge'
 def shared = project ':shared:1.18'
 
-def classpath_file = "${mod_id}_shadow-${mod_version}_mapped_parchment_$parchment_1_18_2-${minecraft_1_18_2}.jar"
+def classpath_file = "${mod_id}-${mod_version}_mapped_parchment_$parchment_1_18_2-${minecraft_1_18_2}.jar"
 
 minecraft {
     copyIdeResources = true
     mappings channel: 'parchment', version: "$parchment_1_18_2-$minecraft_1_18_2"
     runs {
         def runSources = [ sourceSets.main ]
-        def args = [ dev_arg, "$classpath_arg$classpath_file".toString(), common_entrypoint_arg, core_entrypoint_arg,
-            '--add-opens', 'java.base/java.lang=ALL-UNNAMED' ]
+        def args = [ dev_arg, "$classpath_arg$classpath_file".toString(), common_entrypoint_arg, core_entrypoint_arg ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -125,7 +124,7 @@ dependencies {
     implementation fg.deobf("$weather2_artifact:$weather2_1_18_2")
 
     runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_18_2")
-    runtimeOnly fg.deobf("mods.thecomputerizer.theimpossiblelibrary:theimpossiblelibrary_shadow:$mod_version")
+    runtimeOnly fg.deobf("mods.thecomputerizer.theimpossiblelibrary:theimpossiblelibrary:$mod_version")
 }
 
 reobf {

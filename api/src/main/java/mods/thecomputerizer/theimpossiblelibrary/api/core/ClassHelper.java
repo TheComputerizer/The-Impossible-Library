@@ -8,14 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.lang.invoke.MethodHandle;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -25,8 +22,6 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 public class ClassHelper {
-    
-    private static final Map<ClassLoader,MethodHandle> DEFINE_CLASS_HANDLES = new HashMap<>();
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
@@ -91,8 +86,12 @@ public class ClassHelper {
     public static Class<?> defineClass(ClassLoader loader, String name, @Nullable ByteBuffer buffer) {
         if(Objects.isNull(buffer))
             throw new NullPointerException("Tried to define class with null ByteBuffer: "+name);
-        MethodHandle defineClass = DEFINE_CLASS_HANDLES.computeIfAbsent(loader,ClassLoaders::getDefineClassMethod);
-        return (Class<?>)ReflectionHelper.invokeHandle(defineClass,loader,name,buffer,null);
+        try {
+            return ClassLoaders.loadOrDefineByByteCode(buffer,loader);
+        } catch(Throwable t) {
+            TILRef.logError("Failed to define class {} on {}",name,loader);
+        }
+        return null;
     }
 
     public static String descriptor(Class<?> clazz) {
@@ -314,11 +313,11 @@ public class ClassHelper {
     @SuppressWarnings("UnusedReturnValue")
     @SneakyThrows
     public static Class<?> resolveClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
-        if(Objects.nonNull(clazz))
-            ReflectionHelper.invokeMethod(ClassLoader.class,"resolveClass",classLoader,new Class<?>[]{
-                    Class.class},clazz);
-        else TILRef.logFatal("Cannot resolve null defined class!");
-        return clazz;
+        if(Objects.isNull(clazz)) {
+            TILRef.logFatal("Cannot resolve null defined class! {}");
+            return null;
+        }
+        return ClassLoaders.loadOrDefine(clazz,classLoader);
     }
 
     /**
@@ -357,10 +356,6 @@ public class ClassHelper {
         return signatureDesc("L"+name+";",ArrayHelper.mapTo(parameterNames,String.class,p -> "L"+p+";"));
     }
     
-    public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className) {
-        syncSourcesForClass(syncFrom,syncTo,className,className);
-    }
-    
     @IndirectCallers
     public static void syncSourcesAndLoadClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
             BiFunction<ClassLoader,URL,Boolean> urlLoader) {
@@ -376,13 +371,6 @@ public class ClassHelper {
         }
         return resolveClass(loader,defineClass(loader,clazz.getName(),getClassBytes(clazz)));
     }
-    
-    public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
-            @Nullable String ... classesToLoad) {
-        syncSourcesForClass(syncFrom,syncTo,className,(loader,url) ->
-                CoreAPI.getInstance(syncFrom).addURLToClassLoader(loader,url),classesToLoad);
-    }
-    
     
     public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
             BiFunction<ClassLoader,URL,Boolean> urlLoader, @Nullable String ... classesToLoad) {

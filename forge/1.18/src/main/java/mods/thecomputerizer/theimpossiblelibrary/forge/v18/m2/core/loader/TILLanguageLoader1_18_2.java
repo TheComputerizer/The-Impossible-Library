@@ -19,6 +19,6 @@ public class TILLanguageLoader1_18_2 extends TILLanguageLoader implements IModLa
      */
     @Override public <T> T loadMod(IModInfo info, ModFileScanData scanResults, ModuleLayer layer) {
         ClassLoader loader = layer.findModule(info.getOwningFile().moduleName()).orElseThrow().getClassLoader();
-        return super.loadModInner(info,loader,scanResults);
+        return super.loadModInner(info,loader,scanResults,layer);
     }
 }
