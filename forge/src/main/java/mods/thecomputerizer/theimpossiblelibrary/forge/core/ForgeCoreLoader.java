@@ -5,8 +5,7 @@ import cpw.mods.modlauncher.Environment;
 import cpw.mods.modlauncher.Launcher;
 import io.github.toolfactory.jvm.function.catalog.ConsulterSupplyFunction;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
@@ -22,10 +21,12 @@ import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoade
 import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
+import static org.burningwave.core.assembler.StaticComponentContainer.Resources;
 
 /**
  * Figures out which version to load on and how to load stuff on it
  */
+@SuppressWarnings("unused") 
 public class ForgeCoreLoader {
     
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
@@ -389,7 +390,7 @@ public class ForgeCoreLoader {
         }
         Map<?,?> completedLayers = Fields.get(layerManager,"completedLayers");
         ClassLoader loader = Fields.get(completedLayers.get(layer),"cl");
-        TILDev.logInfo("Returning ClassLoader for layer {} as {}",name,loader);
+        LOGGER.debug("Returning ClassLoader for layer {} as {}",name,loader);
         return loader;
     }
     
@@ -398,7 +399,14 @@ public class ForgeCoreLoader {
      * Returns the instance class
      */
     static Class<?> loadAPI(String version) {
-        Class<?> clazz = ClassHelper.findClass(versionClassName("core.TILCoreForge",version),bootLoader());
+        String className = versionClassName("core.TILCoreForge",version);
+        ClassLoader loader = bootLoader();
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName(className,true,loader);
+        } catch(Exception ex) {
+            LOGGER.error("Failed to load class {} for {}",className,loader);
+        }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Forge-"+version+"]");
         LOGGER.info("Successfully loaded CoreAPI instance {}",clazz);
         return clazz;
@@ -466,6 +474,27 @@ public class ForgeCoreLoader {
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("MODULE {} HAS BEEN SUCCESSFULLY MOVED TO THE GAME LAYER HAVE A NICE DAY",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
+    }
+    
+    /**
+     * Java 8 doesn't have modules, so move all classes loaded from the source of the given package to the target
+     * ClassLoader and things should work fine.
+     * Requires generated classes to be excluded from source searching.
+     */
+    public static void nukeAndFinalizeJava8(Class<?> getSourceFrom, ClassLoader target) {
+        if(Objects.isNull(getSourceFrom)) {
+            LOGGER.error("Cannot get source from null class!");
+            return;
+        }
+        Set<String> sources = new HashSet<>();
+        ClassHelper.addSource(sources,getSourceFrom);
+        CoreAPI core = CoreAPI.getInstance();
+        core.addSources(sources);
+        LOGGER.info("Adding {} sources to target loader {}",sources.size(),target);
+        sources.forEach(source -> {
+            LOGGER.info("Adding source {}",source);
+            core.addURLToClassLoader(target,source);
+        });
     }
     
     static void nukeConfig(String name, ClassLoader ... loaders) {
@@ -567,7 +596,6 @@ public class ForgeCoreLoader {
      * This is needed since IModLanguageProvider implementations are forced into PLUGIN layer from service loading and
      * can likely only be called via reflection.
      */
-    @IndirectCallers
     public static void resyncModules(ClassLoader loaderTo, String layerTo, ClassLoader loaderFrom) {
         if(isJava8()) return; //Not needed on Java 8
         LOGGER.info("Resyncing module to {}",layerTo);
@@ -607,6 +635,32 @@ public class ForgeCoreLoader {
         Fields.set(config,"graph",graph);
         
         pkgs.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
+    }
+    
+    static String source(Class<?> c, String name, ClassLoader ... loaders) {
+        //String path = Classes.toPath(c);
+        //URL url = Resources.get(Classes.toPath(c),loaders);
+        //if(Objects.isNull(url)) {
+        //    LOGGER.error("Null URL for {}!",c);
+        //    return "";
+        //}
+        //FileSystemItem file = FileSystemItem.of(url);
+        //if(Objects.isNull(file)) {
+        //    LOGGER.error("Null file for {}!",c);
+        //    return "";
+        //}
+        //while(!file.isFolder() && !file.isArchive()) file = file.getParentContainer();
+        //url = file.getURL();
+        //if(Objects.isNull(url)) {
+        //    LOGGER.error("Null URL for parent container of {}!",c);
+        //    return "";
+        //}
+        try {
+            return Resources.getClassPath(c).getAbsolutePath();
+        } catch(Exception ignored) {
+            return "";
+        }
+        //return Paths.toNormalizedCleanedAbsolutePath(url.toString());
     }
     
     /**

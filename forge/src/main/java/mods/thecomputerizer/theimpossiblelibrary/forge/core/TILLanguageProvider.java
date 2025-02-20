@@ -49,8 +49,9 @@ public class TILLanguageProvider implements IModLanguageProvider {
     }
     
     static Object findVersionProvider(CoreAPI core) {
-        ClassLoader pluginLoader = ForgeCoreLoader.layerClassLoader("PLUGIN");
-        Class<?> target = findCoreAPI().getLaunguageProvider().getClass();
+        ClassLoader pluginLoader = ForgeCoreLoader.isJava8() ? Thread.currentThread().getContextClassLoader() :
+                ForgeCoreLoader.layerClassLoader("PLUGIN");
+        Class<?> target = core.getLaunguageProvider().getClass();
         try {
             return Constructors.newInstanceOf(ClassLoaders.loadOrDefine(target,pluginLoader));
         } catch(Exception ex) {

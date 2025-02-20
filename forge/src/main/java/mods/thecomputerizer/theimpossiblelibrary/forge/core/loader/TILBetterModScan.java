@@ -49,18 +49,24 @@ public class TILBetterModScan extends ModFileScanData {
     public void defineClasses(ClassLoader target) {
         boolean java8 = ForgeCoreLoader.isJava8();
         String pkg = null;
+        Set<String> defined = new HashSet<>();
+        Class<?> outerClass = null;
         for(Entry<String,byte[]> entry : this.writtenClasses.entrySet()) {
             String className = entry.getKey();
             if(Objects.isNull(pkg)) pkg = className.substring(0,className.lastIndexOf('.'));
             Class<?> clazz = ClassHelper.resolveClass(target,ClassHelper.defineClass(target,className,entry.getValue()));
-            if(Objects.nonNull(clazz))
+            if(Objects.nonNull(clazz)) {
                 TILRef.logDebug("Successfully defined and resolved class {} for {}",className,target);
+                defined.add(className);
+                if(!className.contains("\\$")) outerClass = clazz;
+            }
             else TILRef.logError("Class was defined as null?? {}",className);
         }
         if(!alreadyNuked) {
             if(java8) {
                 Class<?> loaderClass = ClassHelper.findClass("net.minecraftforge.fml.ModLoader",target);
                 fixBrokenMods(ReflectionHelper.invokeStaticMethod(loaderClass,"get",new Class<?>[]{}));
+                ForgeCoreLoader.nukeAndFinalizeJava8(outerClass,target);
                 alreadyNuked = true;
             } else if(Objects.nonNull(pkg)) {
                 ForgeCoreLoader.nukeAndFinalize(pkg);

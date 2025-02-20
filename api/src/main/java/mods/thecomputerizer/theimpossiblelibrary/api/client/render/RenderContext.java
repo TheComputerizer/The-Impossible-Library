@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-@SuppressWarnings("unused") @Getter
+@Getter
 public final class RenderContext {
     
     public static RenderContext get(MinecraftAPI<?> mc) {
@@ -137,8 +137,9 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
-            next = new Vector2d(this.scale.applyXForScreen(center.x,next.x),this.scale.applyYForScreen(center.y,next.y));
-            gl.directVertexD(next.x,next.y,0d);
+            double x = this.scale.applyXForScreen(center.x,next.x);
+            double y = this.scale.applyYForScreen(center.y,next.y);
+            gl.directVertexD(x,y,0d);
         }
         gl.directEnd();
         this.renderer.enableTexture();
@@ -154,9 +155,10 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lineLoop,width);
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
-            next = new Vector3d(this.scale.applyXForScreen(center.x,next.x),this.scale.applyYForScreen(center.y,next.y),
-                                this.scale.applyZForScreen(center.z,next.z));
-            gl.directVertexD(next.x,next.y,next.z);
+            double x = this.scale.applyXForScreen(center.x,next.x);
+            double y = this.scale.applyYForScreen(center.y,next.y);
+            double z = this.scale.applyZForScreen(center.z,next.z);
+            gl.directVertexD(x,y,z);
         }
         gl.directEnd();
         this.renderer.enableTexture();
@@ -258,12 +260,6 @@ public final class RenderContext {
         this.renderer.defaultBlendFunc();
         this.renderer.enableAlpha();
         this.renderer.setColor(bgColor);
-    }
-    
-    public GLAPI prepareTriangleFan() {
-        GLAPI gl = this.renderer.getGLAPI();
-        gl.directBegin(gl.triangleFan());
-        return gl;
     }
     
     public void scissorScaled(double left, double bottom, double width, double height) {

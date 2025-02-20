@@ -151,11 +151,11 @@ public class ClassHelper {
     }
 
     /**
-     * Finds a class from the input name via the ClassLoader instance of this class.
+     * Finds a class from the input name via the context ClassLoader.
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findClass(String name) {
-        return findClass(name,true,ClassHelper.class.getClassLoader());
+        return findClass(name,true,Thread.currentThread().getContextClassLoader());
     }
 
     /**
@@ -167,12 +167,12 @@ public class ClassHelper {
     }
 
     /**
-     * Finds a class from the input name via the ClassLoader instance of this class.
+     * Finds a class from the input name via the context ClassLoader.
      * Set initialize to false if you don't want the Class to be loaded in case it doesn't exist.
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findClass(String name, boolean initialize) {
-        return findClass(name,initialize,ClassHelper.class.getClassLoader());
+        return findClass(name,initialize,Thread.currentThread().getContextClassLoader());
     }
 
     /**

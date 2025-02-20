@@ -139,10 +139,12 @@ public class Render1_18_2 extends RenderAPI {
     }
     
     @Override public VertexWrapper getBufferBuilderPC(int mode, int vertices) {
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         return new VertexWrapper1_18_2(getBufferMode(mode),POSITION_COLOR,vertices,3,4);
     }
     
     @Override public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         return new VertexWrapper1_18_2(getBufferMode(mode),POSITION_TEX_COLOR,vertices,3,2,4);
     }
     

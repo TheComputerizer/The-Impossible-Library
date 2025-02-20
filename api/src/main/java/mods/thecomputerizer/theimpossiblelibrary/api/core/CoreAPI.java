@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
@@ -217,6 +218,15 @@ public abstract class CoreAPI {
     
     public void addSources(Set<String> sources) {
         ClassHelper.addSource(sources,CoreAPI.class);
+    }
+    
+    public boolean addURLToClassLoader(ClassLoader loader, String url) {
+        try {
+            return addURLToClassLoader(loader,URI.create(url).toURL());
+        } catch(Exception ex) {
+            TILRef.logError("Failed to add url from string ({}) to {}",url,loader,ex);
+        }
+        return false;
     }
     
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
