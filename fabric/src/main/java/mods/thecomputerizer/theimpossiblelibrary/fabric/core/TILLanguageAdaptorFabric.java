@@ -30,7 +30,9 @@ import net.fabricmc.loader.impl.metadata.ModMetadataParser;
 import net.fabricmc.loader.impl.metadata.ParseMetadataException;
 import net.fabricmc.loader.impl.metadata.VersionOverrides;
 import net.fabricmc.loader.impl.util.UrlUtil;
+import net.fabricmc.loader.impl.util.log.Log;
 import org.apache.commons.lang3.tuple.Pair;
+import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
@@ -57,9 +59,25 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static net.fabricmc.loader.impl.FabricLoaderImpl.INSTANCE;
+import static net.fabricmc.loader.impl.util.log.LogCategory.ENTRYPOINT;
 
 @IndirectCallers
 public class TILLanguageAdaptorFabric implements LanguageAdapter {
+    
+    private static final String BURNINGWAVE_PATH = "org.burningwave.core.assembler.StaticComponentContainer";
+    private static final String CORE_PATH = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
+    private static final String TOOLFACTORY_PATH = "io.github.toolfactory.jvm.Info";
+    
+    static void burningWaveProperties() {
+        Map<Object,Object> properties = new HashMap<>();
+        properties.put("banner.hide","true");
+        properties.put("managed-logger.repository.enabled","false");
+        try {
+            Default.add(properties);
+        } catch(Throwable t) {
+            Log.error(ENTRYPOINT,"Failed to set default BuringWave properties??",t);
+        }
+    }
     
     private final CoreAPI core;
     Collection<ModContainerImpl> queuedContainers;
@@ -77,12 +95,14 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
     String addCoreSources(FabricLauncher launcher) {
         if(Boolean.parseBoolean(System.getProperty("til.dev"))) {
-            String coreAPI = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
-            try {
-                Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(coreAPI);
-                launcher.addToClassPath(Paths.get(clazz.getProtectionDomain().getCodeSource().getLocation().toURI()));
-            } catch(Exception ex) {
-                throw new RuntimeException("Failed to load CoreAPI at "+coreAPI, ex);
+            ClassLoader loader = ClassLoader.getSystemClassLoader();
+            for(String className : new String[]{TOOLFACTORY_PATH,BURNINGWAVE_PATH,CORE_PATH}) {
+                try {
+                    Class<?> clazz = loader.loadClass(className);
+                    addSource(launcher,clazz.getProtectionDomain().getCodeSource().getLocation());
+                } catch(Exception ex) {
+                    throw new RuntimeException("Failed to load class "+className,ex);
+                }
             }
         }
         return addMoreSources(launcher);
@@ -98,6 +118,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
             clazz = clazz.getSuperclass();
             if(CoreAPI.class.getName().equals(clazz.getName())) break;
         }
+        burningWaveProperties();
         return className;
     }
     
@@ -105,9 +126,9 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         if(Objects.nonNull(url)) {
             try {
                 launcher.addToClassPath(Paths.get(url.toURI()));
-                TILDev.logDebug("Added loader source {}",url);
+                Log.debug(ENTRYPOINT,"Added loader source "+url);
             } catch(URISyntaxException ex) {
-                TILRef.logError("Failed to add {} to the classpath",url,ex);
+                Log.error(ENTRYPOINT,"Failed to add "+url+" to the classpath",ex);
             }
         }
     }

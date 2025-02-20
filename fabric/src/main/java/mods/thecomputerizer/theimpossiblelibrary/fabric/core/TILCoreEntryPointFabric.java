@@ -114,7 +114,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
                 TILRef.logInfo("Editing method node {}({})",method.name,methodName);
                 if(keyboard && Misc.equalsAny(methodName,"keyPress","method_1466")) {
                     TILRef.logInfo("Building KEY_PRESSED invoker");
-                    code.insert(ASMHelper.findLabel(code,38),buildKeyPressInvoker());
+                    code.insert(ASMHelper.findLabel(code,45),buildKeyPressInvoker());
                 }
                 else if(screenOverlay) {
                     if(methodName.equals("<init>"))

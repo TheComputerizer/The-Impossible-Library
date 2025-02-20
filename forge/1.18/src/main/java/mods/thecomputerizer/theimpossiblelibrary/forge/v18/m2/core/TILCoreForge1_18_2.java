@@ -2,12 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core;
 
 import cpw.mods.modlauncher.Environment;
 import cpw.mods.modlauncher.Launcher;
-import cpw.mods.modlauncher.TransformingClassLoader;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
@@ -23,7 +21,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader.MultiV
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.core.TILCore1_18_2;
 import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Objects;
@@ -62,18 +59,7 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
     
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
-        if(loader instanceof TransformingClassLoader) {
-            Field field = ReflectionHelper.getField(TransformingClassLoader.class,"delegatedClassLoader");
-            if(Objects.nonNull(field)) {
-                Object instance = ReflectionHelper.getFieldInstance(loader,field);
-                if(instance instanceof URLClassLoader) {
-                    if(ClassHelper.loadURL((URLClassLoader)instance,url)) {
-                        TILRef.logDebug("Successfully loaded URL to mod class loader {}",url);
-                        return true;
-                    } else TILRef.logError("Failed to load URL to mod class loader {}",url);
-                } else TILRef.logError("delegatedClassLoader is not an instance of URLClassLoader??");
-            } else TILRef.logError("Unable to find delegatedClassLoader field??");
-        }
+        TILRef.logError("Directly adding a URL is not supported in this version! Not adding {}",url);
         return false;
     }
     

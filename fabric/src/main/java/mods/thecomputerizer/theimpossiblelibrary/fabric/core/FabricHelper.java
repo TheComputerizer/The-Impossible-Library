@@ -108,6 +108,10 @@ public class FabricHelper {
         return FabricLauncherBase.getLauncher().getTargetNamespace();
     }
     
+    public static boolean isJava8() {
+        return System.getProperty("java.version").startsWith("1.");
+    }
+    
     public static void registerServerHooks() {
         SERVER_STARTING.register(server -> CURRENT_SERVER = server);
         SERVER_STOPPED.register(server -> CURRENT_SERVER = null);
@@ -224,6 +228,7 @@ public class FabricHelper {
     public static void drawGradientRect(RenderAPI renderer, Object mat, int zLevel, int left, int top, int right,
             int bottom,int startColor, int endColor) {
         if(Objects.isNull(renderer)) return;
+        boolean java8 = isJava8();
         float startAlpha = (float)(startColor>>24&255)/255f;
         float startRed = (float)(startColor>>16&255)/255f;
         float startGreen = (float)(startColor>>8&255)/255f;
@@ -236,7 +241,7 @@ public class FabricHelper {
         renderer.disableTexture();
         renderer.enableBlend();
         renderer.defaultBlendFunc();
-        GL11.glShadeModel(GL_SMOOTH); //Only used to compile
+        if(java8) GL11.glShadeModel(GL_SMOOTH); //Only used to compile
         Object buffer = renderer.getBufferBuilder();
         renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
         drawVertex(renderer,buffer,mat,right,top,zLevel,startRed,startGreen,startBlue,startAlpha);
@@ -244,7 +249,7 @@ public class FabricHelper {
         drawVertex(renderer,buffer,mat,right,bottom,zLevel,endRed,endGreen,endBlue,endAlpha);
         drawVertex(renderer,buffer,mat,left,bottom,zLevel,endRed,endGreen,endBlue,endAlpha);
         renderer.endBuffer();
-        GL11.glShadeModel(GL_FLAT); //Only used to compile
+        if(java8) GL11.glShadeModel(GL_FLAT); //Only used to compile
         renderer.disableBlend();
         renderer.enableTexture();
     }

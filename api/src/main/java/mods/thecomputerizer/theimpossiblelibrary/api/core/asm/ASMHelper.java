@@ -121,6 +121,7 @@ public class ASMHelper {
     }
     
     public static AbstractInsnNode findLabel(InsnList code, int ordinal) {
+        //TILRef.logInfo("Label Node {}",((LabelNode)n).getLabel());
         return findNodeOrLast(code,LabelNode.class::isInstance,ordinal);
     }
     
