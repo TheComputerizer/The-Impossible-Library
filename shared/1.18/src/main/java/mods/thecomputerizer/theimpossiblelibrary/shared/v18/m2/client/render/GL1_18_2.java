@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.render;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
@@ -21,16 +22,24 @@ public class GL1_18_2 implements GLAPI {
     private BufferSource workingBufferSource;
     private RenderType workingRenderType;
     private VertexConsumer workingVertexConsumer;
+    private double cutoffX;
+    private double cutoffY;
     
     /**
      * GL11#glBegin was removed after OpenGL 3.1, but backwards compatibility means we can't just remove this method
      */
     @Override public void directBegin(int modeVal) {
-        this.workingBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        Minecraft mc = Minecraft.getInstance();
+        this.workingBufferSource = mc.renderBuffers().bufferSource();
         this.workingRenderType = modeVal==lines() ? RenderType.lines() : RenderType.lineStrip();
         this.workingVertexConsumer = this.workingBufferSource.getBuffer(this.workingRenderType);
         RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
         this.workingColor = RenderSystem.getShaderColor();
+        Window window = mc.getWindow();
+        double width = window.getGuiScaledWidth();
+        double height = window.getGuiScaledHeight();
+        this.cutoffX = width/2d;
+        this.cutoffY = height/2d;
     }
 
     @Override public void directEnd() {
@@ -48,6 +57,8 @@ public class GL1_18_2 implements GLAPI {
         if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (3D) to buffer before calling directBegin!");
         else {
+            if(x>this.cutoffX) x+=(1.5d*(this.cutoffX/this.cutoffY));
+            if(y>this.cutoffY) y+=(1.5d*(this.cutoffY/this.cutoffX));
             this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,1f).endVertex();
             //this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
             //this.workingVertexConsumer.vertex(x,y,z).endVertex();
@@ -58,6 +69,8 @@ public class GL1_18_2 implements GLAPI {
         if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (2D) to buffer before calling directBegin!");
         else {
+            if(x>this.cutoffX) x+=(1.5d*(this.cutoffX/this.cutoffY));
+            if(y>this.cutoffY) y+=(1.5d*(this.cutoffY/this.cutoffX));
             this.workingVertexConsumer.vertex(x,y,0d).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,0f).endVertex();
             //this.workingVertexConsumer.vertex(x,y,0d).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
             //this.workingVertexConsumer.vertex(x,y,0d).endVertex();
@@ -68,6 +81,8 @@ public class GL1_18_2 implements GLAPI {
         if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (3F) to buffer before calling directBegin!");
         else {
+            if(x>this.cutoffX) x+=(float)(1.5f*(this.cutoffX/this.cutoffY));
+            if(y>this.cutoffY) y+=(float)(1.5f*(this.cutoffY/this.cutoffX));
             this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,1f).endVertex();
             //this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
             //this.workingVertexConsumer.vertex(x,y,z).endVertex();
@@ -78,6 +93,8 @@ public class GL1_18_2 implements GLAPI {
         if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (2F) to buffer before calling directBegin!");
         else {
+            if(x>this.cutoffX) x+=(float)(1.5f*(this.cutoffX/this.cutoffY));
+            if(y>this.cutoffY) y+=(float)(1.5f*(this.cutoffY/this.cutoffX));
             this.workingVertexConsumer.vertex(x,y,0f).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,0f).endVertex();
             //this.workingVertexConsumer.vertex(x,y,0f).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
             //this.workingVertexConsumer.vertex(x,y,0f).endVertex();

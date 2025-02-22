@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.Widget;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.WidgetGroup;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.WidgetList;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
@@ -33,10 +34,10 @@ public class TestScreen extends ScreenAPI {
     public TestScreen(int guiScale) {
         super(TextHelper.getLiteral("test"),ClientHelper.getWindow(),guiScale);
         addFuzz(5,10,6f,10f);
-        //addRadialMenu(RenderHelper.getCurrentHeightRatio(),5);
+        addRadialMenu(RenderHelper.getCurrentHeightRatio(),5);
         this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
-        addScrollableMenu(100,1.8d,1.8d);
-        addWidget(this.clicked);
+        //addScrollableMenu(100,1.8d,1.8d);
+        //addWidget(this.clicked);
         addWidget(BasicTypeableWidget.literal("Text Box!",RED,0d,0.95d));
     }
     

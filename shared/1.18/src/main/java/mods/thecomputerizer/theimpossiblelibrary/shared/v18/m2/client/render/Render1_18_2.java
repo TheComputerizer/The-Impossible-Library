@@ -19,7 +19,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
-import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Collection;
@@ -65,7 +64,7 @@ public class Render1_18_2 extends RenderAPI {
     }
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {
-        Minecraft.getInstance().getTextureManager().bindForSetup(location.unwrap());
+        RenderSystem.setShaderTexture(0,location.unwrap());
     }
 
     @Override public void defaultBlendFunc() {
@@ -121,10 +120,7 @@ public class Render1_18_2 extends RenderAPI {
         else font.renderToolTip(this,lines,iX,iY,iWidth,iHeight,iMaxWidth);
     }
 
-    @Override public void enableAlpha() {
-        assertRenderThread();
-        GL11.glEnable(GL_ALPHA_TEST);
-    }
+    @Override public void enableAlpha() {}
 
     @Override public void enableBlend() {
         RenderSystem.enableBlend();
@@ -200,34 +196,6 @@ public class Render1_18_2 extends RenderAPI {
     @Override public RenderAPI init(Object context) {
         setMatrix(context);
         return this;
-    }
-    
-    
-    public void drawLinesModelView(PoseStack stack, Vector3d ... vectors) {
-        PoseStack modelStack = RenderSystem.getModelViewStack();
-        modelStack.pushPose();
-        modelStack.mulPoseMatrix(stack.last().pose());
-        RenderSystem.applyModelViewMatrix();
-        // render code is the same
-        modelStack.popPose();
-        RenderSystem.applyModelViewMatrix();
-    }
-    
-    public void drawLines(PoseStack stack, Vector3d ... vectors) {
-        stack.pushPose();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1f,1f,1f,1f);
-        RenderSystem.disableTexture();
-        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        buffer.begin(LINE_STRIP,POSITION_COLOR);
-        for(Vector3d vector : vectors)
-            buffer.vertex(vector.x,vector.y,vector.z).color(1f,1f,1f,1f).endVertex();
-        Tesselator.getInstance().end();
-        RenderSystem.enableTexture();
-        RenderSystem.disableBlend();
-        stack.popPose();
     }
     
     @Override public void modelView() {

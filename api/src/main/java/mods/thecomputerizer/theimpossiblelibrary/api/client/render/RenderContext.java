@@ -103,7 +103,6 @@ public final class RenderContext {
     
     public void drawColoredPlane(Vector3d center, Plane plane, ColorCache color) {
         if(!plane.checkToleranceBounds(center,this.scale.getRenderBounds())) return;
-        this.renderer.pushMatrix();
         Vector2d min = plane.getRelativeMin();
         Vector2d max = plane.getRelativeMax();
         prepareGradient(color);
@@ -113,7 +112,6 @@ public final class RenderContext {
         withScaledPos(buffer,center,max).color(color).endVertex();
         withScaledPos(buffer,center,min.x,max.y).color(color).endVertex();
         finishGradient(buffer);
-        this.renderer.popMatrix();
     }
     
     public void drawLine(Vector3d start, Vector3d end, float width) {
@@ -176,7 +174,6 @@ public final class RenderContext {
     public void drawTexturedPlane(Vector3d center, Plane plane, ResourceLocationAPI<?> texture, Vector4d uv,
             ColorCache mask) {
         if(Objects.isNull(texture) || isNotBounded(center)) return;
-        this.renderer.pushMatrix();
         Vector2d min = plane.getRelativeMin();
         Vector2d max = plane.getRelativeMax();
         this.renderer.bindTexture(texture);
@@ -187,7 +184,6 @@ public final class RenderContext {
         withScaledPos(buffer,center,max).tex(uv.z,uv.y).color(mask).endVertex();
         withScaledPos(buffer,center,min.x,max.y).tex(uv.x,uv.y).color(mask).endVertex();
         finishTexture(buffer);
-        this.renderer.popMatrix();
     }
     
     public void drawTooltip(Collection<TextAPI<?>> text, double x, double y) {
@@ -210,7 +206,6 @@ public final class RenderContext {
         gl.directEnd();
         this.renderer.enableTexture();
         this.renderer.disableBlend();
-        this.renderer.popMatrix();
     }
     
     public void finishTexture(VertexWrapper buffer) {
@@ -267,7 +262,6 @@ public final class RenderContext {
     
     public GLAPI prepareLine(Function<GLAPI,Integer> mode, float width, ColorCache color) {
         GLAPI gl = this.renderer.getGLAPI();
-        this.renderer.pushMatrix();
         prepareGradient(color);
         gl.setLineWidth(width);
         gl.directBegin(mode.apply(gl));
