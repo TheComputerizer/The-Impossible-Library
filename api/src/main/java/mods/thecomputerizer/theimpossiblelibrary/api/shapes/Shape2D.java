@@ -115,7 +115,7 @@ public abstract class Shape2D implements Shape {
     @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, Supplier<ColorCache> colorGenerator) {
         return new FuzzBall(
                 () -> ScreenHelper.randomPointSupplier2D(this::random2D,minCount,maxCount),
-                () -> ScreenHelper.randomPointSupplier3D(this::random3D,minCount,maxCount),
+                null,
                 () -> RandomHelper.randomFloat(minWidth,maxWidth),
                 colorGenerator
         );

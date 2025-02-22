@@ -15,19 +15,25 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.network.chat.Component;
+import org.joml.Vector3d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR;
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR;
-import static com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS;
+import static com.mojang.blaze3d.vertex.VertexFormat.Mode.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Render1_18_2 extends RenderAPI {
+    
+    private PoseStack modelView;
     
     public Render1_18_2() {
         super(new GL1_18_2());
@@ -102,7 +108,17 @@ public class Render1_18_2 extends RenderAPI {
     
     @Override public void drawTooltip(FontAPI<?> font, Collection<TextAPI<?>> lines, Number x, Number y, Number width,
             Number height, Number maxWidth) {
-        font.renderToolTip(this,lines,x.intValue(),y.intValue(),width.intValue(),height.intValue(),maxWidth.intValue());
+        int iX = x.intValue();
+        int iY = y.intValue();
+        int iWidth = width.intValue();
+        int iHeight = height.intValue();
+        int iMaxWidth = maxWidth.intValue();
+        Screen curScreen = Minecraft.getInstance().screen;
+        if(Objects.nonNull(curScreen)) {
+            List<Component> unwrapped = font.unwrapTooltipComponents(lines);
+            curScreen.renderComponentTooltip(unwrapMatrix(),unwrapped,iX,iY);
+        }
+        else font.renderToolTip(this,lines,iX,iY,iWidth,iHeight,iMaxWidth);
     }
 
     @Override public void enableAlpha() {
@@ -151,14 +167,14 @@ public class Render1_18_2 extends RenderAPI {
     }
     
     private Mode getBufferMode(int mode) {
-        Mode m = QUADS;
-        for(Mode potential : Mode.values()) {
-            if(potential.asGLMode==mode) {
-                m = potential;
-                break;
-            }
-        }
-        return m;
+        return switch(mode) {
+            case GL_LINE -> LINES;
+            case GL_LINE_LOOP, GL_LINE_STRIP -> LINE_STRIP;
+            case GL_TRIANGLES -> TRIANGLES;
+            case GL_TRIANGLE_FAN -> TRIANGLE_FAN;
+            case GL_TRIANGLE_STRIP -> TRIANGLE_STRIP;
+            default -> QUADS;
+        };
     }
     
     @Override public double getDirectMouseX() {
@@ -184,6 +200,47 @@ public class Render1_18_2 extends RenderAPI {
     @Override public RenderAPI init(Object context) {
         setMatrix(context);
         return this;
+    }
+    
+    
+    public void drawLinesModelView(PoseStack stack, Vector3d ... vectors) {
+        PoseStack modelStack = RenderSystem.getModelViewStack();
+        modelStack.pushPose();
+        modelStack.mulPoseMatrix(stack.last().pose());
+        RenderSystem.applyModelViewMatrix();
+        // render code is the same
+        modelStack.popPose();
+        RenderSystem.applyModelViewMatrix();
+    }
+    
+    public void drawLines(PoseStack stack, Vector3d ... vectors) {
+        stack.pushPose();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1f,1f,1f,1f);
+        RenderSystem.disableTexture();
+        BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        buffer.begin(LINE_STRIP,POSITION_COLOR);
+        for(Vector3d vector : vectors)
+            buffer.vertex(vector.x,vector.y,vector.z).color(1f,1f,1f,1f).endVertex();
+        Tesselator.getInstance().end();
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+        stack.popPose();
+    }
+    
+    @Override public void modelView() {
+        if(Objects.nonNull(this.modelView)) {
+            this.modelView.popPose();
+            RenderSystem.applyModelViewMatrix();
+            this.modelView = null;
+        } else {
+            this.modelView = RenderSystem.getModelViewStack();
+            this.modelView.pushPose();
+            this.modelView.mulPoseMatrix(getMatrix().last().pose());
+            RenderSystem.applyModelViewMatrix();
+        }
     }
     
     @Override public void popMatrix() {

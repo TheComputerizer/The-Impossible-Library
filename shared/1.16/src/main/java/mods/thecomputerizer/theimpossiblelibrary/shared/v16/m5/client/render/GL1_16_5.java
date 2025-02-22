@@ -39,7 +39,7 @@ public class GL1_16_5 implements GLAPI {
         GL11.glEnable(cap);
     }
     
-    @Override public int lineLoop() {
+    @Override public int lineStrip() {
         return GL_LINE_LOOP;
     }
 

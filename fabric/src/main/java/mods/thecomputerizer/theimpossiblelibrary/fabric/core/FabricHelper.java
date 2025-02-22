@@ -129,10 +129,10 @@ public class FabricHelper {
     public static void renderTooltip(PoseStack matrix, List<? extends FormattedText> textLines, int mouseX, int mouseY,
             int screenWidth, int screenHeight, int maxTextWidth, int backgroundColor, int borderColorStart,
             int borderColorEnd, Font font) {
+        boolean java8 = isJava8();
         RenderAPI renderer = ClientHelper.getRenderer();
         if(!textLines.isEmpty() && Objects.nonNull(renderer)) {
-            GL11.glDisable(GL_RESCALE_NORMAL); //Only used to compile
-            RenderSystem.disableDepthTest();
+            if(java8) GL11.glDisable(GL_RESCALE_NORMAL); //Only used to compile
             int tooltipTextWidth = 0;
             for(FormattedText textLine : textLines) {
                 int textLineWidth = font.width(textLine);
@@ -182,28 +182,39 @@ public class FabricHelper {
             final int zLevel = 400;
             matrix.pushPose();
             Object mat = matrix.last().pose();
-            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-4,tooltipX+tooltipTextWidth+3,
+            Object buffer = renderer.getBufferBuilder();
+            if(!java8) renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY-4,tooltipX+tooltipTextWidth+3,
                              tooltipY-3,backgroundColor,backgroundColor);
-            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+3,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+3,
                              tooltipX+tooltipTextWidth+3,tooltipY+tooltipHeight+4,backgroundColor,
                              backgroundColor);
-            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
                              tooltipY+tooltipHeight+3,backgroundColor,backgroundColor);
-            drawGradientRect(renderer,mat,zLevel,tooltipX-4,tooltipY-3,tooltipX-3,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-4,tooltipY-3,tooltipX-3,
                              tooltipY+tooltipHeight+3,backgroundColor,backgroundColor);
-            drawGradientRect(renderer,mat,zLevel,tooltipX+tooltipTextWidth+3,tooltipY-3,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX+tooltipTextWidth+3,tooltipY-3,
                              tooltipX+tooltipTextWidth+4,tooltipY+tooltipHeight+3,backgroundColor,
                              backgroundColor);
-            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-3+1,tooltipX-3+1,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY-3+1,tooltipX-3+1,
                              tooltipY+tooltipHeight+3-1,borderColorStart,borderColorEnd);
-            drawGradientRect(renderer,mat,zLevel,tooltipX+tooltipTextWidth+2,tooltipY-3+1,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX+tooltipTextWidth+2,tooltipY-3+1,
                              tooltipX+tooltipTextWidth+3,tooltipY+tooltipHeight+3-1,borderColorStart,
                              borderColorEnd);
-            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY-3,tooltipX+tooltipTextWidth+3,
                              tooltipY-3+1,borderColorStart,borderColorStart);
-            drawGradientRect(renderer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+2,
+            drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+2,
                              tooltipX+tooltipTextWidth+3,tooltipY+tooltipHeight+3,borderColorEnd,
                              borderColorEnd);
+            if(!java8) {
+                RenderSystem.enableDepthTest();
+                renderer.disableTexture();
+                renderer.enableBlend();
+                renderer.defaultBlendFunc();
+                renderer.endBuffer();
+                renderer.disableBlend();
+                renderer.enableTexture();
+            }
             Object renderType = renderer.renderSourceImmediate();
             matrix.translate(0d,0d,zLevel);
             for(int lineNumber=0; lineNumber<textLines.size(); lineNumber++) {
@@ -217,18 +228,16 @@ public class FabricHelper {
             }
             renderer.endBatch(renderType);
             matrix.popPose();
-            RenderSystem.enableDepthTest();
-            GL11.glEnable(GL_RESCALE_NORMAL); //Only used to compile
+            if(java8) GL11.glEnable(GL_RESCALE_NORMAL); //Only used to compile
         }
     }
     
     /**
      * The equivalent of GuiUtils#drawGradientRect from forge
      */
-    public static void drawGradientRect(RenderAPI renderer, Object mat, int zLevel, int left, int top, int right,
-            int bottom,int startColor, int endColor) {
+    public static void drawGradientRect(boolean java8, RenderAPI renderer, Object buffer, Object mat, int zLevel,
+            int left, int top, int right, int bottom, int startColor, int endColor) {
         if(Objects.isNull(renderer)) return;
-        boolean java8 = isJava8();
         float startAlpha = (float)(startColor>>24&255)/255f;
         float startRed = (float)(startColor>>16&255)/255f;
         float startGreen = (float)(startColor>>8&255)/255f;
@@ -237,21 +246,24 @@ public class FabricHelper {
         float endRed = (float)(endColor>>16&255)/255f;
         float endGreen = (float)(endColor>>8&255)/255f;
         float endBlue = (float)(endColor&255)/255f;
-        RenderSystem.enableDepthTest();
-        renderer.disableTexture();
-        renderer.enableBlend();
-        renderer.defaultBlendFunc();
-        if(java8) GL11.glShadeModel(GL_SMOOTH); //Only used to compile
-        Object buffer = renderer.getBufferBuilder();
-        renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
+        if(java8) {
+            RenderSystem.enableDepthTest();
+            renderer.disableTexture();
+            renderer.enableBlend();
+            renderer.defaultBlendFunc();
+            GL11.glShadeModel(GL_SMOOTH); //Only used to compile
+            renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
+        }
         drawVertex(renderer,buffer,mat,right,top,zLevel,startRed,startGreen,startBlue,startAlpha);
         drawVertex(renderer,buffer,mat,left,top,zLevel,startRed,startGreen,startBlue,startAlpha);
         drawVertex(renderer,buffer,mat,right,bottom,zLevel,endRed,endGreen,endBlue,endAlpha);
         drawVertex(renderer,buffer,mat,left,bottom,zLevel,endRed,endGreen,endBlue,endAlpha);
-        renderer.endBuffer();
-        if(java8) GL11.glShadeModel(GL_FLAT); //Only used to compile
-        renderer.disableBlend();
-        renderer.enableTexture();
+        if(java8) {
+            renderer.endBuffer();
+            GL11.glShadeModel(GL_FLAT);
+            renderer.disableBlend();
+            renderer.enableTexture();
+        }
     }
     
     private static void drawVertex(RenderAPI renderer, Object buffer, Object mat, float x, float y, float z,

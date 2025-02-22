@@ -68,24 +68,29 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
             if(Screen.isCopy(keyCode)) {
                 String copied = this.wrapped.onCopy();
                 if(Objects.nonNull(copied)) {
-                    TextInputUtil.setClipboardContents(getMinecraft(),copied);
+                    TextInputUtil.setClipboardContents(minecraft(),copied);
                     return true;
                 }
             }
             if(Screen.isPaste(keyCode)) {
-                String pasted = TextInputUtil.getClipboardContents(getMinecraft());
+                String pasted = TextInputUtil.getClipboardContents(minecraft());
                 if(this.wrapped.onPaste(pasted)) return true;
             }
             if(Screen.isCut(keyCode)) {
                 String copied = this.wrapped.onCut();
                 if(Objects.nonNull(copied)) {
-                    TextInputUtil.setClipboardContents(getMinecraft(),copied);
+                    TextInputUtil.setClipboardContents(minecraft(),copied);
                     return true;
                 }
             }
             if(this.wrapped.onKeyPressed(getKeyState(),keyCode)) return true;
         }
         return super.keyPressed(keyCode,scanCode,mod);
+    }
+    
+    protected Minecraft minecraft() {
+        MinecraftAPI<?> api = ClientHelper.getMinecraft();
+        return Objects.nonNull(api) ? api.unwrap() : null;
     }
     
     @Override public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {

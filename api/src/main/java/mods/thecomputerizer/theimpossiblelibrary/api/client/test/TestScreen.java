@@ -32,7 +32,7 @@ public class TestScreen extends ScreenAPI {
     
     public TestScreen(int guiScale) {
         super(TextHelper.getLiteral("test"),ClientHelper.getWindow(),guiScale);
-        addFuzz(5,10,1f,2f);
+        addFuzz(5,10,6f,10f);
         //addRadialMenu(RenderHelper.getCurrentHeightRatio(),5);
         this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
         addScrollableMenu(100,1.8d,1.8d);

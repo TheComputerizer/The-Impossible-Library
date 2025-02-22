@@ -1,86 +1,86 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import java.util.Objects;
 
-import static com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR_NORMAL;
-import static com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES;
-import static com.mojang.blaze3d.vertex.VertexFormat.Mode.LINE_STRIP;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GL1_18_2 implements GLAPI {
     
     private float[] workingColor;
-    private int workingVertexCount;
-    private BufferBuilder workingBuilder;
+    private BufferSource workingBufferSource;
+    private RenderType workingRenderType;
+    private VertexConsumer workingVertexConsumer;
     
     /**
      * GL11#glBegin was removed after OpenGL 3.1, but backwards compatibility means we can't just remove this method
      */
     @Override public void directBegin(int modeVal) {
-        this.workingColor = RenderSystem.getShaderColor();
-        this.workingBuilder = Tesselator.getInstance().getBuilder();
-        Mode mode = modeVal==lines() ? LINES : LINE_STRIP;
-        this.workingBuilder.begin(mode,POSITION_COLOR_NORMAL);
+        this.workingBufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        this.workingRenderType = modeVal==lines() ? RenderType.lines() : RenderType.lineStrip();
+        this.workingVertexConsumer = this.workingBufferSource.getBuffer(this.workingRenderType);
         RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
+        this.workingColor = RenderSystem.getShaderColor();
     }
 
     @Override public void directEnd() {
-        if(Objects.isNull(this.workingBuilder))
+        if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly end buffer before calling directBegin!");
         else {
-            Tesselator.getInstance().end();
-            this.workingBuilder = null;
-            this.workingVertexCount = 0;
+            this.workingBufferSource.endBatch();
+            this.workingBufferSource = null;
+            this.workingRenderType = null;
+            this.workingVertexConsumer = null;
         }
     }
     
     @Override public void directVertexD(double x, double y, double z) {
-        if(Objects.isNull(this.workingBuilder))
+        if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (3D) to buffer before calling directBegin!");
         else {
-            this.workingBuilder.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],
-                                                    this.workingColor[3]).normal(0f,1f,0f).endVertex();
-            this.workingVertexCount++;
+            this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,1f).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,z).endVertex();
         }
     }
     
     @Override public void directVertexD(double x, double y) {
-        if(Objects.isNull(this.workingBuilder))
+        if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (2D) to buffer before calling directBegin!");
         else {
-            this.workingBuilder.vertex(x,y,0d).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],
-                                                     this.workingColor[3]).normal(0f,1f,0f).endVertex();
-            this.workingVertexCount++;
+            this.workingVertexConsumer.vertex(x,y,0d).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,0f).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,0d).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,0d).endVertex();
         }
     }
     
     @Override public void directVertexF(float x, float y, float z) {
-        if(Objects.isNull(this.workingBuilder))
+        if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (3F) to buffer before calling directBegin!");
         else {
-            this.workingBuilder.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],
-                                                    this.workingColor[3]).normal(0f,1f,0f).endVertex();
-            this.workingVertexCount++;
+            this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,1f).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,z).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,z).endVertex();
         }
     }
     
     @Override public void directVertexF(float x, float y) {
-        if(Objects.isNull(this.workingBuilder))
+        if(Objects.isNull(this.workingBufferSource))
             TILRef.logError("Cannot directly add vertex (2F) to buffer before calling directBegin!");
         else {
-            this.workingBuilder.vertex(x,y,0f).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],
-                                                     this.workingColor[3]).normal(0f,1f,0f).endVertex();
-            this.workingVertexCount++;
+            this.workingVertexConsumer.vertex(x,y,0f).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).normal(1f,1f,0f).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,0f).color(this.workingColor[0],this.workingColor[1],this.workingColor[2],this.workingColor[3]).endVertex();
+            //this.workingVertexConsumer.vertex(x,y,0f).endVertex();
         }
     }
     
@@ -92,7 +92,7 @@ public class GL1_18_2 implements GLAPI {
         GL11.glEnable(cap);
     }
     
-    @Override public int lineLoop() {
+    @Override public int lineStrip() {
         return GL_LINE_STRIP;
     }
 
@@ -113,6 +113,7 @@ public class GL1_18_2 implements GLAPI {
     }
     
     @Override public void setLineWidth(float width) {
+        RenderSystem.enableDepthTest();
         RenderSystem.lineWidth(width);
     }
     

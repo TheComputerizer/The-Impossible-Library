@@ -146,6 +146,8 @@ public class Render1_12_2 extends RenderAPI {
     @Override public RenderAPI init(Object context) {
         return this;
     }
+    
+    @Override public void modelView() {} //I don't think this is applicable in 1.16.5?
 
     @Override public void popMatrix() {
         GlStateManager.popMatrix();

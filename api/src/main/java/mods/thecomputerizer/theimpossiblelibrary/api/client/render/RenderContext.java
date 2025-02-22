@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
+
 @Getter
 public final class RenderContext {
     
@@ -101,6 +103,7 @@ public final class RenderContext {
     
     public void drawColoredPlane(Vector3d center, Plane plane, ColorCache color) {
         if(!plane.checkToleranceBounds(center,this.scale.getRenderBounds())) return;
+        this.renderer.pushMatrix();
         Vector2d min = plane.getRelativeMin();
         Vector2d max = plane.getRelativeMax();
         prepareGradient(color);
@@ -110,6 +113,7 @@ public final class RenderContext {
         withScaledPos(buffer,center,max).color(color).endVertex();
         withScaledPos(buffer,center,min.x,max.y).color(color).endVertex();
         finishGradient(buffer);
+        this.renderer.popMatrix();
     }
     
     public void drawLine(Vector3d start, Vector3d end, float width) {
@@ -125,7 +129,7 @@ public final class RenderContext {
         GLAPI gl = prepareLine(GLAPI::lines,width);
         gl.directVertexD(withDisplayScaledX(startX),withDisplayScaledY(startY),withScaledZ(startZ));
         gl.directVertexD(withDisplayScaledX(endX),withDisplayScaledY(endY),withScaledZ(endZ));
-        gl.directEnd();
+        finishLine(gl);
     }
     
     public void drawOutline(Vector3d center, Shape2D shape, float width, ColorCache color) {
@@ -133,17 +137,17 @@ public final class RenderContext {
     }
     
     public void drawOutline(Vector3d center, VectorSupplier2D vectors, float width, ColorCache color) {
-        prepareGradient(color);
-        GLAPI gl = prepareLine(GLAPI::lineLoop,width);
+        GLAPI gl = prepareLine(GLAPI::lineStrip,width,color);
+        Vector2d first = null;
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
             double x = this.scale.applyXForScreen(center.x,next.x);
             double y = this.scale.applyYForScreen(center.y,next.y);
-            gl.directVertexD(x,y,0d);
+            if(Objects.isNull(first)) first = new Vector2d(x,y);
+            gl.directVertexD(x,y);
         }
-        gl.directEnd();
-        this.renderer.enableTexture();
-        this.renderer.disableBlend();
+        if(Objects.nonNull(first)) gl.directVertexD(first.x,first.y);
+        finishLine(gl);
     }
     
     public void drawOutline(Vector3d center, Shape3D shape, float width, ColorCache color) {
@@ -151,18 +155,18 @@ public final class RenderContext {
     }
     
     public void drawOutline(Vector3d center, VectorSupplier3D vectors, float width, ColorCache color) {
-        prepareGradient(color);
-        GLAPI gl = prepareLine(GLAPI::lineLoop,width);
+        GLAPI gl = prepareLine(GLAPI::lineStrip,width,color);
+        Vector3d first = null;
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
             double x = this.scale.applyXForScreen(center.x,next.x);
             double y = this.scale.applyYForScreen(center.y,next.y);
             double z = this.scale.applyZForScreen(center.z,next.z);
+            if(Objects.isNull(first)) first = new Vector3d(x,y,z);
             gl.directVertexD(x,y,z);
         }
-        gl.directEnd();
-        this.renderer.enableTexture();
-        this.renderer.disableBlend();
+        if(Objects.nonNull(first)) gl.directVertexD(first.x,first.y,first.z);
+        finishLine(gl);
     }
     
     public void drawTexturedPlane(Vector3d center, Plane plane, TextureWrapper texture) {
@@ -172,6 +176,7 @@ public final class RenderContext {
     public void drawTexturedPlane(Vector3d center, Plane plane, ResourceLocationAPI<?> texture, Vector4d uv,
             ColorCache mask) {
         if(Objects.isNull(texture) || isNotBounded(center)) return;
+        this.renderer.pushMatrix();
         Vector2d min = plane.getRelativeMin();
         Vector2d max = plane.getRelativeMax();
         this.renderer.bindTexture(texture);
@@ -182,6 +187,7 @@ public final class RenderContext {
         withScaledPos(buffer,center,max).tex(uv.z,uv.y).color(mask).endVertex();
         withScaledPos(buffer,center,min.x,max.y).tex(uv.x,uv.y).color(mask).endVertex();
         finishTexture(buffer);
+        this.renderer.popMatrix();
     }
     
     public void drawTooltip(Collection<TextAPI<?>> text, double x, double y) {
@@ -198,6 +204,13 @@ public final class RenderContext {
         buffer.finish();
         this.renderer.enableTexture();
         this.renderer.disableBlend();
+    }
+    
+    public void finishLine(GLAPI gl) {
+        gl.directEnd();
+        this.renderer.enableTexture();
+        this.renderer.disableBlend();
+        this.renderer.popMatrix();
     }
     
     public void finishTexture(VertexWrapper buffer) {
@@ -243,13 +256,19 @@ public final class RenderContext {
     
     public void prepareGradient(ColorCache bgColor) {
         this.renderer.enableBlend();
-        this.renderer.disableTexture();
         this.renderer.defaultBlendFunc();
         this.renderer.setColor(bgColor);
+        this.renderer.disableTexture();
     }
     
     public GLAPI prepareLine(Function<GLAPI,Integer> mode, float width) {
+        return prepareLine(mode,width,WHITE);
+    }
+    
+    public GLAPI prepareLine(Function<GLAPI,Integer> mode, float width, ColorCache color) {
         GLAPI gl = this.renderer.getGLAPI();
+        this.renderer.pushMatrix();
+        prepareGradient(color);
         gl.setLineWidth(width);
         gl.directBegin(mode.apply(gl));
         return gl;
@@ -299,7 +318,7 @@ public final class RenderContext {
     }
     
     private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y, double z) {
-        return this.scale.applyForScreen(buffer, center, x, y, z);
+        return this.scale.applyForScreen(buffer,center,x,y,z);
     }
     
     public double withDisplayScaledX(double x) {

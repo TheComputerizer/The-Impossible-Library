@@ -43,7 +43,7 @@ public abstract class Shape3D implements Shape {
     
     @Override public FuzzBall makeFuzzBall(int minCount, int maxCount, float minWidth, float maxWidth, Supplier<ColorCache> colorGenerator) {
         return new FuzzBall(
-                () -> ScreenHelper.randomPointSupplier2D(this::random2D,minCount,maxCount),
+                null,
                 () -> ScreenHelper.randomPointSupplier3D(this::random3D,minCount,maxCount),
                 () -> RandomHelper.randomFloat(minWidth,maxWidth),
                 colorGenerator

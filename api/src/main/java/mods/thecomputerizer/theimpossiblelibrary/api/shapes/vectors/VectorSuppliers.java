@@ -7,6 +7,15 @@ import org.joml.Vector4d;
 @SuppressWarnings("unused")
 public interface VectorSuppliers<V> {
     
+    default int count() {
+        int size = 0;
+        while(hasNext()) {
+            size++;
+            getNext();
+        }
+        reset();
+        return size;
+    }
     int getIndex();
     V getNext();
     boolean hasNext();

@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -8,18 +9,23 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
 
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
+import static com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES;
+import static com.mojang.blaze3d.vertex.VertexFormat.Mode.LINE_STRIP;
 
 public class VertexWrapper1_18_2 extends VertexWrapper {
     
     protected final VertexFormat format;
     protected final Mode formatMode;
+    protected final Tesselator tesselator;
     protected final BufferBuilder buffer;
     
     public VertexWrapper1_18_2(Mode mode, VertexFormat format, int numVertices, int ... vertexSizes) {
         super(mode.asGLMode,numVertices,vertexSizes);
         this.format = format;
         this.formatMode = mode;
-        this.buffer = Tesselator.getInstance().getBuilder();
+        this.tesselator = mode==LINES || mode==LINE_STRIP ?
+                RenderSystem.renderThreadTesselator() : Tesselator.getInstance();
+        this.buffer = tesselator.getBuilder();
     }
     
     @Override protected void begin() {
@@ -27,7 +33,7 @@ public class VertexWrapper1_18_2 extends VertexWrapper {
     }
     
     @Override protected void draw() {
-        Tesselator.getInstance().end();
+        this.tesselator.end();
     }
 
     @Override protected void onVertexEnded(Number[][] numbers) {

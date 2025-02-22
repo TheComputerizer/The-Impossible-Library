@@ -11,7 +11,7 @@ public interface GLAPI {
     void directVertexF(float x, float y);
     void disable(int cap);
     void enable(int cap);
-    int lineLoop();
+    int lineStrip();
     int lines();
     int quads();
     void scissor(int left, int bottom, int width, int height);

@@ -38,8 +38,7 @@ public abstract class FontAPI<F> extends MutableWrapped<F> {
     public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width,
             int height, int maxWidth) {
         renderer.setFont(getWrapped());
-        List<?> components = lines.stream().map(text -> text.getAsComponent()).collect(Collectors.toList());
-        TILRef.getClientHandles().renderToolTip(renderer,components,x,y,width,height,maxWidth);
+        TILRef.getClientHandles().renderToolTip(renderer,unwrapTooltipComponents(lines),x,y,width,height,maxWidth);
     }
     
     public String trimStringTo(String str, Number width) {
@@ -47,4 +46,9 @@ public abstract class FontAPI<F> extends MutableWrapped<F> {
     }
     
     public abstract String trimStringTo(String str, int width, boolean withReset);
+    
+    @SuppressWarnings("unchecked")
+    public <T> List<T> unwrapTooltipComponents(Collection<TextAPI<?>> lines) {
+        return (List<T>)lines.stream().map(text -> text.getAsComponent()).collect(Collectors.toList());
+    }
 }

@@ -68,24 +68,29 @@ public class ScreenWrapper1_18_2 extends Screen implements Wrapped<ScreenAPI> {
             if(Screen.isCopy(keyCode)) {
                 String copied = this.wrapped.onCopy();
                 if(Objects.nonNull(copied)) {
-                    TextFieldHelper.setClipboardContents(getMinecraft(), copied);
+                    TextFieldHelper.setClipboardContents(minecraft(),copied);
                     return true;
                 }
             }
             if(Screen.isPaste(keyCode)) {
-                String pasted = TextFieldHelper.getClipboardContents(getMinecraft());
+                String pasted = TextFieldHelper.getClipboardContents(minecraft());
                 if(this.wrapped.onPaste(pasted)) return true;
             }
             if(Screen.isCut(keyCode)) {
                 String copied = this.wrapped.onCut();
                 if(Objects.nonNull(copied)) {
-                    TextFieldHelper.setClipboardContents(getMinecraft(),copied);
+                    TextFieldHelper.setClipboardContents(minecraft(),copied);
                     return true;
                 }
             }
             if(this.wrapped.onKeyPressed(getKeyState(),keyCode)) return true;
         }
         return super.keyPressed(keyCode,scanCode,mod);
+    }
+    
+    protected Minecraft minecraft() {
+        MinecraftAPI<?> api = ClientHelper.getMinecraft();
+        return Objects.nonNull(api) ? api.unwrap() : null;
     }
     
     @Override public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
@@ -128,7 +133,7 @@ public class ScreenWrapper1_18_2 extends Screen implements Wrapped<ScreenAPI> {
             ctx.getRenderer().setMatrix(matrix);
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
-            this.wrapped.draw(ctx, VectorHelper.zero3D(), x, y);
+            this.wrapped.draw(ctx,VectorHelper.zero3D(),x,y);
         }
     }
     
