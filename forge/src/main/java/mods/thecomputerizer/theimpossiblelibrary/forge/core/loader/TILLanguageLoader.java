@@ -6,6 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
@@ -16,7 +18,9 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
  */
 public abstract class TILLanguageLoader {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger("Multiversion Language Loader");
     private static final String MOD_CONTAINER = "net.minecraftforge.fml.javafmlmod.FMLModContainer";
+    static boolean loadedNewCore;
     
     protected final CoreAPI core;
     protected final String modClass;
@@ -38,10 +42,12 @@ public abstract class TILLanguageLoader {
             Constructor<?> init = java8 ? container.getConstructor(
                     IModInfo.class,String.class,ClassLoader.class,ModFileScanData.class) : container.getConstructor(
                             IModInfo.class,String.class,ModFileScanData.class,extras[0].getClass());
-            return (T)(java8 ? init.newInstance(info,this.modClass,classLoader,scanResults) :
+            T instance = (T)(java8 ? init.newInstance(info,this.modClass,classLoader,scanResults) :
                     init.newInstance(info,this.modClass,scanResults,extras[0]));
-        } catch(Exception ex) {
-            TILRef.logError("Failed to get contructor for {}",container);
+            LOGGER.info("Successfully initialized mod container for {}",this.modClass);
+            return instance;
+        } catch(Throwable t) {
+            LOGGER.error("Failed to initialize {} (modClass {})",container,this.modClass,t);
         }
         return null;
     }
@@ -51,24 +57,27 @@ public abstract class TILLanguageLoader {
         final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
             final Class<?> container = Class.forName(MOD_CONTAINER,true,contextLoader);
-            TILRef.logInfo("Loading FMLModContainer class from {} and got {}",contextLoader,container.getClassLoader());
             String coreName = this.core.getClass().getName();
             
             //Finalizes the module for the class being loaded in the GAME layer
             Methods.invoke(this.scan,"defineClasses",classLoader);
             
-            setCoreAPI(Class.forName(coreName,true,classLoader));
+            if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
+            ForgeCoreLoader.verifyModule(this.modClass,info,extras[0]);
             return getInstance(container,info,classLoader,scanResults,extras);
-        } catch(Exception ex) {
-            throw new RuntimeException("Failed to load "+MOD_CONTAINER+" for multiversion mod!",ex);
+        } catch(Throwable t) {
+            String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";
+            LOGGER.error(msg,t);
+            throw new RuntimeException(msg,t);
         }
     }
     
     protected void setCoreAPI(Class<?> implClass) {
         try {
             implClass.newInstance();
-        } catch(Exception ex) {
-            TILRef.logError("Failed to set CoreAPI instance...",ex);
+            loadedNewCore = true;
+        } catch(Throwable t) {
+            TILRef.logError("Failed to set CoreAPI instance {}",implClass,t);
         }
     }
 }

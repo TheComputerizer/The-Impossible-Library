@@ -1,14 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,29 +20,29 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
+
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class TILBetterModScan extends ModFileScanData {
     
-    static boolean alreadyNuked;
-    
-    private final Map<String,MultiVersionModInfo> modInfos;
-    private final Map<String,byte[]> writtenClasses;
-    private final Set<Path> paths;
-    
-    public TILBetterModScan() {
-        super();
-        this.modInfos = new HashMap<>();
-        this.writtenClasses = new HashMap<>();
-        this.paths = new HashSet<>();
-    }
+    private static final String MODLOADER = "net.minecraftforge.fml.ModLoader";
+    private static final Set<String> NUKED_PACKAGES = new HashSet<>();
+    private static final Map<String,IModFile> MOD_FILES = new HashMap<>();
+    private static final Map<String,MultiVersionModInfo> MOD_INFOS = new HashMap<>();
+    private static final Map<String,byte[]> WRITTEN_CLASSES = new HashMap<>();
+    private static final Set<Path> PATHS = new HashSet<>();
     
     public void addFilePath(Path path) {
-        this.paths.add(path);
+        PATHS.add(path);
+        TILRef.logInfo("Adding file path to scan (total paths = {})",PATHS);
     }
     
-    public void addWrittenClass(String className, MultiVersionModInfo info, byte[] bytecode) {
-        this.modInfos.put(className,info);
-        this.writtenClasses.put(className,bytecode);
+    public void addWrittenClass(String className, MultiVersionModInfo info, IModFile file, byte[] bytecode) {
+        MOD_INFOS.put(className,info);
+        WRITTEN_CLASSES.put(className,bytecode);
+        MOD_FILES.put(className.substring(0,className.lastIndexOf('.')),file);
     }
     
     /**
@@ -47,46 +50,74 @@ public class TILBetterModScan extends ModFileScanData {
      */
     @IndirectCallers
     public void defineClasses(ClassLoader target) {
+        if(MOD_INFOS.isEmpty() || WRITTEN_CLASSES.isEmpty() ) {
+            TILRef.logInfo("No classes left to define for TILBetterModScan");
+            return;
+        }
+        for(String className : MOD_INFOS.keySet()) TILRef.logInfo(className);
         boolean java8 = ForgeCoreLoader.isJava8();
-        String pkg = null;
-        Set<String> defined = new HashSet<>();
-        Class<?> outerClass = null;
-        for(Entry<String,byte[]> entry : this.writtenClasses.entrySet()) {
+        Set<String> pkgs = new HashSet<>();
+        List<Class<?>> defined = new ArrayList<>();
+        Set<Class<?>> outerClasses = new HashSet<>();
+        Map<String,IModInfo> pkgToModMap = new HashMap<>();
+        for(Entry<String,byte[]> entry : WRITTEN_CLASSES.entrySet()) {
             String className = entry.getKey();
-            if(Objects.isNull(pkg)) pkg = className.substring(0,className.lastIndexOf('.'));
-            Class<?> clazz = ClassHelper.resolveClass(target,ClassHelper.defineClass(target,className,entry.getValue()));
-            if(Objects.nonNull(clazz)) {
-                TILRef.logDebug("Successfully defined and resolved class {} for {}",className,target);
-                defined.add(className);
-                if(!className.contains("\\$")) outerClass = clazz;
+            byte[] bytes = entry.getValue();
+            try {
+                Class<?> clazz = ClassHelper.resolveClass(target,ClassHelper.defineClass(target,className,bytes));
+                if(Objects.nonNull(clazz)) {
+                    if(java8) TILRef.logInfo("Successfully defined {}",clazz);
+                    else {
+                        Object module = Methods.invoke(clazz,"getModule");
+                        TILRef.logInfo("Successfully defined {} in {}",clazz,module);
+                    }
+                    defined.add(clazz);
+                    String pkg = className.substring(0,className.lastIndexOf('.'));
+                    if(!className.contains("\\$") && !pkgs.contains(pkg)) outerClasses.add(clazz);
+                    pkgs.add(pkg);
+                    pkgToModMap.putIfAbsent(pkg,getModFromFile(MOD_FILES.get(pkg),MOD_INFOS.get(className).getModID()));
+                } else TILRef.logError("Class was defined as null?? {}",className);
+            } catch(Throwable t) {
+                throw new RuntimeException("Failed to define class "+className,t);
             }
-            else TILRef.logError("Class was defined as null?? {}",className);
         }
-        if(!alreadyNuked) {
-            if(java8) {
-                Class<?> loaderClass = ClassHelper.findClass("net.minecraftforge.fml.ModLoader",target);
-                fixBrokenMods(ReflectionHelper.invokeStaticMethod(loaderClass,"get",new Class<?>[]{}));
-                ForgeCoreLoader.nukeAndFinalizeJava8(outerClass,target);
-                alreadyNuked = true;
-            } else if(Objects.nonNull(pkg)) {
-                ForgeCoreLoader.nukeAndFinalize(pkg);
-                alreadyNuked = true;
+        WRITTEN_CLASSES.clear();
+        if(pkgs.isEmpty()) {
+            TILRef.logWarn("No classes were defined so no sources will be added");
+            return;
+        }
+        if(java8) {
+            try {
+                fixBrokenMods(ClassHelper.findClass(MODLOADER, target));
+                ForgeCoreLoader.nukeAndFinalizeJava8(sourceStack(outerClasses),target,NUKED_PACKAGES.isEmpty());
+            } catch(Throwable t) {
+                TILRef.logError("Failed to finalize packages for Java 8 {}",pkgs,t);
+            }
+        } else {
+            String doLast = getLastPkg(pkgs);
+            try {
+                Set<String> finalizedPkgs = new HashSet<>();
+                for(String pkg : pkgs) handleNotJava8(pkg,pkgToModMap.get(pkg),finalizedPkgs);
+                handleNotJava8(doLast,pkgToModMap.get(doLast),finalizedPkgs);
+                for(Class<?> c : defined) ForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
+            } catch(Throwable t) {
+                TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
             }
         }
+        NUKED_PACKAGES.addAll(pkgs);
     }
     
     /**
      * Yeah, this is kinda necessary when trying to work with classes on the wrong class loader
      */
-    public void fixBrokenMods(Object modLoader) {
-        List<?> warnings = (List<?>)ReflectionHelper.getFieldInstance(modLoader,modLoader.getClass(),"loadingWarnings");
+    public void fixBrokenMods(Class<?> loaderClass) {
+        List<?> warnings = Fields.get(Methods.invokeStatic(loaderClass,"get"),"loadingWarnings");
         if(Objects.isNull(warnings)) TILRef.logWarn("You win this round, Forge");
         else {
             warnings.removeIf(warning -> {
-                Object msg = ReflectionHelper.invokeMethod(warning.getClass(),"formatToString",warning,new Class<?>[]{});
-                String[] split = String.valueOf(msg).split(" ");
+                String[] split = ((String)Methods.invoke(warning,"formatToString")).split(" ");
                 if(split.length>1) {
-                    for(Path path : this.paths) {
+                    for(Path path : PATHS) {
                         if(path.toString().endsWith(split[1])) {
                             TILRef.logWarn("{} is a perfectly valid mod file thanks",path);
                             return true;
@@ -96,5 +127,45 @@ public class TILBetterModScan extends ModFileScanData {
                 return false;
             });
         }
+    }
+    
+    /**
+     * If the given collection of packages contains a package from this library, it needs to be handled last.
+     * The package is removed from the collection if found.
+     */
+    protected String getLastPkg(Collection<String> pkgs) {
+        String last = null;
+        for(String pkg : pkgs) {
+            if(pkg.contains(BASE_PACKAGE)) {
+                last = pkg;
+                break;
+            }
+        }
+        if(Objects.nonNull(last)) pkgs.remove(last);
+        return last;
+    }
+    
+    protected IModInfo getModFromFile(IModFile file, String modid) {
+        for(IModInfo info : file.getModInfos())
+            if(modid.equals(info.getModId())) return info;
+        return null;
+    }
+    
+    private void handleNotJava8(String pkg, IModInfo mod, Set<String> finalizedPkgs) {
+        if(NUKED_PACKAGES.contains(pkg)) {
+            TILRef.logInfo("Skipping already handled sources for {}",pkg);
+            return;
+        }
+        ForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs);
+    }
+    
+    /**
+     * The set of all classes used as reference when adding sources to the target ClassLoader.
+     * Makes multi-project dev environments possible
+     */
+    protected Set<Class<?>> sourceStack(Collection<Class<?>> generated) {
+        Set<Class<?>> sourcesFrom = new HashSet<>(generated);
+        for(MultiVersionModInfo info : MOD_INFOS.values()) sourcesFrom.add(info.getEntryClass());
+        return sourcesFrom;
     }
 }

@@ -114,7 +114,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         ClassLoader loader = DEV ? ClassLoader.getSystemClassLoader() : launcher.getTargetClassLoader();
         Class<?> clazz = ClassHelper.findClass(className,loader);
         while(Objects.nonNull(clazz) && clazz!=Object.class) {
-            addSource(launcher,ClassHelper.getSourceURL(clazz));
+            addSource(launcher,ClassHelper.getSourceURL(className,loader));
             clazz = clazz.getSuperclass();
             if(CoreAPI.class.getName().equals(clazz.getName())) break;
         }
@@ -125,9 +125,9 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     void addSource(FabricLauncher launcher, @Nullable URL url) {
         if(Objects.nonNull(url)) {
             try {
-                launcher.addToClassPath(Paths.get(url.toURI()));
+                launcher.addToClassPath(UrlUtil.asPath(url));
                 Log.debug(ENTRYPOINT,"Added loader source "+url);
-            } catch(URISyntaxException ex) {
+            } catch(Exception ex) {
                 Log.error(ENTRYPOINT,"Failed to add "+url+" to the classpath",ex);
             }
         }

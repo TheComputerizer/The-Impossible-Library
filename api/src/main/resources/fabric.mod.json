@@ -31,6 +31,9 @@
   "languageAdapters": {
     "multiversionAdaptor": "${adaptor}"
   },
+  "mixins": [{
+    "config": "mixins.mm.json"
+  }],
   "name": "The Impossible Loader",
   "version": "${version}"
 }

@@ -93,8 +93,11 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
     
     @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
         unmappedClass = unmappedClass.replace('.','/');
+        FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
         desc = desc.replace('.','/');
-        return FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(unmappedClass,unmappedMethod,desc);
+        TILRef.logInfo("mapping method from class {} | method {} | desc {} | ClassLoader {})",unmappedClass,
+                       unmappedMethod,desc,getClass().getClassLoader());
+        return remapper.mapMethodName(unmappedClass,unmappedMethod,desc);
     }
     
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
@@ -110,5 +113,9 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
             TILRef.logFatal("Unable to find ModContainer instance to inject! The game will likely crash very soon.");
         } else TILRef.logFatal("ASMDataTable instance was not found! The game will likely crash very soon.");
         return false;
+    }
+    
+    @Override public String unmapClass(String className) {
+        return FMLDeobfuscatingRemapper.INSTANCE.unmap(className);
     }
 }

@@ -6,22 +6,27 @@ import cpw.mods.modlauncher.Launcher;
 import io.github.toolfactory.jvm.function.catalog.ConsulterSupplyFunction;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.Map.Entry;
 
 import static cpw.mods.modlauncher.Launcher.INSTANCE;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
+import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-import static org.burningwave.core.assembler.StaticComponentContainer.Resources;
 
 /**
  * Figures out which version to load on and how to load stuff on it
@@ -40,11 +45,7 @@ public class ForgeCoreLoader {
             if(isJava8()) LOGGER.info("I see you are running Java 8. Good choice, but I'll be using burningwave anyways");
             else LOGGER.info("I see you are running Java 9+ so I'll be using burningwave to break its strong encapsulation");
         }
-        try {
-            Default.add(burningWaveProperties());
-        } catch(Throwable t) {
-            LOGGER.error("Failed to set default BuringWave properties??",t);
-        }
+        ClassHelper.checkBurningWaveInit();
     }
     
     /**
@@ -77,6 +78,7 @@ public class ForgeCoreLoader {
      */
     static void addModuleThouroughly(Object module, Object resolvedModule, Object moduleLayer, String name,
             Set<String> packages, Object moduleRef, ClassLoader target) {
+        Fields.set(module,"name",name);
         Object configuration = Fields.get(target,"configuration");
         Map<String,Object> resolvedRoots = Fields.get(target,"resolvedRoots");
         Map<String,Object> packageLookup = Fields.get(target,"packageLookup");
@@ -154,6 +156,29 @@ public class ForgeCoreLoader {
         return Objects.nonNull(loader) ? loader : ClassLoader.getSystemClassLoader();
     }
     
+    static Object buildNewModuleDescriptor(String name, Object secureJar, List<String> usesServices) throws Throwable {
+        LOGGER.info("Building new module descriptor for {}",name);
+        Set<String> packages = new HashSet<>(Methods.invoke(secureJar,"getPackages"));
+        Collection<Object> providers = Methods.invoke(secureJar,"getProviders");
+        Class<?> cDesc = Class.forName("java.lang.module.ModuleDescriptor");
+        Object metadata = Fields.get(secureJar,"metadata");
+        String version = Methods.invoke(metadata,"version");
+        Object builder = Methods.invokeStatic(cDesc,"newAutomaticModule",name);
+        builder = Methods.invoke(builder,"version",version);
+        builder = Methods.invoke(builder,"packages",packages);
+        for(Object provider : providers) {
+            Collection<String> actualProviders = Methods.invoke(provider,"providers");
+            if(!actualProviders.isEmpty()) {
+                String service = Methods.invoke(provider,"serviceName");
+                Methods.invoke(builder,"provides",service,new ArrayList<>(actualProviders));
+            }
+        }
+        for(String service : usesServices) Methods.invoke(builder,"uses",service);
+        Object desc = Methods.invoke(builder,"build");
+        LOGGER.info("Finished building descriptor {}",desc);
+        return desc;
+    }
+    
     static Map<?,?> burningWaveProperties() {
         Map<Object,Object> properties = new HashMap<>();
         properties.put("banner.hide","true");
@@ -167,7 +192,8 @@ public class ForgeCoreLoader {
      * Any classes loaded to the BOOT, SERVICE, or PLUGIN layer that is a part of the given module will have their
      * classLoader field reassigned to the ClassLoader of the GAME layer
      */
-    static void finalizeModule(Object module, ClassLoader target, ClassLoader ... loaders) {
+    static void finalizeModule(String oldName, String newName, Object module, ClassLoader target,
+            ClassLoader ... loaders) {
         String moduleName = moduleName(module);
         Set<Class<?>> allMoved = new HashSet<>();
         Map<ClassLoader,Collection<Class<?>>> removals = new HashMap<>();
@@ -175,7 +201,7 @@ public class ForgeCoreLoader {
             Collection<Class<?>> classes = Fields.get(loader,"classes");
             for(Class<?> c : classes) {
                 String name = moduleName(Fields.get(c,"module"));
-                if(moduleName.equals(name)) {
+                if(moduleName.equals(oldName) || moduleName.equals(newName)) {
                     Fields.set(c,"classLoader",target);
                     allMoved.add(c);
                     removals.putIfAbsent(loader,new HashSet<>());
@@ -214,6 +240,21 @@ public class ForgeCoreLoader {
             return null;
         }
         return foundClass;
+    }
+    
+    /**
+     * Returns an array where the elements are the ClassLoader, resolved module, and the name of the layer.
+     * Assumes the given loaders array will always be in the order of BOOT, SERVICE, PLUGIN, GAME
+     */
+    public static Object[] findModuleLoaderForPackage(String pkg, ClassLoader[] loaders) {
+        for(int i=0;i<loaders.length;i++) {
+            ClassLoader loader = loaders[i];
+            String name = i==0 ? "BOOT" : (i==1 ? "SERVICE" : "PLUGIN");
+            Map<String,Object> lookup = Fields.get(loader,"packageLookup");
+            Object resolvedModule = lookup.get(pkg);
+            if(Objects.nonNull(resolvedModule)) return new Object[]{loader,resolvedModule,name};
+        }
+        return null;
     }
     
     public static void fixIfNotJava8() {
@@ -293,9 +334,9 @@ public class ForgeCoreLoader {
         return ((Optional<?>)Methods.invoke(env,"findModuleLayerManager")).orElse(null);
     }
     
-    @SuppressWarnings("unchecked")
-    static Object getModule(String layerName, String name) {
-        return ((Map<String,Object>)Fields.get(getLayer(layerName),"nameToModule")).get(name);
+    @SuppressWarnings({"unchecked","SameParameterValue"})
+    static Object getModuleFromLayer(String layerName, String name) {
+        return ((Map<String,Object>)Fields.get(getModuleLayer(layerName),"nameToModule")).get(name);
     }
     
     public static Object getModuleFromPackage(String pkg, String layerName) {
@@ -401,15 +442,89 @@ public class ForgeCoreLoader {
     static Class<?> loadAPI(String version) {
         String className = versionClassName("core.TILCoreForge",version);
         ClassLoader loader = bootLoader();
+        if(isJava8()) {
+            URL source = ClassHelper.getSourceURL(ForgeCoreLoader.class);
+            if(!ClassHelper.loadURL((URLClassLoader)loader,source))
+                LOGGER.error("Failed to load source {}",source);
+        }
         Class<?> clazz = null;
         try {
             clazz = Class.forName(className,true,loader);
         } catch(Exception ex) {
-            LOGGER.error("Failed to load class {} for {}",className,loader);
+            LOGGER.error("Failed to load class {} for {}",className,loader,ex);
         }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Forge-"+version+"]");
         LOGGER.info("Successfully loaded CoreAPI instance {}",clazz);
         return clazz;
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    static void loadNewModuleTo(@Nullable IModInfo mod, String targetLayerName, Set<String> finalizedPkgs) {
+        if(Objects.isNull(mod)) {
+            LOGGER.error("Cannot load module from nonexistant file!");
+            return;
+        }
+        try {
+            Object fileInfo = mod.getOwningFile();
+            Object file = Methods.invoke(fileInfo,"getFile");
+            Object secureJar = Methods.invoke(file,"getSecureJar");
+            ClassLoader targetLoader = layerClassLoader("GAME");
+            String existingName = Methods.invoke(secureJar,"name");
+            String name = mod.getModId(); //Usually the same as existingName, but there are some edge cases...
+            Object layer = getModuleLayer(targetLayerName);
+            Map<String,Object> nameToModule = Fields.get(layer,"nameToModule");
+            Object module = nameToModule.get(existingName);
+            if(Objects.isNull(module)) module = nameToModule.get(name);
+            boolean existed = false;
+            if(Objects.nonNull(module)) {
+                LOGGER.info("Found existing module to set up for {}",name);
+                existed = true;
+            } else LOGGER.info("Setting up new module with name {}",name);
+            Object descriptor;
+            if(Objects.nonNull(module)) {
+                descriptor = Fields.get(module,"descriptor");
+                Fields.set(descriptor,"name",name);
+            }
+            else {
+                List<String> usesServices = Methods.invoke(fileInfo,"usesServices");
+                descriptor = buildNewModuleDescriptor(name,secureJar,usesServices);
+            }
+            Class<?> rClass = Class.forName("cpw.mods.cl.JarModuleFinder$JarModuleReference");
+            Object reference = Constructors.newInstanceOf(rClass,secureJar);
+            URI uri = Fields.get(reference,"location");
+            Object config = Fields.get(targetLoader,"configuration");
+            Class<?> refClass = reference.getClass().getSuperclass();
+            Class<?> cResolved = Class.forName("java.lang.module.ResolvedModule");
+            Fields.set(reference,"descriptor",descriptor);
+            Object resolvedModule = Constructors.newInstanceOf(cResolved,config,reference);
+            Set<String> packages = new HashSet<>(resolvedPackages(resolvedModule));
+            packages.removeAll(finalizedPkgs);
+            packages = Collections.unmodifiableSet(packages);
+            finalizedPkgs.addAll(packages);
+            Class<?> cModule = Class.forName("java.lang.Module");
+            if(Objects.isNull(module)) module = Constructors.newInstanceOf(cModule,layer,targetLoader,descriptor,uri);
+            addModuleThouroughly(module,resolvedModule,layer,name,packages,reference,targetLoader);
+            LOGGER.info("Finished setting up {}",module);
+            
+            //nuke & finalize
+            ClassLoader boot = bootLoader();
+            ClassLoader service = layerClassLoader("SERVICE");
+            ClassLoader plugin = layerClassLoader("PLUGIN");
+            nukeConfig(name,boot,service,plugin);
+            nukeLoaderFields(name,boot,service,plugin);
+            nukeModuleLayer(name,"BOOT","SERVICE","PLUGIN");
+            if(!existingName.equals(name) && existed) {
+                nukeConfig(existingName,boot,service,plugin,targetLoader);
+                nukeLoaderFields(existingName,boot,service,plugin,targetLoader);
+                nukeModuleLayer(existingName,"BOOT","SERVICE","PLUGIN","GAME");
+            }
+            finalizeModule(existingName,name,module,targetLoader,boot,service,plugin);
+            LOGGER.warn("------------------------------------------------------------------------------------------------");
+            LOGGER.warn("SUCCESSFULLY LOADED {} TO THE GAME LAYER HAVE A NICE DAY", name);
+            LOGGER.warn("------------------------------------------------------------------------------------------------");
+        } catch(Throwable t) {
+            LOGGER.error("Failed to load new module!",t);
+        }
     }
     
     public static String moduleName(Object module) {
@@ -447,30 +562,41 @@ public class ForgeCoreLoader {
     /**
      * Add the module for the given package to the GAME layer and nuke all references to it from other layers
      */
-    public static void nukeAndFinalize(String pkg) {
+    public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs) {
+        LOGGER.info("Finalizing package {}",pkg);
         ClassLoader boot = bootLoader();
-        Map<String,Object> bootLookup = Fields.get(boot,"packageLookup");
-        Object resolvedModule = bootLookup.get(pkg);
+        ClassLoader service = layerClassLoader("SERVICE");
+        ClassLoader plugin = layerClassLoader("PLUGIN");
+        Object[] found = findModuleLoaderForPackage(pkg,new ClassLoader[]{boot,service,plugin});
+        if(Objects.isNull(found)) {
+            loadNewModuleTo(mod,"GAME",finalizedPkgs);
+            return;
+        }
+        ClassLoader foundLoader = (ClassLoader)found[0];
+        Object resolvedModule = found[1];
+        LOGGER.info("Got resolved module as {}",resolvedModule);
         String name = resolvedName(resolvedModule);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("NUKING ALL REFERENCES OF MODULE {} FROM THE BOOT, SERVICE, & PLUGIN LAYERS",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
-        ClassLoader service = layerClassLoader("SERVICE");
-        ClassLoader plugin = layerClassLoader("PLUGIN");
-        ClassLoader target = layerClassLoader("GAME");
-        Map<String,Object> bootRoots = Fields.get(boot,"resolvedRoots");
+        Map<String,Object> bootRoots = Fields.get(foundLoader,"resolvedRoots");
         Object ref = bootRoots.get(name);
-        Object bootLayer = getModuleLayer("BOOT");
-        Map<String,Object> layerModules = Fields.get(bootLayer,"nameToModule");
+        Object foundLayer = getModuleLayer((String)found[2]);
+        Map<String,Object> layerModules = Fields.get(foundLayer,"nameToModule");
         Object module = layerModules.get(name);
+        ClassLoader target = layerClassLoader("GAME");
         Object moduleLayer = getModuleLayer("GAME");
-        addModuleThouroughly(module,resolvedModule,moduleLayer,name,resolvedPackages(resolvedModule),ref,target);
+        Set<String> packages = new HashSet<>(resolvedPackages(resolvedModule));
+        packages.removeAll(finalizedPkgs);
+        packages = Collections.unmodifiableSet(packages);
+        finalizedPkgs.addAll(packages);
+        addModuleThouroughly(module,resolvedModule,moduleLayer,name,packages,ref,target);
         
         //nuke & finalize
         nukeConfig(name,boot,service,plugin);
         nukeLoaderFields(name,boot,service,plugin);
         nukeModuleLayer(name,"BOOT","SERVICE","PLUGIN");
-        finalizeModule(module,target,boot,service,plugin);
+        finalizeModule(name,name,module,target,boot,service,plugin);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("MODULE {} HAS BEEN SUCCESSFULLY MOVED TO THE GAME LAYER HAVE A NICE DAY",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
@@ -481,15 +607,15 @@ public class ForgeCoreLoader {
      * ClassLoader and things should work fine.
      * Requires generated classes to be excluded from source searching.
      */
-    public static void nukeAndFinalizeJava8(Class<?> getSourceFrom, ClassLoader target) {
-        if(Objects.isNull(getSourceFrom)) {
-            LOGGER.error("Cannot get source from null class!");
+    public static void nukeAndFinalizeJava8(Set<Class<?>> getSourcesFrom, ClassLoader target, boolean first) {
+        if(getSourcesFrom.isEmpty()) {
+            LOGGER.error("No classes to get sources from!");
             return;
         }
         Set<String> sources = new HashSet<>();
-        ClassHelper.addSource(sources,getSourceFrom);
+        for(Class<?> from : getSourcesFrom) ClassHelper.addSource(sources,from);
         CoreAPI core = CoreAPI.getInstance();
-        core.addSources(sources);
+        if(first) core.addSources(sources);
         LOGGER.info("Adding {} sources to target loader {}",sources.size(),target);
         sources.forEach(source -> {
             LOGGER.info("Adding source {}",source);
@@ -637,30 +763,40 @@ public class ForgeCoreLoader {
         pkgs.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
     }
     
-    static String source(Class<?> c, String name, ClassLoader ... loaders) {
-        //String path = Classes.toPath(c);
-        //URL url = Resources.get(Classes.toPath(c),loaders);
-        //if(Objects.isNull(url)) {
-        //    LOGGER.error("Null URL for {}!",c);
-        //    return "";
-        //}
-        //FileSystemItem file = FileSystemItem.of(url);
-        //if(Objects.isNull(file)) {
-        //    LOGGER.error("Null file for {}!",c);
-        //    return "";
-        //}
-        //while(!file.isFolder() && !file.isArchive()) file = file.getParentContainer();
-        //url = file.getURL();
-        //if(Objects.isNull(url)) {
-        //    LOGGER.error("Null URL for parent container of {}!",c);
-        //    return "";
-        //}
-        try {
-            return Resources.getClassPath(c).getAbsolutePath();
-        } catch(Exception ignored) {
-            return "";
+    public static void sanityCheckModule(Class<?> c, String name) {
+        Object module = Methods.invoke(c,"getModule");
+        String actualName = moduleName(module);
+        if(!name.equals(actualName)) {
+            //By this point the class is definitely in the GAME layer regardless of whether the module is correct
+            Fields.set(c,"module",getModuleFromLayer("GAME",name));
+            LOGGER.info("Moved {} from module {} to module {}",c,actualName,name);
         }
-        //return Paths.toNormalizedCleanedAbsolutePath(url.toString());
+    }
+    
+    public static void verifyModule(String className, IModInfo info, Object moduleLayer) throws Exception {
+        LOGGER.info("Verifying that {} is valid for {} and can be found in {}",className,info,moduleLayer);
+        IModFileInfo fileInfo = info.getOwningFile();
+        String modid = info.getModId();
+        LOGGER.info("Mod id is {} and owning file is {}",modid,fileInfo);
+        String moduleName = Methods.invoke(fileInfo,"moduleName");
+        IModFile file = Methods.invoke(fileInfo,"getFile");
+        LOGGER.info("Module name is {} and file is {}",moduleName,file);
+        if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
+        Optional<Object> optionalModule = Methods.invoke(moduleLayer,"findModule",moduleName);
+        LOGGER.info("Module present? {}",optionalModule.isPresent());
+        if(optionalModule.isPresent()) {
+            Object module = optionalModule.get();
+            LOGGER.info("Got module as {}",module);
+            Class<?> c = Class.forName(className);
+            LOGGER.info("Got class as {}",c);
+            Object cModule = Methods.invoke(c,"getModule");
+            LOGGER.info("Got module for class as {}",cModule);
+            if(module!=cModule) {
+                LOGGER.error("Modules are not equal! Attempting to fix");
+                Fields.set(c,"module",module);
+            } else LOGGER.info("Modules are equal");
+        }
+        LOGGER.info("Finished verifying {}",className);
     }
     
     /**

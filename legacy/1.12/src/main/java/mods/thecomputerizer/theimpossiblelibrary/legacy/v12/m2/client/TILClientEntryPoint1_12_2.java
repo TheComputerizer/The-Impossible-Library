@@ -2,8 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 
-import javax.annotation.Nullable;
-
 import java.io.File;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;

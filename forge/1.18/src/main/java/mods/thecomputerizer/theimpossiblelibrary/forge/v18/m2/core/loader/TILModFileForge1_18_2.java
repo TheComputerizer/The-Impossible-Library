@@ -59,11 +59,11 @@ public class TILModFileForge1_18_2 extends ModFile {
         super(file,locator,mod -> getFileInfo(mod,infos),"MOD");
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
-        TILRef.logInfo("Created TILModFileForge1_18_2 in context {}",Thread.currentThread().getContextClassLoader());
+        TILRef.logInfo("Created TILModFileForge1_18_2 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
     }
     
     @Override public ModFileScanData compileContent() {
-        TILRef.logDebug("Starting multiversion mod scan");
+        TILRef.logInfo("Starting multiversion mod scan");
         TILBetterModScan scan = new TILBetterModScan();
         scan.addModFileInfo(getModFileInfo());
         final MethodHandle handle = ReflectionHelper.findMethodHandle(Scanner.class,"fileVisitor",Path.class,
@@ -82,7 +82,7 @@ public class TILModFileForge1_18_2 extends ModFile {
                 for(Pair<String,byte[]> classBytes : data.writeModClass()) {
                     String classpath = classBytes.getLeft();
                     byte[] bytes = classBytes.getRight();
-                    scan.addWrittenClass(classpath,data.getInfo(),bytes);
+                    scan.addWrittenClass(classpath,data.getInfo(),this,bytes);
                     ModClassVisitor visitor = new ModClassVisitor();
                     ClassReader reader = new ClassReader(bytes);
                     reader.accept(visitor,0);

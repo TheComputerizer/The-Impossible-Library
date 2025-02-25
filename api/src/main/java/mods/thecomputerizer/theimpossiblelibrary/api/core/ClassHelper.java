@@ -5,14 +5,20 @@ import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.StringUtils;
+import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 
 import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -20,14 +26,49 @@ import java.util.function.BiFunction;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 public class ClassHelper {
+    
+    private static boolean burningWaveInit;
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
         if(Objects.nonNull(url)) sources.add(url.toString());
         else TILRef.logError("Failed to add source for {}",clazz);
+    }
+    
+    public static boolean addSourceTo(Class<?> c, ClassLoader to) {
+        if(c.getClassLoader()==to) {
+            TILRef.logError("Source for {} already exists on {}!",c,to);
+            return false;
+        }
+        boolean added = false;
+        URL source = getSourceURL(c);
+        CoreAPI core = CoreAPI.getInstance();
+        if(Objects.nonNull(core)) added = core.addURLToClassLoader(to,source);
+        else if(to instanceof URLClassLoader) added = loadURL((URLClassLoader)to,source);
+        else TILRef.logError("Failed to add source for {} to {}!",c,to);
+        return added;
+    }
+    
+    public static Map<?,?> burningWaveProperties() {
+        Map<Object,Object> properties = new HashMap<>();
+        properties.put("banner.hide","true");
+        properties.put("managed-logger.repository.enabled","false");
+        return properties;
+    }
+    
+    public static void checkBurningWaveInit() {
+        if(!burningWaveInit) {
+            try {
+                Default.add(burningWaveProperties());
+            } catch(Throwable t) {
+                TILRef.logError("Failed to set default burningwave properties??",t);
+            }
+            burningWaveInit = true;
+        }
     }
 
     /**
@@ -66,6 +107,7 @@ public class ClassHelper {
         if(Objects.nonNull(url)) {
             TILDev.logInfo("Attempting to define class {} from URL {} on loader {}",name,url,loader);
             try {
+                checkBurningWaveInit();
                 return defineClass(loader,name,Streams.toByteBuffer(url.openStream()));
             } catch(IOException ex) {
                 TILRef.logError("Failed to open stream from URL {}",url,ex);
@@ -88,6 +130,7 @@ public class ClassHelper {
         if(Objects.isNull(buffer))
             throw new NullPointerException("Tried to define class with null ByteBuffer: "+name);
         try {
+            checkBurningWaveInit();
             return ClassLoaders.loadOrDefineByByteCode(buffer,loader);
         } catch(Throwable t) {
             TILRef.logError("Failed to define class {} on {}",name,loader);
@@ -120,33 +163,24 @@ public class ClassHelper {
         return null;
     }
     
-    public static String getResourcePath(String className) {
-        return className.replace('.','/')+".class";
-    }
-    
-    @IndirectCallers
-    public static @Nullable URL getSourceURL(@Nullable String className, ClassLoader loader) {
-        if(StringUtils.isNotBlank(className)) {
-            try {
-                return getSourceURL(loader.loadClass(className));
-            } catch(ClassNotFoundException ex) {
-                TILRef.logError("Failed to find class {} on loader {}", className, loader, ex);
-            }
-        } else TILRef.logError("Cannot get source URL for blank class name");
-        return null;
-    }
-    
-    public static @Nullable URL getSourceURL(@Nullable Class<?> clazz) {
-        if(Objects.nonNull(clazz)) {
-            ProtectionDomain domain = clazz.getProtectionDomain();
-            if(Objects.nonNull(domain)) {
-                CodeSource source = domain.getCodeSource();
-                if(Objects.nonNull(source)) return source.getLocation();
-                TILRef.logError("Cannot get URL for null CodeSource of {}",clazz);
-            }
-            TILRef.logError("Cannot get URL for null ProtectionDomain of {}",clazz);
+    /**
+     * Uses the URL of a class resources and its name to try and extract the original class path.
+     * The className input here should be the relative path rather than the binary name of the class.
+     */
+    public static URL extractClassPath(@Nullable URL url, String className) {
+        if(Objects.isNull(url)) {
+            TILRef.logError("Cannot extract class path of null URL for {}!",className);
+            return null;
         }
-        TILRef.logError("Cannot get URL for null class");
+        String urlStr = url.toString().replace("%20"," ");
+        String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
+        String classpath = urlStr.substring(urlStr.indexOf('/'),urlStr.length()-appended.length());
+        URI uri = new File(classpath).toURI();
+        try {
+            return uri.toURL();
+        } catch(Exception ex) {
+            TILRef.logError("Failed to extract class path from {}",url,ex);
+        }
         return null;
     }
 
@@ -155,7 +189,7 @@ public class ClassHelper {
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findClass(String name) {
-        return findClass(name,true,Thread.currentThread().getContextClassLoader());
+        return findClass(name,true,Thread.currentThread().getContextClassLoader(),false);
     }
 
     /**
@@ -163,7 +197,7 @@ public class ClassHelper {
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findClass(String name, ClassLoader classLoader) {
-        return findClass(name,true,classLoader);
+        return findClass(name,true,classLoader,false);
     }
 
     /**
@@ -172,21 +206,29 @@ public class ClassHelper {
      * Returns null if the class does not exist.
      */
     public static @Nullable Class<?> findClass(String name, boolean initialize) {
-        return findClass(name,initialize,Thread.currentThread().getContextClassLoader());
+        return findClass(name,initialize,Thread.currentThread().getContextClassLoader(),false);
+    }
+    
+    public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader) {
+        return findClass(name,initialize,classLoader,false);
     }
 
     /**
      * Finds a class from the input name via the input ClassLoader.
+     * If the class is found on a different ClassLoader and forceLoader is true it will be defined on the given loader
      * Set initialize to false if you don't want the Class to be loaded in case it doesn't exist.
      * Returns null if the class does not exist.
      */
-    public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader) {
+    public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader,
+            boolean forceLoader) {
         if(Objects.isNull(name) || name.isEmpty()) {
             TILRef.logError("Cannot find class from null or blank name!");
             return null;
         }
         try {
-            return Class.forName(name,initialize,classLoader);
+            Class<?> c = Class.forName(name,initialize,classLoader);
+            if(forceLoader && c.getClassLoader()!=classLoader) moveClassTo(c,classLoader);
+            return c;
         } catch(ClassNotFoundException ex) {
             TILRef.logError("Unable to find class with name `{}` using ClassLoader of type `{}`",name,
                     classLoader.getClass().getName(),ex);
@@ -211,7 +253,7 @@ public class ClassHelper {
     
     @IndirectCallers
     public static @Nullable Class<?>[] findClasses(boolean initialize, ClassLoader classLoader, String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,initialize,classLoader));
+        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,initialize,classLoader,false));
     }
     
     @IndirectCallers
@@ -249,16 +291,56 @@ public class ClassHelper {
 
     public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean initialize,
                                                    ClassLoader classLoader) {
-        return findClass(withPkgName(pkg,simpleName),initialize,classLoader);
+        return findClass(withPkgName(pkg,simpleName),initialize,classLoader,false);
     }
     
     public static byte[] getClassBytes(Class<?> clazz) {
+        checkBurningWaveInit();
         return BufferHandler.toByteArray(Classes.getByteCode(clazz));
+    }
+    
+    public static URL getJarResource(String path, String relativePath) {
+        try {
+            return new URL("jar:file:/"+path+"!/"+relativePath);
+        } catch(Exception ex) {
+            TILRef.logError("Failed to get entry {} from presumed jar file {}",relativePath,path,ex);
+        }
+        return null;
+    }
+    
+    public static String getResourcePath(String className) {
+        return className.replace('.','/')+".class";
+    }
+    
+    @IndirectCallers
+    public static @Nullable URL getSourceURL(@Nullable String className, ClassLoader loader) {
+        if(Objects.nonNull(className) && !className.isEmpty()) {
+            try {
+                String relativePath = getResourcePath(className);
+                return extractClassPath(loader.getResource(relativePath),relativePath);
+            } catch(Exception ex) {
+                TILRef.logError("Caught exception trying to get source URL for {} on {}",className,loader,ex);
+            }
+        } else TILRef.logError("Cannot get source URL for null or empty class name!");
+        return null;
+    }
+    
+    public static @Nullable URL getSourceURL(@Nullable Class<?> clazz) {
+        if(Objects.nonNull(clazz)) {
+            ProtectionDomain pd = clazz.getProtectionDomain();
+            if(Objects.nonNull(pd)) {
+                CodeSource source = pd.getCodeSource();
+                if(Objects.nonNull(source)) return source.getLocation();
+                else TILRef.logError("Cannot get source URL for class with null CodeSource! {}",clazz);
+            } else TILRef.logError("Cannot get source URL for class with null ProtectionDomain! {}",clazz);
+        } else TILRef.logError("Cannot get source URL for null class!");
+        return null;
     }
     
     public static <T> @Nullable T initialize(@Nullable Class<T> clazz, Object ... args) {
         if(Objects.nonNull(clazz)) {
             try {
+                checkBurningWaveInit();
                 return Constructors.newInstanceOf(clazz,args);
             } catch(Exception ex) {
                 TILRef.logError("Failed to initialize {}",clazz,ex);
@@ -303,6 +385,18 @@ public class ClassHelper {
         return true;
     }
     
+    @SuppressWarnings("unchecked")
+    public static void moveClassTo(Class<?> c, ClassLoader target) {
+        ClassLoader from = c.getClassLoader();
+        if(from==target) {
+            TILDev.logDebug("Not moving {} since it was already from {}",c,target);
+            return;
+        }
+        Fields.set(c,"classLoader",target);
+        ((Collection<Class<?>>)Fields.get(from,"classes")).remove(c);
+        ((Collection<Class<?>>)Fields.get(target,"classes")).add(c);
+    }
+    
     @IndirectCallers
     public static String packageName(@Nullable Class<?> clazz) {
         return Objects.nonNull(clazz) ? clazz.getPackage().getName() : "";
@@ -318,6 +412,7 @@ public class ClassHelper {
             TILRef.logFatal("Cannot resolve null defined class! {}");
             return null;
         }
+        checkBurningWaveInit();
         return ClassLoaders.loadOrDefine(clazz,classLoader);
     }
 
@@ -394,7 +489,7 @@ public class ClassHelper {
     }
 
     /**
-     * Returns the classpath of a class via another class in the same package and its simple name or the simple name
+     * Returns the full name of a class via another class in the same package and its simple name or the simple name
      * if the reference class is null
      */
     @IndirectCallers
@@ -403,7 +498,7 @@ public class ClassHelper {
     }
 
     /**
-     * Returns the classpath of a class via another class in the same package and its simple name or the simple name
+     * Returns the full name of a class via another class in the same package and its simple name or the simple name
      * if the reference class is null
      */
     public static String withPkgName(@Nullable Package pkg, String simpleName) {

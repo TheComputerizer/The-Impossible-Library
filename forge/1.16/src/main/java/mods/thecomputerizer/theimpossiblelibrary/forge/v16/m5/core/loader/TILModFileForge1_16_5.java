@@ -80,7 +80,7 @@ public class TILModFileForge1_16_5 extends ModFile {
                 for(Pair<String,byte[]> classBytes : data.writeModClass()) {
                     String classpath = classBytes.getLeft();
                     byte[] bytes = classBytes.getRight();
-                    scan.addWrittenClass(classpath,data.getInfo(),bytes);
+                    scan.addWrittenClass(classpath,data.getInfo(),this,bytes);
                     ModClassVisitor visitor = new ModClassVisitor();
                     ClassReader reader = new ClassReader(bytes);
                     reader.accept(visitor,0);

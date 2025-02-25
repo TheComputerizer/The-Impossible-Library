@@ -211,7 +211,7 @@ public abstract class CoreAPI {
         this.modInfo = new HashMap<>();
         this.injectedMods = new HashSet<>();
         INSTANCE = this;
-        TILDev.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
+        TILRef.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
                 this.version,this.side);
         TILDev.logDebug("Context ClassLoader is {}",Thread.currentThread().getContextClassLoader());
     }
@@ -361,12 +361,14 @@ public abstract class CoreAPI {
         return getClass().getName()+" "+this.version+" "+this.modLoader+" "+this.side;
     }
     
+    public abstract String unmapClass(String className);
+    
     protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
         return ClassHelper.findClassFrom(pkg,name+"Generated"+entryType+"Mod");
     }
     
-    public void writeModContainers(ClassLoader classLoader) {
-        getLoader().loadMods(this.modInfo,classLoader);
+    public void writeModContainers(ClassLoader loader) {
+        getLoader().loadMods(this.modInfo,loader);
     }
 
     @Getter

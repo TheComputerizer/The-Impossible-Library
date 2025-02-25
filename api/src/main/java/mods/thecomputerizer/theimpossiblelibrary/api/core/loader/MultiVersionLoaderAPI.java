@@ -104,7 +104,7 @@ public abstract class MultiVersionLoaderAPI {
         this.candidates = MultiVersionModFinder.discover(this,root,true);
         for(MultiVersionModCandidate candidate : this.candidates)
             candidate.findCoreClasses(classes,candidate,loader);
-        TILRef.logInfo("{} coremods will attempt to be loaded",classes.size());
+        TILRef.logInfo("{} coremod(s) will attempt to be loaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
             if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());

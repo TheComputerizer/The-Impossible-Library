@@ -104,4 +104,8 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
         TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
         return true;
     }
+    
+    @Override public String unmapClass(String className) {
+        return className;
+    }
 }

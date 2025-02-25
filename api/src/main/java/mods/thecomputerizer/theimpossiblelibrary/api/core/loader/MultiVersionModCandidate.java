@@ -8,32 +8,61 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
-import static org.burningwave.core.assembler.StaticComponentContainer.Resources;
 
 @Getter
 public class MultiVersionModCandidate {
     
     public static File loaderFile;
+    
+    static File fromClassName(String className) {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        String asPath = ClassHelper.getResourcePath(className);
+        try {
+            URL resource = loader.getResource(asPath);
+            URL classpath = ClassHelper.extractClassPath(resource,asPath);
+            if(Objects.nonNull(classpath)) return Paths.get(classpath.toURI()).toAbsolutePath().toFile();
+        } catch(Exception ex) {
+            TILRef.logError("Can't find file for {}",className,ex);
+        }
+        return null;
+    }
 
+    private final boolean classpath;
+    private final String relativePath;
     private final File file;
+    private final URL source;
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
 
-    public MultiVersionModCandidate(String classpath) {
-        this(Objects.nonNull(loaderFile) ? loaderFile : new File(Misc.getLastSplit(classpath,'.')+".class"));
+    public MultiVersionModCandidate(String className) {
+        this(fromClassName(className),className,true);
+    }
+    
+    public MultiVersionModCandidate(File file) {
+        this(file,file.getAbsolutePath(),false);
     }
 
-    public MultiVersionModCandidate(File file) {
+    MultiVersionModCandidate(File file, String relativePath, boolean classpath) {
+        this.classpath = classpath;
+        this.relativePath = relativePath;
         this.file = Objects.nonNull(file) ? file : new File(MODID+"-"+VERSION+".jar");
+        URL source = null;
+        try {
+            source = this.file.toURI().toURL();
+        } catch(Exception ex) {
+            TILRef.logError("Can't get source for {}",this.file,ex);
+        }
+        this.source = source;
         this.coreClassNames = new HashSet<>();
         this.modClassNames = new HashSet<>();
     }
@@ -99,7 +128,17 @@ public class MultiVersionModCandidate {
         TILRef.logInfo("Locating loader class {} (for = {} | core = {})",name,loader,coreLoader);
         Class<?> clazz = ClassHelper.existsOn(name,coreLoader);
         if(Objects.nonNull(clazz)) return clazz;
-        return ClassHelper.defineClass(coreLoader,name,Resources.get(ClassHelper.getResourcePath(name),loader));
+        CoreAPI core = CoreAPI.getInstance();
+        if(core.getModLoader().isForge() && !core.getVersion().isV16()) {
+            String path = ClassHelper.getResourcePath(name);
+            URL source = this.classpath ? loader.getResource(path) :
+                    ClassHelper.getJarResource(this.file.getAbsolutePath(),path);
+            return ClassHelper.defineClass(coreLoader,name,source);
+        }
+        URL source = this.classpath ? ClassHelper.getSourceURL(name,loader) : this.source;
+        core.addURLToClassLoader(loader,source);
+        TILRef.logInfo("Added URL {} to loader {}",source,loader);
+        return ClassHelper.findClass(name,loader);
     }
 
     @SuppressWarnings("unchecked")

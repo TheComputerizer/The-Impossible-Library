@@ -100,6 +100,10 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
         return true;
     }
     
+    @Override public String unmapClass(String className) {
+        return mapper().unmapClassName("intermediary",className);
+    }
+    
     @Override protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
         return TILCommonEntryPointFabricTest.class;
     }

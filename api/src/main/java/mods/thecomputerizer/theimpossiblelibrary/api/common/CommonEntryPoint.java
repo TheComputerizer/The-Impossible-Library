@@ -12,9 +12,13 @@ import java.util.Objects;
 public abstract class CommonEntryPoint {
 
     protected final ClientEntryPoint delegatedClient;
-
+    
     protected CommonEntryPoint() {
-        CoreAPI.getInstance().modConstructed(getClass().getPackage(),getModID(),getModName(),
+        this(true);
+    }
+
+    protected CommonEntryPoint(boolean root) {
+        if(root) CoreAPI.getInstance().modConstructed(getClass().getPackage(),getModID(),getModName(),
                 this instanceof ClientEntryPoint ? "Client" : "Common");
         this.delegatedClient = CoreAPI.isClient() ? delegatedClientEntry() : null;
     }

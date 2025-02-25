@@ -47,6 +47,9 @@ jar {
     forge_1_18_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
     manifest {
         attributes([
+                'FMLCorePlugin': legacy_entrypoint,
+                'FMLCorePluginContainsFMLMod': true,
+                'ForceLoadAsMod': true,
                 'Implementation-Title': mod_name,
                 'Implementation-Version': mod_version,
                 'TILMultiversionCoreMods': core_entrypoint,
