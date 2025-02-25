@@ -3,7 +3,7 @@
  * This is needed since the forge base & 1.16.5 shared modules are built off of Forge 1.16.5
  */
 
-basic_remaps = 'block.AbstractBlock:world.level.block.state.BlockBehaviour,'+
+def basic_remaps = 'block.AbstractBlock:world.level.block.state.BlockBehaviour,'+
         'block.BlockState:world.level.block.state.BlockState,'+
         'block.Block:world.level.block.Block,'+
         'block.material.MaterialColor:world.level.material.MaterialColor,'+
@@ -112,7 +112,7 @@ basic_remaps = 'block.AbstractBlock:world.level.block.state.BlockBehaviour,'+
         'world.LightType:world.level.LightLayer,'+
         'world.World:world.level.Level'
 
-render_remaps = 'net.minecraft.client.MainWindow:blaze3d.platform.Window,'+ 
+def render_remaps = 'net.minecraft.client.MainWindow:blaze3d.platform.Window,'+
         'net.minecraft.client.renderer.BufferBuilder:blaze3d.vertex.BufferBuilder,'+ 
         'net.minecraft.client.renderer.Tessellator:blaze3d.vertex.Tesselator,'+ 
         'net.minecraft.client.renderer.vertex.DefaultVertexFormats:blaze3d.vertex.DefaultVertexFormat,'+ 
