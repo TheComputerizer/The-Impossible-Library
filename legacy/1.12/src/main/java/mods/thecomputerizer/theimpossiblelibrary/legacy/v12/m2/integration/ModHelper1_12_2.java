@@ -1,8 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
-import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.*;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
@@ -19,14 +18,14 @@ public class ModHelper1_12_2 extends ModHelperAPI {
     }
 
     @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
-        addMod(map,new Bloodmoon1_12_2());
-        addMod(map,new Champions1_12_2());
-        addMod(map,new DynamicSurrounding1_12_2());
-        addMod(map,new GameStages1_12_2());
-        addMod(map,new InfernalMobs1_12_2());
-        addMod(map,new Nyx1_12_2());
-        addMod(map,new SereneSeasons1_12_2());
-        addMod(map,new Weather21_12_2());
+        if(isModLoaded(BloodmoonAPI.MODID)) addMod(map,new Bloodmoon1_12_2());
+        if(isModLoaded(ChampionsAPI.MODID)) addMod(map,new Champions1_12_2());
+        if(isModLoaded(DynamicSurroundingsAPI.MODID)) addMod(map,new DynamicSurrounding1_12_2());
+        if(isModLoaded(GameStagesAPI.MODID)) addMod(map,new GameStages1_12_2());
+        if(isModLoaded(InfernalMobsAPI.MODID)) addMod(map,new InfernalMobs1_12_2());
+        if(isModLoaded(NyxAPI.MODID)) addMod(map,new Nyx1_12_2());
+        if(isModLoaded(SereneSeasonsAPI.MODID)) addMod(map,new SereneSeasons1_12_2());
+        if(isModLoaded(Weather2API.MODID)) addMod(map,new Weather21_12_2());
         return Collections.unmodifiableMap(map);
     }
     

@@ -52,7 +52,7 @@ def forge = project ':forge:1.21'
 def shared = project ':shared:1.21:1.21.1'
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_1_21_1}-${minecraft_1_21}"
+    mappings channel: 'parchment', version: "${parchment_1_21_1}-${minecraft_1_21_1}"
     runs {
         def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
         configureEach {

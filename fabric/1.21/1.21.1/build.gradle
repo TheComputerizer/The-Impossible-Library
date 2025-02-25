@@ -68,7 +68,7 @@ dependencies {
     minecraft("${fabric_mc}:${minecraft_1_21_1}")
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("${parchment_data}-${minecraft_1_21}:${parchment_1_21_1}@zip")
+        parchment("${parchment_data}-${minecraft_1_21_1}:${parchment_1_21_1}@zip")
     }
     implementation(project(path: ':api', configuration: 'dev'))
     implementation(project(path: ':fabric:1.21', configuration: 'dev'))

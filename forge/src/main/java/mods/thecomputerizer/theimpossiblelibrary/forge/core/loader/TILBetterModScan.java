@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
@@ -99,7 +100,10 @@ public class TILBetterModScan extends ModFileScanData {
                 Set<String> finalizedPkgs = new HashSet<>();
                 for(String pkg : pkgs) handleNotJava8(pkg,pkgToModMap.get(pkg),finalizedPkgs);
                 handleNotJava8(doLast,pkgToModMap.get(doLast),finalizedPkgs);
-                for(Class<?> c : defined) ForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
+                for(Class<?> c : defined)
+                    ForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
+                ForgeCoreLoader.exportAllModules();
+                LOGGER.info("Theoretically fixed all the modules");
             } catch(Throwable t) {
                 TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
             }

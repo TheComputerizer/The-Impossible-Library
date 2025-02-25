@@ -1,8 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.BetterWeatherAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.ChampionsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.DynamicSurroundingsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelestialsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.GameStagesAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.SereneSeasonsAPI;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
@@ -20,12 +26,12 @@ public class ModHelperForge1_16_5 extends ModHelperAPI {
     }
 
     @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
-        addMod(map,new BetterWeatherForge1_16_5());
-        addMod(map,new ChampionsForge1_16_5());
-        addMod(map,new DynamicSurroundingsForge1_16_5());
-        addMod(map,new EnhancedCelestialsForge1_16_5());
-        addMod(map,new GameStagesForge1_16_5());
-        addMod(map,new SereneSeasonsForge1_16_5());
+        if(isModLoaded(BetterWeatherAPI.MODID)) addMod(map,new BetterWeatherForge1_16_5());
+        if(isModLoaded(ChampionsAPI.MODID)) addMod(map,new ChampionsForge1_16_5());
+        if(isModLoaded(DynamicSurroundingsAPI.MODID)) addMod(map, new DynamicSurroundingsForge1_16_5());
+        if(isModLoaded(EnhancedCelestialsAPI.MODID)) addMod(map, new EnhancedCelestialsForge1_16_5());
+        if(isModLoaded(GameStagesAPI.MODID)) addMod(map, new GameStagesForge1_16_5());
+        if(isModLoaded(SereneSeasonsAPI.MODID)) addMod(map, new SereneSeasonsForge1_16_5());
         return Collections.unmodifiableMap(map);
     }
     

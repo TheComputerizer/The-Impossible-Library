@@ -1,8 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.ChampionsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelestialsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.GameStagesAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.SereneSeasonsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.Weather2API;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
 
@@ -20,11 +25,11 @@ public class ModHelperForge1_18_2 extends ModHelperAPI {
     }
 
     @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
-        addMod(map,new ChampionsForge1_18_2());
-        addMod(map,new EnhancedCelestialsForge1_18_2());
-        addMod(map,new GameStagesForge1_18_2());
-        addMod(map,new SereneSeasonsForge1_18_2());
-        addMod(map,new Weather2Forge1_18_2());
+        if(isModLoaded(ChampionsAPI.MODID)) addMod(map,new ChampionsForge1_18_2());
+        if(isModLoaded(EnhancedCelestialsAPI.MODID)) addMod(map,new EnhancedCelestialsForge1_18_2());
+        if(isModLoaded(GameStagesAPI.MODID)) addMod(map,new GameStagesForge1_18_2());
+        if(isModLoaded(SereneSeasonsAPI.MODID)) addMod(map,new SereneSeasonsForge1_18_2());
+        if(isModLoaded(Weather2API.MODID)) addMod(map,new Weather2Forge1_18_2());
         return Collections.unmodifiableMap(map);
     }
     

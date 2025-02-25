@@ -46,7 +46,7 @@ plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_1_21_1}-${minecraft_1_21}"
+    mappings channel: 'parchment', version: "${parchment_1_21_1}-${minecraft_1_21_1}"
 }
 
 configurations {

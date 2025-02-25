@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,6 +44,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PAC
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public class TILModFileForge1_18_2 extends ModFile {
     
@@ -107,19 +109,14 @@ public class TILModFileForge1_18_2 extends ModFile {
     /**
      * No easy way for generic core mods? Fine, I'll do it myself
      */
-    @SuppressWarnings("unchecked")
     private void fixCoreModPackages(String ... extensions) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         TILRef.logInfo("But the real ICoreModProvider loader is {}",loader);
         Class<?> engineClass = ClassHelper.findClass(CoreModEngine.class.getName(),loader);
-        Object allowed = ReflectionHelper.getFieldInstance(engineClass,"ALLOWED_PACKAGES");
-        if(allowed instanceof Set<?>) fixCoreModPackages((Set<String>)allowed,extensions);
-        else TILRef.logError("Failed to fix coremods (allowed packages = {})",allowed);
-    }
-    
-    private void fixCoreModPackages(Set<String> allowed, String ... extensions) {
+        Set<String> allowed = new HashSet<>(Fields.getStatic(engineClass,"ALLOWED_PACKAGES"));
         for(String extension : extensions) allowed.add(BASE_PACKAGE+"."+extension+".core");
         TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
+        Fields.setStaticDirect(engineClass,"ALLOWED_PACKAGES",allowed);
     }
     
     @Override public List<IModInfo> getModInfos() {
