@@ -19,7 +19,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @IndirectCallers
-public class TILLanguageProvider1_18_2 implements TILForgeLanguageProvider {
+public class TILLanguageProvider1_18_2 implements TILForgeLanguageProvider { //TODO This doesn't need to be version specific
     
     @Override public Consumer<ModFileScanData> getFileVisitor(CoreAPI core, IModLanguageProvider provider) {
         return scan -> {
@@ -28,10 +28,10 @@ public class TILLanguageProvider1_18_2 implements TILForgeLanguageProvider {
             Class<?> jlp = Driver.getClassByName(className,false,pluginLoader,Classes.getClass());
             Type modAnnotation = Fields.getStatic(jlp,"MODANNOTATION");
             scan.addLanguageLoader(scan.getAnnotations().stream()
-                            .filter(ad -> ad.annotationType().equals(modAnnotation))
-                            .peek(ad -> TILRef.logDebug("Found @Mod class {} with id {}",ad.clazz().getClassName(),ad.annotationData().get("value")))
-                            .map(ad -> new TILLanguageLoader1_18_2(core,ad.clazz().getClassName(),(String)ad.annotationData().get("value"),scan))
-                            .collect(Collectors.toMap(TILLanguageLoader1_18_2::getModid,Function.identity(),(a,b)->a)));
+                        .filter(ad -> ad.annotationType().equals(modAnnotation))
+                        .peek(ad -> TILRef.logDebug("Found @Mod class {} with id {}",ad.clazz().getClassName(),ad.annotationData().get("value")))
+                        .map(ad -> new TILLanguageLoader1_18_2(core,ad.clazz().getClassName(),(String)ad.annotationData().get("value"),scan))
+                        .collect(Collectors.toMap(TILLanguageLoader1_18_2::getModid,Function.identity(),(a,b)->a)));
         };
     }
 }

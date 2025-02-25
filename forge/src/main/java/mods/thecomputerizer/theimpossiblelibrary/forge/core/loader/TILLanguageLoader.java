@@ -6,8 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
@@ -18,7 +16,6 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
  */
 public abstract class TILLanguageLoader {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger("Multiversion Language Loader");
     private static final String MOD_CONTAINER = "net.minecraftforge.fml.javafmlmod.FMLModContainer";
     static boolean loadedNewCore;
     
@@ -44,10 +41,10 @@ public abstract class TILLanguageLoader {
                             IModInfo.class,String.class,ModFileScanData.class,extras[0].getClass());
             T instance = (T)(java8 ? init.newInstance(info,this.modClass,classLoader,scanResults) :
                     init.newInstance(info,this.modClass,scanResults,extras[0]));
-            LOGGER.info("Successfully initialized mod container for {}",this.modClass);
+            TILRef.logInfo("Successfully initialized mod container for {}",this.modClass);
             return instance;
         } catch(Throwable t) {
-            LOGGER.error("Failed to initialize {} (modClass {})",container,this.modClass,t);
+            TILRef.logError("Failed to initialize {} (modClass {})",container,this.modClass,t);
         }
         return null;
     }
@@ -67,7 +64,7 @@ public abstract class TILLanguageLoader {
             return getInstance(container,info,classLoader,scanResults,extras);
         } catch(Throwable t) {
             String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";
-            LOGGER.error(msg,t);
+            TILRef.logError(msg,t);
             throw new RuntimeException(msg,t);
         }
     }

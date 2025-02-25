@@ -44,9 +44,8 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
     void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {
         if(Files.isDirectory(path)) return;
         String fileName = path.getFileName().toString();
-        TILRef.logInfo("Checking if file {} is the loader",fileName);
         if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
-            TILRef.logInfo("File is the loader");
+            TILRef.logDebug("File is the loader");
             MultiVersionModCandidate.loaderFile = path.toFile();
         }
         if(filter.test(path)) {
@@ -63,7 +62,7 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
     void findFiles(MultiVersionLoaderAPI loader, Predicate<Path> filter, File... files) {
         TILRef.logInfo("Loading {} mod files",files.length);
         for(File mod : files) {
-            TILRef.logInfo("Loading mod file at path",mod.toPath());
+            TILRef.logDebug("Loading mod file at path",mod.toPath());
             checkPath(loader, mod.toPath(), filter);
         }
     }

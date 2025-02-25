@@ -8,8 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLangu
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,12 +21,10 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Constructo
 public class TILLanguageProvider implements IModLanguageProvider {
     
     private static final String CORE_NAME = "mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader";
-    private static final Logger LOGGER = LoggerFactory.getLogger("TIL Language Provider");
     
     //Reflection is needed since this module is forced to be loaded in the PLUGIN layer.
     //We need to fix the modules from the BOOT layer
     static {
-        LOGGER.error("OH HELLO THERE");
         try {
             ClassLoader bootLoader = Launcher.class.getClassLoader();
             Class<?> coreClass = Class.forName(CORE_NAME,false,bootLoader);
@@ -37,7 +33,7 @@ public class TILLanguageProvider implements IModLanguageProvider {
             method.invoke(null,TILLanguageProvider.class.getClassLoader(),"PLUGIN",
                           Launcher.class.getClassLoader());
         } catch(ClassNotFoundException|NoSuchMethodException|IllegalAccessException|InvocationTargetException ex) {
-            LOGGER.error("Failed to resync modules to BOOT layer",ex);
+            TILRef.logError("Failed to resync modules to BOOT layer",ex);
         }
     }
     
