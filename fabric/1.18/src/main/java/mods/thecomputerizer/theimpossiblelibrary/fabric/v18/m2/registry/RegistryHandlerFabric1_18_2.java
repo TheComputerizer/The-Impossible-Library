@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.Registry1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.RegistryHandler1_18_2;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.RegistryVanilla1_18_2;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -37,9 +38,9 @@ public class RegistryHandlerFabric1_18_2 extends RegistryHandler1_18_2 {
     
     @SuppressWarnings("unchecked")
     private <V> Registry1_18_2<V> getRegistry(
-            Set<? super Registry1_18_2<?>> registries, Registry<V> forgeRegistry, String name, Class<?> type) {
+            Set<? super Registry1_18_2<?>> registries, Registry<V> vanillaRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryFabric1_18_2<V> registry = new RegistryFabric1_18_2<>(forgeRegistry,key,(Class<V>)type);
+        RegistryVanilla1_18_2<V> registry = new RegistryVanilla1_18_2<>(vanillaRegistry,key,(Class<V>)type);
         registries.add(registry);
         return registry;
     }

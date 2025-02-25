@@ -56,7 +56,7 @@ public class World1_18_2 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
-        return WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()));
+        return WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()).value());
     }
     
     @Override public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {

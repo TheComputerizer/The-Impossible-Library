@@ -1,8 +1,7 @@
-package mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.registry;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.Registry1_18_2;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
@@ -10,9 +9,9 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class RegistryFabric1_18_2<V> extends Registry1_18_2<V> {
+public class RegistryVanilla1_18_2<V> extends Registry1_18_2<V> {
 
-    public RegistryFabric1_18_2(Registry<V> registry, ResourceLocationAPI<?> registryKey, Class<V> type) {
+    public RegistryVanilla1_18_2(Registry<V> registry, ResourceLocationAPI<?> registryKey, Class<V> type) {
         super(registry,type,registryKey);
     }
     

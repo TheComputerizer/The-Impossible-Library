@@ -269,6 +269,8 @@ shadowJar {
     }
     shared.afterEvaluate {
         from(it.jar.archiveFile.collect { zipTree(it) })
+        relocate "${forge_base_package}.client.event.events", "${forge_1_18_2_package}.client.event.events"
+        relocate "${forge_base_package}.common.event.events", "${forge_1_18_2_package}.common.event.events"
         relocate shared_base_package, forge_base_package
         remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
         renderRemaps.forEach((key,value) -> relocate key, "com.mojang.${value}")
