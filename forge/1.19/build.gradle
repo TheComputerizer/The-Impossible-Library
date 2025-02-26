@@ -47,7 +47,7 @@ plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 def base = project ':api'
 def forge = project ':forge'
-def shared = project ':shared:1.19'
+def shared = project ':shared:shared_1.19'
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_19_2}-${minecraft_1_19_2}"
@@ -60,7 +60,7 @@ configurations {
     }
 }
 
-dependencies {
+dependencies { dep ->
     //noinspection VulnerableLibrariesLocal
     minecraft("${forge_mc}:${forge_1_19_2}")
 

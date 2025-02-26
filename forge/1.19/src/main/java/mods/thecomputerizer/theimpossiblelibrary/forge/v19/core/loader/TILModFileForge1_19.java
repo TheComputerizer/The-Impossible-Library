@@ -25,6 +25,7 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModProvider;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
 
@@ -172,8 +173,8 @@ public class TILModFileForge1_19 extends ModFile {
             return new ModFileInfo((ModFile)file,wrapper,Collections.emptyList());
         }
         
-        public TILLanguageProviderLoader(SecureJar file, IModLocator locator) {
-            super(file,locator,TILLanguageProviderLoader::getLangFileInfo,"LANGPROVIDER");
+        public TILLanguageProviderLoader(SecureJar file, IModProvider provider) {
+            super(file,provider,TILLanguageProviderLoader::getLangFileInfo,"LANGPROVIDER");
         }
         
         @Override public Type getType() {

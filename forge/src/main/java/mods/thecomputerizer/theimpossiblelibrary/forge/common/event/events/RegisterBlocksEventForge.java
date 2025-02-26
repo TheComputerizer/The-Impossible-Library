@@ -1,16 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterBlocksEventWrapper;
-import net.minecraftforge.event.RegistryEvent.Register;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.eventbus.api.Event;
 
-public abstract class RegisterBlocksEventForge<B extends IForgeRegistryEntry<B>> extends RegisterBlocksEventWrapper<Register<B>> {
+public abstract class RegisterBlocksEventForge<E extends Event> extends RegisterBlocksEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(Register<B> event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }

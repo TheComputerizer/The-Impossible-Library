@@ -71,7 +71,7 @@ dependencies {
     }
     implementation(project(path: ':api', configuration: 'dev'))
     implementation(project(path: ':fabric', configuration: 'dev'))
-    implementation(project(path: ':shared:1.18', configuration: 'dev'))
+    implementation(project(path: ':shared:shared_1.18', configuration: 'dev'))
 
     modImplementation("${fabric_loader_artifact}:${fabric_loader}")
     modImplementation("${fabric_api_artifact}:${fabric_1_18_2}")
@@ -107,7 +107,7 @@ jar {
 }
 
 shadowJar {
-    def shared = project(':shared:1.18')
+    def shared = project(':shared:shared_1.18')
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
     shared.afterEvaluate {
         relocate "${shared_base_package}", "${fabric_base_package}"
@@ -117,5 +117,5 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.finalizedBy('remapJar')
 tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':shared:1.18:jar')
+tasks.jar.dependsOn(':shared:shared_1.18:jar')
 tasks.jar.dependsOn(':fabric:jar')

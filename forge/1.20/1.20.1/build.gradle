@@ -107,7 +107,7 @@ repositories {
     }
 }
 
-def shared = project(':shared:1.20:1.20.1')
+def shared = project(':shared:shared_1.20:shared_1.20.1')
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
@@ -115,7 +115,7 @@ dependencies {
 
     implementation(project(':api'))
     //implementation(project(path: ':forge', configuration: 'dev'))
-    implementation(project(':forge:1.20'))
+    implementation(project(':forge:forge_1.20'))
     implementation(shared)
 
     //mod support dependencies
@@ -173,4 +173,4 @@ tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.dependsOn('reobfJar')
 tasks.jar.finalizedBy('reobfJar')
 tasks.jar.dependsOn(':forge:build')
-tasks.compileJava.mustRunAfter(':forge:1.20:shadowJar')
+tasks.compileJava.mustRunAfter(':forge:forge_1.20:shadowJar')

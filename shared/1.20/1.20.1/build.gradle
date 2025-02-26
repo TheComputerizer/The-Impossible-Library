@@ -61,7 +61,7 @@ dependencies {
     minecraft("${forge_mc}:${forge_1_20_1}")
     implementation(project(':api'))
     implementation(project(':shared'))
-    implementation(project(':shared:1.20'))
+    implementation(project(':shared:shared_1.20'))
 }
 
 processResources {

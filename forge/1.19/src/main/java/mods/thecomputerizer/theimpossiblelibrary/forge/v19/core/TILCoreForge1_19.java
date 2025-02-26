@@ -6,7 +6,6 @@ import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
@@ -14,8 +13,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreEntryPointForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v19.client.ClientForge1_19;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v19.common.CommonForge1_19;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v19.core.asm.ModWriterForge1_19;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v19.core.loader.MultiVersionLoaderForge1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.core.TILCore1_19;
@@ -29,8 +26,7 @@ import java.util.Set;
 import static cpw.mods.modlauncher.api.IEnvironment.Keys.LAUNCHTARGET;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 
-@IndirectCallers
-public class TILCoreForge1_19 extends TILCore1_19 implements TILCoreForge {
+public abstract class TILCoreForge1_19 extends TILCore1_19 implements TILCoreForge {
 
     public static final Reference FORGE_REF = TILRef.instance(() -> isClient(Launcher.INSTANCE),"");
     
@@ -46,8 +42,8 @@ public class TILCoreForge1_19 extends TILCore1_19 implements TILCoreForge {
     
     private final MultiVersionLoaderForge1_19 loader;
 
-    public TILCoreForge1_19() {
-        super(FORGE,FORGE_REF.isClient());
+    public TILCoreForge1_19(boolean two) {
+        super(two,FORGE,FORGE_REF.isClient());
         this.loader = new MultiVersionLoaderForge1_19(this);
     }
     
@@ -80,11 +76,7 @@ public class TILCoreForge1_19 extends TILCore1_19 implements TILCoreForge {
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterForge1_19(this, info);
-    }
-    
-    @Override public void initAPI() {
-        TILRef.setAPI(this.side.isClient() ? new ClientForge1_19() : new CommonForge1_19());
+        return new ModWriterForge1_19(this,info);
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}

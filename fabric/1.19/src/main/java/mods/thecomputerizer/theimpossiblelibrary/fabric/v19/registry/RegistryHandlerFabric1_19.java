@@ -15,13 +15,13 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.structure.Structure;
 
 import java.util.Set;
 
 import static net.minecraft.core.Registry.*;
 import static net.minecraft.data.BuiltinRegistries.BIOME;
-import static net.minecraft.data.BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE;
+import static net.minecraft.data.BuiltinRegistries.STRUCTURES;
 
 public class RegistryHandlerFabric1_19 extends RegistryHandler1_19 {
     
@@ -34,7 +34,7 @@ public class RegistryHandlerFabric1_19 extends RegistryHandler1_19 {
         this.item = getRegistry(registries,ITEM,"item",Item.class);
         this.potion = getRegistry(registries,MOB_EFFECT,"potion",MobEffect.class);
         this.sound = getRegistry(registries,SOUND_EVENT,"sound",SoundEvent.class);
-        this.structure = getRegistry(registries,CONFIGURED_STRUCTURE_FEATURE,"structure",ConfiguredStructureFeature.class);
+        this.structure = getRegistry(registries, STRUCTURES, "structure",Structure.class);
     }
     
     @SuppressWarnings("unchecked")

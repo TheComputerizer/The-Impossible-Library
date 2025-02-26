@@ -35,7 +35,7 @@ apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 plugins.apply('fabric-loom')
 
 def fabric = project(':fabric')
-def shared = project(':shared:1.16')
+def shared = project(':shared:shared_1.16')
 
 def sources = "${dev_sources}=api/${build_file};shared/1.16/${build_file};fabric/1.16/${build_classes}"
 def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_entrypoint_arg ]
@@ -60,7 +60,7 @@ dependencies {
     }
     implementation(project(path: ':api', configuration: 'dev'))
     implementation(project(path: ':fabric', configuration: 'dev'))
-    implementation(project(path: ':shared:1.16', configuration: 'dev'))
+    implementation(project(path: ':shared:shared_1.16', configuration: 'dev'))
 
     modImplementation("${fabric_loader_artifact}:${fabric_loader}")
     modImplementation("${fabric_api_artifact}:${fabric_1_16_5}")

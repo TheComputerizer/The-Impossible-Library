@@ -64,6 +64,7 @@ public class ClientEventsForge1_19 extends ClientEvents1_19 {
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
         EVENT_BUS.register(wrapper.getClass());
     }
+    
     @SuppressWarnings("unchecked")
     @Override public Event.Result setEventResult(Result result) {
         return result==DEFAULT ? Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW);

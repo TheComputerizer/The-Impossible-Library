@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.Regi
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19;
 import net.fabricmc.fabric.api.event.Event;
 
-import static net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback.EVENT;
+import static net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT;
 
 public class RegisterCommandsEventFabric1_19 extends RegisterCommandsEventFabric {
     

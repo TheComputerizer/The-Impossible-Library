@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v19.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.EntityEnteringChunkEventForge;
-import net.minecraftforge.event.world.ChunkEvent.Load;
+import net.minecraftforge.event.level.ChunkEvent.Load;
 
 public class EntityEnteringChunkEventForge1_19 extends EntityEnteringChunkEventForge<Load> { //TODO This is the wrong event
     

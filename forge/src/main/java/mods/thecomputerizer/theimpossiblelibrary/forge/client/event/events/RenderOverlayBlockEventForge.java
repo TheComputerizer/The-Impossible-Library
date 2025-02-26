@@ -1,31 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayBlockEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BLOCK;
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.BLOCK;
-
-public abstract class RenderOverlayBlockEventForge extends RenderOverlayBlockEventWrapper<RenderBlockOverlayEvent> {
-    
-    @SubscribeEvent
-    public static void onEvent(RenderBlockOverlayEvent event) {
-        RENDER_OVERLAY_BLOCK.invoke(event);
-    }
+public abstract class RenderOverlayBlockEventForge<E extends Event> extends RenderOverlayBlockEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(RenderBlockOverlayEvent event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-
-    @Override protected EventFieldWrapper<RenderBlockOverlayEvent,OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> EventHelper.getOverlayBlockType(event.getOverlayType()),BLOCK);
     }
 }

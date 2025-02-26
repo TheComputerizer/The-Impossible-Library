@@ -1,15 +1,22 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v19.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.RenderOverlayBlockEventForge;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 
 import javax.annotation.Nonnull;
 
-public class RenderOverlayBlockEventForge1_19 extends RenderOverlayBlockEventForge {
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.BLOCK;
+
+public class RenderOverlayBlockEventForge1_19 extends RenderOverlayBlockEventForge<RenderBlockScreenEffectEvent> {
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderBlockOverlayEvent event) {
+    @Override protected RenderContext initRenderer(@Nonnull RenderBlockScreenEffectEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
+    }
+    
+    @Override protected EventFieldWrapper<RenderBlockScreenEffectEvent,OverlayType> wrapOverlayType() {
+        return wrapGenericGetter(event -> EventHelper.getOverlayBlockType(event.getOverlayType()),BLOCK);
     }
 }

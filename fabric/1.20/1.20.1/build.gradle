@@ -71,8 +71,8 @@ dependencies {
         parchment("${parchment_data}-${minecraft_1_20_1}:${parchment_1_20_1}@zip")
     }
     implementation(project(path: ':api', configuration: 'dev'))
-    implementation(project(path: ':fabric:1.20', configuration: 'dev'))
-    implementation(project(path: ':shared:1.20:1.20.1', configuration: 'dev'))
+    implementation(project(path: ':fabric:fabric_1.20', configuration: 'dev'))
+    implementation(project(path: ':shared:shared_1.20:shared_1.20.1', configuration: 'dev'))
 
     modImplementation("${fabric_loader_artifact}:${fabric_loader}")
     modImplementation("${fabric_api_artifact}:${fabric_1_20_1}")
@@ -111,7 +111,7 @@ jar {
 }
 
 shadowJar {
-    def shared = project(':shared:1.20:1.20.1')
+    def shared = project(':shared:shared_1.20:shared_1.20.1')
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
     shared.afterEvaluate {
         from(shared.jar.archiveFile.collect { zipTree(it) })
@@ -122,4 +122,4 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.finalizedBy('remapJar')
 tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':fabric:1.20:build')
+tasks.jar.dependsOn(':fabric:fabric_1.20:build')

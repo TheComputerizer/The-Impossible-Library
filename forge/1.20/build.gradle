@@ -58,7 +58,7 @@ configurations {
     }
 }
 
-def shared = project(':shared:1.20')
+def shared = project(':shared:shared_1.20')
 
 dependencies {
     //noinspection VulnerableLibrariesLocal

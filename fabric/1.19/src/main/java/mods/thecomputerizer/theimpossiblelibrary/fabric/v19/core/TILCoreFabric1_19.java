@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -13,8 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPoi
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreEntryPointFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.client.ClientFabric1_19;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.common.CommonFabric1_19;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.core.asm.ModWriterFabric1_19;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.core.loader.MultiVersionLoaderFabric1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.core.TILCore1_19;
@@ -29,14 +26,13 @@ import java.util.Set;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
 import static net.fabricmc.api.EnvType.CLIENT;
 
-@IndirectCallers
-public class TILCoreFabric1_19 extends TILCore1_19 implements TILCoreFabric {
+public abstract class TILCoreFabric1_19 extends TILCore1_19 implements TILCoreFabric {
 
     public static final Reference FABRIC_REF = TILRef.instance(() -> FabricLoader.getInstance().getEnvironmentType()==CLIENT,"");
     private final MultiVersionLoaderFabric1_19 loader;
 
-    public TILCoreFabric1_19() {
-        super(FABRIC,FABRIC_REF.isClient());
+    public TILCoreFabric1_19(boolean two) {
+        super(two,FABRIC,FABRIC_REF.isClient());
         this.loader = new MultiVersionLoaderFabric1_19(this);
     }
     
@@ -69,10 +65,6 @@ public class TILCoreFabric1_19 extends TILCore1_19 implements TILCoreFabric {
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
         return new ModWriterFabric1_19(this,info);
-    }
-    
-    @Override public void initAPI() {
-        TILRef.setAPI(this.side.isClient() ? new ClientFabric1_19() : new CommonFabric1_19());
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}

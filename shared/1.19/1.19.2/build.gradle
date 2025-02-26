@@ -45,6 +45,9 @@ apply from: rootProject.file('gradle\\java17-module.gradle')
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
+def base = project ':api'
+def parent = project ':shared:shared_1.19'
+
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_19_2}-${minecraft_1_19_2}"
 }
@@ -58,18 +61,17 @@ configurations {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("${forge_mc}:${forge_1_19_2}")
-    implementation(project(':api'))
-    implementation(project(':shared'))
-    implementation(project(':shared:1.19'))
+    minecraft "$forge_mc:$forge_1_19_2"
+    compileOnlyApi base
+    compileOnlyApi parent
 }
 
 processResources {
-    from(project(':shared').processResources.outputs)
+    from(parent.processResources.outputs)
 }
 
 processTestResources {
-    from(project(':shared').processTestResources.outputs)
+    from(parent.processTestResources.outputs)
 }
 
 jar {
@@ -80,4 +82,4 @@ artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn(':shared:build')
+tasks.jar.dependsOn(':shared:shared_1.19:build')

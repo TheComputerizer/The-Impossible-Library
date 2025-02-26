@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_SOUNDS;
 
-public class RegisterSoundsEventForge1_16_5 extends RegisterSoundsEventForge<SoundEvent> {
+public class RegisterSoundsEventForge1_16_5 extends RegisterSoundsEventForge<Register<SoundEvent>> {
     
     @SubscribeEvent
     public static void onEvent(Register<SoundEvent> event) {

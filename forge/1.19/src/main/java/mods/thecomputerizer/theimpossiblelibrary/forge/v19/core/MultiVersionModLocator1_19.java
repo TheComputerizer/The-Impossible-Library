@@ -30,7 +30,7 @@ import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
-@IndirectCallers
+@SuppressWarnings("FieldCanBeLocal") @IndirectCallers
 public class MultiVersionModLocator1_19 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
@@ -76,7 +76,7 @@ public class MultiVersionModLocator1_19 implements TILForgeModLocator {
     void findPaths(ClassLoader classLoader, MultiVersionLoaderAPI loader) {
         Predicate<SecureJar> filter = jar -> {
             if(Objects.isNull(jar)) return false;
-            Manifest manifest = jar.getManifest();
+            Manifest manifest = jar.moduleDataProvider().getManifest();
             if(Objects.isNull(manifest)) return false;
             return MultiVersionModFinder.hasMods(manifest.getMainAttributes());
         };
@@ -140,7 +140,7 @@ public class MultiVersionModLocator1_19 implements TILForgeModLocator {
         for(TILModFileForge1_19 candidate : this.candidateMap.values()) {
             candidate.populateMultiversionData((Map<String,MultiVersionModData>)data);
             if(MODID.equals(candidate.getModFileInfo().moduleName()))
-                mods.add(new TILLanguageProviderLoader(candidate.getSecureJar(),candidate.getLocator()));
+                mods.add(new TILLanguageProviderLoader(candidate.getSecureJar(),candidate.getProvider()));
             mods.add(candidate);
         }
         return Collections.unmodifiableList(mods);

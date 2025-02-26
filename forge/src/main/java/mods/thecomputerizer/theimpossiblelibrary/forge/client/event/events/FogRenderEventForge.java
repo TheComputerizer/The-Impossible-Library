@@ -1,38 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.FogRenderEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_RENDER;
-
-public abstract class FogRenderEventForge extends FogRenderEventWrapper<RenderFogEvent> {
-    
-    @SubscribeEvent
-    public static void onEvent(RenderFogEvent event) {
-        FOG_RENDER.invoke(event);
-    }
+public abstract class FogRenderEventForge<E extends Event> extends FogRenderEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(RenderFogEvent event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-
-    @Override protected EventFieldWrapper<RenderFogEvent,Float> wrapFarplaneField() {
-        return wrapGenericGetter(RenderFogEvent::getFarPlaneDistance,0f);
-    }
-
-    @Override protected EventFieldWrapper<RenderFogEvent,Integer> wrapFogModeField() {
-        return wrapGenericGetter(event -> 0,0);
-    }
-
-    @Override protected EventFieldWrapper<RenderFogEvent,BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(event -> null);
     }
 }

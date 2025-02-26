@@ -48,8 +48,10 @@ plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
 
 def base = project ':api'
-def forge = project ':forge:1.19'
-def shared = project ':shared:1.19:1.19.2'
+def forge = project ':forge' //TODO Maybe implementation instead of api to clean these up?
+def forge_specific = project ':forge:forge_1.19'
+def shared = project ':shared:shared_1.19'
+def shared_specific = project ':shared:shared_1.19:shared_1.19.2'
 
 def classpath_file = "${mod_id}-${mod_version}_mapped_parchment_$parchment_1_19_2-${minecraft_1_19_2}.jar"
 
@@ -107,8 +109,10 @@ dependencies {
     minecraft("$forge_mc:$forge_1_19_2")
 
     compileOnlyApi base
-    compileOnlyApi project(path: ':forge:1.19', configuration: 'dev')
+    compileOnlyApi project(path: ':forge', configuration: 'dev')
+    compileOnlyApi forge_specific
     compileOnlyApi shared
+    compileOnlyApi shared_specific
 
     //mod support dependencies
     implementation fg.deobf("$blueskies_artifact:$blueskies_1_19_2")
@@ -262,10 +266,11 @@ def renderRemaps = [ 'net.minecraft.client.MainWindow': 'blaze3d.platform.Window
 ]
 
 shadowJar {
-    [ base, forge ].forEach {
+    [ base, forge, forge_specific ].forEach {
         from(it.jar.archiveFile.collect { zipTree(it) })
     }
-    shared.afterEvaluate {
+    shared_specific.afterEvaluate {
+        from(shared.jar.archiveFile.collect { zipTree(it) })
         from(it.jar.archiveFile.collect { zipTree(it) })
         relocate "${forge_base_package}.client.event.events", "${forge_1_19_2_package}.client.event.events"
         relocate "${forge_base_package}.common.event.events", "${forge_1_19_2_package}.common.event.events"
@@ -278,4 +283,4 @@ shadowJar {
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.dependsOn 'reobfJar'
 tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.dependsOn ':forge:1.19:build'
+tasks.jar.dependsOn ':forge:forge_1.19:build'

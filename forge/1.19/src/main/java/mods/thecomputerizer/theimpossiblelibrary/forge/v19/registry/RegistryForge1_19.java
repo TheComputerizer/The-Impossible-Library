@@ -4,12 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.Registry1_19;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class RegistryForge1_19<V extends IForgeRegistryEntry<V>> extends Registry1_19<V> {
+public class RegistryForge1_19<V> extends Registry1_19<V> {
     
     public RegistryForge1_19(IForgeRegistry<V> forgeRegistry, ResourceLocationAPI<?> registryKey, Class<V> type) {
         super(forgeRegistry,type,registryKey);

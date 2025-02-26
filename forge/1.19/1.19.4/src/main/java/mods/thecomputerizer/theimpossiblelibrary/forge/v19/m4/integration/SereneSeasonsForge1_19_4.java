@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v19.integration;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.SereneSeasonsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -8,10 +8,12 @@ import sereneseasons.api.season.SeasonHelper;
 
 import java.util.Objects;
 
-import static sereneseasons.api.season.Season.*;
+import static sereneseasons.api.season.Season.AUTUMN;
+import static sereneseasons.api.season.Season.SPRING;
+import static sereneseasons.api.season.Season.SUMMER;
 import static sereneseasons.api.season.Season.WINTER;
 
-public class SereneSeasonsForge1_19 extends SereneSeasonsAPI {
+public class SereneSeasonsForge1_19_4 extends SereneSeasonsAPI {
 
     public ISeasonState getSeasonState(WorldAPI<?> world) {
         return SeasonHelper.getSeasonState(world.unwrap());

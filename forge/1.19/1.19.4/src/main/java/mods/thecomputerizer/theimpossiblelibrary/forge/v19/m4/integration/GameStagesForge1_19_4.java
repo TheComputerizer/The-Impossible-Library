@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v19.integration;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.GameStagesAPI;
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-public class GameStagesForge1_19 extends GameStagesAPI {
+public class GameStagesForge1_19_4 extends GameStagesAPI {
 
     @Override public Collection<String> getStages(PlayerAPI<?,?> player) {
         IStageData data = GameStageHelper.getPlayerData(player.unwrap());
