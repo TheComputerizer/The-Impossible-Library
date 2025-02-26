@@ -20,6 +20,7 @@ public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     protected Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier;
     protected SoundEventAPI<?> sound;
+    protected int lengthInSeconds = 60;
     
     protected DiscBuilderAPI(@Nullable ItemBuilderAPI parent) {
         super(parent);
@@ -37,6 +38,11 @@ public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     public DiscBuilderAPI setItemType(ItemType type) {
         this.itemType = type;
+        return this;
+    }
+    
+    public DiscBuilderAPI setLengthInSeconds(int length) {
+        this.lengthInSeconds = length;
         return this;
     }
     

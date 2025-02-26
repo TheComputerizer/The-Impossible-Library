@@ -1,0 +1,19 @@
+package mods.thecomputerizer.theimpossiblelibrary.fabric.v19.common.event.events;
+
+import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.RegisterCommandsEventFabric;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19;
+import net.fabricmc.fabric.api.event.Event;
+
+import static net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback.EVENT;
+
+public class RegisterCommandsEventFabric1_19 extends RegisterCommandsEventFabric {
+    
+    @Override public Event<?> getEventInstance() {
+        return EVENT;
+    }
+    
+    @Override public void registerCommand(CommandAPI command) {
+        WrappedCommand1_19.register(this.event[0],command);
+    }
+}

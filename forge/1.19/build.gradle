@@ -35,17 +35,19 @@ buildscript {
         }
     }
     dependencies {
-        classpath("${shadow_plugin}:${shadow_version}")
         classpath("${forge_gradle_plugin}:${forge_gradle_version}")
         classpath("${parchment_plugin}:${parchment_plugin_version}")
     }
 }
 
 apply from: rootProject.file('gradle\\java17-module.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply('net.minecraftforge.gradle')
 plugins.apply('org.parchmentmc.librarian.forgegradle')
+
+def base = project ':api'
+def forge = project ':forge'
+def shared = project ':shared:1.19'
 
 minecraft {
     mappings channel: 'parchment', version: "${parchment_1_19_2}-${minecraft_1_19_2}"
@@ -58,51 +60,20 @@ configurations {
     }
 }
 
-def shared = project(':shared:1.19')
-
 dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft("${forge_mc}:${forge_1_19_2}")
 
-    implementation(project(':api'))
-    //implementation(project(path: ':forge', configuration: 'dev'))
-    //implementation(shared)
-}
-
-compileJava {
-    source(project(':api').sourceSets.main.allJava/*,
-            project(':forge').sourceSets.main.allJava*/)
-}
-
-compileTestJava {
-    source(project(':api').sourceSets.test.allJava/*,
-            project(':forge').sourceSets.test.allJava*/)
-}
-
-processResources {
-    //from(project(':forge').processResources.outputs)
-}
-
-processTestResources {
-    //from(project(':forge').processTestResources.outputs)
+    compileOnlyApi base
+    compileOnlyApi project(path: ':forge', configuration: 'dev')
+    compileOnlyApi shared
 }
 
 jar {
-    //from(project(':forge').jar.archiveFile.collect { zipTree(it) })
-}
-
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
-shadowJar {
-    from(project(':api').jar.archiveFile.collect { zipTree(it) })
-    shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
-        relocate "${shared_base_package}", "${forge_base_package}"
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
     }
 }
 
@@ -110,7 +81,4 @@ artifacts {
     dev jar
 }
 
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.dependsOn('reobfJar')
-tasks.jar.finalizedBy('reobfJar')
-tasks.jar.dependsOn(':forge:build')
+tasks.jar.dependsOn ':forge:build'
