@@ -31,7 +31,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     static final String KEYBOARD_HANDLER = mapClass("net.minecraft.client.KeyboardHandler", "net.minecraft.class_309");
     static final String INVOKER_DESC = TypeHelper.methodDesc(OBJECT_TYPE);
     static final String LIST = "java/util/List";
-    static final String POSESTACK = mapClass("com.mojang.blaze3d.vertex.PoseStack", "net.minecraft.class_4587");
+    static final String POSESTACK = mapClass("com.mojang.blaze3d.vertex.PoseStack","net.minecraft.class_4587");
     
     static String mapClass(String dev, String notDev) {
         return CoreAPI.getInstance().mapClassName(DEV ? dev : notDev,false);
@@ -114,7 +114,8 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
                 TILRef.logInfo("Editing method node {}({})",method.name,methodName);
                 if(keyboard && Misc.equalsAny(methodName,"keyPress","method_1466")) {
                     TILRef.logInfo("Building KEY_PRESSED invoker");
-                    code.insert(ASMHelper.findLabel(code,45),buildKeyPressInvoker());
+                    int ordinal = this.core.getVersion().isV16() ? 38 : 45;
+                    code.insert(ASMHelper.findLabel(code,ordinal),buildKeyPressInvoker());
                 }
                 else if(screenOverlay) {
                     if(methodName.equals("<init>"))

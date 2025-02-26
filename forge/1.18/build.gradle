@@ -124,7 +124,7 @@ dependencies {
     implementation fg.deobf("$weather2_artifact:$weather2_1_18_2")
 
     runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_18_2")
-    runtimeOnly fg.deobf("mods.thecomputerizer.theimpossiblelibrary:theimpossiblelibrary:$mod_version")
+    //runtimeOnly fg.deobf("mods.thecomputerizer.theimpossiblelibrary:theimpossiblelibrary:$mod_version")
 }
 
 reobf {
@@ -159,6 +159,8 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'client.gui.screen.Screen': 'client.gui.screens.Screen',
                    'client.network.play.ClientPlayNetHandler': 'client.multiplayer.ClientPacketListener',
                    'client.network.play.NetworkPlayerInfo': 'client.multiplayer.PlayerInfo',
+                   'client.renderer.IRenderTypeBuffer.Impl': 'client.renderer.MultiBufferSource.BufferSource',
+                   'client.renderer.IRenderTypeBuffer': 'client.renderer.MultiBufferSource',
                    'client.settings.KeyBinding': 'client.KeyMapping',
                    'client.util.ITooltipFlag': 'world.item.TooltipFlag',
                    'client.world.ClientWorld': 'client.multiplayer.ClientLevel',

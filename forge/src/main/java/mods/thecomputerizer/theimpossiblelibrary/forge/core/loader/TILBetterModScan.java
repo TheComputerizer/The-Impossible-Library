@@ -74,7 +74,7 @@ public class TILBetterModScan extends ModFileScanData {
                     }
                     defined.add(clazz);
                     String pkg = className.substring(0,className.lastIndexOf('.'));
-                    if(!className.contains("\\$") && !pkgs.contains(pkg)) outerClasses.add(clazz);
+                    if(!className.contains("$") && !pkgs.contains(pkg)) outerClasses.add(clazz);
                     pkgs.add(pkg);
                     pkgToModMap.putIfAbsent(pkg,getModFromFile(MOD_FILES.get(pkg),MOD_INFOS.get(className).getModID()));
                 } else TILRef.logError("Class was defined as null?? {}",className);

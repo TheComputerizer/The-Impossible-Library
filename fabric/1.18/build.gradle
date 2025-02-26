@@ -104,14 +104,12 @@ compileTestJava {
 
 jar {
     setArchiveBaseName(mod_id)
-    from(project(':fabric').jar.archiveFile.collect { zipTree(it) })
 }
 
 shadowJar {
     def shared = project(':shared:1.18')
     from(project(':api').jar.archiveFile.collect { zipTree(it) })
     shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
         relocate "${shared_base_package}", "${fabric_base_package}"
     }
 }
@@ -119,4 +117,5 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.finalizedBy('remapJar')
 tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':fabric:build')
+tasks.jar.dependsOn(':shared:1.18:jar')
+tasks.jar.dependsOn(':fabric:jar')

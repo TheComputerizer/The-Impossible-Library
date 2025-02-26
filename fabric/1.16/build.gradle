@@ -34,6 +34,9 @@ apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply('fabric-loom')
 
+def fabric = project(':fabric')
+def shared = project(':shared:1.16')
+
 def sources = "${dev_sources}=api/${build_file};shared/1.16/${build_file};fabric/1.16/${build_classes}"
 def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_entrypoint_arg ]
 
@@ -88,7 +91,6 @@ compileTestJava {
 
 jar {
     setArchiveBaseName(mod_id)
-    from(project(':fabric').jar.archiveFile.collect { zipTree(it) })
 }
 
 def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviour',
@@ -108,6 +110,7 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'client.gui.screen.Screen': 'client.gui.screens.Screen',
                    'client.network.play.ClientPlayNetHandler': 'client.multiplayer.ClientPacketListener',
                    'client.network.play.NetworkPlayerInfo': 'client.multiplayer.PlayerInfo',
+                   'client.renderer.IRenderTypeBuffer': 'client.renderer.MultiBufferSource',
                    'client.settings.KeyBinding': 'client.KeyMapping',
                    'client.util.ITooltipFlag': 'world.item.TooltipFlag',
                    'client.world.ClientWorld': 'client.multiplayer.ClientLevel',
@@ -213,10 +216,8 @@ def renderRemaps = [ 'net.minecraft.client.MainWindow': 'blaze3d.platform.Window
 ]
 
 shadowJar {
-    def shared = project(':shared:1.16')
     shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
-        //noinspection GroovyAssignabilityCheck
+        from(it.sourceSets.main.output.classesDirs.asFileTree)
         relocate shared_base_package, fabric_base_package
         remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
         renderRemaps.forEach((key,value) -> relocate key, "com.mojang.${value}")
@@ -226,4 +227,5 @@ shadowJar {
 tasks.assemble.dependsOn(shadowJar)
 tasks.shadowJar.finalizedBy('remapJar')
 tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':fabric:build')
+tasks.jar.dependsOn(':shared:1.16:jar')
+tasks.jar.dependsOn(':fabric:jar')

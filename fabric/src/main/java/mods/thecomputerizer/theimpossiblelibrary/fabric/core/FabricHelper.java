@@ -13,7 +13,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.minecraft.client.gui.Font;
-import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
 import org.lwjgl.opengl.GL11;
 import org.objectweb.asm.Type;
@@ -221,7 +220,7 @@ public class FabricHelper {
                 FormattedText line = textLines.get(lineNumber);
                 FontAPI<?> api = ClientHelper.getFont();
                 if(Objects.nonNull(line) && Objects.nonNull(api))
-                    api.drawInBatch(Language.getInstance().getVisualOrder(line),tooltipX,tooltipY,-1,true,
+                    api.drawInBatch(line,tooltipX,tooltipY,-1,true,
                                     mat,renderType,false,0,15728880);
                 if(lineNumber+1==titleLinesCount) tooltipY+=2;
                 tooltipY += 10;
