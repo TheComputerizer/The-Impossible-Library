@@ -16,15 +16,15 @@ buildscript {
         }
         maven {
             name = 'Fabric'
-            url = uri('https://maven.fabricmc.net/')
+            url = uri 'https://maven.fabricmc.net/'
             content {
                 [ 'fabric-loom', 'net.fabricmc', 'net.fabricmc.fabric-api' ].forEach { includeGroup it }
             }
         }
     }
     dependencies {
-        classpath("${loom_plugin}:${loom_version}")
-        classpath("${shadow_plugin}:${shadow_version}")
+        classpath "$loom_plugin:$loom_version"
+        classpath "$shadow_plugin:$shadow_version"
     }
 }
 
@@ -32,12 +32,13 @@ apply from: rootProject.file('gradle\\java8-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
-plugins.apply('fabric-loom')
+plugins.apply 'fabric-loom'
 
-def fabric = project(':fabric')
-def shared = project(':shared:shared_1.16')
+def base = project ':api'
+def fabric = project ':fabric'
+def shared = project ':shared:shared_1.16'
 
-def sources = "${dev_sources}=api/${build_file};shared/1.16/${build_file};fabric/1.16/${build_classes}"
+def sources = "$dev_sources=api\\$build_file;shared\\1.16\\$build_file;fabric\\1.16\\$build_classes"
 def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_entrypoint_arg ]
 
 [ runClient, runServer ].forEach { it.jvmArgs args}
@@ -45,7 +46,7 @@ def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_ent
 repositories {
     maven {
         name 'Modrinth'
-        url = uri('https://api.modrinth.com/maven')
+        url = uri 'https://api.modrinth.com/maven'
         content {
             includeGroup 'maven.modrinth'
         }
@@ -53,44 +54,46 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${minecraft_1_16_5}")
+    minecraft "com.mojang:minecraft:$minecraft_1_16_5"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("${parchment_data}-${minecraft_1_16_5}:${parchment_1_16_5}@zip")
+        parchment "$parchment_data-$minecraft_1_16_5:$parchment_1_16_5@zip"
     }
-    implementation(project(path: ':api', configuration: 'dev'))
-    implementation(project(path: ':fabric', configuration: 'dev'))
-    implementation(project(path: ':shared:shared_1.16', configuration: 'dev'))
 
-    modImplementation("${fabric_loader_artifact}:${fabric_loader}")
-    modImplementation("${fabric_api_artifact}:${fabric_1_16_5}")
-    modImplementation("${cloth_artifact}:${cloth_1_16_5}")
-    modImplementation("${modmenu_artifact}:${modmenu_1_16_5}")
+    compileOnlyApi base
+    compileOnlyApi fabric
+    compileOnlyApi shared
+
+    modImplementation "$fabric_loader_artifact:$fabric_loader"
+    modImplementation "$fabric_api_artifact:$fabric_1_16_5"
+    modImplementation "$cloth_artifact:$cloth_1_16_5"
+    modImplementation "$modmenu_artifact:$modmenu_1_16_5"
 }
 
 remapJar {
-    setArchiveBaseName("${mod_id}_remapped")
+    setArchiveBaseName "${mod_id}_remapped"
     inputFile = tasks.shadowJar.archiveFile
 }
 
 processResources {
-    from(project(':api').processResources.outputs)
+    from base.processResources.outputs
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from base.processTestResources.outputs
 }
 
 compileJava {
-    source(project(':fabric').sourceSets.main.allJava)
+    source fabric.sourceSets.main.allJava
 }
 
 compileTestJava {
-    source(project(':fabric').sourceSets.test.allJava)
+    source fabric.sourceSets.test.allJava
 }
 
 jar {
-    setArchiveBaseName(mod_id)
+    setArchiveBaseName mod_id
+    from(fabric.jar.archiveFile.collect { zipTree it })
 }
 
 def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviour',
@@ -217,15 +220,15 @@ def renderRemaps = [ 'net.minecraft.client.MainWindow': 'blaze3d.platform.Window
 
 shadowJar {
     shared.afterEvaluate {
-        from(it.sourceSets.main.output.classesDirs.asFileTree)
+        from it.sourceSets.main.output.classesDirs.asFileTree
         relocate shared_base_package, fabric_base_package
-        remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
-        renderRemaps.forEach((key,value) -> relocate key, "com.mojang.${value}")
+        remapThese.forEach((key,value) -> relocate "net.minecraft.$key", "net.minecraft.$value")
+        renderRemaps.forEach((key,value) -> relocate key, "com.mojang.$value")
     }
 }
 
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.finalizedBy('remapJar')
-tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':shared:1.16:jar')
-tasks.jar.dependsOn(':fabric:jar')
+tasks.assemble.dependsOn shadowJar
+tasks.shadowJar.finalizedBy remapJar
+tasks.jar.finalizedBy shadowJar
+tasks.compileJava.mustRunAfter ':fabric:build'
+tasks.compileJava.mustRunAfter ':shared:shared_1.16:build'

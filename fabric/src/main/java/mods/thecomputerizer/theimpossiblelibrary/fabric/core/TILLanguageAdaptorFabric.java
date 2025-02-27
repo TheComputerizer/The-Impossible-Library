@@ -75,7 +75,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         try {
             Default.add(properties);
         } catch(Throwable t) {
-            Log.error(ENTRYPOINT,"Failed to set default BuringWave properties??",t);
+            Log.error(ENTRYPOINT,"Failed to set default BurningWave properties??",t);
         }
     }
     
@@ -116,7 +116,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         while(Objects.nonNull(clazz) && clazz!=Object.class) {
             addSource(launcher,ClassHelper.getSourceURL(className,loader));
             clazz = clazz.getSuperclass();
-            if(CoreAPI.class.getName().equals(clazz.getName())) break;
+            String name = clazz.getName();
+            if(CoreAPI.class.getName().equals(name)) break;
         }
         burningWaveProperties();
         return className;

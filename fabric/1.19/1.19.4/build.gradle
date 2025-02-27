@@ -40,8 +40,8 @@ def fabric_specific = project ':fabric:fabric_1.19'
 def shared = project ':shared:shared_1.19'
 def shared_specific = project ':shared:shared_1.19:shared_1.19.2'
 
-def sources = "${dev_sources}=api/${build_file};shared/1.19/${build_file};shared/1.19/1.19.4/${build_file}" +
-        ";fabric/1.19/${build_classes};fabric/1.19/1.19.4/${build_classes}"
+def sources = "-Dfabric.classPathGroups=$rootDir\\fabric\\1.19\\1.19.4\\$build_classes;"+
+        "$rootDir\\shared\\1.19\\$build_file;$rootDir\\shared\\1.19\\1.19.4\\$build_file"
 def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_entrypoint_arg ]
 
 [ runClient, runServer ].forEach { it.jvmArgs args}
@@ -80,8 +80,8 @@ dependencies {
     compileOnlyApi base
     compileOnlyApi project(path: ':fabric', configuration: 'dev')
     compileOnlyApi fabric_specific
-    compileOnlyApi shared
-    compileOnlyApi shared_specific
+    compileOnlyApi project(path: ':shared:shared_1.19', configuration: 'dev')
+    compileOnlyApi project(path: ':shared:shared_1.19:shared_1.19.4', configuration: 'dev')
 
     modImplementation "$fabric_loader_artifact:$fabric_loader"
     modImplementation "$fabric_api_artifact:$fabric_1_19_4"
@@ -97,30 +97,29 @@ remapJar {
 }
 
 processResources {
-    from(base.processResources.outputs)
+    from(fabric_specific.processResources.outputs)
 }
 
 processTestResources {
-    from(base.processTestResources.outputs)
+    from(fabric_specific.processTestResources.outputs)
 }
 
 jar {
-    setArchiveBaseName(mod_id)
-    from(project(':fabric').jar.archiveFile.collect { zipTree(it) })
+    setArchiveBaseName mod_id
+    from fabric.jar.archiveFile.collect { zipTree it }
 }
 
 shadowJar {
-    [ base, fabric, fabric_specific ].forEach {
-        from(it.jar.archiveFile.collect { zipTree(it) })
-    }
-    shared_specific.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
-        from(it.jar.archiveFile.collect { zipTree(it) })
+    shadowJar {
+        [ shared, shared_specific ].forEach {
+            from it.sourceSets.main.output.classesDirs.asFileTree
+        }
         relocate shared_base_package, fabric_base_package
     }
 }
 
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.finalizedBy('remapJar')
-tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':fabric:fabric_1.19:build')
+tasks.assemble.dependsOn shadowJar
+tasks.shadowJar.finalizedBy 'remapJar'
+tasks.jar.finalizedBy 'shadowJar'
+tasks.compileJava.mustRunAfter ':fabric:fabric_1.19:build'
+tasks.compileJava.mustRunAfter ':shared:shared_1.19:shared_1.19.4:build'

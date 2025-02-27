@@ -6,30 +6,30 @@
  */
 
 apply from: rootProject.file('buildSrc\\shared.gradle')
-java.toolchain.languageVersion = JavaLanguageVersion.of(23)
+java.toolchain.languageVersion = JavaLanguageVersion.of 23
 
-def fabric = project(':fabric')
-def legacy_1_12_2 = project(':legacy:1.12')
-def fabric_1_16_5 = project(':fabric:fabric_1.16')
-def fabric_1_18_2 = project(':fabric:fabric_1.18')
-def fabric_1_19_2 = project(':fabric:fabric_1.19:fabric_1.19.2')
-def fabric_1_19_4 = project(':fabric:fabric_1.19:fabric_1.19.4')
-def fabric_1_20_1 = project(':fabric:fabric_1.20:fabric_1.20.1')
-def fabric_1_20_4 = project(':fabric:fabric_1.20:fabric_1.20.4')
-def fabric_1_20_6 = project(':fabric:fabric_1.20:fabric_1.20.6')
-def fabric_1_21_1 = project(':fabric:fabric_1.21:fabric_1.21.1')
-def forge_1_16_5 = project(':forge:forge_1.16')
-def forge_1_18_2 = project(':forge:forge_1.18')
-def forge_1_19_2 = project(':forge:forge_1.19:forge_1.19.2')
-def forge_1_19_4 = project(':forge:forge_1.19:forge_1.19.4')
-def forge_1_20_1 = project(':forge:forge_1.20:forge_1.20.1')
-def forge_1_20_4 = project(':forge:forge_1.20:forge_1.20.4')
-def forge_1_20_6 = project(':forge:forge_1.20:forge_1.20.6')
-def forge_1_21_1 = project(':forge:forge_1.21:forge_1.21.1')
-def neoforge_1_20_1 = project(':neoforge:neoforge_1.20:neoforge_1.20.1')
-def neoforge_1_20_4 = project(':neoforge:neoforge_1.20:neoforge_1.20.4')
-def neoforge_1_20_6 = project(':neoforge:neoforge_1.20:neoforge_1.20.6')
-def neoforge_1_21_1 = project(':neoforge:neoforge_1.21:neoforge_1.21.1')
+def fabric = project ':fabric'
+def legacy_1_12_2 = project ':legacy:1.12'
+def fabric_1_16_5 = project ':fabric:fabric_1.16'
+def fabric_1_18_2 = project ':fabric:fabric_1.18'
+def fabric_1_19_2 = project ':fabric:fabric_1.19:fabric_1.19.2'
+def fabric_1_19_4 = project ':fabric:fabric_1.19:fabric_1.19.4'
+def fabric_1_20_1 = project ':fabric:fabric_1.20:fabric_1.20.1'
+def fabric_1_20_4 = project ':fabric:fabric_1.20:fabric_1.20.4'
+def fabric_1_20_6 = project ':fabric:fabric_1.20:fabric_1.20.6'
+def fabric_1_21_1 = project ':fabric:fabric_1.21:fabric_1.21.1'
+def forge_1_16_5 = project ':forge:forge_1.16'
+def forge_1_18_2 = project ':forge:forge_1.18'
+def forge_1_19_2 = project ':forge:forge_1.19:forge_1.19.2'
+def forge_1_19_4 = project ':forge:forge_1.19:forge_1.19.4'
+def forge_1_20_1 = project ':forge:forge_1.20:forge_1.20.1'
+def forge_1_20_4 = project ':forge:forge_1.20:forge_1.20.4'
+def forge_1_20_6 = project ':forge:forge_1.20:forge_1.20.6'
+def forge_1_21_1 = project ':forge:forge_1.21:forge_1.21.1'
+def neoforge_1_20_1 = project ':neoforge:neoforge_1.20:neoforge_1.20.1'
+def neoforge_1_20_4 = project ':neoforge:neoforge_1.20:neoforge_1.20.4'
+def neoforge_1_20_6 = project ':neoforge:neoforge_1.20:neoforge_1.20.6'
+def neoforge_1_21_1 = project ':neoforge:neoforge_1.21:neoforge_1.21.1'
 
 processResources {
     fabric.afterEvaluate { from(it.processResources.outputs) }
@@ -40,11 +40,15 @@ processTestResources {
 }
 
 jar {
-    legacy_1_12_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
-    fabric_1_16_5.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree(it) }) }
-    forge_1_16_5.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
-    fabric_1_18_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree(it) }) }
-    forge_1_18_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree(it) }) }
+    legacy_1_12_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    fabric_1_16_5.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
+    forge_1_16_5.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    fabric_1_18_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
+    forge_1_18_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    fabric_1_19_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
+    forge_1_19_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    //fabric_1_19_4.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
+    //forge_1_19_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -60,4 +64,7 @@ jar {
 
 [ ':legacy:1.12:build',
   ':fabric:fabric_1.16:build', ':forge:forge_1.16:build',
-  ':fabric:fabric_1.18:build', ':forge:forge_1.18:build' ].forEach { tasks.jar.dependsOn(it) }
+  ':fabric:fabric_1.18:build', ':forge:forge_1.18:build',
+  ':fabric:fabric_1.19:fabric_1.19.2:build', ':forge:forge_1.19:forge_1.19.2:build'
+  //':fabric:fabric_1.19:fabric_1.19.4:build', ':forge:forge_1.19:forge_1.19.4:build'
+].forEach { tasks.jar.mustRunAfter it }

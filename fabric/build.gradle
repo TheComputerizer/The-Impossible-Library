@@ -22,21 +22,23 @@ buildscript {
         }
         maven {
             name = 'Fabric'
-            url = uri('https://maven.fabricmc.net/')
+            url = uri 'https://maven.fabricmc.net/'
             content {
                 [ 'fabric-loom', 'net.fabricmc', 'net.fabricmc.fabric-api' ].forEach { includeGroup it }
             }
         }
     }
     dependencies {
-        classpath("${loom_plugin}:${loom_version}")
+        classpath "$loom_plugin:$loom_version"
     }
 }
 
 apply from: rootProject.file('gradle\\java8-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 
-plugins.apply('fabric-loom')
+plugins.apply 'fabric-loom'
+
+def base = project ':api'
 
 configurations {
     dev {
@@ -46,37 +48,41 @@ configurations {
 }
 
 dependencies {
-    minecraft("${fabric_mc}:${minecraft_1_16_5}")
+    minecraft "$fabric_mc:$minecraft_1_16_5"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("${parchment_data}-${minecraft_1_16_5}:${parchment_1_16_5}@zip")
+        parchment "$parchment_data-$minecraft_1_16_5:$parchment_1_16_5@zip"
     }
 
-    compileOnly(project(':api'))
+    compileOnlyApi base
 
-    modImplementation("${fabric_loader_artifact}:${fabric_loader}")
-    modImplementation("${fabric_api_artifact}:${fabric_1_16_5}")
+    modImplementation "$fabric_loader_artifact:$fabric_loader"
+    modImplementation "$fabric_api_artifact:$fabric_1_16_5"
 }
 
-loom.mixin.add(sourceSets.main,mod_refmap)
+loom.mixin.add sourceSets.main, mod_refmap
 
 processResources {
     def replacements = [ 'adaptor': fabric_adaptor, 'coremods': fabric_coremods, 'injector': fabric_injector,
                          'version': version ]
     inputs.properties replacements
-    from(project(':api').processResources.outputs) {
+    from(base.processResources.outputs) {
         filesMatching('fabric.mod.json') { expand replacements }
     }
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from(base.processTestResources.outputs)
 }
 
 jar {
-    setArchiveBaseName(mod_id)
+    setArchiveBaseName mod_id
+    from(base.jar.archiveFile.collect { zipTree it })
 }
 
 artifacts {
     dev jar
 }
+
+
+tasks.compileJava.mustRunAfter ':api:build'

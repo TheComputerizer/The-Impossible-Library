@@ -16,23 +16,26 @@ buildscript {
         }
         maven {
             name = 'Fabric'
-            url = uri('https://maven.fabricmc.net/')
+            url = uri 'https://maven.fabricmc.net/'
             content {
                 [ 'fabric-loom', 'net.fabricmc', 'net.fabricmc.fabric-api' ].forEach { includeGroup it }
             }
         }
     }
     dependencies {
-        classpath("${loom_plugin}:${loom_version}")
-        classpath("${shadow_plugin}:${shadow_version}")
+        classpath "$loom_plugin:$loom_version"
+        classpath "$shadow_plugin:$shadow_version"
     }
 }
 
 apply from: rootProject.file('gradle\\java17-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
-plugins.apply('fabric-loom')
+plugins.apply 'fabric-loom'
+
+def base = project ':api'
+def fabric = project ':fabric'
+def shared = project ':shared:shared_1.20'
 
 configurations {
     dev {
@@ -44,7 +47,7 @@ configurations {
 repositories {
     maven {
         name 'Modrinth'
-        url = uri('https://api.modrinth.com/maven')
+        url = uri 'https://api.modrinth.com/maven'
         content {
             includeGroup 'maven.modrinth'
         }
@@ -52,59 +55,44 @@ repositories {
 }
 
 dependencies {
-    minecraft("${fabric_mc}:${minecraft_1_20_1}")
+    minecraft "$fabric_mc:$minecraft_1_20_1"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("${parchment_data}-${minecraft_1_20_1}:${parchment_1_20_1}@zip")
+        parchment "$parchment_data-$minecraft_1_20_1:$parchment_1_20_1@zip"
     }
-    implementation(project(path: ':api', configuration: 'dev'))
-    implementation(project(path: ':fabric', configuration: 'dev'))
-    //implementation(project(path: ':shared:shared_1.20', configuration: 'dev'))
 
-    modImplementation("${fabric_loader_artifact}:${fabric_loader}")
-    modImplementation("${fabric_api_artifact}:${fabric_1_20_1}")
-}
+    compileOnlyApi base
+    compileOnlyApi fabric
+    compileOnlyApi shared
 
-remapJar {
-    setArchiveBaseName("${mod_id}_remapped")
-    inputFile = tasks.shadowJar.archiveFile
+    modImplementation "$fabric_loader_artifact:$fabric_loader"
+    modImplementation "$fabric_api_artifact:$fabric_1_20_1"
 }
 
 processResources {
-    from(project(':api').processResources.outputs)
+    from fabric.processResources.outputs
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from fabric.processTestResources.outputs
 }
 
 compileJava {
-    source(project(':fabric').sourceSets.main.allJava)
+    source fabric.sourceSets.main.allJava
 }
 
 compileTestJava {
-    source(project(':fabric').sourceSets.test.allJava)
+    source fabric.sourceSets.test.allJava
 }
 
 jar {
-    setArchiveBaseName(mod_id)
-    from(project(':fabric').jar.archiveFile.collect { zipTree(it) })
+    setArchiveBaseName mod_id
+    from(fabric.jar.archiveFile.collect { zipTree(it) })
 }
 
 artifacts {
     dev jar
 }
 
-shadowJar {
-    def shared = project(':shared:shared_1.20')
-    from(project(':api').jar.archiveFile.collect { zipTree(it) })
-    shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
-        relocate "${shared_base_package}", "${fabric_base_package}"
-    }
-}
-
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.finalizedBy('remapJar')
-tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':fabric:build')
+tasks.compileJava.mustRunAfter ':fabric:build'
+tasks.compileJava.mustRunAfter ':shared:shared_1.20:build'
