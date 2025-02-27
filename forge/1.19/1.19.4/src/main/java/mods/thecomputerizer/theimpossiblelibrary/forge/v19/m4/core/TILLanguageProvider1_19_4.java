@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v19.core;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -19,7 +19,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @IndirectCallers
-public class TILLanguageProvider1_19 implements TILForgeLanguageProvider { //TODO This doesn't need to be version specific
+public class TILLanguageProvider1_19_4 implements TILForgeLanguageProvider { //TODO This doesn't need to be version specific
     
     @Override public Consumer<ModFileScanData> getFileVisitor(CoreAPI core, IModLanguageProvider provider) {
         return scan -> {

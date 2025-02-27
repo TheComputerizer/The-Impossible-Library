@@ -47,8 +47,8 @@ jar {
     forge_1_18_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
     fabric_1_19_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
     forge_1_19_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    //fabric_1_19_4.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    //forge_1_19_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    fabric_1_19_4.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
+    forge_1_19_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -65,6 +65,6 @@ jar {
 [ ':legacy:1.12:build',
   ':fabric:fabric_1.16:build', ':forge:forge_1.16:build',
   ':fabric:fabric_1.18:build', ':forge:forge_1.18:build',
-  ':fabric:fabric_1.19:fabric_1.19.2:build', ':forge:forge_1.19:forge_1.19.2:build'
-  //':fabric:fabric_1.19:fabric_1.19.4:build', ':forge:forge_1.19:forge_1.19.4:build'
+  ':fabric:fabric_1.19:fabric_1.19.2:build', ':forge:forge_1.19:forge_1.19.2:build',
+  ':fabric:fabric_1.19:fabric_1.19.4:build', ':forge:forge_1.19:forge_1.19.4:build'
 ].forEach { tasks.jar.mustRunAfter it }

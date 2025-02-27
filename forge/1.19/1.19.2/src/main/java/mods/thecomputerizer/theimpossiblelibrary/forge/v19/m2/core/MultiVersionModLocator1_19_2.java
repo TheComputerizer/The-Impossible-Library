@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v19.core;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m2.core;
 
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
@@ -17,6 +17,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v19.core.loader.TILModFil
 import net.minecraftforge.fml.loading.ClasspathLocatorUtils;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModLocator.ModFileOrException;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,16 +32,16 @@ import java.util.jar.Manifest;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 @SuppressWarnings("FieldCanBeLocal") @IndirectCallers
-public class MultiVersionModLocator1_19 implements TILForgeModLocator {
+public class MultiVersionModLocator1_19_2 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
     private final CoreAPI core;
     private final Map<MultiVersionModCandidate,TILModFileForge1_19> candidateMap = new HashMap<>();
     
-    public MultiVersionModLocator1_19(CoreAPI core) {
+    public MultiVersionModLocator1_19_2(CoreAPI core) {
         this.core = core;
-        TILRef.logInfo("1.18.2 Forge Locator plugin loaded on {}",getClass().getClassLoader());
+        TILRef.logInfo("1.19.2 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
     void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<SecureJar> filter) {
@@ -130,7 +131,7 @@ public class MultiVersionModLocator1_19 implements TILForgeModLocator {
     }
     
     @SuppressWarnings("unchecked")
-    @Override public List<IModFile> scanMods(IModLocator locator) {
+    @Override public List<ModFileOrException> scanMods(IModLocator locator) {
         TILRef.logDebug("Scanning for mods in multiversion jars (context = {})",Thread.currentThread().getContextClassLoader());
         List<IModFile> mods = new ArrayList<>();
         TILRef.logDebug("Getting CoreAPI instance");
@@ -143,6 +144,8 @@ public class MultiVersionModLocator1_19 implements TILForgeModLocator {
                 mods.add(new TILLanguageProviderLoader(candidate.getSecureJar(),candidate.getProvider()));
             mods.add(candidate);
         }
-        return Collections.unmodifiableList(mods);
+        List<ModFileOrException> annoyingList = new ArrayList<>();
+        for(IModFile file : mods) annoyingList.add(new ModFileOrException(file,null));
+        return Collections.unmodifiableList(annoyingList);
     }
 }

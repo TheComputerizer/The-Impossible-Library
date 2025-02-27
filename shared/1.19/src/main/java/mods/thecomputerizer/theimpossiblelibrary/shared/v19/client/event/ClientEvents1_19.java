@@ -77,7 +77,7 @@ public abstract class ClientEvents1_19 implements ClientEventsAPI {
     }
     
     @Override public <E> OverlayType getOverlayElementType(E elementType) {
-        return switch((VanillaGuiOverlay)elementType) {
+        return switch(((VanillaGuiOverlay)elementType)) {
             case AIR_LEVEL -> OverlayType.AIR;
             case ARMOR_LEVEL -> OverlayType.ARMOR;
             case BOSS_EVENT_PROGRESS -> OverlayType.BOSSINFO;

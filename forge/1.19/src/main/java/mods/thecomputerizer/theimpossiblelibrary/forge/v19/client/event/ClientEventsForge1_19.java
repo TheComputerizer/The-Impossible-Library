@@ -20,8 +20,8 @@ public class ClientEventsForge1_19 extends ClientEvents1_19 {
     @Override public void defineEvents() {
         CAMERA_SETUP.setConnector(new CameraSetupEventForge1_19());
         CLICK_INPUT.setConnector(new InputClickEventForge());
-        CLIENT_CONNECTED.setConnector(new ClientConnectedEventForge());
-        CLIENT_DISCONNECTED.setConnector(new ClientDisconnectedEventForge());
+        CLIENT_CONNECTED.setConnector(new ClientConnectedEventForge1_19());
+        CLIENT_DISCONNECTED.setConnector(new ClientDisconnectedEventForge1_19());
         CLIENT_RESPAWN.setConnector(new ClientRespawnEventForge());
         FOG_COLORS.setConnector(new FogColorsEventForge1_19());
         FOG_DENSITY.setConnector(new FogDensityEventForge1_19());
@@ -37,11 +37,11 @@ public class ClientEventsForge1_19 extends ClientEvents1_19 {
         PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventForge());
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_19());
-        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge());
-        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge());
+        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge1_19());
+        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge1_19());
         RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge());
         RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge());
-        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge());
+        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge1_19());
         RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_19());
         SOUND_LOAD.setConnector(new LoadSoundEventForge());
         SOUND_PLAY.setConnector(new PlaySoundEventForge1_19());

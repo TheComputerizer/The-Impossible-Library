@@ -31,7 +31,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 /**
  * Figures out which version to load on and how to load stuff on it
  */
-@SuppressWarnings("unused") 
+@SuppressWarnings({"unused","LoggingSimilarMessage"})
 public class ForgeCoreLoader {
     
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
@@ -482,7 +482,7 @@ public class ForgeCoreLoader {
     @SuppressWarnings("SameParameterValue")
     static void loadNewModuleTo(@Nullable IModInfo mod, String targetLayerName, Set<String> finalizedPkgs) {
         if(Objects.isNull(mod)) {
-            LOGGER.error("Cannot load module from nonexistant file!");
+            LOGGER.error("Cannot load module from nonexistent file!");
             return;
         }
         try {
@@ -510,8 +510,10 @@ public class ForgeCoreLoader {
                 List<String> usesServices = Methods.invokeDirect(fileInfo,"usesServices");
                 descriptor = buildNewModuleDescriptor(name,secureJar,usesServices);
             }
-            Class<?> rClass = Class.forName("cpw.mods.cl.JarModuleFinder$JarModuleReference");
-            Object reference = Constructors.newInstanceOf(rClass,secureJar);
+            Class<?> fClass = Class.forName("cpw.mods.cl.JarModuleFinder");
+            Object finder = Constructors.newInstanceOf(fClass,secureJar);
+            Map<String,Object> refMap = Fields.getDirect(finder,"moduleReferenceMap");
+            Object reference = refMap.get(existingName);
             URI uri = Fields.getDirect(reference,"location");
             Object config = Fields.getDirect(targetLoader,"configuration");
             Class<?> refClass = reference.getClass().getSuperclass();

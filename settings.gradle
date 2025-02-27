@@ -15,7 +15,7 @@ plugins {
 
 rootProject.name = 'The_Impossible_Library'
 
-def paths = [               ':api',     ':legacy:1.12',
+def paths = [                                    ':api',     ':legacy:1.12',
   ':fabric:1.16',        ':forge:1.16',                                                        ':shared:1.16',
   ':fabric:1.18',        ':forge:1.18',                                                        ':shared:1.18',
   ':fabric:1.19',        ':forge:1.19',                                                        ':shared:1.19',

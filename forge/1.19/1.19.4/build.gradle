@@ -265,6 +265,10 @@ def renderRemaps = [ 'net.minecraft.client.MainWindow': 'blaze3d.platform.Window
                      'com.mojang.blaze3d.vertex.IVertexBuilder': 'blaze3d.vertex.VertexConsumer'
 ]
 
+def forgeRemaps = [
+        'net.minecraftforge.client.event.RenderGameOverlayEvent': 'net.minecraftforge.client.event.RenderGuiOverlayEvent'
+]
+
 shadowJar {
     [ base, forge, forge_specific ].forEach {
         from(it.jar.archiveFile.collect { zipTree(it) })
@@ -277,6 +281,7 @@ shadowJar {
         relocate shared_base_package, forge_base_package
         remapThese.forEach((key,value) -> relocate "net.minecraft.${key}", "net.minecraft.${value}")
         renderRemaps.forEach((key,value) -> relocate key, "com.mojang.${value}")
+        forgeRemaps.forEach((key,value) -> relocate key, value)
     }
 }
 

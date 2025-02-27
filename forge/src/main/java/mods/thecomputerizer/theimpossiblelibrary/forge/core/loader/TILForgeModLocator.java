@@ -11,5 +11,5 @@ public interface TILForgeModLocator {
     
     IModFile createModFile(Path path, IModLocator locator, Collection<?> infos);
     void initFor(ClassLoader loader, IModLocator locator);
-    List<IModFile> scanMods(IModLocator locator);
+    <T> List<T> scanMods(IModLocator locator);
 }
