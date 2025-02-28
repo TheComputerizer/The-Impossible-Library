@@ -114,7 +114,8 @@ jar {
 
 shadowJar {
     shared.afterEvaluate {
-        relocate "$shared_base_package", "$fabric_base_package"
+        from it.sourceSets.main.output.classesDirs.asFileTree
+        relocate shared_base_package, fabric_base_package
     }
 }
 

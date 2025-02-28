@@ -56,7 +56,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "$fabric_mc}:$minecraft_1_21_1"
+    minecraft "$fabric_mc:$minecraft_1_21_1"
     mappings loom.layered() {
         officialMojangMappings()
         parchment "$parchment_data-$minecraft_1_21_1:$parchment_1_21_1@zip"

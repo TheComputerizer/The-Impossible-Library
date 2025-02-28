@@ -16,15 +16,15 @@ buildscript {
         }
         maven {
             name = 'Fabric'
-            url = uri('https://maven.fabricmc.net/')
+            url = uri 'https://maven.fabricmc.net/'
             content {
                 [ 'fabric-loom', 'net.fabricmc', 'net.fabricmc.fabric-api' ].forEach { includeGroup it }
             }
         }
     }
     dependencies {
-        classpath("${loom_plugin}:${loom_version}")
-        classpath("${shadow_plugin}:${shadow_version}")
+        classpath "$loom_plugin:$loom_version"
+        classpath "$shadow_plugin:$shadow_version"
     }
 }
 
@@ -32,7 +32,13 @@ apply from: rootProject.file('gradle\\java17-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
-plugins.apply('fabric-loom')
+plugins.apply 'fabric-loom'
+
+def base = project ':api'
+def fabric = project ':fabric' //TODO Maybe implementation instead of api to clean these up?
+def fabric_specific = project ':fabric:fabric_1.20'
+def shared = project ':shared:shared_1.20'
+def shared_specific = project ':shared:shared_1.20:shared_1.20.1'
 
 def sources = "${dev_sources}=api/${build_file};shared/1.20/${build_file};shared/1.20/1.20.1/${build_file}" +
         ";fabric/1.20/${build_classes};fabric/1.20/1.20.1/${build_classes}"
@@ -43,83 +49,86 @@ def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_ent
 repositories {
     maven {
         name 'Modrinth'
-        url = uri('https://api.modrinth.com/maven')
+        url = uri 'https://api.modrinth.com/maven'
         content {
             includeGroup 'maven.modrinth'
         }
     }
     maven {
         name = 'CurseMaven'
-        url = uri('https://www.cursemaven.com')
+        url = uri 'https://www.cursemaven.com'
         content {
             includeGroup 'curse.maven'
         }
     }
     maven {
         name = 'ModMaven'
-        url = uri('https://modmaven.dev')
+        url = uri 'https://modmaven.dev'
         content {
-            includeGroup( 'mezz.jei')
+            includeGroup 'mezz.jei'
         }
     }
 }
 
 dependencies {
-    minecraft("${fabric_mc}:${minecraft_1_20_1}")
+    minecraft "$fabric_mc:$minecraft_1_20_1"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("${parchment_data}-${minecraft_1_20_1}:${parchment_1_20_1}@zip")
+        parchment "$parchment_data-$minecraft_1_20_1:$parchment_1_20_1@zip"
     }
-    implementation(project(path: ':api', configuration: 'dev'))
-    implementation(project(path: ':fabric:fabric_1.20', configuration: 'dev'))
-    implementation(project(path: ':shared:shared_1.20:shared_1.20.1', configuration: 'dev'))
 
-    modImplementation("${fabric_loader_artifact}:${fabric_loader}")
-    modImplementation("${fabric_api_artifact}:${fabric_1_20_1}")
-    modImplementation("${cloth_artifact}:${cloth_1_20_1}")
-    modImplementation("${configured_artifact}:${configured_fabric_1_20_1}")
-    modImplementation("${modmenu_artifact}:${modmenu_1_20_1}")
-    modImplementation("${serene_seasons_artifact}:${serene_seasons_fabric_1_20_1}")
+    compileOnlyApi base
+    compileOnlyApi project(path: ':fabric', configuration: 'dev')
+    api fabric_specific
+    compileOnlyApi project(path: ':shared:shared_1.20', configuration: 'dev')
+    compileOnlyApi project(path: ':shared:shared_1.20:shared_1.20.1', configuration: 'dev')
 
-    modRuntimeOnly("${jei_artifact}:${jei_fabric_1_20_1}")
+    modImplementation "$fabric_loader_artifact:$fabric_loader"
+    modImplementation "$fabric_api_artifact:$fabric_1_20_1"
+    modImplementation "$cloth_artifact:$cloth_1_20_1"
+    modImplementation "$configured_artifact:$configured_fabric_1_20_1"
+    modImplementation "$modmenu_artifact:$modmenu_1_20_1"
+    modImplementation "$serene_seasons_artifact:$serene_seasons_fabric_1_20_1"
+
+    modRuntimeOnly "$jei_artifact:$jei_fabric_1_20_1"
 }
 
 remapJar {
-    setArchiveBaseName("${mod_id}_remapped")
+    setArchiveBaseName "${mod_id}_remapped"
     inputFile = tasks.shadowJar.archiveFile
 }
 
 processResources {
-    from(project(':api').processResources.outputs)
+    from fabric_specific.processResources.outputs
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from fabric_specific.processTestResources.outputs
 }
 
 compileJava {
-    source(project(':fabric').sourceSets.main.allJava)
+    source fabric_specific.sourceSets.main.allJava
 }
 
 compileTestJava {
-    source(project(':fabric').sourceSets.test.allJava)
+    source fabric_specific.sourceSets.test.allJava
 }
 
 jar {
-    setArchiveBaseName(mod_id)
-    from(project(':fabric').jar.archiveFile.collect { zipTree(it) })
+    setArchiveBaseName mod_id
+    from(fabric_specific.jar.archiveFile.collect { zipTree it })
 }
 
 shadowJar {
-    def shared = project(':shared:shared_1.20:shared_1.20.1')
-    from(project(':api').jar.archiveFile.collect { zipTree(it) })
-    shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
-        relocate "${shared_base_package}", "${fabric_base_package}"
+    shared_specific.afterEvaluate {
+        from shared.sourceSets.main.output.classesDirs.asFileTree
+        from it.sourceSets.main.output.classesDirs.asFileTree
+        relocate shared_base_package, fabric_base_package
     }
 }
 
-tasks.assemble.dependsOn(shadowJar)
-tasks.shadowJar.finalizedBy('remapJar')
-tasks.jar.finalizedBy('shadowJar')
-tasks.jar.dependsOn(':fabric:fabric_1.20:build')
+tasks.assemble.dependsOn shadowJar
+tasks.shadowJar.finalizedBy remapJar
+tasks.jar.finalizedBy shadowJar
+tasks.compileJava.mustRunAfter ':fabric:fabric_1.20:build'
+tasks.compileJava.mustRunAfter ':shared:shared_1.20:shared_1.20.1:build'
