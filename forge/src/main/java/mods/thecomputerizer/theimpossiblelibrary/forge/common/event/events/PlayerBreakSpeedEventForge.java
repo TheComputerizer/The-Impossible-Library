@@ -31,7 +31,7 @@ public class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<Bre
     }
 
     @Override protected EventFieldWrapper<BreakSpeed,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(BreakSpeed::getPlayer);
+        return wrapPlayerGetter(BreakSpeed::getEntity);
     }
 
     @Override protected EventFieldWrapper<BreakSpeed,BlockPosAPI<?>> wrapPosField() {

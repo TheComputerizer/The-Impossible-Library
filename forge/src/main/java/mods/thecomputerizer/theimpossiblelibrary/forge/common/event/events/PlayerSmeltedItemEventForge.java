@@ -26,7 +26,7 @@ public class PlayerSmeltedItemEventForge extends PlayerSmeltedItemEventWrapper<I
     }
     
     @Override protected EventFieldWrapper<ItemSmeltedEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemSmeltedEvent::getPlayer);
+        return wrapPlayerGetter(ItemSmeltedEvent::getEntity);
     }
 
     @Override protected EventFieldWrapper<ItemSmeltedEvent,ItemStackAPI<?>> wrapStackField() {

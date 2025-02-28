@@ -25,6 +25,6 @@ public class PlayerLoggedInEventForge extends PlayerLoggedInEventWrapper<PlayerL
     }
     
     @Override protected EventFieldWrapper<PlayerLoggedInEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerLoggedInEvent::getPlayer);
+        return wrapPlayerGetter(PlayerLoggedInEvent::getEntity);
     }
 }

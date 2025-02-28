@@ -50,11 +50,6 @@ public abstract class RegistryHandler1_19 implements RegistryHandlerAPI {
     
     protected abstract void collectRegistries(Set<? super Registry1_19<?>> registries);
 
-    @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
-        RegistryAPI<?> reg = getRegistry(registryKey);
-        return reg.hasKey(entryKey) ? BasicWrapped.cast(reg.getValue(entryKey)) : null;
-    }
-
     @Override public RegistryAPI<?> getBiomeRegistry() {
         return this.biome;
     }
@@ -73,6 +68,11 @@ public abstract class RegistryHandler1_19 implements RegistryHandlerAPI {
     
     @Override public RegistryAPI<?> getEntityRegistry() {
         return this.entity;
+    }
+    
+    @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
+        RegistryAPI<?> reg = getRegistry(registryKey);
+        return reg.hasKey(entryKey) ? BasicWrapped.cast(reg.getValue(entryKey)) : null;
     }
     
     @Override public RegistryAPI<?> getItemRegistry() {

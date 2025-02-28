@@ -57,7 +57,7 @@ public class PlayerInteractEntityEventForge extends PlayerInteractEntityEventWra
     }
 
     @Override protected EventFieldWrapper<EntityInteract,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(EntityInteract::getPlayer);
+        return wrapPlayerGetter(EntityInteract::getEntity);
     }
 
     @Override protected EventFieldWrapper<EntityInteract,BlockPosAPI<?>> wrapPosField() {

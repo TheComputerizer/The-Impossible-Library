@@ -30,6 +30,6 @@ public class PlayerStartTrackingEventForge extends PlayerStartTrackingEventWrapp
     }
 
     @Override protected EventFieldWrapper<StartTracking,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(StartTracking::getPlayer);
+        return wrapPlayerGetter(StartTracking::getEntity);
     }
 }

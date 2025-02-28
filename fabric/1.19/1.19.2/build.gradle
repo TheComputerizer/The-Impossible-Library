@@ -117,10 +117,11 @@ jar {
 }
 
 shadowJar {
-    [ shared, shared_specific ].forEach {
+    shared_specific.afterEvaluate {
+        from shared.sourceSets.main.output.classesDirs.asFileTree
         from it.sourceSets.main.output.classesDirs.asFileTree
+        relocate shared_base_package, fabric_base_package
     }
-    relocate shared_base_package, fabric_base_package
 }
 
 tasks.assemble.dependsOn shadowJar

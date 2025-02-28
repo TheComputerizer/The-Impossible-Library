@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.server;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
@@ -8,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelStorageSource.LevelDirectory;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public abstract class MinecraftServer1_19 extends MinecraftServerAPI<MinecraftServer> {
 
@@ -69,12 +74,11 @@ public abstract class MinecraftServer1_19 extends MinecraftServerAPI<MinecraftSe
     }
     
     protected @Nullable Path getLevelPath(Object save) {
-        Field pathField = getLevelPathField(save);
-        Object path = ReflectionHelper.getFieldInstance(save,pathField);
-        return path instanceof Path ? (Path)path : null;
+        String fieldName = DEV ? "levelDirectory" : (CoreAPI.isForge() ? "f_230867_" : "field_23768");
+        ClassHelper.checkBurningWaveInit();
+        LevelDirectory dir = Fields.getDirect(save,fieldName);
+        return dir.path();
     }
-    
-    protected abstract @Nullable Field getLevelPathField(Object save);
     
     protected @Nullable Object getLevelSave(Object server) {
         Field saveField = getLevelSaveField(server);

@@ -72,7 +72,7 @@ public class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWrapper<Lef
     }
 
     @Override protected EventFieldWrapper<LeftClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LeftClickBlock::getPlayer);
+        return wrapPlayerGetter(LeftClickBlock::getEntity);
     }
 
     @Override protected EventFieldWrapper<LeftClickBlock,BlockPosAPI<?>> wrapPosField() {

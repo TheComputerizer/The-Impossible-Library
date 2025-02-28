@@ -16,6 +16,6 @@ public class RegisterCommandsEventForge1_19 extends RegisterCommandsEventForge {
     }
     
     @Override public void registerCommand(CommandAPI command) {
-        WrappedCommand1_19.register(getEvent().getDispatcher(), command);
+        WrappedCommand1_19.register(getEvent().getDispatcher(),command);
     }
 }

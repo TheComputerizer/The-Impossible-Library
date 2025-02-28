@@ -171,7 +171,7 @@ public class Wrapper1_19 implements WrapperAPI {
         return getAs(structure,Structure1_19::new);
     }
     
-    @Override public @Nullable <W> WorldAPI<W> wrapWorld(@Nullable Object world) {
+    @Override @Nullable public <W> WorldAPI<W> wrapWorld(@org.jetbrains.annotations.Nullable Object world) {
         return getAs(world,World1_19::new);
     }
 }

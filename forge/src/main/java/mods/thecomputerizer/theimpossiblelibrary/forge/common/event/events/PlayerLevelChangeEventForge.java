@@ -29,6 +29,6 @@ public class PlayerLevelChangeEventForge extends PlayerLevelChangeEventWrapper<L
     }
 
     @Override protected EventFieldWrapper<LevelChange,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LevelChange::getPlayer);
+        return wrapPlayerGetter(LevelChange::getEntity);
     }
 }

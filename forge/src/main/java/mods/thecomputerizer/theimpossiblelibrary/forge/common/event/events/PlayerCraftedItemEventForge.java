@@ -26,7 +26,7 @@ public class PlayerCraftedItemEventForge extends PlayerCraftedItemEventWrapper<I
     }
     
     @Override protected EventFieldWrapper<ItemCraftedEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemCraftedEvent::getPlayer);
+        return wrapPlayerGetter(ItemCraftedEvent::getEntity);
     }
 
     @Override protected EventFieldWrapper<ItemCraftedEvent,ItemStackAPI<?>> wrapStackField() {

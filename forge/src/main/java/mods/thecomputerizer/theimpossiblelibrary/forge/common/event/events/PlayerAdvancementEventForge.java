@@ -30,6 +30,6 @@ public class PlayerAdvancementEventForge extends PlayerAdvancementEventWrapper<A
     }
 
     @Override protected EventFieldWrapper<AdvancementEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(AdvancementEvent::getPlayer);
+        return wrapPlayerGetter(AdvancementEvent::getEntity);
     }
 }

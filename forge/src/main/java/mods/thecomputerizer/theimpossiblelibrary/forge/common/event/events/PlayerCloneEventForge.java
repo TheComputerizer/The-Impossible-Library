@@ -33,6 +33,6 @@ public class PlayerCloneEventForge extends PlayerCloneEventWrapper<Clone> {
     }
 
     @Override protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(Clone::getPlayer);
+        return wrapPlayerGetter(Clone::getEntity);
     }
 }

@@ -31,7 +31,7 @@ public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<Nam
     }
 
     @Override protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(NameFormat::getPlayer);
+        return wrapPlayerGetter(NameFormat::getEntity);
     }
 
     @Override protected EventFieldWrapper<NameFormat,String> wrapUsernameField() {

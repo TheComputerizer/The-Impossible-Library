@@ -63,10 +63,6 @@ public abstract class TILCoreForge1_19 extends TILCore1_19 implements TILCoreFor
         return null;
     }
     
-    @Override public CommonEntryPoint getCommonVersionHandler() {
-        return null;
-    }
-    
     @Override public CoreEntryPoint getCoreVersionHandler() {
         return new TILCoreEntryPointForge();
     }

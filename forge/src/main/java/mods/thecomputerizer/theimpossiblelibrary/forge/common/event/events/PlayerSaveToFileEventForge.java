@@ -35,6 +35,6 @@ public class PlayerSaveToFileEventForge extends PlayerSaveToFileEventWrapper<Sav
     }
 
     @Override protected EventFieldWrapper<SaveToFile,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(SaveToFile::getPlayer);
+        return wrapPlayerGetter(SaveToFile::getEntity);
     }
 }

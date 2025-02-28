@@ -26,7 +26,7 @@ public class PlayerPickupXPEventForge extends PlayerPickupXPEventWrapper<PickupX
     }
     
     @Override protected EventFieldWrapper<PickupXp,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PickupXp::getPlayer);
+        return wrapPlayerGetter(PickupXp::getEntity);
     }
 
     @Override protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapEntityField() {

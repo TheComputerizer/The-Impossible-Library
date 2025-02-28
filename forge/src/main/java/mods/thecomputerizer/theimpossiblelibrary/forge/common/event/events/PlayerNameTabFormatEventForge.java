@@ -34,6 +34,6 @@ public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapp
     }
 
     @Override protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(TabListNameFormat::getPlayer);
+        return wrapPlayerGetter(TabListNameFormat::getEntity);
     }
 }

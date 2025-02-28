@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.TILCommonEntryPoint1_19;
 
 import java.util.Set;
 
@@ -19,5 +21,9 @@ public abstract class TILCore1_19 extends CoreAPI {
     @Override public void addSources(Set<String> sources) {
         super.addSources(sources);
         ClassHelper.addSource(sources,TILCore1_19.class);
+    }
+    
+    @Override public CommonEntryPoint getCommonVersionHandler() {
+        return new TILCommonEntryPoint1_19();
     }
 }

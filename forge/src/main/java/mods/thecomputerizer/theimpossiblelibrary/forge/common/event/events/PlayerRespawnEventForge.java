@@ -29,6 +29,6 @@ public class PlayerRespawnEventForge extends PlayerRespawnEventWrapper<PlayerRes
     }
 
     @Override protected EventFieldWrapper<PlayerRespawnEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerRespawnEvent::getPlayer);
+        return wrapPlayerGetter(PlayerRespawnEvent::getEntity);
     }
 }

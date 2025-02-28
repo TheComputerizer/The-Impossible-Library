@@ -7,18 +7,13 @@ import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.nio.file.Path;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 public class MinecraftServerFabric1_19 extends MinecraftServer1_19 {
     
     static String saveField = DEV ? "storageSource" : "field_23784";
-    static String levelPathField = DEV ? "levelPath" : "field_23768";
     
-    @Override protected @Nullable Field getLevelPathField(Object save) {
-        return getField(save,levelPathField,Path.class);
-    }
     
     @Override protected @Nullable Field getLevelSaveField(Object server) {
         return getField(server,saveField,LevelStorageAccess.class);

@@ -29,6 +29,6 @@ public class PlayerChangeXPEventForge extends PlayerChangeXPEventWrapper<XpChang
     }
 
     @Override protected EventFieldWrapper<XpChange,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(XpChange::getPlayer);
+        return wrapPlayerGetter(XpChange::getEntity);
     }
 }

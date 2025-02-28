@@ -56,7 +56,7 @@ public class PlayerInteractEmptyEventForge extends PlayerInteractEmptyEventWrapp
     }
 
     @Override protected EventFieldWrapper<RightClickEmpty,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(RightClickEmpty::getPlayer);
+        return wrapPlayerGetter(RightClickEmpty::getEntity);
     }
 
     @Override protected EventFieldWrapper<RightClickEmpty,BlockPosAPI<?>> wrapPosField() {

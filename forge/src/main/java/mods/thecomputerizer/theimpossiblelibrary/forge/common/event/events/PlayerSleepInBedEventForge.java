@@ -26,7 +26,7 @@ public class PlayerSleepInBedEventForge extends PlayerSleepInBedEventWrapper<Pla
     }
     
     @Override protected EventFieldWrapper<PlayerSleepInBedEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerSleepInBedEvent::getPlayer);
+        return wrapPlayerGetter(PlayerSleepInBedEvent::getEntity);
     }
 
     @Override protected EventFieldWrapper<PlayerSleepInBedEvent,BlockPosAPI<?>> wrapPosField() {

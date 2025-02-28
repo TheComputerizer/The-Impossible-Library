@@ -1,7 +1,8 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v19.registry;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v19.registry.RegistryForge1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.Registry1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.RegistryHandler1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.RegistryVanilla1_19;
@@ -15,15 +16,15 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Set;
 
-import static net.minecraft.data.BuiltinRegistries.STRUCTURES;
+import static net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE;
 import static net.minecraftforge.registries.ForgeRegistries.*;
 
-public class RegistryHandlerForge1_19 extends RegistryHandler1_19 {
+public class RegistryHandlerForge1_19_4 extends RegistryHandler1_19 {
     
     @Override protected void collectRegistries(Set<? super Registry1_19<?>> registries) {
         this.biome = getRegistry(registries,BIOMES,"biome",Biome.class);
@@ -34,8 +35,8 @@ public class RegistryHandlerForge1_19 extends RegistryHandler1_19 {
         this.item = getRegistry(registries,ITEMS,"item",Item.class);
         this.potion = getRegistry(registries,POTIONS,"potion",Potion.class);
         this.sound = getRegistry(registries,SOUND_EVENTS,"sound",SoundEvent.class);
-        this.structure = getVanillaRegistry(registries,STRUCTURES,"structure",
-                                            Structure.class);
+        this.structure = getVanillaRegistry(registries,STRUCTURE_TYPE,"structure",
+                                            StructureType.class);
     }
     
     @SuppressWarnings("unchecked")
@@ -49,7 +50,7 @@ public class RegistryHandlerForge1_19 extends RegistryHandler1_19 {
     
     @SuppressWarnings({"unchecked","SameParameterValue"})
     private <V> Registry1_19<V> getVanillaRegistry(
-            Set<? super Registry1_19<?>> registries, Registry<V> vanillaRegistry,String name, Class<?> type) {
+            Set<? super Registry1_19<?>> registries, Registry<V> vanillaRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
         RegistryVanilla1_19<V> registry = new RegistryVanilla1_19<>(vanillaRegistry,key,(Class<V>)type);
         registries.add(registry);

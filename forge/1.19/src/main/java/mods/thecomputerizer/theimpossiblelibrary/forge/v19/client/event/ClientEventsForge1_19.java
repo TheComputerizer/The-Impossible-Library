@@ -39,8 +39,8 @@ public class ClientEventsForge1_19 extends ClientEvents1_19 {
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_19());
         RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge1_19());
         RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge1_19());
-        RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge());
-        RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge());
+        RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge1_19());
+        RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge1_19());
         RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge1_19());
         RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_19());
         SOUND_LOAD.setConnector(new LoadSoundEventForge());

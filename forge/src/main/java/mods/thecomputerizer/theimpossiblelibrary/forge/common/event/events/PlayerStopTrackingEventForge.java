@@ -30,6 +30,6 @@ public class PlayerStopTrackingEventForge extends PlayerStopTrackingEventWrapper
     }
 
     @Override protected EventFieldWrapper<StopTracking,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(StopTracking::getPlayer);
+        return wrapPlayerGetter(StopTracking::getEntity);
     }
 }

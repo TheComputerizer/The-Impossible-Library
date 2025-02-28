@@ -73,7 +73,7 @@ public class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapp
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(RightClickBlock::getPlayer);
+        return wrapPlayerGetter(RightClickBlock::getEntity);
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,BlockPosAPI<?>> wrapPosField() {

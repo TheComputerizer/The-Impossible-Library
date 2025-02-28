@@ -25,6 +25,6 @@ public class PlayerChangeGamemodeEventForge extends PlayerChangeGamemodeEventWra
     }
     
     @Override protected EventFieldWrapper<PlayerChangeGameModeEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerChangeGameModeEvent::getPlayer);
+        return wrapPlayerGetter(PlayerChangeGameModeEvent::getEntity);
     }
 }

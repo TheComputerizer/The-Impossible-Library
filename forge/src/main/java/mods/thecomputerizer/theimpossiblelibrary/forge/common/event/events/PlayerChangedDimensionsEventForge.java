@@ -25,6 +25,6 @@ public class PlayerChangedDimensionsEventForge extends PlayerChangedDimensionsEv
     }
     
     @Override protected EventFieldWrapper<PlayerChangedDimensionEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerChangedDimensionEvent::getPlayer);
+        return wrapPlayerGetter(PlayerChangedDimensionEvent::getEntity);
     }
 }

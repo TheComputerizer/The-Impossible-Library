@@ -34,6 +34,6 @@ public class PlayerCheckHarvestEventForge extends PlayerCheckHarvestEventWrapper
     }
 
     @Override protected EventFieldWrapper<HarvestCheck,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(HarvestCheck::getPlayer);
+        return wrapPlayerGetter(HarvestCheck::getEntity);
     }
 }

@@ -31,7 +31,7 @@ public class PlayerPickupItemEventForge extends PlayerPickupItemEventWrapper<Ite
     }
 
     @Override protected EventFieldWrapper<ItemPickupEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemPickupEvent::getPlayer);
+        return wrapPlayerGetter(ItemPickupEvent::getEntity);
     }
 
     @Override protected EventFieldWrapper<ItemPickupEvent,ItemStackAPI<?>> wrapStackField() {

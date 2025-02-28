@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.server;
 
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -13,6 +14,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
@@ -20,19 +22,32 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19.CustomSuggesterInfo.CustomSuggesterTemplate;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
+
 @ParametersAreNonnullByDefault
 public class WrappedCommand1_19 {
+    
+    private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();
 
     public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandRuntimeException {
         wrapped.prepareExceptionInfo();
@@ -41,7 +56,7 @@ public class WrappedCommand1_19 {
         Object[] exArgs = wrapped.getExceptionArgs();
         try {
             String[] args = getArgStack(ctx);
-            wrapped.execute(ctx, rebuildInput(args), args[args.length-1]);
+            wrapped.execute(ctx,rebuildInput(args),args[args.length-1]);
             return 1;
         } catch(Exception ex) {
             TILRef.logError("Caught exception for command {}! Rethrowing as CommandException",wrapped.getRootName(),ex);
@@ -65,14 +80,14 @@ public class WrappedCommand1_19 {
     private static ArgumentBuilder<CommandSourceStack,?> getBuilder(CommandAPI command) {
         String name = command.getName();
         return switch(command.getType()) {
-            case BOOLEAN -> Commands.argument(name, BoolArgumentType.bool());
-            case DOUBLE -> Commands.argument(name, DoubleArgumentType.doubleArg());
-            case ENTITY -> Commands.argument(name, EntityArgument.entity());
-            case FLOAT -> Commands.argument(name, FloatArgumentType.floatArg());
-            case INTEGER -> Commands.argument(name, IntegerArgumentType.integer());
+            case BOOLEAN -> Commands.argument(name,BoolArgumentType.bool());
+            case DOUBLE -> Commands.argument(name,DoubleArgumentType.doubleArg());
+            case ENTITY -> Commands.argument(name,EntityArgument.entity());
+            case FLOAT -> Commands.argument(name,FloatArgumentType.floatArg());
+            case INTEGER -> Commands.argument(name,IntegerArgumentType.integer());
             case LITERAL -> Commands.literal(name);
-            case LONG -> Commands.argument(name, LongArgumentType.longArg());
-            case PLAYER -> Commands.argument(name, EntityArgument.player());
+            case LONG -> Commands.argument(name,LongArgumentType.longArg());
+            case PLAYER -> Commands.argument(name,EntityArgument.player());
             default -> Commands.argument(name,new CustomSuggester(command));
         };
     }
@@ -90,21 +105,67 @@ public class WrappedCommand1_19 {
         for(CommandAPI subcmd : wrapped.getSubCommands()) root.then(getArg(subcmd));
         if(wrapped.isExecutionNode()) root.executes(ctx -> execute(ctx,wrapped));
         dispatcher.register(root);
+        BY_NAME.put(wrapped.getName(),wrapped);
     }
     
-    record CustomSuggester(CommandAPI command) implements ArgumentType<String> {
+    public static void registerArgType() {
+        CustomSuggesterInfo info = new CustomSuggesterInfo();
+        if(CoreAPI.isForge()) ArgumentTypeInfos.registerByClass(CustomSuggester.class,info);
+        else {
+            String field = DEV ? "BY_CLASS" : "field_10921";
+            Map<Class<?>,Object> byClass = Fields.getStaticDirect(ArgumentTypeInfos.class,field);
+            byClass.put(CustomSuggester.class,info);
+        }
+    }
+    
+    public record CustomSuggester(CommandAPI command) implements ArgumentType<String> {
         
         public <S> CompletableFuture<Suggestions> listSuggestions(
                 final CommandContext<S> ctx, final SuggestionsBuilder builder) {
                 MinecraftServerAPI<?> server = ServerHelper.getAPI();
                 CommandSenderAPI<?> sender = WrapperHelper.wrapCommandSender(ctx);
-                return SharedSuggestionProvider.suggest(
-                        this.command.getTabCompletions(server,sender,builder.getInput(),builder.getRemaining()),
-                        builder);
+                return SharedSuggestionProvider.suggest(this.command.getTabCompletions(
+                        server,sender,builder.getInput(),builder.getRemaining()),builder);
             }
             
             @Override public String parse(StringReader reader) {
                 return reader.readUnquotedString();
             }
         }
+        
+    public static class CustomSuggesterInfo implements ArgumentTypeInfo<CustomSuggester,CustomSuggesterTemplate> {
+        
+        @Override public void serializeToNetwork(CustomSuggesterTemplate template, FriendlyByteBuf buf) {
+            buf.writeUtf(template.command.getName());
+        }
+        
+        @Override public @NotNull CustomSuggesterTemplate deserializeFromNetwork(FriendlyByteBuf buf) {
+            return new CustomSuggesterTemplate(BY_NAME.get(buf.readUtf()));
+        }
+        
+        @Override public void serializeToJson(CustomSuggesterTemplate template, JsonObject json) {
+            json.addProperty("commandapi",template.command.getName());
+        }
+        
+        @Override public @NotNull CustomSuggesterTemplate unpack(CustomSuggester suggester) {
+            return new CustomSuggesterTemplate(suggester.command);
+        }
+        
+        public class CustomSuggesterTemplate implements Template<CustomSuggester> {
+            
+            final CommandAPI command;
+            
+            CustomSuggesterTemplate(CommandAPI command) {
+                this.command = command;
+            }
+            
+            @Override public @NotNull CustomSuggester instantiate(CommandBuildContext context) {
+                return new CustomSuggester(this.command);
+            }
+            
+            @Override public @NotNull CustomSuggesterInfo type() {
+                return CustomSuggesterInfo.this;
+            }
+        }
+    }
 }

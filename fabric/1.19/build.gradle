@@ -87,9 +87,6 @@ compileTestJava {
 jar {
     setArchiveBaseName mod_id
     from(fabric.jar.archiveFile.collect { zipTree it })
-    //[ base, fabric ].forEach {
-    //    from(fabric.jar.archiveFile.collect { zipTree it })
-    //}
 }
 
 artifacts {

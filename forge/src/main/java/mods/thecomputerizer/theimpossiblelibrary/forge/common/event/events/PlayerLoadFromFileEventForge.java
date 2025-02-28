@@ -35,6 +35,6 @@ public class PlayerLoadFromFileEventForge extends PlayerLoadFromFileEventWrapper
     }
 
     @Override protected EventFieldWrapper<LoadFromFile,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LoadFromFile::getPlayer);
+        return wrapPlayerGetter(LoadFromFile::getEntity);
     }
 }
