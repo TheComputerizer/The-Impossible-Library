@@ -64,14 +64,14 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {
         LevelAccessor access = world.unwrap();
-        return getTagNames(access.registryAccess().registry(BIOME_REGISTRY).orElse(null));
-    }
-    
-    protected Set<String> getTagNames(Registry<Biome> registry) {
+        Registry<Biome> registry = access.registryAccess().registry(BIOME_REGISTRY).orElse(null);
         if(Objects.isNull(registry)) return Collections.emptySet();
         ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
         if(Objects.isNull(key)) return Collections.emptySet();
-        Holder<Biome> holder = registry.getHolder(key).orElse(null);
+        return getTagNames(registry.getHolder(key).orElse(null));
+    }
+    
+    protected Set<String> getTagNames(Holder<Biome> holder) {
         if(Objects.isNull(holder)) return Collections.emptySet();
         return holder.tags().map(tagKey -> tagKey.location().toString()).collect(Collectors.toSet());
     }

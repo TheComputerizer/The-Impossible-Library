@@ -22,8 +22,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class ScreenWrapper1_19 extends Screen implements Wrapped<ScreenAPI> {
     
-    private final ScreenAPI wrapped;
-    private boolean isOpen;
+    protected final ScreenAPI wrapped;
+    protected boolean isOpen;
 
     public ScreenWrapper1_19(ScreenAPI wrapped) {
         super(wrapped.getTitle().getAsComponent());

@@ -20,6 +20,7 @@ public class SoundHelper1_19 implements SoundHelperAPI {
             Options options = Minecraft.getInstance().options;
             if(Objects.nonNull(options)) return options.getSoundSourceVolume(category);
             else TILRef.logError("Failed to get source volume for {} (null options)", categoryName);
+            return 1f;
         } else TILRef.logError("Failed to get source volume for {} (nonexistent category)",categoryName);
         return 0f;
     }

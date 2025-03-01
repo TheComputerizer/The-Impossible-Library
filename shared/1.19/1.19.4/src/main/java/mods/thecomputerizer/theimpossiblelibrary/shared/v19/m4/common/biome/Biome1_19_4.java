@@ -9,9 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
@@ -35,6 +37,10 @@ public class Biome1_19_4 extends Biome1_19 {
         return getRegistryName(this.access);
     }
     
+    @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
+        return getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+    }
+    
     @Override protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
         Registry<Biome> registry = access.registry(BIOME).orElse(null);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
@@ -42,6 +48,10 @@ public class Biome1_19_4 extends Biome1_19 {
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {
         LevelAccessor access = world.unwrap();
-        return getTagNames(access.registryAccess().registry(BIOME).orElse(null));
+        Registry<Biome> registry = access.registryAccess().registry(BIOME).orElse(null);
+        if(Objects.isNull(registry)) return Collections.emptySet();
+        ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
+        if(Objects.isNull(key)) return Collections.emptySet();
+        return getTagNames(registry.getHolder(key).orElse(null));
     }
 }

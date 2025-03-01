@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.text;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextTranslationAPI;
 import net.minecraft.network.chat.Style;
 
 public class TextHelper1_19 implements TextHelperAPI<Style> {
@@ -19,7 +20,7 @@ public class TextHelper1_19 implements TextHelperAPI<Style> {
         return this.style;
     }
     
-    @Override public TextTranslation1_19 getTranslated(String key, Object... args) {
+    @Override public TextTranslationAPI<Style> getTranslated(String key, Object... args) {
         return new TextTranslation1_19(this, key, args);
     }
 }
