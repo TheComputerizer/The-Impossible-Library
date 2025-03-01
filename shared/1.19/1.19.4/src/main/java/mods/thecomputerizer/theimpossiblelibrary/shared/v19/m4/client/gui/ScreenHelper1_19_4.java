@@ -20,6 +20,6 @@ public class ScreenHelper1_19_4 extends ScreenHelper1_19 {
     }
     
     @Override public void playVanillaClickSound() {
-        SoundHelper.play(WrapperHelper.wrapSoundEvent(UI_BUTTON_CLICK.get()));
+        SoundHelper.play(WrapperHelper.wrapSoundEvent(UI_BUTTON_CLICK.value()));
     }
 }
