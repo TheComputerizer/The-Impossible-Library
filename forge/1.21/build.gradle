@@ -1,36 +1,32 @@
 /**
- * Shared implementations for anything based in 1.16. Compiles against Forge
+ * Forge implementation for 1.21. Based in 1.21.1
  */
 //file:noinspection GroovyAssignabilityCheck
 buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                [ 'com.fasterxml', 'com.fasterxml.jackson', 'com.fasterxml.woodstox', 'com.google.code.findbugs',
-                  'com.google.code.gson', 'com.google.errorprone', 'com.google.guava', 'com.google.j2objc',
-                  'com.machinezoo.noexception', 'commons-codec', 'commons-io', 'commons-logging', 'de.siegmar',
-                  'io.fabric8', 'io.github.goooler.shadow', 'io.netty', 'it.unimi.dsi', 'jakarta.platform',
-                  'net.sf.jopt-simple', 'org.apache', 'org.apache.ant', 'org.apache.commons',
-                  'org.apache.httpcomponents', 'org.apache.logging', 'org.apache.logging.log4j', 'org.apache.maven',
-                  'org.checkerframework', 'org.codehaus.groovy', 'org.codehaus.plexus', 'org.codehaus.woodstox',
-                  'org.eclipse.ee4j', 'org.eclipse.jetty', 'org.jdom', 'org.junit', 'org.mockito', 'org.ow2',
-                  'org.ow2.asm', 'org.slf4j', 'org.sonatype.oss', 'org.springframework', 'org.tukaani',
-                  'org.vafer' ].forEach { includeGroup it }
+                plugin_portal_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
         maven {
             name = 'Forge'
             url = uri 'https://maven.minecraftforge.net/'
             content {
-                [ 'net.minecraftforge', 'net.minecraftforge.gradle' ].forEach{ includeGroup it }
+                forge_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
         maven {
             name = 'ParchmentMC'
             url = uri 'https://maven.parchmentmc.org'
             content {
-                [ 'org.parchmentmc', 'org.parchmentmc.feather',
-                  'org.parchmentmc.librarian.forgegradle' ].forEach { includeGroup it }
+                parchment_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
     }
@@ -42,7 +38,6 @@ buildscript {
 }
 
 apply from: rootProject.file('gradle\\java23-module.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply 'net.minecraftforge.gradle'
 plugins.apply 'org.parchmentmc.librarian.forgegradle'
@@ -83,9 +78,9 @@ reobf {
 }
 
 shadowJar {
-    from(base.jar.archiveFile.collect { zipTree(it) })
+    from(base.jar.archiveFile.collect { zipTree it })
     shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
+        from(shared.jar.archiveFile.collect { zipTree it })
         relocate shared_base_package, forge_base_package
     }
 }

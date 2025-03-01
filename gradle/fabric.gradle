@@ -1,24 +1,26 @@
 repositories {
     maven {
         name 'ParchmentMC'
-        url = uri('https://maven.parchmentmc.org')
+        url = uri 'https://maven.parchmentmc.org'
         content {
-            [ 'org.parchmentmc', 'org.parchmentmc.data', 'org.parchmentmc.feather',
-              'org.parchmentmc.librarian.forgegradle' ].forEach { includeGroup it }
+            parchment_content.split(';').each {grp ->
+                includeGroup grp
+            }
         }
     }
     maven {
         name 'JitPack'
-        url = uri('https://jitpack.io')
+        parchment_data
+        url = uri 'https://jitpack.io'
         content {
-            includeGroup 'com.github.Chocohead'
+            includeGroup fabric_asm_group
         }
     }
 }
 
 dependencies {
-    compileOnly('com.google.code.findbugs:jsr305:3.0.+')
-    compileOnly('org.apache.logging.log4j:log4j-core:2.+')
+    compileOnly "$jsr_artifact:$jsr_version"
+    compileOnly "$log4j_artifact:$log4j_version"
 
-    shaded('com.github.Chocohead:Fabric-ASM:v2.3')
+    shaded "$fabric_asm_group:$fabric_asm_name:$fabric_asm_version"
 }

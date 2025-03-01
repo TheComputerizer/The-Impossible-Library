@@ -70,14 +70,14 @@ public class GenericUtils {
     }
     
     /**
-     Runs non-strict equality rules.
-     If both inputs are null, they are considered matching.
-     If both elements are equal, they are considered matching.
-     If the value is a string, and it equals the string value of the other, they are considered matching.
-     If the value is a number, and it equals the numerical value of the other, they are considered matching.
-     If the value is a boolean, it will match parsed booleans from strings or numbers (0=false,1=true)
-     If the value is an array, iterable, or iterator further matching rules will be applied.
-     If the type is unknown, the toString values of both inputs will be checked for equality.
+     * Runs non-strict equality rules.
+     * If both inputs are null, they are considered matching.
+     * If both elements are equal, they are considered matching.
+     * If the value is a string, and it equals the string value of the other, they are considered matching.
+     * If the value is a number, and it equals the numerical value of the other, they are considered matching.
+     * If the value is a boolean, it will match parsed booleans from strings or numbers (0=false,1=true)
+     * If the value is an array, iterable, or iterator further matching rules will be applied.
+     * If the type is unknown, the toString values of both inputs will be checked for equality.
      */
     public static boolean matches(@Nullable Object value, @Nullable Object other) {
         if(Objects.isNull(value)) return Objects.isNull(other);

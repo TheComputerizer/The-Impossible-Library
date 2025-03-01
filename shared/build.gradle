@@ -4,6 +4,8 @@
 
 apply from: rootProject.file('buildSrc\\shared.gradle')
 
+def base = project ':api'
+
 configurations {
     dev {
         canBeResolved = false
@@ -12,22 +14,22 @@ configurations {
 }
 
 jar {
-    from(project(':api').jar.archiveFile.collect {
+    from(base.jar.archiveFile.collect {
         include 'mods/**'
-        zipTree(it)
+        zipTree it
     })
 }
 
 processResources {
-    from(project(':api').processResources.outputs)
+    from base.processResources.outputs
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from base.processTestResources.outputs
 }
 
 artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn(':api:build')
+tasks.jar.dependsOn ':api:build'

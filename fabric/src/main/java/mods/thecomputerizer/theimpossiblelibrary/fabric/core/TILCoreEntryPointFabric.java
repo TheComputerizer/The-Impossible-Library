@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
@@ -113,8 +114,8 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
                 String methodName = getMethodName(classNode,method);
                 TILRef.logInfo("Editing method node {}({})",method.name,methodName);
                 if(keyboard && Misc.equalsAny(methodName,"keyPress","method_1466")) {
-                    TILRef.logInfo("Building KEY_PRESSED invoker");
-                    int ordinal = this.core.getVersion().isV16() ? 38 : 45;
+                    int ordinal = keyPressOrdinal(this.core.getVersion());
+                    TILRef.logInfo("Building KEY_PRESSED invoker with ordinal {}",ordinal);
                     code.insert(ASMHelper.findLabel(code,ordinal),buildKeyPressInvoker());
                 }
                 else if(screenOverlay) {
@@ -139,6 +140,15 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     
     @Override public String getCoreName() {
         return NAME+" Core";
+    }
+    
+    int keyPressOrdinal(GameVersion version) {
+        switch(version) {
+            case V16_5: return 38;
+            case V18_2:
+            case V19_2: return 45;
+            default: return 48;
+        }
     }
     
     InsnList initRenderFields() {

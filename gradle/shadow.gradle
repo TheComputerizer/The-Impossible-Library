@@ -1,14 +1,18 @@
-plugins.apply('io.github.goooler.shadow')
+import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+
+apply from: rootProject.file('gradle\\shaded-deps.gradle')
+
+plugins.apply 'io.github.goooler.shadow'
 
 configurations {
-    shadow.extendsFrom(shaded)
+    shadow.extendsFrom shaded
 }
 
 shadowJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    configurations = [project.configurations.shadow]
-    setArchiveBaseName("$mod_id")
-    setArchiveClassifier('')
+    duplicatesStrategy = EXCLUDE
+    configurations = [ project.configurations.shadow ]
+    setArchiveBaseName "$mod_id"
+    setArchiveClassifier ''
     mergeServiceFiles()
     exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA',
             'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'

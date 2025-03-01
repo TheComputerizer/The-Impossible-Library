@@ -1,7 +1,9 @@
 apply from: rootProject.file('buildSrc\\shared.gradle')
 
+def base = project ':api'
+
 dependencies {
-    compileOnly(project(':api'))
+    compileOnlyApi base
 }
 
 processResources {
@@ -9,7 +11,7 @@ processResources {
                          'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
                          'mod_name': mod_name, 'mod_version': version ]
     inputs.properties replacements
-    def parentResources = project(':api').processResources.outputs
+    def parentResources = base.processResources.outputs
     from(parentResources) { exclude 'fabric.mod.json', 'mcmod.info', 'META-INF/mods.toml' }
     from(parentResources) {
         include 'mcmod.info'
@@ -18,7 +20,7 @@ processResources {
 }
 
 processTestResources {
-    from(project(':api').processTestResources.outputs)
+    from base.processTestResources.outputs
 }
 
-tasks.jar.dependsOn(':api:build')
+tasks.jar.dependsOn ':api:build'

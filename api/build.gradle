@@ -1,4 +1,5 @@
-apply from: rootProject.file('gradle\\java8-module.gradle')
+apply from: rootProject.file('buildSrc\\shared.gradle')
+apply from: rootProject.file('gradle\\lombok.gradle')
 
 repositories {
     mavenCentral()
@@ -19,13 +20,20 @@ configurations {
 }
 
 dependencies {
-    compileOnly("com.google.code.findbugs:jsr305:${jsr_version}")
-    compileOnly("io.netty:netty-all:${netty_version}")
-    compileOnly("it.unimi.dsi:fastutil:${fast_version}")
-    compileOnly("org.apache.commons:commons-lang3:${lang3_version}")
-    compileOnly("org.apache.logging.log4j:log4j-core:${log4j_version}")
-    compileOnly("org.ow2.asm:asm-commons:${asm_version}")
-    compileOnly("org.ow2.asm:asm-util:${asm_version}")
+    compileOnly "$jsr_artifact:$jsr_version"
+    compileOnly "io.netty:netty-all:$netty_version"
+    compileOnly "it.unimi.dsi:fastutil:$fast_version"
+    compileOnly "org.apache.commons:commons-lang3:$lang3_version"
+    compileOnly "$log4j_artifact:$log4j_version"
+    compileOnly "org.ow2.asm:asm-commons:$asm_version"
+    compileOnly "org.ow2.asm:asm-util:$asm_version"
+
+    implementation "$burningwave_group:$burningwave_name:$burningwave_version"
+    implementation "$burningwave_group:$burningwave_driver_name:$burningwave_driver_version"
+    implementation "$joml_group:$joml_name:$joml_version"
+    implementation "$toolfactory_group:$toolfactory_name:$toolfactory_version"
+
+
 }
 
 processResources {

@@ -1,36 +1,32 @@
 /**
- * Shared implementations for anything based in 1.16. Compiles against Forge
+ * Forge implementation for 1.21.1
  */
 //file:noinspection GroovyAssignabilityCheck
 buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                [ 'com.fasterxml', 'com.fasterxml.jackson', 'com.fasterxml.woodstox', 'com.google.code.findbugs',
-                  'com.google.code.gson', 'com.google.errorprone', 'com.google.guava', 'com.google.j2objc',
-                  'com.machinezoo.noexception', 'commons-codec', 'commons-io', 'commons-logging', 'de.siegmar',
-                  'io.fabric8', 'io.github.goooler.shadow', 'io.netty', 'it.unimi.dsi', 'jakarta.platform',
-                  'net.sf.jopt-simple', 'org.apache', 'org.apache.ant', 'org.apache.commons',
-                  'org.apache.httpcomponents', 'org.apache.logging', 'org.apache.logging.log4j', 'org.apache.maven',
-                  'org.checkerframework', 'org.codehaus.groovy', 'org.codehaus.plexus', 'org.codehaus.woodstox',
-                  'org.eclipse.ee4j', 'org.eclipse.jetty', 'org.jdom', 'org.junit', 'org.mockito', 'org.ow2',
-                  'org.ow2.asm', 'org.slf4j', 'org.sonatype.oss', 'org.springframework', 'org.tukaani',
-                  'org.vafer' ].forEach { includeGroup it }
+                plugin_portal_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
         maven {
             name = 'Forge'
             url = uri 'https://maven.minecraftforge.net/'
             content {
-                [ 'net.minecraftforge', 'net.minecraftforge.gradle' ].forEach{ includeGroup it }
+                forge_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
         maven {
             name = 'ParchmentMC'
             url = uri 'https://maven.parchmentmc.org'
             content {
-                [ 'org.parchmentmc', 'org.parchmentmc.feather',
-                  'org.parchmentmc.librarian.forgegradle' ].forEach { includeGroup it }
+                parchment_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
     }
@@ -42,7 +38,6 @@ buildscript {
 }
 
 apply from: rootProject.file('gradle\\java23-module.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')
 
 plugins.apply 'net.minecraftforge.gradle'
 plugins.apply 'org.parchmentmc.librarian.forgegradle'
@@ -51,37 +46,29 @@ def base = project ':api'
 def forge = project ':forge:forge_1.21'
 def shared = project ':shared:shared_1.21:shared_1.21.1'
 
+def classpath_file = "$mod_id-${mod_version}_mapped_parchment_$parchment_1_21_1-${minecraft_1_21_1}.jar"
+
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_1_21_1}-${minecraft_1_21_1}"
+    copyIdeResources = true
+    mappings channel: 'parchment', version: "$parchment_1_21_1-$minecraft_1_21_1"
     runs {
-        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+        def runSources = [ sourceSets.main ]
+        def args = [ dev_arg, "$classpath_arg$classpath_file".toString(), common_entrypoint_arg, core_entrypoint_arg ]
         configureEach {
             def srgToMcpFile = project.tasks.createSrgToMcp.outputs.files[0].path
-            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', forge_log_level
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', srgToMcpFile
+            property 'net.minecraftforge.gradle.GradleStart.srg.srg-mcp', srgToMcpFile
+            setSources runSources
+            jvmArgs args
         }
         client {
             workingDirectory file('run_client')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            jvmArgs args
-            mods {
-                theimpossiblelibrary {
-                    source sourceSets.main
-                }
-            }
         }
         server {
             workingDirectory file('run_server')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            jvmArgs args
-            mods {
-                theimpossiblelibrary {
-                    source sourceSets.main
-                }
-            }
         }
     }
 }
@@ -89,14 +76,14 @@ minecraft {
 repositories {
     maven {
         name = 'CurseMaven'
-        url = uri('https://www.cursemaven.com')
+        url = uri 'https://www.cursemaven.com'
         content {
             includeGroup 'curse.maven'
         }
     }
     maven {
         name = 'ModMaven'
-        url = uri('https://modmaven.dev')
+        url = uri 'https://modmaven.dev'
         content {
             includeGroup 'mezz.jei'
         }
@@ -139,9 +126,9 @@ reobf {
 }
 
 shadowJar {
-    from(base.jar.archiveFile.collect { zipTree(it) })
+    from(base.jar.archiveFile.collect { zipTree it })
     shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree(it) })
+        from(shared.jar.archiveFile.collect { zipTree it })
         relocate shared_base_package, forge_base_package
     }
 }

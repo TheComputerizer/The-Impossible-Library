@@ -68,7 +68,6 @@ public interface WrapperAPI {
         if(EntityAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapEntity(generic);
         if(InventoryAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapInventory(generic);
         if(ItemAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapItem(generic);
-        if(ItemAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapItem(generic);
         if(ItemStackAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapItemStack(generic);
         if(MaterialAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapMaterial(generic);
         if(PlayerInventoryAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapPlayerInventory(generic);

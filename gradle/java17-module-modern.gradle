@@ -1,9 +1,9 @@
 /**
- * Java 23 means that this module is in 1.20.6+ and JOML should not be shaded
+ * JOML is included in 1.19.4+ and should not be shaded
  */
 apply from: rootProject.file('buildSrc\\shared.gradle')
 
-java.toolchain.languageVersion = JavaLanguageVersion.of 23
+java.toolchain.languageVersion = JavaLanguageVersion.of 17
 
 apply from: rootProject.file('gradle\\lombok.gradle')
 apply from: rootProject.file('gradle\\shadow-relocate.gradle')

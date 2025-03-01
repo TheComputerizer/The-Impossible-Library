@@ -1,2 +1,0 @@
-apply from: rootProject.file('gradle\\lombok.gradle')
-apply from: rootProject.file('gradle\\shaded-deps.gradle')

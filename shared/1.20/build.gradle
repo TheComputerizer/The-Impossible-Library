@@ -1,52 +1,52 @@
 /**
- * Shared implementations for anything based in 1.16. Compiles against Forge
+ * Shared implementations for anything based in 1.20. Compiles against Forge
  */
 //file:noinspection GroovyAssignabilityCheck
-
 buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                [ 'com.fasterxml', 'com.fasterxml.jackson', 'com.fasterxml.woodstox', 'com.google.code.findbugs',
-                  'com.google.code.gson', 'com.google.errorprone', 'com.google.guava', 'com.google.j2objc',
-                  'com.machinezoo.noexception', 'commons-codec', 'commons-io', 'commons-logging', 'de.siegmar',
-                  'io.fabric8', 'io.netty', 'it.unimi.dsi', 'jakarta.platform', 'net.sf.jopt-simple', 'org.apache',
-                  'org.apache.ant', 'org.apache.commons', 'org.apache.httpcomponents', 'org.apache.logging',
-                  'org.apache.logging.log4j', 'org.apache.maven', 'org.checkerframework', 'org.codehaus.groovy',
-                  'org.codehaus.plexus', 'org.codehaus.woodstox', 'org.eclipse.ee4j', 'org.eclipse.jetty', 'org.jdom',
-                  'org.junit', 'org.mockito', 'org.ow2', 'org.ow2.asm', 'org.slf4j', 'org.sonatype.oss',
-                  'org.springframework', 'org.tukaani', 'org.vafer' ].forEach { includeGroup it }
+                plugin_portal_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
         maven {
             name = 'Forge'
-            url = uri('https://maven.minecraftforge.net/')
+            url = uri 'https://maven.minecraftforge.net/'
             content {
-                [ 'net.minecraftforge', 'net.minecraftforge.gradle' ].forEach{ includeGroup it }
+                forge_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
         maven {
             name = 'ParchmentMC'
-            url = uri('https://maven.parchmentmc.org')
+            url = uri 'https://maven.parchmentmc.org'
             content {
-                [ 'org.parchmentmc', 'org.parchmentmc.feather',
-                  'org.parchmentmc.librarian.forgegradle' ].forEach { includeGroup it }
+                parchment_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
     }
     dependencies {
-        classpath("${forge_gradle_plugin}:${forge_gradle_version}")
-        classpath("${parchment_plugin}:${parchment_plugin_version}")
+        classpath "$shadow_plugin:$shadow_version"
+        classpath "$forge_gradle_plugin:$forge_gradle_version"
+        classpath "$parchment_plugin:$parchment_plugin_version"
     }
 }
 
-apply from: rootProject.file('gradle\\java17-module.gradle')
+apply from: rootProject.file('gradle\\java17-module-modern.gradle')
 
-plugins.apply('net.minecraftforge.gradle')
-plugins.apply('org.parchmentmc.librarian.forgegradle')
+plugins.apply 'net.minecraftforge.gradle'
+plugins.apply 'org.parchmentmc.librarian.forgegradle'
+
+def base = project ':api'
+def shared = project ':shared'
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_1_20_1}-${minecraft_1_20_1}"
+    mappings channel: 'parchment', version: "$parchment_1_20_1-$minecraft_1_20_1"
 }
 
 configurations {
@@ -58,25 +58,25 @@ configurations {
 
 dependencies {
     //noinspection VulnerableLibrariesLocal
-    minecraft("${forge_mc}:${forge_1_20_1}")
-    compileOnly(project(':api'))
-    compileOnly(project(':shared'))
+    minecraft "$forge_mc:$forge_1_20_1"
+    api base
+    api shared
 }
 
 processResources {
-    from(project(':shared').processResources.outputs)
+    from shared.processResources.outputs
 }
 
 processTestResources {
-    from(project(':shared').processTestResources.outputs)
+    from shared.processTestResources.outputs
 }
 
 jar {
-    setArchiveBaseName(mod_id)
+    setArchiveBaseName mod_id
 }
 
 artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn(':shared:build')
+tasks.jar.dependsOn ':shared:build'

@@ -5,7 +5,7 @@ configurations {
 repositories {
     mavenCentral() {
         content {
-            [ 'io.github.toolfactory', 'org.burningwave', 'org.joml' ].forEach {
+            [ toolfactory_group, burningwave_group ].forEach {
                 includeGroup it
             }
         }
@@ -13,8 +13,7 @@ repositories {
 }
 
 dependencies {
-    shaded("org.joml:joml:$joml_version") { transitive = false }
-    shaded("$burningwave_group:core:$burningwave_version") { transitive = false }
-    shaded("$burningwave_group:jvm-driver:$burningwave_driver_version") { transitive = false }
-    shaded("$toolfactory_group:jvm-driver:$toolfactory_version") { transitive = false }
+    shaded("$burningwave_group:$burningwave_name:$burningwave_version") { transitive = false }
+    shaded("$burningwave_group:$burningwave_driver_name:$burningwave_driver_version") { transitive = false }
+    shaded("$toolfactory_group:$toolfactory_name:$toolfactory_version") { transitive = false }
 }

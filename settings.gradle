@@ -2,8 +2,9 @@ pluginManagement {
     repositories {
         gradlePluginPortal() {
             content {
-                [ 'com.google.code.gson', 'com.gradle', 'org.gradle.toolchains',
-                  'org.gradle.toolchains.foojay-resolver-convention' ].forEach { includeGroup it }
+                settings_plugin_content.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
     }

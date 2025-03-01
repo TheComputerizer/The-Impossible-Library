@@ -1,12 +1,13 @@
 repositories {
     mavenCentral() {
         content {
-            includeGroup 'org.projectlombok'
+            includeGroup lombok_group
         }
     }
 }
 
 dependencies {
-    annotationProcessor('org.projectlombok:lombok:1.+')
-    compileOnly('org.projectlombok:lombok:1.+')
+    def lombok_full = "$lombok_group:$lombok_name:$lombok_version".toString()
+    annotationProcessor lombok_full
+    compileOnly lombok_full
 }

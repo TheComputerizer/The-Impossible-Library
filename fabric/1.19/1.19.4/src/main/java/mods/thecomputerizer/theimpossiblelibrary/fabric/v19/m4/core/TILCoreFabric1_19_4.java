@@ -10,7 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.m4.common.CommonFabr
 public class TILCoreFabric1_19_4 extends TILCoreFabric1_19 {
     
     public TILCoreFabric1_19_4() {
-        super(true);
+        super(false);
     }
     
     @Override public void initAPI() {
