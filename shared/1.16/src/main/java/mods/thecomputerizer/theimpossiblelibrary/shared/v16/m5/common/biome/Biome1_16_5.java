@@ -24,9 +24,16 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
         return this.wrapped.getDownfall();
     }
     
+    @Override public ResourceLocationAPI<?> getRegistryName() {
+        return getRegistryName(DynamicRegistries.builtin());
+    }
+    
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        DynamicRegistries registries = ((IWorld)world.unwrap()).registryAccess();
-        Registry<Biome> registry = registries.registry(BIOME_REGISTRY).orElse(null);
+        return getRegistryName(((IWorld)world.unwrap()).registryAccess());
+    }
+    
+    private ResourceLocationAPI<?> getRegistryName(DynamicRegistries access) {
+        Registry<Biome> registry = access.registry(BIOME_REGISTRY).orElse(null);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
     }
     

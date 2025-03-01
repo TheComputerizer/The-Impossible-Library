@@ -9,9 +9,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -42,19 +45,28 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
         return this.wrapped.getDownfall();
     }
     
-    Registry<Biome> getRegistry(LevelAccessor world) {
-        return world.registryAccess().registryOrThrow(BIOME_REGISTRY);
+    @Override public ResourceLocationAPI<?> getRegistryName() {
+        return getRegistryName(RegistryAccess.builtinCopy());
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        Registry<Biome> registry = getRegistry(world.unwrap());
+        return getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+    }
+    
+    private ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
+        Registry<Biome> registry = access.registry(BIOME_REGISTRY).orElse(null);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
     }
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {
-        Registry<Biome> registry = getRegistry(world.unwrap());
-        Holder<Biome> holder = registry.getOrCreateHolder(registry.getResourceKey(this.wrapped).orElseThrow());
-        return holder.tags().map(key -> key.location().toString()).collect(Collectors.toSet());
+        LevelAccessor access = world.unwrap();
+        Registry<Biome> registry = access.registryAccess().registry(BIOME_REGISTRY).orElse(null);
+        if(Objects.isNull(registry)) return Collections.emptySet();
+        ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
+        if(Objects.isNull(key)) return Collections.emptySet();
+        Holder<Biome> holder = registry.getHolder(key).orElse(null);
+        if(Objects.isNull(holder)) return Collections.emptySet();
+        return holder.tags().map(tagKey -> tagKey.location().toString()).collect(Collectors.toSet());
     }
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
