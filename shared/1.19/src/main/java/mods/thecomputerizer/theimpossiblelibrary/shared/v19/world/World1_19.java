@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.biome.Biome1_19;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -56,7 +58,9 @@ public class World1_19 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
-        return WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()).value());
+        BiomeAPI<Biome> biome = WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()).value());
+        ((Biome1_19)biome).setAccess(this.wrapped.registryAccess());
+        return biome;
     }
     
     @Override public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {

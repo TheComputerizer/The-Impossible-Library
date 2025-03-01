@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.biome.Biome1_16_5;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -23,6 +24,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.raid.Raid;
@@ -51,7 +53,9 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
-        return WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()));
+        BiomeAPI<Biome> biome = WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()));
+        ((Biome1_16_5)biome).setAccess(this.wrapped.registryAccess());
+        return biome;
     }
     
     @Override public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {

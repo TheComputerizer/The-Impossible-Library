@@ -1,9 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.common.biome;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.biome.Biome1_19;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.LevelAccessor;
@@ -22,7 +25,14 @@ public class Biome1_19_4 extends Biome1_19 {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        return getRegistryName(RegistryAccess.fromRegistryOfRegistries(REGISTRY));
+        if(Objects.isNull(this.access)) {
+            if(CoreAPI.isClient()) {
+                ClientLevel level = Minecraft.getInstance().level;
+                this.access = Objects.nonNull(level) ? level.registryAccess() :
+                        RegistryAccess.fromRegistryOfRegistries(REGISTRY);
+            } else this.access = RegistryAccess.fromRegistryOfRegistries(REGISTRY);
+        }
+        return getRegistryName(this.access);
     }
     
     @Override protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {

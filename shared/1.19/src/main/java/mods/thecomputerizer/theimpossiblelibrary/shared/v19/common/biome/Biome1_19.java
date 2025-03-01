@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.biome;
 
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -25,10 +26,12 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
 import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
-public class Biome1_19 extends BiomeAPI<Biome> {
+@Setter public class Biome1_19 extends BiomeAPI<Biome> {
     
     private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (CoreAPI.isForge() ? "m_47505_" : "method_21740");
 
+    protected RegistryAccess access;
+    
     public Biome1_19(Object biome) {
         super((Biome)biome);
     }
@@ -46,7 +49,8 @@ public class Biome1_19 extends BiomeAPI<Biome> {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        return getRegistryName(RegistryAccess.builtinCopy());
+        if(Objects.isNull(this.access)) this.access = RegistryAccess.builtinCopy();
+        return getRegistryName(this.access);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {

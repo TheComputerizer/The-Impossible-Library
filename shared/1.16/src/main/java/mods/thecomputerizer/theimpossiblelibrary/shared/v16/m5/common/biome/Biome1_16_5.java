@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.biome;
 
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -14,8 +15,11 @@ import java.util.Objects;
 
 import static net.minecraft.util.registry.Registry.BIOME_REGISTRY;
 
+@Setter
 public class Biome1_16_5 extends BiomeAPI<Biome> {
-
+    
+    protected DynamicRegistries access;
+    
     public Biome1_16_5(Object biome) {
         super((Biome)biome);
     }
@@ -25,7 +29,8 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        return getRegistryName(DynamicRegistries.builtin());
+        if(Objects.isNull(this.access)) this.access = DynamicRegistries.builtin();
+        return getRegistryName(this.access);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
