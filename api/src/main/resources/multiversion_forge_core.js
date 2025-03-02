@@ -1,5 +1,5 @@
 var CORE = Java.type('mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI');
-var ENTRYPOINTS= {}; //Something about scope? Idk but the transformers run later
+var ENTRYPOINTS = {}; //Something about scope? Idk but the transformers run later
 var LOGGER = Java.type('mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef');
 
 function log(message) {
@@ -7,10 +7,10 @@ function log(message) {
 }
 
 function initializeCoreMod() {
-    var instance = CORE.getInstance(); //scope = entire function
+    var instance = CORE.getInstance();
     log("Initializing "+instance.getCoreInstances().size()+" coremod(s)");
-    var ret = {}; //scope = entire function
-    for(let entryPoint in instance.getCoreInstances()) {
+    var ret = {};
+    for each(let entryPoint in instance.getCoreInstances()) {
         let id = entryPoint.getCoreID();
         log("Initializing "+id);
         ENTRYPOINTS[id] = entryPoint;
@@ -21,7 +21,7 @@ function initializeCoreMod() {
             "names": function(classMap) {
                     let names = [];
                     log("Handling targets for "+id);
-                    for(let target in targets) {
+                    for each(let target in targets) {
                         log("("+id+"): Pushing class target "+target);
                         names.push(target)
                     }

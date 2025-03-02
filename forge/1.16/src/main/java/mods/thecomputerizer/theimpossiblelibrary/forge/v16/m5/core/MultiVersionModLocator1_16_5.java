@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -13,14 +12,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeModLocator;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.TILModFileForge1_16_5;
 import net.minecraftforge.fml.loading.LibraryFinder;
-import net.minecraftforge.fml.loading.moddiscovery.AbstractJarFileLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -33,6 +30,7 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
+    @SuppressWarnings({"FieldCanBeLocal","unused"})
     private final CoreAPI core;
     private final Map<MultiVersionModCandidate,TILModFileForge1_16_5> candidateMap = new HashMap<>();
     
@@ -45,7 +43,7 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
         if(Files.isDirectory(path)) return;
         String fileName = path.getFileName().toString();
         if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
-            TILRef.logDebug("File is the loader");
+            TILRef.logInfo("File is the loader");
             MultiVersionModCandidate.loaderFile = path.toFile();
         }
         if(filter.test(path)) {
@@ -63,7 +61,7 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
         TILRef.logInfo("Loading {} mod files",files.length);
         for(File mod : files) {
             TILRef.logDebug("Loading mod file at path",mod.toPath());
-            checkPath(loader, mod.toPath(), filter);
+            checkPath(loader,mod.toPath(),filter);
         }
     }
     
@@ -72,8 +70,8 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
                 .map(Manifest::getMainAttributes)
                 .filter(MultiVersionModFinder::hasMods)
                 .isPresent();
-        findURLs(loader, classLoader, filter);
-        findFiles(loader, filter, FileHelper.list(loader.findModRoot(), File::isFile));
+        findURLs(loader,classLoader,filter);
+        findFiles(loader,filter,FileHelper.list(loader.findModRoot(),File::isFile));
     }
     
     void findURLs(MultiVersionLoaderAPI loader, ClassLoader classLoader, Predicate<Path> filter) {
@@ -115,24 +113,17 @@ public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
         loadCandidateInfos(locator,(Map<?,?>)infoMap);
     }
     
-    @SuppressWarnings({"unchecked","resource"})
+    @SuppressWarnings("unchecked")
     @Override public List<IModFile> scanMods(IModLocator locator) {
-        TILRef.logDebug("Scanning for mods in multiversion jars");
+        TILRef.logInfo("Scanning for mods in multiversion jars");
         List<IModFile> mods = new ArrayList<>();
         Object instance = CoreAPI.invoke(null,"getInstance");
         if(Objects.isNull(instance)) TILRef.logError("Failed to get CoreAPI instance :(");
         Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
         for(TILModFileForge1_16_5 candidate : this.candidateMap.values()) {
-            Map<IModFile,FileSystem> jars = (Map<IModFile,FileSystem>)ReflectionHelper.getFieldInstance(
-                    locator,AbstractJarFileLocator.class,"modJars");
-            if(Objects.isNull(jars)) {
-                TILRef.logError("Failed to reflect modJars field! Things might break");
-                continue;
-            }
-            jars.compute(candidate,(file,system) -> (FileSystem)ReflectionHelper.invokeMethod(
-                    AbstractJarFileLocator.class,"createFileSystem",locator,new Class<?>[]{IModFile.class},file));
             candidate.populateMultiversionData((Map<String,MultiVersionModData>)data);
             mods.add(candidate);
+            TILRef.logInfo("Finished scanning mods from candidate {}",candidate.getFilePath());
         }
         return Collections.unmodifiableList(mods);
     }
