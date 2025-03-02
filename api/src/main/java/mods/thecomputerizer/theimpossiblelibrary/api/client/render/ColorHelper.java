@@ -127,28 +127,28 @@ public class ColorHelper {
     /**
      * Converts a color tuple into a single integer
      */
-    public static int makeRGBAInt(Vector4f colors) {
-        return makeRGBAInt(colors.x(),colors.y(),colors.z(),colors.w());
+    public static int makeARGBInt(Vector4f colors) {
+        return makeARGBInt(colors.x(), colors.y(), colors.z(), colors.w());
     }
 
     /**
      * Converts a color tuple into a single integer
      */
-    public static int makeRGBAInt(Vector4i colors) {
-        return makeRGBAInt(colors.x(),colors.y(),colors.z(),colors.w());
+    public static int makeARGBInt(Vector4i colors) {
+        return makeARGBInt(colors.x(), colors.y(), colors.z(), colors.w());
     }
 
     /**
      * Converts rgba integers into a single color integer
      */
-    public static int makeRGBAInt(float r, float g, float b, float a) {
-        return makeRGBAInt((int)(r*255f),(int)(g*255f),(int)(b*255f),(int)(a*255f));
+    public static int makeARGBInt(float r, float g, float b, float a) {
+        return makeARGBInt((int)(r*255f), (int)(g*255f), (int)(b*255f), (int)(a*255f));
     }
 
     /**
      * Converts rgba integers into a single color integer
      */
-    public static int makeRGBAInt(int r, int g, int b, int a) {
+    public static int makeARGBInt(int r, int g, int b, int a) {
         return ((a&0xFF)<<24) | ((r&0xFF)<<16) | ((g&0xFF)<<8) | (b&0xFF);
     }
     

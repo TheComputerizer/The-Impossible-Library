@@ -21,8 +21,8 @@ public class Minecraft1_19 extends MinecraftAPI<Minecraft> {
         return new Minecraft1_19(Minecraft.getInstance());
     }
     
-    protected Minecraft1_19(Minecraft mc, Render1_19 render) {
-        super(mc,new Font1_19(),render);
+    protected Minecraft1_19(Minecraft mc, Font1_19 font, Render1_19 render) {
+        super(mc,font,render);
     }
     
     public Minecraft1_19(Minecraft mc) {

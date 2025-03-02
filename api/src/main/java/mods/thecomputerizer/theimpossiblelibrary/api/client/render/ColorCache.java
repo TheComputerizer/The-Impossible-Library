@@ -104,7 +104,7 @@ public class ColorCache {
     protected ColorCache(Vector4f colorVF, Vector4i colorVI) {
         this.colorVF = colorVF;
         this.colorVI = colorVI;
-        this.colorI = ColorHelper.makeRGBAInt(this.colorVI);
+        this.colorI = ColorHelper.makeARGBInt(this.colorVI);
     }
     
     @Override public boolean equals(Object other) {
@@ -112,11 +112,11 @@ public class ColorCache {
     }
 
     public int getIntWithAlpha(float alpha) {
-        return ColorHelper.makeRGBAInt(this.colorVF.x,this.colorVF.y,this.colorVF.z,alpha);
+        return ColorHelper.makeARGBInt(this.colorVF.x, this.colorVF.y, this.colorVF.z, alpha);
     }
 
     public int getIntWithAlpha(int alpha) {
-        return ColorHelper.makeRGBAInt(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
+        return ColorHelper.makeARGBInt(this.colorVI.x, this.colorVI.y, this.colorVI.z, alpha);
     }
 
     public Vector4f getVFWithAlpha(float alpha) {

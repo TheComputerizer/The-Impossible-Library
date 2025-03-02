@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_PRE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.SUBTITLES;
 
 public class RenderOverlayPreEventForge1_19 extends RenderOverlayPreEventWrapper<Pre> {
     
@@ -33,6 +34,6 @@ public class RenderOverlayPreEventForge1_19 extends RenderOverlayPreEventWrapper
     }
 
     @Override protected EventFieldWrapper<Pre,OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> ALL,ALL);
+        return wrapGenericGetter(event -> SUBTITLES,ALL);
     }
 }
