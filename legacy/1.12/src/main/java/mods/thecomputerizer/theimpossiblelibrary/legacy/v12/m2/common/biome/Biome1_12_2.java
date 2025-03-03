@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.biome;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -41,5 +42,9 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
 
     @Override public boolean canSnow() {
         return this.wrapped.isSnowyBiome();
+    }
+    
+    @Override public String getName(WorldAPI<?> world) {
+        return CoreAPI.isClient() ? this.wrapped.getBiomeName() : null;
     }
 }

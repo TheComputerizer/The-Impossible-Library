@@ -90,6 +90,7 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
     @Override public void onLoadComplete() {
         devTrace("onLoadComplete");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onLoadComplete();
+        if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onLoadComplete();
         NetworkHandler.load();
     }
 

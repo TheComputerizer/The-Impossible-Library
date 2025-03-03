@@ -9,8 +9,8 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
-
-import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,8 +20,14 @@ import static net.minecraft.world.biome.Biome.RainType.SNOW;
 
 public class ForgeHandlesCommon1_16_5 extends ForgeHandlesCommon {
     
-    @Override public Set<String> biomeTagNames(WorldAPI<?> world, Object biome) {
-        RegistryKey<Biome> key = getBiomeKey(((IWorld)world.getWrapped()).registryAccess(),(Biome)biome);
+    @Override public Set<String> biomeTagNames(WorldAPI<?> worldAPI, Object biomeObj) {
+        Biome biome = (Biome)biomeObj;
+        IWorld world = worldAPI.unwrap();
+        DynamicRegistries registries = world.registryAccess();
+        Registry<Biome> registry = registries.registry(BIOME_REGISTRY).orElse(null);
+        if(Objects.isNull(registry)) return Collections.emptySet();
+        RegistryKey<Biome> key = registry.getResourceKey(biome).orElse(null);
+        if(Objects.isNull(key)) return Collections.emptySet();
         return BiomeDictionary.getTypes(key).stream().map(Type::getName).collect(Collectors.toSet());
     }
     
@@ -35,13 +41,5 @@ public class ForgeHandlesCommon1_16_5 extends ForgeHandlesCommon {
     
     @Override public boolean canBiomeSnow(Object biome) {
         return ((Biome)biome).getPrecipitation()==SNOW;
-    }
-    
-    public @Nullable RegistryKey<Biome> getBiomeKey(DynamicRegistries registries, Biome biome) {
-        return getRegistryKey(registries,BIOME_REGISTRY,biome);
-    }
-    
-    public <R> @Nullable RegistryKey<R> getRegistryKey(DynamicRegistries registries, RegistryKey<Registry<R>> type, R value) {
-        return registries.registryOrThrow(type).getResourceKey(value).orElse(null);
     }
 }

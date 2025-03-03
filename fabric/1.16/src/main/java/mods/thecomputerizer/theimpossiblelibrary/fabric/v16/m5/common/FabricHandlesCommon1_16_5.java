@@ -13,8 +13,9 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
 
 public class FabricHandlesCommon1_16_5 extends FabricHandlesCommon {
     
-    @Override public Set<String> biomeTagNames(WorldAPI<?> world, Object biome) {
-        return Collections.singleton(((Biome)biome).getBiomeCategory().getName());
+    @Override public Set<String> biomeTagNames(WorldAPI<?> world, Object biomeObj) {
+        Biome biome = (Biome)biomeObj;
+        return Collections.singleton(biome.getBiomeCategory().getName());
     }
     
     @Override public Object builtInRegistryAccess() {

@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.Objects;
@@ -22,7 +21,7 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     private static TILClientEntryPoint INSTANCE;
     
     private static void devTrace(String msg, Object ... args) {
-        TILDev.logDebug("[TILClientEntryPoint Trace]: "+msg,args);
+        TILRef.logInfo("[TILClientEntryPoint Trace]: "+msg,args);
     }
 
     public static TILClientEntryPoint getInstance() {
@@ -62,6 +61,7 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     }
     
     @Override public void onLoadComplete() {
+        devTrace("onLoadComplete");
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
         TILRef.getClientHandles().onFinishedLoading();
     }

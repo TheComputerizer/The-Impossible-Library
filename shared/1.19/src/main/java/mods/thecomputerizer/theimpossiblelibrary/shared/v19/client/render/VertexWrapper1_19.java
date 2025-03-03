@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v19.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
@@ -33,7 +34,7 @@ public class VertexWrapper1_19 extends VertexWrapper {
     }
     
     @Override protected void draw() {
-        this.tesselator.end();
+        BufferUploader.drawWithShader(this.buffer.end());
     }
 
     @Override protected void onVertexEnded(Number[][] numbers) {

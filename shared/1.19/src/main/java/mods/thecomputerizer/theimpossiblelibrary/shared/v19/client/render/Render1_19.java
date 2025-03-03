@@ -165,7 +165,7 @@ public class Render1_19 extends RenderAPI {
         return new VertexWrapper1_19(getBufferMode(mode),POSITION_TEX_COLOR,vertices,3,2,4);
     }
     
-    private Mode getBufferMode(int mode) {
+    protected Mode getBufferMode(int mode) {
         return switch(mode) {
             case GL_LINE -> LINES;
             case GL_LINE_LOOP, GL_LINE_STRIP -> LINE_STRIP;
