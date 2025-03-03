@@ -12,6 +12,10 @@ public class LegacyHandlesCommon implements SharedHandlesCommon {
         return Collections.emptySet();
     }
     
+    @Override public Object builtInRegistryAccess() {
+        return null;
+    }
+    
     @Override public boolean canBiomeRain(Object biome) {
         return false;
     }

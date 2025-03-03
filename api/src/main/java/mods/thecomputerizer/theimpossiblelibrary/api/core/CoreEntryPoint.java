@@ -1,15 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.tree.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +17,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 public abstract class CoreEntryPoint {
     
     private InsnList list;
+    private LabelNode label;
     
     protected CoreEntryPoint beginList(InsnList list) {
         this.list = list;
@@ -85,6 +79,16 @@ public abstract class CoreEntryPoint {
         return this;
     }
     
+    public CoreEntryPoint insIf(int opcode, Label label) {
+        if(Objects.isNull(this.list)) TILRef.logError("Tried to insert if instruction before calling beginList");
+        else if(Objects.isNull(label)) TILRef.logError("Tried to insert with null label");
+        else {
+            this.label = new LabelNode(label);
+            this.list.add(new JumpInsnNode(opcode,this.label));
+        }
+        return this;
+    }
+    
     public CoreEntryPoint insInvokeInterface(String owner, String name) {
         return insInvokeInterface(owner,name,EMPTY_METHOD_DESC);
     }
@@ -117,6 +121,20 @@ public abstract class CoreEntryPoint {
     
     public CoreEntryPoint insInvokeVirtual(String owner, String name, String desc) {
         return insMethod(INVOKEVIRTUAL,owner,name,desc,false);
+    }
+    
+    public CoreEntryPoint insLabel() {
+        if(Objects.isNull(this.list)) TILRef.logError("Tried to insert label instruction before calling beginList");
+        else if(Objects.isNull(this.label)) TILRef.logError("Tried to insert uninitialized label instruction");
+        else this.list.add(this.label);
+        this.label = null;
+        return this;
+    }
+    
+    public CoreEntryPoint insLDC(Object object) {
+        if(Objects.isNull(this.list)) TILRef.logError("Tried to insert constant before calling beginList");
+        else this.list.add(new LdcInsnNode(object));
+        return this;
     }
     
     private CoreEntryPoint insMethod(int opcode, String owner, String name, String desc, boolean isInterface) {

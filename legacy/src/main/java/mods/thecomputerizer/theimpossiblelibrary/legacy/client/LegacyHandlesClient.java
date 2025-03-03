@@ -15,7 +15,11 @@ public class LegacyHandlesClient implements SharedHandlesClient {
         return false;
     }
     
+    @Override public void onFinishedLoading() {}
+    
     @Override public void registerKeyBinding(KeyAPI<?> key) {}
+    
+    @Override public void renderDebugText(Object matrix, List<String> text, boolean left) {}
     
     @Override public void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height,
             int maxWidth) {}

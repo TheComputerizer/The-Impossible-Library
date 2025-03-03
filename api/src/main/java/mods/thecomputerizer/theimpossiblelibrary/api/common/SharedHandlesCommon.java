@@ -10,6 +10,7 @@ import java.util.Set;
 public interface SharedHandlesCommon {
     
     Set<String> biomeTagNames(WorldAPI<?> world, Object biome);
+    Object builtInRegistryAccess();
     boolean canBiomeRain(Object biome);
     boolean canBiomeSnow(Object biome);
 }

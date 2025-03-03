@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class FabricHandlesClient implements SharedHandlesClient {
+public abstract class FabricHandlesClient implements SharedHandlesClient {
     
     @Override public void endRenderTypeBatch(Object source, @Nullable Object type) {
         if(Objects.nonNull(type)) ((BufferSource)source).endBatch((RenderType)type);
@@ -25,6 +25,8 @@ public class FabricHandlesClient implements SharedHandlesClient {
         Minecraft mc = (Minecraft)minecraft;
         return Objects.isNull(mc) || (Objects.isNull(mc.level) && Objects.isNull(mc.screen));
     }
+    
+    @Override public void onFinishedLoading() {}
     
     @Override public void registerKeyBinding(KeyAPI<?> key) {
         KeyBindingHelper.registerKeyBinding(key.unwrap());

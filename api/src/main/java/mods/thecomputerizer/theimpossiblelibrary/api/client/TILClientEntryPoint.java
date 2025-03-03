@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
 import java.util.Objects;
 
@@ -53,16 +54,21 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     @Override protected String getModName() {
         return NAME;
     }
+    
+    @Override public void onClientSetup() {
+        devTrace("onClientSetup");
+        if(DEV) KeyHelper.register(TEST_KEY);
+        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
+    }
+    
+    @Override public void onLoadComplete() {
+        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
+        TILRef.getClientHandles().onFinishedLoading();
+    }
 
     @Override public void onPreRegistration() {
         devTrace("onPreRegistration");
         EventHelper.initTILListeners(true,DEV);
         if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
-    }
-
-    @Override public void onClientSetup() {
-        devTrace("onClientSetup");
-        if(DEV) KeyHelper.register(TEST_KEY);
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }
 }

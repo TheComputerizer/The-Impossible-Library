@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.ForgeHandlesClient
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraftforge.client.loading.ClientModLoader;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -19,7 +18,8 @@ public class ForgeHandlesClient1_19 extends ForgeHandlesClient {
     }
     
     @Override public boolean isLoading(@Nullable Object minecraft) {
-        return Objects.isNull(minecraft) || ClientModLoader.isLoading();
+        Minecraft mc = (Minecraft)minecraft;
+        return super.isLoading(minecraft) && (Objects.isNull(mc) || (Objects.isNull(mc.level) && Objects.isNull(mc.screen)));
     }
     
     @Override public void registerKeyBinding(KeyAPI<?> key) {

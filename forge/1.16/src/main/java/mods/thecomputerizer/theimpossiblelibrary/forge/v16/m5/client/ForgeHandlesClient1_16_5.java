@@ -3,10 +3,10 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.ForgeHandlesClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer.Impl;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
@@ -22,7 +22,8 @@ public class ForgeHandlesClient1_16_5 extends ForgeHandlesClient {
     }
     
     @Override public boolean isLoading(@Nullable Object minecraft) {
-        return Objects.isNull(minecraft) || ClientModLoader.isLoading();
+        Minecraft mc = (Minecraft)minecraft;
+        return super.isLoading(minecraft) && (Objects.isNull(mc) || (Objects.isNull(mc.level) && Objects.isNull(mc.screen)));
     }
     
     @Override public void registerKeyBinding(KeyAPI<?> key) {

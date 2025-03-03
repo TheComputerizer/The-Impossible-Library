@@ -9,14 +9,18 @@ import java.util.Set;
 public class ForgeHandlesCommon implements SharedHandlesCommon {
     
     @Override public Set<String> biomeTagNames(WorldAPI<?> world, Object biome) {
-        return Collections.emptySet(); //Not needed in 1.18.2
+        return Collections.emptySet(); //Not needed in 1.18.2+
+    }
+    
+    @Override public Object builtInRegistryAccess() {
+        return null; //Not needed in 1.18.2+
     }
     
     @Override public boolean canBiomeRain(Object biome) {
-        return false; //Not needed in 1.18.2
+        return false; //Not needed in 1.18.2+
     }
     
     @Override public boolean canBiomeSnow(Object biome) {
-        return false; //Not needed in 1.18.2
+        return false; //Not needed in 1.18.2+
     }
 }

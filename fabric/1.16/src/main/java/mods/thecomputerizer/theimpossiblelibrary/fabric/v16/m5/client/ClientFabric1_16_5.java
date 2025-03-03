@@ -10,7 +10,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.client.FabricHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.FabricHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.client.event.ClientEventsFabric1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.common.event.CommonEventsFabric1_16_5;
@@ -54,7 +53,7 @@ public class ClientFabric1_16_5 extends Client1_16_5 {
     }
     
     @Override protected Supplier<SharedHandlesClient> initSharedHandlesClient() {
-        return FabricHandlesClient::new;
+        return FabricHandlesClient1_16_5::new;
     }
     
     @Override public Supplier<SharedHandlesCommon> initSharedHandlesCommon() {

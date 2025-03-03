@@ -25,6 +25,10 @@ public class ForgeHandlesCommon1_16_5 extends ForgeHandlesCommon {
         return BiomeDictionary.getTypes(key).stream().map(Type::getName).collect(Collectors.toSet());
     }
     
+    @Override public Object builtInRegistryAccess() {
+        return DynamicRegistries.builtin();
+    }
+    
     @Override public boolean canBiomeRain(Object biome) {
         return ((Biome)biome).getPrecipitation()==RAIN;
     }
