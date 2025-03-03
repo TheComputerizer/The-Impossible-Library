@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import java.util.Collections;
@@ -16,11 +17,11 @@ public class LegacyHandlesCommon implements SharedHandlesCommon {
         return null;
     }
     
-    @Override public boolean canBiomeRain(Object biome) {
+    @Override public boolean canBiomeRain(Object biome, WorldAPI<?> world, BlockPosAPI<?> pos) {
         return false;
     }
     
-    @Override public boolean canBiomeSnow(Object biome) {
+    @Override public boolean canBiomeSnow(Object biome, WorldAPI<?> world, BlockPosAPI<?> pos) {
         return false;
     }
 }

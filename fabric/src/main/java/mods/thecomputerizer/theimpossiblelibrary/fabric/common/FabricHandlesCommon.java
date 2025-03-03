@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import java.util.Collections;
@@ -16,11 +17,11 @@ public class FabricHandlesCommon implements SharedHandlesCommon {
         return null; //Not needed in 1.18.2+
     }
     
-    @Override public boolean canBiomeRain(Object biome) {
+    @Override public boolean canBiomeRain(Object biome, WorldAPI<?> world, BlockPosAPI<?> pos) {
         return false; //Not needed in 1.18.2+
     }
     
-    @Override public boolean canBiomeSnow(Object biome) {
+    @Override public boolean canBiomeSnow(Object biome, WorldAPI<?> world, BlockPosAPI<?> pos) {
         return false; //Not needed in 1.18.2+
     }
 }

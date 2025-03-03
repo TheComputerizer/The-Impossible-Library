@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -36,12 +37,12 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
         return this.wrapped.getTemperature(pos.unwrap());
     }
 
-    @Override public boolean canRain() {
-        return this.wrapped.canRain();
+    @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return this.wrapped.canRain() && !canSnow(world,pos);
     }
 
-    @Override public boolean canSnow() {
-        return this.wrapped.isSnowyBiome();
+    @Override public boolean canSnow(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return ((World)world.unwrap()).canSnowAt(pos.unwrap(),true);
     }
     
     @Override public String getName(WorldAPI<?> world) {

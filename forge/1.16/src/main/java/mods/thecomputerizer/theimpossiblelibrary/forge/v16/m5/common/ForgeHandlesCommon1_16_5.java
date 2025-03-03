@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.ForgeHandlesCommon;
 import net.minecraft.util.RegistryKey;
@@ -35,11 +36,13 @@ public class ForgeHandlesCommon1_16_5 extends ForgeHandlesCommon {
         return DynamicRegistries.builtin();
     }
     
-    @Override public boolean canBiomeRain(Object biome) {
-        return ((Biome)biome).getPrecipitation()==RAIN;
+    @Override public boolean canBiomeRain(Object biomeObj, WorldAPI<?> world, BlockPosAPI<?> pos) {
+        Biome biome = (Biome)biomeObj;
+        return biome.getPrecipitation()==RAIN && !biome.shouldSnow(world.unwrap(),pos.unwrap());
     }
     
-    @Override public boolean canBiomeSnow(Object biome) {
-        return ((Biome)biome).getPrecipitation()==SNOW;
+    @Override public boolean canBiomeSnow(Object biomeObj, WorldAPI<?> world, BlockPosAPI<?> pos) {
+        Biome biome = (Biome)biomeObj;
+        return biome.getPrecipitation()==SNOW && biome.shouldSnow(world.unwrap(),pos.unwrap());
     }
 }

@@ -36,12 +36,12 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
         super((Biome)biome);
     }
     
-    @Override public boolean canRain() {
-        return this.wrapped.getPrecipitation()==RAIN;
+    @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return this.wrapped.getPrecipitation()==RAIN && !this.wrapped.shouldSnow(world.unwrap(),pos.unwrap());
     }
     
-    @Override public boolean canSnow() {
-        return this.wrapped.getPrecipitation()==SNOW;
+    @Override public boolean canSnow(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return this.wrapped.getPrecipitation()==SNOW && this.wrapped.shouldSnow(world.unwrap(),pos.unwrap());
     }
     
     @Override public float getRainfall() {

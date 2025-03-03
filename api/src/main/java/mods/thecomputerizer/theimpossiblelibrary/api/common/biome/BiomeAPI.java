@@ -16,12 +16,12 @@ public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements Registry
         super(biome);
     }
 
-    @IndirectCallers public boolean canRain() {
-        return TILRef.getCommonHandles().canBiomeRain(this.wrapped);
+    @IndirectCallers public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return TILRef.getCommonHandles().canBiomeRain(this.wrapped,world,pos);
     }
     
-    @IndirectCallers public boolean canSnow() {
-        return TILRef.getCommonHandles().canBiomeSnow(this.wrapped);
+    @IndirectCallers public boolean canSnow(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return TILRef.getCommonHandles().canBiomeSnow(this.wrapped,world,pos);
     }
     
     @IndirectCallers public abstract float getRainfall();
