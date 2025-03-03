@@ -3,6 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client;
 import com.mojang.blaze3d.platform.Window;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -10,10 +12,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.font.Font1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.render.Render1_18_2;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
+
+import static net.minecraft.world.phys.HitResult.Type.BLOCK;
 
 public class Minecraft1_18_2 extends MinecraftAPI<Minecraft> {
     
@@ -42,6 +51,26 @@ public class Minecraft1_18_2 extends MinecraftAPI<Minecraft> {
     
     @Override public @Nullable PlayerAPI<?,?> getPlayer() {
         return WrapperHelper.wrapPlayer(this.wrapped.player);
+    }
+    
+    private @Nullable HitResult getTarget() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.hitResult : null;
+    }
+    
+    @Override public @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
+        HitResult target = getTarget();
+        if(target instanceof BlockHitResult && target.getType()==BLOCK) {
+            BlockPos pos = ((BlockHitResult)target).getBlockPos();
+            Level world = this.wrapped.level;
+            return Objects.nonNull(world) ? WrapperHelper.wrapBlockEntity(world.getBlockEntity(pos)) : null;
+        }
+        return null;
+    }
+    
+    @Override public @Nullable EntityAPI<?,?> getTargetEntity() {
+        HitResult target = getTarget();
+        return target instanceof EntityHitResult ?
+                WrapperHelper.wrapEntity(((EntityHitResult)target).getEntity()) : null;
     }
     
     /**

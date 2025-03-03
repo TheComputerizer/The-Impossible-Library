@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -10,10 +12,17 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.font.Font1
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.render.Render1_16_5;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
+
+import static net.minecraft.util.math.RayTraceResult.Type.BLOCK;
 
 public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     
@@ -41,6 +50,26 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     
     @Override public @Nullable PlayerAPI<?,?> getPlayer() {
         return WrapperHelper.wrapPlayer(this.wrapped.player);
+    }
+    
+    private @Nullable RayTraceResult getTarget() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.hitResult : null;
+    }
+    
+    @Override public @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
+        RayTraceResult target = getTarget();
+        if(target instanceof BlockRayTraceResult && target.getType()==BLOCK) {
+            BlockPos pos = ((BlockRayTraceResult)target).getBlockPos();
+            World world = this.wrapped.level;
+            return Objects.nonNull(world) ? WrapperHelper.wrapBlockEntity(world.getBlockEntity(pos)) : null;
+        }
+        return null;
+    }
+    
+    @Override public @Nullable EntityAPI<?,?> getTargetEntity() {
+        RayTraceResult target = getTarget();
+        return target instanceof EntityRayTraceResult ?
+                WrapperHelper.wrapEntity(((EntityRayTraceResult)target).getEntity()) : null;
     }
     
     /**

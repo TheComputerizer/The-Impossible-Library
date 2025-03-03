@@ -4,6 +4,8 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -33,6 +35,8 @@ public abstract class MinecraftAPI<M> extends AbstractWrapped<M> {
     public abstract int getDisplayWidth();
     public abstract int getGUIScale();
     public abstract @Nullable PlayerAPI<?,?> getPlayer();
+    @IndirectCallers public abstract @Nullable BlockEntityAPI<?,?> getTargetBlockEntity();
+    @IndirectCallers public abstract @Nullable EntityAPI<?,?> getTargetEntity();
     public abstract MinecraftWindow getWindow();
     public abstract @Nullable WorldAPI<?> getWorld();
 

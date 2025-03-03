@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
@@ -16,7 +15,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.biome.Biome1_19;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,10 +41,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static net.minecraft.core.Registry.STRUCTURE_REGISTRY;
 import static net.minecraft.world.level.LightLayer.BLOCK;
 import static net.minecraft.world.level.LightLayer.SKY;
 
@@ -162,9 +166,14 @@ public class World1_19 extends WorldAPI<LevelAccessor> {
         if(this.wrapped instanceof ServerLevel) {
             StructureManager manager = ((ServerLevel)this.wrapped).structureManager();
             BlockPos pos = api.unwrap();
-            for(Object structure : RegistryHelper.getStructureRegistry().getValues())
-                if(manager.getStructureAt(pos,(Structure)structure).isValid())
+            RegistryAccess access = this.wrapped.registryAccess();
+            Registry<Structure> registry = access.registry(STRUCTURE_REGISTRY).orElse(null);
+            if(Objects.isNull(registry)) return null;
+            for(Entry<ResourceKey<Structure>,Structure> entry : registry.entrySet()) {
+                Structure structure = entry.getValue();
+                if(manager.getStructureAt(pos,structure).isValid())
                     return WrapperHelper.wrapStructure(structure);
+            }
         }
         return null;
     }

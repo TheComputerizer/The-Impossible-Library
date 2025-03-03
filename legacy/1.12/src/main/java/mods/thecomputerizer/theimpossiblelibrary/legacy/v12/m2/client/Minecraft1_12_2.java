@@ -2,11 +2,14 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.entity.ClientPlayer1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.font.Font1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render.Render1_12_2;
@@ -16,6 +19,8 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -30,6 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static net.minecraft.util.math.BlockPos.ORIGIN;
 
 public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     
@@ -71,6 +77,22 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     
     @Override public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
         return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.player) ? new ClientPlayer1_12_2(this.wrapped.player) : null;
+    }
+    
+    private @Nullable RayTraceResult getTarget() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.objectMouseOver : null;
+    }
+    
+    @Override public @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
+        RayTraceResult target = getTarget();
+        if(Objects.isNull(target) || Objects.nonNull(target.entityHit)) return null;
+        BlockPos pos = target.getBlockPos();
+        return pos==ORIGIN ? null : WrapperHelper.wrapBlockEntity(this.wrapped.world.getTileEntity(pos));
+    }
+    
+    @Override public @Nullable EntityAPI<?,?> getTargetEntity() {
+        RayTraceResult target = getTarget();
+        return Objects.isNull(target) ? null : WrapperHelper.wrapEntity(target.entityHit);
     }
     
     private @Nullable List<IResourcePack> getResourcePacks(Minecraft mc) {

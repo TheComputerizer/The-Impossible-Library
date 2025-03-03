@@ -220,6 +220,8 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'util.math.AxisAlignedBB': 'world.phys.AABB',
                    'util.math.BlockPos': 'core.BlockPos',
                    'util.math.BlockRayTraceResult': 'world.phys.BlockHitResult',
+                   'util.math.EntityRayTraceResult': 'world.phys.EntityHitResult',
+                   'util.math.RayTraceResult': 'world.phys.HitResult',
                    'util.math.vector.Vector3d': 'world.phys.Vec3',
                    'util.registry.DynamicRegistries': 'core.RegistryAccess',
                    'util.registry.MutableRegistry': 'core.WritableRegistry',
