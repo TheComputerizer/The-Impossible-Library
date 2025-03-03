@@ -188,7 +188,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             case V16_5: return 60;
             case V18_2:
             case V19_2: return 68;
-            default: return 63;
+            default: return 62;
         }
     }
     

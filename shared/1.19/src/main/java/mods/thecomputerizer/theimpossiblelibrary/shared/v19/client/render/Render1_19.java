@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Matrix4f;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
@@ -98,10 +99,12 @@ public class Render1_19 extends RenderAPI {
     }
 
     @Override public void drawCenteredString(FontAPI<?> font, String str, Number x, Number y, int color) {
+        setColor(ColorHelper.decode(color));
         font.drawWithShadow(this,str,x.floatValue()-font.getStringWidth(str)/2f,y.floatValue(),color);
     }
 
     @Override public void drawString(FontAPI<?> font, String str, Number left, Number top, int color) {
+        setColor(ColorHelper.decode(color));
         font.draw(this,str,left.intValue(),top.intValue(),color);
     }
     
