@@ -1,5 +1,4 @@
 var CORE = Java.type('mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI');
-var ENTRYPOINTS = {}; //Something about scope? Idk but the transformers run later
 var LOGGER = Java.type('mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef');
 
 function log(message) {
@@ -11,25 +10,23 @@ function initializeCoreMod() {
     log("Initializing "+instance.getCoreInstances().size()+" coremod(s)");
     var ret = {};
     instance.getCoreInstances().forEach(function(entryPoint) {
-        log("Initializing "+entryPoint.getCoreID());
-        ENTRYPOINTS[entryPoint.getCoreID()] = entryPoint;
+        log("<"+entryPoint.getCoreName()+">: Initializing with ID `"+entryPoint.getCoreID()+"`");
         ret[entryPoint.getCoreID()] = {
             "target": {
             "type": "CLASS",
             "names": function(classMap) {
                     var names = [];
-                    log("Handling targets for "+entryPoint.getCoreID());
+                    var size = entryPoint.classTargets().size();
+                    log("<"+entryPoint.getCoreName()+">: Requesting transformation of "+size+" classes");
                     entryPoint.classTargets().forEach(function(target) {
-                        log("("+entryPoint.getCoreID()+"): Pushing class target "+target);
                         names.push(target);
                     });
                     return names;
                 }
             },
-            "transformer": function(node) { //scope isn't constrained to the loop??
-                log("Transforming node "+node.name);
-                log("id = "+entryPoint.getCoreID());
-                ENTRYPOINTS[entryPoint.getCoreID()].editClass(node);
+            "transformer": function(node) {
+                log("<"+entryPoint.getCoreName()+">: Requested transformation of "+node.name);
+                entryPoint.editClass(node);
                 return node;
             }
         }
