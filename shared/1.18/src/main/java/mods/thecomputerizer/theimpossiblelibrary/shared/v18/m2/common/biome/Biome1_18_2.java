@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.biome;
 
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -76,6 +77,7 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         try {
+            ClassHelper.checkBurningWaveInit();
             return Methods.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());
         } catch(Throwable t) {
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);

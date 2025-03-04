@@ -18,6 +18,14 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
     public Biome1_12_2(Object biome) {
         super((Biome)biome);
     }
+    
+    @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return this.wrapped.canRain() && !canSnow(world,pos);
+    }
+    
+    @Override public boolean canSnow(WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return ((World)world.unwrap()).canSnowAt(pos.unwrap(),false);
+    }
 
     @Override public float getRainfall() {
         return this.wrapped.getRainfall();
@@ -35,14 +43,6 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
 
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         return this.wrapped.getTemperature(pos.unwrap());
-    }
-
-    @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
-        return this.wrapped.canRain() && !canSnow(world,pos);
-    }
-
-    @Override public boolean canSnow(WorldAPI<?> world, BlockPosAPI<?> pos) {
-        return ((World)world.unwrap()).canSnowAt(pos.unwrap(),true);
     }
     
     @Override public String getName(WorldAPI<?> world) {

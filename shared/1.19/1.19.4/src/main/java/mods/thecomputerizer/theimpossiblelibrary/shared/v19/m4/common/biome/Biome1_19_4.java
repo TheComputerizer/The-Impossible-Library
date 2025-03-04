@@ -37,6 +37,10 @@ public class Biome1_19_4 extends Biome1_19 {
         return this.wrapped.getPrecipitationAt(pos.unwrap())==SNOW;
     }
     
+    @Override public float getRainfall() {
+        return this.wrapped.getModifiedClimateSettings().downfall();
+    }
+    
     @Override public ResourceLocationAPI<?> getRegistryName() {
         if(Objects.isNull(this.access)) {
             if(CoreAPI.isClient()) {
