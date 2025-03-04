@@ -27,7 +27,16 @@ public class MathHelper {
     }
     
     /**
-     Ensures the angle is within the range (-RADIANS_180, RADIANS_180]
+     * Distance of N-Dimensional side lengths
+     */
+    public static double distance(double ... values) {
+        double total = 0d;
+        for(double value : values) total+=(value*value);
+        return Math.sqrt(total);
+    }
+    
+    /**
+     * Ensures the angle is within the range (-RADIANS_180, RADIANS_180]
      */
     public static double getBoundedAngle(double angle) {
         while(angle>RADIANS_180) angle-=RADIANS_360;
@@ -36,28 +45,28 @@ public class MathHelper {
     }
     
     /**
-     Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
+     * Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
      */
     public static double getHalfway(Vector2d vec) {
         return getHalfway(vec.x(),vec.y());
     }
 
     /**
-        Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
+     * Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
      */
     public static float getHalfway(Vector2f vec) {
         return getHalfway(vec.x(),vec.y());
     }
 
     /**
-        Calculates a 1D position halfway in between a given start and end
+     * Calculates a 1D position halfway in between a given start and end
      */
     public static double getHalfway(double start, double end) {
         return Math.min(start,end)+(Math.abs(end-start)/2d);
     }
     
     /**
-     Calculates a 1D position halfway in between a given start and end
+     * Calculates a 1D position halfway in between a given start and end
      */
     public static float getHalfway(float start, float end) {
         return Math.min(start,end)+(Math.abs(end-start)/2f);

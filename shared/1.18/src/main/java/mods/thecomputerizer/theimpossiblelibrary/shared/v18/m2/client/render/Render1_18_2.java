@@ -25,6 +25,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static com.mojang.blaze3d.platform.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA;
+import static com.mojang.blaze3d.platform.GlStateManager.SourceFactor.ONE;
+import static com.mojang.blaze3d.platform.GlStateManager.SourceFactor.SRC_ALPHA;
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_COLOR;
 import static com.mojang.blaze3d.vertex.DefaultVertexFormat.POSITION_TEX_COLOR;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.*;
@@ -65,6 +68,10 @@ public class Render1_18_2 extends RenderAPI {
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {
         RenderSystem.setShaderTexture(0,location.unwrap());
+    }
+    
+    @Override public void blendTranslucent() {
+        RenderSystem.blendFuncSeparate(SRC_ALPHA,ONE_MINUS_SRC_ALPHA,ONE,ONE_MINUS_SRC_ALPHA);
     }
 
     @Override public void defaultBlendFunc() {
@@ -154,11 +161,13 @@ public class Render1_18_2 extends RenderAPI {
     
     @Override public VertexWrapper getBufferBuilderPC(int mode, int vertices) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShaderColor(1f,1f,1f,1f);
         return new VertexWrapper1_18_2(getBufferMode(mode),POSITION_COLOR,vertices,3,4);
     }
     
     @Override public VertexWrapper getBufferBuilderPTC(int mode, int vertices) {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShaderColor(1f,1f,1f,1f);
         return new VertexWrapper1_18_2(getBufferMode(mode),POSITION_TEX_COLOR,vertices,3,2,4);
     }
     
@@ -206,7 +215,6 @@ public class Render1_18_2 extends RenderAPI {
         } else {
             this.modelView = RenderSystem.getModelViewStack();
             this.modelView.pushPose();
-            this.modelView.mulPoseMatrix(getMatrix().last().pose());
             RenderSystem.applyModelViewMatrix();
         }
     }
@@ -223,7 +231,9 @@ public class Render1_18_2 extends RenderAPI {
         return MultiBufferSource.immediate(getBufferBuilder());
     }
     
-    @Override public void resetTextureMatrix() {}
+    @Override public void resetTextureMatrix() {
+        RenderSystem.resetTextureMatrix();
+    }
     
     @Override public void rotate(float angle, float x, float y, float z) {
         assertRenderThread();

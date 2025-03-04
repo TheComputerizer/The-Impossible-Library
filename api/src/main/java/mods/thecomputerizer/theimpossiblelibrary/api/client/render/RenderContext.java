@@ -125,8 +125,14 @@ public final class RenderContext {
     public void drawLine(double startX, double startY, double startZ, double endX, double endY, double endZ,
             float width) {
         GLAPI gl = prepareLine(GLAPI::lines,width);
-        gl.directVertexD(withDisplayScaledX(startX),withDisplayScaledY(startY),withScaledZ(startZ));
-        gl.directVertexD(withDisplayScaledX(endX),withDisplayScaledY(endY),withScaledZ(endZ));
+        double dStartX = withDisplayScaledX(startX);
+        double dStartY = withDisplayScaledY(startY);
+        double dStartZ = withScaledZ(startZ);
+        double dEndX = withDisplayScaledX(endX);
+        double dEndY = withDisplayScaledY(endY);
+        double dEndZ = withScaledZ(endZ);
+        gl.normalizedVertex(dStartX,dStartY,dStartZ,dEndX,dEndY,dEndZ);
+        gl.normalizedVertex(dEndX,dEndY,dEndZ,dStartX,dStartY,dStartZ);
         finishLine(gl);
     }
     
@@ -137,14 +143,24 @@ public final class RenderContext {
     public void drawOutline(Vector3d center, VectorSupplier2D vectors, float width, ColorCache color) {
         GLAPI gl = prepareLine(GLAPI::lineStrip,width,color);
         Vector2d first = null;
+        Vector2d last = null;
+        Vector2d vec = null;
         while(vectors.hasNext()) {
             Vector2d next = vectors.getNext();
-            double x = this.scale.applyXForScreen(center.x,next.x);
-            double y = this.scale.applyYForScreen(center.y,next.y);
-            if(Objects.isNull(first)) first = new Vector2d(x,y);
-            gl.directVertexD(x,y);
+            double nextX = this.scale.applyXForScreen(center.x,next.x);
+            double nextY = this.scale.applyYForScreen(center.y,next.y);
+            if(Objects.isNull(vec)) {
+                first = new Vector2d(nextX,nextY);
+                vec = next;
+                continue;
+            }
+            last = new Vector2d(nextX,nextY);
+            double x = this.scale.applyXForScreen(center.x,vec.x);
+            double y = this.scale.applyYForScreen(center.y,vec.y);
+            gl.normalizedVertex2D(x,y,color,nextX,nextY);
+            vec = next;
         }
-        if(Objects.nonNull(first)) gl.directVertexD(first.x,first.y);
+        if(Objects.nonNull(first) && Objects.nonNull(last)) gl.normalizedVertex2D(last,color,first);
         finishLine(gl);
     }
     
@@ -155,15 +171,26 @@ public final class RenderContext {
     public void drawOutline(Vector3d center, VectorSupplier3D vectors, float width, ColorCache color) {
         GLAPI gl = prepareLine(GLAPI::lineStrip,width,color);
         Vector3d first = null;
+        Vector3d last = null;
+        Vector3d vec = null;
         while(vectors.hasNext()) {
             Vector3d next = vectors.getNext();
-            double x = this.scale.applyXForScreen(center.x,next.x);
-            double y = this.scale.applyYForScreen(center.y,next.y);
-            double z = this.scale.applyZForScreen(center.z,next.z);
-            if(Objects.isNull(first)) first = new Vector3d(x,y,z);
-            gl.directVertexD(x,y,z);
+            double nextX = this.scale.applyXForScreen(center.x,next.x);
+            double nextY = this.scale.applyYForScreen(center.y,next.y);
+            double nextZ = this.scale.applyZForScreen(center.z,next.z);
+            if(Objects.isNull(vec)) {
+                vec = next;
+                first = new Vector3d(nextX,nextY,nextZ);
+                continue;
+            }
+            last = new Vector3d(nextX,nextY,nextZ);
+            double x = this.scale.applyXForScreen(center.x,vec.x);
+            double y = this.scale.applyYForScreen(center.y,vec.y);
+            double z = this.scale.applyZForScreen(center.z,vec.z);
+            gl.normalizedVertex(x,y,z,color,nextX,nextY,nextZ);
+            vec = next;
         }
-        if(Objects.nonNull(first)) gl.directVertexD(first.x,first.y,first.z);
+        if(Objects.nonNull(first) && Objects.nonNull(last)) gl.normalizedVertex(last,color,first);
         finishLine(gl);
     }
     
@@ -204,8 +231,12 @@ public final class RenderContext {
     
     public void finishLine(GLAPI gl) {
         gl.directEnd();
+        gl.setLineWidth(1f);
+        this.renderer.setColor(1f,1f,1f,1f);
         this.renderer.enableTexture();
         this.renderer.disableBlend();
+        this.renderer.defaultBlendFunc();
+        //this.renderer.modelView();
     }
     
     public void finishTexture(VertexWrapper buffer) {
@@ -262,7 +293,12 @@ public final class RenderContext {
     
     public GLAPI prepareLine(Function<GLAPI,Integer> mode, float width, ColorCache color) {
         GLAPI gl = this.renderer.getGLAPI();
-        prepareGradient(color);
+        //this.renderer.modelView();
+        this.renderer.enableBlend();
+        this.renderer.blendTranslucent();
+        this.renderer.setColor(color);
+        this.renderer.disableTexture();
+        gl.setWorkingMatrix(this.renderer.matrix);
         gl.setLineWidth(width);
         gl.directBegin(mode.apply(gl));
         return gl;

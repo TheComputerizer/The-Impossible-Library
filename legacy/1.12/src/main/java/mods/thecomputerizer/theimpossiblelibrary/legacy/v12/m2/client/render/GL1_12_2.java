@@ -46,7 +46,12 @@ public class GL1_12_2 implements GLAPI {
     @Override public int lines() {
         return GL_LINES;
     }
-
+    
+    @Override public void normalizedVertex(double x, double y, double z, float r, float g, float b, float a,
+            double nextX, double nextY, double nextZ) { //Only needed since direct GL calls don't work in 1.18.2+
+        directVertexD(x,y,z);
+    }
+    
     @Override public int quads() {
         return GL_QUADS;
     }
@@ -62,6 +67,8 @@ public class GL1_12_2 implements GLAPI {
     @Override public void setLineWidth(float width) {
         GL11.glLineWidth(width);
     }
+    
+    @Override public void setWorkingMatrix(Object matrix) {} //Not needed in 1.12.2
     
     @Override public int triangles() {
         return GL_TRIANGLES;

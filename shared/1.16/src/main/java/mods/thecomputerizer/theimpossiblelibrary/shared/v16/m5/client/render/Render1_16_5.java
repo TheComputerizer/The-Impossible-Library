@@ -26,6 +26,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static com.mojang.blaze3d.platform.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA;
+import static com.mojang.blaze3d.platform.GlStateManager.SourceFactor.ONE;
+import static com.mojang.blaze3d.platform.GlStateManager.SourceFactor.SRC_ALPHA;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
@@ -75,6 +78,10 @@ public class Render1_16_5 extends RenderAPI {
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {
         Minecraft.getInstance().getTextureManager().bind(location.unwrap());
+    }
+    
+    @Override public void blendTranslucent() {
+        RenderSystem.blendFuncSeparate(SRC_ALPHA,ONE_MINUS_SRC_ALPHA,ONE,ONE_MINUS_SRC_ALPHA);
     }
 
     @Override public void defaultBlendFunc() {

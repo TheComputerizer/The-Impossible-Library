@@ -16,6 +16,7 @@ import org.lwjgl.input.Mouse;
 import java.util.Collection;
 
 import static net.minecraft.client.renderer.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA;
+import static net.minecraft.client.renderer.GlStateManager.SourceFactor.ONE;
 import static net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA;
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX_COLOR;
@@ -47,6 +48,11 @@ public class Render1_12_2 extends RenderAPI {
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(location.unwrap());
+    }
+    
+    @Override public void blendTranslucent() {
+        GlStateManager.blendFunc(SRC_ALPHA,ONE_MINUS_SRC_ALPHA);
+        GlStateManager.alphaFunc(ONE.factor,ONE_MINUS_SRC_ALPHA.factor);
     }
 
     @Override public void defaultBlendFunc() {

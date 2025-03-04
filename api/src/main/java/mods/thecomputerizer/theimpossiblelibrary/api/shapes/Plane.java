@@ -135,7 +135,7 @@ public class Plane extends Shape2D {
     }
     
     @Override public Vector2d random2D() {
-        return VectorHelper.randomD(this.relativeMin, this.relativeMax);
+        return VectorHelper.randomD(this.relativeMin,this.relativeMax);
     }
     
     @Override public Vector3d random3D() {
