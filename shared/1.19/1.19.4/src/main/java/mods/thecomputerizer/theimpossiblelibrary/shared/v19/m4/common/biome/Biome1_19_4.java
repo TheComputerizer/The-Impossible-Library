@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.common.biome;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -13,17 +14,26 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biome.ClimateSettings;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static net.minecraft.core.registries.BuiltInRegistries.REGISTRY;
 import static net.minecraft.core.registries.Registries.BIOME;
 import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
 import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public class Biome1_19_4 extends Biome1_19 {
+    
+    static {
+        ClassHelper.checkBurningWaveInit();
+    }
+    
+    static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : "field_26393";
 
     public Biome1_19_4(Object biome) {
         super(biome);
@@ -38,7 +48,9 @@ public class Biome1_19_4 extends Biome1_19 {
     }
     
     @Override public float getRainfall() {
-        return this.wrapped.getModifiedClimateSettings().downfall();
+        if(CoreAPI.isForge()) return this.wrapped.getModifiedClimateSettings().downfall();
+        ClimateSettings climate = Fields.getDirect(this.wrapped,CLIMATE_SETTINGS);
+        return climate.downfall();
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

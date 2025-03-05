@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.client.render;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -26,36 +27,41 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class GL1_19 implements GLAPI {
     
-    private float r = 1f;
-    private float g = 1f;
-    private float b = 1f;
-    private float a = 1f;
-    private VertexFormat workingFormat;
-    private BufferBuilder workingBuffer;
-    private Pose workingPose;
+    protected float r = 1f;
+    protected float g = 1f;
+    protected float b = 1f;
+    protected float a = 1f;
+    protected VertexFormat workingFormat;
+    protected BufferBuilder workingBuffer;
+    protected Pose workingPose;
+    private double scaleX = 1d;
+    private double scaleY = 1d;
     
     /**
      * GL11#glBegin was removed after OpenGL 3.1, but backwards compatibility means we can't just remove this method
      */
     @Override public void directBegin(int modeVal) {
-        Minecraft.getInstance().renderBuffers().bufferSource().endBatch();
         this.workingBuffer = RenderSystem.renderThreadTesselator().getBuilder();
         this.workingFormat = POSITION_COLOR_NORMAL;
         this.workingBuffer.begin(LINES,this.workingFormat);
         setWorkingColor(RenderSystem.getShaderColor());
+        Window window = Minecraft.getInstance().getWindow();
+        double width = window.getWidth();
+        double height = window.getHeight();
+        double widthFactor = height>width ? width/height : 1d;
+        double heightFactor = width>height ? height/width : 1d;
+        this.scaleX = 1d+((1d/width)*16d*widthFactor);
+        this.scaleY = 1d+((1d/height)*16d*heightFactor);
+        
     }
     
     @Override public void directEnd() {
         if(Objects.isNull(this.workingBuffer))
             TILRef.logError("Cannot directly end buffer before calling directBegin!");
         else {
-            boolean transparency = Minecraft.useShaderTransparency();
-            Minecraft mc = Minecraft.getInstance();
-            //if(transparency) mc.levelRenderer.getItemEntityTarget().bindWrite(false);
             RenderSystem.disableCull();
             endWithShader(this.workingFormat);
             RenderSystem.enableCull();
-            //if(transparency) mc.getMainRenderTarget().bindWrite(false);
             this.workingBuffer = null;
             this.r = 1f;
             this.g = 1f;
@@ -113,7 +119,7 @@ public class GL1_19 implements GLAPI {
         return GL_LINES;
     }
     
-    private VertexConsumer normal(VertexConsumer consumer, float x, float y, float z) {
+    protected VertexConsumer normal(VertexConsumer consumer, float x, float y, float z) {
         return Objects.nonNull(this.workingPose) ?
                 consumer.normal(this.workingPose.normal(),x,y,z) : consumer.normal(x,y,z);
     }
@@ -123,6 +129,10 @@ public class GL1_19 implements GLAPI {
         if(Objects.isNull(this.workingBuffer))
             TILRef.logError("Cannot add normalized vertex to buffer before calling directBegin!");
         boolean same = x==nextX && y==nextY && z==nextZ;
+        x*=this.scaleX;
+        y*=this.scaleY;
+        nextX*=this.scaleX;
+        nextY*=this.scaleY;
         double nX = same ? 1f : (nextX-x);
         double nY = same ? 1f : (nextY-y);
         double nZ = same ? 1f : (nextZ-z);
@@ -131,7 +141,7 @@ public class GL1_19 implements GLAPI {
         nY/=dist;
         nZ/=dist;
         normal(vertex(x,y,z).color(r,g,b,a),(float)nX,(float)nY,(float)nZ).endVertex();
-        normal(vertex(nextX,nextY,nextZ).color(r,g,b,a),(float)-nX,(float)-nY,(float)-nZ).endVertex();
+        normal(vertex(nextX,nextY,nextZ).color(r,g,b,a),(float)nX,(float)nY,(float)nZ).endVertex();
     }
 
     @Override public int quads() {
@@ -175,7 +185,7 @@ public class GL1_19 implements GLAPI {
         return GL_TRIANGLE_FAN;
     }
     
-    private VertexConsumer vertex(double x, double y, double z) {
+    protected VertexConsumer vertex(double x, double y, double z) {
         return Objects.nonNull(this.workingPose) ?
                 this.workingBuffer.vertex(this.workingPose.pose(),(float)x,(float)y,(float)z) :
                 this.workingBuffer.vertex(x,y,z);

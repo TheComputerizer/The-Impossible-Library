@@ -36,10 +36,14 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Render1_19 extends RenderAPI {
     
-    private PoseStack modelView;
+    protected PoseStack modelView;
     
     public Render1_19() {
         super(new GL1_19());
+    }
+    
+    protected Render1_19(GL1_19 gl) {
+        super(gl);
     }
 
     @Override public void alphaFuncEqual(float alpha) {

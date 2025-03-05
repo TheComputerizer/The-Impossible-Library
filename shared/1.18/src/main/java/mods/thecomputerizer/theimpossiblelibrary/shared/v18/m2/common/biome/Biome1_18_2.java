@@ -30,6 +30,10 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 @Setter
 public class Biome1_18_2 extends BiomeAPI<Biome> {
     
+    static {
+        ClassHelper.checkBurningWaveInit();
+    }
+    
     private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (CoreAPI.isForge() ? "m_47505_" : "method_21740");
     
     protected RegistryAccess access;
@@ -77,7 +81,6 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         try {
-            ClassHelper.checkBurningWaveInit();
             return Methods.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());
         } catch(Throwable t) {
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);
