@@ -71,6 +71,11 @@ public class RenderFuzz extends RenderShape {
     }
     
     public void draw(RenderContext ctx, Vector3d center) {
-        if(Objects.nonNull(this.fuzz)) this.fuzz.draw(ctx,center);
+        if(Objects.nonNull(this.fuzz)) {
+            RenderAPI renderer = ctx.getRenderer();
+            renderer.translate(0d,0d,-10d);
+            this.fuzz.draw(ctx,center);
+            renderer.translate(0d,0d,10d);
+        }
     }
 }

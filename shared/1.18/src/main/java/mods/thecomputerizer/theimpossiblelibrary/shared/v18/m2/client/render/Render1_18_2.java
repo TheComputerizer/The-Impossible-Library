@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
@@ -241,7 +242,9 @@ public class Render1_18_2 extends RenderAPI {
     }
     
     @Override public void scale(float x, float y, float z) {
-        if(Objects.nonNull(this.matrix)) getMatrix().scale(x, y, z);
+        PoseStack stack = getMatrix();
+        if(Objects.isNull(stack)) TILRef.logError("Tried to scale PoseStack without setting it first");
+        else stack.scale(x,y,z);
     }
 
     @Override public void setColor(float r, float g, float b, float a) {
@@ -253,13 +256,15 @@ public class Render1_18_2 extends RenderAPI {
     }
 
     @Override public void translate(double x, double y, double z) {
-        assertRenderThread();
-        GL11.glTranslated(x,y,z);
+        PoseStack stack = getMatrix();
+        if(Objects.isNull(stack)) TILRef.logError("Tried to translate PoseStack without setting it first");
+        else stack.translate(x,y,z);
     }
 
     @Override public void translate(float x, float y, float z) {
-        assertRenderThread();
-        GL11.glTranslatef(x,y,z);
+        PoseStack stack = getMatrix();
+        if(Objects.isNull(stack)) TILRef.logError("Tried to translate PoseStack without setting it first");
+        else stack.translate(x,y,z);
     }
     
     @Override public <B> B vertexWithMatrix(B buffer, Object matrix, float x, float y, float z) {

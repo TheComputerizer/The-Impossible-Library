@@ -39,7 +39,7 @@ public class ScreenWrapper1_19 extends Screen implements Wrapped<ScreenAPI> {
         this.wrapped.draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
     }
     
-    private KeyStateCache getKeyState() {
+    protected KeyStateCache getKeyState() {
         return new KeyStateCache(hasAltDown(),hasControlDown(),hasShiftDown());
     }
     
@@ -53,7 +53,7 @@ public class ScreenWrapper1_19 extends Screen implements Wrapped<ScreenAPI> {
         this.isOpen = true;
     }
     
-    private boolean isActivelyTicking() {
+    protected boolean isActivelyTicking() {
         return Objects.nonNull(this.wrapped) && this.wrapped.isActivelyTicking();
     }
     
