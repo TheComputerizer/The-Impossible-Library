@@ -13,8 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,9 +29,7 @@ public class TILBasicBlock1_20 extends Block {
     public static Collection<Property<?>> stateProperties = Collections.emptyList();
     
     public static TILBasicBlock1_20 basicFrom(BlockProperties properties) {
-        Material material = properties.getMaterial().unwrap();
-        MaterialColor color = properties.getMaterialColor().unwrap();
-        return new TILBasicBlock1_20(Properties.of(material,color),properties);
+        return new TILBasicBlock1_20(Properties.of(),properties);
     }
     
     protected final BlockProperties properties;

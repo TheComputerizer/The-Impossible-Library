@@ -10,8 +10,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -20,9 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class TILBlockEntityProvider1_20 extends TILBasicBlock1_20 implements EntityBlock {
     
     public static TILBlockEntityProvider1_20 tileFrom(BlockProperties properties) {
-        Material material = properties.getMaterial().unwrap();
-        MaterialColor color = properties.getMaterialColor().unwrap();
-        return new TILBlockEntityProvider1_20(Properties.of(material,color),properties);
+        return new TILBlockEntityProvider1_20(Properties.of(),properties);
     }
     
     public TILBlockEntityProvider1_20(Properties vanillaProperties, BlockProperties properties) {
