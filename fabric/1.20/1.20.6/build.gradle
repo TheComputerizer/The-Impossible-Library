@@ -23,13 +23,12 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java23-module.gradle')
+apply from: rootProject.file('gradle\\java21-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 
 plugins.apply 'fabric-loom'
 
 def base = project ':api'
-def fabric = project ':fabric' //TODO Maybe implementation instead of api to clean these up?
 def fabric_specific = project ':fabric:fabric_1.20'
 def shared = project ':shared:shared_1.20'
 def shared_specific = project ':shared:shared_1.20:shared_1.20.6'

@@ -37,13 +37,12 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java23-module.gradle')
+apply from: rootProject.file('gradle\\java21-module.gradle')
 
 plugins.apply 'net.minecraftforge.gradle'
 plugins.apply 'org.parchmentmc.librarian.forgegradle'
 
 def base = project ':api'
-def forge = project ':forge'
 def shared = project ':shared:shared_1.21'
 
 minecraft {
