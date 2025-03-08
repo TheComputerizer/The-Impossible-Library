@@ -31,8 +31,8 @@ public abstract class TILCoreFabric1_20 extends TILCore1_20 implements TILCoreFa
     public static final Reference FABRIC_REF = TILRef.instance(() -> FabricLoader.getInstance().getEnvironmentType()==CLIENT,"");
     private final MultiVersionLoaderFabric1_20 loader;
 
-    public TILCoreFabric1_20(boolean two) {
-        super(two,FABRIC,FABRIC_REF.isClient());
+    public TILCoreFabric1_20(GameVersion version) {
+        super(version,FABRIC,FABRIC_REF.isClient());
         this.loader = new MultiVersionLoaderFabric1_20(this);
     }
     

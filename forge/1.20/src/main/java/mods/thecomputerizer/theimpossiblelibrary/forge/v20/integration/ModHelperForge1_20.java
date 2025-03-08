@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.integration;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import net.minecraftforge.fml.ModList;
@@ -7,14 +8,12 @@ import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_2;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 
 public abstract class ModHelperForge1_20 extends ModHelperAPI {
 
-    protected ModHelperForge1_20(boolean two, Side side) {
-        super(two ? V19_2 : V19_4,FORGE,side);
+    protected ModHelperForge1_20(GameVersion version, Side side) {
+        super(version,FORGE,side);
     }
     
     @Override public String getModName(String modid) {

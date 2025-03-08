@@ -42,8 +42,8 @@ public abstract class TILCoreForge1_20 extends TILCore1_20 implements TILCoreFor
     
     private final MultiVersionLoaderForge1_20 loader;
 
-    public TILCoreForge1_20(boolean two) {
-        super(two,FORGE,FORGE_REF.isClient());
+    public TILCoreForge1_20(GameVersion version) {
+        super(version,FORGE,FORGE_REF.isClient());
         this.loader = new MultiVersionLoaderForge1_20(this);
     }
     

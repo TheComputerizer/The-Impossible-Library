@@ -1,20 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.integration;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_2;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
 import static net.fabricmc.loader.impl.FabricLoaderImpl.INSTANCE;
 
 public abstract class ModHelperFabric1_20 extends ModHelperAPI {
 
-    public ModHelperFabric1_20(boolean two, Side side) {
-        super(two ? V19_2 : V19_4,FABRIC,side);
+    public ModHelperFabric1_20(GameVersion version, Side side) {
+        super(version,FABRIC,side);
     }
     
     @Override public String getModName(String modid) {
