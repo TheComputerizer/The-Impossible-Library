@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.network;
+package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m1.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
@@ -11,38 +11,38 @@ import net.minecraft.server.level.ServerPlayer;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 @SuppressWarnings("UnstableApiUsage")
-public abstract class MessageWrapperFabric1_20 extends MessageWrapperAPI<ServerPlayer,PacketSender> {
+public abstract class MessageWrapperFabric1_20_1 extends MessageWrapperAPI<ServerPlayer,PacketSender> {
     
-    public static MessageWrapperFabric1_20 getInstance(Object dir) {
+    public static MessageWrapperFabric1_20_1 getInstance(Object dir) {
         boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
         boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
         return login ? (client ? new ClientLogin() : new ServerLogin()) : (client ? new Client() : new Server());
     }
     
-    public static MessageWrapperFabric1_20 getInstance(Object dir, ByteBuf buf) {
+    public static MessageWrapperFabric1_20_1 getInstance(Object dir, ByteBuf buf) {
         boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
         boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
         return login ? (client ? new ClientLogin(buf) : new ServerLogin(buf)) :
                 (client ? new Client(buf) : new Server(buf));
     }
     
-    public static Class<? extends MessageWrapperFabric1_20> getClass(Object dir) {
+    public static Class<? extends MessageWrapperFabric1_20_1> getClass(Object dir) {
         boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
         boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
         return login ? (client ? ClientLogin.class : ServerLogin.class) : (client ? Client.class : Server.class);
     }
     
-    MessageWrapperFabric1_20() {
+    MessageWrapperFabric1_20_1() {
         super();
     }
     
-    MessageWrapperFabric1_20(ByteBuf buf) {
+    MessageWrapperFabric1_20_1(ByteBuf buf) {
         super(buf);
     }
     
     public abstract ResourceLocation getRegistryName();
     
-    public static final class Client extends MessageWrapperFabric1_20 {
+    public static final class Client extends MessageWrapperFabric1_20_1 {
         
         Client() {
             super();
@@ -57,7 +57,7 @@ public abstract class MessageWrapperFabric1_20 extends MessageWrapperAPI<ServerP
         }
     }
     
-    public static final class ClientLogin extends MessageWrapperFabric1_20 {
+    public static final class ClientLogin extends MessageWrapperFabric1_20_1 {
         
         ClientLogin() {
             super();
@@ -72,7 +72,7 @@ public abstract class MessageWrapperFabric1_20 extends MessageWrapperAPI<ServerP
         }
     }
     
-    public static final class Server extends MessageWrapperFabric1_20 {
+    public static final class Server extends MessageWrapperFabric1_20_1 {
         
         Server() {
             super();
@@ -87,7 +87,7 @@ public abstract class MessageWrapperFabric1_20 extends MessageWrapperAPI<ServerP
         }
     }
     
-    public static final class ServerLogin extends MessageWrapperFabric1_20 {
+    public static final class ServerLogin extends MessageWrapperFabric1_20_1 {
         
         ServerLogin() {
             super();

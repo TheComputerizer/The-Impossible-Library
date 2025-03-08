@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.network;
+package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m4.network;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
@@ -21,7 +21,7 @@ import java.util.Objects;
  * Fabric doesn't have mod specific network channels or network direction API classes...
  */
 @SuppressWarnings("UnstableApiUsage")
-public class NetworkFabric1_20 extends Network1_20<Object,Object> {
+public class NetworkFabric1_20_4 extends Network1_20<Object,Object> {
     
     FriendlyByteBuf encodeMessage(MessageWrapperAPI<?,?> message) {
         FriendlyByteBuf buf = PacketByteBufs.create();
@@ -73,7 +73,7 @@ public class NetworkFabric1_20 extends Network1_20<Object,Object> {
     }
     
     ResourceLocation getRegistryName(MessageWrapperAPI<?,?> message) {
-        return ((MessageWrapperFabric1_20)message).getRegistryName();
+        return ((MessageWrapperFabric1_20_4)message).getRegistryName();
     }
 
     @Override public boolean isDirToClient(Object dir) {
@@ -91,20 +91,20 @@ public class NetworkFabric1_20 extends Network1_20<Object,Object> {
     
     void registerClientReceiver(MessageDirectionInfo<Object> info) {
         Object dir = info.getDirection();
-        ResourceLocation registryName = MessageWrapperFabric1_20.getInstance(dir).getRegistryName();
+        ResourceLocation registryName = MessageWrapperFabric1_20_4.getInstance(dir).getRegistryName();
         ClientPlayNetworking.registerGlobalReceiver(registryName,(mc,handler,buf,sender) -> {
-            MessageWrapperFabric1_20 wrapper = MessageWrapperFabric1_20.getInstance(dir,buf);
-            MessageWrapperFabric1_20 response = (MessageWrapperFabric1_20)wrapper.handle(sender);
+            MessageWrapperFabric1_20_4 wrapper = MessageWrapperFabric1_20_4.getInstance(dir,buf);
+            MessageWrapperFabric1_20_4 response = (MessageWrapperFabric1_20_4)wrapper.handle(sender);
             if(Objects.nonNull(response)) response.send();
         });
     }
     
     void registerServerReceiver(MessageDirectionInfo<Object> info) {
         Object dir = info.getDirection();
-        ResourceLocation registryName = MessageWrapperFabric1_20.getInstance(dir).getRegistryName();
+        ResourceLocation registryName = MessageWrapperFabric1_20_4.getInstance(dir).getRegistryName();
         ServerPlayNetworking.registerGlobalReceiver(registryName, (server,player,handler,buf,sender) -> {
-            MessageWrapperFabric1_20 wrapper = MessageWrapperFabric1_20.getInstance(dir,buf);
-            MessageWrapperFabric1_20 response = (MessageWrapperFabric1_20)wrapper.handle(sender);
+            MessageWrapperFabric1_20_4 wrapper = MessageWrapperFabric1_20_4.getInstance(dir,buf);
+            MessageWrapperFabric1_20_4 response = (MessageWrapperFabric1_20_4)wrapper.handle(sender);
             if(Objects.nonNull(response)) {
                 response.setPlayer(player);
                 response.send();
@@ -122,21 +122,21 @@ public class NetworkFabric1_20 extends Network1_20<Object,Object> {
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Object dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_4.getInstance(dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_4.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_4.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
