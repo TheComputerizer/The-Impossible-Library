@@ -31,7 +31,7 @@ public class TILLanguageProvider1_20_6 implements TILForgeLanguageProvider { //T
                         .filter(ad -> ad.annotationType().equals(modAnnotation))
                         .peek(ad -> TILRef.logDebug("Found @Mod class {} with id {}",ad.clazz().getClassName(),ad.annotationData().get("value")))
                         .map(ad -> new TILLanguageLoader1_20(core,ad.clazz().getClassName(),(String)ad.annotationData().get("value"),scan))
-                        .collect(Collectors.toMap(TILLanguageLoader1_20::getModid,Function.identity(),(a,_)->a)));
+                        .collect(Collectors.toMap(TILLanguageLoader1_20::getModid,Function.identity(),(a,b)->a)));
         };
     }
 }
