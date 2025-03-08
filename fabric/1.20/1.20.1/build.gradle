@@ -34,8 +34,8 @@ def fabric_specific = project ':fabric:fabric_1.20'
 def shared = project ':shared:shared_1.20'
 def shared_specific = project ':shared:shared_1.20:shared_1.20.1'
 
-def sources = "${dev_sources}=api/${build_file};shared/1.20/${build_file};shared/1.20/1.20.1/${build_file}" +
-        ";fabric/1.20/${build_classes};fabric/1.20/1.20.1/${build_classes}"
+def sources = "-Dfabric.classPathGroups=$rootDir\\fabric\\1.20\\1.20.1\\$build_classes;"+
+        "$rootDir\\shared\\1.20\\$build_file;$rootDir\\shared\\1.20\\1.20.1\\$build_file"
 def args = [ fabric_log_level, dev_arg, sources, common_entrypoint_arg, core_entrypoint_arg ]
 
 [ runClient, runServer ].forEach { it.jvmArgs args}
@@ -73,7 +73,7 @@ dependencies {
 
     compileOnlyApi base
     compileOnlyApi project(path: ':fabric', configuration: 'dev')
-    api fabric_specific
+    compileOnlyApi fabric_specific
     compileOnlyApi project(path: ':shared:shared_1.20', configuration: 'dev')
     compileOnlyApi project(path: ':shared:shared_1.20:shared_1.20.1', configuration: 'dev')
 

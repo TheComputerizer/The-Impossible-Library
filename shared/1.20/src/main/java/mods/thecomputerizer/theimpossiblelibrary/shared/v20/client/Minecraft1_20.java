@@ -1,0 +1,116 @@
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.client;
+
+import com.mojang.blaze3d.platform.Window;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.font.Font1_20;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.render.Render1_20;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.util.Objects;
+
+import static net.minecraft.world.phys.HitResult.Type.BLOCK;
+
+public class Minecraft1_20 extends MinecraftAPI<Minecraft> {
+    
+    public static MinecraftAPI<?> getInstance() {
+        return new Minecraft1_20(Minecraft.getInstance());
+    }
+    
+    public Minecraft1_20(Minecraft mc) {
+        super(mc,new Font1_20(),new Render1_20());
+    }
+    
+    @Override public void addResourcePackFolder(File dir) {}
+    
+    @Override public int getDisplayHeight() {
+        return this.wrapped.getWindow().getHeight();
+    }
+    
+    @Override public int getDisplayWidth() {
+        return this.wrapped.getWindow().getWidth();
+    }
+    
+    @SuppressWarnings("ConstantValue")
+    @Override public int getGUIScale() {
+        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.options) ?
+                this.wrapped.options.guiScale().get() : 0;
+    }
+    
+    @Override public @Nullable PlayerAPI<?,?> getPlayer() {
+        return WrapperHelper.wrapPlayer(this.wrapped.player);
+    }
+    
+    private @Nullable HitResult getTarget() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.hitResult : null;
+    }
+    
+    @Override public @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
+        HitResult target = getTarget();
+        if(target instanceof BlockHitResult && target.getType()==BLOCK) {
+            BlockPos pos = ((BlockHitResult)target).getBlockPos();
+            Level world = this.wrapped.level;
+            return Objects.nonNull(world) ? WrapperHelper.wrapBlockEntity(world.getBlockEntity(pos)) : null;
+        }
+        return null;
+    }
+    
+    @Override public @Nullable EntityAPI<?,?> getTargetEntity() {
+        HitResult target = getTarget();
+        return target instanceof EntityHitResult ?
+                WrapperHelper.wrapEntity(((EntityHitResult)target).getEntity()) : null;
+    }
+    
+    /**
+     * TODO Cache this?
+     */
+    @Override public MinecraftWindow getWindow() {
+        Window window = Objects.nonNull(this.wrapped) ? this.wrapped.getWindow() : null;
+        if(Objects.isNull(window)) {
+            TILRef.logFatal("Unable to get MinecraftWindow since the Minecraft main window is null?");
+            return new MinecraftWindow(1d,1d,0);
+        }
+        return new MinecraftWindow(window.getGuiScaledWidth(),window.getGuiScaledHeight(),(int)window.getGuiScale());
+    }
+    
+    @Override public @Nullable WorldAPI<?> getWorld() {
+        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.level) ? WrapperHelper.wrapWorld(this.wrapped.level) : null;
+    }
+
+    @Override public <S> boolean isCurrentScreen(S screen) {
+        return Objects.nonNull(this.wrapped) && this.wrapped.screen==screen;
+    }
+
+    @Override public boolean isCurrentScreenAPI() {
+        return false;
+    }
+
+    @Override public boolean isDisplayFocused() {
+        return Objects.nonNull(this.wrapped) && this.wrapped.isWindowActive();
+    }
+
+    @Override public boolean isFinishedLoading() {
+        return !isLoading();
+    }
+    
+    @Override public boolean isFullScreen() {
+        return Objects.nonNull(this.wrapped) && this.wrapped.getWindow().isFullscreen();
+    }
+
+    @Override public boolean isPaused() {
+        return Objects.nonNull(this.wrapped) && this.wrapped.isPaused();
+    }
+}

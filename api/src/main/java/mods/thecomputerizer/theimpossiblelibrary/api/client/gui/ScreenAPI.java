@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.joml.Vector2d;
 import org.joml.Vector3d;
@@ -81,6 +82,10 @@ public class ScreenAPI extends WidgetGroup {
     
     public float defaultBackgroundDarkness() {
         return 2f/3f;
+    }
+    
+    public void draw(RenderContext ctx, double mouseX, double mouseY) {
+        draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
     }
     
     @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {

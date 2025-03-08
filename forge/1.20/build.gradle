@@ -62,22 +62,15 @@ dependencies {
     minecraft "$forge_mc:$forge_1_20_1"
 
     compileOnlyApi base
-    //implementation(project(path: ':forge', configuration: 'dev'))
-    //implementation(shared)
+    compileOnlyApi project(path: ':forge', configuration: 'dev')
+    compileOnlyApi shared
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
-shadowJar {
-    from(base.jar.archiveFile.collect { zipTree it })
-    shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree it })
-        relocate "$shared_base_package", "$forge_base_package"
+jar {
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
     }
 }
 
@@ -85,7 +78,4 @@ artifacts {
     dev jar
 }
 
-tasks.assemble.dependsOn shadowJar
-tasks.shadowJar.dependsOn 'reobfJar'
-tasks.jar.finalizedBy 'reobfJar'
 tasks.jar.dependsOn ':forge:build'

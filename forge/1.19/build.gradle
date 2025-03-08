@@ -57,7 +57,7 @@ configurations {
     }
 }
 
-dependencies { dep ->
+dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft "$forge_mc:$forge_1_19_2"
 

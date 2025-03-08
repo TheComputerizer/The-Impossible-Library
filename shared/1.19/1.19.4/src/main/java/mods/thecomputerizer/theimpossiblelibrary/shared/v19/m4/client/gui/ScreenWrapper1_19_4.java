@@ -33,7 +33,7 @@ public class ScreenWrapper1_19_4 extends ScreenWrapper1_19 {
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
             if(FORGE) matrix.translate(0d,0d,-200d); //maybe?
-            draw(ctx,x,y);
+            this.wrapped.draw(ctx,x,y);
         }
     }
 }

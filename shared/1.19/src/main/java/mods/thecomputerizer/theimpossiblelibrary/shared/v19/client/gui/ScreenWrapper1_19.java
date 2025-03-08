@@ -35,10 +35,6 @@ public class ScreenWrapper1_19 extends Screen implements Wrapped<ScreenAPI> {
         return super.charTyped(c,mods);
     }
     
-    protected void draw(RenderContext ctx, double mouseX, double mouseY) {
-        this.wrapped.draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
-    }
-    
     protected KeyStateCache getKeyState() {
         return new KeyStateCache(hasAltDown(),hasControlDown(),hasShiftDown());
     }
@@ -137,7 +133,7 @@ public class ScreenWrapper1_19 extends Screen implements Wrapped<ScreenAPI> {
             ctx.getRenderer().setMatrix(matrix);
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
-            draw(ctx,x,y);
+            this.wrapped.draw(ctx,x,y);
         }
     }
     

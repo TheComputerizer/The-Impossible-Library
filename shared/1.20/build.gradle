@@ -59,8 +59,8 @@ configurations {
 dependencies {
     //noinspection VulnerableLibrariesLocal
     minecraft "$forge_mc:$forge_1_20_1"
-    api base
-    api shared
+    compileOnlyApi base
+    compileOnlyApi shared
 }
 
 processResources {

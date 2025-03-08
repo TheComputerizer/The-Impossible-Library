@@ -57,8 +57,8 @@ dependencies {
     }
 
     compileOnlyApi base
-    compileOnlyApi fabric
-    compileOnlyApi shared
+    api project(path: ':fabric', configuration: 'dev')
+    compileOnlyApi project(path: ':shared:shared_1.21', configuration: 'dev')
 
     modImplementation "$fabric_loader_artifact:$fabric_loader"
     modImplementation "$fabric_api_artifact:$fabric_1_21_1"

@@ -43,8 +43,10 @@ plugins.apply 'net.minecraftforge.gradle'
 plugins.apply 'org.parchmentmc.librarian.forgegradle'
 
 def base = project ':api'
-def forge = project ':forge:forge_1.21'
-def shared = project ':shared:shared_1.21:shared_1.21.1'
+def forge = project ':forge' //TODO Maybe implementation instead of api to clean these up?
+def forge_specific = project ':forge:forge_1.21'
+def shared = project ':shared:shared_1.21'
+def shared_specific = project ':shared:shared_1.21:shared_1.21.1'
 
 def classpath_file = "$mod_id-${mod_version}_mapped_parchment_$parchment_1_21_1-${minecraft_1_21_1}.jar"
 
@@ -95,27 +97,16 @@ dependencies {
     minecraft "$forge_mc:$forge_1_21_1"
 
     compileOnlyApi base
-    //implementation(project(path: ':forge', configuration: 'dev'))
-    compileOnlyApi forge
+    compileOnlyApi project(path: ':forge', configuration: 'dev')
+    compileOnlyApi forge_specific
     compileOnlyApi shared
+    compileOnlyApi shared_specific
 
     implementation fg.deobf("$configured_artifact:$configured_forge_1_21")
     implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_forge_1_21_1")
     implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_forge_1_21_1")
 
     runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_21_1")
-}
-
-processResources {
-    //from(project(':forge').processResources.outputs)
-}
-
-processTestResources {
-    //from(project(':forge').processTestResources.outputs)
-}
-
-jar {
-    //from(project(':forge').jar.archiveFile.collect { zipTree(it) })
 }
 
 reobf {
@@ -125,16 +116,160 @@ reobf {
     }
 }
 
+jar {
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
+    }
+}
+
+def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviour',
+                   'block.BlockState': 'world.level.block.state.BlockState',
+                   'block.Block': 'world.level.block.Block',
+                   'block.material.MaterialColor': 'world.level.material.MaterialColor',
+                   'block.material.Material': 'world.level.material.Material',
+                   'client.GameSettings': 'client.Options',
+                   'client.KeyboardListener': 'client.KeyboardHandler',
+                   'client.MouseHelper': 'client.MouseHandler',
+                   'client.audio.ISound': 'client.resources.sounds.SoundInstance',
+                   'client.audio.SimpleSound': 'client.resources.sounds.SimpleSoundInstance',
+                   'client.audio.SoundHandler': 'client.sounds.SoundManager',
+                   'client.entity.player.ClientPlayerEntity': 'client.player.LocalPlayer',
+                   'client.gui.FontRenderer': 'client.gui.Font',
+                   'client.gui.fonts.TextInputUtil': 'client.gui.font.TextFieldHelper',
+                   'client.gui.screen.Screen': 'client.gui.screens.Screen',
+                   'client.network.play.ClientPlayNetHandler': 'client.multiplayer.ClientPacketListener',
+                   'client.network.play.NetworkPlayerInfo': 'client.multiplayer.PlayerInfo',
+                   'client.renderer.IRenderTypeBuffer.Impl': 'client.renderer.MultiBufferSource.BufferSource',
+                   'client.renderer.IRenderTypeBuffer': 'client.renderer.MultiBufferSource',
+                   'client.settings.KeyBinding': 'client.KeyMapping',
+                   'client.util.ITooltipFlag': 'world.item.TooltipFlag',
+                   'client.world.ClientWorld': 'client.multiplayer.ClientLevel',
+                   'command.CommandException': 'commands.CommandRuntimeException',
+                   'command.CommandSource': 'commands.CommandSourceStack',
+                   'command.ISuggestionProvider': 'commands.SharedSuggestionProvider',
+                   'command.': 'commands.',
+                   'entity.passive.animal.AnimalEntity': 'world.entity.animal.Animal',
+                   'entity.passive.animal.TameableEntity': 'world.entity.TamableAnimal',
+                   'entity.player.PlayerEntity': 'world.entity.player.Player',
+                   'entity.player.PlayerInventory': 'world.entity.player.Inventory',
+                   'entity.player.ServerPlayerEntity': 'server.level.ServerPlayer',
+                   'entity': 'world.entity',
+                   'item.AxeItem': 'world.item.AxeItem',
+                   'item.BlockItem': 'world.item.BlockItem',
+                   'item.HoeItem': 'world.item.HoeItem',
+                   'item.IItemPropertyGetter': 'client.renderer.item.ItemPropertyFunction',
+                   'item.IItemTier': 'world.item.Tier',
+                   'item.ItemStack': 'world.item.ItemStack',
+                   'item.ItemTier': 'world.item.Tiers',
+                   'item.ItemUseContext': 'world.item.context.UseOnContext',
+                   'item.ItemModelsProperties': 'client.renderer.item.ItemProperties',
+                   'item.Item': 'world.item.Item',
+                   'item.MusicDiscItem': 'world.item.RecordItem',
+                   'item.PickaxeItem': 'world.item.PickaxeItem',
+                   'item.ShovelItem': 'world.item.ShovelItem',
+                   'item.SwordItem': 'world.item.SwordItem',
+                   'item.ToolItem': 'world.item.TieredItem',
+                   'nbt.ByteArrayNBT': 'nbt.ByteArrayTag',
+                   'nbt.ByteNBT': 'nbt.ByteTag',
+                   'nbt.CollectionNBT': 'nbt.CollectionTag',
+                   'nbt.CompoundNBT': 'nbt.CompoundTag',
+                   'nbt.CompressedStreamTools': 'nbt.NbtIo',
+                   'nbt.DoubleNBT': 'nbt.DoubleTag',
+                   'nbt.EndNBT': 'nbt.EndTag',
+                   'nbt.FloatNBT': 'nbt.FloatTag',
+                   'nbt.IntArrayNBT': 'nbt.IntArrayTag',
+                   'nbt.IntNBT': 'nbt.IntTag',
+                   'nbt.INBT': 'nbt.Tag',
+                   'nbt.ListNBT': 'nbt.ListTag',
+                   'nbt.LongArrayNBT': 'nbt.LongArrayTag',
+                   'nbt.LongNBT': 'nbt.LongTag',
+                   'nbt.NBTSizeTracker': 'nbt.NbtAccounter',
+                   'nbt.NumberNBT': 'nbt.NumericTag',
+                   'nbt.ShortNBT': 'nbt.ShortTag',
+                   'nbt.StringNBT': 'nbt.StringTag',
+                   'potion.Effect': 'world.effect.MobEffect',
+                   'potion.EffectInstance': 'world.effect.MobEffectInstance',
+                   'server.management.PlayerList': 'server.players.PlayerList',
+                   'state.Property': 'world.level.block.state.properties.Property',
+                   'state.StateContainer': 'world.level.block.state.StateDefinition',
+                   'tileentity.ITickableTileEntity': 'world.level.block.entity.TickableBlockEntity',
+                   'tileentity.TileEntity': 'world.level.block.entity.BlockEntity',
+                   'util.ActionResultType': 'world.InteractionResult',
+                   'util.Direction': 'core.Direction',
+                   'util.Hand': 'world.InteractionHand',
+                   'util.RegistryKey': 'resources.ResourceKey',
+                   'util.ResourceLocation': 'resources.ResourceLocation',
+                   'util.SharedConstants': 'SharedConstants',
+                   'util.SoundCategory': 'sounds.SoundSource',
+                   'util.SoundEvent': 'sounds.SoundEvent',
+                   'util.math.AxisAlignedBB': 'world.phys.AABB',
+                   'util.math.BlockPos': 'core.BlockPos',
+                   'util.math.BlockRayTraceResult': 'world.phys.BlockHitResult',
+                   'util.math.EntityRayTraceResult': 'world.phys.EntityHitResult',
+                   'util.math.RayTraceResult': 'world.phys.HitResult',
+                   'util.math.vector.Vector3d': 'world.phys.Vec3',
+                   'util.registry.DynamicRegistries': 'core.RegistryAccess',
+                   'util.registry.MutableRegistry': 'core.WritableRegistry',
+                   'util.registry.Registry': 'core.Registry',
+                   'util.text.IFormattableTextComponent': 'network.chat.MutableComponent',
+                   'util.text.ITextComponent': 'network.chat.Component',
+                   'util.text.StringTextComponent': 'network.chat.TextComponent',
+                   'util.text.Style': 'network.chat.Style',
+                   'util.text.TextFormatting': 'ChatFormatting',
+                   'util.text.TranslationTextComponent': 'network.chat.TranslatableComponent',
+                   'world.biome.Biome': 'world.level.biome.Biome',
+                   'world.gen.feature.structure.StructureManager': 'world.level.StructureFeatureManager',
+                   'world.gen.feature.structure.StructureStart': 'world.level.levelgen.structure.StructureStart',
+                   'world.gen.feature.structure.Structure': 'world.level.levelgen.feature.StructureFeature',
+                   'world.lighting.WorldLightManager': 'world.level.lighting.LevelLightEngine',
+                   'world.raid.RaidManager': 'world.entity.raid.Raids',
+                   'world.raid.Raid': 'world.entity.raid.Raid',
+                   'world.server.ServerWorld': 'server.level.ServerLevel',
+                   'world.storage.IWorldInfo': 'world.level.storage.LevelData',
+                   'world.DimensionType': 'world.level.dimension.DimensionType',
+                   'world.Explosion': 'world.level.Explosion',
+                   'world.GameType': 'world.level.GameType',
+                   'world.IBlockReader': 'world.level.BlockGetter',
+                   'world.IWorldReader': 'world.level.LevelReader',
+                   'world.IWorld': 'world.level.LevelAccessor',
+                   'world.LightType': 'world.level.LightLayer',
+                   'world.World': 'world.level.Level'
+]
+
+//These need to be remapped to the com.mojang package
+def renderRemaps = [ 'net.minecraft.client.MainWindow': 'blaze3d.platform.Window',
+                     'net.minecraft.client.renderer.BufferBuilder': 'blaze3d.vertex.BufferBuilder',
+                     'net.minecraft.client.renderer.Tessellator': 'blaze3d.vertex.Tesselator',
+                     'net.minecraft.client.renderer.vertex.DefaultVertexFormats': 'blaze3d.vertex.DefaultVertexFormat',
+                     'net.minecraft.client.renderer.vertex.Vertex': 'blaze3d.vertex.Vertex',
+                     'net.minecraft.util.math.vector.Matrix4f': 'math.Matrix4f',
+                     'com.mojang.blaze3d.matrix.MatrixStack': 'blaze3d.vertex.PoseStack',
+                     'com.mojang.blaze3d.vertex.IVertexBuilder': 'blaze3d.vertex.VertexConsumer'
+]
+
+def otherRemaps = [
+        'net.minecraftforge.client.event.RenderGameOverlayEvent': 'net.minecraftforge.client.event.RenderGuiOverlayEvent'
+]
+
 shadowJar {
-    from(base.jar.archiveFile.collect { zipTree it })
-    shared.afterEvaluate {
+    [ base, forge, forge_specific ].forEach {
+        from(it.jar.archiveFile.collect { zipTree it })
+    }
+    shared_specific.afterEvaluate {
         from(shared.jar.archiveFile.collect { zipTree it })
+        from(it.jar.archiveFile.collect { zipTree it })
+        relocate "${forge_base_package}.client.event.events", "${forge_1_21_1_package}.client.event.events"
+        relocate "${forge_base_package}.common.event.events", "${forge_1_21_1_package}.common.event.events"
         relocate shared_base_package, forge_base_package
+        remapThese.forEach((key,value) -> relocate "net.minecraft.$key", "net.minecraft.$value")
+        renderRemaps.forEach((key,value) -> relocate key, "com.mojang.$value")
+        otherRemaps.forEach((key,value) -> relocate key, value)
     }
 }
 
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.dependsOn 'reobfJar'
 tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.dependsOn ':forge:build'
-tasks.compileJava.mustRunAfter ':forge:forge_1.21:shadowJar'
+tasks.jar.dependsOn ':forge:forge_1.21:build'

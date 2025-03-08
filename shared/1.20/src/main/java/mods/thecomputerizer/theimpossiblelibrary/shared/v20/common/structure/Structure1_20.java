@@ -1,0 +1,36 @@
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.structure;
+
+import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.levelgen.structure.Structure;
+
+import java.util.Objects;
+
+import static net.minecraft.core.registries.Registries.STRUCTURE;
+
+public class Structure1_20 extends StructureAPI<Structure> {
+    
+    public Structure1_20(Object structure) {
+        super((Structure)structure);
+    }
+    
+    @Override public ResourceLocationAPI<?> getRegistryName() {
+        return RegistryHelper.getStructureRegistry().getKey(this.wrapped);
+    }
+    
+    @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
+        LevelAccessor level = world.unwrap();
+        return getRegistryName(level.registryAccess());
+    }
+    
+    protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
+        Registry<Structure> registry = access.registry(STRUCTURE).orElse(null);
+        return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
+    }
+}
