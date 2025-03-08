@@ -21,8 +21,8 @@ public class BlockState1_20 extends BlockStateAPI<BlockState> {
         return WrapperHelper.wrapBlock(this.wrapped.getBlock());
     }
 
-    @Override public MaterialAPI<?> getMaterial() {
-        return WrapperHelper.wrapMaterial(this.wrapped.getMaterial());
+    @Override public MaterialAPI<?> getMaterial() { //The material class isn't standalone in 1.20+
+        return WrapperHelper.wrapMaterial(this.wrapped);
     }
     
     @Nullable @Override public BlockProperty1_20<?> getProperty(String name) {

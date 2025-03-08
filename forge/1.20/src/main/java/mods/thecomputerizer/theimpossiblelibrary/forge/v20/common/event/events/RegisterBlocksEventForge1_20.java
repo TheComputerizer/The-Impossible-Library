@@ -6,16 +6,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_BLOCKS;
-import static net.minecraft.core.Registry.BLOCK_REGISTRY;
+import static net.minecraft.core.registries.Registries.BLOCK;
 
 public class RegisterBlocksEventForge1_20 extends RegisterBlocksEventForge<RegisterEvent> {
     
     @SubscribeEvent
     public static void onEvent(RegisterEvent event) {
-        if(event.getRegistryKey().equals(BLOCK_REGISTRY)) REGISTER_BLOCKS.invoke(event);
+        if(event.getRegistryKey().equals(BLOCK)) REGISTER_BLOCKS.invoke(event);
     }
     
     @Override public void register(BlockAPI<?> entry) {
-        this.event.register(BLOCK_REGISTRY,entry.getRegistryName().unwrap(),entry::unwrap);
+        this.event.register(BLOCK,entry.getRegistryName().unwrap(),entry::unwrap);
     }
 }

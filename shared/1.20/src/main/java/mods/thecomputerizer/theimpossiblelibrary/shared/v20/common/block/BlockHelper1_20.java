@@ -9,10 +9,13 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.MapColor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
+
+import static net.minecraft.world.level.material.MapColor.GRASS;
 
 @SuppressWarnings("unused")
 public class BlockHelper1_20 implements BlockHelperAPI {
@@ -36,18 +39,19 @@ public class BlockHelper1_20 implements BlockHelperAPI {
         return null;
     }
     
-    @Override public Material1_20 getMaterialByName(String name) {
-        if(StringUtils.isBlank(name)) return new Material1_20(WOOD);
-        Field field = ReflectionHelper.getField(Material.class, name.toUpperCase());
-        if(Objects.nonNull(field)) return new Material1_20(ReflectionHelper.getFieldInstance(null, field));
-        return new Material1_20(AIR);
+    @Override public Material1_20 getMaterialByName(String name) { //TODO figure out how to handle materials in 1.20+
+        //if(StringUtils.isBlank(name)) return new Material1_20(WOOD);
+        //Field field = ReflectionHelper.getField(Material.class, name.toUpperCase());
+        //if(Objects.nonNull(field)) return new Material1_20(ReflectionHelper.getFieldInstance(null, field));
+        //return new Material1_20(AIR);
+        return null;
     }
     
     @Override public MaterialColor1_20 getMaterialColorByName(String name) {
         if(StringUtils.isBlank(name)) return new MaterialColor1_20(GRASS);
-        Field field = ReflectionHelper.getField(MaterialColor.class, name.toUpperCase());
+        Field field = ReflectionHelper.getField(MapColor.class,name.toUpperCase());
         if(Objects.nonNull(field))
-            return new MaterialColor1_20((MaterialColor)ReflectionHelper.getFieldInstance(null,field));
+            return new MaterialColor1_20((MapColor)ReflectionHelper.getFieldInstance(null,field));
         return new MaterialColor1_20(GRASS);
     }
 }

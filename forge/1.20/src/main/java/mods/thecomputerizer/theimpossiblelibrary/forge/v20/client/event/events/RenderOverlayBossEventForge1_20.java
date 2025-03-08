@@ -25,7 +25,7 @@ public class RenderOverlayBossEventForge1_20 extends RenderOverlayBossEventWrapp
     }
     
     @Override protected RenderContext initRenderer(@Nonnull BossEventProgress event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     
     @Override public void setEvent(BossEventProgress event) {

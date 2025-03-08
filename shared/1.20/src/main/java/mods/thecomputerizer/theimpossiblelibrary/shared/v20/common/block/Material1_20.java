@@ -1,54 +1,64 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
-import net.minecraft.world.level.material.Material;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 
-import static net.minecraft.world.level.material.Material.AIR;
-import static net.minecraft.world.level.material.Material.REPLACEABLE_WATER_PLANT;
-import static net.minecraft.world.level.material.Material.WATER;
-import static net.minecraft.world.level.material.Material.WATER_PLANT;
+import static net.minecraft.world.level.material.Fluids.FLOWING_WATER;
+import static net.minecraft.world.level.material.Fluids.WATER;
 import static net.minecraft.world.level.material.PushReaction.BLOCK;
 import static net.minecraft.world.level.material.PushReaction.DESTROY;
 
-public class Material1_20 extends MaterialAPI<Material> {
+/**
+ * As of 1.20, the Material class no longer exists...
+ */
+public class Material1_20 extends MaterialAPI<BlockState> {
 
-    public Material1_20(Object material) {
-        super((Material)material);
+    public Material1_20(Object state) {
+        super((BlockState)state);
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public boolean hasCollider() {
         return this.wrapped.blocksMotion();
     }
 
     @Override public boolean isAir() {
-        return this.wrapped==AIR;
+        return this.wrapped.isAir();
     }
 
     @Override public boolean isDestroyedByPiston() {
-        return this.wrapped.getPushReaction()==DESTROY;
+        return this.wrapped.getPistonPushReaction()==DESTROY;
     }
 
-    @Override public boolean isFlammable() {
-        return this.wrapped.isFlammable();
+    @Override public boolean isFlammable(WorldAPI<?> world, BlockPosAPI<?> pos, Facing side) {
+        return this.wrapped.isFlammable(world.unwrap(),pos.unwrap(),EventHelper.setFacing(side));
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override public boolean isLiquid() {
-        return this.wrapped.isLiquid();
+        return this.wrapped.liquid();
     }
 
     @Override public boolean isPushable() {
-        return this.wrapped.getPushReaction()!=BLOCK;
+        return this.wrapped.getPistonPushReaction()!=BLOCK;
     }
 
     @Override public boolean isReplaceable() {
-        return this.wrapped.isReplaceable();
+        return this.wrapped.canBeReplaced();
     }
 
+    @SuppressWarnings("deprecation")
     @Override public boolean isSolid() {
         return this.wrapped.isSolid();
     }
 
     @Override public boolean isUnderwater() {
-        return this.wrapped==WATER || this.wrapped==WATER_PLANT || this.wrapped==REPLACEABLE_WATER_PLANT;
+        Fluid fluid = this.wrapped.getFluidState().getType();
+        return fluid==WATER || fluid==FLOWING_WATER;
     }
 }

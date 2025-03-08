@@ -6,16 +6,17 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_BLOCK_ENTITIES;
-import static net.minecraft.core.Registry.BLOCK_ENTITY_TYPE_REGISTRY;
+import static net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE;
 
 public class RegisterBlockEntitiesEventForge1_20 extends RegisterBlockEntitiesEventForge<RegisterEvent> {
     
     @SubscribeEvent
     public static void onEvent(RegisterEvent event) {
-        if(event.getRegistryKey().equals(BLOCK_ENTITY_TYPE_REGISTRY)) REGISTER_BLOCK_ENTITIES.invoke(event);
+        
+        if(event.getRegistryKey().equals(BLOCK_ENTITY_TYPE)) REGISTER_BLOCK_ENTITIES.invoke(event);
     }
     
     @Override public void register(BlockEntityAPI<?,?> entry) {
-        this.event.register(BLOCK_ENTITY_TYPE_REGISTRY,entry.getRegistryName().unwrap(),entry::unwrap);
+        this.event.register(BLOCK_ENTITY_TYPE,entry.getRegistryName().unwrap(),entry::unwrap);
     }
 }

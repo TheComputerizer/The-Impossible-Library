@@ -9,7 +9,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreEntryPointFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.common.TILCommonEntryPointFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.core.asm.ModWriterFabric1_20;
@@ -56,7 +55,7 @@ public abstract class TILCoreFabric1_20 extends TILCore1_20 implements TILCoreFa
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {
-        return new TILCoreEntryPointFabric();
+        return new TILCoreEntryPointFabric1_20();
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {

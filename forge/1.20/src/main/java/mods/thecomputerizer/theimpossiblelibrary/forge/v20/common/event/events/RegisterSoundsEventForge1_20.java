@@ -6,16 +6,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_SOUNDS;
-import static net.minecraft.core.Registry.SOUND_EVENT_REGISTRY;
+import static net.minecraft.core.registries.Registries.SOUND_EVENT;
 
 public class RegisterSoundsEventForge1_20 extends RegisterSoundsEventForge<RegisterEvent> {
     
     @SubscribeEvent
     public static void onEvent(RegisterEvent event) {
-        if(event.getRegistryKey().equals(SOUND_EVENT_REGISTRY)) REGISTER_SOUNDS.invoke(event);
+        if(event.getRegistryKey().equals(SOUND_EVENT)) REGISTER_SOUNDS.invoke(event);
     }
     
     @Override public void register(SoundEventAPI<?> entry) {
-        this.event.register(SOUND_EVENT_REGISTRY,entry.getRegistryName().unwrap(),entry::unwrap);
+        this.event.register(SOUND_EVENT,entry.getRegistryName().unwrap(),entry::unwrap);
     }
 }

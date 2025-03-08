@@ -27,7 +27,7 @@ public class RenderOverlayTextEventForge1_20 extends RenderOverlayTextEventWrapp
     }
     
     @Override protected RenderContext initRenderer(@Nonnull DebugText event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     
     @Override public void setEvent(DebugText event) {

@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import net.minecraft.SharedConstants;
@@ -36,10 +35,6 @@ public class ScreenWrapper1_20 extends Screen implements Wrapped<ScreenAPI> {
     @Override public boolean charTyped(char c, int mods) {
         if(SharedConstants.isAllowedChatCharacter(c) && this.wrapped.onCharTyped(c)) return true;
         return super.charTyped(c,mods);
-    }
-    
-    protected void draw(RenderContext ctx, double mouseX, double mouseY) {
-        this.wrapped.draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
     }
     
     protected KeyStateCache getKeyState() {
@@ -132,10 +127,10 @@ public class ScreenWrapper1_20 extends Screen implements Wrapped<ScreenAPI> {
         if(Objects.nonNull(this.wrapped)) {
             RenderContext ctx = RenderContext.get(ClientHelper.getMinecraft());
             ctx.setPartialTicks(partialTicks);
-            ctx.getRenderer().setMatrix(matrix);
+            ctx.getRenderer().setMatrix(graphics);
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
-            if(FORGE) matrix.translate(0d,0d,-200d); //maybe?
+            if(FORGE) graphics.pose().translate(0d,0d,-200d); //maybe?
             this.wrapped.draw(ctx,x,y);
         }
     }

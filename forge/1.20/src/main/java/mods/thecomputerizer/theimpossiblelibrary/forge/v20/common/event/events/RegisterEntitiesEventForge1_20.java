@@ -6,16 +6,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_ENTITIES;
-import static net.minecraft.core.Registry.ENTITY_TYPE_REGISTRY;
+import static net.minecraft.core.registries.Registries.ENTITY_TYPE;
 
 public class RegisterEntitiesEventForge1_20 extends RegisterEntitiesEventForge<RegisterEvent> {
     
     @SubscribeEvent
     public static void onEvent(RegisterEvent event) {
-        if(event.getRegistryKey().equals(ENTITY_TYPE_REGISTRY)) REGISTER_ENTITIES.invoke(event);
+        if(event.getRegistryKey().equals(ENTITY_TYPE)) REGISTER_ENTITIES.invoke(event);
     }
     
     @Override public void register(EntityAPI<?,?> entry) {
-        this.event.register(ENTITY_TYPE_REGISTRY,entry.getRegistryName().unwrap(),entry::unwrap);
+        this.event.register(ENTITY_TYPE,entry.getRegistryName().unwrap(),entry::unwrap);
     }
 }

@@ -1,6 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.block.material.Material;
 
 import static net.minecraft.block.material.Material.AIR;
@@ -28,7 +31,7 @@ public class Material1_16_5 extends MaterialAPI<Material> {
         return this.wrapped.getPushReaction()==DESTROY;
     }
 
-    @Override public boolean isFlammable() {
+    @Override public boolean isFlammable(WorldAPI<?> world, BlockPosAPI<?> pos, Facing side) {
         return this.wrapped.isFlammable();
     }
 

@@ -53,7 +53,7 @@ public class TILModFileForge1_20 extends ModFile {
     
     static IModFileInfo getFileInfo(IModFile file, Collection<?> infos) {
         IConfigurable config = new TILFileConfigForge(infos);
-        return new ModFileInfo((ModFile)file,config,Collections.emptyList());
+        return new ModFileInfo((ModFile)file,config,info -> {},Collections.emptyList());
     }
     
     private final Map<MultiVersionModInfo,MultiVersionModData> infos;
@@ -170,7 +170,7 @@ public class TILModFileForge1_20 extends ModFile {
             mod.set("description", "Multiversion language loader for "+NAME);
             config.set("mods",Collections.singletonList(mod));
             IConfigurable wrapper = new NightConfigWrapper(config);
-            return new ModFileInfo((ModFile)file,wrapper,Collections.emptyList());
+            return new ModFileInfo((ModFile)file,wrapper,info -> {},Collections.emptyList());
         }
         
         public TILLanguageProviderLoader(SecureJar file, IModProvider provider) {

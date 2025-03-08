@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class MaterialAPI<M> extends AbstractWrapped<M> {
@@ -11,7 +13,7 @@ public abstract class MaterialAPI<M> extends AbstractWrapped<M> {
     public abstract boolean hasCollider();
     public abstract boolean isAir();
     public abstract boolean isDestroyedByPiston();
-    public abstract boolean isFlammable();
+    public abstract boolean isFlammable(WorldAPI<?> world, BlockPosAPI<?> pos, Facing side);
     public abstract boolean isLiquid();
     public abstract boolean isPushable();
     public abstract boolean isReplaceable();

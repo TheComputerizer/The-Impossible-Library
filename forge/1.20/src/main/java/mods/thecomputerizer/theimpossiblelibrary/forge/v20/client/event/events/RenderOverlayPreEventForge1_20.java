@@ -25,7 +25,7 @@ public class RenderOverlayPreEventForge1_20 extends RenderOverlayPreEventWrapper
     }
     
     @Override protected RenderContext initRenderer(@Nonnull Pre event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     
     @Override public void setEvent(Pre event) {

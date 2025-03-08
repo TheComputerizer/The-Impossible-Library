@@ -28,22 +28,26 @@ import static org.objectweb.asm.Type.INT_TYPE;
 public class TILCoreEntryPointFabric extends CoreEntryPoint {
     
     static final String ARRAYLIST = "java/util/ArrayList";
-    static final String DEBUG_OVERLAY = mapClass("net.minecraft.client.gui.components.DebugScreenOverlay","net.minecraft.class_340");
+    static final String DEBUG_OVERLAY = mapClass("net.minecraft.client.gui.components.DebugScreenOverlay", "net.minecraft.class_340");
     static final String[] DEBUG_LIST_FIELDS = new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"};
     static final String CUSTOM_EVENTS = "mods/thecomputerizer/theimpossiblelibrary/fabric/common/event/CustomFabricEvents";
     static final String FABRIC_EVENT = "net/fabricmc/fabric/api/event/Event";
-    static final String GUI = mapClass("net.minecraft.client.gui.Gui","net.minecraft.class_329");
-    static final String KEYBOARD_HANDLER = mapClass("net.minecraft.client.KeyboardHandler","net.minecraft.class_309");
+    static final String GUI = mapClass("net.minecraft.client.gui.Gui", "net.minecraft.class_329");
+    static final String KEYBOARD_HANDLER = mapClass("net.minecraft.client.KeyboardHandler", "net.minecraft.class_309");
     static final String INVOKER_DESC = TypeHelper.methodDesc(OBJECT_TYPE);
     static final String LIST = "java/util/List";
-    static final String MINECRAFT = mapClass("net/minecraft/client/Minecraft","net/minecraft/class_310");
-    static final String OPTIONS = mapClass("net/minecraft/client/Options","net/minecraft/class_315");
-    static final String POSESTACK = mapClass("com.mojang.blaze3d.vertex.PoseStack","net.minecraft.class_4587");
+    static final String MINECRAFT = mapClass("net/minecraft/client/Minecraft", "net/minecraft/class_310");
+    static final String OPTIONS = mapClass("net/minecraft/client/Options", "net/minecraft/class_315");
+    protected static final String POSESTACK = mapClass("com.mojang.blaze3d.vertex.PoseStack", "net.minecraft.class_4587");
     static final String REF = Type.getInternalName(TILRef.class);
     static final String SHARED_HANDLES_CLIENT = Type.getInternalName(SharedHandlesClient.class);
     
-    static String mapClass(String dev, String notDev) {
-        return CoreAPI.getInstance().mapClassName(DEV ? dev : notDev,false);
+    protected static String mapClass(String dev, String notDev) {
+        return CoreAPI.getInstance().mapClassName(mapDev(dev,notDev),false);
+    }
+    
+    protected static String mapDev(String dev, String notDev) {
+        return DEV ? dev : notDev;
     }
     
     final CoreAPI core;
@@ -109,13 +113,13 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
         // get RENDER_DEBUG_INFO event field
         insField(GETSTATIC,CUSTOM_EVENTS,"RENDER_DEBUG_INFO",toDesc(FABRIC_EVENT))
                 .insInvokeVirtual(FABRIC_EVENT,"invoker",INVOKER_DESC).insType(CHECKCAST,renderDebugOwner);
-        insVar(ALOAD,1); // load PoseStack parameter
+        loadLocalPoseStack(1); // load PoseStack parameter
         for(String name : DEBUG_LIST_FIELDS) insThis().insField(GETFIELD,owner,name,listDesc); // load lists
         insInvokeInterface(renderDebugOwner,"onRenderDebug",renderDebugDesc); // invoke event
         if(!actualDebug) {
             String renderDesc = TypeHelper.voidMethodDesc(OBJECT_TYPE,listType,listType);
             insInvokeStatic(REF,"getClientHandles",TypeHelper.methodDesc(SharedHandlesClient.class)); // get client handles
-            insVar(ALOAD,1); // load PoseStack parameter
+            insVar(ALOAD,1); // load PoseStack or GuiGraphics parameter depending on the version
             for(String name : DEBUG_LIST_FIELDS) insThis().insField(GETFIELD,owner,name,listDesc); // load lists
             insInvokeInterface(SHARED_HANDLES_CLIENT,"renderDebugText",renderDesc); // call renderDebugText
         }
@@ -188,7 +192,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             case V16_5: return 60;
             case V18_2:
             case V19_2: return 68;
-            default: return 62;
+            default: return 62; //1.19.4+
         }
     }
     
@@ -197,7 +201,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             case V16_5: return 38;
             case V18_2:
             case V19_2: return 45;
-            default: return 48;
+            default: return 48; //1.19.4+
         }
     }
     
@@ -208,6 +212,11 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             insThis().insType(NEW,ARRAYLIST).insBasic(DUP).insInvokeSpecial(ARRAYLIST,"<init>")
                     .insField(PUTFIELD,owner,name,toDesc(LIST));
         return endList();
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    protected void loadLocalPoseStack(int index) {
+        insVar(ALOAD,index);
     }
     
     void replace(InsnList code, String name) {

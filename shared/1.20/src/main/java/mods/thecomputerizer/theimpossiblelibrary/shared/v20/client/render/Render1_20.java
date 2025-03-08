@@ -16,6 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -124,7 +126,8 @@ public class Render1_20 extends RenderAPI {
         Screen curScreen = Minecraft.getInstance().screen;
         if(Objects.nonNull(curScreen)) {
             List<Component> unwrapped = font.unwrapTooltipComponents(lines);
-            curScreen.renderComponentTooltip(unwrapMatrix(),unwrapped,iX,iY);
+            GuiGraphics graphics = getGraphics();
+            if(Objects.nonNull(graphics)) graphics.renderComponentTooltip(font.unwrap(),unwrapped,iX,iY);
         }
         else font.renderToolTip(this,lines,iX,iY,iWidth,iHeight,iMaxWidth);
     }
@@ -198,8 +201,12 @@ public class Render1_20 extends RenderAPI {
         return this.gl;
     }
     
+    public @Nullable GuiGraphics getGraphics() {
+        return this.matrix instanceof GuiGraphics ? (GuiGraphics)this.matrix : null;
+    }
+    
     @Override public PoseStack getMatrix() {
-        return unwrapMatrix();
+        return this.matrix instanceof GuiGraphics ? ((GuiGraphics)this.matrix).pose() : unwrapMatrix();
     }
 
     @Override public RenderAPI init(Object context) {

@@ -24,7 +24,7 @@ public class RenderOverlayPostEventForge1_20 extends RenderOverlayPostEventWrapp
     }
     
     @Override protected RenderContext initRenderer(@Nonnull Post event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     
     @Override public void setEvent(Post event) {

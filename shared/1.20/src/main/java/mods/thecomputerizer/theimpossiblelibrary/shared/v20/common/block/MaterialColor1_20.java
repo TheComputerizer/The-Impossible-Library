@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialColorAPI;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 
-public class MaterialColor1_20 extends MaterialColorAPI<MaterialColor> {
+public class MaterialColor1_20 extends MaterialColorAPI<MapColor> {
     
-    public MaterialColor1_20(MaterialColor color) {
+    public MaterialColor1_20(MapColor color) {
         super(color);
     }
     

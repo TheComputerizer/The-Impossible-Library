@@ -1,6 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 
 @SuppressWarnings("unused")
 public class MaterialHelper {
@@ -30,9 +34,13 @@ public class MaterialHelper {
     public static <M> boolean isDestroyedByPiston(M material) {
         return WrapperHelper.wrapMaterial(material).isDestroyedByPiston();
     }
+    
+    public static <M> boolean isFlammable(M material, WorldAPI<?> world, BlockPosAPI<?> pos) {
+        return isFlammable(material,world,pos,UP);
+    }
 
-    public static <M> boolean isFlammable(M material) {
-        return WrapperHelper.wrapMaterial(material).isFlammable();
+    public static <M> boolean isFlammable(M material, WorldAPI<?> world, BlockPosAPI<?> pos, Facing side) {
+        return WrapperHelper.wrapMaterial(material).isFlammable(world,pos,side);
     }
 
     public static <M> boolean isLiquid(M material) {

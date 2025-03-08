@@ -11,7 +11,7 @@ import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
 public class Font1_19_4 extends Font1_19 {
     
     @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
-        getWrapped().draw(getMatrix(renderer),text,x,y,14737632);
+        getWrapped().draw(getMatrix(renderer),text,x,y,color);
     }
     
     @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
@@ -21,6 +21,6 @@ public class Font1_19_4 extends Font1_19 {
     }
     
     @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
-        getWrapped().drawShadow(getMatrix(renderer),text,x,y,14737632);
+        getWrapped().drawShadow(getMatrix(renderer),text,x,y,color);
     }
 }

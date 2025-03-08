@@ -93,7 +93,7 @@ public abstract class RenderAPI {
     public abstract double getDirectMouseY();
     public abstract GLAPI getGLAPI();
     public abstract RenderAPI init(Object context);
-    public abstract void modelView();
+    @IndirectCallers public abstract void modelView();
     public abstract void popMatrix();
     public abstract void pushMatrix();
     public abstract Object renderSourceImmediate();

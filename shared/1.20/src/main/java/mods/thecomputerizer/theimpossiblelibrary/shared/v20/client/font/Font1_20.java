@@ -1,13 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.font;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Matrix4f;
+
+import javax.annotation.Nullable;
+import java.util.Objects;
 
 import static net.minecraft.ChatFormatting.RESET;
 import static net.minecraft.client.gui.Font.DisplayMode.NORMAL;
@@ -18,8 +22,12 @@ public class Font1_20 extends FontAPI<Font> {
         super(mc -> ((Minecraft)mc.unwrap()).font);
     }
     
+    protected void draw(@Nullable GuiGraphics graphics, String text, int x, int y, int color, boolean shadow) {
+        if(Objects.nonNull(graphics)) graphics.drawString(getWrapped(),text,x,y,color,shadow);
+    }
+    
     @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
-        getWrapped().draw(getMatrix(renderer),text,x,y,14737632);
+        draw(getGraphics(renderer),text,(int)x,(int)y,color,false);
     }
     
     @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
@@ -29,7 +37,7 @@ public class Font1_20 extends FontAPI<Font> {
     }
     
     @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
-        getWrapped().drawShadow(getMatrix(renderer),text,x,y,14737632);
+        draw(getGraphics(renderer),text,(int)x,(int)y,color,true);
     }
     
     @Override public int getCharWidth(char c) {
@@ -40,8 +48,12 @@ public class Font1_20 extends FontAPI<Font> {
         return getWrapped().lineHeight;
     }
     
-    protected PoseStack getMatrix(RenderAPI renderer) {
-        return (PoseStack)renderer.getMatrix();
+    protected @Nullable GuiGraphics getGraphics(RenderAPI renderer) {
+        Object matrix = renderer.getMatrix();
+        if(matrix instanceof GuiGraphics) return (GuiGraphics)matrix;
+        String type = Objects.nonNull(matrix) ? matrix.getClass().getName() : "null";
+        TILRef.logError("Tried to get render matrix as GuiGraphics from type {}",type);
+        return null;
     }
     
     @Override public int getStringWidth(String str) {
