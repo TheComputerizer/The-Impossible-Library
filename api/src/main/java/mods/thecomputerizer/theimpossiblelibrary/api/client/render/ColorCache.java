@@ -17,15 +17,15 @@ public class ColorCache {
     }
     
     public static ColorCache grayscale(Vector2 gray) {
-        return of(new Vector4(gray.dX(),gray.dX(),gray.dX(),gray.dY()));
+        return of(new Vector4(gray.fX(),gray.fX(),gray.fX(),gray.fY()));
     }
     
     public static ColorCache grayscale(int gray) {
-        return of(new Vector4(gray,gray,gray,255));
+        return ofI(new Vector4(gray,gray,gray,255));
     }
     
     public static ColorCache grayscale(int gray, int a) {
-        return of(new Vector4(gray,gray,gray,a));
+        return ofI(new Vector4(gray,gray,gray,a));
     }
     
     public static ColorCache of(float r, float g, float b) {
@@ -53,15 +53,19 @@ public class ColorCache {
     }
     
     public static ColorCache of(int r, int g, int b) {
-        return of(new Vector4(r,g,b,255));
+        return ofI(new Vector4(r,g,b,255));
     }
     
     public static ColorCache of(int r, int g, int b, float a) {
-        return of(new Vector4(r,g,b,(int)(255f*a)));
+        return ofI(new Vector4(r,g,b,(int)(255f*a)));
     }
     
     public static ColorCache of(int r, int g, int b, int a) {
-        return of(new Vector4(r,g,b,a));
+        return ofI(new Vector4(r,g,b,a));
+    }
+    
+    public static ColorCache ofI(Vector4 colorVI) {
+        return new ColorCache(ColorHelper.convertI(colorVI));
     }
 
     private final int colorI;

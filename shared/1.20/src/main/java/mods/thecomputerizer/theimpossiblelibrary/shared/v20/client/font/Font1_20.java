@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.font;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.render.Render1_20;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -48,10 +49,7 @@ public class Font1_20 extends FontAPI<Font> {
     }
     
     protected @Nullable GuiGraphics getGraphics(RenderAPI renderer) {
-        Object matrix = renderer.getMatrix();
-        if(matrix instanceof GuiGraphics) return (GuiGraphics)matrix;
-        String type = Objects.nonNull(matrix) ? matrix.getClass().getName() : "null";
-        throw new IllegalArgumentException("Tried to get render matrix as GuiGraphics from type "+type);
+        return ((Render1_20)renderer).getGraphics();
     }
     
     @Override public int getStringWidth(String str) {
