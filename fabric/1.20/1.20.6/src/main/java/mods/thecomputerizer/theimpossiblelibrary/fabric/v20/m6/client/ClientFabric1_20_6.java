@@ -5,11 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.client.ClientFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.event.CommonEventsFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.integration.ModHelperFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.network.NetworkFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.registry.RegistryHandlerFabric1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.Tag1_20_6;
 
 import java.util.function.Supplier;
 
@@ -29,5 +31,9 @@ public class ClientFabric1_20_6 extends ClientFabric1_20 {
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {
         return RegistryHandlerFabric1_20_6::new;
+    }
+    
+    @Override public Supplier<TagAPI> initTag() {
+        return Tag1_20_6::new;
     }
 }

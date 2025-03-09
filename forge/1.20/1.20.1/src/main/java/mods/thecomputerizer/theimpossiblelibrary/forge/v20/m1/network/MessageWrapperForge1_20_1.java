@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v20.network;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
@@ -13,36 +13,36 @@ import static net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT;
 /**
  * It took me way too long to figure out that the wrapper class determines the network direction for decoding.
  */
-public abstract class MessageWrapperForge1_20 extends MessageWrapperAPI<ServerPlayer,Context> {
+public abstract class MessageWrapperForge1_20_1 extends MessageWrapperAPI<ServerPlayer,Context> {
     
-    public static MessageWrapperForge1_20 getInstance(NetworkDirection dir) {
+    public static MessageWrapperForge1_20_1 getInstance(NetworkDirection dir) {
         boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
         boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
         return login ? (client ? new ClientLogin() : new ServerLogin()) : (client ? new Client() : new Server());
     }
     
-    public static MessageWrapperForge1_20 getInstance(NetworkDirection dir, ByteBuf buf) {
+    public static MessageWrapperForge1_20_1 getInstance(NetworkDirection dir, ByteBuf buf) {
         boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
         boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
         return login ? (client ? new ClientLogin(buf) : new ServerLogin(buf)) :
                 (client ? new Client(buf) : new Server(buf));
     }
     
-    public static Class<? extends MessageWrapperForge1_20> getClass(NetworkDirection dir) {
+    public static Class<? extends MessageWrapperForge1_20_1> getClass(NetworkDirection dir) {
         boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
         boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
         return login ? (client ? ClientLogin.class : ServerLogin.class) : (client ? Client.class : Server.class);
     }
     
-    MessageWrapperForge1_20() {
+    MessageWrapperForge1_20_1() {
         super();
     }
     
-    MessageWrapperForge1_20(ByteBuf buf) {
+    MessageWrapperForge1_20_1(ByteBuf buf) {
         super(buf);
     }
     
-    public static final class Client extends MessageWrapperForge1_20 {
+    public static final class Client extends MessageWrapperForge1_20_1 {
         
         Client() {
             super();
@@ -53,7 +53,7 @@ public abstract class MessageWrapperForge1_20 extends MessageWrapperAPI<ServerPl
         }
     }
     
-    public static final class ClientLogin extends MessageWrapperForge1_20 {
+    public static final class ClientLogin extends MessageWrapperForge1_20_1 {
         
         ClientLogin() {
             super();
@@ -64,7 +64,7 @@ public abstract class MessageWrapperForge1_20 extends MessageWrapperAPI<ServerPl
         }
     }
     
-    public static final class Server extends MessageWrapperForge1_20 {
+    public static final class Server extends MessageWrapperForge1_20_1 {
         
         Server() {
             super();
@@ -75,7 +75,7 @@ public abstract class MessageWrapperForge1_20 extends MessageWrapperAPI<ServerPl
         }
     }
     
-    public static final class ServerLogin extends MessageWrapperForge1_20 {
+    public static final class ServerLogin extends MessageWrapperForge1_20_1 {
         
         ServerLogin() {
             super();

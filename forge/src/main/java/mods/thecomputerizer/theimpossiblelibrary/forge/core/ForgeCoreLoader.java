@@ -81,9 +81,9 @@ public class ForgeCoreLoader {
             Set<String> packages, Object moduleRef, ClassLoader target, boolean newFormat) {
         Fields.setDirect(module,"name",name);
         Object configuration = Fields.getDirect(target,"configuration");
-        Map<String,Object> resolvedRoots = Fields.getDirect(target,"resolvedRoots");
+        Map<String,Object> resolvedRoots = Fields.getDirect(target,newFormat ? "ourModules" : "resolvedRoots");
         Map<String,Object> packageLookup = Fields.getDirect(target,newFormat ? "packageToOurModules" : "packageLookup");
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(target,"parentLoaders");
+        Map<String,ClassLoader> parentLoaders = Fields.getDirect(target,newFormat ? "packageToParentLoader" : "parentLoaders");
         resolvedRoots.put(name,moduleRef);
         for(String pkg : packages) packageLookup.put(pkg,resolvedModule);
         parentLoaders.entrySet().removeIf(entry -> packages.contains(entry.getKey()));
@@ -99,7 +99,8 @@ public class ForgeCoreLoader {
         if(Objects.nonNull(layerModules)) {
             layerModules = new HashSet<>(layerModules);
             for(Object lModule : layerModules) {
-                if(moduleName(lModule).equals(moduleName(module))) {
+                String lName = moduleName(lModule);
+                if(Objects.nonNull(lName) && lName.equals(moduleName(module))) {
                     found = true;
                 }
             }
@@ -125,7 +126,7 @@ public class ForgeCoreLoader {
      */
     private static void addResolvedModule(Object module, ClassLoader thisLoader, boolean newFormat) {
         ClassLoader loader = bootLoader();
-        Map<String,Object> roots = Fields.getDirect(loader,"resolvedRoots");
+        Map<String,Object> roots = Fields.getDirect(loader,newFormat ? "ourModules" : "resolvedRoots");
         Map<String,Object> packageLookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
         Object reference = Methods.invokeDirect(module,"reference");
         Object descriptor = Methods.invokeDirect(reference,"descriptor");
@@ -138,12 +139,12 @@ public class ForgeCoreLoader {
         
         //Finalize by moving the original Module from SERVICE to the BOOT layer & fixing parent loaders
         moveModuleToLayer(loader,"BOOT","SERVICE",name);
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(thisLoader,"parentLoaders");
+        Map<String,ClassLoader> parentLoaders = Fields.getDirect(thisLoader,newFormat ? "packageToParentLoader" : "parentLoaders");
         for(String pkg : packages) parentLoaders.put(pkg,loader);
         
         //Fix configurations & prevent reading duplicate modules
         addConfigurationModule(Fields.getDirect(loader,"configuration"),name,module,thisLoader);
-        Map<String,Object> theseRoots = Fields.getDirect(thisLoader,"resolvedRoots");
+        Map<String,Object> theseRoots = Fields.getDirect(thisLoader,newFormat ? "ourModules" : "resolvedRoots");
         theseRoots.remove(name);
         
         LOGGER.info("Finished migrating module {} from the SERVICE layer to the BOOT layer",name);
@@ -236,7 +237,8 @@ public class ForgeCoreLoader {
         Collection<Class<?>> targetClasses = Fields.getDirect(target,"classes");
         for(Class<?> targetClass : targetClasses) {
             String name = moduleName(Fields.getDirect(targetClass,"module"));
-            if(moduleName.equals(name)) Fields.setDirect(targetClass,"module",module);
+            if(Objects.nonNull(moduleName) && moduleName.equals(name))
+                Fields.setDirect(targetClass,"module",module);
         }
         targetClasses.addAll(allMoved);
         for(Entry<ClassLoader,Collection<Class<?>>> removalEntry : removals.entrySet()) {
@@ -611,7 +613,7 @@ public class ForgeCoreLoader {
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("NUKING ALL REFERENCES OF MODULE {} FROM THE BOOT, SERVICE, & PLUGIN LAYERS",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
-        Map<String,Object> bootRoots = Fields.getDirect(foundLoader,"resolvedRoots");
+        Map<String,Object> bootRoots = Fields.getDirect(foundLoader,newFormat ? "ourModules" : "resolvedRoots");
         Object ref = bootRoots.get(name);
         Object foundLayer = getModuleLayer((String)found[2]);
         Map<String,Object> layerModules = Fields.getDirect(foundLayer,"nameToModule");
@@ -672,10 +674,14 @@ public class ForgeCoreLoader {
     
     static void nukeLoaderFields(String moduleName, boolean newFormat, ClassLoader ... loaders) {
         for(ClassLoader loader : loaders) {
-            Map<String,Object> resolvedRoots = Fields.getDirect(loader,"resolvedRoots");
+            Map<String,Object> resolvedRoots = Fields.getDirect(loader,newFormat ? "ourModules" : "resolvedRoots");
             Map<String,Object> packageLookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
-            Map<String,Object> parentLoaders = Fields.getDirect(loader,"parentLoaders");
+            Map<String,Object> parentLoaders = Fields.getDirect(loader,newFormat ? "packageToParentLoader" : "parentLoaders");
             resolvedRoots.remove(moduleName);
+            if(newFormat) {
+                Map<String,Object> ourModulesSecure = Fields.getDirect(loader,"ourModulesSecure");
+                ourModulesSecure.remove(moduleName);
+            }
             Object module = null;
             for(Entry<String,Object> pkgEntry : packageLookup.entrySet()) {
                 Object value = pkgEntry.getValue();
@@ -687,9 +693,12 @@ public class ForgeCoreLoader {
             if(Objects.isNull(module)) continue;
             Set<String> packages = resolvedPackages(module);
             if(Objects.isNull(packages)) continue;
+            Map<String,Object> packageToCodeSource = newFormat ?
+                    Fields.getDirect(loader,"packageToCodeSource") : null;
             for(String pkg : packages) {
                 packageLookup.remove(pkg);
                 parentLoaders.remove(pkg);
+                if(newFormat) packageToCodeSource.remove(pkg);
             }
         }
     }
@@ -791,7 +800,7 @@ public class ForgeCoreLoader {
         Map<String,Object> map = new HashMap<>(Fields.getDirect(layer,"nameToModule"));
         map.remove(name);
         Fields.setDirect(layer,"nameToModule",map);
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(loaderTo,"parentLoaders");
+        Map<String,ClassLoader> parentLoaders = Fields.getDirect(loaderTo,newFormat ? "packageToParentLoader" : "parentLoaders");
         for(String p : packages) parentLoaders.put(p,loaderFrom);
         
         //Deal with the module graph again ._.

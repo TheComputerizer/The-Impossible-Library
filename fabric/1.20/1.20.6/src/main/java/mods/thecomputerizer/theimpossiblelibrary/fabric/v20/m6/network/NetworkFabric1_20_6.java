@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.network.Network1_20;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.network.Network1_20_6;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -24,7 +24,7 @@ import java.util.Objects;
  * Fabric doesn't have mod specific network channels or network direction API classes...
  */
 @SuppressWarnings("UnstableApiUsage")
-public class NetworkFabric1_20_6 extends Network1_20<Object,Object> {
+public class NetworkFabric1_20_6 extends Network1_20_6<Object,Object> {
 
     @Override public Object getDirFromName(String name) {
         return switch(name.toUpperCase()) {

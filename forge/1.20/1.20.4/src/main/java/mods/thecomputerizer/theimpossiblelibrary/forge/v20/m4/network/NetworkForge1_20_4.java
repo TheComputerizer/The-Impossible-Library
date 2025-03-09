@@ -1,28 +1,28 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v20.network;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m4.network;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.network.Network1_20;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent.Context;
-import net.minecraftforge.network.NetworkRegistry.ChannelBuilder;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
 
 import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_CLIENT;
 import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_SERVER;
 import static net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT;
 import static net.minecraftforge.network.NetworkDirection.PLAY_TO_SERVER;
 import static net.minecraftforge.network.PacketDistributor.PLAYER;
+import static net.minecraftforge.network.PacketDistributor.SERVER;
 
-public class NetworkForge1_20 extends Network1_20<SimpleChannel,NetworkDirection> {
+public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirection> {
 
     private SimpleChannel network;
 
@@ -66,12 +66,14 @@ public class NetworkForge1_20 extends Network1_20<SimpleChannel,NetworkDirection
 
     @SuppressWarnings("DataFlowIssue")
     @Override public SimpleChannel getNetwork() {
-        if(Objects.isNull(this.network))
-            this.network = ChannelBuilder.named(TILRef.res("main_network").unwrap())
-                    .clientAcceptedVersions(version -> true)
-                    .serverAcceptedVersions(version -> true)
-                    .networkProtocolVersion(TILRef::getNetworkVersion)
+        if(Objects.isNull(this.network)) {
+            ResourceLocation name = TILRef.res("main_network").unwrap();
+            this.network = ChannelBuilder.named(name)
+                    .clientAcceptedVersions((status,version) -> true)
+                    .serverAcceptedVersions((status,version) -> true)
+                    .networkProtocolVersion(1)
                     .simpleChannel();
+        }
         return this.network;
     }
 
@@ -85,45 +87,41 @@ public class NetworkForge1_20 extends Network1_20<SimpleChannel,NetworkDirection
 
     //TODO I'm pretty sure the login directions need an extra flag to be set
     @SuppressWarnings("unchecked") @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
-        getNetwork().registerMessage(id,(Class<MessageWrapperForge1_20>)MessageWrapperForge1_20.getClass(dir.getDirection()),
-                MessageWrapperAPI::encode, buf -> MessageWrapperForge1_20.getInstance(dir.getDirection(), buf),
-                (message,supplier) -> { //Response handler
-                    Context context = supplier.get();
-                    MessageWrapperForge1_20 wrapper = (MessageWrapperForge1_20)message.handle(context);
-                    if(Objects.nonNull(wrapper)) {
-                        if(!dir.isToClient()) wrapper.setPlayer(context.getSender());
-                        wrapper.send();
-                    }
-                },Optional.of(dir.getDirection()));
+        Class<MessageWrapperForge1_20_4> msgClass = (Class<MessageWrapperForge1_20_4>)MessageWrapperForge1_20_4.getClass(dir.getDirection());
+        getNetwork().messageBuilder(msgClass,id,dir.getDirection())
+                .encoder(MessageWrapperForge1_20_4::encode)
+                .decoder(buf -> MessageWrapperForge1_20_4.getInstance(dir.getDirection(),buf))
+                .consumerNetworkThread(MessageWrapperForge1_20_4::handle)
+                .add();
     }
     
     //TODO Does not support login direction
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        getNetwork().send(PLAYER.with(() -> (ServerPlayer)player), (MessageWrapperForge1_20)message);
+        getNetwork().send(message,PLAYER.with((ServerPlayer)player));
     }
     
     //TODO Does not support login direction
     @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
-        getNetwork().sendToServer((MessageWrapperForge1_20)message);
+        getNetwork().send(message,SERVER.noArg());
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance(dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
