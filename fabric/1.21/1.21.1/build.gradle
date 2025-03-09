@@ -79,7 +79,7 @@ dependencies {
     modImplementation "$fabric_loader_artifact:$fabric_loader"
     modImplementation "$fabric_api_artifact:$fabric_1_21_1"
     modImplementation "$cloth_artifact:$cloth_1_21_1"
-    modImplementation "$configured_artifact:$configured_fabric_1_21"
+    modImplementation "$configured_artifact:$configured_fabric_1_21_1"
     modImplementation "$modmenu_artifact:$modmenu_1_21_1"
     modImplementation "$serene_seasons_artifact:$serene_seasons_fabric_1_21_1"
 

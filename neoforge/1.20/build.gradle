@@ -1,8 +1,72 @@
-apply from: rootProject.file('shared.gradle')
+/**
+ * NeoForge implementation for 1.20. Based in 1.20.4
+ */
+//file:noinspection GroovyAssignabilityCheck
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                plugin_portal_content.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'NeoForge'
+            url = uri 'https://maven.neoforged.net/releases'
+            content {
+                neoforge_content.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+    }
+    dependencies {
+        classpath "$shadow_plugin:$shadow_version"
+        classpath "$neoforge_gradle_plugin:$neoforge_gradle_version"
+    }
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+apply from: rootProject.file('gradle\\java17-module.gradle')
+
+plugins.apply 'net.neoforged.gradle.userdev'
+
+def base = project ':api'
+def shared = project ':shared:shared_1.20'
+
+subsystems {
+    parchment {
+        minecraftVersion = minecraft_1_20_4
+        mappingsVersion = parchment_1_20_4
+    }
+}
+
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
 
 dependencies {
-    compileOnly(project(':api'))
-    implementation(project(':neoforge'))
+    //noinspection VulnerableLibrariesLocal
+    implementation "$neoforge_mc:$neoforge_1_20_4"
+
+    compileOnlyApi base
+    compileOnlyApi project(path: ':neoforge', configuration: 'dev')
+    compileOnlyApi shared
 }
+
+jar {
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
+    }
+}
+
+artifacts {
+    dev jar
+}
+
+tasks.jar.dependsOn ':neoforge:build'

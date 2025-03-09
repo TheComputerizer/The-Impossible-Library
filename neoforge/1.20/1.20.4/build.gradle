@@ -1,8 +1,128 @@
-apply from: rootProject.file('shared.gradle')
+/**
+ * NeoForge implementation for 1.20.4
+ */
+//file:noinspection GroovyAssignabilityCheck
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                plugin_portal_content.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'NeoForge'
+            url = uri 'https://maven.neoforged.net/releases'
+            content {
+                neoforge_content.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+    }
+    dependencies {
+        classpath "$shadow_plugin:$shadow_version"
+        classpath "$neoforge_gradle_plugin:$neoforge_gradle_version"
+    }
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+apply from: rootProject.file('gradle\\java17-module.gradle')
+
+plugins.apply 'net.neoforged.gradle.userdev'
+
+def base = project ':api'
+def neoforge = project ':neoforge'
+def neoforge_specific = project ':neoforge:neoforge_1.20'
+def shared = project ':shared:shared_1.20'
+def shared_specific = project ':shared:shared_1.20:shared_1.20.4'
+
+subsystems {
+    parchment {
+        minecraftVersion = minecraft_1_20_4
+        mappingsVersion = parchment_1_20_4
+    }
+}
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource sourceSets.main
+    }
+    client {
+        systemProperty 'forge.enabledGameTestNamespaces', mod_id
+    }
+    server {
+        systemProperty 'forge.enabledGameTestNamespaces', mod_id
+        programArgument '--nogui'
+    }
+}
+
+repositories {
+    maven {
+        name = 'CurseMaven'
+        url = uri 'https://www.cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven {
+        name = 'ModMaven'
+        url = uri 'https://modmaven.dev'
+        content {
+            includeGroup 'mezz.jei'
+        }
+    }
+}
 
 dependencies {
-    compileOnly(project(':api'))
-    compileOnly(project(':shared'))
+    //noinspection VulnerableLibrariesLocal
+    implementation "$neoforge_mc:$neoforge_1_20_4"
+
+    compileOnlyApi base
+    compileOnlyApi project(path: ':neoforge', configuration: 'dev')
+    compileOnlyApi neoforge_specific
+    compileOnlyApi shared
+    compileOnlyApi shared_specific
+
+    //mod support dependencies
+    implementation "$configured_artifact:$configured_neoforge_1_20_4"
+    implementation "$infernal_mobs_artifact:$infernal_mobs_neoforge_1_20_4"
+    implementation "$serene_seasons_artifact:$serene_seasons_neoforge_1_20_4"
+
+    runtimeOnly "$jei_artifact:$jei_neoforge_1_20_4"
 }
+
+//reobf {
+//    shadowJar {
+//        dependsOn createMcpToSrg
+//        mappings = createMcpToSrg.output
+//    }
+//}
+
+jar {
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
+    }
+}
+
+shadowJar {
+    [ base, neoforge, neoforge_specific ].forEach {
+        from(it.jar.archiveFile.collect { zipTree it })
+    }
+    shared_specific.afterEvaluate {
+        from(shared.jar.archiveFile.collect { zipTree it })
+        from(it.jar.archiveFile.collect { zipTree it })
+        relocate "${neoforge_base_package}.client.event.events", "${neoforge_1_20_4_package}.client.event.events"
+        relocate "${neoforge_base_package}.common.event.events", "${neoforge_1_20_4_package}.common.event.events"
+        relocate shared_base_package, neoforge_base_package
+    }
+}
+
+tasks.assemble.dependsOn shadowJar
+//tasks.shadowJar.dependsOn 'reobfJar'
+tasks.jar.finalizedBy shadowJar
+tasks.jar.dependsOn ':neoforge:neoforge_1.20:build'

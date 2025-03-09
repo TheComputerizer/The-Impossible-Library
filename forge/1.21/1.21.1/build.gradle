@@ -102,7 +102,7 @@ dependencies {
     compileOnlyApi shared
     compileOnlyApi shared_specific
 
-    implementation fg.deobf("$configured_artifact:$configured_forge_1_21")
+    implementation fg.deobf("$configured_artifact:$configured_forge_1_21_1")
     implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_forge_1_21_1")
     implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_forge_1_21_1")
 

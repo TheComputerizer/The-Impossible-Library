@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLanguageProvider;
+import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -70,8 +71,9 @@ public class TILLanguageProvider implements IModLanguageProvider {
             TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
         else TILRef.logError("Initialized versioned language provider as null");
         GameVersion version = this.core.getVersion();
-        if(version==V20_4 || version==V20_6 || version==V21_1) {
-        
+        if(Objects.nonNull(this.versionProvider) && (version==V20_4 || version==V20_6 || version==V21_1)) {
+            TILRef.logInfo("Seems like this version will need some extra convincing to load mods on");
+            this.versionProvider.fixMods();
         }
     }
     

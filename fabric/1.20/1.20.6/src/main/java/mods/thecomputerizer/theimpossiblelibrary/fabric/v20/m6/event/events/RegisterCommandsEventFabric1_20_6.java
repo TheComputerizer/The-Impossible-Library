@@ -14,6 +14,6 @@ public class RegisterCommandsEventFabric1_20_6 extends RegisterCommandsEventFabr
     }
     
     @Override public void registerCommand(CommandAPI command) {
-        WrappedCommand1_20_6.register(this.event[0], command);
+        WrappedCommand1_20_6.register(this.event[0],command);
     }
 }
