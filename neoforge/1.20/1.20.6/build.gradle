@@ -94,13 +94,6 @@ dependencies {
     runtimeOnly "$jei_artifact:$jei_neoforge_1_20_6"
 }
 
-//reobf {
-//    shadowJar {
-//        dependsOn createMcpToSrg
-//        mappings = createMcpToSrg.output
-//    }
-//}
-
 jar {
     manifest {
         attributes([
@@ -123,6 +116,6 @@ shadowJar {
 }
 
 tasks.assemble.dependsOn shadowJar
-//tasks.shadowJar.dependsOn 'reobfJar'
-tasks.jar.finalizedBy shadowJar
+tasks.shadowJar.dependsOn 'neoFormPackRecomp'
+tasks.jar.finalizedBy 'neoFormPackRecomp'
 tasks.jar.dependsOn ':neoforge:neoforge_1.20:build'

@@ -22,6 +22,7 @@ eclipse
 run
 run_client
 run_server
+runs
 *.csv
 /mcp/
 
