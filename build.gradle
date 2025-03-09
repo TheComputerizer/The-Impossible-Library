@@ -55,6 +55,8 @@ jar {
     fabric_1_20_4.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
     forge_1_20_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
     //neoforge_1_20_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    fabric_1_20_6.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
+    forge_1_20_6.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -75,4 +77,5 @@ jar {
   ':fabric:fabric_1.19:fabric_1.19.4:build', ':forge:forge_1.19:forge_1.19.4:build',
   ':fabric:fabric_1.20:fabric_1.20.1:build', ':forge:forge_1.20:forge_1.20.1:build', ':neoforge:neoforge_1.20:neoforge_1.20.1:build',
   ':fabric:fabric_1.20:fabric_1.20.4:build', ':forge:forge_1.20:forge_1.20.4:build', ':neoforge:neoforge_1.20:neoforge_1.20.4:build',
+  ':fabric:fabric_1.20:fabric_1.20.6:build', ':forge:forge_1.20:forge_1.20.6:build', ':neoforge:neoforge_1.20:neoforge_1.20.6:build'
 ].forEach { tasks.jar.mustRunAfter it }
