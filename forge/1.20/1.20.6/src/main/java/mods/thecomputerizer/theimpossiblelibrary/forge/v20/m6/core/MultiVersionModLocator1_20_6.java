@@ -12,8 +12,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeModLocator;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.loader.TILModFileForge1_20;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.loader.TILModFileForge1_20.TILLanguageProviderLoader;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.core.loader.TILModFileForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.core.loader.TILModFileForge1_20_6.TILLanguageProviderLoader;
 import net.minecraftforge.fml.loading.ClasspathLocatorUtils;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
@@ -44,7 +44,7 @@ public class MultiVersionModLocator1_20_6 implements TILForgeModLocator {
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
     private final CoreAPI core;
-    private final Map<MultiVersionModCandidate,TILModFileForge1_20> candidateMap = new HashMap<>();
+    private final Map<MultiVersionModCandidate,TILModFileForge1_20_6> candidateMap = new HashMap<>();
     
     public MultiVersionModLocator1_20_6(CoreAPI core) {
         this.core = core;
@@ -102,7 +102,7 @@ public class MultiVersionModLocator1_20_6 implements TILForgeModLocator {
     }
     
     @Override public IModFile createModFile(Path path, IModLocator locator, Collection<?> infos) {
-        return new TILModFileForge1_20(jarFromPath(path),locator,infos);
+        return new TILModFileForge1_20_6(jarFromPath(path),locator,infos);
     }
     
     @Override public void initFor(ClassLoader loader, IModLocator locator) {
@@ -124,7 +124,7 @@ public class MultiVersionModLocator1_20_6 implements TILForgeModLocator {
             Path sourcePath = candidate.getFile().toPath();
             Collection<?> infos = (Collection<?>)entry.getValue();
             SecureJar jar = jarFromPath(sourcePath);
-            this.candidateMap.put(candidate,new TILModFileForge1_20(jar,locator,infos));
+            this.candidateMap.put(candidate,new TILModFileForge1_20_6(jar,locator,infos));
         }
     }
     
@@ -145,10 +145,10 @@ public class MultiVersionModLocator1_20_6 implements TILForgeModLocator {
         CoreAPI instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) TILRef.logError("Failed to get CoreAPI instance :(");
         Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
-        for(TILModFileForge1_20 candidate : this.candidateMap.values()) {
+        for(TILModFileForge1_20_6 candidate : this.candidateMap.values()) {
             candidate.populateMultiversionData((Map<String,MultiVersionModData>)data);
             if(MODID.equals(candidate.getModFileInfo().moduleName()))
-                mods.add(new TILLanguageProviderLoader(candidate.getSecureJar(), candidate.getProvider()));
+                mods.add(new TILLanguageProviderLoader(candidate.getSecureJar(),candidate.getProvider()));
             mods.add(candidate);
         }
         List<ModFileOrException> annoyingList = new ArrayList<>();

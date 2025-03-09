@@ -32,11 +32,11 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     static final String[] DEBUG_LIST_FIELDS = new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"};
     static final String CUSTOM_EVENTS = "mods/thecomputerizer/theimpossiblelibrary/fabric/common/event/CustomFabricEvents";
     static final String FABRIC_EVENT = "net/fabricmc/fabric/api/event/Event";
-    static final String GUI = mapClass("net.minecraft.client.gui.Gui", "net.minecraft.class_329");
+    protected static final String GUI = mapClass("net.minecraft.client.gui.Gui", "net.minecraft.class_329");
     static final String KEYBOARD_HANDLER = mapClass("net.minecraft.client.KeyboardHandler", "net.minecraft.class_309");
     static final String INVOKER_DESC = TypeHelper.methodDesc(OBJECT_TYPE);
     static final String LIST = "java/util/List";
-    static final String MINECRAFT = mapClass("net/minecraft/client/Minecraft", "net/minecraft/class_310");
+    protected static final String MINECRAFT = mapClass("net/minecraft/client/Minecraft", "net/minecraft/class_310");
     static final String OPTIONS = mapClass("net/minecraft/client/Options", "net/minecraft/class_315");
     protected static final String POSESTACK = mapClass("com.mojang.blaze3d.vertex.PoseStack", "net.minecraft.class_4587");
     static final String REF = Type.getInternalName(TILRef.class);
@@ -50,7 +50,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
         return DEV ? dev : notDev;
     }
     
-    final CoreAPI core;
+    protected final CoreAPI core;
    
     public TILCoreEntryPointFabric() {
         this.core = CoreAPI.getInstance();
@@ -98,15 +98,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
                         .insInvokeInterface(LIST,"addAll",addAllDesc);
             }
         } else  {
-            insVar(ALOAD,0);
-            String mcFieldDesc = toDesc(MINECRAFT);
-            String mcFieldName = DEV ? "minecraft" : "field_2035";
-            String optionsFieldDesc = toDesc(OPTIONS);
-            String optionsFieldName = DEV ? "options" : "field_1690";
-            String renderFieldName = DEV ? "renderDebug" : "field_1866";
-            insField(GETFIELD,owner,mcFieldName,mcFieldDesc)
-                    .insField(GETFIELD,MINECRAFT,optionsFieldName,optionsFieldDesc)
-                    .insField(GETFIELD,OPTIONS,renderFieldName,"Z").insIf(IF_NOT_EQUAL,new Label());
+            renderDebugQuery(owner).insIf(IF_NOT_EQUAL,new Label());
             for(String name : DEBUG_LIST_FIELDS)
                 insThis().insField(GETFIELD,owner,name,listDesc).insInvokeInterface(LIST,"clear");
         }
@@ -192,7 +184,8 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             case V16_5: return 60;
             case V18_2:
             case V19_2: return 68;
-            default: return 62; //1.19.4+
+            case V19_4: return 62;
+            default: return 58; //1.20.1+
         }
     }
     
@@ -201,7 +194,9 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             case V16_5: return 38;
             case V18_2:
             case V19_2: return 45;
-            default: return 48; //1.19.4+
+            case V19_4:
+            case V20_1: return 48;
+            default: return 50; //1.20.4+
         }
     }
     
@@ -217,6 +212,18 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     @SuppressWarnings("SameParameterValue")
     protected void loadLocalPoseStack(int index) {
         insVar(ALOAD,index);
+    }
+    
+    protected CoreEntryPoint renderDebugQuery(String owner) {
+        insVar(ALOAD,0);
+        String mcFieldDesc = toDesc(MINECRAFT);
+        String mcFieldName = mapDev("minecraft","field_2035");
+        String optionsFieldDesc = toDesc(OPTIONS);
+        String optionsFieldName = mapDev("options","field_1690");
+        String renderFieldName = mapDev("renderDebug","field_1866");
+        return insField(GETFIELD,owner,mcFieldName,mcFieldDesc)
+                .insField(GETFIELD,MINECRAFT,optionsFieldName,optionsFieldDesc)
+                .insField(GETFIELD,OPTIONS,renderFieldName,"Z");
     }
     
     void replace(InsnList code, String name) {

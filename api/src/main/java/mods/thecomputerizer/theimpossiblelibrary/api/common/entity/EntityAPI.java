@@ -55,7 +55,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
     
     @IndirectCallers public BlockPosAPI<?> getPosRounded() {
-        return PosHelper.getPos(Math.round(x()*2d)/2d,Math.round(y()*2d)/2d,Math.round(z()*2d)/2d);
+        return PosHelper.getPos(Math.round(x()),Math.round(y()),Math.round(z()));
     }
     public abstract EntityAPI<?,?> getRootVehicle();
     public abstract @Nullable EntityAPI<?,?> getVehicle();
@@ -71,7 +71,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
     
     public void setPosition(Vector3 vec) {
-        setPosition(vec.iX(),vec.iY(),vec.iZ());
+        setPosition(vec.dX(),vec.dY(),vec.dZ());
     }
     
     public void setPosition(int x, int y, int z) {

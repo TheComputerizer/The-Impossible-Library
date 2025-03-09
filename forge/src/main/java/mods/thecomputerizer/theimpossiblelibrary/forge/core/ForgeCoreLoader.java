@@ -400,6 +400,16 @@ public class ForgeCoreLoader {
         return ((Optional<?>)Methods.invokeDirect(layerManager,"getLayer",layerEnum)).orElse(null);
     }
     
+    static String getVersionFromForgeVersion(String forgeVersion) {
+        String ignore = "forge-";
+        String actualVersion = forgeVersion.startsWith(ignore) ? forgeVersion.substring(ignore.length()) : forgeVersion;
+        String version = "1.21.1";
+        if(actualVersion.startsWith("49.")) version = "1.20.4";
+        else if(actualVersion.startsWith("50.")) version = "1.20.6";
+        LOGGER.info("Guessed mc version {} from forge version {}",version,forgeVersion);
+        return version;
+    }
+    
     static String getVersionStr() {
         ArgumentHandler handler = getArgumentHandler();
         if(Objects.isNull(handler)) return null;
@@ -409,17 +419,31 @@ public class ForgeCoreLoader {
             return null;
         }
         int versionIndex = -1;
+        boolean found = false;
         for(int i=0;i<rawArgs.length;i++) {
             if(rawArgs[i].equals("--fml.mcVersion")) {
                 versionIndex = i+1;
+                found = true;
                 break;
             }
         }
-        if(versionIndex>=0) {
+        if(found) {
             LOGGER.info("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
             return rawArgs[versionIndex];
         }
-        LOGGER.error("Failed to find version from {}",Arrays.toString(rawArgs));
+        LOGGER.info("--fml.mcVersion was not found so the mc version will be guessed from --version instead");
+        for(int i=0;i<rawArgs.length;i++) {
+            if(rawArgs[i].equals("--version")) {
+                versionIndex = i+1;
+                found = true;
+                break;
+            }
+        }
+        if(found) {
+            LOGGER.info("Found forge version arg at index {}",versionIndex);
+            return getVersionFromForgeVersion(rawArgs[versionIndex]);
+        }
+        LOGGER.error("Failed to find fml.mcVersion or version flags from args {}",Arrays.toString(rawArgs));
         return null;
     }
     
@@ -786,7 +810,7 @@ public class ForgeCoreLoader {
         Map<String,Object> pkgs = Fields.getDirect(loaderTo,newFormat ? "packageToOurModules" : "packageLookup");
         Object module = pkgs.get(pkg);
         String name = resolvedName(module);
-        Map<String,Object> roots = Fields.getDirect(loaderTo,"resolvedRoots");
+        Map<String,Object> roots = Fields.getDirect(loaderTo,newFormat ? "ourModules" : "resolvedRoots");
         roots.remove(name);
         Object config = Fields.getDirect(loaderTo,"configuration");
         removeFromUnmodifiableSetField(config,"modules",module);

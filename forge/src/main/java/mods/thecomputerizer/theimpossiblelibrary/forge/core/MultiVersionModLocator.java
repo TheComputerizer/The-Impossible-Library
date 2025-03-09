@@ -52,29 +52,6 @@ public class MultiVersionModLocator implements IModLocator {
         else TILRef.logFatal("Failed to find mod locator! Unable to load multiversion mods");
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public List<IModFile> scanMods() {
-        List<IModFile> files = null;
-        this.fileSystems = Collections.emptyMap();
-        if(Objects.nonNull(this.localLocator)) {
-            files = (List<IModFile>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),
-                    "scanMods",this.localLocator,new Class<?>[]{IModLocator.class},this);
-            if(Objects.nonNull(files) && this.localLocator.getClass().getSimpleName().contains("1_16_5")) {
-                this.fileSystems = new HashMap<>();
-                for(IModFile file : files) {
-                    FileSystem fs = fileSystemFor(file);
-                    if(Objects.nonNull(fs)) this.fileSystems.put(file,fs);
-                }
-            }
-        }
-        else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
-        return Objects.nonNull(files) ? files : Collections.emptyList();
-    }
-    
-    @Override public String name() {
-        return "multiversionloader";
-    }
-    
     FileSystem fileSystemFor(IModFile file) {
         try {
             return FileSystems.newFileSystem(file.getFilePath(), file.getClass().getClassLoader());
@@ -83,16 +60,6 @@ public class MultiVersionModLocator implements IModLocator {
         }
         return null;
     }
-    
-    /**
-     * Used in 1.16.5
-     */
-    public Path findPath(IModFile modFile, String ... path) {
-        if(path.length<1) throw new IllegalArgumentException("Missing path");
-        else return this.fileSystems.get(modFile).getPath("",path);
-    }
-    
-    @Override public void scanFile(IModFile modFile, Consumer<Path> pathConsumer) {}
     
     /**
      * Used in 1.16.5
@@ -119,6 +86,14 @@ public class MultiVersionModLocator implements IModLocator {
         }
     }
     
+    /**
+     * Used in 1.16.5
+     */
+    public Path findPath(IModFile modFile, String ... path) {
+        if(path.length<1) throw new IllegalArgumentException("Missing path");
+        else return this.fileSystems.get(modFile).getPath("",path);
+    }
+    
     @Override public void initArguments(Map<String,?> arguments) {
         if(Objects.nonNull(this.localLocator)) {
             ClassLoader loader = getClass().getClassLoader();
@@ -128,7 +103,32 @@ public class MultiVersionModLocator implements IModLocator {
         } else TILRef.logFatal("Locator is null and cannot load multiversion mods! Did it fail to initialize?");
     }
     
-    @Override public boolean isValid(IModFile modFile) {
+    @Override public boolean isValid(IModFile file) {
         return true;
+    }
+    
+    @Override public String name() {
+        return "multiversionloader";
+    }
+    
+    @Override public void scanFile(IModFile file, Consumer<Path> pathConsumer) {}
+    
+    @SuppressWarnings("unchecked")
+    @Override public List<IModFile> scanMods() {
+        List<IModFile> files = null;
+        this.fileSystems = Collections.emptyMap();
+        if(Objects.nonNull(this.localLocator)) {
+            files = (List<IModFile>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),
+                                                                  "scanMods",this.localLocator,new Class<?>[]{IModLocator.class},this);
+            if(Objects.nonNull(files) && this.localLocator.getClass().getSimpleName().contains("1_16_5")) {
+                this.fileSystems = new HashMap<>();
+                for(IModFile file : files) {
+                    FileSystem fs = fileSystemFor(file);
+                    if(Objects.nonNull(fs)) this.fileSystems.put(file,fs);
+                }
+            }
+        }
+        else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
+        return Objects.nonNull(files) ? files : Collections.emptyList();
     }
 }

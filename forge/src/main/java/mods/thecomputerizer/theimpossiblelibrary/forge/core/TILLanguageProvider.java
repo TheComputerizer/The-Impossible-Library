@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import cpw.mods.modlauncher.Launcher;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLanguageProvider;
@@ -15,6 +16,9 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 
@@ -65,14 +69,22 @@ public class TILLanguageProvider implements IModLanguageProvider {
         if(Objects.nonNull(this.versionProvider))
             TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
         else TILRef.logError("Initialized versioned language provider as null");
+        GameVersion version = this.core.getVersion();
+        if(version==V20_4 || version==V20_6 || version==V21_1) {
+        
+        }
     }
     
-    @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {}
+    @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {
+        TILRef.logInfo("LIFECYCLE EVENT {}",consumeEvent.get());
+    }
     
     @Override public Consumer<ModFileScanData> getFileVisitor() {
-        if(Objects.nonNull(versionProvider)) return versionProvider.getFileVisitor(this.core,this);
-        TILRef.logError("Version specific language provider not found! Did it fail to load?");
-        return scan -> {};
+        TILRef.logInfo("GETTING FILE VISITOR");
+        Consumer<ModFileScanData> visitor = scan -> {};
+        if(Objects.nonNull(this.versionProvider)) visitor = versionProvider.getFileVisitor(this.core,this);
+        else TILRef.logError("Version specific language provider not found! Did it fail to load?");
+        return visitor;
     }
     
     @Override public String name() {

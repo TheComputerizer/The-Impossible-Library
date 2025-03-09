@@ -10,7 +10,7 @@ public class PosHelper {
     }
 
     public static BlockPosAPI<?> getPos(double x, double y, double z) {
-        return getPos(new Vector3((int)x,(int)y,(int)z));
+        return getPos(new Vector3(x,y,z));
     }
 
     public static BlockPosAPI<?> getPos(int x, int y, int z) {

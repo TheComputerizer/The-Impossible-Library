@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -21,6 +22,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
@@ -83,14 +87,17 @@ public class TILBetterModScan extends ModFileScanData {
                 throw new RuntimeException("Failed to define class "+className,t);
             }
         }
+        GameVersion version = CoreAPI.getInstance().getVersion();
+        boolean newFormat = version==V20_4 || version==V20_6 || version==V21_1;
         WRITTEN_CLASSES.clear();
         if(pkgs.isEmpty()) {
             TILRef.logWarn("No classes were defined so no sources will be added");
             return;
         }
+        if(newFormat) fixBrokenModsNew(ClassHelper.findClass(MODLOADER,target));
         if(java8) {
             try {
-                fixBrokenMods(ClassHelper.findClass(MODLOADER, target));
+                fixBrokenMods(ClassHelper.findClass(MODLOADER,target));
                 ForgeCoreLoader.nukeAndFinalizeJava8(sourceStack(outerClasses),target,NUKED_PACKAGES.isEmpty());
             } catch(Throwable t) {
                 TILRef.logError("Failed to finalize packages for Java 8 {}",pkgs,t);
@@ -120,6 +127,26 @@ public class TILBetterModScan extends ModFileScanData {
         if(Objects.isNull(warnings)) TILRef.logWarn("You win this round, Forge");
         else {
             warnings.removeIf(warning -> {
+                String[] split = ((String)Methods.invoke(warning,"formatToString")).split(" ");
+                if(split.length>1) {
+                    for(Path path : PATHS) {
+                        if(path.toString().endsWith(split[1])) {
+                            TILRef.logWarn("{} is a perfectly valid mod file thanks",path);
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
+        }
+    }
+    
+    public void fixBrokenModsNew(Class<?> loaderClass) {
+        List<?> exceptions = Fields.get(Methods.invokeStatic(loaderClass,"get"),"loadingExceptions");
+        if(Objects.isNull(exceptions)) TILRef.logWarn("You win this round, Forge");
+        else {
+            TILRef.logWarn("Alright Forge, lets see about those \"invalid\" mod files");
+            exceptions.removeIf(warning -> {
                 String[] split = ((String)Methods.invoke(warning,"formatToString")).split(" ");
                 if(split.length>1) {
                     for(Path path : PATHS) {
