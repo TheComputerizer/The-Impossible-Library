@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -160,7 +161,16 @@ public class TILBetterModScan extends ModFileScanData {
             TILRef.logInfo("Skipping already handled sources for {}",pkg);
             return;
         }
-        ForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs);
+        ForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs,isNewFormat());
+    }
+    
+    private boolean isNewFormat() {
+        switch(CoreAPI.getInstance().getVersion()) {
+            case V20_4:
+            case V20_6:
+            case V21_1: return true;
+            default: return false;
+        }
     }
     
     /**

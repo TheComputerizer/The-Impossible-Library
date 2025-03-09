@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m1.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.SereneSeasonsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.integration.ModHelperFabric1_20;
 
 import java.util.Collections;
@@ -16,6 +17,7 @@ public class ModHelperFabric1_20_1 extends ModHelperFabric1_20 {
     }
 
     @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
+        if(isModLoaded(SereneSeasonsAPI.MODID)) addMod(map,new SereneSeasonsFabric1_20_1());
         return Collections.unmodifiableMap(map);
     }
 }

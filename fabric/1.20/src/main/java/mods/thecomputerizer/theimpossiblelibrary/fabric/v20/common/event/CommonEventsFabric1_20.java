@@ -13,7 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.event.CommonE
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 
-@SuppressWarnings("unused") public class CommonEventsFabric1_20 extends CommonEvents1_20 {
+public abstract class CommonEventsFabric1_20 extends CommonEvents1_20 {
 
     @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventFabric());
@@ -83,7 +83,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventFabric());
         REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventFabric1_20());
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventFabric1_20());
-        REGISTER_COMMANDS.setConnector(new RegisterCommandsEventFabric1_20());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventFabric1_20());
         REGISTER_ITEMS.setConnector(new RegisterItemsEventFabric1_20());
         REGISTER_SOUNDS.setConnector(new RegisterSoundsEventFabric1_20());

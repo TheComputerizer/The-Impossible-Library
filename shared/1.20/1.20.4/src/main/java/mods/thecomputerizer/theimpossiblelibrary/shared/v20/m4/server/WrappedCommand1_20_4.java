@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.shared.v20.server;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.server;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.CommandDispatcher;
@@ -12,6 +12,7 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
@@ -22,9 +23,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.server.WrappedCommand1_20.CustomSuggesterInfo.CustomSuggesterTemplate;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.server.WrappedCommand1_20_4.CustomSuggesterInfo.CustomSuggesterTemplate;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -41,15 +41,16 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
+import static com.mojang.brigadier.exceptions.CommandSyntaxException.BUILT_IN_EXCEPTIONS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @ParametersAreNonnullByDefault
-public class WrappedCommand1_20 {
+public class WrappedCommand1_20_4 {
     
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();
 
-    public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandRuntimeException {
+    public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandSyntaxException {
         wrapped.prepareExceptionInfo();
         String exKey = wrapped.getExceptionKey();
         exKey = Objects.nonNull(exKey) ? exKey : "";
@@ -60,7 +61,7 @@ public class WrappedCommand1_20 {
             return 1;
         } catch(Exception ex) {
             TILRef.logError("Caught exception for command {}! Rethrowing as CommandException",wrapped.getRootName(),ex);
-            throw new CommandRuntimeException(TextHelper.getTranslated(exKey,exArgs).getAsComponent());
+            throw BUILT_IN_EXCEPTIONS.dispatcherParseException().create(TextHelper.getTranslated(exKey,exArgs).getApplied());
         }
     }
 

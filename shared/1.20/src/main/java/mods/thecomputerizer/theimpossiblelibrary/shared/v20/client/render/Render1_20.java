@@ -255,7 +255,9 @@ public class Render1_20 extends RenderAPI {
     }
 
     @Override public void setColor(float r, float g, float b, float a) {
-        RenderSystem.setShaderColor(r,g,b,a);
+        GuiGraphics graphics = getGraphics();
+        if(Objects.nonNull(graphics)) graphics.setColor(r,g,b,a);
+        else RenderSystem.setShaderColor(r,g,b,a);
     }
 
     @Override public void setPosColorShader() {

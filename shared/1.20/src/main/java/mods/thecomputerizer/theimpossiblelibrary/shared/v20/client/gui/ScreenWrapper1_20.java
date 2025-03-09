@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import net.minecraft.SharedConstants;
@@ -21,8 +20,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 public class ScreenWrapper1_20 extends Screen implements Wrapped<ScreenAPI> {
-    
-    private static final boolean FORGE = CoreAPI.isForge();
     
     protected final ScreenAPI wrapped;
     protected boolean isOpen;
@@ -130,7 +127,6 @@ public class ScreenWrapper1_20 extends Screen implements Wrapped<ScreenAPI> {
             ctx.getRenderer().setMatrix(graphics);
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
-            if(FORGE) graphics.pose().translate(0d,0d,-200d); //maybe?
             this.wrapped.draw(ctx,x,y);
         }
     }

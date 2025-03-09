@@ -13,7 +13,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.*;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-@SuppressWarnings("unused") public class CommonEventsForge1_20 extends CommonEvents1_20 {
+public abstract class CommonEventsForge1_20 extends CommonEvents1_20 {
 
     @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventForge());
@@ -83,7 +83,6 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventForge());
         REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventForge1_20()); //TODO Deferred registers?
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventForge1_20());
-        REGISTER_COMMANDS.setConnector(new RegisterCommandsEventForge1_20());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventForge1_20());
         REGISTER_ITEMS.setConnector(new RegisterItemsEventForge1_20());
         REGISTER_SOUNDS.setConnector(new RegisterSoundsEventForge1_20());

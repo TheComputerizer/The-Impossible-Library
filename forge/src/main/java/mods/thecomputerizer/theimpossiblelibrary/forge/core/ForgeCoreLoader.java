@@ -11,6 +11,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.burningwave.core.classes.Fields.NoSuchFieldException;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -77,11 +78,11 @@ public class ForgeCoreLoader {
      * Adds given module and related info to all the relevant objects.
      */
     static void addModuleThouroughly(Object module, Object resolvedModule, Object moduleLayer, String name,
-            Set<String> packages, Object moduleRef, ClassLoader target) {
+            Set<String> packages, Object moduleRef, ClassLoader target, boolean newFormat) {
         Fields.setDirect(module,"name",name);
         Object configuration = Fields.getDirect(target,"configuration");
         Map<String,Object> resolvedRoots = Fields.getDirect(target,"resolvedRoots");
-        Map<String,Object> packageLookup = Fields.getDirect(target,"packageLookup");
+        Map<String,Object> packageLookup = Fields.getDirect(target,newFormat ? "packageToOurModules" : "packageLookup");
         Map<String,ClassLoader> parentLoaders = Fields.getDirect(target,"parentLoaders");
         resolvedRoots.put(name,moduleRef);
         for(String pkg : packages) packageLookup.put(pkg,resolvedModule);
@@ -122,10 +123,10 @@ public class ForgeCoreLoader {
      * package in the right ResolvedModule. Luckily we already have those in the current (SERVICE) layer, so
      * all we need to do is transfer some stuff over and then handle the duplicates
      */
-    private static void addResolvedModule(Object module, ClassLoader thisLoader) {
+    private static void addResolvedModule(Object module, ClassLoader thisLoader, boolean newFormat) {
         ClassLoader loader = bootLoader();
         Map<String,Object> roots = Fields.getDirect(loader,"resolvedRoots");
-        Map<String,Object> packageLookup = Fields.getDirect(loader,"packageLookup");
+        Map<String,Object> packageLookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
         Object reference = Methods.invokeDirect(module,"reference");
         Object descriptor = Methods.invokeDirect(reference,"descriptor");
         String name = Methods.invokeDirect(descriptor,"name");
@@ -282,10 +283,17 @@ public class ForgeCoreLoader {
         if(!isJava8()) {
             String pkg = ConsulterSupplyFunction.class.getPackage().getName();
             ClassLoader thisLoader = ForgeCoreLoader.class.getClassLoader();
-            Map<String,Object> packageLookup = Fields.getDirect(thisLoader,"packageLookup");
+            boolean newFormat = false;
+            Map<String,Object> packageLookup;
+            try {
+                packageLookup = Fields.getDirect(thisLoader,"packageLookup");
+            } catch(NoSuchFieldException ex) {
+                packageLookup = Fields.getDirect(thisLoader,"packageToOurModules");
+                newFormat = true;
+            }
             Object module = packageLookup.get(pkg);
             if(Objects.nonNull(module)) {
-                addResolvedModule(module,thisLoader);
+                addResolvedModule(module,thisLoader,newFormat);
                 packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
             } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
         }
@@ -360,9 +368,9 @@ public class ForgeCoreLoader {
         return ((Map<String,Object>)Fields.getDirect(getModuleLayer(layerName),"nameToModule")).get(name);
     }
     
-    public static Object getModuleFromPackage(String pkg, String layerName) {
+    public static Object getModuleFromPackage(String pkg, String layerName, boolean newFormat) {
         Object layer = getModuleLayer(layerName);
-        Map<String,Object> packageLookup = Fields.get(layerClassLoader(layerName),"packageLookup");
+        Map<String,Object> packageLookup = Fields.get(layerClassLoader(layerName),newFormat ? "packageToOurModules" : "packageLookup");
         Object resolved = packageLookup.get(pkg);
         if(Objects.isNull(resolved)) {
             LOGGER.error("Cannot get module for pacakge {} since it does not exist in input layer {}!",pkg,layerName);
@@ -480,7 +488,8 @@ public class ForgeCoreLoader {
     }
     
     @SuppressWarnings("SameParameterValue")
-    static void loadNewModuleTo(@Nullable IModInfo mod, String targetLayerName, Set<String> finalizedPkgs) {
+    static void loadNewModuleTo(@Nullable IModInfo mod, String targetLayerName, Set<String> finalizedPkgs,
+            boolean newFormat) {
         if(Objects.isNull(mod)) {
             LOGGER.error("Cannot load module from nonexistent file!");
             return;
@@ -526,7 +535,7 @@ public class ForgeCoreLoader {
             finalizedPkgs.addAll(packages);
             Class<?> cModule = Class.forName("java.lang.Module");
             if(Objects.isNull(module)) module = Constructors.newInstanceOf(cModule,layer,targetLoader,descriptor,uri);
-            addModuleThouroughly(module,resolvedModule,layer,name,packages,reference,targetLoader);
+            addModuleThouroughly(module,resolvedModule,layer,name,packages,reference,targetLoader,newFormat);
             LOGGER.info("Finished setting up {}",module);
             
             //nuke & finalize
@@ -534,11 +543,11 @@ public class ForgeCoreLoader {
             ClassLoader service = layerClassLoader("SERVICE");
             ClassLoader plugin = layerClassLoader("PLUGIN");
             nukeConfig(name,boot,service,plugin);
-            nukeLoaderFields(name,boot,service,plugin);
+            nukeLoaderFields(name,newFormat,boot,service,plugin);
             nukeModuleLayer(name,"BOOT","SERVICE","PLUGIN");
             if(!existingName.equals(name) && existed) {
                 nukeConfig(existingName,boot,service,plugin,targetLoader);
-                nukeLoaderFields(existingName,boot,service,plugin,targetLoader);
+                nukeLoaderFields(existingName,newFormat,boot,service,plugin,targetLoader);
                 nukeModuleLayer(existingName,"BOOT","SERVICE","PLUGIN","GAME");
             }
             finalizeModule(existingName,name,module,targetLoader,boot,service,plugin);
@@ -585,14 +594,14 @@ public class ForgeCoreLoader {
     /**
      * Add the module for the given package to the GAME layer and nuke all references to it from other layers
      */
-    public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs) {
+    public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs, boolean newFormat) {
         LOGGER.info("Finalizing package {}",pkg);
         ClassLoader boot = bootLoader();
         ClassLoader service = layerClassLoader("SERVICE");
         ClassLoader plugin = layerClassLoader("PLUGIN");
         Object[] found = findModuleLoaderForPackage(pkg,new ClassLoader[]{boot,service,plugin});
         if(Objects.isNull(found)) {
-            loadNewModuleTo(mod,"GAME",finalizedPkgs);
+            loadNewModuleTo(mod,"GAME",finalizedPkgs,newFormat);
             return;
         }
         ClassLoader foundLoader = (ClassLoader)found[0];
@@ -613,11 +622,11 @@ public class ForgeCoreLoader {
         packages.removeAll(finalizedPkgs);
         packages = Collections.unmodifiableSet(packages);
         finalizedPkgs.addAll(packages);
-        addModuleThouroughly(module,resolvedModule,moduleLayer,name,packages,ref,target);
+        addModuleThouroughly(module,resolvedModule,moduleLayer,name,packages,ref,target,newFormat);
         
         //nuke & finalize
         nukeConfig(name,boot,service,plugin);
-        nukeLoaderFields(name,boot,service,plugin);
+        nukeLoaderFields(name,newFormat,boot,service,plugin);
         nukeModuleLayer(name,"BOOT","SERVICE","PLUGIN");
         finalizeModule(name,name,module,target,boot,service,plugin);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
@@ -661,10 +670,10 @@ public class ForgeCoreLoader {
         }
     }
     
-    static void nukeLoaderFields(String moduleName, ClassLoader ... loaders) {
+    static void nukeLoaderFields(String moduleName, boolean newFormat, ClassLoader ... loaders) {
         for(ClassLoader loader : loaders) {
             Map<String,Object> resolvedRoots = Fields.getDirect(loader,"resolvedRoots");
-            Map<String,Object> packageLookup = Fields.getDirect(loader,"packageLookup");
+            Map<String,Object> packageLookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
             Map<String,Object> parentLoaders = Fields.getDirect(loader,"parentLoaders");
             resolvedRoots.remove(moduleName);
             Object module = null;
@@ -749,7 +758,14 @@ public class ForgeCoreLoader {
         if(isJava8()) return; //Not needed on Java 8
         LOGGER.info("Resyncing module to {}",layerTo);
         final String pkg = "mods.thecomputerizer.theimpossiblelibrary.forge.core";
-        Map<String,Object> fromPkg = Fields.getDirect(loaderFrom,"packageLookup"); //Fix BOOT modules first
+        boolean newFormat = false;
+        Map<String,Object> fromPkg; //Fix BOOT modules first
+        try {
+            fromPkg = Fields.getDirect(loaderFrom,"packageLookup");
+        } catch(NoSuchFieldException ex) {
+            fromPkg = Fields.getDirect(loaderFrom,"packageToOurModules");
+            newFormat = true;
+        }
         Object fromModule = fromPkg.get(pkg);
         Object fromCfg = Fields.getDirect(loaderFrom,"configuration");
         if(!"PLUGIN".equals(layerTo)) {
@@ -757,7 +773,8 @@ public class ForgeCoreLoader {
             modules.add(fromModule);
             Fields.setDirect(fromCfg,"modules",modules);
         }
-        Map<String,Object> pkgs = Fields.getDirect(loaderTo,"packageLookup"); //Remove module from PLUGIN layer
+        //Remove module from PLUGIN layer
+        Map<String,Object> pkgs = Fields.getDirect(loaderTo,newFormat ? "packageToOurModules" : "packageLookup");
         Object module = pkgs.get(pkg);
         String name = resolvedName(module);
         Map<String,Object> roots = Fields.getDirect(loaderTo,"resolvedRoots");
