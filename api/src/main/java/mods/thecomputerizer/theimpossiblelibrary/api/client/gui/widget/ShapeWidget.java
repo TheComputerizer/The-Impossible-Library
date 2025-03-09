@@ -11,11 +11,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3d;
 
 import java.util.function.Supplier;
 
@@ -96,11 +94,11 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
         return of(RenderFuzz.from(shape,max),x,y);
     }
     
-    public static ShapeWidget fuzz(Shape shape, Vector2i counts) {
+    public static ShapeWidget fuzz(Shape shape, Vector2 counts) {
         return of(RenderFuzz.from(shape,counts));
     }
     
-    public static ShapeWidget fuzz(Shape shape, Vector2i counts, double x, double y) {
+    public static ShapeWidget fuzz(Shape shape, Vector2 counts, double x, double y) {
         return of(RenderFuzz.from(shape,counts),x,y);
     }
     
@@ -112,11 +110,11 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
         return of(RenderFuzz.from(shape,minCount,maxCount),x,y);
     }
     
-    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths) {
+    public static ShapeWidget fuzz(Shape shape, Vector2 counts, Vector2 widths) {
         return of(RenderFuzz.from(shape,counts,widths));
     }
     
-    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths, double x, double y) {
+    public static ShapeWidget fuzz(Shape shape, Vector2 counts, Vector2 widths, double x, double y) {
         return of(RenderFuzz.from(shape,counts,widths),x,y);
     }
     
@@ -129,11 +127,11 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
         return of(RenderFuzz.from(shape,minCount,maxCount,minWidth,maxWidth),x,y);
     }
     
-    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths, Supplier<ColorCache> color) {
+    public static ShapeWidget fuzz(Shape shape, Vector2 counts, Vector2 widths, Supplier<ColorCache> color) {
         return of(RenderFuzz.from(shape,counts,widths,color));
     }
     
-    public static ShapeWidget fuzz(Shape shape, Vector2i counts, Vector2f widths, Supplier<ColorCache> color, double x,
+    public static ShapeWidget fuzz(Shape shape, Vector2 counts, Vector2 widths, Supplier<ColorCache> color, double x,
             double y) {
         return of(RenderFuzz.from(shape,counts,widths,color),x,y);
     }
@@ -234,11 +232,11 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
         return copy;
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        this.shape.draw(ctx,VectorHelper.copy3D(center).add(getX(),getY(),0d));
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
+        this.shape.draw(ctx,center.copy().add(getX(),getY(),0d));
     }
     
-    public Vector3d getCenterForGroup(Vector3d center) {
+    public Vector3 getCenterForGroup(Vector3 center) {
         return this.shape.getCenterForGroup(center);
     }
     
@@ -259,7 +257,7 @@ public class ShapeWidget extends Widget implements Wrapped<RenderShape> {
     }
     
     public boolean isInside(double x, double y, double z) {
-        return this.shape.getWrapped().isInside(new Vector3d(x-getX(),y-getY(),z));
+        return this.shape.getWrapped().isInside(new Vector3(x-getX(),y-getY(),z));
     }
     
     public void setColor(ColorCache color) {

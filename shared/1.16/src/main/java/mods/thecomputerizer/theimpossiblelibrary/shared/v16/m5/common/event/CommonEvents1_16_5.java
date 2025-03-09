@@ -6,10 +6,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -60,9 +60,9 @@ public abstract class CommonEvents1_16_5 implements CommonEventsAPI {
         return hand==net.minecraft.util.Hand.MAIN_HAND ? MAINHAND : OFFHAND;
     }
     
-    @Override public <V> Vector3d getVec3d(V vector) {
+    @Override public <V> Vector3 getVec3d(V vector) {
         net.minecraft.util.math.vector.Vector3d vec = (net.minecraft.util.math.vector.Vector3d)vector;
-        return new Vector3d(vec.x,vec.y,vec.z);
+        return new Vector3(vec.x,vec.y,vec.z);
     }
     
     @Override public boolean isDefined() {
@@ -71,7 +71,7 @@ public abstract class CommonEvents1_16_5 implements CommonEventsAPI {
     
     @SuppressWarnings("unchecked")
     @Override public <B> B setAABB(Box box) {
-        return (B)new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z);
+        return (B)new AxisAlignedBB(box.minX(),box.minY(),box.minZ(),box.maxX(),box.maxY(),box.maxZ());
     }
     
     @SuppressWarnings("unchecked")
@@ -103,7 +103,7 @@ public abstract class CommonEvents1_16_5 implements CommonEventsAPI {
     }
     
     @SuppressWarnings("unchecked")
-    @Override public <V> V setVec3d(Vector3d vector) {
-        return (V)new net.minecraft.util.math.vector.Vector3d(vector.x,vector.y,vector.z);
+    @Override public <V> V setVec3d(Vector3 vector) {
+        return (V)new net.minecraft.util.math.vector.Vector3d(vector.dX(),vector.dY(),vector.dZ());
     }
 }

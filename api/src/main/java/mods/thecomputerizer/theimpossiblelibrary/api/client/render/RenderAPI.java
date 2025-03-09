@@ -6,8 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector4f;
 
 import java.util.Collection;
 
@@ -102,8 +102,8 @@ public abstract class RenderAPI {
     public abstract void scale(float x, float y, float z);
     
     public void setColor(ColorCache color) {
-        Vector4f colorVec = color.getColorVF();
-        setColor(colorVec.x,colorVec.y,colorVec.z,colorVec.w);
+        Vector4 colorVec = color.getColorVF();
+        setColor(colorVec.fX(),colorVec.fY(),colorVec.fZ(),colorVec.fW());
     }
     
     public abstract void setColor(float r, float g, float b, float a);

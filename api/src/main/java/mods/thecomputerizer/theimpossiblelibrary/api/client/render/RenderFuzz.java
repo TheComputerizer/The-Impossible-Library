@@ -3,9 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -23,26 +22,24 @@ public class RenderFuzz extends RenderShape {
         return from(shape,2,max,1f,1f,null);
     }
     
-    public static RenderFuzz from(Shape shape, Vector2i counts) {
-        return from(shape,counts.x,counts.y,1f,1f,null);
+    public static RenderFuzz from(Shape shape, Vector2 counts) {
+        return from(shape,counts.iX(),counts.iY(),1f,1f,null);
     }
     
     public static RenderFuzz from(Shape shape, int minCount, int maxCount) {
         return from(shape,minCount,maxCount,1f,1f,null);
     }
     
-    public static RenderFuzz from(Shape shape, Vector2i counts, Vector2f widths) {
-        //noinspection SuspiciousNameCombination
-        return from(shape,counts.x,counts.y,widths.x,widths.y,null);
+    public static RenderFuzz from(Shape shape, Vector2 counts, Vector2 widths) {
+        return from(shape,counts.iX(),counts.iY(),widths.fX(),widths.fY(),null);
     }
     
     public static RenderFuzz from(Shape shape, int minCount, int maxCount, float minWidth, float maxWidth) {
         return from(shape,minCount,maxCount,minWidth,maxWidth,null);
     }
     
-    public static RenderFuzz from(Shape shape, Vector2i counts, Vector2f widths, Supplier<ColorCache> color) {
-        //noinspection SuspiciousNameCombination
-        return from(shape,counts.x,counts.y,widths.x,widths.y,color);
+    public static RenderFuzz from(Shape shape, Vector2 counts, Vector2 widths, Supplier<ColorCache> color) {
+        return from(shape,counts.iX(),counts.iY(),widths.fX(),widths.fY(),color);
     }
     
     public static RenderFuzz from(Shape shape, int minCount, int maxCount, float minWidth, float maxWidth,
@@ -70,7 +67,7 @@ public class RenderFuzz extends RenderShape {
         return fuzz;
     }
     
-    public void draw(RenderContext ctx, Vector3d center) {
+    public void draw(RenderContext ctx, Vector3 center) {
         if(Objects.nonNull(this.fuzz)) {
             RenderAPI renderer = ctx.getRenderer();
             renderer.translate(0d,0d,-10d);

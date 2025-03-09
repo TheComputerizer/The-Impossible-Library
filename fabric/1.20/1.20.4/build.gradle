@@ -23,7 +23,7 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java17-module-modern.gradle')
+apply from: rootProject.file('gradle\\java17-module.gradle')
 apply from: rootProject.file('gradle\\fabric.gradle')
 
 plugins.apply 'fabric-loom'

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.INFINITE;
 
@@ -34,18 +34,18 @@ public final class RenderScale {
         updateResolution(window.getWidth(),window.getHeight(),window.getDisplayWidth(),window.getDisplayHeight());
     }
     
-    public VertexWrapper applyForScreen(VertexWrapper buffer, Vector3d center, double x, double y, double z) {
-        return buffer.pos(applyXForScreen(center.x,x),applyYForScreen(center.y,y),applyZForScreen(center.z,z));
+    public VertexWrapper applyForScreen(VertexWrapper buffer, Vector3 center, double x, double y, double z) {
+        return buffer.pos(applyXForScreen(center.dX(),x),applyYForScreen(center.dY(),y),applyZForScreen(center.dZ(),z));
     }
     
     double applyXForScreen(double centerX, double x) {
-        x = Math.max(this.renderBounds.min.x,Math.min(centerX+x,this.renderBounds.max.x));
+        x = Math.max(this.renderBounds.min.dX(),Math.min(centerX+x,this.renderBounds.max.dX()));
         x = ((x*this.modScaleX)+this.transformX+1d)/this.screenScaleX;
         return x;
     }
     
     double applyYForScreen(double centerY, double y) {
-        y = Math.max(this.renderBounds.min.y,Math.min(centerY+y,this.renderBounds.max.y));
+        y = Math.max(this.renderBounds.min.dY(),Math.min(centerY+y,this.renderBounds.max.dY()));
         y = this.screenHeight-(((y*this.modScaleY)+this.transformY+1d)/this.screenScaleY);
         return y;
     }
@@ -54,7 +54,7 @@ public final class RenderScale {
         return centerZ+z;
     }
     
-    public boolean canDraw(Vector3d center) {
+    public boolean canDraw(Vector3 center) {
         return this.renderBounds.isInside(center);
     }
     

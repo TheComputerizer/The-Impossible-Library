@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.world;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
-import org.joml.Vector3i;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper.zero3I;
 
@@ -11,11 +11,15 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vecto
 public abstract class BlockPosAPI<P> extends AbstractWrapped<P> {
 
     @IndirectCallers
-    public static final BlockPosAPI<Vector3i> ZERO = new Zero(zero3I());
+    public static final BlockPosAPI<Vector3> ZERO = new Zero(zero3I());
 
-    protected Vector3i posVec;
+    protected Vector3 posVec;
+    
+    protected BlockPosAPI(P pos, int x, int y, int z) {
+        this(pos,new Vector3(x,y,z));
+    }
 
-    protected BlockPosAPI(P pos, Vector3i posVec) {
+    protected BlockPosAPI(P pos, Vector3 posVec) {
         super(pos);
         this.posVec = posVec;
     }
@@ -24,8 +28,8 @@ public abstract class BlockPosAPI<P> extends AbstractWrapped<P> {
         return add(api.x(),api.y(),api.z());
     }
 
-    public BlockPosAPI<?> add(Vector3i posVec) {
-        return add(posVec.x,posVec.y,posVec.z);
+    public BlockPosAPI<?> add(Vector3 posVec) {
+        return add(posVec.iX(),posVec.iY(),posVec.iZ());
     }
 
     public abstract BlockPosAPI<?> add(P pos);
@@ -35,7 +39,7 @@ public abstract class BlockPosAPI<P> extends AbstractWrapped<P> {
         return distanceTo(pos.posVec);
     }
 
-    public double distanceTo(Vector3i vec) {
+    public double distanceTo(Vector3 vec) {
         return this.posVec.distance(vec);
     }
 
@@ -68,29 +72,29 @@ public abstract class BlockPosAPI<P> extends AbstractWrapped<P> {
     }
 
     public int x() {
-        return this.posVec.x;
+        return this.posVec.iX();
     }
 
     public int y() {
-        return this.posVec.y;
+        return this.posVec.iY();
     }
 
     public int z() {
-        return this.posVec.z;
+        return this.posVec.iZ();
     }
 
-    private static final class Zero extends BlockPosAPI<Vector3i> {
+    private static final class Zero extends BlockPosAPI<Vector3> {
 
-        private Zero(Vector3i pos) {
+        private Zero(Vector3 pos) {
             super(pos,pos);
         }
 
-        @Override public BlockPosAPI<?> add(Vector3i pos) {
-            return pos.x==0 && pos.y==0 && pos.z==0 ? this : PosHelper.getPos(pos.add(this.posVec));
+        @Override public BlockPosAPI<?> add(Vector3 pos) {
+            return pos.iX()==0 && pos.iY()==0 && pos.iZ()==0 ? this : PosHelper.getPos(pos.add(this.posVec));
         }
 
         @Override public BlockPosAPI<?> add(int x, int y, int z) {
-            return add(new Vector3i(x,y,z));
+            return add(new Vector3(x,y,z));
         }
 
         @Override public BlockPosAPI<?> down() {

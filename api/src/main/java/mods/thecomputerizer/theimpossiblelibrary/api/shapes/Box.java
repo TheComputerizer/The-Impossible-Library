@@ -1,13 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector3i;
 
 import java.util.Objects;
 
@@ -30,10 +29,8 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         @Override public double getWidth() { return POSITIVE_INFINITY; }
         @Override public boolean isInside(BlockPosAPI<?> pos) { return true; }
         @Override public boolean isInside(BlockPosAPI<?> pos, double tolerance) { return true; }
-        @Override public boolean isInside(Vector3d pos) { return true; }
-        @Override public boolean isInside(Vector3d pos, double tolerance) { return true; }
-        @Override public boolean isInside(Vector3i pos) { return true; }
-        @Override public boolean isInside(Vector3i pos, double tolerance) { return true; }
+        @Override public boolean isInside(Vector3 pos) { return true; }
+        @Override public boolean isInside(Vector3 pos, double tolerance) { return true; }
         @Override public boolean isInside(double x, double y, double z) { return true; }
         @Override public boolean isInside(double x, double y, double z, double tolerance) { return true; }
         @Override public boolean isInsideX(double x) { return true; }
@@ -49,10 +46,8 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     public static final Box ZERO = new Box(0d,0d,0d,0d,0d,0d) {
         @Override public boolean isInside(BlockPosAPI<?> pos) { return false; }
         @Override public boolean isInside(BlockPosAPI<?> pos, double tolerance) { return true; }
-        @Override public boolean isInside(Vector3d pos) { return false; }
-        @Override public boolean isInside(Vector3d pos, double tolerance) { return true; }
-        @Override public boolean isInside(Vector3i pos) { return false; }
-        @Override public boolean isInside(Vector3i pos, double tolerance) { return true; }
+        @Override public boolean isInside(Vector3 pos) { return false; }
+        @Override public boolean isInside(Vector3 pos, double tolerance) { return true; }
         @Override public boolean isInside(double x, double y, double z) { return false; }
         @Override public boolean isInside(double x, double y, double z, double tolerance) { return true; }
         @Override public boolean isInsideX(double x) { return true; }
@@ -63,16 +58,16 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         @Override public boolean isInsideZ(double z, double tolerance) { return true; }
     };
 
-    public final Vector3d min;
-    public final Vector3d max;
-    public final Vector3d center;
+    public final Vector3 min;
+    public final Vector3 max;
+    public final Vector3 center;
     
     /**
      See ShapeHelper for alternative construction methods
      */
     public Box(double x1, double y1, double z1, double x2, double y2, double z2) {
-        this.min = new Vector3d(Math.min(x1,x2),Math.min(y1,y2),Math.min(z1,z2));
-        this.max = new Vector3d(Math.max(x1,x2),Math.max(y1,y2),Math.max(z1,z2));
+        this.min = new Vector3(Math.min(x1,x2),Math.min(y1,y2),Math.min(z1,z2));
+        this.max = new Vector3(Math.max(x1,x2),Math.max(y1,y2),Math.max(z1,z2));
         this.center = VectorHelper.getCenter(this.min, this.max);
     }
 
@@ -81,8 +76,8 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
      */
     public Box add(Box ... boxes) {
         if(Objects.isNull(boxes) || boxes.length==0) return this;
-        Vector3d min = this.min.min(boxes[0].min,new Vector3d());
-        Vector3d max = this.max.max(boxes[0].max,new Vector3d());
+        Vector3 min = this.min.min(boxes[0].min,new Vector3());
+        Vector3 max = this.max.max(boxes[0].max,new Vector3());
         for(int i=1;i<boxes.length;i++) {
             min = min.min(boxes[i].min);
             max = max.max(boxes[i].max);
@@ -90,7 +85,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return ShapeHelper.box(min,max);
     }
     
-    @Override public boolean checkToleranceBounds(Vector3d center, Box bounds) {
+    @Override public boolean checkToleranceBounds(Vector3 center, Box bounds) {
         return bounds.expand(getWidth()/2d,getHeight()/2d,getDepth()/2d).isInside(getCenter(center));
     }
     
@@ -141,47 +136,47 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         double yRad = radiusY();
         double zRad = radiusZ();
         if(xRad+x<=0 || yRad+y<=0 || zRad+z<=0) return ZERO;
-        return ShapeHelper.box(this.min.sub(x,y,z,new Vector3d()),this.max.add(x,y,z,new Vector3d()));
+        return ShapeHelper.box(this.min.sub(x,y,z,new Vector3()),this.max.add(x,y,z,new Vector3()));
     }
     
     @Override public double getBoundedX(double x, double y, double z) {
-        return Math.max(this.min.x,Math.min(this.max.x,x));
+        return Math.max(this.min.dX(),Math.min(this.max.dX(),x));
     }
     
     @Override public double getBoundedY(double x, double y, double z) {
-        return Math.max(this.min.y,Math.min(this.max.y,y));
+        return Math.max(this.min.dY(),Math.min(this.max.dY(),y));
     }
     
     @Override public double getBoundedZ(double x, double y, double z) {
-        return Math.max(this.min.z,Math.min(this.max.z,z));
+        return Math.max(this.min.dZ(),Math.min(this.max.dZ(),z));
     }
     
-    @Override public Vector3d getCenter(Vector3d center) {
-        return center.add(this.center,new Vector3d());
+    @Override public Vector3 getCenter(Vector3 center) {
+        return center.add(this.center,new Vector3());
     }
     
     @Override public double getDepth() {
-        return Math.abs(this.max.z-this.min.z);
+        return Math.abs(this.max.dZ()-this.min.dZ());
     }
     
     @Override public double getHeight() {
-        return Math.abs(this.max.y-this.min.y);
+        return Math.abs(this.max.dY()-this.min.dY());
     }
     
     @Override public Box getScaled(double scale) {
         return mul(scale,scale,scale);
     }
     
-    @Override public Box getScaled(Vector2d scale) {
-        return mul(scale.x,scale.y,scale.x);
+    @Override public Box getScaled(Vector2 scale) {
+        return mul(scale.dX(),scale.dY(),scale.dX());
     }
     
     @Override public Box getScaled(double scaleH, double scaleV) {
         return mul(scaleH,scaleV,scaleH);
     }
     
-    @Override public Box getScaled(Vector3d scale) {
-        return mul(scale.x,scale.y,scale.z);
+    @Override public Box getScaled(Vector3 scale) {
+        return mul(scale.dX(),scale.dY(),scale.dZ());
     }
     
     @Override public Box getScaled(double scaleX, double scaleY, double scaleZ) {
@@ -191,25 +186,25 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     @Override public VectorSupplier3D getVectorSupplier(Box bounds) {
         Box bounded = intersection(bounds);
         return VectorStreams.get3D(
-                new Vector3d(bounded.min),
-                new Vector3d(bounded.min.x,bounded.min.y,bounded.max.z),
-                new Vector3d(bounded.min.x,bounded.max.y,bounded.max.z),
-                new Vector3d(bounded.min.x,bounded.max.y,bounded.min.z),
-                new Vector3d(bounded.max.x,bounded.max.y,bounded.min.z),
-                new Vector3d(bounded.max),
-                new Vector3d(bounded.max.x,bounded.min.y,bounded.max.z),
-                new Vector3d(bounded.max.x,bounded.min.y,bounded.min.z)
+                new Vector3(bounded.min),
+                new Vector3(bounded.min.dX(),bounded.min.dY(),bounded.max.dZ()),
+                new Vector3(bounded.min.dX(),bounded.max.dY(),bounded.max.dZ()),
+                new Vector3(bounded.min.dX(),bounded.max.dY(),bounded.min.dZ()),
+                new Vector3(bounded.max.dX(),bounded.max.dY(),bounded.min.dZ()),
+                new Vector3(bounded.max),
+                new Vector3(bounded.max.dX(),bounded.min.dY(),bounded.max.dZ()),
+                new Vector3(bounded.max.dX(),bounded.min.dY(),bounded.min.dZ())
         );
     }
     
     @Override public double getWidth() {
-        return Math.abs(this.max.x-this.min.x);
+        return Math.abs(this.max.dX()-this.min.dX());
     }
     
     public Box intersection(Box other) {
-        return new Box(Math.max(this.min.x,other.min.x),Math.max(this.min.y,other.min.y),
-                       Math.max(this.min.z,other.min.z),Math.min(this.max.x,other.max.x),
-                       Math.min(this.max.y,other.max.y), Math.min(this.max.z,other.max.z));
+        return new Box(Math.max(this.min.dX(),other.min.dX()),Math.max(this.min.dY(),other.min.dY()),
+                       Math.max(this.min.dZ(),other.min.dZ()),Math.min(this.max.dX(),other.max.dX()),
+                       Math.min(this.max.dY(),other.max.dY()), Math.min(this.max.dZ(),other.max.dZ()));
     }
 
     private boolean isFiniteAndNotMaxed(double d) {
@@ -228,20 +223,12 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return isInsideX(pos.x(),tolerance) && isInsideY(pos.y(),tolerance) && isInsideZ(pos.z(),tolerance);
     }
     
-    @Override public boolean isInside(Vector3d pos) {
-        return isInsideX(pos.x,0d) && isInsideY(pos.y,0d) && isInsideZ(pos.z,0d);
+    @Override public boolean isInside(Vector3 pos) {
+        return isInsideX(pos.dX(),0d) && isInsideY(pos.dY(),0d) && isInsideZ(pos.dZ(),0d);
     }
 
-    public boolean isInside(Vector3d pos, double tolerance) {
-        return isInsideX(pos.x,tolerance) && isInsideY(pos.y,tolerance) && isInsideZ(pos.z,tolerance);
-    }
-    
-    public boolean isInside(Vector3i pos) {
-        return isInsideX(pos.x,0d) && isInsideY(pos.y,0d) && isInsideZ(pos.z,0d);
-    }
-
-    public boolean isInside(Vector3i pos, double tolerance) {
-        return isInsideX(pos.x,tolerance) && isInsideY(pos.y,tolerance) && isInsideZ(pos.z,tolerance);
+    public boolean isInside(Vector3 pos, double tolerance) {
+        return isInsideX(pos.dX(),tolerance) && isInsideY(pos.dY(),tolerance) && isInsideZ(pos.dZ(),tolerance);
     }
     
     public boolean isInside(double x, double y, double z) {
@@ -257,7 +244,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     }
     
     public boolean isInsideX(double x, double tolerance) {
-        return x>this.min.x-tolerance && x<this.max.x+tolerance;
+        return x>this.min.dX()-tolerance && x<this.max.dX()+tolerance;
     }
     
     public boolean isInsideXY(double x, double y) {
@@ -273,7 +260,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     }
     
     public boolean isInsideY(double y, double tolerance) {
-        return y>this.min.y-tolerance && y<this.max.y+tolerance;
+        return y>this.min.dY()-tolerance && y<this.max.dY()+tolerance;
     }
     
     public boolean isInsideZ(double z) {
@@ -281,9 +268,33 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     }
     
     public boolean isInsideZ(double z, double tolerance) {
-        return z>this.min.z-tolerance && z<this.max.z+tolerance;
+        return z>this.min.dZ()-tolerance && z<this.max.dZ()+tolerance;
     }
 
+    public double maxX() {
+        return this.max.dX();
+    }
+    
+    public double maxY() {
+        return this.max.dY();
+    }
+    
+    public double maxZ() {
+        return this.max.dZ();
+    }
+    
+    public double minX() {
+        return this.min.dX();
+    }
+    
+    public double minY() {
+        return this.min.dY();
+    }
+    
+    public double minZ() {
+        return this.min.dZ();
+    }
+    
     /**
      * Multiplies each radius by d.
      * If d is 0 or NaN ZERO will be returned.
@@ -314,7 +325,7 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
 
     public Box offset(double x, double y, double z) {
         return x==0 && y==0 && z==0 ? this :
-                ShapeHelper.box(this.min.add(x,y,z,new Vector3d()),this.max.add(x,y,z,new Vector3d()));
+                ShapeHelper.box(this.min.add(x,y,z,new Vector3()),this.max.add(x,y,z,new Vector3()));
     }
 
     public double radiusX() {
@@ -329,11 +340,11 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
         return getDepth()/2d;
     }
     
-    @Override public Vector2d random2D() {
-        return VectorHelper.randomD(new Vector2d(this.min.x, this.min.y), new Vector2d(this.max.x, this.max.y));
+    @Override public Vector2 random2D() {
+        return VectorHelper.randomD(new Vector2(this.min.dX(), this.min.dY()), new Vector2(this.max.dX(), this.max.dY()));
     }
     
-    @Override public Vector3d random3D() {
+    @Override public Vector3 random3D() {
         return VectorHelper.randomD(this.min, this.max);
     }
 
@@ -347,12 +358,12 @@ public class Box extends Shape3D { //TODO Finish edge cases for weird doubles
     
     @Override public Shape2D[] getAs2DArray() {
         return new Shape2D[]{
-                ShapeHelper.plane(new Vector3d(this.min),new Vector3d(this.max.x,this.max.y,this.min.z)),
-                ShapeHelper.plane(new Vector3d(this.min),new Vector3d(this.max.x,this.min.y,this.max.z)),
-                ShapeHelper.plane(new Vector3d(this.min),new Vector3d(this.min.x,this.max.y,this.max.z)),
-                ShapeHelper.plane(new Vector3d(this.min.x,this.max.y,this.min.z),new Vector3d(this.max)),
-                ShapeHelper.plane(new Vector3d(this.max.x,this.min.y,this.min.z),new Vector3d(this.max)),
-                ShapeHelper.plane(new Vector3d(this.min.x,this.min.y,this.max.z),new Vector3d(this.max))
+                ShapeHelper.plane(new Vector3(this.min),new Vector3(this.max.dX(),this.max.dY(),this.min.dZ())),
+                ShapeHelper.plane(new Vector3(this.min),new Vector3(this.max.dX(),this.min.dY(),this.max.dZ())),
+                ShapeHelper.plane(new Vector3(this.min),new Vector3(this.min.dX(),this.max.dY(),this.max.dZ())),
+                ShapeHelper.plane(new Vector3(this.min.dX(),this.max.dY(),this.min.dZ()),new Vector3(this.max)),
+                ShapeHelper.plane(new Vector3(this.max.dX(),this.min.dY(),this.min.dZ()),new Vector3(this.max)),
+                ShapeHelper.plane(new Vector3(this.min.dX(),this.min.dY(),this.max.dZ()),new Vector3(this.max))
         };
     }
 }

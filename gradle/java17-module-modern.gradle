@@ -1,9 +1,0 @@
-/**
- * JOML is included in 1.19.4+ and should not be shaded
- */
-apply from: rootProject.file('buildSrc\\shared.gradle')
-
-java.toolchain.languageVersion = JavaLanguageVersion.of 17
-
-apply from: rootProject.file('gradle\\lombok.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')

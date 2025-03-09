@@ -5,8 +5,8 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector3d;
 
 import java.util.Collection;
 
@@ -51,11 +51,11 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
     
     public abstract boolean doesNotRequireHoverToScroll();
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
-        super.draw(ctx,center.add(0d,this.scrollOffset,0d,new Vector3d()),mouseX,mouseY);
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
+        super.draw(ctx,center.add(0d,this.scrollOffset,0d,new Vector3()),mouseX,mouseY);
     }
     
-    @Override protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3d center, double mouseX,
+    @Override protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3 center, double mouseX,
             double mouseY) {
         mouseX = getOffsetX(mouseX);
         mouseY = getOffsetY(mouseY);
@@ -78,7 +78,7 @@ public abstract class ScrollableWidgetGroup extends BoundedWidgetGroup implement
         return y-this.scrollOffset;
     }
     
-    @Override protected Box getRenderBounds(Vector3d center) {
+    @Override protected Box getRenderBounds(Vector3 center) {
         return super.getRenderBounds(center,0d,-this.scrollOffset,0d);
     }
     

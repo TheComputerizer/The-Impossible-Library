@@ -4,14 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorStreams;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier4D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector4d;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -47,20 +47,20 @@ public class ScreenHelper {
         if(Objects.nonNull(api)) api.playVanillaClickSound();
     }
     
-    public static VectorSupplier2D randomPointSupplier2D(Supplier<Vector2d> supplier, int minCount, int maxCount) {
-        Vector2d[] vectors = new Vector2d[RandomHelper.randomInt(minCount,maxCount)];
+    public static VectorSupplier2D randomPointSupplier2D(Supplier<Vector2> supplier, int minCount, int maxCount) {
+        Vector2[] vectors = new Vector2[RandomHelper.randomInt(minCount,maxCount)];
         for(int i=0;i<vectors.length;i++) vectors[i] = supplier.get();
         return VectorStreams.get2D(vectors);
     }
     
-    public static VectorSupplier3D randomPointSupplier3D(Supplier<Vector3d> supplier, int minCount, int maxCount) {
-        Vector3d[] vectors = new Vector3d[RandomHelper.randomInt(minCount,maxCount)];
+    public static VectorSupplier3D randomPointSupplier3D(Supplier<Vector3> supplier, int minCount, int maxCount) {
+        Vector3[] vectors = new Vector3[RandomHelper.randomInt(minCount,maxCount)];
         for(int i=0;i<vectors.length;i++) vectors[i] = supplier.get();
         return VectorStreams.get3D(vectors);
     }
     
-    public static VectorSupplier4D randomPointSupplier4D(Supplier<Vector4d> supplier, int minCount, int maxCount) {
-        Vector4d[] vectors = new Vector4d[RandomHelper.randomInt(minCount,maxCount)];
+    public static VectorSupplier4D randomPointSupplier4D(Supplier<Vector4> supplier, int minCount, int maxCount) {
+        Vector4[] vectors = new Vector4[RandomHelper.randomInt(minCount,maxCount)];
         for(int i=0;i<vectors.length;i++) vectors[i] = supplier.get();
         return VectorStreams.get4D(vectors);
     }

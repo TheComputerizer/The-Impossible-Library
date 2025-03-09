@@ -11,10 +11,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -88,17 +88,17 @@ public class ScreenAPI extends WidgetGroup {
         draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.background)) this.background.draw(ctx,center,mouseX,mouseY);
         super.draw(ctx,center,mouseX,mouseY);
         Collection<TextAPI<?>> text = getHoverLines(mouseX,mouseY);
         if(!text.isEmpty()) ctx.drawTooltip(text,mouseX,mouseY);
     }
     
-    @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {}
+    @Override public void drawHovered(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {}
     
     protected Plane fullScreenPlane() {
-        return ShapeHelper.plane(Y,new Vector2d(-1d,-1d),new Vector2d(1d,1d));
+        return ShapeHelper.plane(Y,new Vector2(-1d,-1d),new Vector2(1d, 1d));
     }
     
     @Override public double getHeight() {

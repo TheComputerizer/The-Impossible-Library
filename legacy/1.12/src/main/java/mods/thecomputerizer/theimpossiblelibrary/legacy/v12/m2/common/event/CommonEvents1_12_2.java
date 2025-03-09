@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAP
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.util.CustomTick1_12_2;
@@ -17,7 +18,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -148,9 +148,9 @@ public class CommonEvents1_12_2 implements CommonEventsAPI {
         return hand==EnumHand.MAIN_HAND ? MAINHAND : OFFHAND;
     }
     
-    @Override public <V> Vector3d getVec3d(V vector) {
+    @Override public <V> Vector3 getVec3d(V vector) {
         Vec3d vec = (Vec3d)vector;
-        return new Vector3d(vec.x,vec.y,vec.z);
+        return new Vector3(vec.x,vec.y,vec.z);
     }
     
     @Override public boolean isDefined() {
@@ -167,7 +167,7 @@ public class CommonEvents1_12_2 implements CommonEventsAPI {
     
     @SuppressWarnings("unchecked")
     @Override public AxisAlignedBB setAABB(Box box) {
-        return new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z);
+        return new AxisAlignedBB(box.minX(),box.minY(),box.minZ(),box.maxX(),box.maxY(),box.maxZ());
     }
     
     @SuppressWarnings("unchecked")
@@ -199,7 +199,7 @@ public class CommonEvents1_12_2 implements CommonEventsAPI {
     }
     
     @SuppressWarnings("unchecked")
-    @Override public Vec3d setVec3d(Vector3d vector) {
-        return new Vec3d(vector.x,vector.y,vector.z);
+    @Override public Vec3d setVec3d(Vector3 vector) {
+        return new Vec3d(vector.dX(),vector.dY(),vector.dZ());
     }
 }

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.Weather2API;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.mrbt0907.weather2.api.WeatherAPI;
@@ -9,7 +10,6 @@ import net.mrbt0907.weather2.util.Maths.Vec3;
 import net.mrbt0907.weather2.weather.WeatherManager;
 import net.mrbt0907.weather2.weather.storm.SandstormObject;
 import net.mrbt0907.weather2.weather.storm.WeatherObject;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class Weather21_12_2 extends Weather2API {
 
     public @Nullable WeatherData getClosestData(WorldAPI<?> world, BlockPosAPI<?> pos, double distance, WeatherType type) {
         WeatherObject weather = getClosestWeatherType(world,pos,distance,type);
-        return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos),weather.getStage()) : null;
+        return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type), toBuiltInVec(weather.pos), weather.getStage()) : null;
     }
 
     @Override public @Nullable WeatherData getClosestHurricane(WorldAPI<?> world, BlockPosAPI<?> pos, double distance) {
@@ -58,7 +58,7 @@ public class Weather21_12_2 extends Weather2API {
         WeatherManager manager = getManager(world);
         if(Objects.nonNull(manager)) {
             SandstormObject storm = manager.getClosestSandstorm(toVec(pos),distance);
-            return Objects.nonNull(storm) ? new WeatherData(convertType(storm.type),toJomlVec(storm.pos),storm.getStage()) : null;
+            return Objects.nonNull(storm) ? new WeatherData(convertType(storm.type), toBuiltInVec(storm.pos), storm.getStage()) : null;
         }
         return null;
     }
@@ -67,7 +67,7 @@ public class Weather21_12_2 extends Weather2API {
         WeatherManager manager = getManager(world);
         if(Objects.nonNull(manager)) {
             WeatherObject weather = manager.getClosestWeather(toVec(pos),distance);
-            return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type),toJomlVec(weather.pos),weather.getStage()) : null;
+            return Objects.nonNull(weather) ? new WeatherData(convertType(weather.type), toBuiltInVec(weather.pos), weather.getStage()) : null;
         }
         return null;
     }
@@ -103,8 +103,8 @@ public class Weather21_12_2 extends Weather2API {
         return map;
     }
 
-    public Vector3d toJomlVec(Vec3 vec) {
-        return new Vector3d(vec.posX,vec.posY,vec.posZ);
+    public Vector3 toBuiltInVec(Vec3 vec) {
+        return new Vector3(vec.posX,vec.posY,vec.posZ);
     }
 
     public Vec3 toVec(BlockPosAPI<?> pos) {

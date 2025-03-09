@@ -7,12 +7,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerI
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
-import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
@@ -49,7 +49,7 @@ public class PlayerInteractBlockEventFabric extends PlayerInteractBlockEventWrap
         return wrapGenericGetter(wrapArrayGetter(0),MAINHAND);
     }
 
-    @Override protected EventFieldWrapper<Object[],Vector3d> wrapHitVecField() {
+    @Override protected EventFieldWrapper<Object[],Vector3> wrapHitVecField() {
         return wrapGenericGetter(wrapArrayGetter(0),VectorHelper.zero3D());
     }
 

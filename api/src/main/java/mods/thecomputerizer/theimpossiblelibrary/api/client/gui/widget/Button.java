@@ -12,9 +12,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle.CircleSlice;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -40,21 +40,21 @@ public class Button extends WidgetGroup {
         return basic(0d,0d,text,hoverLines);
     }
     
-    public static Button basic(Vector2d center, TextAPI<?> text, TextAPI<?> ... hoverLines) {
-        return basic(center.x,center.y,text,Arrays.asList(hoverLines));
+    public static Button basic(Vector2 center, TextAPI<?> text, TextAPI<?> ... hoverLines) {
+        return basic(center.dX(),center.dY(),text,Arrays.asList(hoverLines));
     }
     
     public static Button basic(double centerX, double centerY, TextAPI<?> text, TextAPI<?> ... hoverLines) {
         return basic(centerX,centerY,text,Arrays.asList(hoverLines));
     }
     
-    public static Button basic(Vector2d center, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
-        return basic(center.x,center.y,text,hoverLines);
+    public static Button basic(Vector2 center, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
+        return basic(center.dX(),center.dY(),text,hoverLines);
     }
     
     public static Button basic(double centerX, double centerY, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
         double heightRatio = RenderHelper.getCurrentHeightRatio();
-        Plane shape = ShapeHelper.plane(Y, new Vector2d(-0.25d*heightRatio,-0.025d),new Vector2d(0.25d*heightRatio,0.025d));
+        Plane shape = ShapeHelper.plane(Y, new Vector2(-0.25d*heightRatio,-0.025d),new Vector2(0.25d*heightRatio,0.025d));
         ShapeWidget texture = ShapeWidget.from(shape,ScreenHelper.getVanillaButtonTexture(false,false),centerX,centerY);
         TextWidget textWidget = TextWidget.from(text);
         ShapeWidget hoverTex = ShapeWidget.from(shape,ScreenHelper.getVanillaButtonTexture(true,false),centerX,centerY);
@@ -72,12 +72,12 @@ public class Button extends WidgetGroup {
         return colored(0d,0d,color,text,hoverLines);
     }
     
-    public static Button colored(Vector2d center, ColorCache color, TextAPI<?> text, TextAPI<?> ... hoverLines) {
-        return colored(center.x,center.y,color,text,Arrays.asList(hoverLines));
+    public static Button colored(Vector2 center, ColorCache color, TextAPI<?> text, TextAPI<?> ... hoverLines) {
+        return colored(center.dX(),center.dY(),color,text,Arrays.asList(hoverLines));
     }
     
-    public static Button colored(Vector2d center, ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
-        return colored(center.x,center.y,color,text,hoverLines);
+    public static Button colored(Vector2 center, ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
+        return colored(center.dX(),center.dY(),color,text,hoverLines);
     }
     
     public static Button colored(double centerX, double centerY, ColorCache color, TextAPI<?> text, TextAPI<?> ... hoverLines) {
@@ -86,7 +86,7 @@ public class Button extends WidgetGroup {
     
     public static Button colored(double centerX, double centerY, ColorCache color, TextAPI<?> text, Collection<TextAPI<?>> hoverLines) {
         double heightRatio = RenderHelper.getCurrentHeightRatio();
-        Plane shape = ShapeHelper.plane(Y, new Vector2d(-0.25d*heightRatio,-0.025d),new Vector2d(0.25d*heightRatio,0.025d));
+        Plane shape = ShapeHelper.plane(Y, new Vector2(-0.25d*heightRatio,-0.025d),new Vector2(0.25d*heightRatio,0.025d));
         ShapeWidget colorWidget = ShapeWidget.from(shape,color,centerX,centerY);
         TextWidget textWidget = TextWidget.from(text);
         ShapeWidget hoverColor = ShapeWidget.from(shape,ColorHelper.reverse(color,color.a()),centerX,centerY);
@@ -96,12 +96,12 @@ public class Button extends WidgetGroup {
         return button;
     }
     
-    public static WidgetGroup radialGroup(Circle circle, Vector2d center, int slices,
+    public static WidgetGroup radialGroup(Circle circle, Vector2 center, int slices,
             BiConsumer<Integer,Button> settings) {
         return BasicWidgetGroup.from(radial(circle,center,slices,0d,settings));
     }
     
-    public static WidgetGroup radialGroup(Circle circle, Vector2d center, int slices, double startAngle,
+    public static WidgetGroup radialGroup(Circle circle, Vector2 center, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
         return BasicWidgetGroup.from(radial(circle,center,slices,startAngle,settings));
     }
@@ -111,9 +111,9 @@ public class Button extends WidgetGroup {
         return BasicWidgetGroup.from(radial(circle,centerX,centerY,slices,startAngle,settings));
     }
     
-    public static Button[] radial(Circle circle, Vector2d center, int slices, double startAngle,
+    public static Button[] radial(Circle circle, Vector2 center, int slices, double startAngle,
             BiConsumer<Integer,Button> settings) {
-        return radial(circle,center.x,center.y,slices,startAngle,settings);
+        return radial(circle,center.dX(),center.dY(),slices,startAngle,settings);
     }
     
     public static Button[] radial(Circle circle, double centerX, double centerY, int slices, double startAngle,
@@ -127,8 +127,8 @@ public class Button extends WidgetGroup {
         return buttons;
     }
     
-    public static Button radial(Circle circle, Vector2d center, Consumer<Button> settings) {
-        return radial(circle,center.x,center.y,settings);
+    public static Button radial(Circle circle, Vector2 center, Consumer<Button> settings) {
+        return radial(circle,center.dX(),center.dY(),settings);
     }
     
     public static Button radial(Circle circle, double centerX, double centerY, Consumer<Button> settings) {
@@ -180,7 +180,7 @@ public class Button extends WidgetGroup {
         return copy;
     }
     
-    @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void drawHovered(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.hover)) this.hover.draw(ctx,center,mouseX,mouseY);
         else draw(ctx,center,mouseX,mouseY);
     }

@@ -13,12 +13,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape3D;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector4d;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +47,7 @@ public final class RenderContext {
         this.scale = new RenderScale(mc.getWindow());
     }
     
-    public void drawArrow2D(Vector3d center, Plane bounds, Facing facing, float lineWidth, ColorCache color,
+    public void drawArrow2D(Vector3 center, Plane bounds, Facing facing, float lineWidth, ColorCache color,
             boolean withTail) {
         double width = bounds.getWidth()/2d;
         double height = bounds.getHeight()/2d;
@@ -75,19 +75,19 @@ public final class RenderContext {
         }
     }
     
-    public void drawArrow2D(Vector3d center, double tipX, double tipY, double prongX, double prongY, float width,
+    public void drawArrow2D(Vector3 center, double tipX, double tipY, double prongX, double prongY, float width,
             boolean withTail) {
-        Vector3d tip = center.add(tipX,tipY,0d,new Vector3d());
-        drawLine(tip,center.x+prongX,center.y+prongY,center.z,width);
-        drawLine(tip,center.x-prongX,center.y-prongY,center.z,width);
-        if(withTail) drawLine(tip,center.x-tipX,center.y-tipY,center.z,width);
+        Vector3 tip = center.add(tipX,tipY,0d,new Vector3());
+        drawLine(tip,center.dX()+prongX,center.dY()+prongY,center.dZ(),width);
+        drawLine(tip,center.dX()-prongX,center.dY()-prongY,center.dZ(),width);
+        if(withTail) drawLine(tip,center.dX()-tipX,center.dY()-tipY,center.dZ(),width);
     }
     
     public void drawColoredBox(Box box, ColorCache color) {
         for(Shape2D shape : box.getAs2DArray()) drawColoredPlane(box.center,(Plane)shape,color);
     }
     
-    public void drawColoredCircle(Vector3d center, Circle circle, ColorCache color) {
+    public void drawColoredCircle(Vector3 center, Circle circle, ColorCache color) {
         if(!circle.checkToleranceBounds(center,this.scale.getRenderBounds())) return;
         VectorSupplier2D vectors = circle.getVectorSupplier(this.scale.getRenderBounds());
         while(vectors.hasNext()) {
@@ -101,25 +101,25 @@ public final class RenderContext {
         }
     }
     
-    public void drawColoredPlane(Vector3d center, Plane plane, ColorCache color) {
+    public void drawColoredPlane(Vector3 center, Plane plane, ColorCache color) {
         if(!plane.checkToleranceBounds(center,this.scale.getRenderBounds())) return;
-        Vector2d min = plane.getRelativeMin();
-        Vector2d max = plane.getRelativeMax();
+        Vector2 min = plane.getRelativeMin();
+        Vector2 max = plane.getRelativeMax();
         prepareGradient(color);
         VertexWrapper buffer = initQuads(false);
         withScaledPos(buffer,center,min).color(color).endVertex();
-        withScaledPos(buffer,center,max.x,min.y).color(color).endVertex();
+        withScaledPos(buffer,center,max.dX(),min.dY()).color(color).endVertex();
         withScaledPos(buffer,center,max).color(color).endVertex();
-        withScaledPos(buffer,center,min.x,max.y).color(color).endVertex();
+        withScaledPos(buffer,center,min.dX(),max.dY()).color(color).endVertex();
         finishGradient(buffer);
     }
     
-    public void drawLine(Vector3d start, Vector3d end, float width) {
-        drawLine(start.x,start.y,start.z,end.x,end.y,end.z,width);
+    public void drawLine(Vector3 start, Vector3 end, float width) {
+        drawLine(start.dX(),start.dY(),start.dZ(),end.dX(),end.dY(),end.dZ(),width);
     }
     
-    public void drawLine(Vector3d start, double endX, double endY, double endZ, float width) {
-        drawLine(start.x,start.y,start.z,endX,endY,endZ,width);
+    public void drawLine(Vector3 start, double endX, double endY, double endZ, float width) {
+        drawLine(start.dX(),start.dY(),start.dZ(),endX,endY,endZ,width);
     }
     
     public void drawLine(double startX, double startY, double startZ, double endX, double endY, double endZ,
@@ -136,27 +136,27 @@ public final class RenderContext {
         finishLine(gl);
     }
     
-    public void drawOutline(Vector3d center, Shape2D shape, float width, ColorCache color) {
+    public void drawOutline(Vector3 center, Shape2D shape, float width, ColorCache color) {
         drawOutline(center,shape.getOutlineSupplier(this.scale.getRenderBounds()),width,color);
     }
     
-    public void drawOutline(Vector3d center, VectorSupplier2D vectors, float width, ColorCache color) {
+    public void drawOutline(Vector3 center, VectorSupplier2D vectors, float width, ColorCache color) {
         GLAPI gl = prepareLine(GLAPI::lineStrip,width,color);
-        Vector2d first = null;
-        Vector2d last = null;
-        Vector2d vec = null;
+        Vector2 first = null;
+        Vector2 last = null;
+        Vector2 vec = null;
         while(vectors.hasNext()) {
-            Vector2d next = vectors.getNext();
-            double nextX = this.scale.applyXForScreen(center.x,next.x);
-            double nextY = this.scale.applyYForScreen(center.y,next.y);
+            Vector2 next = vectors.getNext();
+            double nextX = this.scale.applyXForScreen(center.dX(),next.dX());
+            double nextY = this.scale.applyYForScreen(center.dY(),next.dY());
             if(Objects.isNull(vec)) {
-                first = new Vector2d(nextX,nextY);
+                first = new Vector2(nextX,nextY);
                 vec = next;
                 continue;
             }
-            last = new Vector2d(nextX,nextY);
-            double x = this.scale.applyXForScreen(center.x,vec.x);
-            double y = this.scale.applyYForScreen(center.y,vec.y);
+            last = new Vector2(nextX,nextY);
+            double x = this.scale.applyXForScreen(center.dX(),vec.dX());
+            double y = this.scale.applyYForScreen(center.dY(),vec.dY());
             gl.normalizedVertex2D(x,y,color,nextX,nextY);
             vec = next;
         }
@@ -164,29 +164,29 @@ public final class RenderContext {
         finishLine(gl);
     }
     
-    public void drawOutline(Vector3d center, Shape3D shape, float width, ColorCache color) {
+    public void drawOutline(Vector3 center, Shape3D shape, float width, ColorCache color) {
         drawOutline(center,shape.getOutlineSupplier(this.scale.getRenderBounds()),width,color);
     }
     
-    public void drawOutline(Vector3d center, VectorSupplier3D vectors, float width, ColorCache color) {
+    public void drawOutline(Vector3 center, VectorSupplier3D vectors, float width, ColorCache color) {
         GLAPI gl = prepareLine(GLAPI::lineStrip,width,color);
-        Vector3d first = null;
-        Vector3d last = null;
-        Vector3d vec = null;
+        Vector3 first = null;
+        Vector3 last = null;
+        Vector3 vec = null;
         while(vectors.hasNext()) {
-            Vector3d next = vectors.getNext();
-            double nextX = this.scale.applyXForScreen(center.x,next.x);
-            double nextY = this.scale.applyYForScreen(center.y,next.y);
-            double nextZ = this.scale.applyZForScreen(center.z,next.z);
+            Vector3 next = vectors.getNext();
+            double nextX = this.scale.applyXForScreen(center.dX(),next.dX());
+            double nextY = this.scale.applyYForScreen(center.dY(),next.dY());
+            double nextZ = this.scale.applyZForScreen(center.dZ(),next.dZ());
             if(Objects.isNull(vec)) {
                 vec = next;
-                first = new Vector3d(nextX,nextY,nextZ);
+                first = new Vector3(nextX,nextY,nextZ);
                 continue;
             }
-            last = new Vector3d(nextX,nextY,nextZ);
-            double x = this.scale.applyXForScreen(center.x,vec.x);
-            double y = this.scale.applyYForScreen(center.y,vec.y);
-            double z = this.scale.applyZForScreen(center.z,vec.z);
+            last = new Vector3(nextX,nextY,nextZ);
+            double x = this.scale.applyXForScreen(center.dX(),vec.dX());
+            double y = this.scale.applyYForScreen(center.dY(),vec.dY());
+            double z = this.scale.applyZForScreen(center.dZ(),vec.dZ());
             gl.normalizedVertex(x,y,z,color,nextX,nextY,nextZ);
             vec = next;
         }
@@ -194,22 +194,22 @@ public final class RenderContext {
         finishLine(gl);
     }
     
-    public void drawTexturedPlane(Vector3d center, Plane plane, TextureWrapper texture) {
+    public void drawTexturedPlane(Vector3 center, Plane plane, TextureWrapper texture) {
         drawTexturedPlane(center,plane,texture.getTexture(),texture.getVectorUV(),texture.getColorMask(true));
     }
     
-    public void drawTexturedPlane(Vector3d center, Plane plane, ResourceLocationAPI<?> texture, Vector4d uv,
+    public void drawTexturedPlane(Vector3 center, Plane plane, ResourceLocationAPI<?> texture, Vector4 uv,
             ColorCache mask) {
         if(Objects.isNull(texture) || isNotBounded(center)) return;
-        Vector2d min = plane.getRelativeMin();
-        Vector2d max = plane.getRelativeMax();
+        Vector2 min = plane.getRelativeMin();
+        Vector2 max = plane.getRelativeMax();
         this.renderer.bindTexture(texture);
         prepareTexture(mask);
         VertexWrapper buffer = initQuads(true);
-        withScaledPos(buffer,center,min).tex(uv.x,uv.w).color(mask).endVertex();
-        withScaledPos(buffer,center,max.x,min.y).tex(uv.z,uv.w).color(mask).endVertex();
-        withScaledPos(buffer,center,max).tex(uv.z,uv.y).color(mask).endVertex();
-        withScaledPos(buffer,center,min.x,max.y).tex(uv.x,uv.y).color(mask).endVertex();
+        withScaledPos(buffer,center,min).tex(uv.dX(),uv.dW()).color(mask).endVertex();
+        withScaledPos(buffer,center,max.dX(),min.dY()).tex(uv.dZ(),uv.dW()).color(mask).endVertex();
+        withScaledPos(buffer,center,max).tex(uv.dZ(),uv.dY()).color(mask).endVertex();
+        withScaledPos(buffer,center,min.dX(),max.dY()).tex(uv.dX(),uv.dY()).color(mask).endVertex();
         finishTexture(buffer);
     }
     
@@ -272,7 +272,7 @@ public final class RenderContext {
         return buffer;
     }
     
-    public boolean isNotBounded(Vector3d pos) {
+    public boolean isNotBounded(Vector3 pos) {
         return !this.scale.canDraw(pos);
     }
     
@@ -335,19 +335,19 @@ public final class RenderContext {
         this.scale.updateResolution(screenWidth,screenHeight,displayWidth,displayHeight);
     }
     
-    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, Vector2d pos) {
-        return withScaledPos(buffer,center,pos.x,pos.y,0d);
+    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3 center, Vector2 pos) {
+        return withScaledPos(buffer,center,pos.dX(),pos.dY(),0d);
     }
     
-    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, Vector3d pos) {
-        return withScaledPos(buffer,center,pos.x,pos.y,pos.z);
+    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3 center, Vector3 pos) {
+        return withScaledPos(buffer,center,pos.dX(),pos.dY(),pos.dZ());
     }
     
-    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y) {
+    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3 center, double x, double y) {
         return withScaledPos(buffer,center,x,y,0d);
     }
     
-    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3d center, double x, double y, double z) {
+    private VertexWrapper withScaledPos(VertexWrapper buffer, Vector3 center, double x, double y, double z) {
         return this.scale.applyForScreen(buffer,center,x,y,z);
     }
     

@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 public interface Selectable {
     
     boolean isSelected();
-    void drawSelected(RenderContext ctx, Vector3d center, double mouseX, double mouseY);
+    void drawSelected(RenderContext ctx, Vector3 center, double mouseX, double mouseY);
 }

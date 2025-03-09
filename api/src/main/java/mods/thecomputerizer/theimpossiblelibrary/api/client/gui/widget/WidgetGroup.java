@@ -5,8 +5,8 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -103,13 +103,13 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
             if(!this.widgets.contains(otherChild)) addWidget(otherChild.copy());
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         if(canDraw())
             for(Widget widget : this.widgets)
                 if(widget.canDraw()) drawWidget(ctx,widget,center,mouseX,mouseY);
     }
     
-    protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3d center, double mouseX, double mouseY) {
+    protected boolean drawHoverable(RenderContext ctx, Hoverable hoverable, Vector3 center, double mouseX, double mouseY) {
         if(hoverable.isHovering(mouseX,mouseY) && hoverable.shouldDrawHovered()) {
             hoverable.drawHovered(ctx,center,mouseX,mouseY);
             return true;
@@ -117,7 +117,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return false;
     }
     
-    protected boolean drawSelectable(RenderContext ctx, Selectable selectable, Vector3d center, double mouseX, double mouseY) {
+    protected boolean drawSelectable(RenderContext ctx, Selectable selectable, Vector3 center, double mouseX, double mouseY) {
         if(selectable.isSelected()) {
             selectable.drawSelected(ctx,center,mouseX,mouseY);
             return true;
@@ -125,11 +125,11 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
         return false;
     }
     
-    @Override public void drawHovered(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void drawHovered(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         draw(ctx,center,mouseX,mouseY);
     }
     
-    public void drawWidget(RenderContext ctx, Widget widget, Vector3d center, double mouseX, double mouseY) {
+    public void drawWidget(RenderContext ctx, Widget widget, Vector3 center, double mouseX, double mouseY) {
         boolean drawn = widget instanceof Hoverable && drawHoverable(ctx,(Hoverable)widget,center,mouseX,mouseY);
         if(widget instanceof Selectable && drawSelectable(ctx,(Selectable)widget,center,mouseX,mouseY)) drawn = true;
         if(!drawn) widget.draw(ctx,center,mouseX,mouseY);
@@ -177,7 +177,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     protected double getElementsBottom(double z) {
-        return Math.max(getBottom(),getCenter(z).y-(getElementsHeight()/2d));
+        return Math.max(getBottom(),getCenter(z).dY()-(getElementsHeight()/2d));
     }
     
     protected double getElementsHeight() {
@@ -201,7 +201,7 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     protected double getElementsLeft(double z) {
-        return Math.max(getLeft(),getCenter(z).x-(getElementsWidth()/2d));
+        return Math.max(getLeft(),getCenter(z).dX()-(getElementsWidth()/2d));
     }
     
     protected double getElementsWidth() {
@@ -226,11 +226,11 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     
     @SuppressWarnings("SameParameterValue")
     protected double getElementsTop(double z) {
-        return Math.min(getTop(),getCenter(z).y+(getElementsHeight()/2d));
+        return Math.min(getTop(),getCenter(z).dY()+(getElementsHeight()/2d));
     }
     
     protected double getElementsRight(double z) {
-        return Math.min(getRight(),getCenter(z).x+(getElementsWidth()/2d));
+        return Math.min(getRight(),getCenter(z).dX()+(getElementsWidth()/2d));
     }
     
     public @Nullable Widget getHoveredElement(double mouseX, double mouseY) {

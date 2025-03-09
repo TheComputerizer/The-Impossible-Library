@@ -12,7 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventHel
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.EventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -102,15 +102,15 @@ import java.util.function.Consumer;
         return ((ClientEventsAPI)getEventsAPI(true)).getOverlayElementType(elementType);
     }
     
-    public static <V> Vector3d getVec3d(V vector) {
+    public static <V> Vector3 getVec3d(V vector) {
         return getVec3d(false,vector);
     }
     
-    public static <V> Vector3d getVec3d(EventType<?> type, V vector) {
+    public static <V> Vector3 getVec3d(EventType<?> type, V vector) {
         return getVec3d(type.isClient(),vector);
     }
     
-    public static <V> Vector3d getVec3d(boolean client, V vector) {
+    public static <V> Vector3 getVec3d(boolean client, V vector) {
         return getEventsAPI(client).getVec3d(vector);
     }
     
@@ -187,15 +187,15 @@ import java.util.function.Consumer;
         return getEventsAPI(client).setHand(hand);
     }
     
-    public static <V> V setVec3d(Vector3d vector) {
+    public static <V> V setVec3d(Vector3 vector) {
         return setVec3d(false,vector);
     }
     
-    public static <V> V setVec3d(EventType<?> type, Vector3d vector) {
+    public static <V> V setVec3d(EventType<?> type, Vector3 vector) {
         return setVec3d(type.isClient(),vector);
     }
     
-    public static <V> V setVec3d(boolean client, Vector3d vector) {
+    public static <V> V setVec3d(boolean client, Vector3 vector) {
         return getEventsAPI(client).setVec3d(vector);
     }
 }

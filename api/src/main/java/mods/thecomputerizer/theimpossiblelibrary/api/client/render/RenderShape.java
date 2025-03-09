@@ -7,8 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Square;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
-import org.joml.Vector3d;
 
 import java.util.Objects;
 
@@ -51,7 +51,7 @@ public class RenderShape extends MutableWrapped<Shape> {
         return copy;
     }
     
-    public void draw(RenderContext ctx, Vector3d center) {
+    public void draw(RenderContext ctx, Vector3 center) {
         if(this.wrapped instanceof Plane) {
             Plane plane = (Plane)this.wrapped;
             if(Objects.nonNull(this.texture)) ctx.drawTexturedPlane(center,plane,this.texture);
@@ -59,7 +59,7 @@ public class RenderShape extends MutableWrapped<Shape> {
         } else if(this.wrapped instanceof Circle) ctx.drawColoredCircle(center,(Circle)this.wrapped,this.color);
     }
     
-    public Vector3d getCenterForGroup(Vector3d center) {
+    public Vector3 getCenterForGroup(Vector3 center) {
         return this.wrapped.getCenter(center);
     }
     

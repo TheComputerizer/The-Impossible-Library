@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
@@ -24,7 +25,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -86,7 +86,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
-        return getEntitiesInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
+        return getEntitiesInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
 
     public List<EntityAPI<?,?>> getEntitiesInBox(AxisAlignedBB box) {
@@ -109,7 +109,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
-        return getLivingInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
+        return getLivingInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
 
     public List<LivingEntityAPI<?,?>> getLivingInBox(AxisAlignedBB box) {
@@ -187,15 +187,15 @@ public class World1_12_2 extends WorldAPI<World> {
         }
     }
     
-    @Override public void spawnItem(ItemStackAPI<?> stack, Vector3d pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+    @Override public void spawnItem(ItemStackAPI<?> stack, Vector3 pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isRemote) {
-            EntityItem item = new EntityItem(this.wrapped,pos.x,pos.y,pos.z,stack.unwrap());
+            EntityItem item = new EntityItem(this.wrapped,pos.dX(),pos.dY(),pos.dZ(),stack.unwrap());
             item.setDefaultPickupDelay();
             spawnEntity(WrapperHelper.wrapEntity(item),onSpawn);
         }
     }
     
-    @Override public void spawnItem(ItemAPI<?> api, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+    @Override public void spawnItem(ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isRemote) {
             ItemStackAPI<?> stack = WrapperHelper.wrapItemStack(new ItemStack((Item)api.unwrap()));

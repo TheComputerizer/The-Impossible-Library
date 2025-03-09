@@ -6,8 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
-import org.joml.Vector3d;
 
 import java.util.Objects;
 import java.util.Random;
@@ -25,11 +25,11 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
     private boolean showOutlines = true;
     @Setter private boolean enableCull = false;
     @Setter private boolean pushMatrix = true;
-    private Vector3d previousRenderPos;
-    private Vector3d orbitVec;
+    private Vector3 previousRenderPos;
+    private Vector3 orbitVec;
     private Orbit orbit;
 
-    public Convex3D(Vector3d ... relativeCoords) {
+    public Convex3D(Vector3 ... relativeCoords) {
         if(Objects.isNull(relativeCoords) || relativeCoords.length<=3)
             throw new RuntimeException("Only convex polygons with more than 3 vertices are supported for Convex3D objects");
         this.radius = relativeCoords[0].distance(VectorHelper.zero3D());
@@ -125,15 +125,15 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
     }
 
     public void render(RenderContext ctx, double x, double y, double z) {
-        render(ctx,new Vector3d(x,y,z));
+        render(ctx,new Vector3(x,y,z));
     }
 
-    public void render(RenderContext ctx, Vector3d pos) {
+    public void render(RenderContext ctx, Vector3 pos) {
         RenderAPI renderer = ctx.getRenderer();
         preRender(renderer);
         renderer.setColor(this.color[0],this.color[1],this.color[2],this.color[3]);
         renderer.scale(this.scale[0],this.scale[1],this.scale[2]);
-        setTranslation(renderer,new Vector3d(pos.x/this.scale[0],pos.y/this.scale[1],pos.z/this.scale[2]));
+        setTranslation(renderer,new Vector3(pos.dX()/this.scale[0],pos.dY()/this.scale[1],pos.dZ()/this.scale[2]));
         for(int i = 0; i < this.currentRotation.length; i++)
             this.currentRotation[i] = rotateClampedAxis(i);
         renderer.rotate(this.currentRotation[0],1f,0f,0f);
@@ -145,19 +145,19 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
         postRender(renderer);
     }
 
-    private void setTranslation(RenderAPI renderer, Vector3d initialPos) {
+    private void setTranslation(RenderAPI renderer, Vector3 initialPos) {
         if(Objects.isNull(this.previousRenderPos)) this.previousRenderPos = initialPos;
-        if(Objects.isNull(this.orbit)) renderer.translate(initialPos.x+this.translationOffset[0],
-                initialPos.y+this.translationOffset[1],initialPos.z+this.translationOffset[2]);
+        if(Objects.isNull(this.orbit)) renderer.translate(initialPos.dX()+this.translationOffset[0],
+                initialPos.dY()+this.translationOffset[1],initialPos.dZ()+this.translationOffset[2]);
         else {
             if(Objects.isNull(this.orbitVec))
-                this.orbitVec = new Vector3d(this.translationOffset[0],this.translationOffset[1],this.translationOffset[2]);
+                this.orbitVec = new Vector3(this.translationOffset[0],this.translationOffset[1],this.translationOffset[2]);
             else if(!initialPos.equals(this.previousRenderPos)) {
                 double distance = initialPos.distance(this.previousRenderPos);
-                this.orbitVec = this.orbitVec.add(initialPos.sub(this.previousRenderPos).normalize().mul(distance));
+                this.orbitVec = this.orbitVec.add(initialPos.sub(this.previousRenderPos).normalize().mulScalar(distance));
             }
             this.orbitVec = this.orbit.getNextVec(this.orbitVec,initialPos);
-            renderer.translate(this.orbitVec.x,this.orbitVec.y,this.orbitVec.z);
+            renderer.translate(this.orbitVec.dX(),this.orbitVec.dY(),this.orbitVec.dZ());
         }
         this.previousRenderPos = initialPos;
     }
@@ -189,15 +189,15 @@ public class Convex3D { //TODO Hook parts of this into other helper methods
     }
 
     public void renderTriangleOutline(RenderContext ctx, TriangleMapper triangle, int index) {
-        Vector3d og = triangle.getOriginal();
-        Vector3d a = triangle.getA(index);
-        Vector3d b = triangle.getB(index);
+        Vector3 og = triangle.getOriginal();
+        Vector3 a = triangle.getA(index);
+        Vector3 b = triangle.getB(index);
         ctx.drawLine(og,a,1f);
         ctx.drawLine(og,b,1f);
         ctx.drawLine(a,b,1f);
     }
 
-    private void bufferVertex(VertexWrapper buffer, Vector3d vec) {
-        buffer.pos(vec.x,vec.y,vec.z).color(this.color[0],this.color[1],this.color[2],this.color[3]).endVertex();
+    private void bufferVertex(VertexWrapper buffer, Vector3 vec) {
+        buffer.pos(vec.dX(),vec.dY(),vec.dZ()).color(this.color[0],this.color[1],this.color[2],this.color[3]).endVertex();
     }
 }

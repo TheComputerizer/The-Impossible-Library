@@ -1,5 +1,5 @@
 /**
- * Java 23 means that this module is in 1.20.6+ and JOML should not be shaded
+ * Java 21 means that this module is in 1.20.6+ and JOML should not be shaded
  */
 apply from: rootProject.file('buildSrc\\shared.gradle')
 

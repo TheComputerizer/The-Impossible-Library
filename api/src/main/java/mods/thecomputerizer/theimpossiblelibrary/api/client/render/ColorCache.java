@@ -1,110 +1,81 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
-import org.joml.Vector4f;
-import org.joml.Vector4i;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 
 @SuppressWarnings("unused") @Getter
 public class ColorCache {
     
     public static ColorCache grayscale(float gray) {
-        return of(new Vector4f(gray,gray,gray,1f));
+        return of(new Vector4(gray, gray, gray, 1f));
     }
     
     public static ColorCache grayscale(float gray, float alpha) {
-        return of(new Vector4f(gray,gray,gray,alpha));
+        return of(new Vector4(gray,gray,gray,alpha));
     }
     
-    @SuppressWarnings("SuspiciousNameCombination")
-    public static ColorCache grayscale(Vector2f gray) {
-        return of(new Vector4f(gray.x,gray.x,gray.x,gray.y));
+    public static ColorCache grayscale(Vector2 gray) {
+        return of(new Vector4(gray.dX(),gray.dX(),gray.dX(),gray.dY()));
     }
     
     public static ColorCache grayscale(int gray) {
-        return of(new Vector4i(gray,gray,gray,255));
+        return of(new Vector4(gray,gray,gray,255));
     }
     
     public static ColorCache grayscale(int gray, int a) {
-        return of(new Vector4i(gray,gray,gray,a));
-    }
-    
-    @SuppressWarnings("SuspiciousNameCombination")
-    public static ColorCache grayscale(Vector2i gray) {
-        return of(new Vector4i(gray.x,gray.x,gray.x,gray.y));
+        return of(new Vector4(gray,gray,gray,a));
     }
     
     public static ColorCache of(float r, float g, float b) {
-        return of(new Vector4f(r,g,b,1f));
+        return of(new Vector4(r,g,b,1f));
     }
     
     public static ColorCache of(float r, float g, float b, float a) {
-        return of(new Vector4f(r,g,b,a));
+        return of(new Vector4(r,g,b,a));
     }
     
-    public static ColorCache of(Vector3f colorVF) {
-        return of(new Vector4f(colorVF.x,colorVF.y,colorVF.z,1f));
+    public static ColorCache of(Vector3 colorVF) {
+        return of(new Vector4(colorVF.fX(),colorVF.fY(),colorVF.fZ(),1f));
     }
     
-    public static ColorCache of(Vector3f colorVF, float alpha) {
-        return of(new Vector4f(colorVF.x,colorVF.y,colorVF.z,alpha));
+    public static ColorCache of(Vector3 colorVF, float alpha) {
+        return of(new Vector4(colorVF.fX(),colorVF.fY(),colorVF.fZ(),alpha));
     }
     
-    public static ColorCache of(Vector4f colorVF, float alpha) {
-        return of(new Vector4f(colorVF.x,colorVF.y,colorVF.z,alpha));
+    public static ColorCache of(Vector4 colorVF, float alpha) {
+        return of(new Vector4(colorVF.fX(),colorVF.fY(),colorVF.fZ(),alpha));
     }
     
-    public static ColorCache of(Vector4f colorVF) {
+    public static ColorCache of(Vector4 colorVF) {
         return new ColorCache(colorVF);
     }
     
     public static ColorCache of(int r, int g, int b) {
-        return of(new Vector4i(r,g,b,255));
+        return of(new Vector4(r,g,b,255));
     }
     
     public static ColorCache of(int r, int g, int b, float a) {
-        return of(new Vector4i(r,g,b,(int)(255f*a)));
+        return of(new Vector4(r,g,b,(int)(255f*a)));
     }
     
     public static ColorCache of(int r, int g, int b, int a) {
-        return of(new Vector4i(r,g,b,a));
-    }
-    
-    public static ColorCache of(Vector3i colorVI) {
-        return of(new Vector4i(colorVI.x,colorVI.y,colorVI.z,255));
-    }
-    
-    public static ColorCache of(Vector3i colorVI, int alpha) {
-        return of(new Vector4i(colorVI.x,colorVI.y,colorVI.z,alpha));
-    }
-    
-    public static ColorCache of(Vector4i colorVI, int alpha) {
-        return of(new Vector4i(colorVI.x,colorVI.y,colorVI.z,alpha));
-    }
-    
-    public static ColorCache of(Vector4i colorVI) {
-        return new ColorCache(colorVI);
+        return of(new Vector4(r,g,b,a));
     }
 
     private final int colorI;
-    private final Vector4f colorVF;
-    private final Vector4i colorVI;
+    private final Vector4 colorVF;
+    private final Vector4 colorVI;
     
-    public ColorCache(Vector4f colorVF) {
-        this(colorVF,ColorHelper.convert(colorVF));
+    public ColorCache(Vector4 colorVF) {
+        this(colorVF,ColorHelper.convertF(colorVF));
     }
     
-    public ColorCache(Vector4i colorVI) {
-        this(ColorHelper.convert(colorVI),colorVI);
-    }
-    
-    protected ColorCache(Vector4f colorVF, Vector4i colorVI) {
+    protected ColorCache(Vector4 colorVF, Vector4 colorVI) {
         this.colorVF = colorVF;
         this.colorVI = colorVI;
-        this.colorI = ColorHelper.makeARGBInt(this.colorVI);
+        this.colorI = ColorHelper.makeARGBIntI(this.colorVI);
     }
     
     @Override public boolean equals(Object other) {
@@ -112,50 +83,50 @@ public class ColorCache {
     }
 
     public int getIntWithAlpha(float alpha) {
-        return ColorHelper.makeARGBInt(this.colorVF.x, this.colorVF.y, this.colorVF.z, alpha);
+        return ColorHelper.makeARGBInt(this.colorVF.fX(),this.colorVF.fY(),this.colorVF.fZ(),alpha);
     }
 
     public int getIntWithAlpha(int alpha) {
-        return ColorHelper.makeARGBInt(this.colorVI.x, this.colorVI.y, this.colorVI.z, alpha);
+        return ColorHelper.makeARGBInt(this.colorVI.iX(),this.colorVI.iY(),this.colorVI.iZ(),alpha);
     }
 
-    public Vector4f getVFWithAlpha(float alpha) {
-        return new Vector4f(this.colorVF.x,this.colorVF.y,this.colorVF.z,alpha);
+    public Vector4 getVFWithAlpha(float alpha) {
+        return new Vector4(this.colorVF.fX(),this.colorVF.fY(),this.colorVF.fZ(),alpha);
     }
 
-    public Vector4f getVFWithAlpha(int alpha) {
-        return new Vector4f(this.colorVF.x,this.colorVF.y,this.colorVF.z,((float)alpha)/255f);
+    public Vector4 getVFWithAlpha(int alpha) {
+        return new Vector4(this.colorVF.fX(),this.colorVF.fY(),this.colorVF.fZ(),((float)alpha)/255f);
     }
 
-    public Vector4i getVIWithAlpha(float alpha) {
-        return new Vector4i(this.colorVI.x,this.colorVI.y,this.colorVI.z,(int)(alpha*255f));
+    public Vector4 getVIWithAlpha(float alpha) {
+        return new Vector4(this.colorVI.iX(),this.colorVI.iY(),this.colorVI.iZ(),(int)(alpha*255f));
     }
 
-    public Vector4i getVIWithAlpha(int alpha) {
-        return new Vector4i(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
+    public Vector4 getVIWithAlpha(int alpha) {
+        return new Vector4(this.colorVI.iX(),this.colorVI.iY(),this.colorVI.iZ(),alpha);
     }
     
     public float r() {
-        return this.colorVF.x;
+        return this.colorVF.fX();
     }
     
     public float g() {
-        return this.colorVF.y;
+        return this.colorVF.fY();
     }
     
     public float b() {
-        return this.colorVF.z;
+        return this.colorVF.fZ();
     }
     
     public float a() {
-        return this.colorVF.w;
+        return this.colorVF.fW();
     }
     
     public ColorCache withAlpha(int alpha) {
-        return ColorCache.of(this.colorVI.x,this.colorVI.y,this.colorVI.z,alpha);
+        return ColorCache.of(this.colorVI.iX(),this.colorVI.iY(),this.colorVI.iZ(),alpha);
     }
     
     public ColorCache withAlpha(float alpha) {
-        return ColorCache.of(this.colorVF.x,this.colorVF.y,this.colorVF.z,alpha);
+        return ColorCache.of(this.colorVF.fX(),this.colorVF.fY(),this.colorVF.fZ(),alpha);
     }
 }

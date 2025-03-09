@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.network.MessageWrapperFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.network.Network1_20;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -124,21 +123,21 @@ public class NetworkFabric1_20_6 extends Network1_20<Object,Object> {
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Object dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }

@@ -6,9 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -45,10 +45,10 @@ public abstract class Weather2API implements ModAPI {
     public static class WeatherData {
 
         private final WeatherType type;
-        private final Vector3d pos;
+        private final Vector3 pos;
         @Setter private int level;
 
-        public WeatherData(@Nullable WeatherType type, Vector3d pos, int level) {
+        public WeatherData(@Nullable WeatherType type, Vector3 pos, int level) {
             this.type = type;
             this.pos = pos;
             this.level = level;

@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.font;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -52,8 +51,7 @@ public class Font1_20 extends FontAPI<Font> {
         Object matrix = renderer.getMatrix();
         if(matrix instanceof GuiGraphics) return (GuiGraphics)matrix;
         String type = Objects.nonNull(matrix) ? matrix.getClass().getName() : "null";
-        TILRef.logError("Tried to get render matrix as GuiGraphics from type {}",type);
-        return null;
+        throw new IllegalArgumentException("Tried to get render matrix as GuiGraphics from type "+type);
     }
     
     @Override public int getStringWidth(String str) {

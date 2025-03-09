@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 public class Orbit {
 
@@ -17,12 +17,12 @@ public class Orbit {
         this.angle = angle;
     }
 
-    public Vector3d getNextVec(Vector3d curVec, Vector3d centerVec) {
+    public Vector3 getNextVec(Vector3 curVec, Vector3 centerVec) {
         double curDistance = curVec.distance(centerVec);
         double curGravity = curDistance<this.radius ? 0d : this.speed/(this.radius/curDistance);
         if(curGravity>this.speed) curGravity = ((curGravity-this.speed)/100d)+this.speed;
-        Vector3d dirVec = curVec.cross(centerVec).normalize().mul(this.speed);
-        Vector3d gravityVec = centerVec.sub(curVec).normalize().mul(curGravity);
+        Vector3 dirVec = curVec.cross(centerVec).normalize().mulScalar(this.speed);
+        Vector3 gravityVec = centerVec.sub(curVec).normalize().mulScalar(curGravity);
         return curVec.add(dirVec).add(gravityVec);
     }
 }

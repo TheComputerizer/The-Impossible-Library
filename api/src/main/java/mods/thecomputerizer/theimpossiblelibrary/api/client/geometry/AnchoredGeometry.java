@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,9 +13,9 @@ public abstract class AnchoredGeometry {
 
     private final List<ShapeHolder> freeShapeRenders;
     private final List<Column> columnRenders;
-    @Setter private Vector3d renderVec;
+    @Setter private Vector3 renderVec;
 
-    public AnchoredGeometry(Vector3d renderVec) {
+    public AnchoredGeometry(Vector3 renderVec) {
         this.freeShapeRenders = new ArrayList<>();
         this.columnRenders = new ArrayList<>();
         this.renderVec = renderVec;
@@ -30,16 +30,16 @@ public abstract class AnchoredGeometry {
     }
 
     public void setRenderXZ(double x, double z) {
-        this.renderVec = new Vector3d(x,this.renderVec.y,z);
+        this.renderVec = new Vector3(x,this.renderVec.dY(),z);
     }
 
     public abstract boolean canRender();
 
-    public abstract Vector3d getRenderPos(float partialTicks);
+    public abstract Vector3 getRenderPos(float partialTicks);
 
     public void render(RenderContext ctx, float partialTicks) {
         if(canRender()) {
-            Vector3d renderAt = this.renderVec.sub(getRenderPos(partialTicks));
+            Vector3 renderAt = this.renderVec.sub(getRenderPos(partialTicks));
             Iterator<Column> columnItr = this.columnRenders.iterator();
             while(columnItr.hasNext()) {
                 Column column = columnItr.next();

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.Random;
 
@@ -12,11 +12,11 @@ public class TickableColumn extends Column implements ITickableGeometry<Tickable
     private int maxTime;
     private int time;
 
-    public TickableColumn(Random random, Vector3d relativeBottom, double height, double radius, double spacing) {
+    public TickableColumn(Random random, Vector3 relativeBottom, double height, double radius, double spacing) {
         super(random,relativeBottom,height,radius,spacing);
     }
 
-    @Override public void render(RenderContext ctx, Vector3d relativeCenter) {
+    @Override public void render(RenderContext ctx, Vector3 relativeCenter) {
         if(this.isInitialized) super.render(ctx,relativeCenter);
     }
 

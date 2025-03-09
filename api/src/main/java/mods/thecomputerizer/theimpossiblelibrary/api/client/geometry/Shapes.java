@@ -1,19 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.function.Supplier;
 
 public enum Shapes {
 
-    BOX(() -> new Vector3d[]{new Vector3d(0.5d,-0.5d,-0.5d),new Vector3d(0.5d,0.5d,-0.5d),
-            new Vector3d(0.5d,-0.5d,0.5d),new Vector3d(0.5d,0.5d,0.5d),
-            new Vector3d(-0.5d,-0.5d,-0.5d),new Vector3d(-0.5d,0.5d,-0.5d),
-            new Vector3d(-0.5d,-0.5d,0.5d),new Vector3d(-0.5d,0.5d,0.5d)});
+    BOX(() -> new Vector3[]{new Vector3(0.5d, -0.5d, -0.5d),new Vector3(0.5d, 0.5d, -0.5d),
+            new Vector3(0.5d,-0.5d,0.5d),new Vector3(0.5d,0.5d,0.5d),
+            new Vector3(-0.5d,-0.5d,-0.5d),new Vector3(-0.5d,0.5d,-0.5d),
+            new Vector3(-0.5d,-0.5d,0.5d),new Vector3(-0.5d,0.5d,0.5d)});
 
-    private final Supplier<Vector3d[]> vectorSupplier;
+    private final Supplier<Vector3[]> vectorSupplier;
 
-    Shapes(Supplier<Vector3d[]> vectors) {
+    Shapes(Supplier<Vector3[]> vectors) {
         this.vectorSupplier = vectors;
     }
 

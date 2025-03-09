@@ -17,10 +17,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
-import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
@@ -57,9 +57,9 @@ public class TestScreen extends ScreenAPI {
         WidgetGroup radialMenu = Button.radialGroup(circle, 0d, 0d, slices, 0d, (i,button) -> {
             button.getShape().setColor(BLACK);
             Widget texture = ShapeWidget.from(ShapeHelper.square(Y,0.25d,heightRatio),TILRef.res("test/logo.png"));
-            Vector3d pos = button.getShape().getCenterForGroup(VectorHelper.zero3D());
-            texture.setX(pos.x);
-            texture.setY(pos.y);
+            Vector3 pos = button.getShape().getCenterForGroup(VectorHelper.zero3D());
+            texture.setX(pos.dX());
+            texture.setY(pos.dY());
             button.addWidget(texture);
             button.addHoverLine(TextHelper.getLiteral("test hover "+i));
             button.setClickFunc(b -> this.coloredFuzz = !this.coloredFuzz);

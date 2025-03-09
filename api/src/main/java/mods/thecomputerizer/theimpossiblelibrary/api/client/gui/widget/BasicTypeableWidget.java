@@ -8,9 +8,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import org.apache.commons.lang3.StringUtils;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -153,7 +153,7 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
         return copy;
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.text)) {
             ColorCache color = this.text.getColor();
             if(Objects.nonNull(this.colorOverride)) this.text.setColor(this.colorOverride);
@@ -162,7 +162,7 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
         }
     }
     
-    @Override public void drawSelected(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void drawSelected(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         draw(ctx,center,mouseX,mouseY);
     }
     
@@ -243,10 +243,10 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
         double width = getWidth();
         double parentWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 0d;
         double height = getHeight();
-        Vector3d center = getCenter(0d);
+        Vector3 center = getCenter(0d);
         int pos = this.text.getCharPos(RenderHelper.getContext(),x,y,getCenter(0d),
-                getMinX(center.x,width,parentWidth),getMinY(center.y,height),getMaxX(center.x,width,parentWidth),
-                                       getMaxY(center.y,height));
+                getMinX(center.dX(),width,parentWidth),getMinY(center.dY(),height),getMaxX(center.dX(),width,parentWidth),
+                                       getMaxY(center.dY(),height));
         if(pos!=-1) {
             this.selected = true;
             this.text.setBlinkerPos(pos);

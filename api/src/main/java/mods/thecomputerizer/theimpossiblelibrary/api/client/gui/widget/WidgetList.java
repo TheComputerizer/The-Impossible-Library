@@ -5,8 +5,8 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -52,8 +52,8 @@ public class WidgetList extends ScrollableWidgetGroup {
     
     public WidgetList(Widget elementTemplate, double x, double y, double width, double height) {
         double barWidth = 0.01d*(Math.min(2d,width)/2d);
-        this.scrollBar = ShapeWidget.from(ShapeHelper.plane(Axis.Y, new Vector2d(-barWidth,-height/2d),
-                                                            new Vector2d(barWidth,height/2d)),GRAY);
+        this.scrollBar = ShapeWidget.from(ShapeHelper.plane(Axis.Y,new Vector2(-barWidth, -height/2d),
+                                                            new Vector2(barWidth,height/2d)),GRAY);
         this.elementTemplate = elementTemplate;
         this.height = height;
         this.width = width;
@@ -86,7 +86,7 @@ public class WidgetList extends ScrollableWidgetGroup {
         return false;
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         super.draw(ctx,center,mouseX,mouseY);
         if(Objects.nonNull(this.scrollBar) && this.scrollBar.canDraw() && getElementsHeight()>getHeight())
             this.scrollBar.draw(ctx,center,mouseX,mouseY);

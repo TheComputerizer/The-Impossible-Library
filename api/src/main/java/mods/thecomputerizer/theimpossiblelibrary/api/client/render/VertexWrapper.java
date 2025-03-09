@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector4f;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 
 import javax.annotation.Nullable;
 
@@ -31,7 +31,7 @@ public abstract class VertexWrapper {
         return color(color.getColorVF());
     }
 
-    public VertexWrapper color(Vector4f color) {
+    public VertexWrapper color(Vector4 color) {
         if(this.vIndex>=this.vertices.length)
             TILRef.logError("Tried to buffer the color of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setColor(color);
@@ -70,7 +70,7 @@ public abstract class VertexWrapper {
 
     protected abstract void onVertexEnded(Number[][] numbers);
 
-    public VertexWrapper pos(Vector3d pos) {
+    public VertexWrapper pos(Vector3 pos) {
         if(this.vIndex>=this.vertices.length)
             TILRef.logError("Tried to buffer the position of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setPosition(pos);
@@ -93,7 +93,7 @@ public abstract class VertexWrapper {
         this.begin();
     }
 
-    public VertexWrapper tex(Vector2d uv) {
+    public VertexWrapper tex(Vector2 uv) {
         if(this.vIndex>=this.vertices.length)
             TILRef.logError("Tried to buffer the texture of a filled vertex wrapper!");
         else this.vertices[this.vIndex].setTexture(uv);

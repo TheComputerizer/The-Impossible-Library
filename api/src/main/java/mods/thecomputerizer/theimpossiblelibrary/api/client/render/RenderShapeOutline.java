@@ -5,7 +5,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape3D;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 @SuppressWarnings("unused") @Getter @Setter
 public class RenderShapeOutline extends RenderShape {
@@ -29,7 +29,7 @@ public class RenderShapeOutline extends RenderShape {
         return new RenderShapeOutline(this.wrapped.copy(),this.color,this.lineWidth);
     }
     
-    public void draw(RenderContext ctx, Vector3d center) {
+    public void draw(RenderContext ctx, Vector3 center) {
         if(this.wrapped instanceof Shape2D) ctx.drawOutline(center,(Shape2D)this.wrapped,this.lineWidth,this.color);
         else if(this.wrapped instanceof Shape3D) ctx.drawOutline(center,(Shape3D)this.wrapped,this.lineWidth,this.color);
     }

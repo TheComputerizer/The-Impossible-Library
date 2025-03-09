@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import org.joml.Vector4f;
-import org.joml.Vector4i;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 
 /**
  * Reverses a color vector
@@ -31,16 +30,16 @@ public class ColorHelper {
     /**
      * Converts a color vector stored as 0-255 to a color vector stored as 0-1
      */
-    public static Vector4f convert(Vector4i color) {
-        return new Vector4f(((float)color.x)/255f,((float)color.y)/255f,
-                ((float)color.z)/255f,((float)color.w)/255f);
+    public static Vector4 convertI(Vector4 color) {
+        return new Vector4(color.fX()/255f,color.fY()/255f,
+                           color.fZ()/255f, color.fW()/255f);
     }
 
     /**
      * Converts a color vector stored as 0-1 to a color vector stored as 0-255
      */
-    public static Vector4i convert(Vector4f color) {
-        return new Vector4i((int)(color.x*255f),(int)(color.y*255f),(int)(color.z*255f),(int)(color.w*255f));
+    public static Vector4 convertF(Vector4 color) {
+        return new Vector4((int)(color.fX()*255f),(int)(color.fY()*255f),(int)(color.fZ()*255f),(int)(color.fW()*255f));
     }
     
     /**
@@ -100,49 +99,49 @@ public class ColorHelper {
         return getColor(color).getIntWithAlpha(alpha);
     }
 
-    public static Vector4f getColorVF(String color) {
+    public static Vector4 getColorVF(String color) {
         return getColor(color).getColorVF();
     }
 
-    public static Vector4f getColorVF(String color, float alpha) {
+    public static Vector4 getColorVF(String color, float alpha) {
         return getColor(color).getVFWithAlpha(alpha);
     }
 
-    public static Vector4f getColorVF(String color, int alpha) {
+    public static Vector4 getColorVF(String color, int alpha) {
         return getColor(color).getVFWithAlpha(alpha);
     }
 
-    public static Vector4i getColorVI(String color) {
+    public static Vector4 getColorVI(String color) {
         return getColor(color).getColorVI();
     }
 
-    public static Vector4i getColorVI(String color, float alpha) {
+    public static Vector4 getColorVI(String color, float alpha) {
         return getColor(color).getVIWithAlpha(alpha);
     }
 
-    public static Vector4i getColorVI(String color, int alpha) {
+    public static Vector4 getColorVI(String color, int alpha) {
         return getColor(color).getVIWithAlpha(alpha);
     }
 
     /**
      * Converts a color tuple into a single integer
      */
-    public static int makeARGBInt(Vector4f colors) {
-        return makeARGBInt(colors.x(), colors.y(), colors.z(), colors.w());
+    public static int makeARGBIntF(Vector4 colors) {
+        return makeARGBInt(colors.fX(),colors.fY(),colors.fZ(),colors.fW());
     }
 
     /**
      * Converts a color tuple into a single integer
      */
-    public static int makeARGBInt(Vector4i colors) {
-        return makeARGBInt(colors.x(), colors.y(), colors.z(), colors.w());
+    public static int makeARGBIntI(Vector4 colors) {
+        return makeARGBInt(colors.iX(),colors.iY(),colors.iZ(),colors.iW());
     }
 
     /**
      * Converts rgba integers into a single color integer
      */
     public static int makeARGBInt(float r, float g, float b, float a) {
-        return makeARGBInt((int)(r*255f), (int)(g*255f), (int)(b*255f), (int)(a*255f));
+        return makeARGBInt((int)(r*255f),(int)(g*255f),(int)(b*255f),(int)(a*255f));
     }
 
     /**
@@ -153,7 +152,7 @@ public class ColorHelper {
     }
     
     public static ColorCache reverse(ColorCache color) {
-        return new ColorCache(reverse(color.getColorVF()));
+        return new ColorCache(reverseF(color.getColorVF()));
     }
     
     public static ColorCache reverse(ColorCache color, float alpha) {
@@ -167,29 +166,29 @@ public class ColorHelper {
     /**
      * Reverses a color vector
      */
-    public static Vector4f reverse(Vector4f colors) {
-        return new Vector4f(Math.abs(colors.x()-1f),Math.abs(colors.y()-1f),Math.abs(colors.z()-1f),colors.w());
+    public static Vector4 reverseF(Vector4 colors) {
+        return new Vector4(Math.abs(colors.fX()-1f),Math.abs(colors.fY()-1f),Math.abs(colors.fZ()-1f),colors.fW());
     }
 
     /**
      * Reverses a color vector
      */
-    public static Vector4i reverse(Vector4i colors) {
-        return new Vector4i(Math.abs(colors.x()-255),Math.abs(colors.y()-255),Math.abs(colors.z()-255),colors.w());
+    public static Vector4 reverseI(Vector4 colors) {
+        return new Vector4(Math.abs(colors.iX()-255),Math.abs(colors.iY()-255),Math.abs(colors.iZ()-255),colors.iW());
     }
 
     /**
      * Sets the global state color
      */
-    public static void setStateColor(RenderAPI renderer, Vector4f color) {
-        setStateColor(renderer,color.x,color.y,color.z,color.w);
+    public static void setStateColorF(RenderAPI renderer, Vector4 color) {
+        setStateColor(renderer,color.fX(),color.fY(),color.fZ(),color.fW());
     }
 
     /**
      * Sets the global state color
      */
-    public static void setStateColor(RenderAPI renderer, Vector4i color) {
-        setStateColor(renderer,color.x,color.y,color.z,color.w);
+    public static void setStateColorI(RenderAPI renderer, Vector4 color) {
+        setStateColor(renderer,color.iX(),color.iY(),color.iZ(),color.iW());
     }
 
     /**

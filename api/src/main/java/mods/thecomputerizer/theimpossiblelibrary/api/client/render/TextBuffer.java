@@ -4,15 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector4f;
-import org.joml.Vector4i;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -129,13 +127,13 @@ public class TextBuffer {
         this.highlightStart = this.blinkerPos-1;
     }
     
-    public void draw(RenderContext ctx, Vector3d center, double minX, double minY, double maxX, double maxY) {
+    public void draw(RenderContext ctx, Vector3 center, double minX, double minY, double maxX, double maxY) {
         double width = Math.abs(maxX-minX);
         if(!this.cached) cache(ctx,width);
         draw(ctx,center,this.lineCache,this.highlightStart,this.highlightEnd,minX,minY,width,Math.abs(maxY-minY));
     }
     
-    private void draw(RenderContext ctx, Vector3d center, List<String> lines, int charStart, int charEnd, double left,
+    private void draw(RenderContext ctx, Vector3 center, List<String> lines, int charStart, int charEnd, double left,
             double bottom, double width, double height) {
         double lineHeight = ctx.getScaledFontHeight();
         double offset = 0;
@@ -144,7 +142,7 @@ public class TextBuffer {
         int blinker = this.blinkerPos;
         for(String line : lines) {
             int lineLength = line.length();
-            draw(ctx,VectorHelper.copy3D(center),line,start,Math.min(charEnd,lineLength),blinker,lineHeight,left,bottom,
+            draw(ctx,center.copy(),line,start,Math.min(charEnd,lineLength),blinker,lineHeight,left,bottom,
                  width,height,offset);
             offset+=(lineHeight+this.lineSpacing);
             if(start>=0) start-=lineLength;
@@ -153,37 +151,37 @@ public class TextBuffer {
         }
     }
     
-    private void draw(RenderContext ctx, Vector3d center, String line, int charStart, int charEnd, int blinker,
+    private void draw(RenderContext ctx, Vector3 center, String line, int charStart, int charEnd, int blinker,
             double lineHeight, double left, double bottom, double width, double height, double offset) {
-        if(isTopAligned()) center.y = bottom+height;
-        else if(isBottomAligned()) center.y = bottom+lineHeight;
-        else center.y = bottom+(height/2d)+(lineHeight/2d);
-        if(isLeftAligned()) center.x = left;
-        else if(isRightAligned()) center.x = left-getWidth(ctx, width);
-        else center.x = left+(width/2d);
+        if(isTopAligned()) center.setY(bottom+height);
+        else if(isBottomAligned()) center.setY(bottom+lineHeight);
+        else center.setY(bottom+(height/2d)+(lineHeight/2d));
+        if(isLeftAligned()) center.setX(left);
+        else if(isRightAligned()) center.setX(left-getWidth(ctx, width));
+        else center.setX(left+(width/2d));
         center.add(this.translateX,this.translateY-offset,0d);
         RenderAPI renderer = ctx.getRenderer();
-        double scaledX = ctx.withScreenScaledX(center.x);
-        double scaledY = ctx.withScreenScaledY(center.y);
+        double scaledX = ctx.withScreenScaledX(center.dX());
+        double scaledY = ctx.withScreenScaledY(center.dY());
         if(isLeftAligned() || isRightAligned())
             renderer.drawString(ctx.getFont(),line,scaledX,scaledY,this.color.getColorI());
         else {
             renderer.drawCenteredString(ctx.getFont(),line,scaledX,scaledY,this.color.getColorI());
-            center.x-=(ctx.getScaledStringWidth(line)/2d);
+            center.setX(center.dX()-(ctx.getScaledStringWidth(line)/2d));
         }
-        double blinkerX = center.x;
-        center.y-=(ctx.getScaledFontHeight()/2d);
+        double blinkerX = center.dX();
+        center.setY(center.dY()-(ctx.getScaledFontHeight()/2d));
         if(charStart>=0 && charStart<charEnd) {
             double highlightWidth = ctx.getScaledStringWidth(line.substring(charStart,charEnd));
-            center.x+=(highlightWidth/2d);
-            if(charStart>0) center.x+=ctx.getScaledStringWidth(line.substring(0,charStart));
+            center.setX(center.dX()+(highlightWidth/2d));
+            if(charStart>0) center.setX(center.dX()+ctx.getScaledStringWidth(line.substring(0,charStart)));
             highlightShape.setWidth(highlightWidth);
             highlightShape.draw(ctx,center);
         }
         if(this.blinkerVisible && blinker>=0 && blinker<=line.length()) {
-            center.x = blinkerX;
+            center.setX(blinkerX);
             if(blinker>0)
-                center.x+=(ctx.getScaledStringWidth((line.substring(0,blinker)))-(this.blinkerShape.getWidth()/2d));
+                center.setX(center.dX()+(ctx.getScaledStringWidth((line.substring(0,blinker)))-(this.blinkerShape.getWidth()/2d)));
             this.blinkerShape.draw(ctx,center);
         }
     }
@@ -195,11 +193,11 @@ public class TextBuffer {
     /**
      Returns -1 if the position is too far outside the drawn text or if the buffer is not yet cached.
      */
-    public int getCharPos(RenderContext ctx, double x, double y, Vector3d center, double minX, double minY, double maxX, double maxY) {
+    public int getCharPos(RenderContext ctx, double x, double y, Vector3 center, double minX, double minY, double maxX, double maxY) {
         return this.cached ? getCharPos(ctx,x,y,center,this.lineCache,minX,minY,Math.abs(maxX-minX),Math.abs(maxY-minY)) : -1;
     }
     
-    private int getCharPos(RenderContext ctx, double x, double y, Vector3d center, List<String> lines, double left,
+    private int getCharPos(RenderContext ctx, double x, double y, Vector3 center, List<String> lines, double left,
             double bottom, double width, double height) {
         int pos = -1;
         double lineHeight = this.heightCache/lines.size();
@@ -207,26 +205,26 @@ public class TextBuffer {
         int blinker = this.blinkerPos;
         for(String line : lines) {
             int lineLength = line.length();
-            pos = getCharPos(ctx,x,y,VectorHelper.copy3D(center),line,lineHeight,left,bottom,width,height,offset);
+            pos = getCharPos(ctx,x,y,center.copy(),line,lineHeight,left,bottom,width,height,offset);
             if(pos!=-1) break;
             offset+=(lineHeight);
         }
         return pos;
     }
     
-    private int getCharPos(RenderContext ctx, double x, double y, Vector3d center, String line, double lineHeight,
+    private int getCharPos(RenderContext ctx, double x, double y, Vector3 center, String line, double lineHeight,
             double left, double bottom, double width, double height, double offset) {
-        if(isTopAligned()) center.y = bottom+height;
-        else if(isBottomAligned()) center.y = bottom+lineHeight;
-        else center.y = bottom+(height/2d)+(lineHeight/2d);
+        if(isTopAligned()) center.setY(bottom+height);
+        else if(isBottomAligned()) center.setY(bottom+lineHeight);
+        else center.setY(bottom+(height/2d)+(lineHeight/2d));
         double lineWidth = ctx.getScaledStringWidth(line);
-        if(isLeftAligned()) center.x = left;
-        else if(isRightAligned()) center.x = left-this.widthCache;
-        else center.x = left+(width/2d)-(lineWidth/2d);
+        if(isLeftAligned()) center.setX(left);
+        else if(isRightAligned()) center.setX(left-this.widthCache);
+        else center.setX(left+(width/2d)-(lineWidth/2d));
         center.add(this.translateX,this.translateY-offset,0d);
-        if(x>=center.x && x<center.x+ctx.getScaledStringWidth(line+"|") && y<=center.y && y>center.y-lineHeight) {
+        if(x>=center.dX() && x<center.dX()+ctx.getScaledStringWidth(line+"|") && y<=center.dY() && y>center.dY()-lineHeight) {
             FontAPI<?> font = ctx.getFont();
-            String trimmed = font.trimStringTo(line,font.getStringWidth(line)*((x-center.x)/lineWidth));
+            String trimmed = font.trimStringTo(line,font.getStringWidth(line)*((x-center.dX())/lineWidth));
             return trimmed.length();
         }
         return -1;
@@ -248,8 +246,8 @@ public class TextBuffer {
         return toString().substring(this.highlightStart,this.highlightStart+length);
     }
     
-    public double getLeft(Vector3d center) {
-        return center.x-(this.cached ? this.widthCache/2d : 0d);
+    public double getLeft(Vector3 center) {
+        return center.dX()-(this.cached ? this.widthCache/2d : 0d);
     }
     
     public double getWidth(@Nullable RenderContext ctx, double maxWidth) {
@@ -351,42 +349,42 @@ public class TextBuffer {
         /**
          * Assumes values from 0-1
          */
-        public Builder setColor(Vector4f color) {
+        public Builder setColorF(Vector4 color) {
             return setColor(new ColorCache(color));
         }
 
         /**
          * Assumes values from 0-1
          */
-        public Builder setColor(float r, float g, float b, float a) {
+        public Builder setColorF(float r, float g, float b, float a) {
             return setColor(ColorCache.of(r,g,b,a));
         }
 
         /**
          * Assumes values from 0-255
          */
-        public Builder setColor(Vector4i color) {
-            return setColor(new ColorCache(color));
+        public Builder setColorI(Vector4 color) {
+            return setColor(ColorCache.of(color.iX(),color.iY(),color.iZ(),color.iW()));
         }
 
         /**
          * Assumes values from 0-255
          */
-        public Builder setColor(int r, int g, int b, int a) {
+        public Builder setColorI(int r, int g, int b, int a) {
             return setColor(ColorCache.of(r,g,b,a));
         }
         
         /**
          * Assumes alpha from 0-1
          */
-        public Builder setColor(ColorCache color, float alpha) {
+        public Builder setColorF(ColorCache color, float alpha) {
             return setColor(color.withAlpha(alpha));
         }
         
         /**
          * Assumes alpha from 0-255
          */
-        public Builder setColor(ColorCache color, int alpha) {
+        public Builder setColorI(ColorCache color, int alpha) {
             return setColor(color.withAlpha(alpha));
         }
 
@@ -400,9 +398,9 @@ public class TextBuffer {
             return this;
         }
         
-        public Builder setScale(Vector2d scale) {
-            this.scaleX = scale.x;
-            this.scaleY = scale.y;
+        public Builder setScale(Vector2 scale) {
+            this.scaleX = scale.dX();
+            this.scaleY = scale.dY();
             return this;
         }
         
@@ -422,9 +420,9 @@ public class TextBuffer {
             return this;
         }
         
-        public Builder setTranslation(Vector2d translation) {
-            this.translateX = translation.x;
-            this.translateY = translation.y;
+        public Builder setTranslation(Vector2 translation) {
+            this.translateX = translation.dX();
+            this.translateY = translation.dY();
             return this;
         }
         

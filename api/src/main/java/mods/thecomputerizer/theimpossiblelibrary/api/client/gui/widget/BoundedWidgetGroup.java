@@ -5,9 +5,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderScale;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.joml.Vector3d;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +17,7 @@ public abstract class BoundedWidgetGroup extends WidgetGroup {
     
     @Override public abstract BoundedWidgetGroup copy();
     
-    @Override public void drawWidget(RenderContext ctx, Widget widget, Vector3d center, double mouseX, double mouseY) {
+    @Override public void drawWidget(RenderContext ctx, Widget widget, Vector3 center, double mouseX, double mouseY) {
         RenderScale scale = ctx.getScale();
         Box previousBounds = scale.getRenderBounds();
         Box bounds = getRenderBounds(center);
@@ -35,15 +35,15 @@ public abstract class BoundedWidgetGroup extends WidgetGroup {
         return isBounded(mouseX,mouseY) ? super.getHoverLines(mouseX,mouseY) : Collections.emptyList();
     }
     
-    protected Box getRenderBounds(Vector3d center) {
+    protected Box getRenderBounds(Vector3 center) {
         return ShapeHelper.box(getCenter(center),getWidth(),getHeight());
     }
     
-    protected Box getRenderBounds(Vector3d center, Vector3d offset) {
-        return getRenderBounds(center,offset.x,offset.y,offset.z);
+    protected Box getRenderBounds(Vector3 center, Vector3 offset) {
+        return getRenderBounds(center,offset.dX(),offset.dY(),offset.dZ());
     }
     
-    protected Box getRenderBounds(Vector3d center, double offsetX, double offsetY, double offsetZ) {
+    protected Box getRenderBounds(Vector3 center, double offsetX, double offsetY, double offsetZ) {
         return ShapeHelper.box(getCenter(center).add(offsetX,offsetY,offsetZ),getWidth(),getHeight());
     }
     
@@ -51,11 +51,11 @@ public abstract class BoundedWidgetGroup extends WidgetGroup {
         return isBounded(VectorHelper.zero3D(),x,y);
     }
     
-    public boolean isBounded(Vector3d center, double x, double y) {
+    public boolean isBounded(Vector3 center, double x, double y) {
         return getRenderBounds(center).isInsideXY(x,y);
     }
     
-    public boolean isBounded(Vector3d center, Vector3d pos) {
+    public boolean isBounded(Vector3 center, Vector3 pos) {
         return getRenderBounds(center).isInside(pos);
     }
     

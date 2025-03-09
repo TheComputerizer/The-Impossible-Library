@@ -3,10 +3,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.shapes;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.FuzzBall;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
 
 import java.util.function.Supplier;
 
@@ -25,16 +25,16 @@ public abstract class Shape3D implements Shape {
         return getScaled(scale,scale,scale);
     }
     
-    @Override public Shape3D getScaled(Vector2d scale) {
-        return getScaled(scale.x,scale.y,scale.x);
+    @Override public Shape3D getScaled(Vector2 scale) {
+        return getScaled(scale.dX(),scale.dY(),scale.dX());
     }
     
     @Override public Shape3D getScaled(double scaleH, double scaleV) {
         return getScaled(scaleH,scaleV,scaleH);
     }
     
-    @Override public Shape3D getScaled(Vector3d scale) {
-        return getScaled(scale.x,scale.y,scale.z);
+    @Override public Shape3D getScaled(Vector3 scale) {
+        return getScaled(scale.dX(),scale.dY(),scale.dZ());
     }
     
     @Override public abstract Shape3D getScaled(double scaleX, double scaleY, double scaleZ);

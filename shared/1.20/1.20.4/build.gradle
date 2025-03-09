@@ -37,7 +37,7 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java17-module-modern.gradle')
+apply from: rootProject.file('gradle\\java17-module.gradle')
 
 plugins.apply 'net.minecraftforge.gradle'
 plugins.apply 'org.parchmentmc.librarian.forgegradle'

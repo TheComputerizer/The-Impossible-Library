@@ -20,7 +20,6 @@ repositories {
 dependencies {
     annotationProcessor("org.projectlombok:lombok:${lombok_version}")
 
-    compileOnly("org.joml:joml:${joml_version}") { transitive = false }
     compileOnly("org.projectlombok:lombok:${lombok_version}")
 }
 

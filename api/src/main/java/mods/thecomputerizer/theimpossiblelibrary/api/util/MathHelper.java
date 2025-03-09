@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
-import org.joml.Vector2d;
-import org.joml.Vector2f;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+
+import static java.lang.Math.PI;
 
 @SuppressWarnings("unused")
 public class MathHelper {
@@ -26,6 +27,15 @@ public class MathHelper {
         return Math.max(min,Math.min(val,max));
     }
     
+    public static double cosFromSin(double sin, double angle) {
+        double cos = Math.sqrt(1d-sin*sin);
+        double a = angle+(PI/2d);
+        double pi2 = PI*2d;
+        double b = a-(int)(a/pi2)*pi2;
+        if(b<0d) b = pi2+b;
+        return b>=PI ? -cos : cos;
+    }
+    
     /**
      * Distance of N-Dimensional side lengths
      */
@@ -47,15 +57,15 @@ public class MathHelper {
     /**
      * Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
      */
-    public static double getHalfway(Vector2d vec) {
-        return getHalfway(vec.x(),vec.y());
+    public static double getHalfwayD(Vector2 vec) {
+        return getHalfway(vec.dX(),vec.dY());
     }
 
     /**
      * Calculates a 1D position halfway in between a given start and end where vec.x is the start and vec.y is the end
      */
-    public static float getHalfway(Vector2f vec) {
-        return getHalfway(vec.x(),vec.y());
+    public static float getHalfwayF(Vector2 vec) {
+        return getHalfway(vec.fX(),vec.fY());
     }
 
     /**

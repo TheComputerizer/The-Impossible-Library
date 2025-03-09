@@ -30,7 +30,6 @@ dependencies {
 
     implementation "$burningwave_group:$burningwave_name:$burningwave_version"
     implementation "$burningwave_group:$burningwave_driver_name:$burningwave_driver_version"
-    implementation "$joml_group:$joml_name:$joml_version"
     implementation "$toolfactory_group:$toolfactory_name:$toolfactory_version"
 
 

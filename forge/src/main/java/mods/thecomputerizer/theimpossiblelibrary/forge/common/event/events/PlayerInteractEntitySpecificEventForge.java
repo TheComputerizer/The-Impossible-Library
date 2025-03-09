@@ -9,12 +9,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerI
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY_AT;
@@ -58,7 +58,7 @@ public class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntity
         return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
     }
 
-    @Override protected EventFieldWrapper<EntityInteractSpecific,Vector3d> wrapLocalPosField() {
+    @Override protected EventFieldWrapper<EntityInteractSpecific,Vector3> wrapLocalPosField() {
         return wrapGenericGetter(event -> EventHelper.getVec3d(event.getLocalPos()),VectorHelper.zero3D());
     }
 

@@ -8,12 +8,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerP
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_PUNCH_BLOCK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
@@ -62,7 +62,7 @@ public class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWrapper<Lef
         return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
     }
 
-    @Override protected EventFieldWrapper<LeftClickBlock,Vector3d> wrapHitVecField() {
+    @Override protected EventFieldWrapper<LeftClickBlock,Vector3> wrapHitVecField() {
         return wrapGenericGetter(event -> VectorHelper.zero3D(),VectorHelper.zero3D());
     }
 

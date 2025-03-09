@@ -6,36 +6,33 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppli
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier4D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector4d;
 
 import java.util.Objects;
 
 @SuppressWarnings("unused")
 public abstract class VectorStreams<V> {
     
-    public static VectorStream2D get2D(Iterable<Vector2d> vectors) {
-        return get2D(ArrayHelper.fromIterable(vectors,Vector2d.class));
+    public static VectorStream2D get2D(Iterable<Vector2> vectors) {
+        return get2D(ArrayHelper.fromIterable(vectors,Vector2.class));
     }
     
-    public static VectorStream2D get2D(Vector2d ... vectors) {
+    public static VectorStream2D get2D(Vector2 ... vectors) {
         return new VectorStream2D(vectors);
     }
     
-    public static VectorStream3D get3D(Iterable<Vector3d> vectors) {
-        return get3D(ArrayHelper.fromIterable(vectors,Vector3d.class));
+    public static VectorStream3D get3D(Iterable<Vector3> vectors) {
+        return get3D(ArrayHelper.fromIterable(vectors,Vector3.class));
     }
     
-    public static VectorStream3D get3D(Vector3d ... vectors) {
+    public static VectorStream3D get3D(Vector3 ... vectors) {
         return new VectorStream3D(vectors);
     }
     
-    public static VectorStream4D get4D(Iterable<Vector4d> vectors) {
-        return get4D(ArrayHelper.fromIterable(vectors,Vector4d.class));
+    public static VectorStream4D get4D(Iterable<Vector4> vectors) {
+        return get4D(ArrayHelper.fromIterable(vectors,Vector4.class));
     }
     
-    public static VectorStream4D get4D(Vector4d ... vectors) {
+    public static VectorStream4D get4D(Vector4 ... vectors) {
         return new VectorStream4D(vectors);
     }
     
@@ -89,42 +86,42 @@ public abstract class VectorStreams<V> {
         this.index = 0;
     }
     
-    public static class VectorStream2D extends VectorStreams<Vector2d> implements VectorSupplier2D {
+    public static class VectorStream2D extends VectorStreams<Vector2> implements VectorSupplier2D {
         
-        protected VectorStream2D(Vector2d ... vectors) {
+        protected VectorStream2D(Vector2 ... vectors) {
             super(vectors);
             for(int i=0;i<vectors.length;i++)
-                if(Objects.isNull(vectors[i])) vectors[i] = new Vector2d();
+                if(Objects.isNull(vectors[i])) vectors[i] = new Vector2();
         }
         
-        @Override protected Vector2d[] getDefault() {
-            return new Vector2d[]{};
+        @Override protected Vector2[] getDefault() {
+            return new Vector2[]{};
         }
     }
     
-    public static class VectorStream3D extends VectorStreams<Vector3d> implements VectorSupplier3D {
+    public static class VectorStream3D extends VectorStreams<Vector3> implements VectorSupplier3D {
         
-        protected VectorStream3D(Vector3d ... vectors) {
+        protected VectorStream3D(Vector3 ... vectors) {
             super(vectors);
             for(int i=0;i<vectors.length;i++)
-                if(Objects.isNull(vectors[i])) vectors[i] = new Vector3d();
+                if(Objects.isNull(vectors[i])) vectors[i] = new Vector3();
         }
         
-        @Override protected Vector3d[] getDefault() {
-            return new Vector3d[]{};
+        @Override protected Vector3[] getDefault() {
+            return new Vector3[]{};
         }
     }
     
-    public static class VectorStream4D extends VectorStreams<Vector4d> implements VectorSupplier4D {
+    public static class VectorStream4D extends VectorStreams<Vector4> implements VectorSupplier4D {
         
-        protected VectorStream4D(Vector4d... vectors) {
+        protected VectorStream4D(Vector4... vectors) {
             super(vectors);
             for(int i=0;i<vectors.length;i++)
-                if(Objects.isNull(vectors[i])) vectors[i] = new Vector4d();
+                if(Objects.isNull(vectors[i])) vectors[i] = new Vector4();
         }
         
-        @Override protected Vector4d[] getDefault() {
-            return new Vector4d[]{};
+        @Override protected Vector4[] getDefault() {
+            return new Vector4[]{};
         }
     }
 }

@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import org.joml.Vector2d;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.WHITE;
 
@@ -19,12 +19,12 @@ public interface GLAPI {
     int lineStrip();
     int lines();
     
-    default void normalizedVertex2D(Vector2d vec, Vector2d next) {
-        normalizedVertex(vec.x,vec.y,0d,WHITE,next.x,next.y,0d);
+    default void normalizedVertex2D(Vector2 vec, Vector2 next) {
+        normalizedVertex(vec.dX(),vec.dY(),0d,WHITE,next.dX(),next.dY(),0d);
     }
     
-    default void normalizedVertex2D(Vector2d vec, ColorCache color, Vector2d next) {
-        normalizedVertex(vec.x,vec.y,0d,color.r(),color.g(),color.b(),color.a(),next.x,next.y,0d);
+    default void normalizedVertex2D(Vector2 vec, ColorCache color, Vector2 next) {
+        normalizedVertex(vec.dX(),vec.dY(),0d,color.r(),color.g(),color.b(),color.a(),next.dX(),next.dY(),0d);
     }
     
     default void normalizedVertex2D(double x, double y, double nextX, double nextY) {
@@ -39,12 +39,12 @@ public interface GLAPI {
         normalizedVertex(x,y,0d,r,g,b,a,nextX,nextY,0d);
     }
     
-    default void normalizedVertex(Vector3d vec, Vector3d next) {
-        normalizedVertex(vec.x,vec.y,vec.z,WHITE,next.x,next.y,next.z);
+    default void normalizedVertex(Vector3 vec, Vector3 next) {
+        normalizedVertex(vec.dX(),vec.dY(),vec.dZ(),WHITE,next.dX(),next.dY(),next.dZ());
     }
     
-    default void normalizedVertex(Vector3d vec, ColorCache color, Vector3d next) {
-        normalizedVertex(vec.x,vec.y,vec.z,color.r(),color.g(),color.b(),color.a(),next.x,next.y,next.z);
+    default void normalizedVertex(Vector3 vec, ColorCache color, Vector3 next) {
+        normalizedVertex(vec.dX(),vec.dY(),vec.dZ(),color.r(),color.g(),color.b(),color.a(),next.dX(),next.dY(),next.dZ());
     }
     
     default void normalizedVertex(double x, double y, double z, double nextX, double nextY, double nextZ) {

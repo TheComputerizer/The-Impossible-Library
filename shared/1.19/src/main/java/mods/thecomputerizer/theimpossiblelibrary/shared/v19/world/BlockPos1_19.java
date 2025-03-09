@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.world;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import net.minecraft.core.BlockPos;
-import org.joml.Vector3i;
 
 public class BlockPos1_19 extends BlockPosAPI<BlockPos> {
     
@@ -15,15 +15,15 @@ public class BlockPos1_19 extends BlockPosAPI<BlockPos> {
     }
     
     public static BlockPos1_19 vec(Object pos) {
-        return new BlockPos1_19((Vector3i)pos);
+        return new BlockPos1_19((Vector3)pos);
     }
 
     public BlockPos1_19(BlockPos pos) {
-        this(pos,new Vector3i(pos.getX(),pos.getY(),pos.getZ()));
+        this(pos,new Vector3(pos.getX(),pos.getY(),pos.getZ()));
     }
 
-    public BlockPos1_19(Vector3i posVec) {
-        this(new BlockPos(posVec.x,posVec.y,posVec.z),posVec);
+    public BlockPos1_19(Vector3 posVec) {
+        this(new BlockPos(posVec.iX(),posVec.iY(),posVec.iZ()),posVec);
     }
 
     public BlockPos1_19(double x, double y, double z) {
@@ -31,10 +31,10 @@ public class BlockPos1_19 extends BlockPosAPI<BlockPos> {
     }
 
     public BlockPos1_19(int x, int y, int z) {
-        this(new BlockPos(x,y,z),new Vector3i(x,y,z));
+        this(new BlockPos(x,y,z),new Vector3(x,y,z));
     }
 
-    private BlockPos1_19(BlockPos pos, Vector3i posVec) {
+    private BlockPos1_19(BlockPos pos, Vector3 posVec) {
         super(pos,posVec);
     }
 

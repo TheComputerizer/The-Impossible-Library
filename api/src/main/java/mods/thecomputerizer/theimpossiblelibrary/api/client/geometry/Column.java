@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.*;
 
@@ -9,7 +9,7 @@ import java.util.*;
 public class Column {
 
     private final Random random;
-    private final Vector3d relativeBottom;
+    private final Vector3 relativeBottom;
     private final double height;
     private final double radius;
     private final double spacing;
@@ -19,7 +19,7 @@ public class Column {
     private ShapeHolder recentShape;
     private boolean shouldGenerateShapes;
 
-    public Column(Random random, Vector3d relativeBottom, double height, double radius, double spacing) {
+    public Column(Random random, Vector3 relativeBottom, double height, double radius, double spacing) {
         this.random = random;
         this.relativeBottom = relativeBottom;
         this.height = height;
@@ -48,17 +48,17 @@ public class Column {
     public void setSpeed(double speed) {
         this.shapeSpeed = speed;
         for(ShapeHolder holder : this.movingShapes)
-            holder.setDirection(new Vector3d(0d,0.04d*this.shapeSpeed,0d));
+            holder.setDirection(new Vector3(0d,0.04d*this.shapeSpeed,0d));
     }
 
-    public void render(RenderContext ctx, Vector3d relativeCenter) {
-        Vector3d actualRender = relativeCenter.add(this.relativeBottom.x,0d,this.relativeBottom.z);
+    public void render(RenderContext ctx, Vector3 relativeCenter) {
+        Vector3 actualRender = relativeCenter.add(this.relativeBottom.dX(),0d,this.relativeBottom.dZ());
         this.outline.render(ctx,actualRender);
         if(this.shouldGenerateShapes) {
             if(this.movingShapes.isEmpty() || Objects.isNull(this.recentShape) ||
-                    this.recentShape.getRelativePosition().y - this.relativeBottom.y > this.spacing) {
+                    this.recentShape.getRelativePosition().dY()-this.relativeBottom.dY()>this.spacing) {
                 ShapeHolder newholder = new ShapeHolder(generateRandomBox())
-                        .setRelativePosition(this.relativeBottom).setDirection(new Vector3d(0d,0.04d *this.shapeSpeed,0d));
+                        .setRelativePosition(this.relativeBottom).setDirection(new Vector3(0d,0.04d *this.shapeSpeed,0d));
                 newholder.startMoving();
                 this.movingShapes.add(newholder);
                 this.recentShape = newholder;
@@ -67,7 +67,7 @@ public class Column {
             while(shapesIterator.hasNext()) {
                 ShapeHolder holder = shapesIterator.next();
                 holder.render(ctx,actualRender);
-                if(holder.getRelativePosition().y+this.spacing>this.relativeBottom.y+height)
+                if(holder.getRelativePosition().dY()+this.spacing>this.relativeBottom.dY()+height)
                     shapesIterator.remove();
             }
         }

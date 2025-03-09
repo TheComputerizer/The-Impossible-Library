@@ -5,8 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +18,7 @@ public interface CommonEventsAPI {
     <E> Result getEventResult(E result);
     <D> @Nullable Facing getFacing(@Nullable D direction);
     <H> Hand getHand(H hand);
-    <V> Vector3d getVec3d(V vector);
+    <V> Vector3 getVec3d(V vector);
     boolean isDefined();
     void postCustomTick(CustomTick ticker);
     <E extends EventWrapper<?>> void register(E wrapper);
@@ -27,5 +27,5 @@ public interface CommonEventsAPI {
     <E> E setEventResult(Result result);
     <D> @Nullable D setFacing(@Nullable Facing facing);
     <H> H setHand(Hand hand);
-    <V> V setVec3d(Vector3d vector);
+    <V> V setVec3d(Vector3 vector);
 }

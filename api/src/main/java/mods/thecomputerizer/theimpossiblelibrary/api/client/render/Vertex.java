@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector4f;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 
 @SuppressWarnings("UnusedReturnValue")
 public class Vertex {
@@ -27,8 +27,8 @@ public class Vertex {
         for(int index=0; index<sizes.length; index++) this.buffer[index] = new Number[sizes[index]];
     }
 
-    public Vertex setColor(Vector4f color) {
-        return setColor(color.x,color.y,color.z,color.w);
+    public Vertex setColor(Vector4 color) {
+        return setColor(color.fX(),color.fY(),color.fZ(),color.fW());
     }
 
     public Vertex setColor(float r, float g, float b, float a) {
@@ -47,8 +47,8 @@ public class Vertex {
         return this;
     }
 
-    public Vertex setPosition(Vector3d pos) {
-        return setPosition(pos.x,pos.y,pos.z);
+    public Vertex setPosition(Vector3 pos) {
+        return setPosition(pos.dX(),pos.dY(),pos.dZ());
     }
 
     public Vertex setPosition(double x, double y, double z) {
@@ -66,8 +66,8 @@ public class Vertex {
         return this;
     }
 
-    public Vertex setTexture(Vector2d uv) {
-        return setTexture(uv.x,uv.y);
+    public Vertex setTexture(Vector2 uv) {
+        return setTexture(uv.dX(),uv.dY());
     }
 
     public Vertex setTexture(double u, double v) {

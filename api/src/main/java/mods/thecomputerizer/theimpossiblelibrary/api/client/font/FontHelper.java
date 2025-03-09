@@ -25,28 +25,28 @@ public class FontHelper {
     /**
      * Returns the total number of lines a string would be if it was split
      */
-    public static int howManyLinesWillThisBe(FontAPI font, String original, Number width) {
+    public static int howManyLinesWillThisBe(FontAPI<?> font, String original, Number width) {
         return splitLines(font,original,0,width.intValue()).size();
     }
 
     /**
      * Returns the total number of lines a string would be if it was split
      */
-    public static int howManyLinesWillThisBe(FontAPI font, String original, int left, int right) {
+    public static int howManyLinesWillThisBe(FontAPI<?> font, String original, int left, int right) {
         return splitLines(font,original,left,right).size();
     }
 
     /**
      * Splits a string into a list of lines
      */
-    public static List<String> splitLines(FontAPI font, String original, Number width) {
+    public static List<String> splitLines(FontAPI<?> font, String original, Number width) {
         return splitLines(font,original,0,width.intValue());
     }
 
     /**
      * Splits a string into a list of lines
      */
-    public static List<String> splitLines(FontAPI font, String original, int left, int right) {
+    public static List<String> splitLines(FontAPI<?> font, String original, int left, int right) {
         List<String> lines = new ArrayList<>();
         String[] words = original.replace("\\n","\n").split(" ");
         StringJoiner joiner = new StringJoiner(" ");

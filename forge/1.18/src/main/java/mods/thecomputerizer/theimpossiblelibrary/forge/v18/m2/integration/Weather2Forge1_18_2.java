@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.Weather2API;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3d;
 import weather2.ClientTickHandler;
 import weather2.ServerTickHandler;
 import weather2.weathersystem.WeatherManager;
@@ -107,8 +107,8 @@ public class Weather2Forge1_18_2 extends Weather2API { //TODO
         return Collections.emptyMap();
     }
 
-    public Vector3d toJomlVec(Vec3 vec) {
-        return new Vector3d(vec.x,vec.y,vec.z);
+    public Vector3 toBuiltInVec(Vec3 vec) {
+        return new Vector3(vec.x,vec.y,vec.z);
     }
 
     public Vec3 toVec(BlockPosAPI<?> pos) {

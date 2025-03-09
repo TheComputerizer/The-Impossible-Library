@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -168,11 +169,12 @@ public class GL1_20 implements GLAPI {
     }
     
     @Override public void setWorkingMatrix(Object matrix) {
-        if(matrix instanceof PoseStack) this.workingPose = ((PoseStack)matrix).last();
+        if(matrix instanceof GuiGraphics) this.workingPose = ((GuiGraphics)matrix).pose().last();
+        else if(matrix instanceof PoseStack) this.workingPose = ((PoseStack)matrix).last();
         else if(matrix instanceof Pose) this.workingPose = (Pose)matrix;
         else {
             if(Objects.nonNull(matrix))
-                TILRef.logError("Tried to set working Pose for GL1_20 to a non PoseStack or Pose {}",matrix);
+                TILRef.logError("Tried to set working Pose for GL1_20 to a non GuiGraphics, PoseStack, or Pose {}",matrix);
             this.workingPose = null;
         }
     }

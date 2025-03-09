@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -29,7 +30,6 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.raid.Raid;
 import net.minecraft.world.server.ServerWorld;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
-        return getEntitiesInBox(new AxisAlignedBB(box.min.x, box.min.y, box.min.z, box.max.x, box.max.y, box.max.z));
+        return getEntitiesInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
     
     private List<EntityAPI<?,?>> getEntitiesInBox(Object box) {
@@ -120,7 +120,7 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
-        return getLivingInBox(new AxisAlignedBB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
+        return getLivingInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
     
     private List<LivingEntityAPI<?,?>> getLivingInBox(Object box) {
@@ -206,16 +206,16 @@ public class World1_16_5 extends WorldAPI<IWorld> {
         }
     }
     
-    @Override public void spawnItem(ItemStackAPI<?> stack, Vector3d pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+    @Override public void spawnItem(ItemStackAPI<?> stack, Vector3 pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(this.wrapped instanceof World && !this.wrapped.isClientSide()) {
-            ItemEntity item = new ItemEntity((World)this.wrapped, pos.x, pos.y, pos.z, stack.unwrap());
+            ItemEntity item = new ItemEntity((World)this.wrapped,pos.dX(),pos.dY(),pos.dZ(),stack.unwrap());
             item.setDefaultPickUpDelay();
             spawnEntity(WrapperHelper.wrapEntity(item),onSpawn);
         }
     }
     
     @Override public void spawnItem(
-            ItemAPI<?> api, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+            ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isClientSide()) {
             ItemStackAPI<?> stack = WrapperHelper.wrapItemStack(new ItemStack(api.unwrap()));

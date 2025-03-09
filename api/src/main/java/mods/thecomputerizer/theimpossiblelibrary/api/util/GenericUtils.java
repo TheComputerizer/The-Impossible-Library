@@ -98,6 +98,24 @@ public class GenericUtils {
         return value.toString().equals(other.toString());
     }
     
+    public static Number numberAdd(Number n1, Number n2) {
+        if(n1 instanceof Byte) return n1.byteValue()+n2.byteValue();
+        if(n1 instanceof Double) return n1.doubleValue()+n2.doubleValue();
+        if(n1 instanceof Float) return n1.floatValue()+n2.floatValue();
+        if(n1 instanceof Integer) return n1.intValue()+n2.intValue();
+        if(n1 instanceof Long) return n1.longValue()+n2.longValue();
+        return n1.shortValue()+n2.shortValue();
+    }
+    
+    public static Number numberDiv(Number n1, Number n2) {
+        if(n1 instanceof Byte) return n1.byteValue()/n2.byteValue();
+        if(n1 instanceof Double) return n1.doubleValue()/n2.doubleValue();
+        if(n1 instanceof Float) return n1.floatValue()/n2.floatValue();
+        if(n1 instanceof Integer) return n1.intValue()/n2.intValue();
+        if(n1 instanceof Long) return n1.longValue()/n2.longValue();
+        return n1.shortValue()/n2.shortValue();
+    }
+    
     public static boolean numberMatches(Number number, Object other) {
         if(number instanceof Byte)
             return numberMatches((Byte)number,other,obj -> Byte.parseByte((String)other),(n1,n2) -> n1==n2.byteValue());
@@ -122,6 +140,24 @@ public class GenericUtils {
         if(other instanceof Iterable<?>) return IterableHelper.matches((Iterable<?>)other,number);
         if(other instanceof Iterator<?>) return IterableHelper.matches((Iterator<?>)other,number);
         return number.toString().equals(other.toString());
+    }
+    
+    public static Number numberMul(Number n1, Number n2) {
+        if(n1 instanceof Byte) return n1.byteValue()*n2.byteValue();
+        if(n1 instanceof Double) return n1.doubleValue()*n2.doubleValue();
+        if(n1 instanceof Float) return n1.floatValue()*n2.floatValue();
+        if(n1 instanceof Integer) return n1.intValue()*n2.intValue();
+        if(n1 instanceof Long) return n1.longValue()*n2.longValue();
+        return n1.shortValue()*n2.shortValue();
+    }
+    
+    public static Number numberSub(Number n1, Number n2) {
+        if(n1 instanceof Byte) return n1.byteValue()-n2.byteValue();
+        if(n1 instanceof Double) return n1.doubleValue()-n2.doubleValue();
+        if(n1 instanceof Float) return n1.floatValue()-n2.floatValue();
+        if(n1 instanceof Integer) return n1.intValue()-n2.intValue();
+        if(n1 instanceof Long) return n1.longValue()-n2.longValue();
+        return n1.shortValue()-n2.shortValue();
     }
 
     /**

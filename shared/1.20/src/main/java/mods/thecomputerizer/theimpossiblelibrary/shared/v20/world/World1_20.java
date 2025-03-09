@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -34,7 +35,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
-import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -88,8 +88,8 @@ public class World1_20 extends WorldAPI<LevelAccessor> {
     
     Collection<ChunkAccess> getChunks(Box box) {
         Set<ChunkAccess> chunks = new HashSet<>();
-        for(double x = box.min.x;x<box.max.x;x+=16d) {
-            for(double z = box.min.z;x<box.max.z;x+=16d) {
+        for(double x = box.minX();x<box.maxX();x+=16d) {
+            for(double z = box.minZ();x<box.maxZ();x+=16d) {
                 int chunkX = SectionPos.blockToSectionCoord((int)x);
                 int chunkZ = SectionPos.blockToSectionCoord((int)z);
                 chunks.add(this.wrapped.getChunk(chunkX,chunkZ));
@@ -117,7 +117,7 @@ public class World1_20 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
-        return getEntitiesInBox(new AABB(box.min.x, box.min.y, box.min.z, box.max.x, box.max.y, box.max.z));
+        return getEntitiesInBox(new AABB(box.minX(),box.minY(),box.minZ(),box.maxX(),box.maxY(),box.maxZ()));
     }
     
     private List<EntityAPI<?,?>> getEntitiesInBox(Object box) {
@@ -140,12 +140,12 @@ public class World1_20 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
-        return getLivingInBox(new AABB(box.min.x,box.min.y,box.min.z,box.max.x,box.max.y,box.max.z));
+        return getLivingInBox(new AABB(box.minX(),box.minY(),box.minZ(),box.maxX(),box.maxY(),box.maxZ()));
     }
     
     private List<LivingEntityAPI<?,?>> getLivingInBox(Object box) {
         List<LivingEntityAPI<?,?>> entities = new ArrayList<>();
-        for(LivingEntity entity : this.wrapped.getEntitiesOfClass(LivingEntity.class, (AABB)box))
+        for(LivingEntity entity : this.wrapped.getEntitiesOfClass(LivingEntity.class,(AABB)box))
             entities.add(WrapperHelper.wrapLivingEntity(entity));
         return entities;
     }
@@ -231,16 +231,16 @@ public class World1_20 extends WorldAPI<LevelAccessor> {
         }
     }
     
-    @Override public void spawnItem(ItemStackAPI<?> stack, Vector3d pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
+    @Override public void spawnItem(ItemStackAPI<?> stack, Vector3 pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(this.wrapped instanceof Level && !this.wrapped.isClientSide()) {
-            ItemEntity item = new ItemEntity((Level)this.wrapped, pos.x, pos.y, pos.z, stack.unwrap());
+            ItemEntity item = new ItemEntity((Level)this.wrapped,pos.dX(),pos.dY(),pos.dZ(),stack.unwrap());
             item.setDefaultPickUpDelay();
             spawnEntity(WrapperHelper.wrapEntity(item),onSpawn);
         }
     }
     
     @Override public void spawnItem(
-            ItemAPI<?> api, Vector3d pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+            ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isClientSide()) {
             ItemStackAPI<?> stack = WrapperHelper.wrapItemStack(new ItemStack((Item)api.unwrap()));

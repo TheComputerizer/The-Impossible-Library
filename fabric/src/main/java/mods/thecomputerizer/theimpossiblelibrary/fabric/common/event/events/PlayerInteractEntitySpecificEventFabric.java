@@ -8,12 +8,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerI
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
-import org.joml.Vector3d;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
@@ -45,7 +45,7 @@ public class PlayerInteractEntitySpecificEventFabric extends PlayerInteractEntit
         return wrapGenericGetter(wrapArrayGetter(0),MAINHAND);
     }
 
-    @Override protected EventFieldWrapper<Object[],Vector3d> wrapLocalPosField() {
+    @Override protected EventFieldWrapper<Object[],Vector3> wrapLocalPosField() {
         return wrapGenericGetter(wrapArrayGetter(0),VectorHelper.zero3D());
     }
 

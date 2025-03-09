@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.geometry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
-import org.joml.Vector3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ public class ShapeHolder {
     protected final Convex3D shape;
     private final List<ShapeHolder> childHolders;
     private boolean isMoving;
-    protected Vector3d relativePosVec;
-    private Vector3d dirVec;
+    protected Vector3 relativePosVec;
+    private Vector3 dirVec;
 
     public ShapeHolder(Convex3D shape) {
         this.shape = shape;
@@ -37,16 +37,16 @@ public class ShapeHolder {
         this.isMoving = true;
     }
 
-    public ShapeHolder setRelativePosition(Vector3d relativePos) {
+    public ShapeHolder setRelativePosition(Vector3 relativePos) {
         this.relativePosVec = relativePos;
         return this;
     }
 
     public void setRelativeBottom() {
-        setRelativePosition(new Vector3d(0d,this.shape.getScaledHeight(),0d));
+        setRelativePosition(new Vector3(0d,this.shape.getScaledHeight(),0d));
     }
 
-    public ShapeHolder setDirection(Vector3d dirVec) {
+    public ShapeHolder setDirection(Vector3 dirVec) {
         this.dirVec = dirVec;
         return this;
     }
@@ -70,18 +70,18 @@ public class ShapeHolder {
         this.isMoving = false;
     }
 
-    public Vector3d getRelativePosition() {
+    public Vector3 getRelativePosition() {
         return this.relativePosVec;
     }
 
-    public void render(RenderContext ctx, Vector3d relativeCenter) {
+    public void render(RenderContext ctx, Vector3 relativeCenter) {
         this.shape.render(ctx,relativeCenter.add(this.relativePosVec));
         if(this.isMoving) setRelativePosition(this.relativePosVec.add(this.dirVec));
         for(ShapeHolder child : this.childHolders) child.render(ctx,relativeCenter);
     }
 
-    public void renderScaledRelative(RenderContext ctx, Vector3d relativeCenter, float scale) {
-        this.shape.render(ctx,relativeCenter.add(this.relativePosVec.mul(scale)));
+    public void renderScaledRelative(RenderContext ctx, Vector3 relativeCenter, float scale) {
+        this.shape.render(ctx,relativeCenter.add(this.relativePosVec.mulScalar(scale)));
         if(this.isMoving) setRelativePosition(this.relativePosVec.add(this.dirVec));
         for(ShapeHolder child : this.childHolders) child.render(ctx,relativeCenter);
     }

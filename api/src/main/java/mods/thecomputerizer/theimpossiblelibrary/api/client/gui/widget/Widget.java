@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import org.joml.Vector3d;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 
 import java.util.Objects;
 
@@ -42,22 +42,22 @@ public abstract class Widget {
         return isVisible();
     }
     
-    public abstract void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY);
+    public abstract void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY);
     
     public double getBottom() {
         return getY()-(getHeight()/2d);
     }
     
-    public Vector3d getCenter() {
-        return new Vector3d(getX(),getY(),0d);
+    public Vector3 getCenter() {
+        return new Vector3(getX(),getY(),0d);
     }
     
-    public Vector3d getCenter(double z) {
-        return new Vector3d(getX(),getY(),z);
+    public Vector3 getCenter(double z) {
+        return new Vector3(getX(),getY(),z);
     }
     
-    public Vector3d getCenter(Vector3d center) {
-        return new Vector3d(getX()+center.x,getY()+center.y,center.z);
+    public Vector3 getCenter(Vector3 center) {
+        return new Vector3(getX()+center.dX(),getY()+center.dY(),center.dZ());
     }
     
     public double getLeft() {

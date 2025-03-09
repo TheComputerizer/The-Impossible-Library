@@ -4,14 +4,10 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
-import org.joml.Vector4d;
-import org.joml.Vector4f;
-import org.joml.Vector4i;
 
 import java.util.Objects;
 
@@ -57,8 +53,8 @@ public class TextureWrapper {
         return of(texture,colorMask,alpha,1d,1d);
     }
     
-    public static TextureWrapper of(String path, ColorCache colorMask, float alpha, Vector2d maxUV) {
-        return of(ResourceHelper.getResource(path),colorMask,alpha,maxUV.x,maxUV.y);
+    public static TextureWrapper of(String path, ColorCache colorMask, float alpha, Vector2 maxUV) {
+        return of(ResourceHelper.getResource(path),colorMask,alpha,maxUV.dX(),maxUV.dY());
     }
     
     public static TextureWrapper of(String path, ColorCache colorMask, float alpha, double maxU,
@@ -66,8 +62,8 @@ public class TextureWrapper {
         return of(ResourceHelper.getResource(path),colorMask,alpha,maxU,maxV);
     }
     
-    public static TextureWrapper of(String modid, String path, ColorCache colorMask, float alpha, Vector2d maxUV) {
-        return of(ResourceHelper.getResource(modid,path),colorMask,alpha,maxUV.x,maxUV.y);
+    public static TextureWrapper of(String modid, String path, ColorCache colorMask, float alpha, Vector2 maxUV) {
+        return of(ResourceHelper.getResource(modid,path),colorMask,alpha,maxUV.dX(),maxUV.dY());
     }
     
     public static TextureWrapper of(String modid, String path, ColorCache colorMask, float alpha, double maxU,
@@ -75,8 +71,8 @@ public class TextureWrapper {
         return of(ResourceHelper.getResource(modid,path),colorMask,alpha,maxU,maxV);
     }
     
-    public static TextureWrapper of(ResourceLocationAPI<?> texture, ColorCache colorMask, float alpha, Vector2d maxUV) {
-        return of(texture,colorMask,alpha,maxUV.x,maxUV.y);
+    public static TextureWrapper of(ResourceLocationAPI<?> texture, ColorCache colorMask, float alpha, Vector2 maxUV) {
+        return of(texture,colorMask,alpha,maxUV.dX(),maxUV.dY());
     }
     
     public static TextureWrapper of(ResourceLocationAPI<?> texture, ColorCache colorMask, float alpha, double maxU,
@@ -127,7 +123,7 @@ public class TextureWrapper {
         if(Objects.nonNull(this.texture)) renderer.bindTexture(this.texture);
     }
     
-    public void draw(RenderContext ctx, Vector3d center) {
+    public void draw(RenderContext ctx, Vector3 center) {
         if(Objects.nonNull(this.texture))
             ctx.drawTexturedPlane(center,Plane.getBoundedAxis(Y,this.width,this.height,ctx.getHeightRatio()),this);
     }
@@ -139,22 +135,22 @@ public class TextureWrapper {
     /**
      x = minV ; y = maxV
      */
-    public Vector2d getVectorU() {
-        return new Vector2d(this.minU,this.maxU);
+    public Vector2 getVectorU() {
+        return new Vector2(this.minU,this.maxU);
     }
     
     /**
      x = minU ; y = maxU
      */
-    public Vector2d getVectorV() {
-        return new Vector2d(this.minV,this.maxV);
+    public Vector2 getVectorV() {
+        return new Vector2(this.minV,this.maxV);
     }
     
     /**
      x = minU ; y = minV ; z = maxU ; w = maxV
      */
-    public Vector4d getVectorUV() {
-        return new Vector4d(this.minU,this.minV,this.maxU,this.maxV);
+    public Vector4 getVectorUV() {
+        return new Vector4(this.minU,this.minV,this.maxU,this.maxV);
     }
 
     public TextureWrapper setAlpha(float alpha) {
@@ -167,44 +163,40 @@ public class TextureWrapper {
         return this;
     }
     
-    public TextureWrapper setMask(float r, float g, float b) {
+    public TextureWrapper setMaskF(float r, float g, float b) {
         return setMask(ColorCache.of(r,g,b));
     }
     
-    public TextureWrapper setMask(float r, float g, float b, float a) {
+    public TextureWrapper setMaskF(float r, float g, float b, float a) {
         return setMask(ColorCache.of(r,g,b,a));
     }
     
-    public TextureWrapper setMask(Vector3f rgb) {
+    public TextureWrapper setMaskF(Vector3 rgb) {
         return setMask(ColorCache.of(rgb));
     }
     
-    public TextureWrapper setMask(Vector3f rgb, float alpha) {
+    public TextureWrapper setMaskF(Vector3 rgb, float alpha) {
         return setMask(ColorCache.of(rgb,alpha));
     }
     
-    public TextureWrapper setMask(Vector4f rgba) {
+    public TextureWrapper setMaskF(Vector4 rgba) {
         return setMask(new ColorCache(rgba));
     }
     
-    public TextureWrapper setMask(int r, int g, int b) {
+    public TextureWrapper setMaskI(int r, int g, int b) {
         return setMask(ColorCache.of(r,g,b));
     }
     
-    public TextureWrapper setMask(int r, int g, int b, int a) {
+    public TextureWrapper setMaskI(int r, int g, int b, int a) {
         return setMask(ColorCache.of(r,g,b,a));
     }
     
-    public TextureWrapper setMask(Vector3i rgb) {
+    public TextureWrapper setMaskI(Vector3 rgb) {
         return setMask(ColorCache.of(rgb));
     }
     
-    public TextureWrapper setMask(Vector3i rgb, int alpha) {
+    public TextureWrapper setMaskI(Vector3 rgb, int alpha) {
         return setMask(ColorCache.of(rgb,alpha));
-    }
-    
-    public TextureWrapper setMask(Vector4i rgba) {
-        return setMask(new ColorCache(rgba));
     }
 
     public TextureWrapper setMask(ColorCache mask) {
@@ -243,8 +235,8 @@ public class TextureWrapper {
         return this;
     }
     
-    public TextureWrapper setU(Vector2d minMax) {
-        return setU(minMax.x,minMax.y);
+    public TextureWrapper setU(Vector2 minMax) {
+        return setU(minMax.dX(),minMax.dY());
     }
 
     public TextureWrapper setU(double min, double max) {
@@ -253,8 +245,8 @@ public class TextureWrapper {
         return this;
     }
     
-    public TextureWrapper setUV(Vector4d uv) {
-        return setUV(uv.x,uv.y,uv.z,uv.w);
+    public TextureWrapper setUV(Vector4 uv) {
+        return setUV(uv.dX(),uv.dY(),uv.dZ(),uv.dW());
     }
     
     public TextureWrapper setUV(double minU, double minV, double maxU, double maxV) {
@@ -265,8 +257,8 @@ public class TextureWrapper {
         return this;
     }
     
-    public TextureWrapper setV(Vector2d minMax) {
-        return setV(minMax.x,minMax.y);
+    public TextureWrapper setV(Vector2 minMax) {
+        return setV(minMax.dX(),minMax.dY());
     }
 
     public TextureWrapper setV(double min, double max) {

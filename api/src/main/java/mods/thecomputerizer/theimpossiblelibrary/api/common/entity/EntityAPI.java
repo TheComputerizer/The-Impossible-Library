@@ -5,13 +5,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanc
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import org.joml.Vector3d;
-import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -44,15 +43,15 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
     
     @IndirectCallers
-    public double getDistanceTo(Vector3i pos) {
+    public double getDistanceTo(Vector3 pos) {
         return Objects.nonNull(pos) ? getPos().distanceTo(pos) : MAX_VALUE;
     }
 
     public abstract String getName();
     public abstract BlockPosAPI<?> getPos();
 
-    public Vector3d getPosExact() {
-        return new Vector3d(x(),y(),z());
+    public Vector3 getPosExact() {
+        return new Vector3(x(),y(),z());
     }
     
     @IndirectCallers public BlockPosAPI<?> getPosRounded() {
@@ -71,12 +70,8 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         setPosition(pos.x(),pos.y(),pos.z());
     }
     
-    public void setPosition(Vector3i vec) {
-        setPosition(vec.x,vec.y,vec.z);
-    }
-    
-    public void setPosition(Vector3d vec) {
-        setPosition(vec.x,vec.y,vec.z);
+    public void setPosition(Vector3 vec) {
+        setPosition(vec.iX(),vec.iY(),vec.iZ());
     }
     
     public void setPosition(int x, int y, int z) {

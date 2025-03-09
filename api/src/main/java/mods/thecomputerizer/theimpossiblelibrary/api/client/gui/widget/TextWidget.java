@@ -6,10 +6,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
-import org.joml.Vector3d;
 
 import java.util.Objects;
 
@@ -74,14 +74,14 @@ public class TextWidget extends Widget implements Wrapped<TextBuffer> {
         return copy;
     }
     
-    @Override public void draw(RenderContext ctx, Vector3d center, double mouseX, double mouseY) {
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.text)) {
-            center = getCenter(center.z).add(center.x,center.y,0d);
+            center = getCenter(center.dZ()).add(center.dX(),center.dY(),0d);
             double width = getWidth();
             double parentWidth = Objects.nonNull(this.parent) ? this.parent.getWidth() : 0d;
             double height = getHeight();
-            this.text.draw(ctx,getCenter(center.z),getMinX(center.x,width,parentWidth),getMinY(center.y,height),
-                           getMaxX(center.x,width,parentWidth),getMaxY(center.y,height));
+            this.text.draw(ctx,getCenter(center.dZ()),getMinX(center.dX(),width,parentWidth),getMinY(center.dY(),height),
+                           getMaxX(center.dX(),width,parentWidth),getMaxY(center.dY(),height));
         }
     }
     

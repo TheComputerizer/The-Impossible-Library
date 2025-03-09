@@ -2,10 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier2D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
-import org.joml.Vector3d;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -76,7 +76,7 @@ public class FuzzBall {
         draw(ctx,VectorHelper.zero3D());
     }
     
-    public void draw(RenderContext ctx, Vector3d center) {
+    public void draw(RenderContext ctx, Vector3 center) {
         float width = Objects.nonNull(this.widthGenerator) ? this.widthGenerator.get() : 1f;
         ColorCache color = Objects.nonNull(this.colorGenerator) ? this.colorGenerator.get() : WHITE;
         draw2D(ctx,center,width,color);
@@ -87,13 +87,13 @@ public class FuzzBall {
         draw2D(ctx,VectorHelper.zero3D());
     }
     
-    public void draw2D(RenderContext ctx, Vector3d center) {
+    public void draw2D(RenderContext ctx, Vector3 center) {
         float width = Objects.nonNull(this.widthGenerator) ? this.widthGenerator.get() : 1f;
         ColorCache color = Objects.nonNull(this.colorGenerator) ? this.colorGenerator.get() : WHITE;
         draw2D(ctx,center,width,color);
     }
     
-    public void draw2D(RenderContext ctx, Vector3d center, float width, ColorCache color) {
+    public void draw2D(RenderContext ctx, Vector3 center, float width, ColorCache color) {
         if(Objects.isNull(this.generator2D)) return;
         ctx.drawOutline(center,this.generator2D.get(),width,color);
     }
@@ -102,13 +102,13 @@ public class FuzzBall {
         draw3D(ctx,VectorHelper.zero3D());
     }
     
-    public void draw3D(RenderContext ctx, Vector3d center) {
+    public void draw3D(RenderContext ctx, Vector3 center) {
         float width = Objects.nonNull(this.widthGenerator) ? this.widthGenerator.get() : 1f;
         ColorCache color = Objects.nonNull(this.colorGenerator) ? this.colorGenerator.get() : WHITE;
         draw3D(ctx,center,width,color);
     }
     
-    public void draw3D(RenderContext ctx, Vector3d center, float width, ColorCache color) {
+    public void draw3D(RenderContext ctx, Vector3 center, float width, ColorCache color) {
         if(Objects.isNull(this.generator3D)) return;
         ctx.drawOutline(center,this.generator3D.get(),width,color);
     }
