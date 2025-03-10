@@ -1,30 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.WorldCreateSpawnPosEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.WORLD_CREATE_SPAWN_POS;
-
-public class WorldCreateSpawnPosEventForge extends WorldCreateSpawnPosEventWrapper<CreateSpawnPosition> {
-    
-    @SubscribeEvent
-    public static void onEvent(CreateSpawnPosition event) {
-        WORLD_CREATE_SPAWN_POS.invoke(event);
-    }
+public abstract class WorldCreateSpawnPosEventForge<E extends Event> extends WorldCreateSpawnPosEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(CreateSpawnPosition event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-    
-    @Override protected EventFieldWrapper<CreateSpawnPosition,WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(CreateSpawnPosition::getWorld);
     }
 }

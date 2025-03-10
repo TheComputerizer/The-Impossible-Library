@@ -17,6 +17,6 @@ public abstract class LivingDamageEventForge extends LivingDamageEventWrapper<Li
     }
 
     @Override protected EventFieldWrapper<LivingDamageEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingDamageEvent::getEntityLiving);
+        return wrapLivingGetter(LivingDamageEvent::getEntity);
     }
 }

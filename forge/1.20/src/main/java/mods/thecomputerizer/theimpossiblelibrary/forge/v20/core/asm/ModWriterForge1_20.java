@@ -16,7 +16,11 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 public class ModWriterForge1_20 extends ModWriterForge {
     
     public ModWriterForge1_20(CoreAPI core, MultiVersionModInfo info) {
-        super(core,info,JAVA17);
+        this(core,info,JAVA17);
+    }
+    
+    protected ModWriterForge1_20(CoreAPI core, MultiVersionModInfo info, int javaVer) {
+        super(core,info,javaVer);
     }
     
     @Override protected Type getEventMethod(String className) {

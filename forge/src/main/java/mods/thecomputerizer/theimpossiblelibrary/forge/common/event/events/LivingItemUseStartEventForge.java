@@ -30,7 +30,7 @@ public class LivingItemUseStartEventForge extends LivingItemUseStartEventWrapper
     }
 
     @Override protected EventFieldWrapper<Start,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(Start::getEntityLiving);
+        return wrapLivingGetter(Start::getEntity);
     }
 
     @Override protected EventFieldWrapper<Start,ItemStackAPI<?>> wrapStackField() {

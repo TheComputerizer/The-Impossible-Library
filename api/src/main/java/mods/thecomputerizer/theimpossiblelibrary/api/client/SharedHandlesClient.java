@@ -10,22 +10,39 @@ import java.util.List;
 /**
  * Client-sided mod loader stuff that is otherwise annoying to abstract
  */
-public interface SharedHandlesClient {
+public abstract class SharedHandlesClient {
     
-    default void endRenderTypeBatch(Object source) {
+    protected boolean loading;
+    
+    protected SharedHandlesClient() {
+        this(true);
+    }
+    
+    protected SharedHandlesClient(boolean loading) {
+        this.loading = loading;
+    }
+    
+    public void endRenderTypeBatch(Object source) {
         endRenderTypeBatch(source,null);
     }
     
-    void endRenderTypeBatch(Object source, @Nullable Object type);
-    boolean isLoading(@Nullable Object minecraft);
-    void onFinishedLoading();
-    void registerKeyBinding(KeyAPI<?> key);
+    public abstract void endRenderTypeBatch(Object source, @Nullable Object type);
     
-    @IndirectCallers default void renderDebugText(Object matrix, List<String> left, List<String> right) {
+    public boolean isLoading(@Nullable Object minecraft) {
+        return this.loading;
+    }
+    
+    public void onFinishedLoading() {
+        this.loading = false;
+    }
+    
+    public abstract void registerKeyBinding(KeyAPI<?> key);
+    
+    @IndirectCallers public void renderDebugText(Object matrix, List<String> left, List<String> right) {
         renderDebugText(matrix,left,true);
         renderDebugText(matrix,right,false);
     }
     
-    void renderDebugText(Object matrix, List<String> text, boolean left);
-    void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height, int maxWidth);
+    public abstract void renderDebugText(Object matrix, List<String> text, boolean left);
+    public abstract void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height, int maxWidth);
 }

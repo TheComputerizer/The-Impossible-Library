@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
@@ -14,7 +15,11 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class FabricHandlesClient implements SharedHandlesClient {
+public abstract class FabricHandlesClient extends SharedHandlesClient {
+    
+    protected FabricHandlesClient() {
+        super(false);
+    }
     
     @Override public void endRenderTypeBatch(Object source, @Nullable Object type) {
         if(Objects.nonNull(type)) ((BufferSource)source).endBatch((RenderType)type);
@@ -35,7 +40,8 @@ public abstract class FabricHandlesClient implements SharedHandlesClient {
     @SuppressWarnings("unchecked")
     @Override public void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height,
             int maxWidth) {
-        FabricHelper.renderTooltip(renderer.unwrapMatrix(),(List<MutableComponent>)lines,x,y,width,height,maxWidth,
-                                   renderer.unwrapFont());
+        PoseStack stack = renderer.unwrapMatrix();
+        List<MutableComponent> unwrappedLines = (List<MutableComponent>)lines;
+        FabricHelper.renderTooltip(stack,unwrappedLines,x,y,width,height,maxWidth,renderer.unwrapFont());
     }
 }

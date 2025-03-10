@@ -25,6 +25,6 @@ public class LivingJumpEventForge extends LivingJumpEventWrapper<LivingJumpEvent
     }
     
     @Override protected EventFieldWrapper<LivingJumpEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingJumpEvent::getEntityLiving);
+        return wrapLivingGetter(LivingJumpEvent::getEntity);
     }
 }

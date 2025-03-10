@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingHealEventWrapper;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -30,6 +29,6 @@ public class LivingHealEventForge extends LivingHealEventWrapper<LivingHealEvent
     }
 
     @Override protected EventFieldWrapper<LivingHealEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingEvent::getEntityLiving);
+        return wrapLivingGetter(LivingHealEvent::getEntity);
     }
 }

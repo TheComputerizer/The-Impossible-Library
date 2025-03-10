@@ -1,35 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.ExplosionStartEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraftforge.event.world.ExplosionEvent.Start;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.EXPLOSION_START;
-
-public class ExplosionStartEventForge extends ExplosionStartEventWrapper<Start> {
-    
-    @SubscribeEvent
-    public static void onEvent(Start event) {
-        EXPLOSION_START.invoke(event);
-    }
+public abstract class ExplosionStartEventForge<E extends Event> extends ExplosionStartEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(Start event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-    
-    @Override protected EventFieldWrapper<Start,ExplosionAPI<?>> wrapExplosionField() {
-        return wrapExplosionGetter(Start::getExplosion);
-    }
-
-    @Override protected EventFieldWrapper<Start,WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(Start::getWorld);
     }
 }

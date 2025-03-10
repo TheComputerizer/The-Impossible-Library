@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.common.CommonFabric1_20;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.event.CommonEventsFabric1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.common.event.CommonEventsFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.integration.ModHelperFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.network.NetworkFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.registry.RegistryHandlerFabric1_20_6;

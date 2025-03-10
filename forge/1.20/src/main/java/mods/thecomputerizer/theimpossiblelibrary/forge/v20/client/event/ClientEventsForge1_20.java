@@ -33,7 +33,7 @@ public class ClientEventsForge1_20 extends ClientEvents1_20 {
         MOUSE_INPUT.setConnector(new InputMouseEventForge());
         MOUSE_RAW.setConnector(new RawMouseEventForge());
         MOUSE_SCROLL.setConnector(new MouseScrollEventForge());
-        PLAYER_PUNCH_EMPTY.setConnector(new PlayerPunchEmptyEventForge());
+        PLAYER_PUNCH_EMPTY.setConnector(new PlayerPunchEmptyEventForge1_20());
         PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventForge());
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_20());

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.LivingHurtEventForge;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.entity.Damage1_18_2;
@@ -23,5 +24,9 @@ public class LivingHurtEventForge1_18_2 extends LivingHurtEventForge {
     
     @Override protected EventFieldWrapper<LivingHurtEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_18_2(event.getSource(),1f),null);
+    }
+    
+    @Override protected EventFieldWrapper<LivingHurtEvent,LivingEntityAPI<?,?>> wrapLivingField() {
+        return wrapLivingGetter(LivingHurtEvent::getEntityLiving);
     }
 }

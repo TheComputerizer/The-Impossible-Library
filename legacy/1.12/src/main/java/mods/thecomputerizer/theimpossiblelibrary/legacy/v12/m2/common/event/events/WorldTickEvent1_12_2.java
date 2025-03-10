@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.WorldTickEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -19,6 +20,10 @@ public class WorldTickEvent1_12_2 extends WorldTickEventWrapper<WorldTickEvent> 
     
     @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override public WorldAPI<?> getWorld() {
+        return wrapWorld(event -> event.world);
     }
     
     @Override public void setEvent(WorldTickEvent event) {

@@ -9,28 +9,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ITEM;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public class PlayerInteractItemEventForge extends PlayerInteractItemEventWrapper<RightClickItem> {
-    
-    @SubscribeEvent
-    public static void onEvent(RightClickItem event) {
-        PLAYER_INTERACT_ITEM.invoke(event);
-    }
+public abstract class PlayerInteractItemEventForge extends PlayerInteractItemEventWrapper<RightClickItem> {
     
     @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(RightClickItem::getItemStack);
-    }
-    
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickItem::getWorld);
     }
     
     @Override public void cancel() {

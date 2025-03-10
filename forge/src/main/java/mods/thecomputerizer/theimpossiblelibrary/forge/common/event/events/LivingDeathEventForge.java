@@ -17,6 +17,6 @@ public abstract class LivingDeathEventForge extends LivingDeathEventWrapper<Livi
     }
 
     @Override protected EventFieldWrapper<LivingDeathEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingDeathEvent::getEntityLiving);
+        return wrapLivingGetter(LivingDeathEvent::getEntity);
     }
 }

@@ -30,7 +30,7 @@ public class LivingItemUseTickEventForge extends LivingItemUseTickEventWrapper<T
     }
 
     @Override protected EventFieldWrapper<Tick,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(Tick::getEntityLiving);
+        return wrapLivingGetter(Tick::getEntity);
     }
 
     @Override protected EventFieldWrapper<Tick,ItemStackAPI<?>> wrapStackField() {

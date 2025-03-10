@@ -1,30 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.WorldSaveEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraftforge.event.world.WorldEvent.Save;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.WORLD_SAVE;
-
-public class WorldSaveEventForge extends WorldSaveEventWrapper<Save> {
-    
-    @SubscribeEvent
-    public static void onEvent(Save event) {
-        WORLD_SAVE.invoke(event);
-    }
+public abstract class WorldSaveEventForge<E extends Event> extends WorldSaveEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(Save event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-    
-    @Override protected EventFieldWrapper<Save,WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(Save::getWorld);
     }
 }

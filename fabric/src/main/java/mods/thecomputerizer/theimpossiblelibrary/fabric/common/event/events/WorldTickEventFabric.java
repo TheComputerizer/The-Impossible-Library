@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.WorldTickEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CommonFabricEvent;
 import net.fabricmc.fabric.api.event.Event;
 
@@ -14,6 +15,10 @@ public class WorldTickEventFabric extends WorldTickEventWrapper<Object[]> implem
     
     @Override public Event<?> getEventInstance() {
         return END_WORLD_TICK;
+    }
+    
+    @Override public WorldAPI<?> getWorld() {
+        return null;
     }
     
     @Override protected TickPhase wrapTickPhase() {

@@ -10,21 +10,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public class PlayerInteractEntityEventForge extends PlayerInteractEntityEventWrapper<EntityInteract> {
-    
-    @SubscribeEvent
-    public static void onEvent(EntityInteract event) {
-        PLAYER_INTERACT_ENTITY.invoke(event);
-    }
+public abstract class PlayerInteractEntityEventForge extends PlayerInteractEntityEventWrapper<EntityInteract> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
@@ -32,10 +24,6 @@ public class PlayerInteractEntityEventForge extends PlayerInteractEntityEventWra
     
     @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(EntityInteract::getItemStack);
-    }
-
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(EntityInteract::getWorld);
     }
     
     @Override public void setEvent(EntityInteract event) {

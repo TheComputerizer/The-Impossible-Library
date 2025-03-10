@@ -11,22 +11,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_BLOCK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapper<RightClickBlock> {
-    
-    @SubscribeEvent
-    public static void onEvent(RightClickBlock event) {
-        PLAYER_INTERACT_BLOCK.invoke(event);
-    }
+public abstract class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapper<RightClickBlock> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
@@ -34,10 +26,6 @@ public class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapp
     
     @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(RightClickBlock::getItemStack);
-    }
-    
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickBlock::getWorld);
     }
     
     @Override public void setEvent(RightClickBlock event) {

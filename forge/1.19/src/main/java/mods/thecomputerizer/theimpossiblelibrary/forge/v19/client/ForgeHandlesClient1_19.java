@@ -17,11 +17,6 @@ public class ForgeHandlesClient1_19 extends ForgeHandlesClient {
         else ((BufferSource)source).endBatch();
     }
     
-    @Override public boolean isLoading(@Nullable Object minecraft) {
-        Minecraft mc = (Minecraft)minecraft;
-        return super.isLoading(minecraft) && (Objects.isNull(mc) || (Objects.isNull(mc.level) && Objects.isNull(mc.screen)));
-    }
-    
     @Override public void registerKeyBinding(KeyAPI<?> key) {
         ArrayUtils.add(Minecraft.getInstance().options.keyMappings,key.unwrap());
     }

@@ -3,23 +3,20 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class ForgeHandlesClient implements SharedHandlesClient {
+/**
+ * Handled by Forge in all versions except 1.16.5?
+ */
+public abstract class ForgeHandlesClient extends SharedHandlesClient {
     
-    protected boolean loading = true;
+    /**
+     * Handled by Forge in all versions
+     */
+    @Override public void renderDebugText(Object o, List<String> l, boolean b) {}
     
-    @Override public boolean isLoading(@Nullable Object minecraft) {
-        return this.loading;
-    }
-    
-    @Override public void onFinishedLoading() {
-        this.loading = false;
-    }
-    
-    @Override public void renderDebugText(Object matrix, List<String> text, boolean left) {} //Handled by Forge
-    
-    @Override public void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height,
-            int maxWidth) {}
+    /**
+     * Handled by Forge in all versions except 1.16.5?
+     */
+    @Override public void renderToolTip(RenderAPI r, List<?> l, int x, int y, int w, int h, int maxW) {}
 }

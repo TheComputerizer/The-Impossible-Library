@@ -84,6 +84,18 @@ public class TypeHelper {
         return method(returnType,args).getDescriptor();
     }
     
+    public static Type neofml(String path) {
+        return neoforged("fml/"+path);
+    }
+    
+    public static Type neoforge(String path) {
+        return neoforged("neoforge/"+path);
+    }
+    
+    public static Type neoforged(String path) {
+        return get("net/neoforged/"+path);
+    }
+    
     @IndirectCallers
     public static Type voidMethod(Class<?> ... args) {
         return method(VOID_TYPE,args);

@@ -33,6 +33,6 @@ public class LivingFallEventForge extends LivingFallEventWrapper<LivingFallEvent
     }
 
     @Override protected EventFieldWrapper<LivingFallEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingFallEvent::getEntityLiving);
+        return wrapLivingGetter(LivingFallEvent::getEntity);
     }
 }

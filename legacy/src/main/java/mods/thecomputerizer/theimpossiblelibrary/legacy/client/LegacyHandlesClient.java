@@ -6,21 +6,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 
 import java.util.List;
 
-//TODO Maybe abstract 1.12.2 stuff here?
-public class LegacyHandlesClient implements SharedHandlesClient {
+/**
+ * Forge is the only supported mod loader in 1.12.2, so these are handled in its MinecraftAPI implementation
+ */
+public class LegacyHandlesClient extends SharedHandlesClient {
     
-    @Override public void endRenderTypeBatch(Object source, Object type) {}
+    @Override public void endRenderTypeBatch(Object s, Object t) {}
     
-    @Override public boolean isLoading(Object minecraft) {
-        return false;
-    }
+    @Override public void registerKeyBinding(KeyAPI<?> k) {}
     
-    @Override public void onFinishedLoading() {}
+    @Override public void renderDebugText(Object o, List<String> l, boolean b) {}
     
-    @Override public void registerKeyBinding(KeyAPI<?> key) {}
-    
-    @Override public void renderDebugText(Object matrix, List<String> text, boolean left) {}
-    
-    @Override public void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height,
-            int maxWidth) {}
+    @Override public void renderToolTip(RenderAPI r, List<?> l, int x, int y, int w, int m, int maxW) {}
 }

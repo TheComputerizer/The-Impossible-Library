@@ -3,27 +3,35 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v19.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.EntityEnteringChunkEventForge;
-import net.minecraftforge.event.level.ChunkEvent.Load;
+import net.minecraftforge.event.entity.EntityEvent.EnteringSection;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class EntityEnteringChunkEventForge1_19 extends EntityEnteringChunkEventForge<Load> { //TODO This is the wrong event
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.ENTITY_ENTERING_CHUNK;
+
+public class EntityEnteringChunkEventForge1_19 extends EntityEnteringChunkEventForge<EnteringSection> {
     
-    @Override protected EventFieldWrapper<Load,EntityAPI<?,?>> wrapEntityField() {
-        return wrapEntityGetter(event -> null);
+    @SubscribeEvent
+    public static void onEvent(EnteringSection event) {
+        if(event.didChunkChange()) ENTITY_ENTERING_CHUNK.invoke(event);
     }
     
-    @Override protected EventFieldWrapper<Load,Integer> wrapNewXField() {
-        return wrapGenericBoth(event -> 0,(event,x) -> {},0);
+    @Override protected EventFieldWrapper<EnteringSection,EntityAPI<?,?>> wrapEntityField() {
+        return wrapEntityGetter(EnteringSection::getEntity);
     }
     
-    @Override protected EventFieldWrapper<Load,Integer> wrapNewZField() {
-        return wrapGenericBoth(event -> 0,(event,z) -> {},0);
+    @Override protected EventFieldWrapper<EnteringSection,Integer> wrapNewXField() {
+        return wrapGenericBoth(event -> event.getNewPos().x(),(event,x) -> {},0);
     }
     
-    @Override protected EventFieldWrapper<Load,Integer> wrapOldXField() {
-        return wrapGenericBoth(event -> 0,(event,x) -> {},0);
+    @Override protected EventFieldWrapper<EnteringSection,Integer> wrapNewZField() {
+        return wrapGenericBoth(event -> event.getNewPos().z(),(event,z) -> {},0);
     }
     
-    @Override protected EventFieldWrapper<Load,Integer> wrapOldZField() {
-        return wrapGenericBoth(event -> 0,(event,z) -> {},0);
+    @Override protected EventFieldWrapper<EnteringSection,Integer> wrapOldXField() {
+        return wrapGenericBoth(event -> event.getOldPos().x(),(event,x) -> {},0);
+    }
+    
+    @Override protected EventFieldWrapper<EnteringSection,Integer> wrapOldZField() {
+        return wrapGenericBoth(event -> event.getOldPos().z(),(event,z) -> {},0);
     }
 }

@@ -30,7 +30,7 @@ public class LivingKnockbackEventForge extends LivingKnockbackEventWrapper<Livin
     }
 
     @Override protected EventFieldWrapper<LivingKnockBackEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingKnockBackEvent::getEntityLiving);
+        return wrapLivingGetter(LivingKnockBackEvent::getEntity);
     }
 
     @Override protected EventFieldWrapper<LivingKnockBackEvent,EntityAPI<?,?>> wrapOriginalAttackerField() {

@@ -4,18 +4,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerBreakSpeedEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_BREAK_SPEED;
-
-public class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<BreakSpeed> {
-    
-    @SubscribeEvent
-    public static void onEvent(BreakSpeed event) {
-        PLAYER_BREAK_SPEED.invoke(event);
-    }
+public abstract class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<BreakSpeed> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
@@ -32,10 +23,6 @@ public class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<Bre
 
     @Override protected EventFieldWrapper<BreakSpeed,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(BreakSpeed::getEntity);
-    }
-
-    @Override protected EventFieldWrapper<BreakSpeed,BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(BreakSpeed::getPos);
     }
 
     @Override protected EventFieldWrapper<BreakSpeed,Float> wrapSpeedField() {

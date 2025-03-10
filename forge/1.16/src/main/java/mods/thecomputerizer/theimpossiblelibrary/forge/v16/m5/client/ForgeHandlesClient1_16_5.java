@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.ForgeHandlesClient;
@@ -20,11 +21,6 @@ public class ForgeHandlesClient1_16_5 extends ForgeHandlesClient {
         else ((Impl)source).endBatch();
     }
     
-    //@Override public boolean isLoading(@Nullable Object minecraft) {
-    //    Minecraft mc = (Minecraft)minecraft;
-    //    return super.isLoading(minecraft) && (Objects.isNull(mc) || (Objects.isNull(mc.level) && Objects.isNull(mc.screen)));
-    //}
-    
     @Override public void registerKeyBinding(KeyAPI<?> key) {
         ClientRegistry.registerKeyBinding(key.unwrap());
     }
@@ -32,7 +28,8 @@ public class ForgeHandlesClient1_16_5 extends ForgeHandlesClient {
     @SuppressWarnings("unchecked")
     @Override public void renderToolTip(RenderAPI renderer, List<?> lines, int x, int y, int width, int height,
             int maxWidth) {
-        GuiUtils.drawHoveringText(renderer.unwrapMatrix(),(List<ITextComponent>)lines,x,y,width,height,maxWidth,
-                                  renderer.unwrapFont());
+        MatrixStack stack = renderer.unwrapMatrix();
+        List<ITextComponent> unwrappedLines = (List<ITextComponent>)lines;
+        GuiUtils.drawHoveringText(stack,unwrappedLines,x,y,width,height,maxWidth, renderer.unwrapFont());
     }
 }

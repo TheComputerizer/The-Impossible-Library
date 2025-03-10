@@ -30,7 +30,7 @@ public class LivingItemUseFinishEventForge extends LivingItemUseFinishEventWrapp
     }
 
     @Override protected EventFieldWrapper<Finish,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(Finish::getEntityLiving);
+        return wrapLivingGetter(Finish::getEntity);
     }
 
     @Override protected EventFieldWrapper<Finish,ItemStackAPI<?>> wrapStackResultField() {

@@ -21,6 +21,6 @@ public abstract class LootingLevelEventForge extends LootingLevelEventWrapper<Lo
     }
 
     @Override protected EventFieldWrapper<LootingLevelEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LootingLevelEvent::getEntityLiving);
+        return wrapLivingGetter(LootingLevelEvent::getEntity);
     }
 }

@@ -8,14 +8,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickEmpty;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.PLAYER_PUNCH_EMPTY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 
-public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<LeftClickEmpty> {
+public abstract class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<LeftClickEmpty> {
     
     @SubscribeEvent
     public static void onEvent(LeftClickEmpty event) {
@@ -28,10 +27,6 @@ public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<Lef
     
     @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(LeftClickEmpty::getItemStack);
-    }
-    
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(LeftClickEmpty::getWorld);
     }
     
     @Override public void setEvent(LeftClickEmpty event) {
@@ -49,7 +44,7 @@ public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<Lef
     }
 
     @Override protected EventFieldWrapper<LeftClickEmpty,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LeftClickEmpty::getPlayer);
+        return wrapPlayerGetter(LeftClickEmpty::getEntity);
     }
 
     @Override protected EventFieldWrapper<LeftClickEmpty,BlockPosAPI<?>> wrapPosField() {

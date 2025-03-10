@@ -9,21 +9,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickEmpty;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_EMPTY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public class PlayerInteractEmptyEventForge extends PlayerInteractEmptyEventWrapper<RightClickEmpty> {
-    
-    @SubscribeEvent
-    public static void onEvent(RightClickEmpty event) {
-        PLAYER_INTERACT_EMPTY.invoke(event);
-    }
+public abstract class PlayerInteractEmptyEventForge extends PlayerInteractEmptyEventWrapper<RightClickEmpty> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
@@ -31,10 +23,6 @@ public class PlayerInteractEmptyEventForge extends PlayerInteractEmptyEventWrapp
     
     @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(RightClickEmpty::getItemStack);
-    }
-
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickEmpty::getWorld);
     }
     
     @Override public void setEvent(RightClickEmpty event) {

@@ -12,21 +12,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY_AT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific> {
-    
-    @SubscribeEvent
-    public static void onEvent(EntityInteractSpecific event) {
-        PLAYER_INTERACT_ENTITY_AT.invoke(event);
-    }
+public abstract class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
@@ -34,10 +26,6 @@ public class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntity
     
     @Override protected ItemStackAPI<?> getStackInHand() {
         return wrapItemStack(EntityInteractSpecific::getItemStack);
-    }
-
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(EntityInteractSpecific::getWorld);
     }
     
     @Override public void setEvent(EntityInteractSpecific event) {

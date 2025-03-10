@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.client.ClientForge1_20;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.event.CommonEventsForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.CommonEventsForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.integration.ModHelperForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network.NetworkForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.client.gui.ScreenHelper1_20_6;
