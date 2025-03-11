@@ -48,7 +48,7 @@ public class MultiVersionModLocator1_20_4 implements TILNeoForgeModLocator<IModL
     
     public MultiVersionModLocator1_20_4(CoreAPI core) {
         this.core = core;
-        TILRef.logInfo("1.20.4 Forge Locator plugin loaded on {}",getClass().getClassLoader());
+        TILRef.logInfo("1.20.4 NeoForge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
     void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<SecureJar> filter) {

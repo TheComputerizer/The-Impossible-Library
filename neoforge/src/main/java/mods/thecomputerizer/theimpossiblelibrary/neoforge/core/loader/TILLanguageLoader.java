@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 
@@ -10,12 +11,9 @@ import java.lang.reflect.Constructor;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
-/**
- * Basically the same as FMLJavaModLanguageProvider$FMLModTarget but since it's private, we can't use it...
- */
 public abstract class TILLanguageLoader {
     
-    private static final String MOD_CONTAINER = "net.minecraftforge.fml.javafmlmod.FMLModContainer";
+    private static final String MOD_CONTAINER = "net.neoforged.fml.javafmlmod.FMLModContainer";
     static boolean loadedNewCore;
     
     protected final CoreAPI core;
@@ -32,11 +30,11 @@ public abstract class TILLanguageLoader {
     
     @SuppressWarnings("unchecked")
     private <T> T getInstance(Class<?> container, IModInfo info, ModFileScanData scanResults,
-            Object ... extras) {
+            ModuleLayer layer) {
         try {
             Constructor<?> init = container.getConstructor(IModInfo.class,String.class,ModFileScanData.class,
-                                                           extras[0].getClass());
-            T instance = (T)init.newInstance(info,this.modClass,scanResults,extras[0]);
+                                                           ModuleLayer.class);
+            T instance = (T)init.newInstance(info,this.modClass,scanResults,layer);
             TILRef.logInfo("Successfully initialized mod container for {}",this.modClass);
             return instance;
         } catch(Throwable t) {
@@ -46,7 +44,7 @@ public abstract class TILLanguageLoader {
     }
     
     protected <T> T loadModInner(IModInfo info, ClassLoader classLoader, ModFileScanData scanResults,
-            Object ... extras) {
+            ModuleLayer layer) {
         final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
             final Class<?> container = Class.forName(MOD_CONTAINER,true,contextLoader);
@@ -56,8 +54,8 @@ public abstract class TILLanguageLoader {
             Methods.invoke(this.scan,"defineClasses",classLoader);
             
             if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
-            //ForgeCoreLoader.verifyModule(this.modClass,info,extras[0]);
-            return getInstance(container,info,scanResults,extras);
+            NeoForgeCoreLoader.verifyModule(this.modClass,info,layer);
+            return getInstance(container,info,scanResults,layer);
         } catch(Throwable t) {
             String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";
             TILRef.logError(msg,t);

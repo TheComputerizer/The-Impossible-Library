@@ -105,6 +105,7 @@ public abstract class ModWriterNeoForge extends ModWriter {
     @Override protected final void writeConstructor(ClassVisitor visitor) {
         final String extraDataDesc = TypeHelper.voidMethodDesc(OBJECT_TYPE);
         writeConstructor(visitor,constructor -> {
+            constructor.visitVarInsn(ALOAD,0);
             constructor.visitFieldInsn(GETFIELD,this.modTypeInternal,"entryPoint",this.entryPointDesc);
             constructor.visitVarInsn(ALOAD,1); //Load IEventBus parameter
             constructor.visitMethodInsn(INVOKEVIRTUAL,this.entryPointInternal,"setExtraData",extraDataDesc,false);

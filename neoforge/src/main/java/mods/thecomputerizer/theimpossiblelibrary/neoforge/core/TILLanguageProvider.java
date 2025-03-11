@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.core;
 
 import cpw.mods.modlauncher.Launcher;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILNeoForgeLanguageProvider;
@@ -16,15 +15,12 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 
 public class TILLanguageProvider implements IModLanguageProvider {
     
-    private static final String CORE_NAME = "mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader";
+    private static final String CORE_NAME = "mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader";
     
     //Reflection is needed since this module is forced to be loaded in the PLUGIN layer.
     //We need to fix the modules from the BOOT layer
@@ -60,19 +56,15 @@ public class TILLanguageProvider implements IModLanguageProvider {
     }
     
     final CoreAPI core; //Might get thrown out by the GC if not stored & passed through
-    final TILNeoForgeLanguageProvider versionProvider;
+    final TILNeoForgeLanguageProvider<Object> versionProvider;
     
+    @SuppressWarnings("unchecked")
     public TILLanguageProvider() {
         this.core = findCoreAPI();
-        this.versionProvider = (TILNeoForgeLanguageProvider)findVersionProvider(core);
+        this.versionProvider = (TILNeoForgeLanguageProvider<Object>)findVersionProvider(core);
         if(Objects.nonNull(this.versionProvider))
             TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
         else TILRef.logError("Initialized versioned language provider as null");
-        GameVersion version = this.core.getVersion();
-        if(Objects.nonNull(this.versionProvider) && (version==V20_4 || version==V20_6 || version==V21_1)) {
-            TILRef.logInfo("Seems like this version will need some extra convincing to load mods on");
-            this.versionProvider.fixMods();
-        }
     }
     
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {

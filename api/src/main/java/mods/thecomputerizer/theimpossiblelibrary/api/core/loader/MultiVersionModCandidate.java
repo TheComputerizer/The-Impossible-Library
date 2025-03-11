@@ -4,6 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
@@ -129,7 +130,8 @@ public class MultiVersionModCandidate {
         Class<?> clazz = ClassHelper.existsOn(name,coreLoader);
         if(Objects.nonNull(clazz)) return clazz;
         CoreAPI core = CoreAPI.getInstance();
-        if(core.getModLoader().isForge() && !core.getVersion().isV16()) {
+        ModLoader modLoader = core.getModLoader();
+        if(modLoader.isNeoForge() || (modLoader.isForge() && !core.getVersion().isV16())) {
             String path = ClassHelper.getResourcePath(name);
             URL source = this.classpath ? loader.getResource(path) :
                     ClassHelper.getJarResource(this.file.getAbsolutePath(),path);

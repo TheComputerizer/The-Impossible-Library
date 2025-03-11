@@ -7,6 +7,5 @@ import java.util.function.Consumer;
 
 public interface TILNeoForgeLanguageProvider<LOADER> {
     
-    default void fixMods() {}
     Consumer<ModFileScanData> getFileVisitor(CoreAPI core, LOADER loader);
 }
