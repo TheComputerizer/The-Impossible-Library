@@ -1,22 +1,18 @@
-package mods.thecomputerizer.theimpossiblelibrary.neoforge.client.event.events;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v20.client.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.ClientRespawnEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent.Clone;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.ClientRespawnEventForge;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent.Clone;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CLIENT_RESPAWN;
 
-public class ClientRespawnEventNeoForge extends ClientRespawnEventWrapper<Clone> {
+public class ClientRespawnEventForge1_20 extends ClientRespawnEventForge<Clone> {
     
     @SubscribeEvent
     public static void onEvent(Clone event) {
         CLIENT_RESPAWN.invoke(event);
-    }
-    
-    @Override public void setEvent(Clone event) {
-        super.setEvent(event);
     }
     
     @Override protected EventFieldWrapper<Clone,PlayerAPI<?,?>> wrapOldPlayerField() {

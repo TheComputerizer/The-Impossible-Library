@@ -22,7 +22,7 @@ public class ClientEventsForge1_20 extends ClientEvents1_20 {
         CLICK_INPUT.setConnector(new InputClickEventForge());
         CLIENT_CONNECTED.setConnector(new ClientConnectedEventForge1_20());
         CLIENT_DISCONNECTED.setConnector(new ClientDisconnectedEventForge1_20());
-        CLIENT_RESPAWN.setConnector(new ClientRespawnEventForge());
+        CLIENT_RESPAWN.setConnector(new ClientRespawnEventForge1_20());
         FOG_COLORS.setConnector(new FogColorsEventForge1_20());
         FOG_DENSITY.setConnector(new FogDensityEventForge1_20());
         FOG_RENDER.setConnector(new FogRenderEventForge1_20());
