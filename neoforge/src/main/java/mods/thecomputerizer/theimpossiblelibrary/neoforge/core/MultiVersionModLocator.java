@@ -1,14 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core;
 
 import cpw.mods.modlauncher.Launcher;
-import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModLocator;
 
-import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -18,17 +16,14 @@ import java.util.function.Consumer;
 
 public class MultiVersionModLocator implements IModLocator {
     
-    static final String MANIFEST = "META-INF/MANIFEST.MF";
-    
     static {
-        NeoForgeCoreLoader.fixIfNotJava8();
+        NeoForgeCoreLoader.fixForServiceLayer();
         Object instance = NeoForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
         if(Objects.isNull(instance))
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
     }
     
     private final Object localLocator;
-    @Getter private Map<IModFile,FileSystem> fileSystems;
     
     public MultiVersionModLocator() {
         ClassLoader loader = getClass().getClassLoader();

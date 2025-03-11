@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -27,7 +26,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class TILBetterModScan extends ModFileScanData {
     
-    private static final String MODLOADER = "net.minecraftforge.fml.ModLoader";
     private static final Set<String> NUKED_PACKAGES = new HashSet<>();
     private static final Map<String,IModFile> MOD_FILES = new HashMap<>();
     private static final Map<String,MultiVersionModInfo> MOD_INFOS = new HashMap<>();
@@ -101,7 +99,7 @@ public class TILBetterModScan extends ModFileScanData {
             TILRef.logInfo("Skipping already handled sources for {}",pkg);
             return;
         }
-        NeoForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs,isNewFormat());
+        NeoForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs);
     }
     
     /**
@@ -124,12 +122,5 @@ public class TILBetterModScan extends ModFileScanData {
         for(IModInfo info : file.getModInfos())
             if(modid.equals(info.getModId())) return info;
         return null;
-    }
-    
-    private boolean isNewFormat() {
-        return switch(CoreAPI.getInstance().getVersion()) {
-            case V20_4,V20_6,V21_1 -> true;
-            default -> false;
-        };
     }
 }
