@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.server.event.events.ServerTickEventNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.server.event.ServerEvents1_20;
-import net.minecraftforge.eventbus.api.Event;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
@@ -22,7 +21,7 @@ public class ServerEventsNeoForge1_20 extends ServerEvents1_20 {
     }
     
     @Override public <R> Result getEventResult(R result) {
-        return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
+        return result==Result.DEFAULT ? DEFAULT : (result==Result.DENY ? DENY : ALLOW);
     }
     
     @Override public void postCustomTick(CustomTick ticker) {
@@ -34,7 +33,7 @@ public class ServerEventsNeoForge1_20 extends ServerEvents1_20 {
     }
     
     @SuppressWarnings("unchecked")
-    @Override public Event.Result setEventResult(Result result) {
-        return result==DEFAULT ? Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW);
+    @Override public Result setEventResult(Result result) {
+        return result==DEFAULT ? Result.DEFAULT : (result==DENY ? Result.DENY : Result.ALLOW);
     }
 }

@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.burningwave.core.classes.Fields.NoSuchFieldException;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -306,12 +305,7 @@ public class ForgeCoreLoader {
      */
     static ArgumentHandler getArgumentHandler() {
         LOGGER.info("Atempting to get ArgumentHandler for loader {}",Thread.currentThread().getContextClassLoader());
-        Object args = getField(INSTANCE.getClass(),"argumentHandler",INSTANCE);
-        if(!(args instanceof ArgumentHandler)) {
-            LOGGER.error("Failed to find argument handler!");
-            return null;
-        }
-        return (ArgumentHandler)args;
+        return Fields.getDirect(INSTANCE,"argumentHandler");
     }
     
     public static @Nullable Object getBootLoadedCoreAPI() {
@@ -320,7 +314,7 @@ public class ForgeCoreLoader {
     
     static Object getCoreAPIReflectively(ClassLoader loader) {
         try {
-            return getField(Class.forName(APICORE,false,loader),"INSTANCE",null);
+            return Fields.getStaticDirect(Class.forName(APICORE,false,loader),"INSTANCE");
         } catch(ClassNotFoundException ex) {
             LOGGER.debug("CoreAPI not found on {}",loader);
         }
@@ -335,17 +329,6 @@ public class ForgeCoreLoader {
     @SuppressWarnings("unchecked")
     static <E extends Enum<E>> E getEnum(Class<?> enumClass, String name) {
         return Enum.valueOf((Class<E>)enumClass,name);
-    }
-    
-    static @Nullable Object getField(Class<?> cls, String name, @Nullable Object instance) {
-        try {
-            Field field = cls.getDeclaredField(name);
-            if(!field.isAccessible()) field.setAccessible(true);
-            return field.get(instance);
-        } catch(Exception ex) {
-            LOGGER.error("Failed to get field {} from {} on instance {}",name,cls,instance,ex);
-        }
-        return null;
     }
     
     /**
@@ -413,7 +396,7 @@ public class ForgeCoreLoader {
     static String getVersionStr() {
         ArgumentHandler handler = getArgumentHandler();
         if(Objects.isNull(handler)) return null;
-        String[] rawArgs = (String[])getField(handler.getClass(),"args",handler);
+        String[] rawArgs = Fields.getDirect(handler,"args");
         if(Objects.isNull(rawArgs)) {
             LOGGER.error("Failed to find version using handler {}",handler);
             return null;

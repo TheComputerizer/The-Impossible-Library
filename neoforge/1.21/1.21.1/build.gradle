@@ -116,6 +116,5 @@ shadowJar {
 }
 
 tasks.assemble.dependsOn shadowJar
-tasks.shadowJar.dependsOn 'neoFormPackRecomp'
-tasks.jar.finalizedBy 'neoFormPackRecomp'
+tasks.jar.finalizedBy shadowJar
 tasks.jar.dependsOn ':neoforge:neoforge_1.21:build'

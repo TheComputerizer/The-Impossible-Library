@@ -156,11 +156,10 @@ public class NeoForgeCoreLoader {
     }
     
     /**
-     * Should be the ClassLoader for the BOOT layer or the system ClassLoader if Java 8
+     * Should be the ClassLoader for the BOOT layer
      */
     public static ClassLoader bootLoader() {
-        ClassLoader loader = Launcher.class.getClassLoader();
-        return Objects.nonNull(loader) ? loader : ClassLoader.getSystemClassLoader();
+        return Launcher.class.getClassLoader();
     }
     
     static ModuleDescriptor buildNewModuleDescriptor(String name, Jar jar, List<String> usesServices) {
@@ -297,12 +296,7 @@ public class NeoForgeCoreLoader {
      */
     static ArgumentHandler getArgumentHandler() {
         LOGGER.info("Atempting to get ArgumentHandler for loader {}",Thread.currentThread().getContextClassLoader());
-        Object args = getField(INSTANCE.getClass(),"argumentHandler",INSTANCE);
-        if(!(args instanceof ArgumentHandler)) {
-            LOGGER.error("Failed to find argument handler!");
-            return null;
-        }
-        return (ArgumentHandler)args;
+        return Fields.getDirect(INSTANCE,"argumentHandler");
     }
     
     public static @Nullable Object getBootLoadedCoreAPI() {
@@ -311,28 +305,9 @@ public class NeoForgeCoreLoader {
     
     static Object getCoreAPIReflectively(ClassLoader loader) {
         try {
-            return getField(Class.forName(APICORE,false,loader),"INSTANCE",null);
+            return Fields.getStaticDirect(Class.forName(APICORE,false,loader),"INSTANCE");
         } catch(ClassNotFoundException ex) {
             LOGGER.debug("CoreAPI not found on {}",loader);
-        }
-        return null;
-    }
-    
-    static <E extends Enum<E>> E getEnum(ClassLoader loader, String className, String name) {
-        Class<?> foundClass = findClassInHeirarchy(loader,className);
-        return Objects.nonNull(foundClass) ? getEnum(foundClass,name) : null;
-    }
-    
-    @SuppressWarnings("unchecked")
-    static <E extends Enum<E>> E getEnum(Class<?> enumClass, String name) {
-        return Enum.valueOf((Class<E>)enumClass,name);
-    }
-    
-    static @Nullable Object getField(Class<?> cls, String name, @Nullable Object instance) {
-        try {
-            return cls.getDeclaredField(name).get(instance);
-        } catch(Exception ex) {
-            LOGGER.error("Failed to get field {} from {} on instance {}",name,cls,instance,ex);
         }
         return null;
     }
@@ -365,7 +340,6 @@ public class NeoForgeCoreLoader {
     
     /**
      * Get a ModuleLayer instance by name (BOOT/SERVICE/PLUGIN/GAME) for module manipulation
-     * 1.18.2+ only
      */
     static ModuleLayer getModuleLayer(String name) {
         IModuleLayerManager layerManager = getLayerManager();
@@ -390,7 +364,7 @@ public class NeoForgeCoreLoader {
     static String getVersionStr() {
         ArgumentHandler handler = getArgumentHandler();
         if(Objects.isNull(handler)) return null;
-        String[] rawArgs = (String[])getField(handler.getClass(),"args",handler);
+        String[] rawArgs = Fields.getDirect(handler,"args");
         if(Objects.isNull(rawArgs)) {
             LOGGER.error("Failed to find version using handler {}",handler);
             return null;
@@ -676,13 +650,6 @@ public class NeoForgeCoreLoader {
                 Fields.setDirect(moduleLayer,"modules",Collections.unmodifiableSet(modules));
             }
         }
-    }
-    
-    /**
-     * Not present in Java 8
-     */
-    static ClassLoader platformLoader() {
-        return Methods.invokeStaticDirect(ClassLoader.class,"getPlatformClassLoader");
     }
     
     @SuppressWarnings("SameParameterValue")
