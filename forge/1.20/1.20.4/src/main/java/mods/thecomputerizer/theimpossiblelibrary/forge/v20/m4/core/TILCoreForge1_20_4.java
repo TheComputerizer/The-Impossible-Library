@@ -18,7 +18,7 @@ public class TILCoreForge1_20_4 extends TILCoreForge1_20 {
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPoint1_20_4();
+        return TILCommonEntryPoint1_20_4.getInstance();
     }
     
     @Override public void initAPI() {

@@ -13,13 +13,13 @@ import org.objectweb.asm.Type;
 
 import java.util.Map;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.EMPTY_METHOD;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.PUBLIC_STATIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
-public abstract class ModWriterNeoForge extends ModWriter { //TODO
+public abstract class ModWriterNeoForge extends ModWriter {
     
     protected static final Type DIST = TypeHelper.neoforged("api/distmarker/Dist");
+    protected static final Type EVENT_BUS = TypeHelper.neoforged("bus/api/IEventBus");
     protected static final Type EVENT_SUBSCRIBER = TypeHelper.neofml("common/Mod$EventBusSubscriber");
     protected static final Type EVENT_SUBSCRIBER_BUS = TypeHelper.neofml("common/Mod$EventBusSubscriber$Bus");
     protected static final Type MOD_ANNOTATION = TypeHelper.neofml("common/Mod");
@@ -63,6 +63,10 @@ public abstract class ModWriterNeoForge extends ModWriter { //TODO
         });
     }
     
+    @Override protected MethodVisitor getConstructor(ClassVisitor visitor) {
+        return ASMHelper.getConstructor(visitor,PUBLIC,new Type[]{EVENT_BUS});
+    }
+    
     @Override protected Type getEventMethod(String className) {
         className = (className.startsWith("FMLServer") ? "server" : "lifecycle")+"/"+className;
         return TypeHelper.method(VOID_TYPE,TypeHelper.neofml("event/"+className));
@@ -92,5 +96,18 @@ public abstract class ModWriterNeoForge extends ModWriter { //TODO
                             "onServerStopping");
         mapEntryPointMethod(redirects,types,"serverStopped",getEventMethod("FMLServerStoppedEvent"),
                             "onServerStopped");
+    }
+    
+    /**
+     * Sets the extraData field of CommonEntryPoint to the IEventBus passed into the constructor of the written class
+     * so that it is internally accessible
+     */
+    @Override protected final void writeConstructor(ClassVisitor visitor) {
+        final String extraDataDesc = TypeHelper.voidMethodDesc(OBJECT_TYPE);
+        writeConstructor(visitor,constructor -> {
+            constructor.visitFieldInsn(GETFIELD,this.modTypeInternal,"entryPoint",this.entryPointDesc);
+            constructor.visitVarInsn(ALOAD,1); //Load IEventBus parameter
+            constructor.visitMethodInsn(INVOKEVIRTUAL,this.entryPointInternal,"setExtraData",extraDataDesc,false);
+        });
     }
 }

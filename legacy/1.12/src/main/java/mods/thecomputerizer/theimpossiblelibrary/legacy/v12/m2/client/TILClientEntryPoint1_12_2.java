@@ -1,20 +1,24 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.DelegatingClientEntryPoint;
 
 import java.io.File;
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
-public final class TILClientEntryPoint1_12_2 extends ClientEntryPoint {
+public final class TILClientEntryPoint1_12_2 extends DelegatingClientEntryPoint {
     
-    public TILClientEntryPoint1_12_2() {
-        Minecraft1_12_2.getInstance().addResourcePackFolder(new File("TILResources"));
+    private static TILClientEntryPoint1_12_2 INSTANCE;
+    
+    public static TILClientEntryPoint1_12_2 getInstance() {
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILClientEntryPoint1_12_2();
     }
     
-    @Override public ClientEntryPoint delegatedClientEntry() {
-        return this;
+    private TILClientEntryPoint1_12_2() {
+        Minecraft1_12_2.getInstance().addResourcePackFolder(new File("TILResources"));
+        INSTANCE = this;
     }
     
     @Override protected String getModID() {

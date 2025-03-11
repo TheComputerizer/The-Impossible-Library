@@ -24,6 +24,6 @@ public abstract class TILCore1_19 extends CoreAPI {
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPoint1_19();
+        return TILCommonEntryPoint1_19.getInstance();
     }
 }

@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core;
 import cpw.mods.modlauncher.Environment;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
@@ -59,10 +58,6 @@ public abstract class TILCoreNeoForge1_20 extends TILCore1_20 implements TILCore
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
         TILRef.logError("Directly adding a URL is not supported in this version! Not adding {}",url);
         return false;
-    }
-    
-    @Override public CommonEntryPoint getClientVersionHandler() {
-        return null;
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {

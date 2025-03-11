@@ -18,7 +18,7 @@ public class TILCoreFabric1_20_4 extends TILCoreFabric1_20 {
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPointFabric1_20_4();
+        return TILCommonEntryPointFabric1_20_4.getInstance();
     }
     
     @Override public void initAPI() {

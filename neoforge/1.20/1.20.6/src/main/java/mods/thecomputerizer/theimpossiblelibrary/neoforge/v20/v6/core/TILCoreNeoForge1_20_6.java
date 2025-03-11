@@ -5,8 +5,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core.TILCoreNeoForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.client.ClientNeoForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.client.TILClientEntryPointNeoForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.common.CommonNeoForge1_20_6;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.TILCommonEntryPoint1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.common.TILCommonEntryPointNeoForge1_20_6;
 
 @IndirectCallers
 public class TILCoreNeoForge1_20_6 extends TILCoreNeoForge1_20 {
@@ -15,8 +16,12 @@ public class TILCoreNeoForge1_20_6 extends TILCoreNeoForge1_20 {
         super(false);
     }
     
+    @Override public CommonEntryPoint getClientVersionHandler() {
+        return TILClientEntryPointNeoForge1_20_6.getInstance();
+    }
+    
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPoint1_20_6();
+        return TILCommonEntryPointNeoForge1_20_6.getInstance();
     }
     
     @Override public void initAPI() {

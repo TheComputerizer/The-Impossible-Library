@@ -22,7 +22,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
  * For internal use only
  */
 @MultiVersionMod(modDescription = DESCRIPTION, modid = MODID, modName = NAME, modVersion = VERSION)
-public final class TILCommonEntryPoint extends CommonEntryPoint {
+public final class TILCommonEntryPoint extends DelegatingCommonEntryPoint {
 
     private static TILCommonEntryPoint INSTANCE;
     
@@ -35,16 +35,9 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
         return INSTANCE;
     }
 
-    private final CommonEntryPoint versionHandler;
-
     public TILCommonEntryPoint() {
         devTrace("constructor");
         TagHelper.initGlobal();
-        this.versionHandler = CoreAPI.getInstance().getCommonVersionHandler();
-    }
-
-    @Override public @Nullable ClientEntryPoint delegatedClientEntry() {
-        return TILClientEntryPoint.getInstance();
     }
 
     @Override protected String getModID() {
@@ -57,65 +50,70 @@ public final class TILCommonEntryPoint extends CommonEntryPoint {
 
     @Override public void onConstructed() {
         devTrace("onConstructed");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onConstructed();
+        super.onConstructed();
     }
 
     @Override public void onPreRegistration() {
         devTrace("onPreRegistration");
         EventHelper.initTILListeners(false,DEV);
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
-        if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onPreRegistration();
+        super.onPreRegistration();
     }
 
     @Override public void onCommonSetup() {
         devTrace("onCommonSetup");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onCommonSetup();
+        super.onCommonSetup();
     }
 
     @Override public void onDedicatedServerSetup() {
         devTrace("onDedicatedServerSetup");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onDedicatedServerSetup();
     }
 
     @Override public void onInterModEnqueue() {
         devTrace("onInterModEnqueue");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onInterModEnqueue();
+        super.onInterModEnqueue();
     }
 
     @Override public void onInterModProcess() {
         devTrace("onInterModProcess");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onInterModProcess();
+        super.onInterModProcess();
     }
 
     @Override public void onLoadComplete() {
         devTrace("onLoadComplete");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onLoadComplete();
-        if(Objects.nonNull(this.delegatedClient)) this.delegatedClient.onLoadComplete();
+        super.onLoadComplete();
         NetworkHandler.load();
     }
 
     @Override public void onServerAboutToStart() {
         devTrace("onServerAboutToStart");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerAboutToStart();
+        super.onServerAboutToStart();
     }
 
     @Override public void onServerStarting() {
         devTrace("onServerStarting");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStarting();
+        super.onServerStarting();
     }
 
     @Override public void onServerStarted() {
         devTrace("onServerStarted");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStarted();
+        super.onServerStarted();
     }
 
     @Override public void onServerStopping() {
         devTrace("onServerStopping");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStopping();
+        super.onServerStopping();
     }
 
     @Override public void onServerStopped() {
         devTrace("onServerStopped");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onServerStopped();
+        super.onServerStopped();
+    }
+    
+    @Override public @Nullable ClientEntryPoint setDelegatedClientHandle() {
+        return TILClientEntryPoint.getInstance();
+    }
+    
+    public CommonEntryPoint setDelegatedCustomHandle() {
+        return CoreAPI.getInstance().getCommonVersionHandler();
     }
 }

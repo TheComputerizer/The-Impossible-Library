@@ -1,17 +1,23 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.DelegatingCommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
-public class TILCommonEntryPointFabric extends CommonEntryPoint {
+public class TILCommonEntryPointFabric extends DelegatingCommonEntryPoint {
     
-    @Override public @Nullable ClientEntryPoint delegatedClientEntry() {
-        return null;
+    private static TILCommonEntryPointFabric INSTANCE;
+    
+    public static TILCommonEntryPointFabric getInstance() {
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPointFabric();
+    }
+    
+    protected TILCommonEntryPointFabric() {
+        INSTANCE = this;
     }
     
     @Override protected String getModID() {
@@ -24,5 +30,6 @@ public class TILCommonEntryPointFabric extends CommonEntryPoint {
     
     @Override public void onLoadComplete() {
         FabricHelper.registerServerHooks();
+        super.onLoadComplete();
     }
 }

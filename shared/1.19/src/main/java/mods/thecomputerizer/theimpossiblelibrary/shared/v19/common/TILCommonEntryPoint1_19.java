@@ -1,17 +1,23 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.DelegatingCommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
-public class TILCommonEntryPoint1_19 extends CommonEntryPoint {
+public class TILCommonEntryPoint1_19 extends DelegatingCommonEntryPoint {
     
-    @Override public @Nullable ClientEntryPoint delegatedClientEntry() {
-        return null;
+    private static TILCommonEntryPoint1_19 INSTANCE;
+    
+    public static TILCommonEntryPoint1_19 getInstance() {
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPoint1_19();
+    }
+    
+    private TILCommonEntryPoint1_19() {
+        INSTANCE = this;
     }
     
     @Override protected String getModID() {
@@ -24,5 +30,6 @@ public class TILCommonEntryPoint1_19 extends CommonEntryPoint {
     
     @Override public void onLoadComplete() {
         WrappedCommand1_19.registerArgType();
+        super.onLoadComplete();
     }
 }

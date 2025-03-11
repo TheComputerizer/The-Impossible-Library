@@ -21,7 +21,7 @@ public class TILCoreForge1_20_6 extends TILCoreForge1_20 {
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPoint1_20_6();
+        return TILCommonEntryPoint1_20_6.getInstance();
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {

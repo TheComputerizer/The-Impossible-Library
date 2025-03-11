@@ -56,11 +56,11 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
     }
     
     @Override public CommonEntryPoint getClientVersionHandler() {
-        return new TILClientEntryPoint1_12_2();
+        return TILClientEntryPoint1_12_2.getInstance();
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPoint1_12_2();
+        return TILCommonEntryPoint1_12_2.getInstance();
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {

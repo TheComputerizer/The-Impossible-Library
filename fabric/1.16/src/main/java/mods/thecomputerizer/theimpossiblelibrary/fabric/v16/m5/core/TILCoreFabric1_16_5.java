@@ -56,7 +56,7 @@ public class TILCoreFabric1_16_5 extends TILCore1_16_5 implements TILCoreFabric 
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return new TILCommonEntryPointFabric();
+        return TILCommonEntryPointFabric.getInstance();
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {

@@ -1,22 +1,27 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.custom.RegisterCommands1_12_2;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import javax.annotation.Nullable;
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public final class TILCommonEntryPoint1_12_2 extends CommonEntryPoint {
-
-    @Override public @Nullable ClientEntryPoint delegatedClientEntry() {
-        return null;
+    
+    private static TILCommonEntryPoint1_12_2 INSTANCE;
+    
+    public static TILCommonEntryPoint1_12_2 getInstance() {
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPoint1_12_2();
     }
-
+    
+    private TILCommonEntryPoint1_12_2() {
+        INSTANCE = this;
+    }
+    
     @Override protected String getModID() {
         return MODID;
     }

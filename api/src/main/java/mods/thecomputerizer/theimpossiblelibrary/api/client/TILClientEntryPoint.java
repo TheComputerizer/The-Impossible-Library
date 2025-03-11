@@ -16,7 +16,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 /**
  * For internal use only
  */
-public final class TILClientEntryPoint extends ClientEntryPoint {
+public final class TILClientEntryPoint extends DelegatingClientEntryPoint {
 
     private static TILClientEntryPoint INSTANCE;
     
@@ -25,25 +25,17 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
     }
 
     public static TILClientEntryPoint getInstance() {
-        if(Objects.isNull(INSTANCE)) INSTANCE = new TILClientEntryPoint();
-        return INSTANCE;
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILClientEntryPoint();
     }
 
     public static void init() {
         devTrace("init");
-        if(Objects.nonNull(INSTANCE)) INSTANCE.onClientSetup();
+        getInstance().onClientSetup();
     }
 
-    private final ClientEntryPoint versionHandler;
-
-    public TILClientEntryPoint() {
+    private TILClientEntryPoint() {
         devTrace("constructor");
-        CommonEntryPoint versionHandler = CoreAPI.getInstance().getClientVersionHandler();
-        this.versionHandler = versionHandler instanceof ClientEntryPoint ? (ClientEntryPoint)versionHandler : null;
-    }
-
-    @Override public ClientEntryPoint delegatedClientEntry() {
-        return this;
+        INSTANCE = this;
     }
 
     @Override protected String getModID() {
@@ -54,21 +46,24 @@ public final class TILClientEntryPoint extends ClientEntryPoint {
         return NAME;
     }
     
+    @Override public void onPreRegistration() {
+        devTrace("onPreRegistration");
+        EventHelper.initTILListeners(true,DEV);
+        super.onPreRegistration();
+    }
+    
     @Override public void onClientSetup() {
         devTrace("onClientSetup");
         if(DEV) KeyHelper.register(TEST_KEY);
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
     }
     
     @Override public void onLoadComplete() {
         devTrace("onLoadComplete");
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onClientSetup();
+        super.onLoadComplete();
         TILRef.getClientHandles().onFinishedLoading();
     }
-
-    @Override public void onPreRegistration() {
-        devTrace("onPreRegistration");
-        EventHelper.initTILListeners(true,DEV);
-        if(Objects.nonNull(this.versionHandler)) this.versionHandler.onPreRegistration();
+    
+    public CommonEntryPoint setDelegatedCustomHandle() {
+        return CoreAPI.getInstance().getClientVersionHandler();
     }
 }

@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.client.ClientNeoForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.common.event.CommonEventsNeoForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.integration.ModHelperNeoForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.v6.network.NetworkNeoForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.client.gui.ScreenHelper1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.Tag1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.text.TextHelper1_20_6;

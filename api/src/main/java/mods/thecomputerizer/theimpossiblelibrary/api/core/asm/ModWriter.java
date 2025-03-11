@@ -146,6 +146,7 @@ public abstract class ModWriter {
         return new String[]{};
     }
     
+    @SuppressWarnings("SameParameterValue")
     protected final void writeAnnotationArray(AnnotationVisitor annotation, String name,
             Consumer<AnnotationVisitor> arrayWriter) {
         AnnotationVisitor array = annotation.visitArray(name);
@@ -166,12 +167,17 @@ public abstract class ModWriter {
         writeMethod(visitor,ASMHelper::getClassInit,this::classInit);
     }
     
-    protected final void writeConstructor(ClassVisitor visitor) {
+    protected void writeConstructor(ClassVisitor visitor) {
+        writeConstructor(visitor,constructor -> {});
+    }
+    
+    protected final void writeConstructor(ClassVisitor visitor, Consumer<MethodVisitor> extraDataHandler) {
         writeMethod(visitor,this::getConstructor,constructor -> {
             ASMHelper.addSuperConstructor(constructor,OBJECT_TYPE.getInternalName(),EMPTY_METHOD_DESC,false);
             constructor.visitVarInsn(ALOAD,0);
             ASMHelper.addNewInstance(constructor,this.entryPointInternal,EMPTY_METHOD_DESC,false);
             constructor.visitFieldInsn(PUTFIELD,this.modTypeInternal,"entryPoint",this.entryPointDesc);
+            extraDataHandler.accept(constructor);
             constructor.visitVarInsn(ALOAD,0);
             constructor.visitFieldInsn(PUTSTATIC,this.modTypeInternal,"INSTANCE",this.modTypeDesc);
             constructor(constructor);

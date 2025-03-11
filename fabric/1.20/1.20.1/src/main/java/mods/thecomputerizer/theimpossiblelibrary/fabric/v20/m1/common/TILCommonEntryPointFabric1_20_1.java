@@ -4,7 +4,19 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPoi
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m1.server.WrappedCommand1_20_1;
 
+import java.util.Objects;
+
 public class TILCommonEntryPointFabric1_20_1 extends TILCommonEntryPointFabric {
+    
+    private static TILCommonEntryPointFabric1_20_1 INSTANCE;
+    
+    public static TILCommonEntryPointFabric1_20_1 getInstance() {
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPointFabric1_20_1();
+    }
+    
+    private TILCommonEntryPointFabric1_20_1() {
+        INSTANCE = this;
+    }
     
     @Override public void onLoadComplete() {
         FabricHelper.registerServerHooks();
