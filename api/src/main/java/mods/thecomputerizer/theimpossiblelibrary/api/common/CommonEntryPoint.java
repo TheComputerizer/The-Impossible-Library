@@ -90,7 +90,7 @@ public abstract class CommonEntryPoint {
     @SuppressWarnings("SameParameterValue")
     protected final void handleAll(Consumer<CommonEntryPoint> commonHandle, Consumer<ClientEntryPoint> clientHandle,
             boolean ignoreThis) {
-        handleEither(this,commonHandle,clientHandle);
+        if(!ignoreThis) handleEither(this,commonHandle,clientHandle);
         handleEither(this.delegatedClientHandle,commonHandle,clientHandle);
         handleEither(this.delegatedCustomHandle,commonHandle,clientHandle);
         handleEither(this.delegatedServerHandle,commonHandle,clientHandle);
@@ -110,7 +110,7 @@ public abstract class CommonEntryPoint {
      */
     @SuppressWarnings("SameParameterValue")
     protected final void handleAll(Consumer<CommonEntryPoint> commonHandle, boolean ignoreThis) {
-        commonHandle.accept(this);
+        if(!ignoreThis) commonHandle.accept(this);
         if(Objects.nonNull(this.delegatedClientHandle)) commonHandle.accept(this.delegatedClientHandle);
         if(Objects.nonNull(this.delegatedCustomHandle)) commonHandle.accept(this.delegatedCustomHandle);
         if(Objects.nonNull(this.delegatedServerHandle)) commonHandle.accept(this.delegatedServerHandle);
