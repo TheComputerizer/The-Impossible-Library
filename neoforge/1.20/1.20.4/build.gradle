@@ -91,6 +91,7 @@ dependencies {
     implementation "$infernal_mobs_artifact:$infernal_mobs_neoforge_1_20_4"
     implementation "$serene_seasons_artifact:$serene_seasons_neoforge_1_20_4"
 
+    runtimeOnly "$glitchcore_artifact:$glitchcore_neoforge_1_20_4"
     runtimeOnly "$jei_artifact:$jei_neoforge_1_20_4"
 }
 

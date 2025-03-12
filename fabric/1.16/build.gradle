@@ -62,6 +62,9 @@ dependencies {
     modImplementation "$fabric_api_artifact:$fabric_1_16_5"
     modImplementation "$cloth_artifact:$cloth_1_16_5"
     modImplementation "$modmenu_artifact:$modmenu_1_16_5"
+
+    modRuntimeOnly "$architectury_artifact:$architectury_fabric_1_16_5"
+    modRuntimeOnly "$rei_artifact:$rei_fabric_1_16_5"
 }
 
 remapJar {

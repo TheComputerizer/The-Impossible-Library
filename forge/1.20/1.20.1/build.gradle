@@ -121,6 +121,7 @@ dependencies {
     implementation fg.deobf("$structure_gel_api_artifact:$structure_gel_api_1_20_1")
     implementation fg.deobf("$weather2_artifact:$weather2_1_20_1")
 
+    runtimeOnly fg.deobf("$glitchcore_artifact:$glitchcore_forge_1_20_1")
     runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_20_1")
 }
 

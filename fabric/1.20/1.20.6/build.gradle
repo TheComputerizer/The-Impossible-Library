@@ -83,6 +83,7 @@ dependencies {
     modImplementation "$modmenu_artifact:$modmenu_1_20_6"
     modImplementation "$serene_seasons_artifact:$serene_seasons_fabric_1_20_6"
 
+    modRuntimeOnly "$glitchcore_artifact:$glitchcore_fabric_1_20_6"
     modRuntimeOnly "$jei_artifact:$jei_fabric_1_20_6"
 }
 

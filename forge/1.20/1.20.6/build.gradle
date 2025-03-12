@@ -106,6 +106,7 @@ dependencies {
     implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_forge_1_20_6")
     implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_forge_1_20_6")
 
+    runtimeOnly fg.deobf("$glitchcore_artifact:$glitchcore_forge_1_20_6")
     runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_20_6")
 }
 
