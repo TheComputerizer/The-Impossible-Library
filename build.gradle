@@ -74,6 +74,6 @@ jar {
   ':fabric:fabric_1.19:fabric_1.19.2:remapJar', ':forge:forge_1.19:forge_1.19.2:shadowJar',
   ':fabric:fabric_1.19:fabric_1.19.4:remapJar', ':forge:forge_1.19:forge_1.19.4:shadowJar',
   ':fabric:fabric_1.20:fabric_1.20.1:remapJar', ':forge:forge_1.20:forge_1.20.1:shadowJar',
-  ':fabric:fabric_1.20:fabric_1.20.4:remapJar', ':forge:forge_1.20:forge_1.20.4:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.4:shadowJar',
-  ':fabric:fabric_1.20:fabric_1.20.6:remapJar', ':forge:forge_1.20:forge_1.20.6:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.6:shadowJar'
+  ':fabric:fabric_1.20:fabric_1.20.4:remapJar', ':forge:forge_1.20:forge_1.20.4:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.4:assemble',
+  ':fabric:fabric_1.20:fabric_1.20.6:remapJar', ':forge:forge_1.20:forge_1.20.6:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.6:assemble'
 ].forEach { tasks.jar.mustRunAfter it }

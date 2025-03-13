@@ -64,6 +64,7 @@ processTestResources {
 }
 
 jar {
+    from(base.jar.archiveFile.collect { zipTree it })
     manifest {
         attributes([
                 'Implementation-Title': mod_name,
@@ -76,4 +77,4 @@ artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn ':api:build'
+tasks.classes.mustRunAfter ':api:jar'

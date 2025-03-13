@@ -32,7 +32,7 @@ apply from: rootProject.file('gradle\\java17-module.gradle')
 plugins.apply 'net.neoforged.gradle.userdev'
 
 def base = project ':api'
-def shared = project ':shared:shared_1.20'
+def neoforge = project ':neoforge'
 
 subsystems {
     parchment {
@@ -54,10 +54,11 @@ dependencies {
 
     compileOnlyApi base
     compileOnlyApi project(path: ':neoforge', configuration: 'dev')
-    compileOnlyApi shared
+    compileOnlyApi project(path: ':shared:shared_1.20', configuration: 'dev')
 }
 
 jar {
+    from(neoforge.jar.archiveFile.collect { zipTree(it) })
     manifest {
         attributes([
                 'Implementation-Version': mod_version
@@ -69,4 +70,4 @@ artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn ':neoforge:build'
+tasks.classes.mustRunAfter ':neoforge:jar'
