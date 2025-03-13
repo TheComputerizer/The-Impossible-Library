@@ -1,8 +1,7 @@
 /**
  * Pass through parent module for shared version modules
  */
-
-apply from: rootProject.file('buildSrc\\shared.gradle')
+apply from: rootProject.file('shared.gradle')
 
 def base = project ':api'
 

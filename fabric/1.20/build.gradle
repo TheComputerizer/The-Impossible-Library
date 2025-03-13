@@ -30,7 +30,6 @@ plugins.apply 'fabric-loom'
 
 def base = project ':api'
 def fabric = project ':fabric'
-def shared = project ':shared:shared_1.20'
 
 configurations {
     dev {

@@ -1,10 +1,15 @@
-plugins.apply('idea')
-plugins.apply('java')
-plugins.apply('java-base')
-plugins.apply('java-library')
+import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+
+plugins.apply 'idea'
+plugins.apply 'java-library'
 
 group = base_package
 version = mod_version
+
+compileJava {
+    options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
+    options.encoding = 'UTF-8'
+}
 
 idea {
     module {
@@ -13,21 +18,15 @@ idea {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    annotationProcessor("org.projectlombok:lombok:${lombok_version}")
-
-    compileOnly("org.projectlombok:lombok:${lombok_version}")
-}
-
 jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    setArchiveBaseName(mod_id)
+    duplicatesStrategy = EXCLUDE
+    setArchiveBaseName "$mod_id"
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of 8
+}
+
+processResources {
+    duplicatesStrategy = EXCLUDE
 }

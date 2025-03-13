@@ -1,4 +1,4 @@
-apply from: rootProject.file('buildSrc\\shared.gradle')
+apply from: rootProject.file('shared.gradle')
 apply from: rootProject.file('gradle\\lombok.gradle')
 
 repositories {
@@ -21,7 +21,8 @@ configurations {
 
 dependencies {
     compileOnly "$jsr_artifact:$jsr_version"
-    compileOnly "io.netty:netty-all:$netty_version"
+    //noinspection VulnerableLibrariesLocal
+    compileOnly "io.netty:netty-all:$netty_version" //Not shaded so vulnerable dependecies aren't an issue
     compileOnly "it.unimi.dsi:fastutil:$fast_version"
     compileOnly "org.apache.commons:commons-lang3:$lang3_version"
     compileOnly "$log4j_artifact:$log4j_version"
@@ -31,8 +32,6 @@ dependencies {
     implementation "$burningwave_group:$burningwave_name:$burningwave_version"
     implementation "$burningwave_group:$burningwave_driver_name:$burningwave_driver_version"
     implementation "$toolfactory_group:$toolfactory_name:$toolfactory_version"
-
-
 }
 
 processResources {

@@ -2,7 +2,7 @@ import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 apply from: rootProject.file('gradle\\shaded-deps.gradle')
 
-plugins.apply 'io.github.goooler.shadow'
+plugins.apply 'com.gradleup.shadow'
 
 configurations {
     shadow.extendsFrom shaded

@@ -4,8 +4,7 @@
  * Shading and relocation must happen within each module to properly respect reobfuscation.
  * Any necessary reobfuscations must happen in the version the deobfuscations happened in.
  */
-
-apply from: rootProject.file('buildSrc\\shared.gradle')
+apply from: rootProject.file('shared.gradle')
 java.toolchain.languageVersion = JavaLanguageVersion.of 23
 
 def fabric = project ':fabric'
@@ -69,12 +68,12 @@ jar {
     }
 }
 
-[ ':legacy:1.12:build',
-  ':fabric:fabric_1.16:build', ':forge:forge_1.16:build',
-  ':fabric:fabric_1.18:build', ':forge:forge_1.18:build',
-  ':fabric:fabric_1.19:fabric_1.19.2:build', ':forge:forge_1.19:forge_1.19.2:build',
-  ':fabric:fabric_1.19:fabric_1.19.4:build', ':forge:forge_1.19:forge_1.19.4:build',
-  ':fabric:fabric_1.20:fabric_1.20.1:build', ':forge:forge_1.20:forge_1.20.1:build',
-  ':fabric:fabric_1.20:fabric_1.20.4:build', ':forge:forge_1.20:forge_1.20.4:build', ':neoforge:neoforge_1.20:neoforge_1.20.4:build',
-  ':fabric:fabric_1.20:fabric_1.20.6:build', ':forge:forge_1.20:forge_1.20.6:build', ':neoforge:neoforge_1.20:neoforge_1.20.6:build'
+[ ':legacy:1.12:shadowJar',
+  ':fabric:fabric_1.16:remapJar', ':forge:forge_1.16:shadowJar',
+  ':fabric:fabric_1.18:remapJar', ':forge:forge_1.18:shadowJar',
+  ':fabric:fabric_1.19:fabric_1.19.2:remapJar', ':forge:forge_1.19:forge_1.19.2:shadowJar',
+  ':fabric:fabric_1.19:fabric_1.19.4:remapJar', ':forge:forge_1.19:forge_1.19.4:shadowJar',
+  ':fabric:fabric_1.20:fabric_1.20.1:remapJar', ':forge:forge_1.20:forge_1.20.1:shadowJar',
+  ':fabric:fabric_1.20:fabric_1.20.4:remapJar', ':forge:forge_1.20:forge_1.20.4:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.4:shadowJar',
+  ':fabric:fabric_1.20:fabric_1.20.6:remapJar', ':forge:forge_1.20:forge_1.20.6:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.6:shadowJar'
 ].forEach { tasks.jar.mustRunAfter it }

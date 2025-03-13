@@ -1,7 +1,7 @@
 /**
  * Shade JOML up to 1.19.2 for API usage
  */
-apply from: rootProject.file('buildSrc\\shared.gradle')
+apply from: rootProject.file('shared.gradle')
 
 java.toolchain.languageVersion = JavaLanguageVersion.of 8
 
