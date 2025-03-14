@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements RegistryEntryAPI<B> {
@@ -27,6 +28,12 @@ public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements Registry
     }
     
     @IndirectCallers public abstract float getRainfall();
+    
+    @Override public ResourceLocationAPI<?> getRegistryName() {
+        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        return this.registryName;
+    }
+    
     @IndirectCallers public abstract ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world);
     
     @IndirectCallers

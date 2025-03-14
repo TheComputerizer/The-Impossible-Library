@@ -16,7 +16,7 @@ public class Resource1_19 implements ResourceAPI {
     }
 
     @Override public ResourceLocationAPI<?> getLocation(String modid, String path) {
-        return WrapperHelper.wrapResourceLocation(new ResourceLocation(modid, path));
+        return WrapperHelper.wrapResourceLocation(new ResourceLocation(modid,path));
     }
 
     @Override public InputStream stream(ResourceLocationAPI<?> location) {

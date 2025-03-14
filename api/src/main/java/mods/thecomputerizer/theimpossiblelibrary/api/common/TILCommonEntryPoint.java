@@ -7,9 +7,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.TILServerEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
@@ -55,7 +55,7 @@ public final class TILCommonEntryPoint extends DelegatingCommonEntryPoint {
 
     @Override public void onPreRegistration() {
         devTrace("onPreRegistration");
-        EventHelper.initTILListeners(false,DEV);
+        EventHelper.initTILListeners(false,true,false,DEV);
         super.onPreRegistration();
     }
 
@@ -109,11 +109,18 @@ public final class TILCommonEntryPoint extends DelegatingCommonEntryPoint {
         super.onServerStopped();
     }
     
-    @Override public @Nullable ClientEntryPoint setDelegatedClientHandle() {
+    @Override public ClientEntryPoint setDelegatedClientHandle() {
+        devTrace("setDelegatedClientHandle");
         return TILClientEntryPoint.getInstance();
     }
     
-    public CommonEntryPoint setDelegatedCustomHandle() {
+    @Override public CommonEntryPoint setDelegatedCustomHandle() {
+        devTrace("setDelegatedCustomHandle");
         return CoreAPI.getInstance().getCommonVersionHandler();
+    }
+    
+    @Override public CommonEntryPoint setDelegatedServerHandle() {
+        devTrace("setDelegatedServerHandle");
+        return TILServerEntryPoint.getInstance();
     }
 }

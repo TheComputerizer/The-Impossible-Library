@@ -60,6 +60,12 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     @IndirectCallers public BlockPosAPI<?> getPosRounded() {
         return PosHelper.getPos(Math.round(x()),Math.round(y()),Math.round(z()));
     }
+    
+    @Override public ResourceLocationAPI<?> getRegistryName() {
+        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        return this.registryName;
+    }
+    
     public abstract EntityAPI<?,?> getRootVehicle();
     public abstract @Nullable EntityAPI<?,?> getVehicle();
     public abstract WorldAPI<?> getWorld();

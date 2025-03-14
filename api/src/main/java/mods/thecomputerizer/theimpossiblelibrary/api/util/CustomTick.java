@@ -18,7 +18,7 @@ public class CustomTick {
     private static final List<CustomTick> registeredTickEvents = new ArrayList<>();
 
     private static void addCustomTick(final CustomTick ticker) {
-        CommonEventsAPI api = EventHelper.getEventsAPI(false);
+        CommonEventsAPI api = EventHelper.getEventsAPI(false,false);
         if(Objects.isNull(api) || isRegistered(ticker)) return;
         Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
             try {
