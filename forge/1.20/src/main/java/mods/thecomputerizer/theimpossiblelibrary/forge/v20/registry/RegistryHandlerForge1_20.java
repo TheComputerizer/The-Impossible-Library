@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.registry.tab.CreativeTabBuilderForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.Registry1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryHandler1_20;
 import net.minecraft.resources.ResourceLocation;
@@ -39,5 +41,9 @@ public class RegistryHandlerForge1_20 extends RegistryHandler1_20 {
         RegistryForge1_20<V> registry = new RegistryForge1_20<>(forgeRegistry,key,(Class<V>)type);
         registries.add(registry);
         return registry;
+    }
+    
+    @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
+        return new CreativeTabBuilderForge1_20();
     }
 }

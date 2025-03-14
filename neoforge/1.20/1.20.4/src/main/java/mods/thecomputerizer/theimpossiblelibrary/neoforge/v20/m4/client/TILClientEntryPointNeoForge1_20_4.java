@@ -21,12 +21,16 @@ public class TILClientEntryPointNeoForge1_20_4 extends TILClientEntryPoint1_20 {
         INSTANCE = this;
     }
     
-    @Override public void onClientSetup() {
-        ModContainer container = ModLoadingContext.get().getActiveContainer();
-        if(Objects.nonNull(container)) {
-            IEventBus bus = container.getEventBus();
-            if(Objects.nonNull(bus)) bus.addListener(NetworkNeoForge1_20_4::registerPayloadClient);
-            else TILRef.logError("Failed to register network payloads! The event bus doesnt exist?");
-        } else TILRef.logError("Failed to register network payloads! The mod container doesnt exist?");
+    @Override public void onCommonSetup() {
+        if(Objects.isNull(this.extraData)) {
+            TILRef.logWarn("(NeoForge 1.20.4) Extra data not found! Attempting to extract from context");
+            ModContainer container = ModLoadingContext.get().getActiveContainer();
+            if(Objects.nonNull(container)) this.extraData = container.getEventBus();
+            else TILRef.logError("Failed to set extra data! The mod container doesnt exist?");
+        }
+        if(this.extraData instanceof IEventBus)
+            ((IEventBus)this.extraData).addListener(NetworkNeoForge1_20_4::registerPayloadClient);
+        else TILRef.logError("Failed to register network payloads! "+
+                             "Extra data not set to instance of IEventBus {}",this.extraData);
     }
 }

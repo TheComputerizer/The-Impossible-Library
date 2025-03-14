@@ -48,7 +48,7 @@ public class Biome1_19_4 extends Biome1_19 {
     }
     
     @Override public float getRainfall() {
-        if(CoreAPI.isForge()) return this.wrapped.getModifiedClimateSettings().downfall();
+        if(FORGE_OR_NEOFORGE) return this.wrapped.getModifiedClimateSettings().downfall();
         ClimateSettings climate = Fields.getDirect(this.wrapped,CLIMATE_SETTINGS);
         return climate.downfall();
     }

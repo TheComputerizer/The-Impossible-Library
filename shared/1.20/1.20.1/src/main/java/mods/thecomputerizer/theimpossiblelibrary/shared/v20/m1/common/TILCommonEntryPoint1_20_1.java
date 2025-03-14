@@ -13,7 +13,7 @@ public class TILCommonEntryPoint1_20_1 extends TILCommonEntryPoint1_20 {
         return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPoint1_20_1();
     }
     
-    private TILCommonEntryPoint1_20_1() {
+    protected TILCommonEntryPoint1_20_1() {
         INSTANCE = this;
     }
     

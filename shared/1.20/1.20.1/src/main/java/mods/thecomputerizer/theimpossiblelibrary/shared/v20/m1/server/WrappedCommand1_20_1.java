@@ -110,7 +110,7 @@ public class WrappedCommand1_20_1 {
     
     public static void registerArgType() {
         CustomSuggesterInfo info = new CustomSuggesterInfo();
-        if(CoreAPI.isForge()) ArgumentTypeInfos.registerByClass(CustomSuggester.class,info);
+        if(CoreAPI.isForge() || CoreAPI.isNeoforge()) ArgumentTypeInfos.registerByClass(CustomSuggester.class,info);
         else {
             String field = DEV ? "BY_CLASS" : "field_10921";
             Map<Class<?>,Object> byClass = Fields.getStaticDirect(ArgumentTypeInfos.class,field);

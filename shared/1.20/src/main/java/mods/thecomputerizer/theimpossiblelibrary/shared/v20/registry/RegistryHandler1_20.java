@@ -11,7 +11,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ToolType;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.block.BlockBuilder1_20;
@@ -22,7 +21,6 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.item.ItemBl
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.item.ItemBuilder1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.item.ToolBuilder1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.sound.SoundBuilder1_20;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.tab.CreativeTabBuilder1_20;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -120,10 +118,6 @@ public abstract class RegistryHandler1_20 implements RegistryHandlerAPI {
     
     @Override public BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
         return new BlockEntityBuilder1_20(parent);
-    }
-    
-    @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
-        return new CreativeTabBuilder1_20();
     }
     
     @Override public DiscBuilderAPI makeDiscBuilder(@Nullable ItemBuilderAPI parent) {

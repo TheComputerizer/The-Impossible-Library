@@ -16,7 +16,7 @@ public class TILCommonEntryPoint1_19 extends DelegatingCommonEntryPoint {
         return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPoint1_19();
     }
     
-    private TILCommonEntryPoint1_19() {
+    protected TILCommonEntryPoint1_19() {
         INSTANCE = this;
     }
     

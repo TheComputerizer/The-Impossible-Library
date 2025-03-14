@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m4.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.registry.tab.CreativeTabBuilderFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.Registry1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryHandler1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryVanilla1_20;
@@ -37,8 +39,12 @@ public class RegistryHandlerFabric1_20_4 extends RegistryHandler1_20 {
     private <V> Registry1_20<V> getRegistry(
             Set<? super Registry1_20<?>> registries, Registry<V> vanillaRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryVanilla1_20<V> registry = new RegistryVanilla1_20<>(vanillaRegistry, key, (Class<V>)type);
+        RegistryVanilla1_20<V> registry = new RegistryVanilla1_20<>(vanillaRegistry,key,(Class<V>)type);
         registries.add(registry);
         return registry;
+    }
+    
+    @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
+        return new CreativeTabBuilderFabric1_20();
     }
 }

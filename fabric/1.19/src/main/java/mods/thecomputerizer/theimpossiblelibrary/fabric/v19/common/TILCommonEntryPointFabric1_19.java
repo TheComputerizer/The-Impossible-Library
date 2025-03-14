@@ -14,12 +14,13 @@ public class TILCommonEntryPointFabric1_19 extends TILCommonEntryPointFabric {
         return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPointFabric1_19();
     }
     
-    private TILCommonEntryPointFabric1_19() {
+    protected TILCommonEntryPointFabric1_19() {
         INSTANCE = this;
     }
     
     @Override public void onLoadComplete() {
         FabricHelper.registerServerHooks();
         WrappedCommand1_19.registerArgType();
+        super.onLoadComplete();
     }
 }

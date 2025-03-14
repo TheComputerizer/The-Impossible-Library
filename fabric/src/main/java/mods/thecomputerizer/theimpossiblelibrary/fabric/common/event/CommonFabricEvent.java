@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.EventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import net.fabricmc.fabric.api.event.Event;
 
 import java.lang.reflect.InvocationHandler;
@@ -23,11 +24,13 @@ public interface CommonFabricEvent {
                                                              ((CommonFabricEvent)wrapper).createEventProxy(type)));
     }
     
+    @IndirectCallers
     default void cancel() {
         EventWrapper<?> wrapper = (EventWrapper<?>)this;
         if(wrapper.isCancelable()) wrapper.setCanceled(true);
     }
     
+    @SuppressWarnings("SuspiciousInvocationHandlerImplementation")
     default InvocationHandler createEventProxy(EventType<?> type) {
         return ((proxy,method,args) -> {
             if(method.getReturnType()==Boolean.class) return (Boolean)registerReturn(type,args);

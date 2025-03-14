@@ -33,6 +33,7 @@ public abstract class MinecraftServer1_20 extends MinecraftServerAPI<MinecraftSe
             server.getCommands().performPrefixedCommand(server.createCommandSourceStack(),command);
     }
     
+    @SuppressWarnings("SameParameterValue")
     protected @Nullable Field getField(Object parent, String name, Class<?> descType) {
         Class<?> parentClass = parent instanceof MinecraftServer ? MinecraftServer.class : parent.getClass();
         CoreAPI core = CoreAPI.getInstance();
@@ -74,7 +75,7 @@ public abstract class MinecraftServer1_20 extends MinecraftServerAPI<MinecraftSe
     }
     
     protected @Nullable Path getLevelPath(Object save) {
-        String fieldName = DEV ? "levelDirectory" : (CoreAPI.isForge() ? "f_230867_" : "field_23768");
+        String fieldName = DEV ? "levelDirectory" : (CoreAPI.isForge() || CoreAPI.isNeoforge() ? "f_230867_" : "field_23768");
         ClassHelper.checkBurningWaveInit();
         LevelDirectory dir = Fields.getDirect(save,fieldName);
         return dir.path();

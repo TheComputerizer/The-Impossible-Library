@@ -39,7 +39,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     }
     
     static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : "field_26393";
-    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (CoreAPI.isForge() ? "m_47505_" : "method_21740");
+    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (FORGE_OR_NEOFORGE ? "m_47505_" : "method_21740");
 
     protected RegistryAccess access;
     
@@ -56,7 +56,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     }
     
     @Override public float getRainfall() {
-        if(CoreAPI.isForge()) return this.wrapped.getModifiedClimateSettings().downfall();
+        if(FORGE_OR_NEOFORGE) return this.wrapped.getModifiedClimateSettings().downfall();
         ClimateSettings climate = Fields.getDirect(this.wrapped,CLIMATE_SETTINGS);
         return climate.downfall();
     }

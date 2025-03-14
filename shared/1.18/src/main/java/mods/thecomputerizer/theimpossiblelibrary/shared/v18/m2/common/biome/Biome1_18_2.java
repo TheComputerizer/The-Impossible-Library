@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.biome;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -35,7 +34,7 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
         ClassHelper.checkBurningWaveInit();
     }
     
-    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (CoreAPI.isForge() ? "m_47505_" : "method_21740");
+    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (FORGE ? "m_47505_" : "method_21740");
     
     protected RegistryAccess access;
     

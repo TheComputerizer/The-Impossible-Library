@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.biome;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -33,7 +32,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
         ClassHelper.checkBurningWaveInit();
     }
     
-    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (CoreAPI.isForge() ? "m_47505_" : "method_21740");
+    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (FORGE_OR_NEOFORGE ? "m_47505_" : "method_21740");
 
     protected RegistryAccess access;
     

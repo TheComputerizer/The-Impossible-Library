@@ -12,7 +12,7 @@ public class CreativeTab1_19 extends CreativeTabAPI<CreativeModeTab> {
         super((CreativeModeTab)wrapped);
     }
     
-    @Override public void addStack(ItemStackAPI<?> stack) {} //Not valid for 1.16.5-1.19.2
+    @Override public void addStack(ItemStackAPI<?> stack) {} //Not valid for 1.16.5+
     
     @Override public ItemStackAPI<?> getIcon() {
         return WrapperHelper.wrapItemStack(this.wrapped.getIconItem());

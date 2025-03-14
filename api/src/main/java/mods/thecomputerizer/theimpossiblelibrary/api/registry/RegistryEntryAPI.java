@@ -13,6 +13,7 @@ import java.util.StringJoiner;
 public interface RegistryEntryAPI<V> extends Wrapped<V> {
     
     boolean FORGE = CoreAPI.isForge();
+    boolean FORGE_OR_NEOFORGE = FORGE || CoreAPI.isNeoforge();
     
     @IndirectCallers default String getName() {
         ResourceLocationAPI<?> registryName = getRegistryName();

@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.TILCoreForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.client.ClientForge1_20_1;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.common.CommonForge1_20_1;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m1.common.TILCommonEntryPoint1_20_1;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.common.TILCommonEntryPointForge1_20_1;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
 
@@ -18,7 +18,7 @@ public class TILCoreForge1_20_1 extends TILCoreForge1_20 {
     }
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
-        return TILCommonEntryPoint1_20_1.getInstance();
+        return TILCommonEntryPointForge1_20_1.getInstance();
     }
     
     @Override public void initAPI() {

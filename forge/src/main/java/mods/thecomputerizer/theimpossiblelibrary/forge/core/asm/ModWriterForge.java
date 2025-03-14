@@ -22,6 +22,7 @@ public abstract class ModWriterForge extends ModWriter {
     protected static final Type DIST = TypeHelper.forge("api/distmarker/Dist");
     protected static final Type EVENT_SUBSCRIBER = TypeHelper.fml("common/Mod$EventBusSubscriber");
     protected static final Type EVENT_SUBSCRIBER_BUS = TypeHelper.fml("common/Mod$EventBusSubscriber$Bus");
+    protected static final Type JAVA_LOADING_CONTEXT = TypeHelper.fml("javafmlmod/FMLJavaModLoadingContext");
     protected static final Type MOD_ANNOTATION = TypeHelper.fml("common/Mod");
     protected static final Type SUBSCRIBE_EVENT = TypeHelper.forge("eventbus/api/SubscribeEvent");
     
