@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
@@ -13,7 +14,11 @@ import net.minecraft.world.item.RecordItem;
 
 import javax.annotation.Nullable;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.BiFunction;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
+import static net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP;
 
 public class DiscBuilder1_19 extends DiscBuilderAPI {
     
@@ -22,12 +27,24 @@ public class DiscBuilder1_19 extends DiscBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        RecordItem item = new TILDiscItem1_19(this.sound.unwrap(),buildProperties(),this.lengthInSeconds);
+        mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties properties = buildProperties();
+        RecordItem item = new TILDiscItem1_19(getSound(),properties,this.lengthInSeconds);
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
             ItemProperties.register(item,location,(stack,world,entity,seed) ->
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
-        return WrapperHelper.wrapItem(item);
+        ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
+        wrapped.setRegistryName(this.registryName);
+        if(VERSION==V19_4) {
+            CreativeTabAPI<?> tab = properties.getCreativeTab();
+            if(Objects.nonNull(tab)) tab.addStack(wrapped.defaultStack());
+        }
+        return wrapped;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override protected <S> S defaultSound() {
+        return (S)EXPERIENCE_ORB_PICKUP;
     }
 }

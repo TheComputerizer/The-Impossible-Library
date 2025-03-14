@@ -1,16 +1,18 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.DiscBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 
 import javax.annotation.Nullable;
 import java.util.Map.Entry;
@@ -26,8 +28,10 @@ public class DiscBuilder1_12_2 extends DiscBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        SoundEvent sound = Objects.nonNull(this.sound) ? this.sound.unwrap() : ENTITY_EXPERIENCE_ORB_PICKUP; //TODO Replace with empty sound event
-        Item item = new TILDiscItem1_12_2(this.nameSupplier,sound,buildProperties());
+        ItemProperties properties = buildProperties();
+        Item item = new TILDiscItem1_12_2(this.nameSupplier,getSound(),properties);
+        CreativeTabAPI<?> tab = properties.getCreativeTab();
+        if(Objects.nonNull(tab)) tab.addStack(WrapperHelper.wrapItemStack(new ItemStack(item)));
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
             IItemPropertyGetter getter = (stack,world,entity) ->
@@ -35,5 +39,10 @@ public class DiscBuilder1_12_2 extends DiscBuilderAPI {
             item.addPropertyOverride(location,getter);
         }
         return WrapperHelper.wrapItem(item);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override protected <S> S defaultSound() {
+        return (S)ENTITY_EXPERIENCE_ORB_PICKUP;
     }
 }

@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.tag.CompoundTag1_19;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -58,7 +57,7 @@ public class BlockEntity1_19 extends BlockEntityAPI<BlockEntity,BlockEntityType<
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
-        //TODO Verify this doesn't need to be here
+        setLocalRegistryName(registryName); //There is no built-in registryName field for forge in 1.19.+
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {

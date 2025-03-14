@@ -122,7 +122,7 @@ public abstract class RegistryHandler1_20 implements RegistryHandlerAPI {
         return new BlockEntityBuilder1_20(parent);
     }
     
-    @Override public CreativeTabBuilderAPI makeCreativeTabBuilder() {
+    @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
         return new CreativeTabBuilder1_20();
     }
     

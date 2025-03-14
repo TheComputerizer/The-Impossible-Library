@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IWorld;
@@ -30,13 +31,18 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.access))
-            this.access = (DynamicRegistries)TILRef.getCommonHandles().builtInRegistryAccess();
-        return getRegistryName(this.access);
+        if(Objects.isNull(this.registryName)) {
+            if(Objects.isNull(this.access))
+                this.access = (DynamicRegistries)TILRef.getCommonHandles().builtInRegistryAccess();
+            this.registryName = getRegistryName(this.access);
+        }
+        return this.registryName;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        return getRegistryName(((IWorld)world.unwrap()).registryAccess());
+        if(Objects.isNull(this.registryName))
+            this.registryName = getRegistryName(((IWorld)world.unwrap()).registryAccess());
+        return this.registryName;
     }
     
     private ResourceLocationAPI<?> getRegistryName(DynamicRegistries access) {
@@ -46,5 +52,10 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         return this.wrapped.getTemperature(pos.unwrap());
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName);
+        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
 }

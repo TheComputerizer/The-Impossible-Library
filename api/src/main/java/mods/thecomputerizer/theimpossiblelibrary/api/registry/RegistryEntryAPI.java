@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
@@ -10,6 +11,8 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 public interface RegistryEntryAPI<V> extends Wrapped<V> {
+    
+    boolean FORGE = CoreAPI.isForge();
     
     @IndirectCallers default String getName() {
         ResourceLocationAPI<?> registryName = getRegistryName();
@@ -40,4 +43,6 @@ public interface RegistryEntryAPI<V> extends Wrapped<V> {
     default ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
         return getRegistryName();
     }
+    
+    void setRegistryName(ResourceLocationAPI<?> registryName);
 }

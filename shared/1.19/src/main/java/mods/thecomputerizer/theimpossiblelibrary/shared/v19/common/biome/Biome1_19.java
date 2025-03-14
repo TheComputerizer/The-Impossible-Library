@@ -54,12 +54,17 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.access)) this.access = RegistryAccess.builtinCopy();
-        return getRegistryName(this.access);
+        if(Objects.isNull(this.registryName)) {
+            if(Objects.isNull(this.access)) this.access = RegistryAccess.builtinCopy();
+            this.registryName = getRegistryName(this.access);
+        }
+        return this.registryName;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        return getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+        if(Objects.isNull(this.registryName))
+            this.registryName = getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+        return this.registryName;
     }
     
     protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
@@ -88,5 +93,9 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);
             return this.wrapped.getBaseTemperature();
         }
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName); //There is no built-in registryName field for forge in 1.19.+
     }
 }

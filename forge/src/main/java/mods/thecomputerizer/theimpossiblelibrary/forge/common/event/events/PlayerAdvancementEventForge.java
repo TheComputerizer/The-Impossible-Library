@@ -1,35 +1,16 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerAdvancementEventWrapper;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_ADVANCEMENT;
-
-public class PlayerAdvancementEventForge extends PlayerAdvancementEventWrapper<AdvancementEvent> {
-    
-    @SubscribeEvent
-    public static void onEvent(AdvancementEvent event) {
-        PLAYER_ADVANCEMENT.invoke(event);
-    }
+public abstract class PlayerAdvancementEventForge<E extends Event> extends PlayerAdvancementEventWrapper<E> {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(AdvancementEvent event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
-    }
-    
-    @Override protected EventFieldWrapper<AdvancementEvent,AdvancementAPI<?>> wrapAdvancementField() {
-        return wrapAdvancementGetter(AdvancementEvent::getAdvancement);
-    }
-
-    @Override protected EventFieldWrapper<AdvancementEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(AdvancementEvent::getEntity);
     }
 }

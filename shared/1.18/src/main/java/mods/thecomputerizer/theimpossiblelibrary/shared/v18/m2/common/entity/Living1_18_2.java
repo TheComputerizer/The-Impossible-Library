@@ -2,12 +2,14 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.entity;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -95,6 +97,11 @@ public class Living1_18_2 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public boolean isOwnedBy(EntityAPI<?,?> owner) {
         return this.entity instanceof TamableAnimal && ((TamableAnimal)this.entity).getOwner()==this.entity;
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName);
+        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
     
     @Override public void setPosition(double x, double y, double z) {

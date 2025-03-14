@@ -113,7 +113,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             insInvokeStatic(REF,"getClientHandles",TypeHelper.methodDesc(SharedHandlesClient.class)); // get client handles
             insVar(ALOAD,1); // load PoseStack or GuiGraphics parameter depending on the version
             for(String name : DEBUG_LIST_FIELDS) insThis().insField(GETFIELD,owner,name,listDesc); // load lists
-            insInvokeInterface(SHARED_HANDLES_CLIENT,"renderDebugText",renderDesc); // call renderDebugText
+            insInvokeVirtual(SHARED_HANDLES_CLIENT,"renderDebugText",renderDesc); // call renderDebugText
         }
         return actualDebug ? endList() : insLabel().endList();
     }

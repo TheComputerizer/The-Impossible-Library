@@ -62,18 +62,23 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.access)) {
-            if(CoreAPI.isClient()) {
-                ClientLevel level = Minecraft.getInstance().level;
-                this.access = Objects.nonNull(level) ? level.registryAccess() :
-                        RegistryAccess.fromRegistryOfRegistries(REGISTRY);
-            } else this.access = RegistryAccess.fromRegistryOfRegistries(REGISTRY);
+        if(Objects.isNull(this.registryName)) {
+            if(Objects.isNull(this.access)) {
+                if(CoreAPI.isClient()) {
+                    ClientLevel level = Minecraft.getInstance().level;
+                    this.access = Objects.nonNull(level) ? level.registryAccess() :
+                            RegistryAccess.fromRegistryOfRegistries(REGISTRY);
+                } else this.access = RegistryAccess.fromRegistryOfRegistries(REGISTRY);
+            }
+            this.registryName = getRegistryName(this.access);
         }
-        return getRegistryName(this.access);
+        return this.registryName;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        return getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+        if(Objects.isNull(this.registryName))
+            this.registryName = getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+        return this.registryName;
     }
     
     protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
@@ -102,5 +107,9 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);
             return this.wrapped.getBaseTemperature();
         }
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName); //There is no built-in registryName field for forge in 1.19.+
     }
 }

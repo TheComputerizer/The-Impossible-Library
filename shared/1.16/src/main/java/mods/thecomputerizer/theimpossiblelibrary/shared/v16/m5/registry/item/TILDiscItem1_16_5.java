@@ -1,17 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -20,16 +20,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 
 @MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILDiscItem1_16_5 extends MusicDiscItem implements WithItemProperties {
     
+    static Properties tab(Properties iProperties, ItemProperties properties) {
+        CreativeTabAPI<?> tab = properties.getCreativeTab();
+        return Objects.nonNull(tab) ? iProperties.tab(tab.unwrap()) : iProperties;
+    }
+    
     protected final ItemProperties properties;
     
     public TILDiscItem1_16_5(SoundEvent sound, ItemProperties properties) {
-        super(0,() -> sound,new Properties().stacksTo(properties.getStackSize()));
+        super(0,() -> sound,tab(new Properties().stacksTo(properties.getStackSize()),properties));
         this.properties = properties;
-        setRegistryName((ResourceLocation)properties.getRegistryName().unwrap());
     }
     
     @Override public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> components, ITooltipFlag flag) {

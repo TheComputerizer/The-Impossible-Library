@@ -13,6 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
@@ -55,12 +56,17 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.access)) this.access = RegistryAccess.builtinCopy();
-        return getRegistryName(this.access);
+        if(Objects.isNull(this.registryName)) {
+            if(Objects.isNull(this.access)) this.access = RegistryAccess.builtinCopy();
+            this.registryName = getRegistryName(this.access);
+        }
+        return this.registryName;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
-        return getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+        if(Objects.isNull(this.registryName))
+            this.registryName = getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
+        return this.registryName;
     }
     
     private ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
@@ -86,5 +92,10 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);
             return this.wrapped.getBaseTemperature();
         }
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName);
+        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
 }

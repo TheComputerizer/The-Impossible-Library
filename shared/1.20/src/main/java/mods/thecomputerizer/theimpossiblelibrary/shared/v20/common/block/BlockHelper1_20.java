@@ -13,12 +13,68 @@ import net.minecraft.world.level.material.MapColor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Objects;
 
 import static net.minecraft.world.level.material.MapColor.GRASS;
 
 @SuppressWarnings("unused")
 public class BlockHelper1_20 implements BlockHelperAPI {
+    
+    static final Map<String,MapColor> COLOR_BY_NAME = buildColorMap();
+    
+    static Map<String,MapColor> buildColorMap() {
+        return Map.ofEntries(Map.entry("AIR",MapColor.NONE),
+                Map.entry("BLACK",MapColor.COLOR_BLACK),
+                Map.entry("BLACK_TERRACOTTA",MapColor.TERRACOTTA_BLACK),
+                Map.entry("BLUE",MapColor.COLOR_BLUE),
+                Map.entry("BLUE_TERRACOTTA",MapColor.TERRACOTTA_BLUE),
+                Map.entry("BROWN",MapColor.COLOR_BROWN),
+                Map.entry("BROWN_TERRACOTTA",MapColor.TERRACOTTA_BROWN),
+                Map.entry("CLAY",MapColor.CLAY),
+                Map.entry("CYAN", MapColor.COLOR_CYAN),
+                Map.entry("CYAN_TERRACOTTA",MapColor.TERRACOTTA_CYAN),
+                Map.entry("DIAMOND",MapColor.DIAMOND),
+                Map.entry("DIRT", MapColor.DIRT),
+                Map.entry("EMERALD",MapColor.EMERALD),
+                Map.entry("FOLIAGE", MapColor.PLANT),
+                Map.entry("GOLD",MapColor.GOLD),
+                Map.entry("GRASS", MapColor.GRASS),
+                Map.entry("GRAY",MapColor.COLOR_GRAY),
+                Map.entry("GRAY_TERRACOTTA",MapColor.TERRACOTTA_GRAY),
+                Map.entry("GREEN",MapColor.COLOR_GREEN),
+                Map.entry("GREEN_TERRACOTTA",MapColor.TERRACOTTA_GREEN),
+                Map.entry("ICE",MapColor.ICE),
+                Map.entry("LAPIS", MapColor.LAPIS),
+                Map.entry("LIGHT_BLUE",MapColor.COLOR_LIGHT_BLUE),
+                Map.entry("LIGHT_BLUE_TERRACOTTA",MapColor.TERRACOTTA_LIGHT_BLUE),
+                Map.entry("LIGHT_GRAY",MapColor.COLOR_LIGHT_GRAY),
+                Map.entry("LIGHT_GRAY_TERRACOTTA",MapColor.TERRACOTTA_LIGHT_GRAY),
+                Map.entry("LIME",MapColor.COLOR_LIGHT_GREEN),
+                Map.entry("LIME_TERRACOTTA",MapColor.TERRACOTTA_LIGHT_GREEN),
+                Map.entry("MAGENTA",MapColor.COLOR_MAGENTA),
+                Map.entry("MAGENTA_TERRACOTTA",MapColor.TERRACOTTA_MAGENTA),
+                Map.entry("METAL",MapColor.METAL),
+                Map.entry("NETHER", MapColor.NETHER),
+                Map.entry("ORANGE",MapColor.COLOR_ORANGE),
+                Map.entry("ORANGE_TERRACOTTA",MapColor.TERRACOTTA_ORANGE),
+                Map.entry("PINK",MapColor.COLOR_PINK),
+                Map.entry("PINK_TERRACOTTA",MapColor.TERRACOTTA_PINK),
+                Map.entry("PURPLE",MapColor.COLOR_PURPLE),
+                Map.entry("PURPLE_TERRACOTTA",MapColor.TERRACOTTA_PURPLE),
+                Map.entry("QUARTZ",MapColor.QUARTZ),
+                Map.entry("RED",MapColor.COLOR_RED),
+                Map.entry("RED_TERRACOTTA",MapColor.TERRACOTTA_RED),
+                Map.entry("SAND",MapColor.SAND),
+                Map.entry("SNOW",MapColor.SNOW),
+                Map.entry("STONE",MapColor.STONE),
+                Map.entry("WATER",MapColor.WATER),
+                Map.entry("WHITE_TERRACOTTA",MapColor.TERRACOTTA_WHITE),
+                Map.entry("WOOL",MapColor.WOOL),
+                Map.entry("WOOD",MapColor.WOOD),
+                Map.entry("YELLOW",MapColor.COLOR_YELLOW),
+                Map.entry("YELLOW_TERRACOTTA",MapColor.TERRACOTTA_YELLOW));
+    }
     
     @SuppressWarnings("unchecked") @Override public <V extends Comparable<V>> BlockPropertyAPI<?,V> createProperty(String name, V defVal) {
         if(defVal instanceof Boolean) return new BlockProperty1_20<>((Property<V>)BooleanProperty.create(name));

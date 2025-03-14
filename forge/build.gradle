@@ -1,7 +1,5 @@
 /**
- * Common builds and sources relevant to all Forge modules
- *
- * Based in 1.16.5
+ * Common builds and sources relevant to all Forge modules. Based in 1.16.5
  */
 //file:noinspection GroovyAssignabilityCheck
 buildscript {
@@ -88,4 +86,4 @@ artifacts {
     dev jar
 }
 
-tasks.jar.dependsOn ':api:build'
+tasks.jar.mustRunAfter ':api:jar'

@@ -1,13 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
@@ -21,17 +21,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILCustomTool1_18_2 extends TieredItem implements WithItemProperties {
     
+    static Properties tab(Properties iProperties, ItemProperties properties) {
+        CreativeTabAPI<?> tab = properties.getCreativeTab();
+        return Objects.nonNull(tab) ? iProperties.tab(tab.unwrap()) : iProperties;
+    }
+    
     private final ItemProperties properties;
     
     public TILCustomTool1_18_2(Tier tier, float damage, float speed, Set<Block> blocks, ItemProperties properties) {
-        super(tier,new Properties().stacksTo(properties.getStackSize()));
+        super(tier,tab(new Properties().stacksTo(properties.getStackSize()),properties));
         this.properties = properties;
-        setRegistryName((ResourceLocation)properties.getRegistryName().unwrap());
     }
     
     @Override public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> components, TooltipFlag flag) {

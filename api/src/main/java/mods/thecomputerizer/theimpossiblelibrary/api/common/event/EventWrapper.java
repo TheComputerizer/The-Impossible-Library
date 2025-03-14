@@ -280,7 +280,7 @@ public abstract class EventWrapper<E> {
             if(Objects.nonNull(this.connector)) {
                 if(this.invokers.isEmpty()) EventHelper.registerWrapperImpl(this.connector);
                 this.invokers.add(invoker);
-            } else TILRef.logError("Cannot add invoker to unconnected event type!");
+            } else TILRef.logError("Cannot add invoker to unconnected event type ({})",getClass().getName());
         }
 
         private boolean hasInvokers() {

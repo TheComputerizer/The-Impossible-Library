@@ -27,6 +27,8 @@ public class ItemBuilder1_18_2 extends ItemBuilderAPI {
             ItemProperties.register(item,location,(stack,world,entity,seed) ->
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
-        return WrapperHelper.wrapItem(item);
+        ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
+        wrapped.setRegistryName(this.registryName);
+        return wrapped;
     }
 }

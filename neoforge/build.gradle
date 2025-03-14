@@ -53,16 +53,6 @@ dependencies {
     api base
 }
 
-processResources {
-    from(base.processResources.outputs) {
-        exclude 'fabric.mod.json'
-    }
-}
-
-processTestResources {
-    from base.processTestResources.outputs
-}
-
 jar {
     from(base.jar.archiveFile.collect { zipTree it })
     manifest {

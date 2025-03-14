@@ -129,6 +129,7 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'item.HoeItem': 'world.item.HoeItem',
                    'item.IItemPropertyGetter': 'client.renderer.item.ItemPropertyFunction',
                    'item.IItemTier': 'world.item.Tier',
+                   'item.ItemGroup': 'world.item.CreativeModeTab',
                    'item.ItemStack': 'world.item.ItemStack',
                    'item.ItemTier': 'world.item.Tiers',
                    'item.ItemUseContext': 'world.item.context.UseOnContext',

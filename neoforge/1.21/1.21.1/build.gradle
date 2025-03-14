@@ -95,6 +95,14 @@ dependencies {
     runtimeOnly "$jei_artifact:$jei_neoforge_1_21_1"
 }
 
+processResources {
+    from neoforge_specific.processResources.outputs
+}
+
+processTestResources {
+    from neoforge_specific.processTestResources.outputs
+}
+
 jar {
     manifest {
         attributes([

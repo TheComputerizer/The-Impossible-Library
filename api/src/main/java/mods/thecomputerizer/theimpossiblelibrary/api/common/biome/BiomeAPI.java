@@ -4,14 +4,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 import java.util.Set;
 
 public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements RegistryEntryAPI<B> {
-
+    
+    protected ResourceLocationAPI<?> registryName;
+    
     protected BiomeAPI(B biome) {
         super(biome);
     }
@@ -33,4 +35,8 @@ public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements Registry
     }
     
     @IndirectCallers public abstract float getTemperatureAt(BlockPosAPI<?> pos);
+    
+    protected void setLocalRegistryName(ResourceLocationAPI<?> registryName) {
+        this.registryName = registryName;
+    }
 }

@@ -30,7 +30,7 @@ public interface RegistryHandlerAPI {
     RegistryAPI<?> getStructureRegistry();
     BlockBuilderAPI makeBlockBuilder(@Nullable BlockBuilderAPI parent);
     BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent);
-    CreativeTabBuilderAPI makeCreativeTabBuilder();
+    CreativeTabBuilderAPI<?> makeCreativeTabBuilder();
     DiscBuilderAPI makeDiscBuilder(@Nullable ItemBuilderAPI parent);
     EntityBuilderAPI makeEntityBuilder(@Nullable EntityBuilderAPI parent);
     ItemBlockBuilderAPI makeItemBlockBuilder(@Nullable ItemBuilderAPI parent);

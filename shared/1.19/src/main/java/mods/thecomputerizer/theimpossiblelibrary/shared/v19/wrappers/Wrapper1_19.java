@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -47,6 +48,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.item.Item1_19
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.item.ItemStack1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.sound.SoundEvent1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.structure.Structure1_19;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.tab.CreativeTab1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.resource.ResourceLocation1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.CommandSender1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.entity.ServerPlayer1_19;
@@ -169,6 +171,10 @@ public class Wrapper1_19 implements WrapperAPI {
     
     @Override public <S> StructureAPI<S> wrapStructure(@Nullable Object structure) {
         return getAs(structure,Structure1_19::new);
+    }
+    
+    @Override public <T> CreativeTabAPI<T> wrapTab(@Nullable Object tab) {
+        return getAs(tab,CreativeTab1_19::new);
     }
     
     @Override @Nullable public <W> WorldAPI<W> wrapWorld(@org.jetbrains.annotations.Nullable Object world) {

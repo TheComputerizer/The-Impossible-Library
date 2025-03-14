@@ -3,6 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.registry.item;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
@@ -14,6 +16,8 @@ import java.util.function.Supplier;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 
 public interface WithItemProperties {
+    
+    GameVersion VERSION = CoreAPI.getInstance().getVersion();
     
     @Nonnull ItemProperties getProperties();
     

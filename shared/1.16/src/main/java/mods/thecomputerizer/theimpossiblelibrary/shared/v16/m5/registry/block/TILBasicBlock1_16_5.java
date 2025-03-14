@@ -1,9 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block;
 
 import mcp.MethodsReturnNonnullByDefault;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -13,7 +13,6 @@ import net.minecraft.state.Property;
 import net.minecraft.state.StateContainer.Builder;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
@@ -44,7 +43,6 @@ public class TILBasicBlock1_16_5 extends Block {
         if(properties.hasStateTransformer())
             registerDefaultState(properties.getDefaultState(WrapperHelper.wrapState(this.stateDefinition.any())).unwrap());
         this.properties = properties;
-        setRegistryName((ResourceLocation)properties.getRegistryName().unwrap());
     }
     
     @Override protected void createBlockStateDefinition(Builder<Block,BlockState> builder) {

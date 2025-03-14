@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
@@ -47,6 +48,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.sound.SoundEvent1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure.Structure1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.tab.CreativeTab1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.ResourceLocation1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.CommandSender1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server.entity.ServerPlayer1_12_2;
@@ -169,6 +171,10 @@ public class Wrapper1_12_2 implements WrapperAPI {
     
     @Override public <S> StructureAPI<S> wrapStructure(@Nullable Object structure) {
         return getAs(structure,Structure1_12_2::new);
+    }
+    
+    @Override public <T> CreativeTabAPI<T> wrapTab(@Nullable Object tab) {
+        return getAs(tab,CreativeTab1_12_2::new);
     }
     
     @Override public @Nullable <W> WorldAPI<W> wrapWorld(@Nullable Object world) {

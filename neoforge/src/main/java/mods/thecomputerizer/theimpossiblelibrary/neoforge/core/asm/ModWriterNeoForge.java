@@ -23,7 +23,7 @@ public abstract class ModWriterNeoForge extends ModWriter {
     protected static final Type EVENT_SUBSCRIBER = TypeHelper.neofml("common/Mod$EventBusSubscriber");
     protected static final Type EVENT_SUBSCRIBER_BUS = TypeHelper.neofml("common/Mod$EventBusSubscriber$Bus");
     protected static final Type MOD_ANNOTATION = TypeHelper.neofml("common/Mod");
-    protected static final Type SUBSCRIBE_EVENT = TypeHelper.neoforged("eventbus/api/SubscribeEvent");
+    protected static final Type SUBSCRIBE_EVENT = TypeHelper.neoforged("bus/api/SubscribeEvent");
     
     protected ModWriterNeoForge(CoreAPI core, MultiVersionModInfo info, int javaVersion) {
         super(core,info,javaVersion);

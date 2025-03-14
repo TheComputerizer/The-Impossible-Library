@@ -35,7 +35,9 @@ public class ToolBuilder1_16_5 extends ToolBuilderAPI {
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world));
             ItemModelsProperties.register(item,location,getter);
         }
-        return WrapperHelper.wrapItem(item);
+        ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
+        wrapped.setRegistryName(this.registryName);
+        return wrapped;
     }
     
     private Item getItem(ItemProperties properties, ItemTier tier) {

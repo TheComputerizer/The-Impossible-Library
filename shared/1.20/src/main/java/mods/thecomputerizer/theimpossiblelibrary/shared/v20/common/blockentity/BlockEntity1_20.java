@@ -57,7 +57,7 @@ public class BlockEntity1_20 extends BlockEntityAPI<BlockEntity,BlockEntityType<
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
-        //TODO Verify this doesn't need to be here
+        setLocalRegistryName(registryName); //There is no built-in registryName field for forge in 1.19.+
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {

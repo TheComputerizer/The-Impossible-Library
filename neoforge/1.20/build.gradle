@@ -57,6 +57,14 @@ dependencies {
     compileOnlyApi project(path: ':shared:shared_1.20', configuration: 'dev')
 }
 
+processResources {
+    from neoforge.processResources.outputs
+}
+
+processTestResources {
+    from neoforge.processTestResources.outputs
+}
+
 jar {
     from(neoforge.jar.archiveFile.collect { zipTree(it) })
     manifest {

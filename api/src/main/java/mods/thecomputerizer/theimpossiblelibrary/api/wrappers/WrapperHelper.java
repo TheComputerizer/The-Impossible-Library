@@ -23,6 +23,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -144,6 +145,10 @@ public class WrapperHelper {
     @IndirectCallers
     public static <S> StructureAPI<S> wrapStructure(@Nullable Object structure) {
         return getAPI().wrapStructure(structure);
+    }
+    
+    public static <T> CreativeTabAPI<T> wrapTab(@Nullable Object tab) {
+        return getAPI().wrapTab(tab);
     }
 
     public static <W> WorldAPI<W> wrapWorld(@Nullable Object world) {

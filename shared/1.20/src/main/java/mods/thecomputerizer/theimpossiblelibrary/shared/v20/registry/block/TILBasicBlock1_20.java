@@ -1,8 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.block;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -23,7 +24,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionRe
 import static net.minecraft.world.InteractionResult.PASS;
 
 @SuppressWarnings("deprecation")
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault @Getter
 public class TILBasicBlock1_20 extends Block {
     
     public static Collection<Property<?>> stateProperties = Collections.emptyList();

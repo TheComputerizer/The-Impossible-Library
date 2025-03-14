@@ -15,6 +15,8 @@ import javax.annotation.Nullable;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
+import static net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP;
+
 public class DiscBuilder1_18_2 extends DiscBuilderAPI {
     
     public DiscBuilder1_18_2(@Nullable ItemBuilderAPI parent) {
@@ -22,12 +24,19 @@ public class DiscBuilder1_18_2 extends DiscBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        RecordItem item = new TILDiscItem1_18_2(this.sound.unwrap(),buildProperties());
+        RecordItem item = new TILDiscItem1_18_2(getSound(),buildProperties());
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
             ItemProperties.register(item,location,(stack,world,entity,seed) ->
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
-        return WrapperHelper.wrapItem(item);
+        ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
+        wrapped.setRegistryName(this.registryName);
+        return wrapped;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override protected <S> S defaultSound() {
+        return (S)EXPERIENCE_ORB_PICKUP;
     }
 }

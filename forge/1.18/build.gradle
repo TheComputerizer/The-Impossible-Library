@@ -281,4 +281,5 @@ shadowJar {
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.dependsOn 'reobfJar'
 tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.dependsOn ':forge:build'
+tasks.jar.mustRunAfter ':forge:jar'
+tasks.jar.mustRunAfter ':shared:shared_1.18:jar'

@@ -2,7 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
 
 public class Block1_16_5 extends BlockAPI<Block> {
 
@@ -12,5 +14,10 @@ public class Block1_16_5 extends BlockAPI<Block> {
 
     @Override public BlockStateAPI<?> getDefaultState() {
         return new BlockState1_16_5(this.wrapped.defaultBlockState());
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName);
+        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
 }

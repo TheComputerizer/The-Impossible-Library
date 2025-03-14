@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
@@ -33,6 +34,11 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
         return getRegistryName();
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName);
+        this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {

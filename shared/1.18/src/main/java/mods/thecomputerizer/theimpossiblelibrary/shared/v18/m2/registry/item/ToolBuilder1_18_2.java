@@ -32,7 +32,9 @@ public class ToolBuilder1_18_2 extends ToolBuilderAPI {
             net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity,seed) ->
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
-        return WrapperHelper.wrapItem(item);
+        ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
+        wrapped.setRegistryName(this.registryName);
+        return wrapped;
     }
     
     private Item getItem(ItemProperties properties, Tier tier) {

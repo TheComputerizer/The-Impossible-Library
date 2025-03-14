@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
@@ -12,11 +13,13 @@ import net.minecraft.block.Block;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
@@ -27,7 +30,10 @@ public class ToolBuilder1_12_2 extends ToolBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        Item item = getItem(buildProperties(),this.toolTier.unwrap());
+        ItemProperties properties = buildProperties();
+        Item item = getItem(properties,this.toolTier.unwrap());
+        CreativeTabAPI<?> tab = properties.getCreativeTab();
+        if(Objects.nonNull(tab)) tab.addStack(WrapperHelper.wrapItemStack(new ItemStack(item)));
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
             IItemPropertyGetter getter = (stack,world,entity) ->

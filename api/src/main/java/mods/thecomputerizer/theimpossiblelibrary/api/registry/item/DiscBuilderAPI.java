@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -19,7 +20,7 @@ import java.util.function.Function;
 public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     protected Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier;
-    protected SoundEventAPI<?> sound;
+    private SoundEventAPI<?> sound;
     protected int lengthInSeconds = 60;
     
     protected DiscBuilderAPI(@Nullable ItemBuilderAPI parent) {
@@ -31,7 +32,13 @@ public abstract class DiscBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    @Override public DiscBuilderAPI setCreativeTab(CreativeTabAPI tab) {
+    protected abstract <S> S defaultSound(); //TODO Replace with empty sound event
+    
+    @SuppressWarnings("unchecked") protected <S> S getSound() {
+        return Objects.nonNull(this.sound) ? this.sound.unwrap() : (S)defaultSound();
+    }
+    
+    @Override public DiscBuilderAPI setCreativeTab(CreativeTabAPI<?> tab) {
         this.creativeTab = tab;
         return this;
     }

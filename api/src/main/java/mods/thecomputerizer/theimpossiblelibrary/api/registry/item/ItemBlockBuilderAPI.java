@@ -37,7 +37,7 @@ public abstract class ItemBlockBuilderAPI extends ItemBuilderAPI {
         return this;
     }
     
-    public ItemBlockBuilderAPI setCreativeTab(CreativeTabAPI tab) {
+    public ItemBlockBuilderAPI setCreativeTab(CreativeTabAPI<?> tab) {
         this.creativeTab = tab;
         return this;
     }

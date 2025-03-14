@@ -150,7 +150,7 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
         return new BlockEntityBuilder1_12_2(parent);
     }
     
-    @Override public CreativeTabBuilderAPI makeCreativeTabBuilder() {
+    @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
         return new CreativeTabBuilder1_12_2();
     }
     

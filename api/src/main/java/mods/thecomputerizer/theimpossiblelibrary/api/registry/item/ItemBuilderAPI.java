@@ -4,6 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
@@ -24,7 +26,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBu
 
 public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
     
-    protected CreativeTabAPI creativeTab;
+    protected static final GameVersion VERSION = CoreAPI.getInstance().getVersion();
+    
+    protected CreativeTabAPI<?> creativeTab;
     protected BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc;
     protected ItemType itemType;
     protected Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> propertyMap;
@@ -59,7 +63,7 @@ public abstract class ItemBuilderAPI extends RegistryEntryBuilder<ItemAPI<?>> {
     }
     
     @IndirectCallers
-    public ItemBuilderAPI setCreativeTab(CreativeTabAPI tab) {
+    public ItemBuilderAPI setCreativeTab(CreativeTabAPI<?> tab) {
         this.creativeTab = tab;
         return this;
     }

@@ -25,6 +25,7 @@ public class BlockBuilder1_19 extends BlockBuilderAPI {
         TILBasicBlock1_19.stateProperties = stateProperties;
         BlockAPI<?> block = WrapperHelper.wrapBlock(properties.isBlockEntity() ?
                         TILBlockEntityProvider1_19.tileFrom(properties) : TILBasicBlock1_19.basicFrom(properties));
+        block.setRegistryName(properties.getRegistryName());
         TILBasicBlock1_19.stateProperties = Collections.emptyList();
         return block;
     }

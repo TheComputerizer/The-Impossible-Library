@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanc
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -98,5 +99,6 @@ public interface WrapperAPI {
     <S> @Nullable SoundAPI<S> wrapSoundInstance(@Nullable Object sound);
     <S> @Nullable BlockStateAPI<S> wrapState(@Nullable Object state);
     <S> StructureAPI<S> wrapStructure(@Nullable Object structure);
+    <T>CreativeTabAPI<T> wrapTab(@Nullable Object tab);
     <W> @Nullable WorldAPI<W> wrapWorld(@Nullable Object world);
 }

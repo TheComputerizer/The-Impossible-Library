@@ -4,13 +4,14 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -20,6 +21,8 @@ import static java.lang.Double.MAX_VALUE;
 
 @Getter
 public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements RegistryEntryAPI<V> {
+    
+    protected ResourceLocationAPI<?> registryName;
 
     protected E entity;
 
@@ -65,6 +68,10 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     public abstract boolean isLiving();
     public abstract boolean isPlayer();
     @IndirectCallers public abstract boolean isOwnedBy(EntityAPI<?,?> owner);
+    
+    protected void setLocalRegistryName(ResourceLocationAPI<?> registryName) {
+        this.registryName = registryName;
+    }
     
     public void setPosition(BlockPosAPI<?> pos) {
         setPosition(pos.x(),pos.y(),pos.z());

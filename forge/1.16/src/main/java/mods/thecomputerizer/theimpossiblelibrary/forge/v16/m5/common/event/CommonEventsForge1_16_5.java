@@ -3,17 +3,23 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.ForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.event.CommonEvents1_16_5;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+
+import javax.annotation.Nullable;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.*;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-@SuppressWarnings("unused") public class CommonEventsForge1_16_5 extends CommonEvents1_16_5 {
+public class CommonEventsForge1_16_5 extends CommonEvents1_16_5 implements ForgeEventHelper {
 
     @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventForge());
@@ -50,7 +56,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
         LIVING_ITEM_USE_START.setConnector(new LivingItemUseStartEventForge());
         LIVING_ITEM_USE_STOP.setConnector(new LivingItemUseStopEventForge());
         LIVING_ITEM_USE_TICK.setConnector(new LivingItemUseTickEventForge());
-        PLAYER_ADVANCEMENT.setConnector(new PlayerAdvancementEventForge());
+        PLAYER_ADVANCEMENT.setConnector(new PlayerAdvancementEventForge1_16_5());
         PLAYER_BREAK_SPEED.setConnector(new PlayerBreakSpeedEventForge1_16_5());
         PLAYER_CHANGE_GAMEMODE.setConnector(new PlayerChangeGamemodeEventForge());
         PLAYER_CHANGED_DIMENSIONS.setConnector(new PlayerChangedDimensionsEventForge());
@@ -100,13 +106,17 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
     @Override public <R> Result getEventResult(R result) {
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
     }
-
+    
+    @Override @Nullable public IEventBus getModBus(ModContainer container) {
+        return container instanceof FMLModContainer ? ((FMLModContainer)container).getEventBus() : null;
+    }
+    
     @Override public void postCustomTick(CustomTick ticker) {
         EVENT_BUS.post(new CustomTickForge(ticker));
     }
-
+    
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
-        EVENT_BUS.register(wrapper.getClass());
+        registerForgeOrModBus(wrapper);
     }
     
     @SuppressWarnings("unchecked")

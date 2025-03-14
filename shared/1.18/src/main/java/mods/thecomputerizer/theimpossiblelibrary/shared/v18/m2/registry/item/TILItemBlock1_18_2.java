@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -21,13 +21,16 @@ import java.util.Objects;
 @MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILItemBlock1_18_2 extends BlockItem implements WithItemProperties {
     
+    static Properties tab(Properties iProperties, ItemProperties properties) {
+        CreativeTabAPI<?> tab = properties.getCreativeTab();
+        return Objects.nonNull(tab) ? iProperties.tab(tab.unwrap()) : iProperties;
+    }
+    
     protected final ItemProperties properties;
     
     public TILItemBlock1_18_2(Block block, ItemProperties properties) {
-        super(block,new Properties().stacksTo(properties.getStackSize()));
+        super(block,tab(new Properties().stacksTo(properties.getStackSize()),properties));
         this.properties = properties;
-        ResourceLocation name = block.getRegistryName();
-        if(Objects.nonNull(name)) setRegistryName(name);
     }
     
     @Override public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> components, TooltipFlag flag) {

@@ -58,7 +58,8 @@ public class BlockEntity1_18_2 extends BlockEntityAPI<BlockEntity,BlockEntityTyp
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
-        this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        setLocalRegistryName(registryName);
+        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {

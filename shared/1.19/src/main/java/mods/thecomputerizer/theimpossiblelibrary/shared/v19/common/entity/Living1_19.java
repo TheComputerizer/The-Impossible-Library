@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.entity;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
@@ -95,6 +96,10 @@ public class Living1_19 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public boolean isOwnedBy(EntityAPI<?,?> owner) {
         return this.entity instanceof TamableAnimal && ((TamableAnimal)this.entity).getOwner()==this.entity;
+    }
+    
+    @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
+        setLocalRegistryName(registryName); //There is no built-in registryName field for forge in 1.19.+
     }
     
     @Override public void setPosition(double x, double y, double z) {
