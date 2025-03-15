@@ -142,7 +142,7 @@ processTestResources {
 }
 
 jar {
-    from(legacy.jar.archiveFile.collect { zipTree(it) })
+    from(legacy.jar.archiveFile.collect { zipTree it })
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -160,7 +160,7 @@ reobf {
 }
 
 shadowJar {
-    from(base.jar.archiveFile.collect { zipTree(it) })
+    from(base.jar.archiveFile.collect { zipTree it })
 }
 
 tasks.assemble.dependsOn shadowJar

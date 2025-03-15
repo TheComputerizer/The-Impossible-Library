@@ -64,10 +64,11 @@ public class Render1_20 extends RenderAPI {
         RenderSystem.assertOnRenderThreadOrInit();
     }
     
-    @Override public void beginBuffer(Object buffer, int mode, Object vertexFormat) {
+    @Override public Object beginBuffer(Object buffer, int mode, Object vertexFormat) {
         if(vertexFormat==POSITION_COLOR) RenderSystem.setShader(GameRenderer::getPositionColorShader);
         else if(vertexFormat==POSITION_TEX_COLOR) RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         ((BufferBuilder)buffer).begin(getBufferMode(mode),(VertexFormat)vertexFormat);
+        return buffer;
     }
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {

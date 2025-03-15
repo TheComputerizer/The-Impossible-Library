@@ -182,7 +182,7 @@ public class FabricHelper {
             matrix.pushPose();
             Object mat = matrix.last().pose();
             Object buffer = renderer.getBufferBuilder();
-            if(!java8) renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
+            if(!java8) buffer =renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
             drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY-4,tooltipX+tooltipTextWidth+3,
                              tooltipY-3,backgroundColor,backgroundColor);
             drawGradientRect(java8,renderer,buffer,mat,zLevel,tooltipX-3,tooltipY+tooltipHeight+3,
@@ -251,7 +251,7 @@ public class FabricHelper {
             renderer.enableBlend();
             renderer.defaultBlendFunc();
             GL11.glShadeModel(GL_SMOOTH); //Only used to compile
-            renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
+            buffer =renderer.beginBuffer(buffer,GL_QUADS,POSITION_COLOR);
         }
         drawVertex(renderer,buffer,mat,right,top,zLevel,startRed,startGreen,startBlue,startAlpha);
         drawVertex(renderer,buffer,mat,left,top,zLevel,startRed,startGreen,startBlue,startAlpha);

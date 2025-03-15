@@ -27,7 +27,7 @@ public abstract class RenderAPI {
     @IndirectCallers public abstract void alphaFuncEqual(float alpha);
     public abstract void alphaFuncGreater(float alpha);
     @IndirectCallers public abstract void alphaFuncLesser(float alpha);
-    public abstract void beginBuffer(Object buffer, int mode, Object vertexFormat);
+    public abstract Object beginBuffer(Object buffer, int mode, Object vertexFormat);
     public abstract void bindTexture(ResourceLocationAPI<?> location);
     public abstract void blendTranslucent();
     public abstract void defaultBlendFunc();

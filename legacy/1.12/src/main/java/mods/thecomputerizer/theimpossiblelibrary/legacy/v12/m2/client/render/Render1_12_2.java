@@ -42,8 +42,9 @@ public class Render1_12_2 extends RenderAPI {
         GlStateManager.alphaFunc(GL_LESS,alpha);
     }
     
-    @Override public void beginBuffer(Object buffer, int mode, Object vertexFormat) {
+    @Override public Object beginBuffer(Object buffer, int mode, Object vertexFormat) {
         ((BufferBuilder)buffer).begin(mode,(VertexFormat)vertexFormat);
+        return buffer;
     }
     
     @Override public void bindTexture(ResourceLocationAPI<?> location) {

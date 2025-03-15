@@ -32,7 +32,7 @@
     "multiversionAdaptor": "${adaptor}"
   },
   "mixins": [{
-    "config": "mixins.mm.json"
+    "config": "mixins.${mixin_name}.json"
   }],
   "name": "The Impossible Loader",
   "version": "${version}"
