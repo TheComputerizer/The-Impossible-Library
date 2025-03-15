@@ -75,7 +75,7 @@ public abstract class MinecraftServer1_20 extends MinecraftServerAPI<MinecraftSe
     
     protected @Nullable Path getLevelPath(Object save) {
         String fieldName = CoreAPI.isNamedEnv() ? "levelDirectory" :
-                (CoreAPI.isSrgEnv() ? "f_230867_" : "levelDirectory");
+                (CoreAPI.isSrgEnv() ? "f_230867_" : "field_23768");
         ClassHelper.checkBurningWaveInit();
         LevelDirectory dir = Fields.getDirect(save,fieldName);
         return dir.path();
