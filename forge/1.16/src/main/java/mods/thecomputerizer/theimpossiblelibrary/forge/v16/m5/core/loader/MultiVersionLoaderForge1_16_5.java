@@ -18,10 +18,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 public class MultiVersionLoaderForge1_16_5 extends MultiVersionLoaderForge {
     
@@ -47,8 +49,10 @@ public class MultiVersionLoaderForge1_16_5 extends MultiVersionLoaderForge {
     }
     
     @Override protected @Nullable Attributes getFileAttributes(File file) {
+        if(Objects.isNull(file) || !file.exists()) return null;
         try(JarFile jar = new JarFile(file)) {
-            return jar.getManifest().getMainAttributes();
+            Manifest manifest = jar.getManifest();
+            return Objects.nonNull(manifest) ? manifest.getMainAttributes() : null;
         } catch(IOException ex) {
             TILRef.logError("Error getting attributes for jar file {}",file,ex);
         }

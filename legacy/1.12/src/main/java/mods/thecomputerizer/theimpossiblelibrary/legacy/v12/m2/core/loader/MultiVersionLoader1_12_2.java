@@ -50,16 +50,17 @@ public class MultiVersionLoader1_12_2 extends MultiversionLoaderLegacy {
 
     @Override protected @Nullable Attributes getFileAttributes(File file) {
         if(Objects.isNull(file) || !file.exists()) return null;
-        File manifest = new File(file.getAbsolutePath()+".meta");
-        if(DISABLE_EXTERNAL_MANIFEST || !manifest.exists()) {
+        File manifestFile = new File(file.getAbsolutePath()+".meta");
+        if(DISABLE_EXTERNAL_MANIFEST || !manifestFile.exists()) {
             try(JarFile jar = new JarFile(file)) {
-                return Objects.isNull(jar.getManifest()) ? null : jar.getManifest().getMainAttributes();
+                Manifest manifest = jar.getManifest();
+                return Objects.nonNull(manifest) ? manifest.getMainAttributes() : null;
             } catch(IOException ex) {
                 TILRef.logError("Failed to get attributes from jar `{}`",file,ex);
                 return null;
             }
         }
-        try(FileInputStream stream = new FileInputStream(manifest)) {
+        try(FileInputStream stream = new FileInputStream(manifestFile)) {
             return new Manifest(stream).getMainAttributes();
         } catch(IOException ex) {
             TILRef.logError("Failed to get attributes from file `{}`",file,ex);
