@@ -1,17 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.RegisterEntitiesEventFabric;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.common.event.RegistryEventFabric1_20;
-import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.core.Registry;
 
-public class RegisterEntitiesEventFabric1_20 extends RegisterEntitiesEventFabric implements RegistryEventFabric1_20 {
+import static net.minecraft.core.registries.Registries.ENTITY_TYPE;
+
+public class RegisterEntitiesEventFabric1_20 extends RegisterEntitiesEventFabric {
     
-    @Override public Event<?> getEventInstance() {
-        return null;
+    @SuppressWarnings("unchecked")
+    @Override public <E> Registry<E> getRegistry() {
+        return (Registry<E>)ENTITY_TYPE;
     }
     
-    @Override public void register(EntityAPI<?,?> entry) {
-        register("entity",entry);
-    }
 }

@@ -21,9 +21,7 @@ public class CreativeTabBuilder1_16_5 extends CreativeTabBuilderAPI<ItemStack> {
         }
         ItemGroup tab = new ItemGroup(this.registryName.getPath()) {
             @Override public @Nonnull ItemStack makeIcon() {
-        
                 return getBuilderIcon();
-    
             }
         };
         return WrapperHelper.wrapTab(tab);

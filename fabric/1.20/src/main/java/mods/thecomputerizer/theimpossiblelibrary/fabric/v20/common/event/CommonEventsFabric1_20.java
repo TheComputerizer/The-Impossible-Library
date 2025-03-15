@@ -85,7 +85,7 @@ public abstract class CommonEventsFabric1_20 extends CommonEvents1_20 {
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventFabric1_20());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventFabric1_20());
         REGISTER_ITEMS.setConnector(new RegisterItemsEventFabric1_20());
-        REGISTER_SOUNDS.setConnector(new RegisterSoundsEventFabric1_20());
+        REGISTER_SOUNDS.setConnector(new RegisterSoundEventsFabric1_20());
         TICK_PLAYER.setConnector(new PlayerTickEventFabric());
         TICK_WORLD.setConnector(new WorldTickEventFabric());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventFabric());

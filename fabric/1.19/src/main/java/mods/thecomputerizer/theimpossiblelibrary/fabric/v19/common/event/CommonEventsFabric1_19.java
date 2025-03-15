@@ -13,7 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.event.CommonE
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 
-@SuppressWarnings("unused") public class CommonEventsFabric1_19 extends CommonEvents1_19 {
+public abstract class CommonEventsFabric1_19 extends CommonEvents1_19 {
 
     @Override public void defineEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventFabric());
@@ -81,12 +81,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEventFabric());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEventFabric());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventFabric());
-        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventFabric1_19());
-        REGISTER_BLOCKS.setConnector(new RegisterBlocksEventFabric1_19());
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventFabric1_19());
-        REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventFabric1_19());
-        REGISTER_ITEMS.setConnector(new RegisterItemsEventFabric1_19());
-        REGISTER_SOUNDS.setConnector(new RegisterSoundsEventFabric1_19());
         TICK_PLAYER.setConnector(new PlayerTickEventFabric());
         TICK_WORLD.setConnector(new WorldTickEventFabric());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventFabric());
@@ -96,6 +91,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
         WORLD_UNLOAD.setConnector(new WorldUnloadEventFabric());
         super.defineEvents();
     }
+    
+    protected abstract void defineRegistryEvents();
     
     @Override public <R> Result getEventResult(R result) {
         return DEFAULT;

@@ -161,6 +161,7 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'potion.Effect': 'world.effect.MobEffect',
                    'potion.EffectInstance': 'world.effect.MobEffectInstance',
                    'server.management.PlayerList': 'server.players.PlayerList',
+                   'state.BooleanProperty': 'world.level.block.state.properties.BooleanProperty',
                    'state.Property': 'world.level.block.state.properties.Property',
                    'state.StateContainer': 'world.level.block.state.StateDefinition',
                    'tileentity.ITickableTileEntity': 'world.level.block.entity.TickableBlockEntity',

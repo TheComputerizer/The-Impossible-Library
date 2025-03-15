@@ -33,7 +33,7 @@ public class TILItemHoe1_19 extends HoeItem implements WithItemProperties {
     
     static Properties tab19_2(Properties iProperties, ItemProperties properties) {
         CreativeTabAPI<?> tab = properties.getCreativeTab();
-        return Objects.nonNull(tab) ? iProperties.tab(tab.unwrap()) : iProperties;
+        return Objects.nonNull(tab) ? tab.withItemProperties(iProperties) : iProperties;
     }
     
     protected final ItemProperties properties;

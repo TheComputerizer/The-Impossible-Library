@@ -725,24 +725,18 @@ public class NeoForgeCoreLoader {
         LOGGER.info("Verifying that {} is valid for {} and can be found in {}",className,info,layer);
         IModFileInfo fileInfo = info.getOwningFile();
         String modid = info.getModId();
-        LOGGER.info("Mod id is {} and owning file is {}",modid,fileInfo);
         String moduleName = fileInfo.moduleName();
         IModFile file = fileInfo.getFile();
-        LOGGER.info("Module name is {} and file is {}",moduleName,file);
         if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
         Optional<Module> optionalModule = layer.findModule(moduleName);
-        LOGGER.info("Module present? {}",optionalModule.isPresent());
         if(optionalModule.isPresent()) {
             Module module = optionalModule.get();
-            LOGGER.info("Got module as {}",module);
             Class<?> c = Class.forName(className,false,layer.findLoader(module.getName()));
-            LOGGER.info("Got class as {}",c);
             Module cModule = c.getModule();
-            LOGGER.info("Got module for class as {}",cModule);
             if(module!=cModule) {
-                LOGGER.error("Modules are not equal! Attempting to fix");
+                LOGGER.debug("Attempting to fix modules that are not equal");
                 Fields.setDirect(c,"module",module);
-            } else LOGGER.info("Modules are equal");
+            } else LOGGER.debug("Modules are equal");
         }
         LOGGER.info("Finished verifying {}",className);
     }

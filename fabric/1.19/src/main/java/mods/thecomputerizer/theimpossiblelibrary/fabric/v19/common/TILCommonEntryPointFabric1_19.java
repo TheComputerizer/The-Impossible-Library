@@ -4,19 +4,9 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPoi
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19;
 
-import java.util.Objects;
-
-public class TILCommonEntryPointFabric1_19 extends TILCommonEntryPointFabric {
+public abstract class TILCommonEntryPointFabric1_19 extends TILCommonEntryPointFabric {
     
-    private static TILCommonEntryPointFabric1_19 INSTANCE;
-    
-    public static TILCommonEntryPointFabric1_19 getInstance() {
-        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPointFabric1_19();
-    }
-    
-    protected TILCommonEntryPointFabric1_19() {
-        INSTANCE = this;
-    }
+    protected TILCommonEntryPointFabric1_19() {}
     
     @Override public void onLoadComplete() {
         FabricHelper.registerServerHooks();

@@ -1,17 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common.event.events;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.RegisterBlockEntitiesEventFabric;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common.event.RegistryEventFabric1_18_2;
-import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.core.Registry;
 
-public class RegisterBlockEntitiesEventFabric1_18_2 extends RegisterBlockEntitiesEventFabric implements RegistryEventFabric1_18_2 {
+import static net.minecraft.core.Registry.BLOCK_ENTITY_TYPE;
+
+public class RegisterBlockEntitiesEventFabric1_18_2 extends RegisterBlockEntitiesEventFabric {
     
-    @Override public Event<?> getEventInstance() {
-        return null;
-    }
-    
-    @Override public void register(BlockEntityAPI<?,?> entry) {
-        register("block_entity",entry);
+    @SuppressWarnings("unchecked")
+    @Override public <E> Registry<E> getRegistry() {
+        return (Registry<E>)BLOCK_ENTITY_TYPE;
     }
 }

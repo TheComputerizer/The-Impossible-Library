@@ -130,7 +130,6 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
         TILRef.logInfo("Editing class node for {}",classNode.name);
         if(isTarget(classNode)) {
             String name = getClassName(classNode);
-            TILRef.logInfo("Editing mapped class node {}",name);
             boolean gui = name.endsWith("class_329") || name.endsWith("Gui");
             boolean screenOverlay = name.endsWith("class_340") || name.endsWith("DebugScreenOverlay");
             boolean keyboard = name.endsWith("class_309") || name.endsWith("KeyboardHandler");
@@ -138,7 +137,6 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
             for(MethodNode method : classNode.methods) {
                 InsnList code = method.instructions;
                 String methodName = getMethodName(classNode,method);
-                TILRef.logInfo("Editing method node {}({})",method.name,methodName);
                 if(keyboard && Misc.equalsAny(methodName,"keyPress","method_1466")) {
                     int ordinal = keyPressOrdinal(this.core.getVersion());
                     TILRef.logInfo("Building KEY_PRESSED invoker with ordinal {}",ordinal);

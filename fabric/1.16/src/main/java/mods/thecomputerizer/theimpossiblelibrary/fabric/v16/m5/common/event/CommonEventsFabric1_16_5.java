@@ -86,7 +86,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventFabric1_16_5());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventFabric1_16_5());
         REGISTER_ITEMS.setConnector(new RegisterItemsEventFabric1_16_5());
-        REGISTER_SOUNDS.setConnector(new RegisterSoundsEventFabric1_16_5());
+        REGISTER_SOUNDS.setConnector(new RegisterSoundEventsFabric1_16_5());
         TICK_PLAYER.setConnector(new PlayerTickEventFabric());
         TICK_WORLD.setConnector(new WorldTickEventFabric());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventFabric());

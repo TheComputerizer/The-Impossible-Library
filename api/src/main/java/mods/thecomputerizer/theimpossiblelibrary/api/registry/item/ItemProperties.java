@@ -20,13 +20,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionRe
 
 public class ItemProperties {
     
-    @Getter private final CreativeTabAPI creativeTab;
+    @Getter private final CreativeTabAPI<?> creativeTab;
     private final BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc;
     @Getter private final ResourceLocationAPI<?> registryName;
     @Getter private final int stackSize;
     private final Function<TILItemUseContext,ActionResult> useFunc;
     
-    public ItemProperties(CreativeTabAPI creativeTab, int stackSize, ResourceLocationAPI<?> registryName,
+    public ItemProperties(CreativeTabAPI<?> creativeTab, int stackSize, ResourceLocationAPI<?> registryName,
             @Nullable BiFunction<ItemStackAPI<?>,WorldAPI<?>,Collection<TextAPI<?>>> descFunc,
             @Nullable Function<TILItemUseContext,ActionResult> useFunc) {
         this.creativeTab = creativeTab;

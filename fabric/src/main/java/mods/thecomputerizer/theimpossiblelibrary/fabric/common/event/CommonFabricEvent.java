@@ -17,9 +17,8 @@ public interface CommonFabricEvent {
     static <T> void register(EventWrapper<?> wrapper, Event<T> event, EventType<?> type) {
         if(Objects.isNull(event)) return;
         Object invoker = event.invoker();
-        TILRef.logInfo("Event invoker is {}",invoker);
         Class<T> eventType = (Class<T>)invoker.getClass().getInterfaces()[0];
-        TILRef.logInfo("Event invoker clas is {}",eventType);
+        TILRef.logInfo("Event invoker class is {}",eventType);
         event.register((T)Proxy.newProxyInstance(eventType.getClassLoader(),new Class<?>[]{eventType},
                                                              ((CommonFabricEvent)wrapper).createEventProxy(type)));
     }

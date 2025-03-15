@@ -1,13 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m1.common;
 
-import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.common.TILCommonEntryPointFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m1.server.WrappedCommand1_20_1;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.tab.CreativeTabBuilder1_20;
 
 import java.util.Objects;
 
-public class TILCommonEntryPointFabric1_20_1 extends TILCommonEntryPointFabric {
+public class TILCommonEntryPointFabric1_20_1 extends TILCommonEntryPointFabric1_20 {
     
     private static TILCommonEntryPointFabric1_20_1 INSTANCE;
     

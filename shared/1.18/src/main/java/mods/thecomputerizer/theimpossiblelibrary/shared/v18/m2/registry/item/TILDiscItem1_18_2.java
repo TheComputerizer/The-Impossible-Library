@@ -27,7 +27,7 @@ public class TILDiscItem1_18_2 extends RecordItem implements WithItemProperties 
     
     static Properties tab(Properties iProperties, ItemProperties properties) {
         CreativeTabAPI<?> tab = properties.getCreativeTab();
-        return Objects.nonNull(tab) ? iProperties.tab(tab.unwrap()) : iProperties;
+        return Objects.nonNull(tab) ? tab.withItemProperties(iProperties) : iProperties;
     }
     
     protected final ItemProperties properties;

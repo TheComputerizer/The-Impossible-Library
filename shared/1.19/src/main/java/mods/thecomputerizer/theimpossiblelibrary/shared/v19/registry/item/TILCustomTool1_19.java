@@ -35,7 +35,7 @@ public class TILCustomTool1_19 extends TieredItem implements WithItemProperties 
     
     static Properties tab19_2(Properties iProperties, ItemProperties properties) {
         CreativeTabAPI<?> tab = properties.getCreativeTab();
-        return Objects.nonNull(tab) ? iProperties.tab(tab.unwrap()) : iProperties;
+        return Objects.nonNull(tab) ? tab.withItemProperties(iProperties) : iProperties;
     }
     
     private final ItemProperties properties;

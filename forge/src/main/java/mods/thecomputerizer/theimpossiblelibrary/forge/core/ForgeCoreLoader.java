@@ -833,24 +833,18 @@ public class ForgeCoreLoader {
         LOGGER.info("Verifying that {} is valid for {} and can be found in {}",className,info,moduleLayer);
         IModFileInfo fileInfo = info.getOwningFile();
         String modid = info.getModId();
-        LOGGER.info("Mod id is {} and owning file is {}",modid,fileInfo);
         String moduleName = Methods.invokeDirect(fileInfo,"moduleName");
         IModFile file = Methods.invokeDirect(fileInfo,"getFile");
-        LOGGER.info("Module name is {} and file is {}",moduleName,file);
         if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
         Optional<Object> optionalModule = Methods.invokeDirect(moduleLayer,"findModule",moduleName);
-        LOGGER.info("Module present? {}",optionalModule.isPresent());
         if(optionalModule.isPresent()) {
             Object module = optionalModule.get();
-            LOGGER.info("Got module as {}",module);
             Class<?> c = Class.forName(className);
-            LOGGER.info("Got class as {}",c);
             Object cModule = Methods.invokeDirect(c,"getModule");
-            LOGGER.info("Got module for class as {}",cModule);
             if(module!=cModule) {
-                LOGGER.error("Modules are not equal! Attempting to fix");
+                LOGGER.debug("Attempting to fix modules that are not equal");
                 Fields.setDirect(c,"module",module);
-            } else LOGGER.info("Modules are equal");
+            } else LOGGER.debug("Modules are equal");
         }
         LOGGER.info("Finished verifying {}",className);
     }
