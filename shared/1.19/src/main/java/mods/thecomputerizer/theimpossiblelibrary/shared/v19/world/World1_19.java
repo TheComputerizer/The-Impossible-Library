@@ -225,7 +225,7 @@ public class World1_19 extends WorldAPI<LevelAccessor> {
     
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isClientSide()) {
-            this.wrapped.addFreshEntity((Entity)entity.getEntity());
+            this.wrapped.addFreshEntity(entity.unwrapEntity());
             if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
         }
     }

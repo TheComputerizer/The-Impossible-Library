@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import cpw.mods.modlauncher.Launcher;
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
@@ -17,15 +16,10 @@ import java.nio.file.Path;
 import java.security.CodeSigner;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class MultiVersionModLocator implements IModLocator {
-    
-    static final String MANIFEST = "META-INF/MANIFEST.MF";
     
     static {
         ForgeCoreLoader.fixIfNotJava8();
@@ -74,14 +68,10 @@ public class MultiVersionModLocator implements IModLocator {
     public Pair<Optional<Manifest>,Optional<CodeSigner[]>> findManifestAndSigners(Path path) {
         try(JarFile jar = new JarFile(path.toFile())) {
             Manifest manifest = jar.getManifest();
-            if(Objects.isNull(manifest)) return Pair.of(Optional.empty(),Optional.empty());
-            else {
-                JarEntry entry = jar.getJarEntry(MANIFEST);
-                LamdbaExceptionUtils.uncheck(() -> Methods.invokeDirect(jar,"ensureInitialization"));
-                return Pair.of(Optional.of(manifest),Optional.ofNullable(entry.getCodeSigners()));
-            }
-        } catch(IOException ex) {
-            TILRef.logError("Failed to find manifest & signers for {}",path,ex);
+            Optional<Manifest> optionalManifest = Objects.nonNull(manifest) ? Optional.of(manifest) : Optional.empty();
+            return Pair.of(optionalManifest,Optional.empty());
+        } catch(Throwable t) {
+            TILRef.logError("Failed to find manifest & signers for {}",path,t);
             return Pair.of(Optional.empty(),Optional.empty());
         }
     }
@@ -99,7 +89,7 @@ public class MultiVersionModLocator implements IModLocator {
             ClassLoader loader = getClass().getClassLoader();
             TILDev.logInfo("Initializing mod locator with {}",loader);
             ReflectionHelper.invokeMethod(this.localLocator.getClass(),"initFor",this.localLocator,
-                    new Class<?>[]{ClassLoader.class,IModLocator.class},loader,this);
+                                          new Class<?>[]{ClassLoader.class,IModLocator.class},loader,this);
         } else TILRef.logFatal("Locator is null and cannot load multiversion mods! Did it fail to initialize?");
     }
     
@@ -119,7 +109,7 @@ public class MultiVersionModLocator implements IModLocator {
         this.fileSystems = Collections.emptyMap();
         if(Objects.nonNull(this.localLocator)) {
             files = (List<IModFile>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),
-                                                                  "scanMods",this.localLocator,new Class<?>[]{IModLocator.class},this);
+                    "scanMods",this.localLocator,new Class<?>[]{IModLocator.class},this);
             if(Objects.nonNull(files) && this.localLocator.getClass().getSimpleName().contains("1_16_5")) {
                 this.fileSystems = new HashMap<>();
                 for(IModFile file : files) {

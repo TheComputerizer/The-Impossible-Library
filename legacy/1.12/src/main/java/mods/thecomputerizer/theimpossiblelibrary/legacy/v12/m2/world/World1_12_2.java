@@ -49,7 +49,7 @@ public class World1_12_2 extends WorldAPI<World> {
 
     @Override public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
         List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
-        if(this.wrapped instanceof World) {
+        if(Objects.nonNull(this.wrapped)) {
             synchronized(this.wrapped) {
                 for(TileEntity tile : this.wrapped.loadedTileEntityList) {
                     BlockPos pos = tile.getPos();
@@ -182,7 +182,7 @@ public class World1_12_2 extends WorldAPI<World> {
     
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isRemote) {
-            this.wrapped.spawnEntity(entity.unwrap());
+            this.wrapped.spawnEntity(entity.unwrapEntity());
             if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
         }
     }

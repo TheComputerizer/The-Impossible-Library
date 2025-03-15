@@ -92,6 +92,12 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
     
     public abstract void setPosition(double x, double y, double z);
+    
+    @SuppressWarnings("unchecked")
+    public <T> T unwrapEntity() {
+        return (T)getEntity();
+    }
+    
     public abstract double x();
     public abstract double y();
     public abstract double z();
