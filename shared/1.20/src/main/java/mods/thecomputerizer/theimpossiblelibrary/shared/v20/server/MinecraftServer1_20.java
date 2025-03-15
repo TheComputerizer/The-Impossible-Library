@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public abstract class MinecraftServer1_20 extends MinecraftServerAPI<MinecraftServer> {
@@ -75,7 +74,8 @@ public abstract class MinecraftServer1_20 extends MinecraftServerAPI<MinecraftSe
     }
     
     protected @Nullable Path getLevelPath(Object save) {
-        String fieldName = DEV ? "levelDirectory" : (CoreAPI.isForge() || CoreAPI.isNeoforge() ? "f_230867_" : "field_23768");
+        String fieldName = CoreAPI.isNamedEnv() ? "levelDirectory" :
+                (CoreAPI.isSrgEnv() ? "f_230867_" : "levelDirectory");
         ClassHelper.checkBurningWaveInit();
         LevelDirectory dir = Fields.getDirect(save,fieldName);
         return dir.path();

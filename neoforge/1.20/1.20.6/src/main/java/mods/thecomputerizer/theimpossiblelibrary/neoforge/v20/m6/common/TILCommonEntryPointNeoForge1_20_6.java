@@ -59,7 +59,6 @@ public class TILCommonEntryPointNeoForge1_20_6 extends TILCommonEntryPoint1_20_6
             bus.addListener(TILCommonEntryPointNeoForge1_20_6::onSupplyCreativeTabs);
             bus.addListener(NetworkNeoForge1_20_6::registerPayloadServer);
         } else TILRef.logError("Failed to register network payloads!");
-        CreativeTabBuilder1_20.onRegister(null);
         super.onCommonSetup();
     }
 }

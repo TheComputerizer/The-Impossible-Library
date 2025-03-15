@@ -18,10 +18,12 @@ import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
@@ -131,12 +133,26 @@ public abstract class CoreAPI {
         return getInstance().getModLoader()==LEGACY;
     }
     
+    public static boolean isNamedEnv() {
+        return DEV || (isNeoforge() && CoreAPI.getInstance().getVersion()!=V20_1);
+    }
+    
     public static boolean isNeoforge() {
         return getInstance().getModLoader()==NEOFORGE;
     }
     
     public static boolean isServer() {
         return getInstance().getSide().isServer();
+    }
+    
+    public static boolean isSrgEnv() {
+        CoreAPI core = CoreAPI.getInstance();
+        switch(core.getModLoader()) {
+            case FORGE:
+            case LEGACY: return true;
+            case NEOFORGE: return core.getVersion()==V20_1;
+            default: return false;
+        }
     }
     
     @SuppressWarnings("DataFlowIssue")
@@ -164,7 +180,7 @@ public abstract class CoreAPI {
                 switch(splits.length>2 ? splits[2] : "1") {
                     case "4": return GameVersion.V20_4;
                     case "6": return GameVersion.V20_6;
-                    default: return GameVersion.V20_1;
+                    default: return V20_1;
                 }
             }
             case "21": return GameVersion.V21_1;

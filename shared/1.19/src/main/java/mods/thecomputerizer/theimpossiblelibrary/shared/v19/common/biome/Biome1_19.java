@@ -32,7 +32,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
         ClassHelper.checkBurningWaveInit();
     }
     
-    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (FORGE_OR_NEOFORGE ? "m_47505_" : "method_21740");
+    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (SRG_ENV ? "m_47505_" : "method_21740");
 
     protected RegistryAccess access;
     

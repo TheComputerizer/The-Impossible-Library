@@ -14,6 +14,8 @@ public interface RegistryEntryAPI<V> extends Wrapped<V> {
     
     boolean FORGE = CoreAPI.isForge();
     boolean FORGE_OR_NEOFORGE = FORGE || CoreAPI.isNeoforge();
+    boolean NAMED_ENV = CoreAPI.isNamedEnv();
+    boolean SRG_ENV = CoreAPI.isSrgEnv();
     
     @IndirectCallers default String getName() {
         ResourceLocationAPI<?> registryName = getRegistryName();

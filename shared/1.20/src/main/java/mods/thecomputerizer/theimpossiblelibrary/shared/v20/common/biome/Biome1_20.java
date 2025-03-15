@@ -24,7 +24,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static net.minecraft.core.registries.BuiltInRegistries.REGISTRY;
 import static net.minecraft.core.registries.Registries.BIOME;
 import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
@@ -38,8 +37,8 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
         ClassHelper.checkBurningWaveInit();
     }
     
-    static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : "field_26393";
-    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (FORGE_OR_NEOFORGE ? "m_47505_" : "method_21740");
+    static final String CLIMATE_SETTINGS = NAMED_ENV ? "climateSettings" : "field_26393";
+    private static final String GET_TEMPERATURE = NAMED_ENV ? "getTemperature" : (SRG_ENV ? "m_47505_" : "method_21740");
 
     protected RegistryAccess access;
     

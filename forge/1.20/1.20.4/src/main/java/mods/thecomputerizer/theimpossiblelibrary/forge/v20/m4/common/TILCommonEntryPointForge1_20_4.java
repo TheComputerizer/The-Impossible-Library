@@ -54,7 +54,6 @@ public class TILCommonEntryPointForge1_20_4 extends TILCommonEntryPoint1_20_4 {
     @Override public void onCommonSetup() {
         IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) bus.addListener(TILCommonEntryPointForge1_20_4::onSupplyCreativeTabs);
-        CreativeTabBuilder1_20.onRegister(null);
         super.onCommonSetup();
     }
 }
