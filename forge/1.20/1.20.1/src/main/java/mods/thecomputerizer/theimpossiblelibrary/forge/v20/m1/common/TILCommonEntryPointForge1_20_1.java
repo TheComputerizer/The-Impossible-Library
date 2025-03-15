@@ -41,7 +41,9 @@ public class TILCommonEntryPointForge1_20_1 extends TILCommonEntryPoint1_20_1 {
         }
         if(this.extraData instanceof FMLJavaModLoadingContext)
             return ((FMLJavaModLoadingContext)this.extraData).getModEventBus();
-        TILRef.logError("(Forge 1.20.1) Extra data not set to instance of FMLJavaModLoadingContext! {}",this.extraData);
+        if(this.extraData instanceof IEventBus) return (IEventBus)this.extraData; //In the case of NeoForge
+        TILRef.logError("(Forge 1.20.1) Extra data not set to instance of FMLJavaModLoadingContext or IEventBus! "+
+                        "{}",this.extraData);
         return null;
     }
     

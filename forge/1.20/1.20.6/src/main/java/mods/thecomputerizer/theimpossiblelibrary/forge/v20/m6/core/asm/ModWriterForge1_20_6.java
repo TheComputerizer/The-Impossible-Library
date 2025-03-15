@@ -11,5 +11,4 @@ public class ModWriterForge1_20_6 extends ModWriterForge1_20 {
     public ModWriterForge1_20_6(CoreAPI core, MultiVersionModInfo info) {
         super(core,info,JAVA21);
     }
-    
 }

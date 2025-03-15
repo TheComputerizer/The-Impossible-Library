@@ -3,10 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.core;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.TILCoreForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.client.ClientForge1_20_1;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.common.CommonForge1_20_1;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.common.TILCommonEntryPointForge1_20_1;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.core.asm.ModWriterForge1_20_1;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
 
@@ -19,6 +22,10 @@ public class TILCoreForge1_20_1 extends TILCoreForge1_20 {
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
         return TILCommonEntryPointForge1_20_1.getInstance();
+    }
+    
+    @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
+        return new ModWriterForge1_20_1(this,info);
     }
     
     @Override public void initAPI() {

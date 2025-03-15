@@ -27,7 +27,7 @@ public class ModWriterForge1_20 extends ModWriterForge {
     }
     
     @Override protected MethodVisitor getConstructor(ClassVisitor visitor) {
-        return ASMHelper.getConstructor(visitor,PUBLIC,new Type[]{JAVA_LOADING_CONTEXT});
+        return ASMHelper.getConstructor(visitor,PUBLIC,new Type[]{getOptionalContructorType()});
     }
     
     @Override protected Type getEventMethod(String className) {
@@ -36,6 +36,10 @@ public class ModWriterForge1_20 extends ModWriterForge {
             return TypeHelper.method(VOID_TYPE,TypeHelper.forge("event/server/"+className));
         }
         return super.getEventMethod(className);
+    }
+    
+    protected Type getOptionalContructorType() {
+        return JAVA_LOADING_CONTEXT;
     }
     
     @Override protected void writeMod(ClassWriter writer, List<Pair<String,byte[]>> classBytes) {
