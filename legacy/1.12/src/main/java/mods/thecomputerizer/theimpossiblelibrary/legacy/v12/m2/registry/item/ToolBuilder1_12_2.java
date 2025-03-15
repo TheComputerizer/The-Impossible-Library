@@ -33,7 +33,7 @@ public class ToolBuilder1_12_2 extends ToolBuilderAPI {
         ItemProperties properties = buildProperties();
         Item item = getItem(properties,this.toolTier.unwrap());
         CreativeTabAPI<?> tab = properties.getCreativeTab();
-        if(Objects.nonNull(tab)) tab.addStack(WrapperHelper.wrapItemStack(new ItemStack(item)));
+        if(Objects.nonNull(tab)) tab.addStack(() -> WrapperHelper.wrapItemStack(new ItemStack(item)));
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
             IItemPropertyGetter getter = (stack,world,entity) ->

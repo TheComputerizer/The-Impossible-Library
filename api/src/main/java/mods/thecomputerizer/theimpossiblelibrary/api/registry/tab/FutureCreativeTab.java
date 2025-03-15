@@ -41,5 +41,5 @@ public abstract class FutureCreativeTab<T> extends MutableWrapped<T> {
         return this;
     }
     
-    public abstract void supply(@Nullable Object arg, List<ItemStackAPI<?>> stacks);
+    public abstract void supply(@Nullable Object arg, List<Supplier<ItemStackAPI<?>>> stackSuppliers);
 }

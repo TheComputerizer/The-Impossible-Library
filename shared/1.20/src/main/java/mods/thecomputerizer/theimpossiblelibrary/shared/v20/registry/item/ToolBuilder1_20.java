@@ -38,7 +38,7 @@ public class ToolBuilder1_20 extends ToolBuilderAPI {
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
         CreativeTabAPI<?> tab = properties.getCreativeTab();
-        if(Objects.nonNull(tab)) tab.addStack(wrapped.defaultStack());
+        if(Objects.nonNull(tab)) tab.addStack(wrapped::defaultStack);
         return wrapped;
     }
     

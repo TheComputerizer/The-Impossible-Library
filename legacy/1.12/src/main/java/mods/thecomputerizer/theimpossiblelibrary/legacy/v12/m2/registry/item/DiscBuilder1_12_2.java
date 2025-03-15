@@ -31,7 +31,7 @@ public class DiscBuilder1_12_2 extends DiscBuilderAPI {
         ItemProperties properties = buildProperties();
         Item item = new TILDiscItem1_12_2(this.nameSupplier,getSound(),properties);
         CreativeTabAPI<?> tab = properties.getCreativeTab();
-        if(Objects.nonNull(tab)) tab.addStack(WrapperHelper.wrapItemStack(new ItemStack(item)));
+        if(Objects.nonNull(tab)) tab.addStack(() -> WrapperHelper.wrapItemStack(new ItemStack(item)));
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
             IItemPropertyGetter getter = (stack,world,entity) ->

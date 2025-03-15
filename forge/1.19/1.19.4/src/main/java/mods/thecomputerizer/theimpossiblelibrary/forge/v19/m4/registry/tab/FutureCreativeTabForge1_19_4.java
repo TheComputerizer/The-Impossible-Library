@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class FutureCreativeTabForge1_19_4 extends FutureCreativeTab<CreativeModeTab> {
     
@@ -47,7 +48,7 @@ public class FutureCreativeTabForge1_19_4 extends FutureCreativeTab<CreativeMode
     /**
      * arg = CreativeModeTabEvent.BuildContents
      */
-    @Override public void supply(@Nullable Object arg, List<ItemStackAPI<?>> stacks) {
+    @Override public void supply(@Nullable Object arg, List<Supplier<ItemStackAPI<?>>> stackSuppliers) {
         if(Objects.isNull(arg)) {
             TILRef.logError("Cannot supply future creative tab with null arg!");
             return;
@@ -55,8 +56,8 @@ public class FutureCreativeTabForge1_19_4 extends FutureCreativeTab<CreativeMode
         BuildContents event = (BuildContents)arg;
         if(event.getTab()!=this.wrapped) return;
         this.suppliedItems.clear();
-        for(ItemStackAPI<?> api : stacks) {
-            ItemStack stack = api.unwrap();
+        for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
+            ItemStack stack = supplier.get().unwrap();
             event.accept(stack);
             this.suppliedItems.add(stack);
         }

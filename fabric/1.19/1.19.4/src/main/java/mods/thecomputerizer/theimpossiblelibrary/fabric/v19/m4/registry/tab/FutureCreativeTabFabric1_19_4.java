@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public class FutureCreativeTabFabric1_19_4 extends FutureCreativeTab<CreativeModeTab> {
     
@@ -50,15 +51,15 @@ public class FutureCreativeTabFabric1_19_4 extends FutureCreativeTab<CreativeMod
      * arg = FabricItemGroupEntries
      */
     @SuppressWarnings("UnstableApiUsage")
-    @Override public void supply(@Nullable Object arg, List<ItemStackAPI<?>> stacks) {
+    @Override public void supply(@Nullable Object arg, List<Supplier<ItemStackAPI<?>>> stackSuppliers) {
         if(Objects.isNull(arg)) {
             TILRef.logError("Cannot supply future creative tab with null arg!");
             return;
         }
         FabricItemGroupEntries entries = (FabricItemGroupEntries)arg;
         this.suppliedItems.clear();
-        for(ItemStackAPI<?> api : stacks) {
-            ItemStack stack = api.unwrap();
+        for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
+            ItemStack stack = supplier.get().unwrap();
             entries.accept(stack);
             this.suppliedItems.add(stack);
         }

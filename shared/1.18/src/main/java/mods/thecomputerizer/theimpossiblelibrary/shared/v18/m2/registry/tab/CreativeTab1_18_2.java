@@ -6,13 +6,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item.Properties;
 
+import java.util.function.Supplier;
+
 public class CreativeTab1_18_2 extends CreativeTabAPI<CreativeModeTab> {
     
     public CreativeTab1_18_2(Object wrapped) {
         super((CreativeModeTab)wrapped);
     }
     
-    @Override public void addStack(ItemStackAPI<?> stack) {} //Not valid for 1.16.5-1.19.2
+    @Override public void addStack(Supplier<ItemStackAPI<?>> supplier) {} //Not valid for 1.16.5-1.19.2
     
     @Override public ItemStackAPI<?> getIcon() {
         return WrapperHelper.wrapItemStack(this.wrapped.getIconItem());

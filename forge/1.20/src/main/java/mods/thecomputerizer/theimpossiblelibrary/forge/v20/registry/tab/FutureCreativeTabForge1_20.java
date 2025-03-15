@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
 import static net.minecraft.world.item.CreativeModeTab.Row.TOP;
@@ -53,7 +54,7 @@ public class FutureCreativeTabForge1_20 extends FutureCreativeTab<CreativeModeTa
     /**
      * arg = BuildCreativeModeTabContentsEvent
      */
-    @Override public void supply(@Nullable Object arg, List<ItemStackAPI<?>> stacks) {
+    @Override public void supply(@Nullable Object arg, List<Supplier<ItemStackAPI<?>>> stackSuppliers) {
         if(Objects.isNull(arg)) {
             TILRef.logError("Cannot supply future creative tab with null arg!");
             return;
@@ -61,8 +62,8 @@ public class FutureCreativeTabForge1_20 extends FutureCreativeTab<CreativeModeTa
         BuildCreativeModeTabContentsEvent event = (BuildCreativeModeTabContentsEvent)arg;
         if(event.getTab()!=this.wrapped) return;
         this.suppliedItems.clear();
-        for(ItemStackAPI<?> api : stacks) {
-            ItemStack stack = api.unwrap();
+        for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
+            ItemStack stack = supplier.get().unwrap();
             event.accept(stack);
             this.suppliedItems.add(stack);
         }

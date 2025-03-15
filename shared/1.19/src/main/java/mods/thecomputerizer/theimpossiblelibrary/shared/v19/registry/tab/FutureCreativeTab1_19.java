@@ -9,6 +9,8 @@ import net.minecraft.world.item.CreativeModeTab;
 
 import javax.annotation.Nullable;
 
+import java.util.function.Supplier;
+
 import static net.minecraft.world.item.ItemStack.EMPTY;
 
 public class FutureCreativeTab1_19 extends CreativeTabAPI<FutureCreativeTab<CreativeModeTab>> {
@@ -17,8 +19,8 @@ public class FutureCreativeTab1_19 extends CreativeTabAPI<FutureCreativeTab<Crea
         super(wrapped);
     }
     
-    @Override public void addStack(ItemStackAPI<?> stack) {
-        this.stacks.add(stack);
+    @Override public void addStack(Supplier<ItemStackAPI<?>> supplier) {
+        this.stacks.add(supplier);
     }
     
     @Override public ItemStackAPI<?> getIcon() {

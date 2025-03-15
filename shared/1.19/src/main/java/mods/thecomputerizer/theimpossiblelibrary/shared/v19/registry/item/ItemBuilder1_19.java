@@ -36,7 +36,7 @@ public class ItemBuilder1_19 extends ItemBuilderAPI {
         wrapped.setRegistryName(this.registryName);
         if(VERSION==V19_4) {
             CreativeTabAPI<?> tab = properties.getCreativeTab();
-            if(Objects.nonNull(tab)) tab.addStack(wrapped.defaultStack());
+            if(Objects.nonNull(tab)) tab.addStack(wrapped::defaultStack);
         }
         return wrapped;
     }

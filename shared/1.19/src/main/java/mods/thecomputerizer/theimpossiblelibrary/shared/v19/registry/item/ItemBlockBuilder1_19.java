@@ -39,7 +39,7 @@ public class ItemBlockBuilder1_19 extends ItemBlockBuilderAPI {
         wrapped.setRegistryName(Objects.nonNull(this.registryName) ? this.registryName : block.getRegistryName());
         if(VERSION==V19_4) {
             CreativeTabAPI<?> tab = properties.getCreativeTab();
-            if(Objects.nonNull(tab)) tab.addStack(wrapped.defaultStack());
+            if(Objects.nonNull(tab)) tab.addStack(wrapped::defaultStack);
         }
         return wrapped;
     }
