@@ -23,6 +23,6 @@ public interface RegistryEventFabric extends CommonFabricEvent {
     }
     
     default <E> void registerEntry(Registry<E> registry, ResourceLocationAPI<?> name, E entry) {
-        Registry.register(registry, (ResourceLocation)name.unwrap(), entry);
+        Registry.register(registry,(ResourceLocation)name.unwrap(),entry);
     }
 }

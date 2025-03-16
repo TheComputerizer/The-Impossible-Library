@@ -38,6 +38,7 @@ public class MultiVersionModCandidate {
         return null;
     }
 
+    private final CoreAPI core;
     private final boolean classpath;
     private final String relativePath;
     private final File file;
@@ -45,15 +46,16 @@ public class MultiVersionModCandidate {
     private final Set<String> coreClassNames;
     private final Set<String> modClassNames;
 
-    public MultiVersionModCandidate(String className) {
-        this(fromClassName(className),className,true);
+    public MultiVersionModCandidate(CoreAPI core, String className) {
+        this(core,fromClassName(className),className,true);
     }
     
-    public MultiVersionModCandidate(File file) {
-        this(file,file.getAbsolutePath(),false);
+    public MultiVersionModCandidate(CoreAPI core, File file) {
+        this(core,file,file.getAbsolutePath(),false);
     }
 
-    MultiVersionModCandidate(File file, String relativePath, boolean classpath) {
+    MultiVersionModCandidate(CoreAPI core, File file, String relativePath, boolean classpath) {
+        this.core = core;
         this.classpath = classpath;
         this.relativePath = relativePath;
         this.file = Objects.nonNull(file) ? file : new File(MODID+"-"+VERSION+".jar");
@@ -143,28 +145,42 @@ public class MultiVersionModCandidate {
         return ClassHelper.findClass(name,loader);
     }
 
-    @SuppressWarnings("unchecked")
     public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,
                                 MultiVersionModCandidate candidate, ClassLoader classLoader) {
         TILRef.logInfo("Finding coremod loader classes in file `{}`",this.file);
+        Collection<Class<? extends CoreEntryPoint>> found = new ArrayList<>();
+        findCoreClasses(found,classLoader);
+        if(found.isEmpty()) return;
+        classes.putIfAbsent(candidate,new ArrayList<>());
+        classes.get(candidate).addAll(found);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void findCoreClasses(Collection<Class<? extends CoreEntryPoint>> classes, ClassLoader classLoader) {
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(classLoader,name);
-            if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class)) {
-                classes.putIfAbsent(candidate,new ArrayList<>());
-                classes.get(candidate).add((Class<? extends CoreEntryPoint>)clazz);
+            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionCoreMod.class)) {
+                classes.add((Class<? extends CoreEntryPoint>)clazz);
             }
         }
     }
     
-    @SuppressWarnings("unchecked")
     public void findModClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes,
                                MultiVersionModCandidate candidate, ClassLoader classLoader) {
         TILRef.logInfo("Finding mod loader classes in file `{}`",this.file);
+        Collection<Class<? extends CommonEntryPoint>> found = new ArrayList<>();
+        findModClasses(found,classLoader);
+        if(found.isEmpty()) return;
+        classes.putIfAbsent(candidate,new ArrayList<>());
+        classes.get(candidate).addAll(found);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void findModClasses(Collection<Class<? extends CommonEntryPoint>> classes, ClassLoader classLoader) {
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(classLoader,name);
             if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class)) {
-                classes.putIfAbsent(candidate,new ArrayList<>());
-                classes.get(candidate).add((Class<? extends CommonEntryPoint>)clazz);
+                classes.add((Class<? extends CommonEntryPoint>)clazz);
             }
         }
     }
@@ -175,5 +191,14 @@ public class MultiVersionModCandidate {
 
     public boolean hasMods() {
         return !this.modClassNames.isEmpty();
+    }
+    
+    /**
+     * CoreMods still need to be handled separately, but NeoForge has good entry hooks for custom mod loading.
+     * In this case it is better to merge the candidates for preloading without needing to store anything statically.
+     */
+    public void merge(MultiVersionModCandidate otherCandidate) {
+        this.coreClassNames.addAll(otherCandidate.coreClassNames);
+        this.modClassNames.addAll(otherCandidate.modClassNames);
     }
 }

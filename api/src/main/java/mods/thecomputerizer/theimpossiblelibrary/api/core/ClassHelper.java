@@ -301,7 +301,8 @@ public class ClassHelper {
     
     public static URL getJarResource(String path, String relativePath) {
         try {
-            return new URL("jar:file:/"+path+"!/"+relativePath);
+            String prefix = path.startsWith("/") ? "jar:file:" : "jar:file:/";
+            return new URL(prefix+path+"!/"+relativePath);
         } catch(Exception ex) {
             TILRef.logError("Failed to get entry {} from presumed jar file {}",relativePath,path,ex);
         }

@@ -95,6 +95,25 @@ public abstract class MultiVersionLoaderAPI {
         if(version.isV21()) return v21;
         return false;
     }
+    
+    public void loadCoreMods(MultiVersionModCandidate candidate, Collection<MultiVersionCoreModInfo> infos,
+            ClassLoader loader) {
+        Collection<Class<? extends CoreEntryPoint>> classes = new HashSet<>();
+        candidate.findCoreClasses(classes,loader);
+        loadCoreMods(infos,classes);
+    }
+    
+    public void loadCoreMods(Collection<MultiVersionCoreModInfo> infos,
+            Collection<Class<? extends CoreEntryPoint>> classes) {
+        if(classes.isEmpty()) return;
+        for(Class<? extends CoreEntryPoint> clazz : classes) {
+            MultiVersionCoreModInfo info = loadCoreMod(clazz);
+            if(Objects.nonNull(info)) {
+                infos.add(info);
+                TILDev.logInfo("Successfully loaded coremod `{}` using class `{}`",info.getName(),info.getEntryClass());
+            }
+        }
+    }
 
     public void loadCoreMods(Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infoMap,
             ClassLoader loader) {
@@ -107,14 +126,9 @@ public abstract class MultiVersionLoaderAPI {
         TILRef.logInfo("{} coremod(s) will attempt to be loaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
-            if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
-            for(Class<? extends CoreEntryPoint> clazz : entry.getValue()) {
-                MultiVersionCoreModInfo info = loadCoreMod(clazz);
-                if(Objects.nonNull(info)) {
-                    infoMap.get(candidate).add(info);
-                    TILDev.logInfo("Successfully loaded coremod `{}` using class `{}`",info.getName(),info.getEntryClass());
-                }
-            }
+            Collection<MultiVersionCoreModInfo> infos = new ArrayList<>();
+            loadCoreMods(infos,entry.getValue());
+            if(!infos.isEmpty()) infoMap.put(candidate,infos);
         }
     }
 
@@ -128,6 +142,24 @@ public abstract class MultiVersionLoaderAPI {
     private @Nullable MultiVersionCoreModInfo loadCoreMod(Class<? extends CoreEntryPoint> clazz, MultiVersionCoreMod mod) {
         return isValidContext(mod) ? MultiVersionCoreModInfo.get(clazz,mod) : null;
     }
+    
+    public void loadMods(MultiVersionModCandidate candidate, Collection<MultiVersionModInfo> infos, ClassLoader loader) {
+        Collection<Class<? extends CommonEntryPoint>> classes = new HashSet<>();
+        candidate.findModClasses(classes,loader);
+        loadMods(candidate,infos,loader,classes);
+    }
+    
+    public void loadMods(MultiVersionModCandidate candidate, Collection<MultiVersionModInfo> infos, ClassLoader loader,
+            Collection<Class<? extends CommonEntryPoint>> classes) {
+        if(classes.isEmpty()) return;
+        for(Class<? extends CommonEntryPoint> clazz : classes) {
+            MultiVersionModInfo info = loadMod(loader,candidate,clazz);
+            if(Objects.nonNull(info)) {
+                infos.add(info);
+                TILDev.logInfo("Successfully preloaded mod `{}` using class `{}`",info.getName(),info.getEntryClass());
+            }
+        }
+    }
 
     public void loadMods(Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap, ClassLoader loader) {
         File root = findModRoot();
@@ -139,14 +171,9 @@ public abstract class MultiVersionLoaderAPI {
         TILRef.logDebug("{} mods will attempt to be preloaded",classes.size());
         for(Entry<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> entry : classes.entrySet()) {
             MultiVersionModCandidate candidate = entry.getKey();
-            if(!entry.getValue().isEmpty()) infoMap.put(candidate,new ArrayList<>());
-            for(Class<? extends CommonEntryPoint> clazz : entry.getValue()) {
-                MultiVersionModInfo info = loadMod(loader,candidate,clazz);
-                if(Objects.nonNull(info)) {
-                    infoMap.get(candidate).add(info);
-                    TILDev.logInfo("Successfully preloaded mod `{}` using class `{}`",info.getName(),info.getEntryClass());
-                }
-            }
+            Collection<MultiVersionModInfo> infos = new ArrayList<>();
+            loadMods(candidate,infos,loader,entry.getValue());
+            if(!infos.isEmpty()) infoMap.put(candidate,infos);
         }
     }
 

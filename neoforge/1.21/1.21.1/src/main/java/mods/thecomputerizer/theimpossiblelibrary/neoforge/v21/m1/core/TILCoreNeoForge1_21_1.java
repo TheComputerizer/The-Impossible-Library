@@ -6,11 +6,13 @@ import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.TILCoreNeoFor
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.m1.client.ClientNeoForge1_21_1;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.m1.common.CommonNeoForge1_21_1;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
+
 @IndirectCallers
 public class TILCoreNeoForge1_21_1 extends TILCoreNeoForge1_21 {
     
     public TILCoreNeoForge1_21_1() {
-        super(false);
+        super(V21_1);
     }
     
     @Override public void initAPI() {

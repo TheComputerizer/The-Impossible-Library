@@ -3,12 +3,15 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.loader;
 import com.electronwill.nightconfig.core.Config;
 import cpw.mods.jarhandling.SecureJar;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILBetterModScan;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILFileConfigNeoForge;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.MultiVersionModReader;
 import net.neoforged.coremod.CoreModScriptingEngine;
 import net.neoforged.fml.loading.moddiscovery.CoreModFile;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
@@ -23,10 +26,11 @@ import net.neoforged.neoforgespi.language.IModLanguageLoader;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.language.ModFileScanData.AnnotationData;
 import net.neoforged.neoforgespi.locating.IModFile;
-import net.neoforged.neoforgespi.locating.IModFileCandidateLocator;
+import net.neoforged.neoforgespi.locating.IModFileReader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,19 +61,27 @@ public class TILModFileNeoForge1_21 extends ModFile {
         return new ModFileInfo((ModFile)file,config,info -> {},Collections.emptyList());
     }
     
+    static SecureJar jarFor(MultiVersionModCandidate candidate) {
+        return MultiVersionModReader.jarFromPath(candidate.getFile().toPath());
+    }
+    
+    private final MultiVersionModCandidate candidate;
     private final Map<MultiVersionModInfo,MultiVersionModData> infos;
     
-    public TILModFileNeoForge1_21(SecureJar file, IModFileCandidateLocator locator, Collection<?> infos) {
-        super(file,mod -> getFileInfo(mod,infos),MOD,DEFAULT.withLocator(locator));
+    public TILModFileNeoForge1_21(IModFileReader reader, MultiVersionModCandidate candidate, Collection<?> infos) {
+        super(jarFor(candidate),mod -> getFileInfo(mod,infos),MOD,DEFAULT.withReader(reader));
+        this.candidate = candidate;
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
-        TILRef.logInfo("Created TILModFileForge1_20_4 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
+        TILRef.logInfo("Created TILModFileNeoForge1_21 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
     }
     
     //TODO IModLanguageLoader#loadMod requires an IModInfo instance so some load oredering will need to be reworked
     @Override public ModFileScanData compileContent() {
+        populateMultiversionData();
         TILRef.logInfo("Starting multiversion mod scan");
         TILBetterModScan scan = new TILBetterModScan();
+        scan.setCore(this.candidate.getCore());
         scan.addModFileInfo(getModFileInfo());
         scanFile(p -> scanReflectively(new Scanner(this),p,scan)); //Collects the jar paths
         TILRef.logDebug("Injecting @Mod annotations from multiversion mod info");
@@ -128,19 +140,21 @@ public class TILModFileNeoForge1_21 extends ModFile {
         if(ret) {
             List<CoreModFile> coreMods = getCoreMods();
             if(!coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","neoforge","neoforge.v21","neoforge.v21.m1");
+                fixCoreModPackages("api","neoforge","neoforge.v21","neoforge.v20.m6","neoforge.v21.m1");
                 fixedCoreMods = true;
             }
         }
         return ret;
     }
     
-    public void populateMultiversionData(Map<String,MultiVersionModData> dataMap) {
-        for(MultiVersionModData data : dataMap.values()) {
-            MultiVersionModInfo info = data.getInfo();
-            if(this.infos.containsKey(info)) {
-                TILRef.logDebug("Populated data for {}",info);
+    public void populateMultiversionData() {
+        CoreAPI core = this.candidate.getCore();
+        File file = this.candidate.getFile();
+        for(MultiVersionModInfo info : this.infos.keySet()) {
+            MultiVersionModData data = core.getModData(file,this.candidate,info);
+            if(Objects.nonNull(data)) {
                 this.infos.put(info,data);
+                TILRef.logInfo("Populated data for {}",info);
             }
         }
     }
@@ -154,7 +168,7 @@ public class TILModFileNeoForge1_21 extends ModFile {
         }
     }
     
-    public static class TILLanguageProviderLoader extends ModFile {
+    public static class TILLanguageProviderLoader extends ModFile { //TODO Verify whether this is still needed
         
         public static IModFileInfo getLangFileInfo(IModFile file) {
             Config config = Config.inMemory();
@@ -172,8 +186,8 @@ public class TILModFileNeoForge1_21 extends ModFile {
             return new ModFileInfo((ModFile)file,wrapper,info -> {},Collections.emptyList());
         }
         
-        public TILLanguageProviderLoader(SecureJar file, IModFileCandidateLocator locator) {
-            super(file,TILLanguageProviderLoader::getLangFileInfo,LIBRARY,DEFAULT.withLocator(locator));
+        public TILLanguageProviderLoader(SecureJar file, IModFileReader reader) {
+            super(file,TILLanguageProviderLoader::getLangFileInfo,LIBRARY,DEFAULT.withReader(reader));
         }
         
         @Override public Type getType() {

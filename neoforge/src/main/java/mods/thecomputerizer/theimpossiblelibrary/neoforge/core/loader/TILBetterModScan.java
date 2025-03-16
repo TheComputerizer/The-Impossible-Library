@@ -1,6 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 
+import lombok.Getter;
+import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -24,17 +27,25 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PAC
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+@Setter @Getter
 public class TILBetterModScan extends ModFileScanData {
     
-    private static final Set<String> NUKED_PACKAGES = new HashSet<>();
+    private static final Map<IModInfo,String> MOD_CLASSES = new HashMap<>();
     private static final Map<String,IModFile> MOD_FILES = new HashMap<>();
     private static final Map<String,MultiVersionModInfo> MOD_INFOS = new HashMap<>();
-    private static final Map<String,byte[]> WRITTEN_CLASSES = new HashMap<>();
+    private static final Set<String> NUKED_PACKAGES = new HashSet<>();
     private static final Set<Path> PATHS = new HashSet<>();
+    private static final Map<String,byte[]> WRITTEN_CLASSES = new HashMap<>();
+    
+    private CoreAPI core;
     
     public void addFilePath(Path path) {
         PATHS.add(path);
         TILRef.logInfo("Adding file path to scan (total paths = {})",PATHS);
+    }
+    
+    public void setModClass(IModInfo mod, String className) {
+        MOD_CLASSES.put(mod,className);
     }
     
     public void addWrittenClass(String className, MultiVersionModInfo info, IModFile file, byte[] bytecode) {
@@ -116,6 +127,10 @@ public class TILBetterModScan extends ModFileScanData {
         }
         if(Objects.nonNull(last)) pkgs.remove(last);
         return last;
+    }
+    
+    public String getModClass(IModInfo info) {
+        return MOD_CLASSES.get(info);
     }
     
     protected IModInfo getModFromFile(IModFile file, String modid) {

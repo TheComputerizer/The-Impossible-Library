@@ -24,8 +24,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static cpw.mods.modlauncher.api.IEnvironment.Keys.LAUNCHTARGET;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
 
 public abstract class TILCoreNeoForge1_21 extends TILCore1_21 implements TILCoreNeoforge {
@@ -44,8 +42,8 @@ public abstract class TILCoreNeoForge1_21 extends TILCore1_21 implements TILCore
     
     private final MultiVersionLoaderNeoForge1_21 loader;
 
-    public TILCoreNeoForge1_21(boolean four) {
-        super(four ? V20_4 : V20_6,NEOFORGE,NEOFORGE_REF.isClient());
+    public TILCoreNeoForge1_21(GameVersion version) {
+        super(version,NEOFORGE,NEOFORGE_REF.isClient());
         this.loader = new MultiVersionLoaderNeoForge1_21(this);
     }
     

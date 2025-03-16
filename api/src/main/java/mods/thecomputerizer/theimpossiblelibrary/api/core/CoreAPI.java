@@ -296,13 +296,22 @@ public abstract class CoreAPI {
 
     public void instantiateCoreMods() {
         TILRef.logInfo("Instantiating {} coremod candidate(s)",this.coreInfo.size());
-        for(Collection<MultiVersionCoreModInfo> infos : this.coreInfo.values()) {
-            for(MultiVersionCoreModInfo info : infos) {
-                CoreEntryPoint core = info.getInstance();
-                if(Objects.nonNull(core)) {
-                    this.coreInstances.add(core);
-                    TILRef.logInfo("Successfully instantiated coremod `{}`!",info.getName());
-                }
+        for(Entry<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infos : this.coreInfo.entrySet()) {
+            String path = infos.getKey().getFile().getName();
+            instantiateCoreMods(path,infos.getValue());
+        }
+    }
+    
+    public void instantiateCoreMods(String containerName, Collection<MultiVersionCoreModInfo> infos) {
+        if(infos.isEmpty()) {
+            TILRef.logInfo("No coremods to instantiate for {}");
+            return;
+        }
+        for(MultiVersionCoreModInfo info : infos) {
+            CoreEntryPoint core = info.getInstance();
+            if(Objects.nonNull(core)) {
+                this.coreInstances.add(core);
+                TILRef.logInfo("Successfully instantiated coremod for {} as `{}`!",info.getName());
             }
         }
     }
@@ -313,6 +322,24 @@ public abstract class CoreAPI {
     
     public boolean isServerSide() {
         return getSide().isServer();
+    }
+    
+    /**
+     * This should only be called in NeoForge 1.20.6 since it has actual custom mod loading support.
+     * Returns a collection of MultiVersionModInfo instances.
+     */
+    public Collection<?> loadCandidate(MultiVersionModCandidate candidate, MultiVersionLoaderAPI loader,
+            ClassLoader classLoader) {
+        List<MultiVersionCoreModInfo> coreInfo = new ArrayList<>();
+        loader.loadCoreMods(candidate,coreInfo,classLoader);
+        if(!coreInfo.isEmpty()) {
+            this.coreInfo.put(candidate,coreInfo);
+            instantiateCoreMods(candidate.getFile().getName(),coreInfo);
+        }
+        List<MultiVersionModInfo> modInfos = new ArrayList<>();
+        loader.loadMods(candidate,modInfos,classLoader);
+        if(!modInfos.isEmpty()) this.modInfo.put(candidate,modInfos);
+        return modInfos;
     }
     
     public void loadCoreModInfo(ClassLoader classLoader) {

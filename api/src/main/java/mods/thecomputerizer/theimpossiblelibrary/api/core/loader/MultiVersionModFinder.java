@@ -21,7 +21,7 @@ public class MultiVersionModFinder {
         Set<MultiVersionModCandidate> candidates = new HashSet<>();
         Set<String> foundCoreMods = new HashSet<>();
         Set<String> foundMods = new HashSet<>();
-        addClasspathMods(candidates,isCore,foundCoreMods,foundMods);
+        addClasspathMods(loader,candidates,isCore,foundCoreMods,foundMods);
         for(File file : loader.gatherCandidateModFiles(root)) {
             MultiVersionModCandidate candidate = getCandidate(loader,file,isCore,foundCoreMods,foundMods);
             if(Objects.nonNull(candidate) && ((!isCore && candidate.hasMods()) || (isCore && candidate.hasCoreMods())))
@@ -29,13 +29,21 @@ public class MultiVersionModFinder {
         }
         return candidates;
     }
+    
+    public static @Nullable MultiVersionModCandidate discoverCoreCandidate(MultiVersionLoaderAPI loader, File file) {
+        return getCandidate(loader,file,true,new HashSet<>(),new HashSet<>());
+    }
+    
+    public static @Nullable MultiVersionModCandidate discoverModCandidate(MultiVersionLoaderAPI loader, File file) {
+        return getCandidate(loader,file,false,new HashSet<>(),new HashSet<>());
+    }
 
     private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file,
             boolean isCore, Set<String> foundCoreMods, Set<String> foundMods) {
-        TILRef.logInfo("Examining candidate file`{}`",file);
+        TILRef.logInfo("Examining candidate file`{}` for {}",file,isCore ? "coremods" : "mods");
         Attributes attributes = loader.getFileAttributes(file);
         if(Objects.nonNull(attributes)) {
-            MultiVersionModCandidate candidate = new MultiVersionModCandidate(file);
+            MultiVersionModCandidate candidate = new MultiVersionModCandidate(loader.parent,file);
             if(isCore) candidate.addCoreClasses(foundCoreMods,parseClasses(attributes,MULTIVERSION_COREMODS));
             else candidate.addModClasses(foundMods,parseClasses(attributes,MULTIVERSION_MODS));
             return candidate;
@@ -47,12 +55,12 @@ public class MultiVersionModFinder {
         return attributes.containsKey(MULTIVERSION_MODS) || attributes.containsKey(MULTIVERSION_COREMODS);
     }
 
-    private static void addClasspathMods(Set<MultiVersionModCandidate> candidates, boolean isCore,
-            Set<String> foundCoreMods, Set<String> foundMods) {
+    private static void addClasspathMods(MultiVersionLoaderAPI loader, Set<MultiVersionModCandidate> candidates,
+            boolean isCore, Set<String> foundCoreMods, Set<String> foundMods) {
         if(isCore) {
             TILRef.logDebug("Adding {} classpath coremods", CLASSPATH_COREMODS.size());
             for(String core : CLASSPATH_COREMODS) {
-                MultiVersionModCandidate candidate = new MultiVersionModCandidate(core);
+                MultiVersionModCandidate candidate = new MultiVersionModCandidate(loader.parent,core);
                 TILRef.logDebug("Adding classpath coremod `{}`", core);
                 candidate.addCoreClasses(foundCoreMods,core);
                 candidates.add(candidate);
@@ -61,7 +69,7 @@ public class MultiVersionModFinder {
         else {
             TILRef.logDebug("Adding {} classpath mods", CLASSPATH_MODS.size());
             for(String mod : CLASSPATH_MODS) {
-                MultiVersionModCandidate candidate = new MultiVersionModCandidate(mod);
+                MultiVersionModCandidate candidate = new MultiVersionModCandidate(loader.parent,mod);
                 TILRef.logDebug("Adding classpath mod `{}`", mod);
                 candidate.addModClasses(foundMods,mod);
                 candidates.add(candidate);

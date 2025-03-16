@@ -281,8 +281,14 @@ public class NeoForgeCoreLoader {
     }
     
     public static void fixForServiceLayer() {
-        String pkg = ConsulterSupplyFunction.class.getPackage().getName();
+        LOGGER.info("Running SERVICE layer fix");
+        StackWalker.getInstance().forEach(frame -> LOGGER.info("\t{}#{}",frame.getClassName(),frame.getMethodName()));
         ClassLoader thisLoader = NeoForgeCoreLoader.class.getClassLoader();
+        if(thisLoader==bootLoader()) {
+            LOGGER.warn("Tried to fix SERVICE layer twice!");
+            return;
+        }
+        String pkg = ConsulterSupplyFunction.class.getPackage().getName();
         Map<String,ResolvedModule> packageLookup = Fields.getDirect(thisLoader,"packageLookup");
         ResolvedModule module = packageLookup.get(pkg);
         if(Objects.nonNull(module)) {
@@ -401,7 +407,7 @@ public class NeoForgeCoreLoader {
     /**
      * Returns a CoreAPI instance on the input ClassLoader. Initializes the source if necessary
      */
-    static @Nullable Object initCoreAPI(ClassLoader loader) {
+    public static @Nullable Object initCoreAPI(ClassLoader loader) {
         LOGGER.debug("Starting CoreAPI init");
         Object bootInstance = getBootLoadedCoreAPI();
         if(Objects.nonNull(bootInstance)) {
@@ -525,6 +531,7 @@ public class NeoForgeCoreLoader {
     
     @SuppressWarnings("SameParameterValue")
     public static void moveModuleToLayer(ClassLoader targetLoader, String layerTo, String layerFrom, String moduleName) {
+        LOGGER.info("Moving module {} from {} to {}",moduleName,layerFrom,layerTo);
         ModuleLayer to = getModuleLayer(layerTo);
         if(Objects.isNull(to)) {
             LOGGER.error("Unable to move module {}! Cannot find target layer {}",moduleName,layerTo);
