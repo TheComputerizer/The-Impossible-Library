@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_DAMAGE;
 
-public class LivingDamageEventNeoForge1_20 extends LivingDamageEventNeoForge {
+public class LivingDamageEventNeoForge1_20 extends LivingDamageEventNeoForge<LivingDamageEvent> {
     
     @SubscribeEvent
     public static void onEvent(LivingDamageEvent event) {

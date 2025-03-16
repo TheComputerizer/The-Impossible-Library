@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LootingLevelEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_LOOTING_LEVEL;
 
-public class LootingLevelEventNeoForge1_20 extends LootingLevelEventNeoForge {
+public class LootingLevelEventNeoForge1_20 extends LootingLevelEventNeoForge<LootingLevelEvent> {
     
     @SubscribeEvent
     public static void onEvent(LootingLevelEvent event) {
@@ -18,5 +18,9 @@ public class LootingLevelEventNeoForge1_20 extends LootingLevelEventNeoForge {
     
     @Override protected EventFieldWrapper<LootingLevelEvent,DamageAPI> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_20(event.getDamageSource(),1f),null);
+    }
+    
+    @Override protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {
+        return wrapGenericBoth(LootingLevelEvent::getLootingLevel,LootingLevelEvent::setLootingLevel,1);
     }
 }

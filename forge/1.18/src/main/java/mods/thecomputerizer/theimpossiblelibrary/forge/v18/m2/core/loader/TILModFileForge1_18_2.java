@@ -128,7 +128,7 @@ public class TILModFileForge1_18_2 extends ModFile {
         if(ret) {
             List<CoreModFile> coreMods = getCoreMods();
             if(!coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","forge","legacy","forge.v18.m2");
+                fixCoreModPackages("api","forge","forge.v18.m2");
                 fixedCoreMods = true;
             }
         }

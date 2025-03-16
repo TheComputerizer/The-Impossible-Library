@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v19.core.loader;
 import com.electronwill.nightconfig.core.Config;
 import cpw.mods.jarhandling.SecureJar;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -41,6 +42,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_2;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
@@ -129,7 +131,8 @@ public class TILModFileForge1_19 extends ModFile {
         if(ret) {
             List<CoreModFile> coreMods = getCoreMods();
             if(!coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","forge","legacy","forge.v18.m2");
+                String minor = CoreAPI.getInstance().getVersion()==V19_2 ? "m2" : "m4";
+                fixCoreModPackages("api","forge","forge.v19","forge.v19."+minor);
                 fixedCoreMods = true;
             }
         }

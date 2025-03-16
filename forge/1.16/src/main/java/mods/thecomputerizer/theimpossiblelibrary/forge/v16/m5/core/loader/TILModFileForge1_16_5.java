@@ -129,7 +129,7 @@ public class TILModFileForge1_16_5 extends ModFile {
         if(Objects.isNull(this.coreMods)) {
             this.coreMods = findCoreMods();
             if(!this.coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","fabric","forge","legacy","fabric.v16.m5","forge.v16.m5");
+                fixCoreModPackages("api","forge","forge.v16.m5");
                 fixedCoreMods = true;
             }
         }

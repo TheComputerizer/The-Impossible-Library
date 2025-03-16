@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_ATTACKED;
 
-public class LivingAttackedEventNeoForge1_20 extends LivingAttackedEventNeoForge {
+public class LivingAttackedEventNeoForge1_20 extends LivingAttackedEventNeoForge<LivingAttackEvent> {
     
     @SubscribeEvent
     public static void onEvent(LivingAttackEvent event) {
@@ -17,6 +17,6 @@ public class LivingAttackedEventNeoForge1_20 extends LivingAttackedEventNeoForge
     }
     
     @Override protected EventFieldWrapper<LivingAttackEvent,DamageAPI> wrapDamageField() {
-        return wrapGenericGetter(event -> new Damage1_20(event.getSource(), 1f), null);
+        return wrapGenericGetter(event -> new Damage1_20(event.getSource(),1f),null);
     }
 }

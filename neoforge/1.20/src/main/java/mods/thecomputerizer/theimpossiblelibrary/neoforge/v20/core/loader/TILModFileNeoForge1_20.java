@@ -126,7 +126,7 @@ public class TILModFileNeoForge1_20 extends ModFile {
         if(ret) {
             List<CoreModFile> coreMods = getCoreMods();
             if(!coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","forge","legacy","forge.v18.m2");
+                fixCoreModPackages("api","neoforge","neoforge.v20","neoforge.v20.m4");
                 fixedCoreMods = true;
             }
         }

@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_HURT;
 
-public class LivingHurtEventNeoForge1_20 extends LivingHurtEventNeoForge {
+public class LivingHurtEventNeoForge1_20 extends LivingHurtEventNeoForge<LivingHurtEvent> {
     
     @SubscribeEvent
     public static void onEvent(LivingHurtEvent event) {
@@ -18,7 +18,7 @@ public class LivingHurtEventNeoForge1_20 extends LivingHurtEventNeoForge {
     
     @Override public void setAmount(float amount) {
         this.event.setAmount(amount);
-        this.damage.set(this.event,new Damage1_20(this.event.getSource(), amount));
+        this.damage.set(this.event,new Damage1_20(this.event.getSource(),amount));
     }
     
     @Override protected EventFieldWrapper<LivingHurtEvent,DamageAPI> wrapDamageField() {

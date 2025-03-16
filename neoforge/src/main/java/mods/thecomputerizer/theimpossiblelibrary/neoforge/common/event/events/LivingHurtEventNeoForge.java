@@ -3,20 +3,21 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingHurtEventWrapper;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
-public abstract class LivingHurtEventNeoForge extends LivingHurtEventWrapper<LivingHurtEvent> {
+public abstract class LivingHurtEventNeoForge<E extends LivingEvent> extends LivingHurtEventWrapper<E> {
     
     @Override public void cancel() {
-        this.event.setCanceled(true);
+        if(this.event instanceof ICancellableEvent cancellable) cancellable.setCanceled(true);
     }
     
-    @Override public void setEvent(LivingHurtEvent event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
-        setCanceled(event.isCanceled());
+        if(event instanceof ICancellableEvent cancellable) setCanceled(cancellable.isCanceled());
     }
     
-    @Override protected EventFieldWrapper<LivingHurtEvent,LivingEntityAPI<?,?>> wrapLivingField() {
-        return wrapLivingGetter(LivingHurtEvent::getEntity);
+    @Override protected EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingField() {
+        return wrapLivingGetter(LivingEvent::getEntity);
     }
 }

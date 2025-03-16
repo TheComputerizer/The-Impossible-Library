@@ -17,7 +17,11 @@ public class ModWriterFabric1_20 extends ModWriterFabric {
     public static final String SERVER_MOD_INITIALIZER = Type.getInternalName(DedicatedServerModInitializer.class);
     
     public ModWriterFabric1_20(CoreAPI core, MultiVersionModInfo info) {
-        super(core,info,JAVA17);
+        this(core,info,JAVA17);
+    }
+    
+    protected ModWriterFabric1_20(CoreAPI core, MultiVersionModInfo info, int javaVer) {
+        super(core,info,javaVer);
     }
     
     @Override protected String[] modInterfaces(boolean client, boolean server) {
