@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.ListTag1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.PrimitiveTag1_21;
 import net.minecraft.core.component.TypedDataComponent;
 
-public class StringComponent1_21 extends StringTagAPI<TypedDataComponent<String>> {
+public class StringComponent1_21 extends StringTagAPI<TypedDataComponent<String>> implements ComponentWrapper {
 
     public StringComponent1_21(TypedDataComponent<String> component) {
         super(component);

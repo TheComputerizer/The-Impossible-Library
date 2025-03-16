@@ -6,12 +6,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.common.CommonForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.CommonEventsForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.integration.ModHelperForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network.NetworkForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.Tag1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.text.TextHelper1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.wrappers.Wrapper1_20_6;
 
 import java.util.function.Supplier;
 
@@ -35,5 +37,9 @@ public class CommonForge1_20_6 extends CommonForge1_20 {
     
     @Override public Supplier<TextHelperAPI<?>> initTextHelper() {
         return TextHelper1_20_6::new;
+    }
+    
+    @Override public Supplier<WrapperAPI> initWrapper() {
+        return Wrapper1_20_6::new;
     }
 }

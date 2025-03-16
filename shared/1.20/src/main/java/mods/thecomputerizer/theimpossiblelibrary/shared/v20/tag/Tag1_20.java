@@ -61,7 +61,7 @@ public class Tag1_20 implements TagAPI {
         return new StringTag1_20(StringTag.valueOf(value));
     }
     
-    @Override public CompoundTag1_20 readFromFile(File file) throws IOException {
+    @Override public CompoundTagAPI<?> readFromFile(File file) throws IOException {
         CompoundTag tag = null;
         try {
             tag = NbtIo.read(file);

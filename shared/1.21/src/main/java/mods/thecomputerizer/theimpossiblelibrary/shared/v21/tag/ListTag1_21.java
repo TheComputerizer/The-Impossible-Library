@@ -9,7 +9,7 @@ import net.minecraft.nbt.Tag;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListTag1_21 extends ListTagAPI<ListTag> {
+public class ListTag1_21 extends ListTagAPI<ListTag> implements TagWrapper {
 
     public ListTag1_21(ListTag tag) {
         super(tag);

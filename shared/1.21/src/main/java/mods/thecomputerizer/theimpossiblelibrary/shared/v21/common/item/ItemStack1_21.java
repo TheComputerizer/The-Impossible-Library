@@ -1,16 +1,19 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v21.common.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.CompoundTag1_21;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.component.CompoundComponent1_21;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+
+import static net.minecraft.core.component.DataComponents.CUSTOM_DATA;
+import static net.minecraft.world.item.component.CustomData.EMPTY;
 
 public class ItemStack1_21 extends ItemStackAPI<ItemStack> {
 
@@ -26,13 +29,13 @@ public class ItemStack1_21 extends ItemStackAPI<ItemStack> {
         return WrapperHelper.wrapItem(this.wrapped.getItem());
     }
 
-    @Override public CompoundTag1_21 getOrCreateTag() { //TODO Finish this
-        return new CompoundTag1_21(this.wrapped.getOrCreateTag());
+    @Override public CompoundTagAPI<?> getOrCreateTag() {
+        this.wrapped.update(CUSTOM_DATA,EMPTY,data -> data);
+        return new CompoundComponent1_21(this.wrapped.get(CUSTOM_DATA));
     }
 
-    @Override public @Nullable CompoundTag1_21 getTag() { //TODO Finish this
-        CompoundTag tag = this.wrapped.getTag();
-        return Objects.nonNull(tag) ? TagHelper.getWrapped(this.wrapped.getComponents()) : null;
+    @Override public @Nullable CompoundTagAPI<?> getTag() {
+        return this.wrapped.has(CUSTOM_DATA) ? new CompoundComponent1_21(this.wrapped.get(CUSTOM_DATA)) : null;
     }
 
     @Override public boolean isEmpty() {
@@ -43,8 +46,10 @@ public class ItemStack1_21 extends ItemStackAPI<ItemStack> {
         this.wrapped.setCount(count);
     }
 
-    @Override public void setTag(@Nullable CompoundTagAPI<?> tag) { //TODO Finish this
-        this.wrapped.applyComponents();
-        this.wrapped.setTag(Objects.nonNull(tag) ? tag.unwrap() : null);
+    @Override public void setTag(@Nullable CompoundTagAPI<?> api) {
+        if(Objects.isNull(api)) return;
+        Object value = api.getWrapped();
+        CompoundTag updateWith = value instanceof CompoundTag ? (CompoundTag)value : ((CustomData)value).copyTag();
+        this.wrapped.update(CUSTOM_DATA,EMPTY,tag -> CustomData.of(tag.copyTag().merge(updateWith)));
     }
 }

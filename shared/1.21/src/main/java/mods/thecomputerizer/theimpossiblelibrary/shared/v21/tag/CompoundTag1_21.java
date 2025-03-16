@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
-public class CompoundTag1_21 extends CompoundTagAPI<CompoundTag> {
+public class CompoundTag1_21 extends CompoundTagAPI<CompoundTag> implements TagWrapper {
 
     public CompoundTag1_21(CompoundTag tag) {
         super(tag);

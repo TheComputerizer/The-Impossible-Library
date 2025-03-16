@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.StringTagAPI;
 import net.minecraft.nbt.StringTag;
 
-public class StringTag1_21 extends StringTagAPI<StringTag> {
+public class StringTag1_21 extends StringTagAPI<StringTag> implements TagWrapper {
 
     public StringTag1_21(StringTag tag) {
         super(tag);

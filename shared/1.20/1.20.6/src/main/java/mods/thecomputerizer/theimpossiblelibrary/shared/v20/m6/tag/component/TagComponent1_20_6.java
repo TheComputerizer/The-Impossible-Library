@@ -1,10 +1,11 @@
-package mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.component;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.component;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.TagWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.TagWrapper;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.nbt.CompoundTag;
@@ -16,64 +17,64 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class TagComponent1_21 implements TagAPI {
+public class TagComponent1_20_6 implements TagAPI {
     
     @SuppressWarnings("unchecked") @Override public <T> BaseTagAPI<T> getWrapped(T component) {
         if(component instanceof CustomData)
-            return (BaseTagAPI<T>)new CompoundComponent1_21((CustomData)component);
+            return (BaseTagAPI<T>)new CompoundComponent1_20_6((CustomData)component);
         if(component instanceof DataComponentMap)
-            return (BaseTagAPI<T>)new ListComponent1_21((DataComponentMap)component);
+            return (BaseTagAPI<T>)new ListComponent1_20_6((DataComponentMap)component);
         TypedDataComponent<?> typed = (TypedDataComponent<?>)component;
         Object value = typed.value();
         if(value instanceof Number)
-            return (BaseTagAPI<T>)new PrimitiveComponent1_21((TypedDataComponent<Number>)typed);
+            return (BaseTagAPI<T>)new PrimitiveComponent1_20_6((TypedDataComponent<Number>)typed);
         if(value instanceof String)
-            return (BaseTagAPI<T>)new StringComponent1_21((TypedDataComponent<String>)typed);
+            return (BaseTagAPI<T>)new StringComponent1_20_6((TypedDataComponent<String>)typed);
         TILRef.logError("Failed to wrap component! {}",component);
         return null;
     }
     
-    @Override public CompoundComponent1_21 makeCompoundTag() {
-        return new CompoundComponent1_21(CustomData.of(new CompoundTag()));
+    @Override public CompoundComponent1_20_6 makeCompoundTag() {
+        return new CompoundComponent1_20_6(CustomData.of(new CompoundTag()));
     }
 
-    @Override public ListComponent1_21 makeListTag() {
-        return new ListComponent1_21(DataComponentMap.builder().build());
-    }
-    
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(boolean b) {
+    @Override public ListTagAPI<?> makeListTag() {
         return null;
     }
     
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(byte b) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(boolean b) {
         return null;
     }
     
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(double d) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(byte b) {
         return null;
     }
     
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(float f) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(double d) {
         return null;
     }
     
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(int i) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(float f) {
         return null;
     }
     
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(long l) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(int i) {
         return null;
     }
     
-    @Override public PrimitiveComponent1_21 makePrimitiveTag(short s) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(long l) {
         return null;
     }
     
-    @Override public StringComponent1_21 makeStringTag(String value) {
+    @Override public PrimitiveComponent1_20_6 makePrimitiveTag(short s) {
         return null;
     }
     
-    @Override public CompoundComponent1_21 readFromFile(File file) throws IOException {
+    @Override public StringComponent1_20_6 makeStringTag(String value) {
+        return null;
+    }
+    
+    @Override public CompoundComponent1_20_6 readFromFile(File file) throws IOException {
         CompoundTag tag = null;
         try {
             tag = NbtIo.read(file.toPath());
@@ -81,7 +82,7 @@ public class TagComponent1_21 implements TagAPI {
             TILRef.logWarn("Empty data file {}",file.toPath(),ex.getMessage());
         }
         if(Objects.isNull(tag)) tag = new CompoundTag();
-        return new CompoundComponent1_21(CustomData.of(tag));
+        return new CompoundComponent1_20_6(CustomData.of(tag));
     }
     
     @Override public void writeToFile(CompoundTagAPI<?> tag, File file) throws IOException {

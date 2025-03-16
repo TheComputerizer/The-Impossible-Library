@@ -21,8 +21,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core.loader.MultiV
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.core.TILCore1_18_2;
 import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Objects;
 import java.util.Set;
 
@@ -55,12 +53,6 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
         super.addSources(sources);
         ClassHelper.addSource(sources,TILCoreForge.class);
         ClassHelper.addSource(sources,TILCoreForge1_18_2.class);
-    }
-    
-    @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
-        if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
-        TILRef.logError("Directly adding a URL is not supported in this version! Not adding {}",url);
-        return false;
     }
     
     @Override public CommonEntryPoint getClientVersionHandler() {

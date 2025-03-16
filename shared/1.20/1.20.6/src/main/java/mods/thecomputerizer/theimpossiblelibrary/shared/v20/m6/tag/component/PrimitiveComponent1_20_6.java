@@ -1,14 +1,11 @@
-package mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.component;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.component;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.CompoundTag1_21;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.ListTag1_21;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.StringTag1_21;
 import net.minecraft.core.component.TypedDataComponent;
 
-public class PrimitiveComponent1_21 extends PrimitiveTagAPI<TypedDataComponent<Number>> implements ComponentWrapper {
+public class PrimitiveComponent1_20_6 extends PrimitiveTagAPI<TypedDataComponent<Number>> implements ComponentWrapper {
 
-    public PrimitiveComponent1_21(TypedDataComponent<Number> component) {
+    public PrimitiveComponent1_20_6(TypedDataComponent<Number> component) {
         super(component);
     }
 
@@ -20,7 +17,7 @@ public class PrimitiveComponent1_21 extends PrimitiveTagAPI<TypedDataComponent<N
         return this.wrapped.value().byteValue();
     }
     
-    @Override public CompoundTag1_21 asCompoundTag() {
+    @Override public CompoundComponent1_20_6 asCompoundTag() {
         return null;
     }
 
@@ -36,7 +33,7 @@ public class PrimitiveComponent1_21 extends PrimitiveTagAPI<TypedDataComponent<N
         return this.wrapped.value().intValue();
     }
     
-    @Override public ListTag1_21 asListTag() {
+    @Override public ListComponent1_20_6 asListTag() {
         return null;
     }
 
@@ -44,7 +41,7 @@ public class PrimitiveComponent1_21 extends PrimitiveTagAPI<TypedDataComponent<N
         return this.wrapped.value().longValue();
     }
     
-    @Override public PrimitiveComponent1_21 asPrimitiveTag() {
+    @Override public PrimitiveComponent1_20_6 asPrimitiveTag() {
         return this;
     }
 
@@ -52,7 +49,7 @@ public class PrimitiveComponent1_21 extends PrimitiveTagAPI<TypedDataComponent<N
         return this.wrapped.value().shortValue();
     }
     
-    @Override public StringTag1_21 asStringTag() {
+    @Override public StringComponent1_20_6 asStringTag() {
         return null;
     }
     

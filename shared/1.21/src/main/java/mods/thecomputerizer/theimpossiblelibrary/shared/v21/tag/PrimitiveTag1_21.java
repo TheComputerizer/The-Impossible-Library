@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
 import net.minecraft.nbt.NumericTag;
 
-public class PrimitiveTag1_21 extends PrimitiveTagAPI<NumericTag> {
+public class PrimitiveTag1_21 extends PrimitiveTagAPI<NumericTag> implements TagWrapper {
 
     public PrimitiveTag1_21(NumericTag tag) {
         super(tag);

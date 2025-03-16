@@ -25,11 +25,11 @@ public class ItemStack1_20 extends ItemStackAPI<ItemStack> {
         return WrapperHelper.wrapItem(this.wrapped.getItem());
     }
 
-    @Override public CompoundTag1_20 getOrCreateTag() {
+    @Override public CompoundTagAPI<?> getOrCreateTag() {
         return new CompoundTag1_20(this.wrapped.getOrCreateTag());
     }
 
-    @Override public @Nullable CompoundTag1_20 getTag() {
+    @Override public @Nullable CompoundTagAPI<?> getTag() {
         CompoundTag tag = this.wrapped.getTag();
         return Objects.nonNull(tag) ? new CompoundTag1_20(tag) : null;
     }

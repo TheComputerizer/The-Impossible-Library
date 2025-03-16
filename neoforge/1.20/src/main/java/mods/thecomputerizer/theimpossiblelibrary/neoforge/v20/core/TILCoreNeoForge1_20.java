@@ -17,8 +17,6 @@ import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core.loader.MultiV
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.core.TILCore1_20;
 import net.neoforged.fml.loading.targets.CommonLaunchHandler;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,12 +50,6 @@ public abstract class TILCoreNeoForge1_20 extends TILCore1_20 implements TILCore
         super.addSources(sources);
         ClassHelper.addSource(sources,TILCoreNeoforge.class);
         ClassHelper.addSource(sources,TILCoreNeoForge1_20.class);
-    }
-    
-    @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
-        if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
-        TILRef.logError("Directly adding a URL is not supported in this version! Not adding {}",url);
-        return false;
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {

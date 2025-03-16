@@ -1,12 +1,10 @@
-package mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.component;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.component;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.CompoundTag1_21;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.PrimitiveTag1_21;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.StringTag1_21;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentMap.Builder;
 import net.minecraft.core.component.TypedDataComponent;
@@ -20,12 +18,13 @@ import java.util.List;
 import java.util.Objects;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_DATA;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
-public class ListComponent1_21 extends ListTagAPI<DataComponentMap> implements ComponentWrapper {
+public class ListComponent1_20_6 extends ListTagAPI<DataComponentMap> implements ComponentWrapper {
 
     private DataComponentMap mutableWrapped;
     
-    public ListComponent1_21(DataComponentMap map) {
+    public ListComponent1_20_6(DataComponentMap map) {
         super(map);
         this.mutableWrapped = map;
     }
@@ -57,7 +56,10 @@ public class ListComponent1_21 extends ListTagAPI<DataComponentMap> implements C
             case Tag tag -> {
                 if(tag instanceof CompoundTag compound) {
                     if(hasCustomData) yield compound;
-                    addComponent(builder, TypedDataComponent.createUnchecked(CUSTOM_DATA, CustomData.of(compound)));
+                    ClassHelper.checkBurningWaveInit();
+                    //Why did TypedDataComponent#createUnchecked start out as package-private??
+                    addComponent(builder,Methods.invokeStaticDirect(TypedDataComponent.class,
+                            "createUnchecked",CUSTOM_DATA,CustomData.of(compound)));
                 } else TILRef.logWarn("Tag must be CompoundTag instance to add to ListComponent! {}", tag);
                 yield null;
             }
@@ -72,19 +74,19 @@ public class ListComponent1_21 extends ListTagAPI<DataComponentMap> implements C
         builder.set(component.type(),component.value());
     }
     
-    @Override public CompoundTag1_21 asCompoundTag() {
+    @Override public CompoundComponent1_20_6 asCompoundTag() {
         return null;
     }
     
-    @Override public ListComponent1_21 asListTag() {
+    @Override public ListComponent1_20_6 asListTag() {
         return this;
     }
     
-    @Override public PrimitiveTag1_21 asPrimitiveTag() {
+    @Override public PrimitiveComponent1_20_6 asPrimitiveTag() {
         return null;
     }
     
-    @Override public StringTag1_21 asStringTag() {
+    @Override public StringComponent1_20_6 asStringTag() {
         return null;
     }
     
