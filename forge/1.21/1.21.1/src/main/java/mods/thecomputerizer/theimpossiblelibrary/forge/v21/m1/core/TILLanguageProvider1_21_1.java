@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v21.core;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v21.m1.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -19,7 +19,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @IndirectCallers
-public class TILLanguageProvider1_21 implements TILForgeLanguageProvider { //TODO This doesn't need to be version specific
+public class TILLanguageProvider1_21_1 implements TILForgeLanguageProvider {
     
     @Override public Consumer<ModFileScanData> getFileVisitor(CoreAPI core, IModLanguageProvider provider) {
         return scan -> {
@@ -30,7 +30,7 @@ public class TILLanguageProvider1_21 implements TILForgeLanguageProvider { //TOD
             scan.addLanguageLoader(scan.getAnnotations().stream()
                         .filter(ad -> ad.annotationType().equals(modAnnotation))
                         .peek(ad -> TILRef.logDebug("Found @Mod class {} with id {}",ad.clazz().getClassName(),ad.annotationData().get("value")))
-                        .map(ad -> new TILLanguageLoader1_21(core, ad.clazz().getClassName(),(String)ad.annotationData().get("value"),scan))
+                        .map(ad -> new TILLanguageLoader1_21(core,ad.clazz().getClassName(),(String)ad.annotationData().get("value"),scan))
                         .collect(Collectors.toMap(TILLanguageLoader1_21::getModid,Function.identity(),(a,b)->a)));
         };
     }

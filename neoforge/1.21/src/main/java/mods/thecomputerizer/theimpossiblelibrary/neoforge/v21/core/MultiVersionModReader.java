@@ -21,16 +21,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.jar.Manifest;
 
 public class MultiVersionModReader implements IModFileReader {
     
     static {
-        NeoForgeCoreLoader.fixForServiceLayer();
-        Object instance = NeoForgeCoreLoader.initCoreAPI(MultiVersionModReader.class.getClassLoader());
-        if(Objects.isNull(instance))
-            throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
+        ClassLoader loader = MultiVersionModReader.class.getClassLoader();
+        if(loader!=NeoForgeCoreLoader.bootLoader()) {
+            NeoForgeCoreLoader.fixForServiceLayer();
+            Object instance = NeoForgeCoreLoader.initCoreAPI(MultiVersionModReader.class.getClassLoader());
+            if(Objects.isNull(instance))
+                throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
+        }
     }
     
     public static SecureJar jarFromPath(Path path) {
@@ -42,9 +47,10 @@ public class MultiVersionModReader implements IModFileReader {
         return null;
     }
     
+    static Set<String> alreadyHandled = new HashSet<>();
+    
     private final CoreAPI core;
     private final MultiVersionLoaderAPI loader;
-    private MultiVersionModCandidate candidate;
     
     public MultiVersionModReader() {
         this.core = CoreAPI.getInstance();
@@ -62,16 +68,23 @@ public class MultiVersionModReader implements IModFileReader {
         return candidate2;
     }
     
-    void queryLoaderFile(String loaderName, File file) {
+    boolean queryFile(String loaderName, File file) {
         String fileName = file.getName();
+        if(alreadyHandled.contains(fileName)) {
+            TILRef.logInfo("Skipping file that was already handled {}",fileName);
+            return true;
+        }
+        alreadyHandled.add(fileName);
         TILDev.logInfo("[{}]: Checking if file {} is the loader",loaderName,fileName);
         if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
             TILDev.logInfo("[{}]: File is the loader",loaderName);
             MultiVersionModCandidate.loaderFile = file;
         }
+        return false;
     }
     
     @Override public @Nullable IModFile read(JarContents jar, ModFileDiscoveryAttributes attributes) {
+        MultiVersionModCandidate candidate = null;
         Manifest manifest = jar.getManifest();
         if(Objects.nonNull(manifest) && MultiVersionModFinder.hasMods(manifest.getMainAttributes())) {
             Path path = jar.getPrimaryPath();
@@ -79,12 +92,12 @@ public class MultiVersionModReader implements IModFileReader {
             String loaderName = this.loader.getName();
             TILRef.logInfo("[{}]: Found mod candidate at {}",loaderName,path);
             File file = path.toFile();
-            queryLoaderFile(loaderName,file);
-            this.candidate = mergeCandidates(MultiVersionModFinder.discoverCoreCandidate(this.loader,file),
+            if(queryFile(loaderName,file)) return null;
+            candidate = mergeCandidates(MultiVersionModFinder.discoverCoreCandidate(this.loader,file),
                     MultiVersionModFinder.discoverModCandidate(this.loader,file));
         }
-        if(Objects.isNull(this.candidate)) return null;
-        Collection<?> infos = this.core.loadCandidate(this.candidate,this.loader,getClass().getClassLoader());
-        return infos.isEmpty() ? null : new TILModFileNeoForge1_21(this,this.candidate,infos);
+        if(Objects.isNull(candidate)) return null;
+        Collection<?> infos = this.core.loadCandidate(candidate,this.loader,getClass().getClassLoader());
+        return infos.isEmpty() ? null : new TILModFileNeoForge1_21(this,candidate,infos);
     }
 }

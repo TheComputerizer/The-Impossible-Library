@@ -269,11 +269,11 @@ public class ForgeCoreLoader {
      * Returns an array where the elements are the ClassLoader, resolved module, and the name of the layer.
      * Assumes the given loaders array will always be in the order of BOOT, SERVICE, PLUGIN, GAME
      */
-    public static Object[] findModuleLoaderForPackage(String pkg, ClassLoader[] loaders) {
+    public static Object[] findModuleLoaderForPackage(String pkg, ClassLoader[] loaders, boolean newFormat) {
         for(int i=0;i<loaders.length;i++) {
             ClassLoader loader = loaders[i];
             String name = i==0 ? "BOOT" : (i==1 ? "SERVICE" : "PLUGIN");
-            Map<String,Object> lookup = Fields.getDirect(loader,"packageLookup");
+            Map<String,Object> lookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
             Object resolvedModule = lookup.get(pkg);
             if(Objects.nonNull(resolvedModule)) return new Object[]{loader,resolvedModule,name};
         }
@@ -528,9 +528,11 @@ public class ForgeCoreLoader {
                 List<String> usesServices = Methods.invokeDirect(fileInfo,"usesServices");
                 descriptor = buildNewModuleDescriptor(name,secureJar,usesServices);
             }
-            Class<?> fClass = Class.forName("cpw.mods.cl.JarModuleFinder");
-            Object finder = Constructors.newInstanceOf(fClass,secureJar);
-            Map<String,Object> refMap = Fields.getDirect(finder,"moduleReferenceMap");
+            String finderName = newFormat ? "net.minecraftforge.securemodules.SecureModuleFinder" :
+                    "cpw.mods.cl.JarModuleFinder";
+            Class<?> fClass = Class.forName(finderName);
+            Object finder = Constructors.newInstanceOf(fClass,newFormat ? Collections.singletonList(secureJar) : secureJar);
+            Map<String,Object> refMap = Fields.getDirect(finder,newFormat ? "references" : "moduleReferenceMap");
             Object reference = refMap.get(existingName);
             URI uri = Fields.getDirect(reference,"location");
             Object config = Fields.getDirect(targetLoader,"configuration");
@@ -608,7 +610,7 @@ public class ForgeCoreLoader {
         ClassLoader boot = bootLoader();
         ClassLoader service = layerClassLoader("SERVICE");
         ClassLoader plugin = layerClassLoader("PLUGIN");
-        Object[] found = findModuleLoaderForPackage(pkg,new ClassLoader[]{boot,service,plugin});
+        Object[] found = findModuleLoaderForPackage(pkg,new ClassLoader[]{boot,service,plugin},newFormat);
         if(Objects.isNull(found)) {
             loadNewModuleTo(mod,"GAME",finalizedPkgs,newFormat);
             return;
@@ -839,7 +841,9 @@ public class ForgeCoreLoader {
         Optional<Object> optionalModule = Methods.invokeDirect(moduleLayer,"findModule",moduleName);
         if(optionalModule.isPresent()) {
             Object module = optionalModule.get();
-            Class<?> c = Class.forName(className);
+            String name = moduleName(module);
+            ClassLoader loader = Methods.invokeDirect(moduleLayer,"findLoader",name);
+            Class<?> c = Class.forName(className,false,loader);
             Object cModule = Methods.invokeDirect(c,"getModule");
             if(module!=cModule) {
                 LOGGER.debug("Attempting to fix modules that are not equal");

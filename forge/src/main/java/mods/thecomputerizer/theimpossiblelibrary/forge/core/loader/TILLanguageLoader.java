@@ -60,7 +60,7 @@ public abstract class TILLanguageLoader {
             Methods.invoke(this.scan,"defineClasses",classLoader);
             
             if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
-            //ForgeCoreLoader.verifyModule(this.modClass,info,extras[0]);
+            ForgeCoreLoader.verifyModule(this.modClass,info,extras[0]);
             return getInstance(container,info,classLoader,scanResults,extras);
         } catch(Throwable t) {
             String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";

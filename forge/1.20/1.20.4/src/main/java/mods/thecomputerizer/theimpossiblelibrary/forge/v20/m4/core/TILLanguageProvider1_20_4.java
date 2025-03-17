@@ -7,16 +7,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLanguageProvider;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.loader.TILLanguageLoader1_20;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m4.core.loader.TILModFileForge1_20_4;
-import net.minecraftforge.fml.loading.EarlyLoadingException;
-import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
-import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,23 +21,6 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @IndirectCallers
 public class TILLanguageProvider1_20_4 implements TILForgeLanguageProvider {
-    
-    @Override public void fixMods() {
-        try {
-            TILRef.logError("Starting to try and fix multiversion mods");
-            LoadingModList list = LoadingModList.get();
-            List<EarlyLoadingException> errors = list.getErrors();
-            TILRef.logError("Maybe fixing {} loading errors",errors.size());
-            errors.removeIf(ex -> {
-                List<ExceptionData> dataList = new ArrayList<>(ex.getAllData());
-                TILRef.logInfo("Exception has {} mod infos {}",dataList.size(),ex);
-                dataList.removeIf(data -> data.getModInfo().getOwningFile().getFile() instanceof TILModFileForge1_20_4);
-                return dataList.isEmpty();
-            });
-        } catch(Throwable t) {
-            TILRef.logError("Failed to fix mods",t);
-        }
-    }
     
     @Override public Consumer<ModFileScanData> getFileVisitor(CoreAPI core, IModLanguageProvider provider) {
         return scan -> {
