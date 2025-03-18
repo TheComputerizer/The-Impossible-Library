@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core;
 
-import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
@@ -52,8 +51,7 @@ public class MultiVersionModLocator1_18_2 implements TILForgeModLocator {
             TILDev.logInfo("[{}]: File is the loader",loaderName);
             MultiVersionModCandidate.loaderFile = path.toFile();
         }
-        SecureJar sj = jarFromPath(path);
-        if(filter.test(sj)) {
+        if(filter.test(SecureJar.from(path))) {
             TILRef.logInfo("[{}]: Found mod candidate at {}",loaderName,path);
             loader.addPotentialModPath(path);
         }
@@ -68,7 +66,7 @@ public class MultiVersionModLocator1_18_2 implements TILForgeModLocator {
     void findFiles(MultiVersionLoaderAPI loader, Predicate<SecureJar> filter, File... files) {
         TILRef.logInfo("[{}]: Loading {} mod files",loader.getName(),files.length);
         for(File mod : files) {
-            TILRef.logInfo("[{}]: Loading mod file at path",loader.getName(),mod.toPath());
+            TILRef.logInfo("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
             checkPath(loader,mod.toPath(),filter);
         }
     }
@@ -94,7 +92,7 @@ public class MultiVersionModLocator1_18_2 implements TILForgeModLocator {
     }
     
     @Override public IModFile createModFile(Path path, IModLocator locator, Collection<?> infos) {
-        return new TILModFileForge1_18_2(jarFromPath(path),locator,infos);
+        return new TILModFileForge1_18_2(SecureJar.from(path),locator,infos);
     }
     
     @Override public void initFor(ClassLoader loader, IModLocator locator) {
@@ -105,18 +103,12 @@ public class MultiVersionModLocator1_18_2 implements TILForgeModLocator {
         loadMods(loader,locator,core);
     }
     
-    SecureJar jarFromPath(Path path) {
-        return SecureJar.from(Manifest::new,jar -> JarMetadata.from(jar,path),
-                              (root,p) -> true,path);
-    }
-    
     public void loadCandidateInfos(IModLocator locator, Map<?,?> infoMap) {
         for(Entry<?,?> entry : infoMap.entrySet()) {
             MultiVersionModCandidate candidate = (MultiVersionModCandidate)entry.getKey();
             Path sourcePath = candidate.getFile().toPath();
             Collection<?> infos = (Collection<?>)entry.getValue();
-            SecureJar jar = jarFromPath(sourcePath);
-            this.candidateMap.put(candidate,new TILModFileForge1_18_2(jar,locator,infos));
+            this.candidateMap.put(candidate,new TILModFileForge1_18_2(SecureJar.from(sourcePath),locator,infos));
         }
     }
     

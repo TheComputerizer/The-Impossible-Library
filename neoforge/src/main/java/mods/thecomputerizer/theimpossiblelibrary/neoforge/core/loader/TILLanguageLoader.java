@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
@@ -9,6 +10,7 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 
 import java.lang.reflect.Constructor;
 
+import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public abstract class TILLanguageLoader {
@@ -65,7 +67,8 @@ public abstract class TILLanguageLoader {
     
     protected void setCoreAPI(Class<?> implClass) {
         try {
-            implClass.newInstance();
+            ClassHelper.checkBurningWaveInit();
+            Constructors.newInstanceOf(implClass);
             loadedNewCore = true;
         } catch(Throwable t) {
             TILRef.logError("Failed to set CoreAPI instance {}",implClass,t);

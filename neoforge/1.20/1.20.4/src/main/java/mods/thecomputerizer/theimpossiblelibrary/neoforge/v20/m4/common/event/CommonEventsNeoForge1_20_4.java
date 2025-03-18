@@ -2,7 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.CommonEventsNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event.events.PlayerTickEventNeoForge1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event.events.RegisterCommandsEventNeoForge1_20_4;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event.events.WorldTickEventNeoForge1_20_4;
 import net.neoforged.bus.api.Event;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
@@ -14,6 +16,8 @@ public class CommonEventsNeoForge1_20_4 extends CommonEventsNeoForge1_20 {
 
     @Override public void defineEvents() {
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventNeoForge1_20_4());
+        TICK_PLAYER.setConnector(new PlayerTickEventNeoForge1_20_4());
+        TICK_WORLD.setConnector(new WorldTickEventNeoForge1_20_4());
         super.defineEvents();
     }
     

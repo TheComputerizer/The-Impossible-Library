@@ -91,13 +91,11 @@ public abstract class CommonEventsNeoForge1_20 extends CommonEvents1_20 {
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEventNeoForge());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEventNeoForge());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventNeoForge());
-        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventNeoForge()); //TODO Deferred registers?
+        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventNeoForge());
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventNeoForge());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventNeoForge());
         REGISTER_ITEMS.setConnector(new RegisterItemsEventNeoForge());
         REGISTER_SOUNDS.setConnector(new RegisterSoundsEventNeoForge());
-        TICK_PLAYER.setConnector(new PlayerTickEventNeoForge());
-        TICK_WORLD.setConnector(new WorldTickEventNeoForge());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventNeoForge());
         WORLD_LOAD.setConnector(new WorldLoadEventNeoForge());
         WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventNeoForge());

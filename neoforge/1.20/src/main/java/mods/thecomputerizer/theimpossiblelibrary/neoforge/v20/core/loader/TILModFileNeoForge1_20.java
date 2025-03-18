@@ -51,7 +51,7 @@ public class TILModFileNeoForge1_20 extends ModFile {
     static boolean fixedCoreMods;
     
     static IModFileInfo getFileInfo(IModFile file, Collection<?> infos) {
-        IConfigurable config = new TILFileConfigNeoForge(infos);
+        IConfigurable config = new TILFileConfigNeoForge(infos,"multiversionprovider");
         return new ModFileInfo((ModFile)file,config,info -> {},Collections.emptyList());
     }
     

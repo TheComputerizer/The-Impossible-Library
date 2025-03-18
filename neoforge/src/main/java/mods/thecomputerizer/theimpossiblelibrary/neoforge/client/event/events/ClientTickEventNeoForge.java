@@ -1,30 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.ClientTickEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.TickEvent.ClientTickEvent;
-import net.neoforged.neoforge.event.TickEvent.Phase;
+import net.neoforged.bus.api.Event;
 
-import java.util.Objects;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.TICK_CLIENT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.START;
-
-public class ClientTickEventNeoForge extends ClientTickEventWrapper<ClientTickEvent> {
+public abstract class ClientTickEventNeoForge<E extends Event> extends ClientTickEventWrapper<E> {
     
-    @SubscribeEvent
-    public static void onEvent(ClientTickEvent event) {
-        TICK_CLIENT.invoke(event);
-    }
-    
-    @Override public void setEvent(ClientTickEvent event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
-    }
-    
-    @Override protected TickPhase wrapTickPhase() {
-        return Objects.nonNull(this.event) ? (event.phase==Phase.END ? END : START) : DEFAULT;
     }
 }

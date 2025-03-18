@@ -56,20 +56,20 @@ public class NeoForgeCoreLoader {
     /**
      * Fix Configuration instance for both the BOOT and SERVICE layers
      */
-    private static void addConfigurationModule(Configuration configuration, String name, ResolvedModule resolvedModule,
+    private static void addConfigurationModule(Configuration bootConfig, String name, ResolvedModule resolvedModule,
             ClassLoader thisLoader) {
         
-        Map<String,ResolvedModule> nameToModule = new HashMap<>(Fields.getDirect(configuration,"nameToModule"));
+        Map<String,ResolvedModule> nameToModule = new HashMap<>(Fields.getDirect(bootConfig,"nameToModule"));
         nameToModule.putIfAbsent(name,resolvedModule);
-        Fields.setDirect(configuration,"nameToModule",Collections.unmodifiableMap(nameToModule));
+        Fields.setDirect(bootConfig,"nameToModule",Collections.unmodifiableMap(nameToModule));
+        
+        //Update the configuration field for the module
+        Fields.setDirect(resolvedModule,"cf",bootConfig);
         
         //Prevent reading duplicate modules
         Configuration thisConfig = Fields.getDirect(thisLoader,"configuration");
         removeFromUnmodifiableSetField(thisConfig,"modules",resolvedModule);
         removeFromUnmodifiableMapField(thisConfig,"nameToModule",name);
-        
-        //Update the configuration field for the module
-        Fields.setDirect(resolvedModule,"cf",thisConfig);
         
         //Deal with the module graph ._.
         Map<ResolvedModule,Set<ResolvedModule>> thisGraph = new HashMap<>(Fields.getDirect(thisConfig,"graph"));
@@ -127,32 +127,31 @@ public class NeoForgeCoreLoader {
     /**
      * So basically the only way to guaruntee stuff will work in the BOOT layer is if it can find the right
      * package in the right ResolvedModule. Luckily we already have those in the current (SERVICE) layer, so
-     * all we need to do is transfer some stuff over and then handle the duplicates
+     * all we need to do is transfer some stuff over and then handle the duplicates.
+     * Returns the packages for the ModuleDescriptor for adding as parent loaders
      */
-    private static void addResolvedModule(ResolvedModule module, ClassLoader thisLoader) {
+    private static Set<String> addResolvedModule(ResolvedModule module, ClassLoader thisLoader) {
         ClassLoader loader = bootLoader();
-        Map<String,ModuleReference> roots = Fields.getDirect(loader, "resolvedRoots");
-        Map<String,ResolvedModule> packageLookup = Fields.getDirect(loader,"packageLookup");
+        Map<String,ModuleReference> roots = Fields.getDirect(loader,"resolvedRoots");
         ModuleReference reference = Methods.invokeDirect(module,"reference");
         ModuleDescriptor descriptor = reference.descriptor();
         String name = descriptor.name();
         roots.put(name,reference);
         Set<String> packages = descriptor.packages();
-        for(String pkg : packages) {
-            packageLookup.put(pkg,module);
-        }
         
         //Finalize by moving the original Module from SERVICE to the BOOT layer & fixing parent loaders
         moveModuleToLayer(loader,"BOOT","SERVICE",name);
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(thisLoader,"parentLoaders");
-        for(String pkg : packages) parentLoaders.put(pkg,loader);
         
         //Fix configurations & prevent reading duplicate modules
         addConfigurationModule(Fields.getDirect(loader,"configuration"),name,module,thisLoader);
         Map<String,ModuleReference> theseRoots = Fields.getDirect(thisLoader,"resolvedRoots");
         theseRoots.remove(name);
         
-        LOGGER.info("Finished migrating module {} from the SERVICE layer to the BOOT layer",name);
+        return packages;
+    }
+    
+    private static void addToServiceCatalog(Module module, ModuleLayer layer) {
+        Methods.invokeDirect(getServicesCatalog(layer),"register",module);
     }
     
     /**
@@ -282,7 +281,6 @@ public class NeoForgeCoreLoader {
     
     public static void fixForServiceLayer() {
         LOGGER.info("Running SERVICE layer fix");
-        StackWalker.getInstance().forEach(frame -> LOGGER.info("\t{}#{}",frame.getClassName(),frame.getMethodName()));
         ClassLoader thisLoader = NeoForgeCoreLoader.class.getClassLoader();
         if(thisLoader==bootLoader()) {
             LOGGER.warn("Tried to fix SERVICE layer twice!");
@@ -292,9 +290,91 @@ public class NeoForgeCoreLoader {
         Map<String,ResolvedModule> packageLookup = Fields.getDirect(thisLoader,"packageLookup");
         ResolvedModule module = packageLookup.get(pkg);
         if(Objects.nonNull(module)) {
-            addResolvedModule(module,thisLoader);
-            packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
+            Set<String> packages = new HashSet<>(addResolvedModule(module,thisLoader));
+            packageLookup.entrySet().removeIf(entry -> {
+                if(module.equals(entry.getValue())) {
+                    packages.add(entry.getKey());
+                    return true; //Prevent reading duplicate modules
+                }
+                return false;
+            });
+            ClassLoader boot = bootLoader();
+            Map<String,ResolvedModule> bootLookup = Fields.getDirect(boot,"packageLookup");
+            Map<String,ClassLoader> parentLoaders = Fields.getDirect(thisLoader,"parentLoaders");
+            for(String p : packages) {
+                bootLookup.put(p,module);
+                parentLoaders.put(p,boot);
+            }
+            LOGGER.info("Finished migrating module {} from the SERVICE layer to the BOOT layer",module.name());
         } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
+    }
+    
+    public static void fixService(String service, String impl, ClassLoader loaderFrom) {
+        fixService(service,impl,loaderFrom,false);
+    }
+    
+    public static void fixService(String service, String impl, ClassLoader loaderFrom, boolean isRemoval) {
+        LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
+        ClassLoader loader = bootLoader();
+        String pkg = ConsulterSupplyFunction.class.getPackage().getName();
+        Map<String,ResolvedModule> packageLookup = Fields.getDirect(loader,"packageLookup");
+        ResolvedModule resolved = packageLookup.get(pkg);
+        if(Objects.isNull(resolved)) {
+            LOGGER.error("Failed to get module from package! {}",pkg);
+            return;
+        }
+        String name = resolved.name();
+        ModuleLayer serviceLayer = getModuleLayer("SERVICE");
+        ModuleLayer bootLayer = getModuleLayer("BOOT");
+        Map<String,Module> nameToModule = Fields.getDirect(bootLayer,"nameToModule");
+        Module module = nameToModule.get(name);
+        if(Objects.isNull(module)) {
+            LOGGER.error("Failed to get module {} in BOOT layer!",name);
+            return;
+        }
+        fixServiceFor(service,impl,module,bootLayer,isRemoval);
+        if(!isRemoval) {
+            fixServiceFor(service,impl,module,serviceLayer,true);
+            try {
+                Class<?> implClass = Class.forName(impl,false,loader);
+                Fields.setDirect(implClass,"module",module);
+                Fields.setDirect(implClass,"classLoader",loader);
+            } catch(ClassNotFoundException ex) {
+                LOGGER.error("Service class that was supposed to be moved was not found in the BOOT layer! {}",impl,ex);
+            }
+        }
+        LOGGER.info("Sucessfully notified the ServicesCatalog that {} has been moved",impl);
+    }
+    
+    private static void fixServiceFor(String service, String impl, Module module, ModuleLayer layer, boolean isRemoval) {
+        Object servicesCatalog = getServicesCatalog(layer);
+        Class<?> sClass = servicesCatalog.getClass();
+        String providerClassName = sClass.getName()+"$ServiceProvider";
+        Class<?> pClass;
+        try {
+            pClass = Class.forName(providerClassName);
+        } catch(ClassNotFoundException ex) {
+            LOGGER.error("Failed to find class {}",providerClassName,ex);
+            return;
+        }
+        Map<String,List<?>> map = new HashMap<>(Fields.getDirect(servicesCatalog,"map"));
+        Object found = null;
+        if(map.containsKey(service)) {
+            List<?> providers = map.get(service);
+            for(Object provider : providers) {
+                String name = Methods.invokeDirect(provider,"providerName");
+                if(name.equals(impl)) {
+                    Fields.setDirect(provider,"module",module);
+                    found = provider;
+                }
+            }
+        }
+        if(Objects.nonNull(found)) {
+            if(isRemoval) map.get(service).remove(found);
+        } else if(!isRemoval) {
+            Object provider = Constructors.newInstanceOf(pClass,module,impl);
+            Methods.invokeDirect(servicesCatalog,"addProviders",service,provider);
+        }
     }
     
     /**
@@ -356,15 +436,9 @@ public class NeoForgeCoreLoader {
         return layerManager.getLayer(Layer.valueOf(name)).orElse(null);
     }
     
-    //TODO Verify this is needed and correct
-    static String getVersionFromNeoForgeVersion(String neoforgeVersion) {
-        String ignore = "neoforge-";
-        String actualVersion = neoforgeVersion.startsWith(ignore) ? neoforgeVersion.substring(ignore.length()) : neoforgeVersion;
-        String version = "1.21.1";
-        if(actualVersion.startsWith("49.")) version = "1.20.4";
-        else if(actualVersion.startsWith("50.")) version = "1.20.6";
-        LOGGER.info("Guessed mc version {} from neoforge version {}",version,neoforgeVersion);
-        return version;
+    static Object getServicesCatalog(ModuleLayer layer) {
+        Object langAccess = Fields.getStaticDirect(ServiceLoader.class,"LANG_ACCESS");
+        return Methods.invokeDirect(langAccess,"getServicesCatalog",layer);
     }
     
     static String getVersionStr() {
@@ -388,18 +462,6 @@ public class NeoForgeCoreLoader {
             LOGGER.info("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
             return rawArgs[versionIndex];
         }
-        LOGGER.info("--fml.mcVersion was not found so the mc version will be guessed from --version instead");
-        for(int i=0;i<rawArgs.length;i++) {
-            if(rawArgs[i].equals("--version")) {
-                versionIndex = i+1;
-                found = true;
-                break;
-            }
-        }
-        if(found) {
-            LOGGER.info("Found neoforge version arg at index {}",versionIndex);
-            return getVersionFromNeoForgeVersion(rawArgs[versionIndex]);
-        }
         LOGGER.error("Failed to find fml.mcVersion or version flags from args {}",Arrays.toString(rawArgs));
         return null;
     }
@@ -415,7 +477,8 @@ public class NeoForgeCoreLoader {
             return bootInstance;
         }
         String version = getVersionStr();
-        Class<?> coreClass = loadAPI(version);
+        Class<?> coreClass = loadAPI(version,bootLoader());
+        //Class<?> coreClass = loadAPI(version,loader);
         try {
             //noinspection deprecation
             return coreClass.newInstance();
@@ -448,12 +511,11 @@ public class NeoForgeCoreLoader {
      * Define necessary classes for the versioned CoreAPI instance
      * Returns the instance class
      */
-    static Class<?> loadAPI(String version) {
+    static Class<?> loadAPI(String version, ClassLoader loader) {
         String className = versionClassName("core.TILCoreNeoForge",version);
-        ClassLoader loader = bootLoader();
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(className,true,loader);
+            clazz = Driver.getClassByName(className,true,loader,Classes.getClass());
         } catch(Exception ex) {
             LOGGER.error("Failed to load class {} for {}",className,loader,ex);
         }
@@ -477,8 +539,12 @@ public class NeoForgeCoreLoader {
             String name = mod.getModId(); //Usually the same as existingName, but there are some edge cases...
             ModuleLayer layer = getModuleLayer(targetLayerName);
             Map<String,Module> nameToModule = Fields.getDirect(layer,"nameToModule");
+            boolean foundExistingName = true;
             Module module = nameToModule.get(existingName);
-            if(Objects.isNull(module)) module = nameToModule.get(name);
+            if(Objects.isNull(module)) {
+                module = nameToModule.get(name);
+                foundExistingName = false;
+            }
             boolean existed = false;
             if(Objects.nonNull(module)) {
                 LOGGER.info("Found existing module to set up for {}",name);
@@ -488,8 +554,7 @@ public class NeoForgeCoreLoader {
             if(Objects.nonNull(module)) {
                 descriptor = module.getDescriptor();
                 Fields.setDirect(descriptor,"name",name);
-            }
-            else {
+            } else {
                 List<String> usesServices = fileInfo.usesServices();
                 descriptor = buildNewModuleDescriptor(name,(Jar)jar,usesServices);
             }
@@ -520,6 +585,8 @@ public class NeoForgeCoreLoader {
                 nukeLoaderFields(existingName,boot,service,plugin,targetLoader);
                 nukeModuleLayer(existingName,"BOOT","SERVICE","PLUGIN","GAME");
             }
+            if(foundExistingName) nameToModule.remove(existingName);
+            nameToModule.put(name,module);
             finalizeModule(existingName,name,module,targetLoader,boot,service,plugin);
             LOGGER.warn("------------------------------------------------------------------------------------------------");
             LOGGER.warn("SUCCESSFULLY LOADED {} TO THE GAME LAYER HAVE A NICE DAY", name);
@@ -543,19 +610,31 @@ public class NeoForgeCoreLoader {
             return;
         }
         String fieldName = "nameToModule";
-        Map<String,Object> moduleMapFrom = new HashMap<>(Fields.getDirect(from,fieldName));
-        Object module = moduleMapFrom.get(moduleName);
+        Map<String,Module> moduleMapFrom = new HashMap<>(Fields.get(from,fieldName));
+        Module module = moduleMapFrom.get(moduleName);
         if(Objects.isNull(module)) {
             LOGGER.error("Unable to move module {}! Cannot find module in supplier layer {}",moduleName,layerFrom);
             return;
         }
         Fields.setDirect(module,"loader",targetLoader);
         Fields.setDirect(module,"layer",to);
-        Map<String,Object> moduleMapTo = new HashMap<>(Fields.getDirect(to,fieldName));
-        moduleMapTo.putIfAbsent(moduleName,module);
-        Fields.setDirect(to,fieldName,Collections.unmodifiableMap(moduleMapTo));
+        Map<String,Module> moduleMapTo = new HashMap<>(Fields.get(to,fieldName));
+        moduleMapTo.put(moduleName,module);
         moduleMapFrom.remove(moduleName);
         Fields.setDirect(from,fieldName,Collections.unmodifiableMap(moduleMapFrom));
+        Fields.setDirect(to,fieldName,Collections.unmodifiableMap(moduleMapTo));
+        Set<Module> modulesFrom = Fields.getDirect(from,"modules");
+        if(Objects.nonNull(modulesFrom)) {
+            modulesFrom = new HashSet<>(modulesFrom);
+            modulesFrom.remove(module);
+            Fields.setDirect(from,"modules",Collections.unmodifiableSet(modulesFrom));
+        }
+        Set<Module> modulesTo = Fields.getDirect(from,"modules");
+        LOGGER.info("modules collection null for layer {}? {}",layerTo,Objects.isNull(modulesTo));
+        modulesTo = Objects.nonNull(modulesTo) ? new HashSet<>(modulesTo) : new HashSet<>();
+        modulesTo.add(module);
+        Fields.setDirect(to,"modules",Collections.unmodifiableSet(modulesTo));
+        addToServiceCatalog(module,to);
     }
     
     /**
@@ -736,15 +815,29 @@ public class NeoForgeCoreLoader {
         IModFile file = fileInfo.getFile();
         if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
         Optional<Module> optionalModule = layer.findModule(moduleName);
+        if(optionalModule.isEmpty()) {
+            for(Module module : layer.modules()) {
+                if(moduleName.equals(module.getName())) {
+                    boolean sameLayer = module.getLayer()==layer;
+                    LOGGER.info("Found module {} in {} layer that wasn't present in the nameToModule map",
+                                moduleName,sameLayer ? "the same" : "a different");
+                    Map<String,Module> nameToModule = new HashMap<>(Fields.getDirect(layer,"nameToModule"));
+                    nameToModule.put(moduleName,module);
+                    Fields.setDirect(layer,"nameToModule",Collections.unmodifiableMap(nameToModule));
+                    break;
+                }
+            }
+        }
+        optionalModule = layer.findModule(moduleName);
         if(optionalModule.isPresent()) {
             Module module = optionalModule.get();
             Class<?> c = Class.forName(className,false,layer.findLoader(module.getName()));
             Module cModule = c.getModule();
             if(module!=cModule) {
-                LOGGER.debug("Attempting to fix modules that are not equal");
+                LOGGER.info("Attempting to fix modules that are not equal");
                 Fields.setDirect(c,"module",module);
-            } else LOGGER.debug("Modules are equal");
-        }
+            } else LOGGER.info("Modules are equal");
+        } else LOGGER.error("Module {} is not present in the target layer!",moduleName);
         LOGGER.info("Finished verifying {}",className);
     }
     

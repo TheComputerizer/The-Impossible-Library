@@ -30,6 +30,8 @@ public class MultiVersionLanguageLoader implements IModLanguageLoader {
                 betterScan.defineClasses(loader);
                 if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,loader));
                 NeoForgeCoreLoader.verifyModule(modClass,info,layer);
+                TILRef.logInfo("Attempting to initialize container in module {} for {}",
+                               info.getOwningFile().moduleName(),modClass);
                 ModContainer container = new FMLModContainer(info,Collections.singletonList(modClass),scan,layer);
                 TILRef.logInfo("Successfully initialized mod container for {}",modClass);
                 return container;

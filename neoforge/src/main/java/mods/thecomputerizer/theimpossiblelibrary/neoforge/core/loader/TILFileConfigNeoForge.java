@@ -20,9 +20,9 @@ public class TILFileConfigNeoForge implements IConfigurable {
     private final Map<String,List<IConfigurable>> childConfigs;
     private final Map<String,List<IConfigurable>> dependencies;
     
-    public TILFileConfigNeoForge(Collection<?> infos) {
+    public TILFileConfigNeoForge(Collection<?> infos, String loaderName) {
         this.infoMap = new HashMap<>();
-        this.infoMap.put("modLoader","multiversionprovider");
+        this.infoMap.put("modLoader",loaderName);
         this.infoMap.put("loaderVersion","[0.4.0,)");
         this.infoMap.put("license","NYI");
         this.childConfigs = new HashMap<>();

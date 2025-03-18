@@ -1,20 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.client.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.event.ClientEvents1_20;
-import net.neoforged.bus.api.Event;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
 import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
 
-public class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
+public abstract class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
 
     @Override public void defineEvents() {
         CAMERA_SETUP.setConnector(new CameraSetupEventNeoForge());
@@ -47,13 +42,8 @@ public class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
         SOUND_PLAY_SOURCE.setConnector(new PlaySoundSourceEventNeoForge());
         SOUND_PLAY_STREAMING.setConnector(new PlayStreamingSoundSourceEventNeoForge());
         SOUND_SETUP.setConnector(new SoundSetupEventNeoForge());
-        TICK_CLIENT.setConnector(new ClientTickEventNeoForge());
         TICK_RENDER.setConnector(new RenderTickEventNeoForge());
         super.defineEvents();
-    }
-    
-    @Override public <R> Result getEventResult(R result) {
-        return result==net.neoforged.bus.api.Event.Result.DEFAULT ? DEFAULT : (result==net.neoforged.bus.api.Event.Result.DENY ? DENY : ALLOW);
     }
     
     @Override public void postCustomTick(CustomTick ticker) {
@@ -62,10 +52,5 @@ public class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
     
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
         EVENT_BUS.register(wrapper.getClass());
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Override public net.neoforged.bus.api.Event.Result setEventResult(Result result) {
-        return result==DEFAULT ? net.neoforged.bus.api.Event.Result.DEFAULT : (result==DENY ? net.neoforged.bus.api.Event.Result.DENY : Event.Result.ALLOW);
     }
 }

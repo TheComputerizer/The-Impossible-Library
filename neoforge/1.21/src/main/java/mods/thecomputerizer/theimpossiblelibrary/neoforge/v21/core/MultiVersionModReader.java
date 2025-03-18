@@ -1,12 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
 import cpw.mods.jarhandling.JarContents;
-import cpw.mods.jarhandling.JarContentsBuilder;
-import cpw.mods.jarhandling.JarMetadata;
-import cpw.mods.jarhandling.SecureJar;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
@@ -16,9 +12,10 @@ import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModFileReader;
 import net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,35 +25,31 @@ import java.util.jar.Manifest;
 
 public class MultiVersionModReader implements IModFileReader {
     
+    private static final CoreAPI CORE;
+    private static final Logger LOGGER = LoggerFactory.getLogger("MultiVersionModReader");
+    
     static {
         ClassLoader loader = MultiVersionModReader.class.getClassLoader();
-        if(loader!=NeoForgeCoreLoader.bootLoader()) {
-            NeoForgeCoreLoader.fixForServiceLayer();
-            Object instance = NeoForgeCoreLoader.initCoreAPI(MultiVersionModReader.class.getClassLoader());
-            if(Objects.isNull(instance))
-                throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
-        }
-    }
-    
-    public static SecureJar jarFromPath(Path path) {
-        try(JarContents contents = new JarContentsBuilder().paths(path).build()) {
-            return SecureJar.from(contents, JarMetadata.from(contents));
-        } catch(IOException ex) {
-            TILRef.logError("Failed to get SecureJar from {}",path,ex);
-        }
-        return null;
+        CORE = (CoreAPI)NeoForgeCoreLoader.initCoreAPI(loader);
+        if(Objects.isNull(CORE))
+            throw new RuntimeException("Failed to retrieve CoreAPI instance for TILSelfLocator");
     }
     
     static Set<String> alreadyHandled = new HashSet<>();
     
-    private final CoreAPI core;
     private final MultiVersionLoaderAPI loader;
     
     public MultiVersionModReader() {
-        this.core = CoreAPI.getInstance();
-        if(Objects.isNull(this.core))
-            throw new RuntimeException("Failed to get CoreAPI instance! Did something break in NeoForgeCoreLoader?");
-        this.loader = this.core.getLoader();
+        this.loader = CORE.getLoader();
+    }
+    
+    /**
+     * Try reading multiversion mods first so they can be filtered out from normal mod loading earlier.
+     * Don't use HIGHEST_SYSTEM_PRIORITY to avoid potential conflicts with important readers.
+     * DEFAULT_PRIORITY = 0
+     */
+    @Override public int getPriority() {
+        return 1;
     }
     
     @Nullable MultiVersionModCandidate mergeCandidates(@Nullable MultiVersionModCandidate candidate1,
@@ -71,11 +64,11 @@ public class MultiVersionModReader implements IModFileReader {
     boolean queryFile(String loaderName, File file) {
         String fileName = file.getName();
         if(alreadyHandled.contains(fileName)) {
-            TILRef.logInfo("Skipping file that was already handled {}",fileName);
+            LOGGER.info("Skipping file that was already handled {}",fileName);
             return true;
         }
         alreadyHandled.add(fileName);
-        TILDev.logInfo("[{}]: Checking if file {} is the loader",loaderName,fileName);
+        LOGGER.info("[{}]: Checking if file {} is the loader",loaderName,fileName);
         if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
             TILDev.logInfo("[{}]: File is the loader",loaderName);
             MultiVersionModCandidate.loaderFile = file;
@@ -90,14 +83,14 @@ public class MultiVersionModReader implements IModFileReader {
             Path path = jar.getPrimaryPath();
             this.loader.addPotentialModPath(path);
             String loaderName = this.loader.getName();
-            TILRef.logInfo("[{}]: Found mod candidate at {}",loaderName,path);
+            LOGGER.info("[{}]: Found mod candidate at {}",loaderName,path);
             File file = path.toFile();
             if(queryFile(loaderName,file)) return null;
             candidate = mergeCandidates(MultiVersionModFinder.discoverCoreCandidate(this.loader,file),
                     MultiVersionModFinder.discoverModCandidate(this.loader,file));
         }
         if(Objects.isNull(candidate)) return null;
-        Collection<?> infos = this.core.loadCandidate(candidate,this.loader,getClass().getClassLoader());
+        Collection<?> infos = CORE.loadCandidate(candidate,this.loader,getClass().getClassLoader());
         return infos.isEmpty() ? null : new TILModFileNeoForge1_21(this,candidate,infos);
     }
 }

@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.loader;
 
-import com.electronwill.nightconfig.core.Config;
 import cpw.mods.jarhandling.SecureJar;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
@@ -11,12 +10,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILBetterModScan;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILFileConfigNeoForge;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.MultiVersionModReader;
 import net.neoforged.coremod.CoreModScriptingEngine;
 import net.neoforged.fml.loading.moddiscovery.CoreModFile;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
-import net.neoforged.fml.loading.moddiscovery.NightConfigWrapper;
 import net.neoforged.fml.loading.modscan.ModClassVisitor;
 import net.neoforged.fml.loading.modscan.Scanner;
 import net.neoforged.neoforgespi.language.IConfigurable;
@@ -26,7 +23,9 @@ import net.neoforged.neoforgespi.language.IModLanguageLoader;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.language.ModFileScanData.AnnotationData;
 import net.neoforged.neoforgespi.locating.IModFile;
+import net.neoforged.neoforgespi.locating.IModFileCandidateLocator;
 import net.neoforged.neoforgespi.locating.IModFileReader;
+import net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes;
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
 
@@ -43,9 +42,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
-import static net.neoforged.neoforgespi.locating.IModFile.Type.LIBRARY;
 import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
 import static net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes.DEFAULT;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
@@ -57,26 +53,35 @@ public class TILModFileNeoForge1_21 extends ModFile {
     static boolean fixedCoreMods;
     
     static IModFileInfo getFileInfo(IModFile file, Collection<?> infos) {
-        IConfigurable config = new TILFileConfigNeoForge(infos);
+        IConfigurable config = new TILFileConfigNeoForge(infos,"multiversionloader");
         return new ModFileInfo((ModFile)file,config,info -> {},Collections.emptyList());
     }
     
     static SecureJar jarFor(MultiVersionModCandidate candidate) {
-        return MultiVersionModReader.jarFromPath(candidate.getFile().toPath());
+        return SecureJar.from(candidate.getFile().toPath());
     }
     
     private final MultiVersionModCandidate candidate;
     private final Map<MultiVersionModInfo,MultiVersionModData> infos;
     
+    public TILModFileNeoForge1_21(IModFileCandidateLocator locator, MultiVersionModCandidate candidate,
+            Collection<?> infos) {
+        this(DEFAULT.withLocator(locator),candidate,infos);
+    }
+    
     public TILModFileNeoForge1_21(IModFileReader reader, MultiVersionModCandidate candidate, Collection<?> infos) {
-        super(jarFor(candidate),mod -> getFileInfo(mod,infos),MOD,DEFAULT.withReader(reader));
+        this(DEFAULT.withReader(reader),candidate,infos);
+    }
+    
+    public TILModFileNeoForge1_21(ModFileDiscoveryAttributes attributes, MultiVersionModCandidate candidate,
+            Collection<?> infos) {
+        super(jarFor(candidate),mod -> getFileInfo(mod,infos),MOD,attributes);
         this.candidate = candidate;
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
         TILRef.logInfo("Created TILModFileNeoForge1_21 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
     }
     
-    //TODO IModLanguageLoader#loadMod requires an IModInfo instance so some load oredering will need to be reworked
     @Override public ModFileScanData compileContent() {
         populateMultiversionData();
         TILRef.logInfo("Starting multiversion mod scan");
@@ -89,9 +94,10 @@ public class TILModFileNeoForge1_21 extends ModFile {
         if(Objects.nonNull(annotations)) {
             TILRef.logTrace("Annotation data is present");
             for(Entry<MultiVersionModInfo,MultiVersionModData> entry : this.infos.entrySet()) {
+                MultiVersionModInfo info = entry.getKey();
                 MultiVersionModData data = entry.getValue();
                 if(Objects.isNull(data)) {
-                    TILRef.logWarn("Skipping mod injection for {} since no data exists",entry.getKey().getModID());
+                    TILRef.logWarn("Skipping mod injection for {} since no data exists",info.getModID());
                     continue;
                 }
                 for(Pair<String,byte[]> classBytes : data.writeModClass()) {
@@ -104,6 +110,15 @@ public class TILModFileNeoForge1_21 extends ModFile {
                     visitor.buildData(scan.getClasses(),scan.getAnnotations());
                     TILRef.logInfo("Successfully loaded & scanned mod class {}!",classpath);
                 }
+                IModInfo mod = null;
+                for(IModInfo potentialMod : getModInfos()) {
+                    if(potentialMod.getModId().equals(info.getModID())) {
+                        mod = potentialMod;
+                        break;
+                    }
+                }
+                if(Objects.nonNull(mod)) scan.setModClass(mod,info.getModClasspath());
+                else TILRef.logError("Failed to set mod class for scan of {}!",info.getModID());
             }
         } else TILRef.logError("@Mod scan annotation set for multiversion mod is null?");
         List<IModLanguageLoader> loaders = getLoaders();
@@ -165,33 +180,6 @@ public class TILModFileNeoForge1_21 extends ModFile {
             Methods.invokeDirect(scanner,"fileVisitor",path,scan);
         } catch(Throwable ex) {
             TILRef.logError("Failed to scan {}!",path,ex);
-        }
-    }
-    
-    public static class TILLanguageProviderLoader extends ModFile { //TODO Verify whether this is still needed
-        
-        public static IModFileInfo getLangFileInfo(IModFile file) {
-            Config config = Config.inMemory();
-            config.set("modLoader","minecraft");
-            config.set("loaderVersion","1");
-            Config mod = Config.inMemory();
-            mod.set("modId","multiversionprovider");
-            mod.set("version",VERSION);
-            mod.set("displayName","Multiversion Language Provider");
-            mod.set("logoFile","logo.png");
-            mod.set("authors","The_Computerizer");
-            mod.set("description","Multiversion language loader for "+NAME);
-            config.set("mods",Collections.singletonList(mod));
-            IConfigurable wrapper = new NightConfigWrapper(config);
-            return new ModFileInfo((ModFile)file,wrapper,info -> {},Collections.emptyList());
-        }
-        
-        public TILLanguageProviderLoader(SecureJar file, IModFileReader reader) {
-            super(file,TILLanguageProviderLoader::getLangFileInfo,LIBRARY,DEFAULT.withReader(reader));
-        }
-        
-        @Override public Type getType() {
-            return LIBRARY;
         }
     }
 }

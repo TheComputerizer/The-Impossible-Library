@@ -100,8 +100,10 @@ public abstract class CoreAPI {
     public static CoreAPI getInstance(ClassLoader loader) {
         if(Objects.isNull(INSTANCE)) {
             TILRef.logDebug("Attempting to get CoreAPI instance that does not exist yet on loader {}",loader);
-            if(Objects.nonNull(loader)) syncInstanceClassLoader(loader);
-            else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
+            if(Objects.nonNull(loader)) {
+                ClassHelper.checkBurningWaveInit();
+                syncInstanceClassLoader(loader);
+            } else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
         }
         return (CoreAPI)INSTANCE;
     }

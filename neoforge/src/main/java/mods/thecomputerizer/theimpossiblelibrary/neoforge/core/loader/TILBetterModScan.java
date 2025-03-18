@@ -5,7 +5,6 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import net.neoforged.neoforgespi.language.IModInfo;
@@ -57,7 +56,6 @@ public class TILBetterModScan extends ModFileScanData {
     /**
      * Called via reflection from TILLanguageLoader
      */
-    @IndirectCallers
     public void defineClasses(ClassLoader target) {
         if(MOD_INFOS.isEmpty() || WRITTEN_CLASSES.isEmpty() ) {
             TILRef.logInfo("No classes left to define for TILBetterModScan");

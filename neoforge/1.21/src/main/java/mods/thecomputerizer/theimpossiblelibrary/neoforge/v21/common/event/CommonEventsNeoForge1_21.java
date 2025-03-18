@@ -11,7 +11,9 @@ import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.event
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.LivingDeathEventNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.LivingHurtEventNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.LootingLevelEventNeoForge1_21;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.PlayerTickEventNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.RegisterCommandsEventNeoForge1_21;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.WorldTickEventNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.common.event.CommonEvents1_21;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -103,8 +105,8 @@ public class CommonEventsNeoForge1_21 extends CommonEvents1_21 {
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventNeoForge());
         REGISTER_ITEMS.setConnector(new RegisterItemsEventNeoForge());
         REGISTER_SOUNDS.setConnector(new RegisterSoundsEventNeoForge());
-        TICK_PLAYER.setConnector(new PlayerTickEventNeoForge());
-        TICK_WORLD.setConnector(new WorldTickEventNeoForge());
+        TICK_PLAYER.setConnector(new PlayerTickEventNeoForge1_21());
+        TICK_WORLD.setConnector(new WorldTickEventNeoForge1_21());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventNeoForge());
         WORLD_LOAD.setConnector(new WorldLoadEventNeoForge());
         WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventNeoForge());

@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.client.event.events.ClientTickEventNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.client.event.ClientEvents1_21;
 import net.neoforged.neoforge.common.util.TriState;
 
@@ -47,7 +48,7 @@ public class ClientEventsNeoForge1_21 extends ClientEvents1_21 {
         SOUND_PLAY_SOURCE.setConnector(new PlaySoundSourceEventNeoForge());
         SOUND_PLAY_STREAMING.setConnector(new PlayStreamingSoundSourceEventNeoForge());
         SOUND_SETUP.setConnector(new SoundSetupEventNeoForge());
-        TICK_CLIENT.setConnector(new ClientTickEventNeoForge());
+        TICK_CLIENT.setConnector(new ClientTickEventNeoForge1_21());
         TICK_RENDER.setConnector(new RenderTickEventNeoForge());
         super.defineEvents();
     }
