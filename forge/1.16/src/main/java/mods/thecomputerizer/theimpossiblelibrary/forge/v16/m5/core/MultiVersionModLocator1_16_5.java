@@ -25,17 +25,14 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.jar.Manifest;
 
-@IndirectCallers
 public class MultiVersionModLocator1_16_5 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     
-    @SuppressWarnings({"FieldCanBeLocal","unused"})
-    private final CoreAPI core;
     private final Map<MultiVersionModCandidate,TILModFileForge1_16_5> candidateMap = new HashMap<>();
     
+    @IndirectCallers
     public MultiVersionModLocator1_16_5(CoreAPI core) {
-        this.core = core;
         TILRef.logInfo("1.16.5 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     

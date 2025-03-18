@@ -110,13 +110,6 @@ dependencies {
     runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_21_1")
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
 jar {
     manifest {
         attributes([

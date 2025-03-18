@@ -839,6 +839,23 @@ public class ForgeCoreLoader {
         IModFile file = Methods.invokeDirect(fileInfo,"getFile");
         if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
         Optional<Object> optionalModule = Methods.invokeDirect(moduleLayer,"findModule",moduleName);
+        if(!optionalModule.isPresent()) {
+            Set<Object> modules = Methods.invokeDirect(moduleLayer,"modules");
+            for(Object module : modules) {
+                String name = moduleName(module);
+                if(Objects.isNull(name)) continue;
+                if(name.equals(moduleName) || name.equals(modid)) {
+                    Object layer = Methods.invokeDirect(module,"getLayer");
+                    boolean sameLayer = layer==moduleLayer;
+                    LOGGER.info("Found module {} in {} layer that wasn't present in the nameToModule map",
+                                moduleName,sameLayer ? "the same" : "a different");
+                    Map<String,Object> nameToModule = new HashMap<>(Fields.getDirect(layer,"nameToModule"));
+                    nameToModule.put(moduleName,module);
+                    Fields.setDirect(layer,"nameToModule",Collections.unmodifiableMap(nameToModule));
+                    break;
+                }
+            }
+        }
         if(optionalModule.isPresent()) {
             Object module = optionalModule.get();
             String name = moduleName(module);
@@ -849,7 +866,7 @@ public class ForgeCoreLoader {
                 LOGGER.debug("Attempting to fix modules that are not equal");
                 Fields.setDirect(c,"module",module);
             } else LOGGER.debug("Modules are equal");
-        }
+        } else LOGGER.error("Module {} is not present in the target layer!",moduleName);
         LOGGER.info("Finished verifying {}",className);
     }
     

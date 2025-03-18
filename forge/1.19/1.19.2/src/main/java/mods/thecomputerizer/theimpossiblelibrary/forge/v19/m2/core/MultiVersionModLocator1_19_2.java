@@ -30,16 +30,14 @@ import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
-@SuppressWarnings("FieldCanBeLocal") @IndirectCallers
 public class MultiVersionModLocator1_19_2 implements TILForgeModLocator {
     
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
-    
-    private final CoreAPI core;
+  
     private final Map<MultiVersionModCandidate,TILModFileForge1_19> candidateMap = new HashMap<>();
     
+    @IndirectCallers
     public MultiVersionModLocator1_19_2(CoreAPI core) {
-        this.core = core;
         TILRef.logInfo("1.19.2 Forge Locator plugin loaded on {}",getClass().getClassLoader());
     }
     
