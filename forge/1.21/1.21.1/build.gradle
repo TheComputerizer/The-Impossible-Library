@@ -248,12 +248,12 @@ def otherRemaps = [
 ]
 
 shadowJar {
-    [ base, forge, forge_specific ].forEach {
-        from(it.jar.archiveFile.collect { zipTree it })
-    }
+    from(base.jar.archiveFile.collect { zipTree it })
     shared_specific.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree it })
-        from(it.jar.archiveFile.collect { zipTree it })
+        from shared.sourceSets.main.output.classesDirs.asFileTree
+        from it.sourceSets.main.output.classesDirs.asFileTree
+        from forge.sourceSets.main.output.classesDirs.asFileTree
+        from forge_specific.sourceSets.main.output.classesDirs.asFileTree
         relocate "${forge_base_package}.client.event.events", "${forge_1_21_1_package}.client.event.events"
         relocate "${forge_base_package}.common.event.events", "${forge_1_21_1_package}.common.event.events"
         relocate shared_base_package, forge_base_package

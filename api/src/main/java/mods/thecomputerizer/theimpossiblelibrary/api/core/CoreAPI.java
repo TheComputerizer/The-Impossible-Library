@@ -19,6 +19,9 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
@@ -136,7 +139,10 @@ public abstract class CoreAPI {
     }
     
     public static boolean isNamedEnv() {
-        return DEV || (isNeoforge() && CoreAPI.getInstance().getVersion()!=V20_1);
+        if(DEV) return true;
+        GameVersion version = CoreAPI.getInstance().getVersion();
+        return (isNeoforge() && version!=V20_1) ||
+               (isForge() && (version==V20_4 || version==V20_6 || version==V21_1));
     }
     
     public static boolean isNeoforge() {

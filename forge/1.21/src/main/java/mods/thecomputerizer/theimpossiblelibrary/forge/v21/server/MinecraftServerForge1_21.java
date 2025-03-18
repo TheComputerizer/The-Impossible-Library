@@ -8,14 +8,10 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-
 public class MinecraftServerForge1_21 extends MinecraftServer1_21 {
     
-    static String saveField = DEV ? "storageSource" : "f_129744_";
-    
     @Override protected @Nullable Field getLevelSaveField(Object server) {
-       return getField(server,saveField,LevelStorageAccess.class);
+       return getField(server,"storageSource",LevelStorageAccess.class);
     }
     
     @SuppressWarnings("UnstableApiUsage")

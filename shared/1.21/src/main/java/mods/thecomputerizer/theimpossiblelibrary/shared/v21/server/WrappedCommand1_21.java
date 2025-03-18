@@ -42,13 +42,13 @@ import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mojang.brigadier.exceptions.CommandSyntaxException.BUILT_IN_EXCEPTIONS;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @ParametersAreNonnullByDefault
 public class WrappedCommand1_21 {
     
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();
+    public static final CustomSuggesterInfo INFO = new CustomSuggesterInfo();
 
     public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandSyntaxException {
         wrapped.prepareExceptionInfo();
@@ -110,12 +110,11 @@ public class WrappedCommand1_21 {
     }
     
     public static void registerArgType() {
-        CustomSuggesterInfo info = new CustomSuggesterInfo();
-        if(CoreAPI.isForge() || CoreAPI.isNeoforge()) ArgumentTypeInfos.registerByClass(CustomSuggester.class,info);
+        if(CoreAPI.isForge() || CoreAPI.isNeoforge()) ArgumentTypeInfos.registerByClass(CustomSuggester.class,INFO);
         else {
-            String field = DEV ? "BY_CLASS" : "field_10921";
+            String field = CoreAPI.isNamedEnv() ? "BY_CLASS" : "field_10921";
             Map<Class<?>,Object> byClass = Fields.getStaticDirect(ArgumentTypeInfos.class,field);
-            byClass.put(CustomSuggester.class,info);
+            byClass.put(CustomSuggester.class,INFO);
         }
     }
     

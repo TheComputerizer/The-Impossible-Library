@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.Advancem
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementDisplayInfoAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Registry;
@@ -24,8 +25,9 @@ public class Advancement1_21 extends AdvancementAPI<Advancement> {
     private RegistryAccess access;
 
     public Advancement1_21(Object advancement) {
-        super((Advancement)advancement);
-        this.display = new AdvancementDisplayInfo1_21(((Advancement)advancement).display().orElse(null));
+        super(advancement instanceof AdvancementHolder ? ((AdvancementHolder)advancement).value() :
+                      (Advancement)advancement);
+        this.display = new AdvancementDisplayInfo1_21(this.wrapped.display().orElse(null));
     }
 
     @Override public AdvancementDisplayInfoAPI getDisplayInfo() {

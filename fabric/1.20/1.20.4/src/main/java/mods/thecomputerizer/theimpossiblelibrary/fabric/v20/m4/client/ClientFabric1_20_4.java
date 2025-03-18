@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.client.ClientFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m4.common.event.CommonEventsFabric1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m4.integration.ModHelperFabric1_20_4;
@@ -16,6 +17,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m4.registry.Registry
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.client.gui.ScreenHelper1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.tag.Tag1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.text.TextHelper1_20_4;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.wrappers.Wrapper1_20_4;
 
 import java.util.function.Supplier;
 
@@ -47,5 +49,9 @@ public class ClientFabric1_20_4 extends ClientFabric1_20 {
     
     @Override public Supplier<TextHelperAPI<?>> initTextHelper() {
         return TextHelper1_20_4::new;
+    }
+    
+    @Override public Supplier<WrapperAPI> initWrapper() {
+        return Wrapper1_20_4::new;
     }
 }

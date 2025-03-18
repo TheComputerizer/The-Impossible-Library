@@ -17,7 +17,7 @@ public class PlayerAdvancementEventForge1_21 extends PlayerAdvancementEventForge
     }
     
     @Override protected EventFieldWrapper<AdvancementEarnEvent,AdvancementAPI<?>> wrapAdvancementField() {
-        return wrapAdvancementGetter(AdvancementEarnEvent::getAdvancement);
+        return wrapAdvancementGetter(event -> event.getAdvancement().value());
     }
     
     @Override protected EventFieldWrapper<AdvancementEarnEvent,PlayerAPI<?,?>> wrapPlayerField() {

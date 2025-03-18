@@ -5,9 +5,12 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.tab.CreativeTabBuilder1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.WrappedCommand1_21;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.WrappedCommand1_21.INFO;
 import static net.minecraft.core.registries.BuiltInRegistries.*;
 
 public class TILCommonEntryPointFabric1_21 extends TILCommonEntryPointFabric {
@@ -25,6 +28,7 @@ public class TILCommonEntryPointFabric1_21 extends TILCommonEntryPointFabric {
     @Override public void onLoadComplete() {
         FabricHelper.registerServerHooks();
         WrappedCommand1_21.registerArgType();
+        Registry.register(COMMAND_ARGUMENT_TYPE,ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester"),INFO);
         CreativeTabBuilder1_21.onRegister(null);
         super.onLoadComplete();
     }
