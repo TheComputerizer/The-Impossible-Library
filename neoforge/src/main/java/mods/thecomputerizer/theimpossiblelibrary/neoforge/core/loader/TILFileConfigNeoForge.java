@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import net.neoforged.neoforgespi.language.IConfigurable;
 
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILFileConfigNeoForge implements IConfigurable {
     
@@ -24,11 +24,15 @@ public class TILFileConfigNeoForge implements IConfigurable {
         this.infoMap = new HashMap<>();
         this.infoMap.put("modLoader",loaderName);
         this.infoMap.put("loaderVersion","[0.4.0,)");
-        this.infoMap.put("license","NYI");
         this.childConfigs = new HashMap<>();
         this.dependencies = new HashMap<>();
         this.childConfigs.put("mods",new ArrayList<>());
+        boolean foundLicense = false;
         for(Object info : infos) {
+            if(!foundLicense) {
+                this.infoMap.put("license",getLicense(info));
+                foundLicense = true;
+            }
             this.childConfigs.get("mods").add(new TILModConfigNeoForge(info));
             String modid = getModID(info);
             if(!modid.equals(MODID)) {
@@ -37,10 +41,15 @@ public class TILFileConfigNeoForge implements IConfigurable {
                         MODID,"[0.4.0,)","AFTER","BOTH",true));
             }
         }
+        if(!foundLicense) this.infoMap.put("license","LGPL V3");
     }
     
-    String getModID(Object generic) {
-        return (String)ReflectionHelper.invokeMethod(generic.getClass(),"getModID",generic,new Class<?>[]{});
+    String getLicense(Object info) {
+        return Methods.invokeDirect(info,"getLicense");
+    }
+    
+    String getModID(Object info) {
+        return Methods.invokeDirect(info,"getModID");
     }
     
     @SuppressWarnings("unchecked") @Override public <T> Optional<T> getConfigElement(String ... keys) {

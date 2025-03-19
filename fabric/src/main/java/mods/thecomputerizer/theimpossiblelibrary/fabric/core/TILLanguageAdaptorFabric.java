@@ -185,7 +185,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         json.addProperty("environment","*");
         json.addProperty("icon","logo.png");
         json.addProperty("id",modid);
-        json.addProperty("license","NYI");
+        json.addProperty("license",info.getLicense());
         json.addProperty("name",info.getName());
         json.addProperty("version",info.getVersion());
         json.add("depends",buildDependencies(modid));

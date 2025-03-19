@@ -9,7 +9,7 @@ public class MultiVersionModInfo {
 
     public static MultiVersionModInfo get(Class<? extends CommonEntryPoint> clazz, MultiVersionMod mod) {
         return new MultiVersionModInfo(clazz,mod.modid(),mod.modName(),mod.modVersion(),mod.modDescription(),
-                                       mod.client(),mod.server());
+                mod.modLicense(),mod.client(),mod.server());
     }
 
     private final Class<? extends CommonEntryPoint> entryClass;
@@ -17,18 +17,20 @@ public class MultiVersionModInfo {
     private final String name;
     private final String version;
     private final String description;
+    private final String license;
     private final boolean client;
     private final boolean server;
     private final String modClasspath;
     private final String containerClasspath;
 
     private MultiVersionModInfo(Class<? extends CommonEntryPoint> clazz, String modID, String name, String version,
-                                String description, boolean client, boolean server) {
+                                String description, String license, boolean client, boolean server) {
         this.entryClass = clazz;
         this.modID = modID;
         this.name = name;
         this.version = version;
         this.description = description;
+        this.license = license;
         this.client = client;
         this.server = server;
         String baseName = clazz.getPackage().getName()+"."+name.replace(" ","");

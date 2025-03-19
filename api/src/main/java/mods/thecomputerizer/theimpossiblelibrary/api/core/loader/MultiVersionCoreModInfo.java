@@ -1,14 +1,18 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 
-import javax.annotation.Nullable;
+import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 
 @Getter
 public class MultiVersionCoreModInfo {
+    
+    static {
+        ClassHelper.checkBurningWaveInit();
+    }
 
     public static MultiVersionCoreModInfo get(Class<? extends CoreEntryPoint> clazz, MultiVersionCoreMod mod) {
         return new MultiVersionCoreModInfo(clazz,mod.modid(),mod.modName(),mod.modVersion(),mod.client(),mod.server());
@@ -31,13 +35,8 @@ public class MultiVersionCoreModInfo {
         this.server = server;
     }
 
-    public @Nullable CoreEntryPoint getInstance() {
-        try {
-            return this.entryClass.newInstance();
-        } catch(Exception ex) {
-            TILRef.logError("Failed to instantiate coremod `{}`!",this.entryClass,ex);
-        }
-        return null;
+    public CoreEntryPoint getInstance() {
+        return Constructors.newInstanceOf(this.entryClass);
     }
     
     @Override public String toString() {

@@ -38,6 +38,11 @@ public @interface MultiVersionMod {
      * Lowercase ID of the mod
      */
     String modid();
+    
+    /**
+     * The license of the mod. Defualts to LGPL V3 since that is the license of this library.
+     */
+    String modLicense() default "LGPL V3";
 
     /**
      * Human-readable name of the mod

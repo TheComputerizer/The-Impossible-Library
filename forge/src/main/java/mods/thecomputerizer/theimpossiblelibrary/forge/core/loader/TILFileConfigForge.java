@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import net.minecraftforge.forgespi.language.IConfigurable;
 
 import java.util.ArrayList;
@@ -13,8 +13,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILFileConfigForge implements IConfigurable {
+    
+    static {
+        ClassHelper.checkBurningWaveInit();
+    }
     
     private final Map<String,Object> infoMap;
     private final Map<String,List<IConfigurable>> childConfigs;
@@ -24,11 +29,15 @@ public class TILFileConfigForge implements IConfigurable {
         this.infoMap = new HashMap<>();
         this.infoMap.put("modLoader","multiversionprovider");
         this.infoMap.put("loaderVersion","[0.4.0,)");
-        this.infoMap.put("license","NYI");
         this.childConfigs = new HashMap<>();
         this.dependencies = new HashMap<>();
         this.childConfigs.put("mods",new ArrayList<>());
+        boolean foundLicense = false;
         for(Object info : infos) {
+            if(!foundLicense) {
+                this.infoMap.put("license",getLicense(info));
+                foundLicense = true;
+            }
             this.childConfigs.get("mods").add(new TILModConfigForge(info));
             String modid = getModID(info);
             if(!modid.equals(MODID)) {
@@ -37,10 +46,15 @@ public class TILFileConfigForge implements IConfigurable {
                         MODID,"[0.4.0,)","AFTER","BOTH",true));
             }
         }
+        if(!foundLicense) this.infoMap.put("license","LGPL V3");
     }
     
-    String getModID(Object generic) {
-        return (String)ReflectionHelper.invokeMethod(generic.getClass(),"getModID",generic,new Class<?>[]{});
+    String getLicense(Object info) {
+        return Methods.invokeDirect(info,"getLicense");
+    }
+    
+    String getModID(Object info) {
+        return Methods.invokeDirect(info,"getModID");
     }
     
     @SuppressWarnings("unchecked") @Override public <T> Optional<T> getConfigElement(String ... keys) {

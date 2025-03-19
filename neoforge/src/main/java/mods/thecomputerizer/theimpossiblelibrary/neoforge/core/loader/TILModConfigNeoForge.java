@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import net.neoforged.neoforgespi.language.IConfigurable;
 
 import java.util.Collections;
@@ -9,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILModConfigNeoForge implements IConfigurable {
     
@@ -24,7 +25,7 @@ public class TILModConfigNeoForge implements IConfigurable {
     }
     
     String genericMethod(Object generic, String name) {
-        return (String)ReflectionHelper.invokeMethod(generic.getClass(),name,generic,new Class<?>[]{});
+        return Methods.invokeDirect(generic,name);
     }
     
     @SuppressWarnings("unchecked") @Override public <T> Optional<T> getConfigElement(String ... key) {
