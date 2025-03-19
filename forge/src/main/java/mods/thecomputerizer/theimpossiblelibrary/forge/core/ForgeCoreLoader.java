@@ -146,7 +146,7 @@ public class ForgeCoreLoader {
         Map<String,Object> theseRoots = Fields.getDirect(thisLoader,newFormat ? "ourModules" : "resolvedRoots");
         theseRoots.remove(name);
         
-        LOGGER.info("Finished migrating module {} from the SERVICE layer to the BOOT layer",name);
+        LOGGER.debug("Finished migrating module {} from the SERVICE layer to the BOOT layer",name);
     }
     
     /**
@@ -304,7 +304,6 @@ public class ForgeCoreLoader {
      * Get the command line argument handler in case we need to check stuff very early in the loading process
      */
     static ArgumentHandler getArgumentHandler() {
-        LOGGER.info("Atempting to get ArgumentHandler for loader {}",Thread.currentThread().getContextClassLoader());
         return Fields.getDirect(INSTANCE,"argumentHandler");
     }
     
@@ -411,10 +410,10 @@ public class ForgeCoreLoader {
             }
         }
         if(found) {
-            LOGGER.info("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
+            LOGGER.debug("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
             return rawArgs[versionIndex];
         }
-        LOGGER.info("--fml.mcVersion was not found so the mc version will be guessed from --version instead");
+        LOGGER.debug("--fml.mcVersion was not found so the mc version will be guessed from --version instead");
         for(int i=0;i<rawArgs.length;i++) {
             if(rawArgs[i].equals("--version")) {
                 versionIndex = i+1;
@@ -423,7 +422,7 @@ public class ForgeCoreLoader {
             }
         }
         if(found) {
-            LOGGER.info("Found forge version arg at index {}",versionIndex);
+            LOGGER.debug("Found forge version arg at index {}",versionIndex);
             return getVersionFromForgeVersion(rawArgs[versionIndex]);
         }
         LOGGER.error("Failed to find fml.mcVersion or version flags from args {}",Arrays.toString(rawArgs));
@@ -492,7 +491,7 @@ public class ForgeCoreLoader {
             LOGGER.error("Failed to load class {} for {}",className,loader,ex);
         }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Forge-"+version+"]");
-        LOGGER.info("Successfully loaded CoreAPI instance {}",clazz);
+        LOGGER.debug("Successfully loaded CoreAPI instance {}",clazz);
         return clazz;
     }
     

@@ -17,7 +17,7 @@ public class MultiVersionModFinder {
     public static final Name MULTIVERSION_MODS = new Name("TILMultiversionMods");
 
     public static Set<MultiVersionModCandidate> discover(MultiVersionLoaderAPI loader, File root, boolean isCore) {
-        TILRef.logInfo("Attempting to find multiversion {} candidates from root `{}`",isCore ? "coremod" : "mod",root);
+        TILRef.logDebug("Attempting to find multiversion {} candidates from root `{}`",isCore ? "coremod" : "mod",root);
         Set<MultiVersionModCandidate> candidates = new HashSet<>();
         Set<String> foundCoreMods = new HashSet<>();
         Set<String> foundMods = new HashSet<>();
@@ -40,14 +40,14 @@ public class MultiVersionModFinder {
 
     private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file,
             boolean isCore, Set<String> foundCoreMods, Set<String> foundMods) {
-        TILRef.logInfo("Examining candidate file`{}` for {}",file,isCore ? "coremods" : "mods");
+        TILRef.logDebug("Examining candidate file`{}` for {}",file,isCore ? "coremods" : "mods");
         Attributes attributes = loader.getFileAttributes(file);
         if(Objects.nonNull(attributes)) {
             MultiVersionModCandidate candidate = new MultiVersionModCandidate(loader.parent,file);
             if(isCore) candidate.addCoreClasses(foundCoreMods,parseClasses(attributes,MULTIVERSION_COREMODS));
             else candidate.addModClasses(foundMods,parseClasses(attributes,MULTIVERSION_MODS));
             return candidate;
-        } else TILRef.logInfo("File did not contain any attributes to check");
+        } else TILRef.logDebug("File did not contain any attributes to check");
         return null;
     }
     

@@ -381,7 +381,6 @@ public class NeoForgeCoreLoader {
      * Get the command line argument handler in case we need to check stuff very early in the loading process
      */
     static ArgumentHandler getArgumentHandler() {
-        LOGGER.info("Atempting to get ArgumentHandler for loader {}",Thread.currentThread().getContextClassLoader());
         return Fields.getDirect(INSTANCE,"argumentHandler");
     }
     
@@ -459,7 +458,7 @@ public class NeoForgeCoreLoader {
             }
         }
         if(found) {
-            LOGGER.info("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
+            LOGGER.debug("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
             return rawArgs[versionIndex];
         }
         LOGGER.error("Failed to find fml.mcVersion or version flags from args {}",Arrays.toString(rawArgs));
@@ -473,12 +472,11 @@ public class NeoForgeCoreLoader {
         LOGGER.debug("Starting CoreAPI init");
         Object bootInstance = getBootLoadedCoreAPI();
         if(Objects.nonNull(bootInstance)) {
-            LOGGER.info("Returning existing CoreAPI instance found in the BOOT layer");
+            LOGGER.debug("Returning existing CoreAPI instance found in the BOOT layer");
             return bootInstance;
         }
         String version = getVersionStr();
         Class<?> coreClass = loadAPI(version,bootLoader());
-        //Class<?> coreClass = loadAPI(version,loader);
         try {
             //noinspection deprecation
             return coreClass.newInstance();
@@ -520,7 +518,7 @@ public class NeoForgeCoreLoader {
             LOGGER.error("Failed to load class {} for {}",className,loader,ex);
         }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [NeoForge-"+version+"]");
-        LOGGER.info("Successfully loaded CoreAPI instance {}",clazz);
+        LOGGER.debug("Successfully loaded CoreAPI instance {}",clazz);
         return clazz;
     }
     

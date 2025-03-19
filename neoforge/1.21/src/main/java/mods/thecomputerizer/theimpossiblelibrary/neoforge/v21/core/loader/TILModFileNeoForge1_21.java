@@ -19,7 +19,6 @@ import net.neoforged.fml.loading.modscan.Scanner;
 import net.neoforged.neoforgespi.language.IConfigurable;
 import net.neoforged.neoforgespi.language.IModFileInfo;
 import net.neoforged.neoforgespi.language.IModInfo;
-import net.neoforged.neoforgespi.language.IModLanguageLoader;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.language.ModFileScanData.AnnotationData;
 import net.neoforged.neoforgespi.locating.IModFile;
@@ -79,7 +78,8 @@ public class TILModFileNeoForge1_21 extends ModFile {
         this.candidate = candidate;
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
-        TILRef.logInfo("Created TILModFileNeoForge1_21 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
+        ClassLoader context = Thread.currentThread().getContextClassLoader();
+        TILRef.logDebug("Created TILModFileNeoForge1_21 with {} in context {}",infos,context);
     }
     
     @Override public ModFileScanData compileContent() {
@@ -121,13 +121,7 @@ public class TILModFileNeoForge1_21 extends ModFile {
                 else TILRef.logError("Failed to set mod class for scan of {}!",info.getModID());
             }
         } else TILRef.logError("@Mod scan annotation set for multiversion mod is null?");
-        List<IModLanguageLoader> loaders = getLoaders();
-        if(loaders.isEmpty()) TILRef.logError("Why are there no language loaders??");
-        else {
-            TILRef.logDebug("Injecting scan data into language loader");
-            //realLoader.loadMod();
-            
-        }
+        if(getLoaders().isEmpty()) TILRef.logError("Why are there no language loaders??");
         TILRef.logInfo("Finishing multiversion mod scan",Thread.currentThread());
         scan.addFilePath(getFilePath());
         return scan;
@@ -138,11 +132,11 @@ public class TILModFileNeoForge1_21 extends ModFile {
      */
     private void fixCoreModPackages(String ... extensions) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        TILRef.logInfo("But the real ICoreModProvider loader is {}",loader);
         Class<?> engineClass = ClassHelper.findClass(CoreModScriptingEngine.class.getName(), loader);
         Set<String> allowed = new HashSet<>(Fields.getStatic(engineClass,"ALLOWED_PACKAGES"));
         for(String extension : extensions) allowed.add(BASE_PACKAGE+"."+extension+".core");
-        TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
+        allowed.add(BASE_PACKAGE+".api.core");
+        TILRef.logDebug("Expanded coremod package whitelist to {}",allowed);
         Fields.setStaticDirect(engineClass,"ALLOWED_PACKAGES",allowed);
     }
     
@@ -155,7 +149,7 @@ public class TILModFileNeoForge1_21 extends ModFile {
         if(ret) {
             List<CoreModFile> coreMods = getCoreMods();
             if(!coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","neoforge","neoforge.v21","neoforge.v20.m6","neoforge.v21.m1");
+                fixCoreModPackages("neoforge","neoforge.v21","neoforge.v20.m6","neoforge.v21.m1");
                 fixedCoreMods = true;
             }
         }
@@ -169,7 +163,7 @@ public class TILModFileNeoForge1_21 extends ModFile {
             MultiVersionModData data = core.getModData(file,this.candidate,info);
             if(Objects.nonNull(data)) {
                 this.infos.put(info,data);
-                TILRef.logInfo("Populated data for {}",info);
+                TILRef.logDebug("Populated data for {}",info);
             }
         }
     }

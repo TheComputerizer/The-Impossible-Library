@@ -118,7 +118,8 @@ public class TILModFileForge1_16_5 extends ModFile {
     
     private void fixCoreModPackages(Set<String> allowed, String ... extensions) {
         for(String extension : extensions) allowed.add(BASE_PACKAGE+"."+extension+".core");
-        TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
+        allowed.add(BASE_PACKAGE+".api.core");
+        TILRef.logDebug("Expanded coremod package whitelist to {}",allowed);
     }
     
     @Override public Optional<Path> getAccessTransformer() {
@@ -129,7 +130,7 @@ public class TILModFileForge1_16_5 extends ModFile {
         if(Objects.isNull(this.coreMods)) {
             this.coreMods = findCoreMods();
             if(!this.coreMods.isEmpty() && !fixedCoreMods) {
-                fixCoreModPackages("api","forge","forge.v16.m5");
+                fixCoreModPackages("forge","forge.v16.m5");
                 fixedCoreMods = true;
             }
         }

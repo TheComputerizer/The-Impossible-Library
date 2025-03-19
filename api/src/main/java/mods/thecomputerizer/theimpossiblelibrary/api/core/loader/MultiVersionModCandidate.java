@@ -57,19 +57,13 @@ public class MultiVersionModCandidate {
         this.classpath = classpath;
         this.relativePath = relativePath;
         this.file = Objects.nonNull(file) ? file : new File(MODID+"-"+VERSION+".jar");
-        URL source = null;
-        try {
-            source = this.file.toURI().toURL();
-        } catch(Exception ex) {
-            TILRef.logError("Can't get source for {}",this.file,ex);
-        }
-        this.source = source;
+        this.source = FileHelper.toURL(this.file);
         this.coreClassNames = new HashSet<>();
         this.modClassNames = new HashSet<>();
     }
 
     public void addCoreClasses(Collection<String> foundCoreClasses, String ... classes) {
-        TILRef.logDebug("Attempting to register {} coremod classes for file `{}` -> `{}`",
+        TILRef.logInfo("Attempting to register {} coremod classes for file `{}` -> `{}`",
                         classes.length,this.file,classes);
         for(String className : classes) {
             if(foundCoreClasses.contains(className)) {
@@ -82,7 +76,7 @@ public class MultiVersionModCandidate {
     }
 
     public void addModClasses(Collection<String> foundModClasses, String ... classes) {
-        TILRef.logDebug("Attempting to register {} mod classes for file `{}` -> `{}`",
+        TILRef.logInfo("Attempting to register {} mod classes for file `{}` -> `{}`",
                         classes.length,this.file,classes);
         for(String className : classes) {
             if(foundModClasses.contains(className)) {
@@ -157,9 +151,8 @@ public class MultiVersionModCandidate {
     public void findCoreClasses(Collection<Class<? extends CoreEntryPoint>> classes, ClassLoader classLoader) {
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(classLoader,name);
-            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionCoreMod.class)) {
+            if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class))
                 classes.add((Class<? extends CoreEntryPoint>)clazz);
-            }
         }
     }
     
@@ -177,9 +170,8 @@ public class MultiVersionModCandidate {
     public void findModClasses(Collection<Class<? extends CommonEntryPoint>> classes, ClassLoader classLoader) {
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(classLoader,name);
-            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class)) {
+            if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class))
                 classes.add((Class<? extends CommonEntryPoint>)clazz);
-            }
         }
     }
     

@@ -114,11 +114,11 @@ public class TILModFileForge1_19 extends ModFile {
      */
     private void fixCoreModPackages(String ... extensions) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        TILRef.logInfo("But the real ICoreModProvider loader is {}",loader);
         Class<?> engineClass = ClassHelper.findClass(CoreModEngine.class.getName(),loader);
         Set<String> allowed = new HashSet<>(Fields.getStatic(engineClass,"ALLOWED_PACKAGES"));
         for(String extension : extensions) allowed.add(BASE_PACKAGE+"."+extension+".core");
-        TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
+        allowed.add(BASE_PACKAGE+".api.core");
+        TILRef.logDebug("Expanded coremod package whitelist to {}",allowed);
         Fields.setStaticDirect(engineClass,"ALLOWED_PACKAGES",allowed);
     }
     
@@ -132,7 +132,7 @@ public class TILModFileForge1_19 extends ModFile {
             List<CoreModFile> coreMods = getCoreMods();
             if(!coreMods.isEmpty() && !fixedCoreMods) {
                 String minor = CoreAPI.getInstance().getVersion()==V19_2 ? "m2" : "m4";
-                fixCoreModPackages("api","forge","forge.v19","forge.v19."+minor);
+                fixCoreModPackages("forge","forge.v19","forge.v19."+minor);
                 fixedCoreMods = true;
             }
         }

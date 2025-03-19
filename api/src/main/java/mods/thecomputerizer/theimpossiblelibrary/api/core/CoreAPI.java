@@ -397,7 +397,7 @@ public abstract class CoreAPI {
     }
     
     /**
-     * This should only be called in NeoForge 1.20.6 since it has actual custom mod loading support.
+     * This should only be called in NeoForge 1.20.6+ since it has actual custom mod loading support.
      * Returns a collection of MultiVersionModInfo instances.
      */
     public Collection<?> loadCandidate(MultiVersionModCandidate candidate, MultiVersionLoaderAPI loader,
