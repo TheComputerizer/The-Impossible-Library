@@ -9,12 +9,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
@@ -29,9 +29,7 @@ public class MultiVersionModCandidate {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         String asPath = ClassHelper.getResourcePath(className);
         try {
-            URL resource = loader.getResource(asPath);
-            URL classpath = ClassHelper.extractClassPath(resource,asPath);
-            if(Objects.nonNull(classpath)) return Paths.get(classpath.toURI()).toAbsolutePath().toFile();
+            return FileHelper.get(ClassHelper.absoluteLocation(loader.getResource(asPath),asPath));
         } catch(Exception ex) {
             TILRef.logError("Can't find file for {}",className,ex);
         }

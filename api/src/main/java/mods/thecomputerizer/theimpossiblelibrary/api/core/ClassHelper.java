@@ -3,14 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import io.github.toolfactory.jvm.util.BufferHandler;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.commons.lang3.StringUtils;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
@@ -23,6 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static java.io.File.separator;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
@@ -33,12 +33,27 @@ public class ClassHelper {
     
     private static boolean burningWaveInit;
     
+    /**
+     * Uses the URL of a class resources and its name to try and extract the original class path.
+     * The className input here should be the relative path rather than the binary name of the class.
+     */
+    public static URL absoluteLocation(@Nullable URL url, String className) {
+        if(Objects.isNull(url)) {
+            TILRef.logError("Cannot extract class path of null URL for {}!",className);
+            return null;
+        }
+        String urlStr = url.toString().replace("%20"," ");
+        String appended = (urlStr.startsWith("jar") ? "!" : "")+separator+className;
+        return FileHelper.toURL(urlStr.substring(urlStr.indexOf(separator),urlStr.length()-appended.length()));
+    }
+    
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
         if(Objects.nonNull(url)) sources.add(url.toString());
         else TILRef.logError("Failed to add source for {}",clazz);
     }
     
+    @IndirectCallers
     public static boolean addSourceTo(Class<?> c, ClassLoader to) {
         if(c.getClassLoader()==to) {
             TILRef.logError("Source for {} already exists on {}!",c,to);
@@ -159,27 +174,6 @@ public class ClassHelper {
             return Class.forName(name,false,loader);
         } catch(ClassNotFoundException ex) {
             TILDev.logDebug("Class `{}` does not exist on {}",name,loader);
-        }
-        return null;
-    }
-    
-    /**
-     * Uses the URL of a class resources and its name to try and extract the original class path.
-     * The className input here should be the relative path rather than the binary name of the class.
-     */
-    public static URL extractClassPath(@Nullable URL url, String className) {
-        if(Objects.isNull(url)) {
-            TILRef.logError("Cannot extract class path of null URL for {}!",className);
-            return null;
-        }
-        String urlStr = url.toString().replace("%20"," ");
-        String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
-        String classpath = urlStr.substring(urlStr.indexOf('/'),urlStr.length()-appended.length());
-        URI uri = new File(classpath).toURI();
-        try {
-            return uri.toURL();
-        } catch(Exception ex) {
-            TILRef.logError("Failed to extract class path from {}",url,ex);
         }
         return null;
     }
@@ -318,7 +312,7 @@ public class ClassHelper {
         if(Objects.nonNull(className) && !className.isEmpty()) {
             try {
                 String relativePath = getResourcePath(className);
-                return extractClassPath(loader.getResource(relativePath),relativePath);
+                return absoluteLocation(loader.getResource(relativePath), relativePath);
             } catch(Exception ex) {
                 TILRef.logError("Caught exception trying to get source URL for {} on {}",className,loader,ex);
             }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlReader.TableBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
@@ -25,7 +26,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -105,7 +105,7 @@ import java.util.Map.Entry;
     
     public static Toml readURI(URI uri, TomlReader reader, OpenOption ... options)
             throws TomlParsingException, IOException {
-        return readPath(Paths.get(uri),reader,options);
+        return readPath(FileHelper.toPath(uri),reader,options);
     }
     
     public static Toml readURL(URL url) throws TomlParsingException, IOException {
