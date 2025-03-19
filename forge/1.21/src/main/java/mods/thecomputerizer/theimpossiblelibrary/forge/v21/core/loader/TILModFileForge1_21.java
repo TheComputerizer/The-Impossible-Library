@@ -63,7 +63,7 @@ public class TILModFileForge1_21 extends ModFile {
         super(file,locator,mod -> getFileInfo(mod,infos),"MOD");
         this.infos = new HashMap<>();
         for(Object info : infos) this.infos.put((MultiVersionModInfo)info,null);
-        TILRef.logInfo("Created TILModFileForge1_20_6 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
+        TILRef.logInfo("Created TILModFileForge1_21_1 with {} in context {}",infos,Thread.currentThread().getContextClassLoader());
     }
     
     @Override public ModFileScanData compileContent() {
@@ -168,16 +168,17 @@ public class TILModFileForge1_21 extends ModFile {
             mod.set("modId","multiversionprovider");
             mod.set("version",VERSION);
             mod.set("displayName","Multiversion Language Provider");
-            mod.set("logoFile", "logo.png");
-            mod.set("authors", "The_Computerizer");
-            mod.set("description", "Multiversion language loader for "+NAME);
+            mod.set("logoFile","logo.png");
+            mod.set("authors","The_Computerizer");
+            mod.set("description","Multiversion language loader for "+NAME);
             config.set("mods",Collections.singletonList(mod));
             IConfigurable wrapper = Constructors.newInstanceOf(ClassHelper.findClass(NIGHT_CONFIG_WRAPPER),config);
-            return new ModFileInfo((ModFile)file,wrapper,info -> {},Collections.emptyList());
+            return new ModFileInfo((ModFile)file, wrapper,
+                    info -> Methods.invokeDirect(wrapper,"setFile",info),Collections.emptyList());
         }
         
         public TILLanguageProviderLoader(SecureJar file, IModProvider provider) {
-            super(file, provider, TILLanguageProviderLoader::getLangFileInfo, "LANGPROVIDER");
+            super(file,provider,TILLanguageProviderLoader::getLangFileInfo,"LANGPROVIDER");
         }
         
         @Override public Type getType() {

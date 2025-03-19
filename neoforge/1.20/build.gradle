@@ -79,3 +79,8 @@ artifacts {
 }
 
 tasks.classes.mustRunAfter ':neoforge:jar'
+afterEvaluate {
+    [ 'cacheVersionManifest1.20.4', 'neoFormUnzipAdditionalSources', 'neoFormListLibraries' ].forEach {
+        tasks.named(it).get().mustRunAfter ':neoforge:idePostSync'
+    }
+}

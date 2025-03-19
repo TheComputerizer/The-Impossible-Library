@@ -161,6 +161,7 @@ public class TILModFileForge1_20_6 extends ModFile {
     public static class TILLanguageProviderLoader extends ModFile {
         
         public static IModFileInfo getLangFileInfo(IModFile file) {
+            TILRef.logInfo("Getting lang file info");
             Config config = Config.inMemory();
             config.set("modLoader","minecraft");
             config.set("loaderVersion","1");
@@ -173,11 +174,23 @@ public class TILModFileForge1_20_6 extends ModFile {
             mod.set("description", "Multiversion language loader for "+NAME);
             config.set("mods",Collections.singletonList(mod));
             IConfigurable wrapper = Constructors.newInstanceOf(ClassHelper.findClass(NIGHT_CONFIG_WRAPPER),config);
-            return new ModFileInfo((ModFile)file,wrapper,info -> {},Collections.emptyList());
+            TILRef.logInfo("Constructing lang file info");
+            IModFileInfo fileInfo;
+            try {
+                fileInfo = new ModFileInfo((ModFile)file,wrapper,
+                        info -> Methods.invokeDirect(wrapper,"setFile",info),
+                        Collections.emptyList());
+            } catch(Throwable t) {
+                TILRef.logError("Failed to construct lang file info",t);
+                throw t;
+            }
+            TILRef.logInfo("Returning lang file info");
+            return fileInfo;
         }
         
         public TILLanguageProviderLoader(SecureJar file, IModProvider provider) {
             super(file,provider,TILLanguageProviderLoader::getLangFileInfo,"LANGPROVIDER");
+            TILRef.logInfo("Successfully instantiated TILLanguageProviderLoader!!!!!!!!!!");
         }
         
         @Override public Type getType() {

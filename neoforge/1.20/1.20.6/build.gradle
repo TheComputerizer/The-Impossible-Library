@@ -127,3 +127,8 @@ tasks.assemble.dependsOn shadowJar
 tasks.jar.finalizedBy shadowJar
 tasks.jar.mustRunAfter ':neoforge:neoforge_1.20:jar'
 tasks.jar.mustRunAfter ':shared:shared_1.20:classes'
+afterEvaluate {
+    [ 'cacheVersionManifest1.20.6', 'neoFormUnzipAdditionalSources', 'neoFormListLibraries' ].forEach {
+        tasks.named(it).get().mustRunAfter ':neoforge:neoforge_1.20:neoforge_1.20.4:idePostSync'
+    }
+}

@@ -163,6 +163,86 @@ public abstract class CoreAPI {
         }
     }
     
+    public static boolean isV12() {
+        return getInstance().getVersion().isV12();
+    }
+    
+    public static boolean isV16() {
+        return getInstance().getVersion().isV16();
+    }
+    
+    public static boolean isV18() {
+        return getInstance().getVersion().isV18();
+    }
+    
+    public static boolean isV19() {
+        return getInstance().getVersion().isV19();
+    }
+    
+    public static boolean isV19_2() {
+        return getInstance().getVersion().isV19_2();
+    }
+    
+    public static boolean isV19_4() {
+        return getInstance().getVersion().isV19_4();
+    }
+    
+    public static boolean isV20() {
+        return getInstance().getVersion().isV20();
+    }
+    
+    public static boolean isV20_1() {
+        return getInstance().getVersion().isV20_1();
+    }
+    
+    public static boolean isV20_4() {
+        return getInstance().getVersion().isV20_4();
+    }
+    
+    public static boolean isV20_6() {
+        return getInstance().getVersion().isV20_6();
+    }
+    
+    public static boolean isV21() {
+        return getInstance().getVersion().isV21();
+    }
+    
+    public static boolean isV21_1() {
+        return getInstance().getVersion().isV21_1();
+    }
+    
+    public static boolean isVersionAtLeast(@Nullable String versionStr) {
+        return getInstance().getVersion().isAtLeast(versionStr);
+    }
+    
+    public static boolean isVersionAtLeast(GameVersion version) {
+        return getInstance().getVersion().isAtLeast(version);
+    }
+    
+    public static boolean isVersionAtMost(@Nullable String versionStr) {
+        return getInstance().getVersion().isAtMost(versionStr);
+    }
+    
+    public static boolean isVersionAtMost(GameVersion version) {
+        return getInstance().getVersion().isAtMost(version);
+    }
+    
+    public static boolean isVersionGreaterThan(@Nullable String versionStr) {
+        return getInstance().getVersion().isGreaterThan(versionStr);
+    }
+    
+    public static boolean isVersionGreaterThan(GameVersion version) {
+        return getInstance().getVersion().isGreaterThan(version);
+    }
+    
+    public static boolean isVersionLessThan(@Nullable String versionStr) {
+        return getInstance().getVersion().isLessThan(versionStr);
+    }
+    
+    public static boolean isVersionLessThan(GameVersion version) {
+        return getInstance().getVersion().isLessThan(version);
+    }
+    
     @SuppressWarnings("DataFlowIssue")
     public static Object parseFrom(Object unparsed, ClassLoader loader, boolean java8) {
         try {
@@ -177,23 +257,7 @@ public abstract class CoreAPI {
     }
     
     public static GameVersion parseVersion(String versionStr) {
-        String[] splits = versionStr.split("\\.");
-        if(splits.length<2 || !splits[0].equals("1")) return null;
-        switch(splits[1]) {
-            case "12": return GameVersion.V12_2;
-            case "16": return GameVersion.V16_5;
-            case "18": return GameVersion.V18_2;
-            case "19": return splits.length>2 && splits[2].equals("4") ? GameVersion.V19_4 : GameVersion.V19_2;
-            case "20": {
-                switch(splits.length>2 ? splits[2] : "1") {
-                    case "4": return GameVersion.V20_4;
-                    case "6": return GameVersion.V20_6;
-                    default: return V20_1;
-                }
-            }
-            case "21": return GameVersion.V21_1;
-            default: return null;
-        }
+        return GameVersion.parse(versionStr);
     }
     
     public static void setInstance(Object instance) {
@@ -433,6 +497,41 @@ public abstract class CoreAPI {
         V20_4("1.20.4","v20.m4"),
         V20_6("1.20.6","v20.m6"),
         V21_1("1.21.1","v21.m1");
+        
+        private static final Map<String,GameVersion> BY_NAME;
+        
+        static {
+            Map<String,GameVersion> byName = new HashMap<>();
+            for(GameVersion version : values()) byName.put(version.name,version);
+            BY_NAME = Collections.unmodifiableMap(byName);
+        }
+        
+        public static GameVersion parse(String versionStr) {
+            if(Objects.isNull(versionStr) || versionStr.isEmpty()) {
+                TILRef.logError("Unable to parse version from null or empty string");
+                return null;
+            }
+            switch(versionStr.split("\\.").length) {
+                case 1: {
+                    TILRef.logWarn("Attempting to parse version without any '.' separators from {}",versionStr);
+                    switch(versionStr) {
+                        case "12": return V12_2;
+                        case "16": return V16_5;
+                        case "18": return V18_2;
+                        case "19": return V19_2;
+                        case "20": return V20_1;
+                        case "21": return V21_1;
+                        default: return null;
+                    }
+                }
+                case 2: return BY_NAME.get("1."+versionStr);
+                case 3: return BY_NAME.get(versionStr);
+                default: {
+                    TILRef.logError("Unable to guess version from string with more than 2 '.' characters");
+                    return null;
+                }
+            }
+        }
 
         private final String name;
         private final String pkg;
@@ -451,9 +550,12 @@ public abstract class CoreAPI {
         }
         
         public boolean isCompatibleFabric() {
-            return !isV12();
+            return isV16() || isV18() || isV19() || isV20() || isV21();
         }
         
+        /**
+         * Is this an unecessary check? Yes, but at least it probably ensures future compatibility.
+         */
         public boolean isCompatibleForge() {
             return isCompatibleLegacyForge() || isCompatibleModernForge();
         }
@@ -463,7 +565,7 @@ public abstract class CoreAPI {
         }
         
         public boolean isCompatibleModernForge() {
-            return isV16() || isV18() || isV19() || this==V20_1;
+            return isV16() || isV18() || isV19() || isV20() || isV21();
         }
         
         public boolean isCompatibleNeoForge() {
@@ -486,12 +588,114 @@ public abstract class CoreAPI {
             return this==V19_2 || this==V19_4;
         }
         
+        public boolean isV19_2() {
+            return this==V19_2;
+        }
+        
+        public boolean isV19_4() {
+            return this==V19_2;
+        }
+        
         public boolean isV20() {
             return this==V20_1 || this==V20_4 || this==V20_6;
         }
         
+        public boolean isV20_1() {
+            return this==V20_1;
+        }
+        
+        public boolean isV20_4() {
+            return this==V20_4;
+        }
+        
+        public boolean isV20_6() {
+            return this==V20_6;
+        }
+        
         public boolean isV21() {
             return this==V21_1;
+        }
+        
+        public boolean isV21_1() {
+            return this==V20_1;
+        }
+        
+        public boolean isAtLeast(@Nullable String versionStr) {
+            return isAtLeast(parse(versionStr));
+        }
+        
+        public boolean isAtLeast(@Nullable GameVersion version) {
+            if(Objects.isNull(version)) return false;
+            switch(version) {
+                case V12_2: return isV12() || isV16() || isV18() || isV19() || isV20() || isV21();
+                case V16_5: return isV16() || isV18() || isV19() || isV20() || isV21();
+                case V18_2: return isV18() || isV19() || isV20() || isV21();
+                case V19_2: return isV19() || isV20() || isV21();
+                case V19_4: return isV19_4() || isV20() || isV21();
+                case V20_1: return isV20() || isV21();
+                case V20_4: return isV20_4() || isV20_6() || isV21();
+                case V20_6: return isV20_6() || isV21();
+                case V21_1: return isV21();
+                default: return false;
+            }
+        }
+        
+        public boolean isAtMost(@Nullable String versionStr) {
+            return isAtMost(parse(versionStr));
+        }
+        
+        public boolean isAtMost(@Nullable GameVersion version) {
+            if(Objects.isNull(version)) return false;
+            switch(version) {
+                case V12_2: return isV12();
+                case V16_5: return isV12() || isV16();
+                case V18_2: return isV12() || isV16() || isV18();
+                case V19_2: return isV12() || isV16() || isV18() || isV19_2();
+                case V19_4: return isV12() || isV16() || isV18() || isV19();
+                case V20_1: return isV12() || isV16() || isV18() || isV19() || isV20_1();
+                case V20_4: return isV12() || isV16() || isV18() || isV19() || isV20_1() || isV20_4();
+                case V20_6: return isV12() || isV16() || isV18() || isV19() || isV20();
+                case V21_1: return isV12() || isV16() || isV18() || isV19() || isV20() || isV21();
+                default: return false;
+            }
+        }
+        
+        public boolean isGreaterThan(@Nullable String versionStr) {
+            return isGreaterThan(parse(versionStr));
+        }
+        
+        public boolean isGreaterThan(@Nullable GameVersion version) {
+            if(Objects.isNull(version)) return false;
+            switch(version) {
+                case V12_2: return isV16() || isV18() || isV19() || isV20() || isV21();
+                case V16_5: return isV18() || isV19() || isV20() || isV21();
+                case V18_2: return isV19() || isV20() || isV21();
+                case V19_2: return isV19_4() || isV20() || isV21();
+                case V19_4: return isV20() || isV21();
+                case V20_1: return isV20_4() || isV20_6() || isV21();
+                case V20_4: return isV20_6() || isV21();
+                case V20_6: return isV21();
+                default: return false;
+            }
+        }
+        
+        public boolean isLessThan(@Nullable String versionStr) {
+            return isLessThan(parse(versionStr));
+        }
+        
+        public boolean isLessThan(@Nullable GameVersion version) {
+            if(Objects.isNull(version)) return false;
+            switch(version) {
+                case V16_5: return isV12();
+                case V18_2: return isV12() || isV16();
+                case V19_2: return isV12() || isV16() || isV18();
+                case V19_4: return isV12() || isV16() || isV18() || isV19_2();
+                case V20_1: return isV12() || isV16() || isV18() || isV19();
+                case V20_4: return isV12() || isV16() || isV18() || isV19() || isV20_1();
+                case V20_6: return isV12() || isV16() || isV18() || isV19() || isV20_1() || isV20_4();
+                case V21_1: return isV12() || isV16() || isV18() || isV19() || isV20();
+                default: return false;
+            }
         }
 
         @Override public String toString() {

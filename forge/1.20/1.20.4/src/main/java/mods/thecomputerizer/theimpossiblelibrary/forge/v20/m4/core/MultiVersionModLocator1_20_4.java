@@ -129,9 +129,9 @@ public class MultiVersionModLocator1_20_4 implements TILForgeModLocator {
     
     @SuppressWarnings("unchecked")
     @Override public List<ModFileOrException> scanMods(IModLocator locator) {
-        TILRef.logDebug("Scanning for mods in multiversion jars (context = {})",Thread.currentThread().getContextClassLoader());
+        TILRef.logInfo("Scanning for mods in multiversion jars (context = {})",Thread.currentThread().getContextClassLoader());
         List<IModFile> mods = new ArrayList<>();
-        TILRef.logDebug("Getting CoreAPI instance");
+        TILRef.logInfo("Getting CoreAPI instance");
         CoreAPI instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) TILRef.logError("Failed to get CoreAPI instance :(");
         Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));

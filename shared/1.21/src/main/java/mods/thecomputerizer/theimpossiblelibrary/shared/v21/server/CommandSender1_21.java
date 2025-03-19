@@ -33,6 +33,6 @@ public class CommandSender1_21 extends CommandSenderAPI<CommandContext<CommandSo
     }
     
     @Override public void sendMessage(TextAPI<?> text) {
-        this.wrapped.getSource().sendSuccess(text.getAsComponent(),true);
+        this.wrapped.getSource().sendSuccess(text::getAsComponent,true);
     }
 }

@@ -15,7 +15,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
@@ -72,6 +71,7 @@ public class TILModFileForge1_20_4 extends ModFile {
         scan.addModFileInfo(getModFileInfo());
         Class<?> cScanner = ClassHelper.findClass(SCANNER);
         Class<?> cModClassVisitor = ClassHelper.findClass(MOD_CLASS_VISITOR);
+        ClassHelper.checkBurningWaveInit();
         scanFile(p -> scanReflectively(Constructors.newInstanceOf(cScanner,this),p,scan)); //Collects the jar paths
         TILRef.logDebug("Injecting @Mod annotations from multiversion mod info");
         Set<AnnotationData> annotations = scan.getAnnotations();
@@ -117,16 +117,13 @@ public class TILModFileForge1_20_4 extends ModFile {
         Class<?> engineClass = ClassHelper.findClass(CoreModEngine.class.getName(),loader);
         Set<String> allowed = new HashSet<>(Fields.getStatic(engineClass,"ALLOWED_PACKAGES"));
         for(String extension : extensions) allowed.add(BASE_PACKAGE+"."+extension+".core");
-        TILDev.logDebug("Allowed coremod packages have been expanded to {}",allowed);
+        TILRef.logInfo("Allowed coremod packages have been expanded to {}",allowed);
         Fields.setStaticDirect(engineClass,"ALLOWED_PACKAGES",allowed);
-    }
-    
-    @Override public List<IModInfo> getModInfos() {
-        return getModFileInfo().getMods();
     }
     
     @SuppressWarnings("UnstableApiUsage")
     @Override public boolean identifyMods() {
+        TILRef.logInfo("Identifying mods");
         boolean ret = super.identifyMods();
         if(ret) {
             List<CoreModFile> coreMods = getCoreMods();
@@ -135,6 +132,7 @@ public class TILModFileForge1_20_4 extends ModFile {
                 fixedCoreMods = true;
             }
         }
+        TILRef.logInfo("Finished identifying mods");
         return ret;
     }
     
@@ -160,6 +158,7 @@ public class TILModFileForge1_20_4 extends ModFile {
     public static class TILLanguageProviderLoader extends ModFile {
         
         public static IModFileInfo getLangFileInfo(IModFile file) {
+            TILRef.logInfo("Getting lang file info");
             Config config = Config.inMemory();
             config.set("modLoader","minecraft");
             config.set("loaderVersion","1");
@@ -167,16 +166,28 @@ public class TILModFileForge1_20_4 extends ModFile {
             mod.set("modId","multiversionprovider");
             mod.set("version",VERSION);
             mod.set("displayName","Multiversion Language Provider");
-            mod.set("logoFile", "logo.png");
-            mod.set("authors", "The_Computerizer");
-            mod.set("description", "Multiversion language loader for "+NAME);
+            mod.set("logoFile","logo.png");
+            mod.set("authors","The_Computerizer");
+            mod.set("description","Multiversion language loader for "+NAME);
             config.set("mods",Collections.singletonList(mod));
             IConfigurable wrapper = Constructors.newInstanceOf(ClassHelper.findClass(NIGHT_CONFIG_WRAPPER),config);
-            return new ModFileInfo((ModFile)file,wrapper,info -> {},Collections.emptyList());
+            TILRef.logInfo("Constructing lang file info");
+            IModFileInfo fileInfo;
+            try {
+                fileInfo = new ModFileInfo((ModFile)file,wrapper,
+                                           info -> Methods.invokeDirect(wrapper,"setFile",info),
+                                           Collections.emptyList());
+            } catch(Throwable t) {
+                TILRef.logError("Failed to construct lang file info",t);
+                throw t;
+            }
+            TILRef.logInfo("Returning lang file info");
+            return fileInfo;
         }
         
         public TILLanguageProviderLoader(SecureJar file, IModProvider provider) {
-            super(file, provider, TILLanguageProviderLoader::getLangFileInfo, "LANGPROVIDER");
+            super(file,provider,TILLanguageProviderLoader::getLangFileInfo,"LANGPROVIDER");
+            TILRef.logInfo("Successfully instantiated TILLanguageProviderLoader");
         }
         
         @Override public Type getType() {
