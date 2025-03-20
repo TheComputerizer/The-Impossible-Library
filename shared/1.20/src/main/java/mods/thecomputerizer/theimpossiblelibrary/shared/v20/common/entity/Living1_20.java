@@ -3,12 +3,15 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.entity;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.tag.CompoundTag1_20;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,6 +46,10 @@ public class Living1_20 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     protected Box getBoundingBox(AABB box) {
         return new Box(box.minX,box.minY,box.minZ,box.maxX,box.maxY,box.maxZ);
+    }
+    
+    @Override public CompoundTagAPI<?> getData() {
+        return new CompoundTag1_20(Objects.nonNull(this.entity) ? this.entity.serializeNBT() : new CompoundTag());
     }
 
     @Override public DimensionAPI<?> getDimension() {

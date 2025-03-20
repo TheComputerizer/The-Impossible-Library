@@ -214,14 +214,17 @@ public class FileHelper {
         return Objects.nonNull(files) ? files : new File[]{};
     }
     
+    @IndirectCallers
     public static List<String> toLines(URL url) {
         return toLines(get(url));
     }
     
+    @IndirectCallers
     public static List<String> toLines(URI uri) {
         return toLines(get(uri));
     }
     
+    @IndirectCallers
     public static List<String> toLines(Path path) {
         return toLines(get(path));
     }
@@ -398,6 +401,7 @@ public class FileHelper {
     public static void writeLine(File file, String text, BufferedWriter writer) {
         try {
             writer.write(text);
+            writer.newLine();
         } catch (Exception ex) {
             TILRef.logError("[FileHelper]: Failed to write line {} to file {}",text,file.getAbsolutePath(),ex);
         }

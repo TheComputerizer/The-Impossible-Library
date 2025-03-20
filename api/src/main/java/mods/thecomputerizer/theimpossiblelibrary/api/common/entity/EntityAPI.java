@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
@@ -33,6 +34,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
 
     public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
     public abstract Box getBoundingBox();
+    public abstract CompoundTagAPI<?> getData();
     public abstract DimensionAPI<?> getDimension();
 
     @IndirectCallers
