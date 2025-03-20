@@ -30,6 +30,10 @@ public class Minecraft1_20 extends MinecraftAPI<Minecraft> {
         return new Minecraft1_20(Minecraft.getInstance());
     }
     
+    protected Minecraft1_20(Minecraft mc, Render1_20 render) {
+        super(mc,new Font1_20(),render);
+    }
+    
     public Minecraft1_20(Minecraft mc) {
         super(mc,new Font1_20(),new Render1_20());
     }

@@ -41,6 +41,10 @@ public class Render1_20 extends RenderAPI {
     
     protected PoseStack modelView;
     
+    protected Render1_20(GL1_20 gl) {
+        super(gl);
+    }
+    
     public Render1_20() {
         super(new GL1_20());
     }

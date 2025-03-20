@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.client;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
@@ -14,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.common.event.Comm
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.integration.ModHelperFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.network.NetworkFabric1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m6.registry.RegistryHandlerFabric1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.client.Minecraft1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.client.gui.ScreenHelper1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.Tag1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.text.TextHelper1_20_6;
@@ -22,6 +24,10 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.wrappers.Wrapper1
 import java.util.function.Supplier;
 
 public class ClientFabric1_20_6 extends ClientFabric1_20 {
+    
+    @Override public MinecraftAPI<?> getMinecraft() {
+        return Minecraft1_20_6.getInstance();
+    }
     
     @Override public Supplier<CommonEventsAPI> initCommonEvents() {
         return CommonEventsFabric1_20_6::new;

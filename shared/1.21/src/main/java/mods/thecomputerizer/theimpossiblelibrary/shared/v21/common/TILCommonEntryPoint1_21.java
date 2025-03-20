@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v21.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.DelegatingCommonEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.WrappedCommand1_21;
 
 import java.util.Objects;
 
@@ -26,10 +25,5 @@ public class TILCommonEntryPoint1_21 extends DelegatingCommonEntryPoint {
     
     @Override protected String getModName() {
         return NAME;
-    }
-    
-    @Override public void onLoadComplete() {
-        WrappedCommand1_21.registerArgType();
-        super.onLoadComplete();
     }
 }

@@ -53,7 +53,6 @@ public class GL1_20 implements GLAPI {
         double heightFactor = width>height ? height/width : 1d;
         this.scaleX = 1d+((1d/width)*16d*widthFactor);
         this.scaleY = 1d+((1d/height)*16d*heightFactor);
-        
     }
     
     @Override public void directEnd() {

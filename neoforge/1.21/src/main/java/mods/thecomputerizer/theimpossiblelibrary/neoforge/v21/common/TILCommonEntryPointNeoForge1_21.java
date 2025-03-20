@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.network.NetworkNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.common.TILCommonEntryPoint1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.tab.CreativeTabBuilder1_21;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.WrappedCommand1_21;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -32,6 +33,7 @@ public class TILCommonEntryPointNeoForge1_21 extends TILCommonEntryPoint1_21 {
         else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
             ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester");
             event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
+            WrappedCommand1_21.registerArgType();
         }
     }
     

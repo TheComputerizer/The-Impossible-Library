@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v21.m1.common;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.common.TILCommonEntryPoint1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.tab.CreativeTabBuilder1_21;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.WrappedCommand1_21;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -31,6 +32,7 @@ public class TILCommonEntryPointForge1_21_1 extends TILCommonEntryPoint1_21 {
         else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
             ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester");
             event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
+            WrappedCommand1_21.registerArgType();
         }
     }
     

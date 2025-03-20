@@ -3,7 +3,9 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.network.NetworkNeoForge1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.common.TILCommonEntryPoint1_20_4;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.server.WrappedCommand1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.tab.CreativeTabBuilder1_20;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
@@ -13,6 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.server.WrappedCommand1_20_4.INFO;
+import static net.minecraft.core.registries.Registries.COMMAND_ARGUMENT_TYPE;
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
 
 public class TILCommonEntryPointNeoForge1_20_4 extends TILCommonEntryPoint1_20_4 {
@@ -25,6 +30,11 @@ public class TILCommonEntryPointNeoForge1_20_4 extends TILCommonEntryPoint1_20_4
     
     public static void onRegisterCreativeTabs(RegisterEvent event) {
         if(event.getRegistryKey()==CREATIVE_MODE_TAB) CreativeTabBuilder1_20.onRegister(event);
+        else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
+            ResourceLocation registryName = new ResourceLocation(MODID,"custom_suggester");
+            event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
+            WrappedCommand1_20_4.registerArgType();
+        }
     }
     
     public static void onSupplyCreativeTabs(BuildCreativeModeTabContentsEvent event) {

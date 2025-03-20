@@ -15,8 +15,6 @@ import org.burningwave.core.classes.Fields.NoSuchFieldException;
 
 import javax.annotation.Nullable;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -440,7 +438,7 @@ public class ForgeCoreLoader {
             return bootInstance;
         }
         String version = getVersionStr();
-        Class<?> coreClass = loadAPI(version);
+        Class<?> coreClass = loadAPI(version,bootLoader());
         try {
             return coreClass.newInstance();
         } catch(InstantiationException | IllegalAccessException ex) {
@@ -476,17 +474,11 @@ public class ForgeCoreLoader {
      * Define necessary classes for the versioned CoreAPI instance
      * Returns the instance class
      */
-    static Class<?> loadAPI(String version) {
+    static Class<?> loadAPI(String version, ClassLoader loader) {
         String className = versionClassName("core.TILCoreForge",version);
-        ClassLoader loader = bootLoader();
-        if(isJava8()) {
-            URL source = ClassHelper.getSourceURL(ForgeCoreLoader.class);
-            if(!ClassHelper.loadURL((URLClassLoader)loader,source))
-                LOGGER.error("Failed to load source {}",source);
-        }
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(className,true,loader);
+            clazz = Driver.getClassByName(className,true,loader,Classes.getClass());
         } catch(Exception ex) {
             LOGGER.error("Failed to load class {} for {}",className,loader,ex);
         }

@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -120,18 +121,19 @@ public class WrappedCommand1_21 {
     
     public record CustomSuggester(CommandAPI command) implements ArgumentType<String> {
         
-        public <S> CompletableFuture<Suggestions> listSuggestions(
-                final CommandContext<S> ctx, final SuggestionsBuilder builder) {
-                MinecraftServerAPI<?> server = ServerHelper.getAPI();
-                CommandSenderAPI<?> sender = WrapperHelper.wrapCommandSender(ctx);
-                return SharedSuggestionProvider.suggest(this.command.getTabCompletions(
-                        server,sender,builder.getInput(),builder.getRemaining()),builder);
-            }
-            
-            @Override public String parse(StringReader reader) {
-                return reader.readUnquotedString();
-            }
+        public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> ctx,
+                final SuggestionsBuilder builder) {
+            MinecraftServerAPI<?> server = ServerHelper.getAPI();
+            CommandSenderAPI<?> sender = WrapperHelper.wrapCommandSender(ctx);
+            List<String> completions = Objects.nonNull(this.command) ? this.command.getTabCompletions(
+                    server,sender,builder.getInput(),builder.getRemaining()) : List.of();
+            return SharedSuggestionProvider.suggest(completions,builder);
         }
+        
+        @Override public String parse(StringReader reader) {
+            return reader.readUnquotedString();
+        }
+    }
         
     public static class CustomSuggesterInfo implements ArgumentTypeInfo<CustomSuggester,CustomSuggesterTemplate> {
         
