@@ -55,9 +55,9 @@ public abstract class Player1_21<P extends Player> extends PlayerAPI<P,EntityTyp
     }
     
     @Override public CompoundTagAPI<?> getData() {
-        CompoundTag tag = null;
-        if(Objects.nonNull(this.entity)) tag = this.entity.serializeNBT(this.entity.level().registryAccess());
-        return new CompoundTag1_21(Objects.nonNull(tag) ? tag : new CompoundTag());
+        CompoundTag tag = new CompoundTag();
+        if(Objects.nonNull(this.entity)) tag = this.entity.saveWithoutId(tag);
+        return new CompoundTag1_21(tag);
     }
 
     @Override public DimensionAPI<?> getDimension() {

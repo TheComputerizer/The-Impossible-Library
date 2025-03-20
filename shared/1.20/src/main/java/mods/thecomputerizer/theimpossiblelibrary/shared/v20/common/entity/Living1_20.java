@@ -49,7 +49,9 @@ public class Living1_20 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     }
     
     @Override public CompoundTagAPI<?> getData() {
-        return new CompoundTag1_20(Objects.nonNull(this.entity) ? this.entity.serializeNBT() : new CompoundTag());
+        CompoundTag tag = new CompoundTag();
+        if(Objects.nonNull(this.entity)) this.entity.saveWithoutId(tag);
+        return new CompoundTag1_20(tag);
     }
 
     @Override public DimensionAPI<?> getDimension() {
