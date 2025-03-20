@@ -383,7 +383,7 @@ public abstract class CoreAPI {
             CoreEntryPoint core = info.getInstance();
             if(Objects.nonNull(core)) {
                 this.coreInstances.add(core);
-                TILRef.logInfo("Successfully instantiated coremod for {} as `{}`!",info.getName());
+                TILRef.logInfo("Successfully instantiated coremod for {} as `{}`!",info.getModid(),info.getName());
             }
         }
     }

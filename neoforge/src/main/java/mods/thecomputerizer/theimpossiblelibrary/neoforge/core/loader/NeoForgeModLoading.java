@@ -14,13 +14,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import net.neoforged.fml.loading.ClasspathLocatorUtils;
-import net.neoforged.fml.loading.moddiscovery.ModClassVisitor;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
 import net.neoforged.fml.loading.moddiscovery.NightConfigWrapper;
-import net.neoforged.fml.loading.moddiscovery.Scanner;
 import net.neoforged.neoforgespi.language.IConfigurable;
 import net.neoforged.neoforgespi.language.IModFileInfo;
+import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModLocator.ModFileOrException;
@@ -74,7 +73,6 @@ public class NeoForgeModLoading {
     };
     static final Function<Object,Object> INFO_GETTER = file -> Methods.invokeDirect(file,"getInfos");
     static final Function<Object,String> MODULE_NAME_GETTER = file -> ((IModFile)file).getModFileInfo().moduleName();
-    static Function<Object,Object> newLangProviderLoader;
     static final BiFunction<URL,String,Path> urlToPath = (url,manifest) ->
             ClasspathLocatorUtils.findJarPathFor(manifest,manifest,url);
     static final Function<Path,Manifest> pathToManifest = path -> {
@@ -83,8 +81,11 @@ public class NeoForgeModLoading {
     };
     static String coreModEngineClass;
     static String[] coreModExtensions;
+    static Class<?> modClassVisitorClass;
+    static Class<?> scannerClass;
     static Function<Object[],Object> modFileCreator;
     static boolean fixedCoreMods;
+    static boolean isNew;
     
     @SuppressWarnings("unchecked")
     private static <F> void addScannedMod(Object file, List<F> mods) {
@@ -191,7 +192,7 @@ public class NeoForgeModLoading {
         LOGGER.info("Starting multiversion mod scan");
         TILBetterModScan scan = new TILBetterModScan();
         scan.addModFileInfo(file.getModFileInfo());
-        file.scanFile(p -> scanReflectively(new Scanner(file),p,scan));
+        file.scanFile(p -> scanReflectively(Constructors.newInstanceOf(scannerClass,file),p,scan));
         LOGGER.debug("Injecting @Mod annotations from multiversion mod info");
         if(Objects.nonNull(scan.getAnnotations())) return scan;
         LOGGER.error("@Mod scan annotation set for multiversion mod is null???");
@@ -256,9 +257,11 @@ public class NeoForgeModLoading {
     }
     
     private static TILBetterModScan onFinishedWritingMods(TILBetterModScan scan, IModFile file) {
-        List<?> loaders = file.getLoaders();
-        if(loaders.isEmpty()) LOGGER.error("Why are there no language loaders??");
-        for(Object loader : loaders) AFTER_WRITING_MODS.accept(scan,loader);
+        if(!isNew) {
+            List<?> loaders = Methods.invoke(file,"getLoaders");
+            if(loaders.isEmpty()) LOGGER.error("Why are there no language loaders??");
+            for(Object loader : loaders) AFTER_WRITING_MODS.accept(scan,loader);
+        }
         LOGGER.debug("Finishing multiversion mod scan");
         scan.addFilePath(file.getFilePath());
         return scan;
@@ -332,22 +335,19 @@ public class NeoForgeModLoading {
             SecureJar jar = SecureJar.from((Path)args[0]);
             return Constructors.newInstanceOf(fileClass,jar,args[1],args[2]);
         };
-        final Class<?> providerClass = ClassHelper.findClass(className+"$TILLanguageProviderLoader");
-        newLangProviderLoader = file -> {
-            Object jar = Methods.invoke(file,"getSecureJar");
-            Object provider = Methods.invoke(file,"getProvider");
-            return Constructors.newInstanceOf(providerClass,jar,provider);
-        };
-        boolean isNew = version.startsWith("21");
-        coreModEngineClass = "net.neoforged.coremod.CoreMod"+(isNew ? "" : "Scripting")+"Engine";
+        isNew = version.startsWith("21");
+        coreModEngineClass = "net.neoforged.coremod.CoreMod"+(isNew ? "Scripting" : "")+"Engine";
         coreModExtensions = isNew ? new String[]{"v21","v20.m6","v21.m1"} : new String[]{"v20","v20.m4"};
+        String pkg = "net.neoforged.fml.loading."+(isNew ? "modscan." : "moddiscovery.");
+        modClassVisitorClass = ClassHelper.findClass(pkg+"ModClassVisitor");
+        scannerClass = ClassHelper.findClass(pkg+"Scanner");
         LOGGER.info("1.{} NeoForge Locator plugin loaded on {}",actualVersion,caller.getClassLoader());
     }
     
     private static void writeClassBytes(IModFile file, TILBetterModScan scan, MultiVersionModData data,
             String className, byte[] bytes) {
         scan.addWrittenClass(className,data.getInfo(),file,bytes);
-        ClassVisitor visitor = new ModClassVisitor();
+        ClassVisitor visitor = Constructors.newInstanceOf(modClassVisitorClass);
         ClassReader reader = new ClassReader(bytes);
         reader.accept(visitor,0);
         Methods.invokeDirect(visitor,"buildData",scan.getClasses(),scan.getAnnotations());
@@ -356,13 +356,22 @@ public class NeoForgeModLoading {
     
     private static void writeEntry(IModFile file, TILBetterModScan scan,
             Entry<MultiVersionModInfo,MultiVersionModData> entry) {
+        MultiVersionModInfo info = entry.getKey();
+        String modid = info.getModID();
         MultiVersionModData data = entry.getValue();
         if(Objects.isNull(data)) {
-            LOGGER.warn("Skipping mod injection for {} since no data exists",entry.getKey().getModID());
+            LOGGER.warn("Skipping mod injection for {} since no data exists",modid);
             return;
         }
+        scan.setCore(data.getCandidate().getCore());
         for(Pair<String,byte[]> classBytes : data.writeModClass())
             writeClassBytes(file,scan,data,classBytes.getLeft(),classBytes.getRight());
+        for(IModInfo mod : file.getModInfos()) {
+            if(modid.equals(mod.getModId())) {
+                scan.setModClass(mod,info.getModClasspath());
+                break;
+            }
+        }
     }
     
     @SuppressWarnings("unchecked")

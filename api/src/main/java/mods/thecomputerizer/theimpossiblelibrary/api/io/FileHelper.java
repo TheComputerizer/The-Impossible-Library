@@ -35,7 +35,7 @@ public class FileHelper {
                 }
             }
             if(file.createNewFile()) {
-                TILRef.logDebug("[FileHelper]: Successfully created new file {}");
+                TILRef.logDebug("[FileHelper]: Successfully created new file {}",file);
                 return true;
             }
             TILRef.logError("[FileHelper]: Failed to create file {}",file);

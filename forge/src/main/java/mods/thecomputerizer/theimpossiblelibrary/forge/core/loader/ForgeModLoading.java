@@ -437,9 +437,11 @@ public class ForgeModLoading {
     
     private static void writeEntry(IModFile file, TILBetterModScan scan, Class<?> visitorClass,
             Entry<MultiVersionModInfo,MultiVersionModData> entry) {
+        MultiVersionModInfo info = entry.getKey();
+        String modid = info.getModID();
         MultiVersionModData data = entry.getValue();
         if(Objects.isNull(data)) {
-            LOGGER.warn("Skipping mod injection for {} since no data exists",entry.getKey().getModID());
+            LOGGER.warn("Skipping mod injection for {} since no data exists",modid);
             return;
         }
         for(Pair<String,byte[]> classBytes : data.writeModClass())

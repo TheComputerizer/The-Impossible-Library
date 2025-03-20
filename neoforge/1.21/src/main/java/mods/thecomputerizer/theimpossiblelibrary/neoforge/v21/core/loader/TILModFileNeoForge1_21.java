@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILBetterModScan;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILFileConfigNeoForge;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
@@ -20,6 +21,7 @@ import net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
 import static net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes.DEFAULT;
@@ -61,7 +63,9 @@ public class TILModFileNeoForge1_21 extends ModFile {
     
     @Override public ModFileScanData compileContent() {
         NeoForgeModLoading.populateMultiversionData(this.candidate,this);
-        return NeoForgeModLoading.writeMods(this);
+        TILBetterModScan scan = NeoForgeModLoading.writeMods(this);
+        if(Objects.nonNull(scan)) scan.setCore(this.candidate.getCore());
+        return scan;
     }
     
     @Override public boolean identifyMods() {
