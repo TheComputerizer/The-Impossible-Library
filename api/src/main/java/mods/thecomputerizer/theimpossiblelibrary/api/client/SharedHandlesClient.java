@@ -38,6 +38,8 @@ public abstract class SharedHandlesClient {
     
     public abstract void registerKeyBinding(KeyAPI<?> key);
     
+    public void registerKeyBindingsEvent(Object event) {}
+    
     @IndirectCallers public void renderDebugText(Object matrix, List<String> left, List<String> right) {
         renderDebugText(matrix,left,true);
         renderDebugText(matrix,right,false);

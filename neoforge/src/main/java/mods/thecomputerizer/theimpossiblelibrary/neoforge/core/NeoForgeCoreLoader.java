@@ -218,7 +218,7 @@ public class NeoForgeCoreLoader {
         Set<Class<?>> allMoved = new HashSet<>();
         Map<ClassLoader,Collection<Class<?>>> removals = new HashMap<>();
         for(ClassLoader loader : loaders) {
-            Collection<Class<?>> classes = Fields.getDirect(loader,"classes");
+            Collection<Class<?>> classes = new HashSet<>(Fields.getDirect(loader,"classes"));
             for(Class<?> c : classes) {
                 String name = c.getModule().getName();
                 if(Objects.isNull(name)) continue;

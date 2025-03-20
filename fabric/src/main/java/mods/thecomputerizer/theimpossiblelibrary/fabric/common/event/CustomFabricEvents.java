@@ -28,31 +28,31 @@ public interface CustomFabricEvents {
     );
     
     Event<RegistryEvent> REGISTER_BLOCK_ENTITIES = EventFactory.createArrayBacked(
-            RegistryEvent.class, listeners -> registry -> {
+            RegistryEvent.class,listeners -> registry -> {
                 for(RegistryEvent listener: listeners) listener.register(registry);
             }
     );
     
     Event<RegistryEvent> REGISTER_BLOCKS = EventFactory.createArrayBacked(
-            RegistryEvent.class, listeners -> registry -> {
+            RegistryEvent.class,listeners -> registry -> {
                 for(RegistryEvent listener: listeners) listener.register(registry);
             }
     );
     
     Event<RegistryEvent> REGISTER_ENTITIES = EventFactory.createArrayBacked(
-            RegistryEvent.class, listeners -> registry -> {
+            RegistryEvent.class,listeners -> registry -> {
                 for(RegistryEvent listener: listeners) listener.register(registry);
             }
     );
     
     Event<RegistryEvent> REGISTER_ITEMS = EventFactory.createArrayBacked(
-            RegistryEvent.class, listeners -> registry -> {
+            RegistryEvent.class,listeners -> registry -> {
                 for(RegistryEvent listener: listeners) listener.register(registry);
             }
     );
     
     Event<RegistryEvent> REGISTER_SOUND_EVENTS = EventFactory.createArrayBacked(
-            RegistryEvent.class, listeners -> registry -> {
+            RegistryEvent.class,listeners -> registry -> {
                 for(RegistryEvent listener: listeners) listener.register(registry);
             }
     );

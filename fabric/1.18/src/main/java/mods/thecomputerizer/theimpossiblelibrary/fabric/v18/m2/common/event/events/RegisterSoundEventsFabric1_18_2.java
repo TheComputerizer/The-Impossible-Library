@@ -7,8 +7,7 @@ import static net.minecraft.core.Registry.SOUND_EVENT;
 
 public class RegisterSoundEventsFabric1_18_2 extends RegisterSoundEventsFabric {
     
-    @SuppressWarnings("unchecked")
-    @Override public <E> Registry<E> getRegistry() {
-        return (Registry<E>)SOUND_EVENT;
+    @Override public Registry<?> getRegistry() {
+        return SOUND_EVENT;
     }
 }

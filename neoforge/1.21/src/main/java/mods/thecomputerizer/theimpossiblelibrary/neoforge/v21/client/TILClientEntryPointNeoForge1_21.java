@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.client.TILClientEntr
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -20,6 +21,10 @@ public class TILClientEntryPointNeoForge1_21 extends TILClientEntryPoint1_21 {
     
     public static TILClientEntryPointNeoForge1_21 getInstance() {
         return Objects.nonNull(INSTANCE) ? INSTANCE : new TILClientEntryPointNeoForge1_21();
+    }
+    
+    private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
+        TILRef.getClientHandles().registerKeyBindingsEvent(event);
     }
     
     private TILClientEntryPointNeoForge1_21() {
@@ -40,9 +45,10 @@ public class TILClientEntryPointNeoForge1_21 extends TILClientEntryPoint1_21 {
     
     @Override public void onClientSetup() {
         IEventBus bus = getModBus();
-        if(Objects.nonNull(bus)) bus.addListener(NetworkNeoForge1_21::registerPayloadClient);
-        else TILRef.logError("Failed to register network payloads!");
+        if(Objects.nonNull(bus)) {
+            bus.addListener(NetworkNeoForge1_21::registerPayloadClient);
+            bus.addListener(TILClientEntryPointNeoForge1_21::registerKeyMappings);
+        } else TILRef.logError("Failed to register network payloads!");
         EventHelper.addListener(RENDER_OVERLAY_POST,NeoForgeClientHelpers::emulateForgeDebugTextEvent);
-        super.onCommonSetup();
     }
 }

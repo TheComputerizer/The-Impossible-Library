@@ -7,9 +7,8 @@ import static net.minecraft.core.Registry.BLOCK_ENTITY_TYPE;
 
 public class RegisterBlockEntitiesEventFabric1_16_5 extends RegisterBlockEntitiesEventFabric {
     
-    @SuppressWarnings("unchecked")
-    @Override public <E> Registry<E> getRegistry() {
-        return (Registry<E>)BLOCK_ENTITY_TYPE;
+    @Override public Registry<?> getRegistry() {
+        return BLOCK_ENTITY_TYPE;
     }
 
 }

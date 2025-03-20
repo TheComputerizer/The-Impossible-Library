@@ -7,9 +7,8 @@ import static net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE;
 
 public class RegisterEntitiesEventFabric1_21 extends RegisterEntitiesEventFabric {
     
-    @SuppressWarnings("unchecked")
-    @Override public <E> Registry<E> getRegistry() {
-        return (Registry<E>)ENTITY_TYPE;
+    @Override public  Registry<?> getRegistry() {
+        return ENTITY_TYPE;
     }
     
 }

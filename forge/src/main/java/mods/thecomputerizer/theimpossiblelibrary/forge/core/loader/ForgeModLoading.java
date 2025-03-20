@@ -65,12 +65,11 @@ public class ForgeModLoading {
     static final String SCANNER = "net.minecraftforge.fml.loading.moddiscovery.Scanner";
     static final BiConsumer<TILBetterModScan,Object> AFTER_WRITING_MODS = (scan,language) -> {
         LOGGER.debug("Injecting scan data into the language loader");
-        Consumer<ModFileScanData> visitor = Methods.invokeDirect(language, "getFileVisitor");
+        Consumer<ModFileScanData> visitor = Methods.invokeDirect(language,"getFileVisitor");
         visitor.accept(scan);
     };
     static final Function<Object,Object> INFO_GETTER = file -> Methods.invokeDirect(file,"getInfos");
     static Function<Object,String> moduleNameGetter = file -> null;
-    static Function<IModFile,Object> getLoaders;
     static Function<ModFile,IModFileInfo> langProviderFileInfo;
     static BiFunction<URL,String,Path> urlToPath;
     static BiFunction<Path,Object,Manifest> pathToManifest;
@@ -266,7 +265,7 @@ public class ForgeModLoading {
     }
     
     private static TILBetterModScan onFinishedWritingMods(TILBetterModScan scan, IModFile file) {
-        Object loader = Objects.nonNull(getLoaders) ? getLoaders.apply(file) : file;
+        Object loader = Methods.invokeDirect(file,pathBased ? "getLoader" : "getLoaders");
         if(Objects.isNull(loader)) LOGGER.error("Why are there no language loaders??");
         else if(loader instanceof Collection<?>) {
             Collection<?> loaders = (Collection<?>)loader;

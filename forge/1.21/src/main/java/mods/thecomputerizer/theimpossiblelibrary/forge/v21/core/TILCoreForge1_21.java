@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoa
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreEntryPointForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v21.client.TILClientEntryPointForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v21.core.asm.ModWriterForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v21.core.loader.MultiVersionLoaderForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.core.TILCore1_21;
@@ -53,7 +54,7 @@ public abstract class TILCoreForge1_21 extends TILCore1_21 implements TILCoreFor
     }
     
     @Override public CommonEntryPoint getClientVersionHandler() {
-        return null;
+        return TILClientEntryPointForge1_21.getInstance();
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {

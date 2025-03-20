@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-import static java.io.File.separator;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
@@ -43,8 +42,8 @@ public class ClassHelper {
             return null;
         }
         String urlStr = url.toString().replace("%20"," ");
-        String appended = (urlStr.startsWith("jar") ? "!" : "")+separator+className;
-        return FileHelper.toURL(urlStr.substring(urlStr.indexOf(separator),urlStr.length()-appended.length()));
+        String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
+        return FileHelper.toURL(urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length()));
     }
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
@@ -203,6 +202,7 @@ public class ClassHelper {
         return findClass(name,initialize,Thread.currentThread().getContextClassLoader(),false);
     }
     
+    @IndirectCallers
     public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader) {
         return findClass(name,initialize,classLoader,false);
     }
@@ -312,7 +312,7 @@ public class ClassHelper {
         if(Objects.nonNull(className) && !className.isEmpty()) {
             try {
                 String relativePath = getResourcePath(className);
-                return absoluteLocation(loader.getResource(relativePath), relativePath);
+                return absoluteLocation(loader.getResource(relativePath),relativePath);
             } catch(Exception ex) {
                 TILRef.logError("Caught exception trying to get source URL for {} on {}",className,loader,ex);
             }

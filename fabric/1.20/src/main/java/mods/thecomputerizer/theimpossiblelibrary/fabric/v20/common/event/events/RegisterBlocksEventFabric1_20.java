@@ -7,8 +7,7 @@ import static net.minecraft.core.registries.BuiltInRegistries.BLOCK;
 
 public class RegisterBlocksEventFabric1_20 extends RegisterBlocksEventFabric {
     
-    @SuppressWarnings("unchecked")
-    @Override public <E> Registry<E> getRegistry() {
-        return (Registry<E>)BLOCK;
+    @Override public Registry<?> getRegistry() {
+        return BLOCK;
     }
 }

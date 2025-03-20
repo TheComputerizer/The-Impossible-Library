@@ -219,7 +219,7 @@ public class ForgeCoreLoader {
         Set<Class<?>> allMoved = new HashSet<>();
         Map<ClassLoader,Collection<Class<?>>> removals = new HashMap<>();
         for(ClassLoader loader : loaders) {
-            Collection<Class<?>> classes = Fields.getDirect(loader,"classes");
+            Collection<Class<?>> classes = new HashSet<>(Fields.getDirect(loader,"classes"));
             for(Class<?> c : classes) {
                 String name = moduleName(Fields.getDirect(c,"module"));
                 if(Objects.isNull(name)) continue;

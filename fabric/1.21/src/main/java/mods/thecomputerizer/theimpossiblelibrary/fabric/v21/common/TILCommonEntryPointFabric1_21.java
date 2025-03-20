@@ -25,10 +25,14 @@ public class TILCommonEntryPointFabric1_21 extends TILCommonEntryPointFabric {
         INSTANCE = this;
     }
     
-    @Override public void onLoadComplete() {
-        FabricHelper.registerServerHooks();
+    @Override public void onCommonSetup() {
         WrappedCommand1_21.registerArgType();
         Registry.register(COMMAND_ARGUMENT_TYPE,ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester"),INFO);
+        super.onCommonSetup();
+    }
+    
+    @Override public void onLoadComplete() {
+        FabricHelper.registerServerHooks();
         CreativeTabBuilder1_21.onRegister(null);
         super.onLoadComplete();
     }
