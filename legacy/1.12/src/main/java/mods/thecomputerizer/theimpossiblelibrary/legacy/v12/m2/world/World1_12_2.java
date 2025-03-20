@@ -123,6 +123,10 @@ public class World1_12_2 extends WorldAPI<World> {
         return this.wrapped.getMoonPhase();
     }
     
+    @Override public @Nullable String getRaidStatus(BlockPosAPI<?> pos) {
+        return null;
+    }
+    
     @Override public int getRaidWave(BlockPosAPI<?> pos) {
         return -1;
     }

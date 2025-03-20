@@ -154,8 +154,22 @@ public class World1_21 extends WorldAPI<LevelAccessor> {
         return this.wrapped.getMoonPhase();
     }
     
+    private Raid getRaid(BlockPosAPI<?> pos) {
+        return this.wrapped.isClientSide() ? null : ((ServerLevel)this.wrapped).getRaidAt(pos.unwrap());
+    }
+    
+    @Override public @Nullable String getRaidStatus(BlockPosAPI<?> pos) {
+        Raid raid = getRaid(pos);
+        if(Objects.isNull(raid)) return null;
+        if(raid.isVictory()) return "VICTORY";
+        if(raid.isLoss()) return "LOSS";
+        if(raid.isStopped()) return "STOPPED";
+        if(raid.isActive()) return "ONGOING";
+        return null;
+    }
+    
     @Override public int getRaidWave(BlockPosAPI<?> pos) {
-        Raid raid = this.wrapped.isClientSide() ? null : ((ServerLevel)this.wrapped).getRaidAt(pos.unwrap());
+        Raid raid = getRaid(pos);
         return Objects.nonNull(raid) ? raid.getGroupsSpawned() : -1;
     }
     
