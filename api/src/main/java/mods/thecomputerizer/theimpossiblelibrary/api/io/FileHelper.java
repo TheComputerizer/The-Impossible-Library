@@ -4,8 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import javax.annotation.Nullable;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -13,10 +16,12 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class FileHelper {
     
@@ -29,7 +34,7 @@ public class FileHelper {
             if(Objects.nonNull(parent) && !parent.exists()) {
                 if(parent.mkdirs())
                     TILRef.logDebug("[FileHelper]: Successfully created parent directories for {}",file);
-                if(!parent.mkdirs()) {
+                else {
                     TILRef.logError("[FileHelper]: Failed to create directories for {} ({})",file,parent);
                     return false;
                 }
@@ -159,6 +164,19 @@ public class FileHelper {
         return canProceed ? (create(file) ? file : null) : file;
     }
     
+    public static @Nullable BufferedReader getCheckedLineReader(File file) {
+        if(!file.exists() && !create(file)) {
+            TILRef.logError("[FileHelper]: Cannot read from a file that does not exist: Failed to create file {}",file);
+            return null;
+        }
+        try {
+            return getLineReader(file);
+        } catch(IOException ex) {
+            TILRef.logError("[FileHelper]: Failed to open BufferedReader for file {}",file.getAbsolutePath(),ex);
+        }
+        return null;
+    }
+    
     /**
      * Get a BufferedWriter for a file after it is verified that the file exists.
      * Returns null if the input file is null, the input file does not exist, or the BufferedWriter throws an exception.
@@ -176,6 +194,10 @@ public class FileHelper {
         return null;
     }
     
+    public static BufferedReader getLineReader(File file) throws FileNotFoundException {
+        return new BufferedReader(new FileReader(file));
+    }
+    
     /**
      * Get a BufferedWriter for a file without checking if the file exists
      */
@@ -190,6 +212,28 @@ public class FileHelper {
     public static File[] list(File root, Predicate<File> filter) {
         File[] files = Objects.nonNull(root) ? root.listFiles(filter::test) : null;
         return Objects.nonNull(files) ? files : new File[]{};
+    }
+    
+    public static List<String> toLines(URL url) {
+        return toLines(get(url));
+    }
+    
+    public static List<String> toLines(URI uri) {
+        return toLines(get(uri));
+    }
+    
+    public static List<String> toLines(Path path) {
+        return toLines(get(path));
+    }
+    
+    public static List<String> toLines(File file) {
+        List<String> lines = Collections.emptyList();
+        try(BufferedReader reader = getCheckedLineReader(file)) {
+            if(Objects.nonNull(reader)) lines = reader.lines().collect(Collectors.toList());
+        } catch(Exception ex) {
+            TILRef.logError("Failed to read lines from file {}",file,ex);
+        }
+        return lines;
     }
     
     public static Path toPath(File file) {
