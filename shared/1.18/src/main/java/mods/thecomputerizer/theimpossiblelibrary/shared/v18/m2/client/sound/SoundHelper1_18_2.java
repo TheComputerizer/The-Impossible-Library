@@ -20,7 +20,7 @@ public class SoundHelper1_18_2 implements SoundHelperAPI {
         if(Objects.nonNull(category)) {
             Options options = Minecraft.getInstance().options;
             if(Objects.nonNull(options)) return options.getSoundSourceVolume(category);
-            TILRef.logInfo("Getting sound level from cached options for ",categoryName);
+            TILRef.logInfo("Getting sound level from cached options for {} ",categoryName);
             return ClientHelper.getCachedOptionSoundCategory(name);
         } else TILRef.logError("Failed to get source volume for {} (nonexistent category)",categoryName);
         return 0f;
