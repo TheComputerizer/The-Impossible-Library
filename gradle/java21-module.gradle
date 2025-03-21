@@ -6,4 +6,4 @@ apply from: rootProject.file('shared.gradle')
 java.toolchain.languageVersion = JavaLanguageVersion.of 21
 
 apply from: rootProject.file('gradle\\lombok.gradle')
-apply from: rootProject.file('gradle\\shadow-relocate.gradle')
+apply from: rootProject.file('gradle\\shadow.gradle')

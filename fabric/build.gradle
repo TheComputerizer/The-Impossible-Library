@@ -59,8 +59,7 @@ dependencies {
 loom.mixin.add sourceSets.main, mod_refmap
 
 processResources {
-    def replacements = [ 'adaptor': fabric_adaptor, 'coremods': fabric_coremods, 'injector': fabric_injector,
-                         'mixin_name': fabric_asm_mixin_new,'version': version ]
+    def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
     inputs.properties replacements
     from(base.processResources.outputs) {
         filesMatching('fabric.mod.json') {

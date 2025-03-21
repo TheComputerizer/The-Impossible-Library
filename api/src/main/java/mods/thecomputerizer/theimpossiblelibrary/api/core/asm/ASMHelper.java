@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import org.apache.logging.log4j.core.net.UrlConnectionFactory;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
 
@@ -397,11 +398,26 @@ public class ASMHelper {
             if(Objects.nonNull(replaceWith)) code.insertBefore(code.get(i),replaceWith);
         }
     }
-
-    public static void writeDebugByteCode(String classpath, byte[] bytes) {
-        File debugDir = new File("/"+DATA_DIRECTORY,"asm_debug");
-        String filepath = classpath.replace('.',separatorChar)+".class";
-        writeByteCodeToFile(FileHelper.get(new File(debugDir,filepath),false),bytes);
+    
+    public static @Nullable byte[] toBytes(@Nullable ClassNode node) {
+        return toBytes(node,0);
+    }
+    
+    /**
+     * Input flags should either be ASMRef.COMPUTE_FRAMES, ASMRef.COMPUTE_MAXS, or 0
+     */
+    public static @Nullable byte[] toBytes(@Nullable ClassNode node, int flags) {
+        if(Objects.isNull(node)) return null;
+        ClassWriter writer = new ClassWriter(flags);
+        node.accept(writer);
+        return writer.toByteArray();
+    }
+    
+    public static ClassNode toClassNode(byte[] byteCode) {
+        ClassNode node = new ClassNode();
+        ClassReader reader = new ClassReader(byteCode);
+        reader.accept(node,0);
+        return node;
     }
 
     public static void writeByteCodeToFile(File file, byte[] bytes) {
@@ -411,5 +427,11 @@ public class ASMHelper {
         } catch(IOException ex) {
             TILRef.logError("Failed to print class file to `{}`",file);
         }
+    }
+    
+    public static void writeDebugByteCode(String classpath, byte[] bytes) {
+        File debugDir = new File("/"+DATA_DIRECTORY,"asm_debug");
+        String filepath = classpath.replace('.',separatorChar)+".class";
+        writeByteCodeToFile(FileHelper.get(new File(debugDir,filepath),false),bytes);
     }
 }

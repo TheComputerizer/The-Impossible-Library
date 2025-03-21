@@ -6,7 +6,6 @@ import net.minecraft.core.Registry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
-import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.*;
 
 public abstract class TILCommonEntryPointFabric extends DelegatingCommonEntryPoint {
     
@@ -21,11 +20,11 @@ public abstract class TILCommonEntryPointFabric extends DelegatingCommonEntryPoi
     }
     
     @Override public void onCommonSetup() { //Stupid casting shenanigans
-        REGISTER_BLOCKS.invoker().register(registryBlock());
-        REGISTER_BLOCK_ENTITIES.invoker().register(registryBlockEntity());
-        REGISTER_ITEMS.invoker().register(registryItem());
-        REGISTER_ENTITIES.invoker().register(registryEntity());
-        REGISTER_SOUND_EVENTS.invoker().register(registrySoundEvent());
+        //REGISTER_BLOCKS.invoker().register(registryBlock());
+        //REGISTER_BLOCK_ENTITIES.invoker().register(registryBlockEntity());
+        //REGISTER_ITEMS.invoker().register(registryItem());
+        //REGISTER_ENTITIES.invoker().register(registryEntity());
+        //REGISTER_SOUND_EVENTS.invoker().register(registrySoundEvent());
         super.onCommonSetup();
     }
     

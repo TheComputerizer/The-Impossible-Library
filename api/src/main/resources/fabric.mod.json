@@ -20,9 +20,6 @@
         "adapter": "multiversionAdaptor",
         "value": "${injector}"
       }
-    ],
-    "mm:early_risers": [
-      "${coremods}"
     ]
   },
   "environment": "*",
@@ -31,9 +28,6 @@
   "languageAdapters": {
     "multiversionAdaptor": "${adaptor}"
   },
-  "mixins": [{
-    "config": "mixins.${mixin_name}.json"
-  }],
   "name": "The Impossible Loader",
   "version": "${version}"
 }

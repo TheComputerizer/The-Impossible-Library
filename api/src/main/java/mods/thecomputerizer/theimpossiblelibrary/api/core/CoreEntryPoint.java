@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.*;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -131,6 +133,7 @@ public abstract class CoreEntryPoint {
         return this;
     }
     
+    @IndirectCallers
     public CoreEntryPoint insLDC(Object object) {
         if(Objects.isNull(this.list)) TILRef.logError("Tried to insert constant before calling beginList");
         else this.list.add(new LdcInsnNode(object));
@@ -184,5 +187,16 @@ public abstract class CoreEntryPoint {
     
     @Override public String toString() {
         return "CoreEntryPoint["+getCoreName()+"]";
+    }
+    
+    @IndirectCallers
+    public final @Nullable byte[] transform(byte[] byteCode) {
+        return transform(byteCode,0);
+    }
+    
+    public final @Nullable byte[] transform(byte[] byteCode, int writerFlags) {
+        ClassNode node = ASMHelper.toClassNode(byteCode);
+        editClass(node);
+        return ASMHelper.toBytes(node,writerFlags);
     }
 }

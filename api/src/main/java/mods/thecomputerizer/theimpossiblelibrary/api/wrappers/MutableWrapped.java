@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.wrappers;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public abstract class MutableWrapped<W> implements Wrapped<W> {
     
@@ -14,7 +15,12 @@ public abstract class MutableWrapped<W> implements Wrapped<W> {
         this.wrapped = wrapped;
     }
     
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass") @Override public boolean equals(Object other) {
+    public Optional<W> asOptional() {
+        return Optional.ofNullable(this.wrapped);
+    }
+    
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    @Override public boolean equals(Object other) {
         if(Objects.isNull(this.wrapped)) return Objects.isNull(other);
         Object otherWrapped = other;
         while(otherWrapped instanceof Wrapped<?>) otherWrapped = ((Wrapped<?>)otherWrapped).getWrapped();

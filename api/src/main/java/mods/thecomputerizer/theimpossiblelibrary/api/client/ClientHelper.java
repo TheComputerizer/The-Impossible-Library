@@ -6,21 +6,156 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 public class ClientHelper {
+    
+    static Map<String,String> optionsCache;
     
     @IndirectCallers
     public static void addResourcePackFolder(File dir) {
         MinecraftAPI<?> api = getMinecraft();
         if(Objects.nonNull(api)) api.addResourcePackFolder(dir);
         else TILRef.logError("Unable to add resource pack folder `{}` since MinecraftAPI<?> is null");
+    }
+    
+    /**
+     * Returns true if the check fails
+     */
+    private static boolean checkString(@Nullable String str, String msg, Object ... args) {
+        if(Objects.isNull(str) || str.isEmpty()) {
+            TILRef.logError(msg,args);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Returns true if the check fails
+     */
+    private static boolean checkValue(@Nullable String value, String type, Object ... args) {
+        return checkString(value,"Cannot get null or empty option value as "+type+" (from {})",args);
+    }
+    
+    public static @Nullable String getCachedOption(String key) {
+        if(Objects.isNull(key) || key.isEmpty()) {
+            TILRef.logError("Cannot get option from null or empty key!");
+            return null;
+        }
+        return getOptionsCache().get(key);
+    }
+    
+    @IndirectCallers
+    public static boolean getCachedOptionBoolean(String key) {
+        String value = getCachedOption(key);
+        return !checkValue(value,"boolean",key) && Boolean.parseBoolean(value);
+    }
+    
+    @IndirectCallers
+    public static byte getCachedOptionByte(String key) {
+        return getCachedOptionByte(key,(byte)0);
+    }
+    
+    public static byte getCachedOptionByte(String key, byte defaultValue) {
+        return getCachedOptionNumber(key,defaultValue);
+    }
+    
+    @IndirectCallers
+    public static double getCachedOptionDouble(String key) {
+        return getCachedOptionDouble(key,0d);
+    }
+    
+    public static double getCachedOptionDouble(String key, double defaultValue) {
+        return getCachedOptionNumber(key,defaultValue);
+    }
+    
+    @IndirectCallers
+    @SuppressWarnings({"unchecked","DataFlowIssue"})
+    public static <E extends Enum<E>> E getCachedOptionEnum(String key, E defualtValue) {
+        String value = getCachedOption(key);
+        Class<E> clazz = (Class<E>)defualtValue.getClass();
+        return checkValue(value,"enum ("+clazz.getName()+")",key) ? defualtValue : Enum.valueOf(clazz,value);
+    }
+    
+    @IndirectCallers
+    public static float getCachedOptionFloat(String key) {
+        return getCachedOptionFloat(key,0f);
+    }
+    
+    public static float getCachedOptionFloat(String key, float defaultValue) {
+        return getCachedOptionNumber(key,defaultValue);
+    }
+    
+    @IndirectCallers
+    public static int getCachedOptionInt(String key) {
+        return getCachedOptionInt(key,0);
+    }
+    
+    public static int getCachedOptionInt(String key, int defaultValue) {
+        return getCachedOptionNumber(key,defaultValue);
+    }
+    
+    @IndirectCallers
+    public static long getCachedOptionLong(String key) {
+        return getCachedOptionLong(key,0L);
+    }
+    
+    public static long getCachedOptionLong(String key, long defaultValue) {
+        return getCachedOptionNumber(key,defaultValue);
+    }
+    
+    @IndirectCallers
+    public static short getCachedOptionShort(String key) {
+        return getCachedOptionShort(key,(short)0);
+    }
+    
+    public static short getCachedOptionShort(String key, short defaultValue) {
+        return getCachedOptionNumber(key,defaultValue);
+    }
+    
+    /**
+     * Gets volume level of the input sound category.
+     * This should only be called during startup if the volume level is needed before the options field is initialized.
+     */
+    public static float getCachedOptionSoundCategory(String name) {
+        String key = "soundCategory_"+("records".equals(name) ? "record" : name);
+        return getCachedOptionFloat(key,1f);
+    }
+    
+    private static <N extends Number> N getCachedOptionNumber(String key, N defaultValue) {
+        String value = getCachedOption(key);
+        String type = defaultValue.getClass().getSimpleName().toLowerCase();
+        if(type.equals("integer")) type = "int";
+        return checkValue(value,type,key) ? defaultValue : GenericUtils.parseNumber(value,defaultValue);
+    }
+    
+    /**
+     * Returns a direct map of lines read in from options.txt.
+     * Each line in the options.txt file is parsed as 'key:value'
+     */
+    public static Map<String,String> getOptionsCache() {
+        if(Objects.nonNull(optionsCache)) return optionsCache;
+        final Map<String,String> cacheBuilder = new HashMap<>();
+        for(String line : FileHelper.toLines("options.txt")) {
+            int split = line.indexOf(':');
+            if(split<=0) continue; //Index 0 places it at the start of the line, and we don't want empty keys
+            String key = line.substring(0,split);
+            String value = line.substring(split+1);
+            if(!value.isEmpty()) cacheBuilder.put(key,value);
+        }
+        optionsCache = Collections.unmodifiableMap(cacheBuilder);
+        return optionsCache;
     }
     
     public static int getDisplayHeight() {

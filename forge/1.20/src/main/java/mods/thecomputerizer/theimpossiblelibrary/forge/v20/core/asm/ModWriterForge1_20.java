@@ -1,14 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.asm.ModWriterForge;
 import org.apache.commons.lang3.tuple.Pair;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.util.List;
@@ -24,10 +21,6 @@ public class ModWriterForge1_20 extends ModWriterForge {
     
     protected ModWriterForge1_20(CoreAPI core, MultiVersionModInfo info, int javaVer) {
         super(core,info,javaVer);
-    }
-    
-    @Override protected MethodVisitor getConstructor(ClassVisitor visitor) {
-        return ASMHelper.getConstructor(visitor,PUBLIC,new Type[]{getOptionalContructorType()});
     }
     
     @Override protected Type getEventMethod(String className) {
@@ -54,19 +47,5 @@ public class ModWriterForge1_20 extends ModWriterForge {
         writeInnerClass(addInnerEventSubscriber(writer,this.info.getModID(),false,true,true,
                                 "ServerLifecycle","serverAboutToStart","serverStarting",
                                 "serverStarted","serverStopping","serverStopped"),classBytes);
-    }
-    
-    /**
-     * Sets the extraData field of CommonEntryPoint to the FMLJavaModLoadingContext passed into the constructor of the
-     * written class so that it is internally accessible
-     */
-    @Override protected final void writeConstructor(ClassVisitor visitor) {
-        final String extraDataDesc = TypeHelper.voidMethodDesc(OBJECT_TYPE);
-        writeConstructor(visitor,constructor -> {
-            constructor.visitVarInsn(ALOAD,0);
-            constructor.visitFieldInsn(GETFIELD,this.modTypeInternal,"entryPoint",this.entryPointDesc);
-            constructor.visitVarInsn(ALOAD,1); //Load FMLJavaModLoadingContext parameter
-            constructor.visitMethodInsn(INVOKEVIRTUAL,this.entryPointInternal,"setExtraData",extraDataDesc,false);
-        });
     }
 }

@@ -1,7 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
@@ -17,8 +19,13 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("unused")
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
+
 public class GenericUtils {
+    
+    static {
+        ClassHelper.checkBurningWaveInit();
+    }
 
     /**
      * This attempts to cast a value stored as an object to a generic type.
@@ -49,6 +56,7 @@ public class GenericUtils {
     /**
      * The list type can't be checked if it's empty, so it has to return false if that is the case.
      */
+    @IndirectCallers
     public static boolean isListAnyType(List<?> list, Class<?> ... classTypes) {
         return !list.isEmpty() && isInstanceAnyType(list.get(0), classTypes);
     }
@@ -183,17 +191,36 @@ public class GenericUtils {
      */
     @SuppressWarnings("deprecation")
     public static Object parseGenericType(String unparsed, Class<?> valType) {
-        switch(valType.getSimpleName()) {
-            case "Boolean": return Boolean.parseBoolean(unparsed);
-            case "Byte": return Byte.parseByte(unparsed);
-            case "Date": return Date.parse(unparsed);
-            case "Double": return Double.parseDouble(unparsed);
-            case "Float": return Float.parseFloat(unparsed);
-            case "Integer": return Integer.parseInt(unparsed);
-            case "Long": return Long.parseLong(unparsed);
-            case "Short": return Short.parseShort(unparsed);
-            default: return unparsed;
+        if(valType.isPrimitive()) return parsePrimitive(unparsed,valType);
+        if("Date".equals(valType.getSimpleName())) return Date.parse(unparsed);
+        return unparsed; //Return both string values and unknown types as strings
+    }
+    
+    /**
+     * Luckily the parse methods for each number type all follow the same format, with a minor exception for parseInt.
+     * Does not handle NumberFormatException occurances.
+     */
+    public static <N extends Number> N parseNumber(String unparsed, Class<?> valType) {
+        String typeName = valType.getSimpleName();
+        if("Integer".equals(typeName)) typeName = "Int";
+        return Methods.invokeStatic(valType,"parse"+typeName,unparsed);
+    }
+    
+    public static <N extends Number> N parseNumber(String unparsed, N defaultValue) {
+        Class<? extends Number> valType = defaultValue.getClass();
+        try {
+            return parseNumber(unparsed,valType);
+        } catch(NumberFormatException ex) {
+            TILRef.logError("Failed to parse {} as {}",unparsed,defaultValue.getClass().getName());
         }
+        return defaultValue;
+    }
+    
+    public static Object parsePrimitive(String unparsed, Class<?> valType) {
+        if(valType==void.class || valType==Void.class) return null;
+        if(valType==boolean.class || valType==Boolean.class) return Boolean.parseBoolean(unparsed);
+        //Every other primitive type is a number
+        return parseNumber(unparsed,valType);
     }
 
     private static List<?> readFromList(ListTagAPI<?> list) {
@@ -204,7 +231,8 @@ public class GenericUtils {
         }
         return ret;
     }
-
+    
+    @IndirectCallers
     public static void writeGenericToTag(CompoundTagAPI<?> tag, Object obj) {
         tag.putString("type",obj.getClass().getName());
         if(obj instanceof List<?>) tag.putTag("value",writeList(obj));

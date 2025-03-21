@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.core;
 
-import com.chocohead.mm.api.ClassTinkerers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -15,9 +14,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm.TILFabricASMTarget;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm.TILFabricCoreModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.loader.TILModInjectorFabric;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.LanguageAdapter;
 import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.ModContainerImpl;
 import net.fabricmc.loader.impl.discovery.ModCandidateImpl;
 import net.fabricmc.loader.impl.entrypoint.EntrypointStorage;
@@ -89,6 +92,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         if(Objects.nonNull(pairCls)) launcher.addToClassPath(UrlUtil.getCodeSource(pairCls));
         else TILRef.logFatal("Failed to load Pair class! Mod writing will likely break");
         this.core = initializeCore(launcher.getTargetClassLoader(),target);
+        if(Objects.nonNull(this.core)) addTransformer(FabricLoader.getInstance());
+        else TILRef.logError("Cannot add coremod transformer patch with null CoreAPI instance!");
         scheduleContainers();
         TILDev.logInfo("Instantiated multiversionAdaptor");
     }
@@ -132,6 +137,12 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
                 Log.error(ENTRYPOINT,"Failed to add "+url+" to the classpath",ex);
             }
         }
+    }
+    
+    void addTransformer(FabricLoader loader) {
+        if(loader instanceof FabricLoaderImpl)
+            TILFabricCoreModLoader.patchTransformer((FabricLoaderImpl)loader,this.core);
+        else TILRef.logError("Unknown FabricLoader type! Cannot add coremod transformer patch to {}",loader);
     }
     
     JsonObject buildDependencies(String modid) {
@@ -209,9 +220,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     void buildModClasses(CoreAPI core, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
         for(Pair<String,byte[]> classBytes : core.getModData(new File("."),candidate,info).writeModClass()) {
             String name = classBytes.getLeft();
-            if(ClassTinkerers.define(name,classBytes.getRight()))
-                TILDev.logInfo("Built mod entrypoint at {}",name);
-            else TILRef.logError("Failed to define class {}");
+            TILFabricASMTarget.registerDefinition(name,classBytes.getRight());
+            TILRef.logInfo("Built mod entrypoint at {}",name);
         }
     }
     
@@ -271,6 +281,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
                 } else TILRef.logError("Loaded object isn't a mod candidate?? {}",mod);
             }
         }
+        TILFabricASMTarget.loadDefinitions();
         return candidates;
     }
     

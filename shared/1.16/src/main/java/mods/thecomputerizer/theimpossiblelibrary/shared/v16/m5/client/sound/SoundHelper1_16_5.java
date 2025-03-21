@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.sound;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -19,8 +20,8 @@ public class SoundHelper1_16_5 implements SoundHelperAPI {
         if(Objects.nonNull(category)) {
             GameSettings options = Minecraft.getInstance().options;
             if(Objects.nonNull(options)) return options.getSoundSourceVolume(category);
-            else TILRef.logError("Failed to get source volume for {} (null options)", categoryName);
-            return 1f;
+            TILRef.logInfo("Getting sound level from cached options for ",categoryName);
+            return ClientHelper.getCachedOptionSoundCategory(name);
         } else TILRef.logError("Failed to get source volume for {} (nonexistent category)",categoryName);
         return 0f;
     }

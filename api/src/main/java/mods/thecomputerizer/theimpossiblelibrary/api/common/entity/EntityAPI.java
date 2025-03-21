@@ -31,6 +31,16 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         super(type);
         this.entity = entity;
     }
+    
+    @Override public boolean equals(Object other) {
+        if(super.equals(other) && other instanceof EntityAPI<?,?>) {
+            Object entity = getEntity();
+            Object otherEntity = ((EntityAPI<?,?>)other).getEntity();
+            if(Objects.isNull(entity)) return Objects.isNull(otherEntity);
+            return Objects.nonNull(otherEntity) && entity.equals(otherEntity);
+        }
+        return false;
+    }
 
     public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
     public abstract Box getBoundingBox();

@@ -63,7 +63,7 @@ public class MultiVersionModCandidate {
     }
 
     public void addCoreClasses(Collection<String> foundCoreClasses, String ... classes) {
-        TILRef.logInfo("Attempting to register {} coremod classes for file `{}` -> `{}`",
+        TILRef.logDebug("Attempting to register {} coremod classes for file `{}` -> `{}`",
                         classes.length,this.file,classes);
         for(String className : classes) {
             if(foundCoreClasses.contains(className)) {
@@ -76,7 +76,7 @@ public class MultiVersionModCandidate {
     }
 
     public void addModClasses(Collection<String> foundModClasses, String ... classes) {
-        TILRef.logInfo("Attempting to register {} mod classes for file `{}` -> `{}`",
+        TILRef.logDebug("Attempting to register {} mod classes for file `{}` -> `{}`",
                         classes.length,this.file,classes);
         for(String className : classes) {
             if(foundModClasses.contains(className)) {

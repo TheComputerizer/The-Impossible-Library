@@ -229,6 +229,19 @@ public class FileHelper {
         return toLines(get(path));
     }
     
+    public static List<String> toLines(String filePath) {
+        return toLines(filePath,false);
+    }
+    
+    public static List<String> toLines(String filePath, boolean createNewFile) {
+        File file = new File(filePath);
+        if(!file.exists() && !createNewFile) {
+            TILRef.logError("Cannot read lines from nonexistant file {}",filePath);
+            return Collections.emptyList();
+        }
+        return toLines(get(filePath));
+    }
+    
     public static List<String> toLines(File file) {
         List<String> lines = Collections.emptyList();
         try(BufferedReader reader = getCheckedLineReader(file)) {

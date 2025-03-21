@@ -8,19 +8,9 @@ repositories {
             }
         }
     }
-    maven {
-        name 'JitPack'
-        parchment_data
-        url = uri 'https://jitpack.io'
-        content {
-            includeGroup fabric_asm_group
-        }
-    }
 }
 
 dependencies {
     compileOnly "$jsr_artifact:$jsr_version"
     compileOnly "$log4j_artifact:$log4j_version"
-
-    shaded "$fabric_asm_group:$fabric_asm_name:$fabric_asm_version"
 }

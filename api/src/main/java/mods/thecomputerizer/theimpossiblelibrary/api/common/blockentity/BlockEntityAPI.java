@@ -32,6 +32,16 @@ public abstract class BlockEntityAPI<E,T> extends AbstractWrapped<T> implements 
         return Objects.nonNull(this.creator) ? this.creator.create(world,pos,state) : null;
     }
     
+    @Override public boolean equals(Object other) {
+        if(super.equals(other) && other instanceof BlockEntityAPI<?,?>) {
+            Object entity = getEntity();
+            Object otherEntity = ((BlockEntityAPI<?,?>)other).getEntity();
+            if(Objects.isNull(entity)) return Objects.isNull(otherEntity);
+            return Objects.nonNull(otherEntity) && entity.equals(otherEntity);
+        }
+        return false;
+    }
+    
     public abstract BlockPosAPI<?> getPos();
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

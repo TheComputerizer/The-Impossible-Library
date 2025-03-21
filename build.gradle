@@ -73,10 +73,6 @@ jar {
                 'TILMultiversionMods': common_entrypoint
         ])
     }
-    exclude "mixins.${fabric_asm_mixin}.json"
-    rename { String file ->
-        file.replace "mixins.${fabric_asm_mixin}.refmap.json", "mixins.${fabric_asm_mixin_new}.refmap.json"
-    }
 }
 
 [ ':legacy:1.12:shadowJar',
