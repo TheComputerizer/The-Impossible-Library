@@ -1,23 +1,85 @@
 # The-Impossible-Library
 This is the multiversion branch (THIS BRANCH IS WIP AND HAS NOT BEEN RELEASED YET)
 
-This mod was made to offer mod devs methods for doing things that are typically thought of as impossible, hacky, tedious, or maybe even require a 3rd party java library.
+This mod was originally made to offer mod devs methods for doing things that are typically thought of as impossible, 
+hacky, tedious, or maybe even require a third party java library. 
+It now additionally serves as an API that can be used to _**load and run**_ mods on multiple versions & mod loaders.
 
-Of course when doing the impossible it has to be done efficiently, so that is the second focus. If you see something that does not look good, or you have a suggestion/addition to the library, feel free to let me know and/or make a PR!
+## Supported Versions
 
-Once I have a decent amount finished for the library I will be making a wiki to help explain exactly how to use the features present in the library!
+The status indicators are as follows:
+- BROKEN → The API has been implemented in this version, but it is not yet able to load.
+- FUNCTIONAL → There are no known major issues specific to this version.
+- LOADABLE → The game can load in this version, but entering a world is not yet possible.
+- PLANNED → The API has not yet been implemented for this version, but it will be soon.
+- PLAYABLE → Worlds are able to load in this version, but there may be stability issues
 
-Some current features
-- File creation and manipulation
+### Cleanroom
+- 1.12.2 → PLANNED
+
+### Fabric/Quilt
+- 1.16.5 → FUNCTIONAL
+- 1.18.2 → FUNCTIONAL
+- 1.19.2 → FUNCTIONAL
+- 1.19.4 → FUNCTIONAL
+- 1.20.1 → FUNCTIONAL
+- 1.20.4 → FUNCTIONAL
+- 1.20.6 → FUNCTIONAL
+- 1.21.1 → FUNCTIONAL
+- 1.21.4 → PLANNED
+
+Other: Registering stuff is not yet possible & a majority of the event wrappers have not yet been implemented.
+
+### Forge
+- 1.12.2 → FUNCTIONAL
+- 1.16.5 → BROKEN
+- 1.18.2 → FUNCTIONAL
+- 1.19.2 → FUNCTIONAL
+- 1.19.4 → FUNCTIONAL
+- 1.20.1 → FUNCTIONAL
+- 1.20.4 → BROKEN
+- 1.20.6 → BROKEN
+- 1.21.1 → PLAYABLE
+- 1.21.4 → PLANNED
+
+Other: Keybinds do not show up in the keybind menu in 1.19.2+
+
+### NeoForge
+- 1.20.1 → FUNCTIONAL
+- 1.20.4 → BROKEN
+- 1.20.6 → LOADABLE
+- 1.21.1 → LOADABLE
+- 1.21.4 → PLANNED
+
+Other: Keybinds do not show up in the keybind menu
+
+## Getting Started
+
+To get started, all you need is a valid entrypoint class. For a class to be a valid entrypoint class, it must
+- extend `mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint`
+- be annotated with `@mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod`
+- enter a valid modid in the `@MultiVersionMod` annotation
+- be added to `TILMultiversionMods` in the manifest of the jar file
+
+When running in a dev environment, you can use the `til.classpath.mods` arg to substitute for the manifest entry.
+For example, `-Dtil.classpath.mods=mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint`
+
+To use the coremod section of the API for any early loading stuff you might need to do, there is an additional
+entrypoint `mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint`. 
+The core entrypoint should be annotated `@MultiVersionCoreMod` rather than `@MultiVersionMod` and similarly should be
+added to the manifest as `TILMultiversionCoreMods` or to the `til.classpath.coremods` arg.
+
+A single mod jar is allowed to contain multiple common and core entrypoints. 
+Each class name should be separated by `;` in the relevant manifest entry or arg.
+
+## Features
+
+I will be writing a more in-depth wiki at some point, but in the meantime here are a few helpful things you can do:
+- Easier file creation and manipulation
 - Generic image rendering to the screen
 - Global nbt data storage and retrieval
 - Support for radial gui elements and some helper methods regarding that
 - Custom async tick events able set by millisecond
-
-Some planned features
-- RGB shenanigans
-- GIF rendering
-- MP4 rendering
 
 CF Project: https://www.curseforge.com/minecraft/mc-mods/the-impossible-library
 
@@ -41,7 +103,7 @@ dependencies {
   implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
-The file ID for the latest version of `0.4.0+universal` is `UNRELEASED`
+The file ID for the latest version of `0.4.0` is `UNRELEASED`
 
 Alternatively, if you wish to use the modrinth maven, you can do it like this
 ```
