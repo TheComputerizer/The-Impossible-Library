@@ -3,22 +3,20 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.game.GameProvider;
 import net.fabricmc.loader.impl.game.patch.GamePatch;
 import net.fabricmc.loader.impl.game.patch.GameTransformer;
 import net.fabricmc.loader.impl.launch.FabricLauncher;
-import net.fabricmc.loader.impl.util.SimpleClassPath;
+import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import org.objectweb.asm.tree.ClassNode;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,9 +27,12 @@ import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILFabricCoreModLoader extends GamePatch {
+    
+    static void announcePatches(Collection<String> classNames) {
+        log(TILRef::logInfo,"Recalculated patch map for {}",classNames);
+    }
     
     static String findMappedClass(MappingResolver mapper, String name) {
         return mapper.mapClassName("intermediary",name);
@@ -46,6 +47,7 @@ public class TILFabricCoreModLoader extends GamePatch {
         log(TILRef::logInfo,"Adding coremod transformer patch");
         final GameProvider provider = loader.getGameProvider();
         setupPatch(provider.getEntrypointTransformer(),Fields.getDirect(provider,"gameJars"));
+        log(TILRef::logInfo,"Finished adding coremod transformer patch");
     }
     
     static void registerEditors(final CoreAPI core, final @Nullable MappingResolver mapper) {
@@ -64,33 +66,16 @@ public class TILFabricCoreModLoader extends GamePatch {
     
     static void setupPatch(final GameTransformer transformer, final List<Path> gameJars) {
         List<GamePatch> patches = new ArrayList<>(Fields.getDirect(transformer,"patches"));
-        patches.add(new TILFabricCoreModLoader(transformer,gameJars));
+        patches.add(new TILFabricCoreModLoader());
         Fields.setDirect(transformer,"patches",Collections.unmodifiableList(patches));
-    }
-    
-    TILFabricCoreModLoader(final GameTransformer transformer, final List<Path> paths) {
+        //Recalculate the patch map
+        Fields.setDirect(transformer,"entrypointsLocated",false);
+        transformer.locateEntrypoints(FabricLauncherBase.getLauncher(),gameJars);
         Map<String,byte[]> patchedClasses = Fields.getDirect(transformer,"patchedClasses");
-        if(Objects.nonNull(patchedClasses)) patchedClasses.putAll(inject(transformer,paths));
+        announcePatches(patchedClasses.keySet());
     }
     
-    @Nullable ClassNode findClass(final GameTransformer transformer, final List<Path> paths, final String className) {
-        try(SimpleClassPath classPath = new SimpleClassPath(paths)) {
-            return Methods.invokeDirect(transformer,"readClassNode",classPath,className);
-        } catch(IOException ex) {
-            TILRef.logError("Failed to read paths as SimpleClassPath {}",paths,ex);
-        }
-        return null;
-    }
-    
-    Map<String,byte[]> inject(final GameTransformer transformer, final List<Path> paths) {
-        Map<String,byte[]> transformed = new HashMap<>();
-        Consumer<ClassNode> emitter = node -> {
-            String className = node.name.replace('/','.');
-            transformed.put(className,ASMHelper.toBytes(node));
-        };
-        TILFabricASMTarget.runTransformers(className -> findClass(transformer,paths,className),emitter);
-        return transformed;
-    }
+    private TILFabricCoreModLoader() {}
     
     @Override public void process(FabricLauncher launcher, Function<String,ClassNode> source,
             Consumer<ClassNode> emitter) {

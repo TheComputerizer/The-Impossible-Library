@@ -7,12 +7,12 @@ import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm.TILFabricASMTarget;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm.TILFabricCoreModLoader;
@@ -42,19 +42,18 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
@@ -63,6 +62,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static net.fabricmc.loader.impl.FabricLoaderImpl.INSTANCE;
 import static net.fabricmc.loader.impl.util.log.LogCategory.ENTRYPOINT;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @IndirectCallers
 public class TILLanguageAdaptorFabric implements LanguageAdapter {
@@ -91,11 +92,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         Class<?> pairCls = ClassHelper.findClass("org.apache.commons.lang3.tuple.Pair",ClassLoader.getSystemClassLoader());
         if(Objects.nonNull(pairCls)) launcher.addToClassPath(UrlUtil.getCodeSource(pairCls));
         else TILRef.logFatal("Failed to load Pair class! Mod writing will likely break");
-        this.core = initializeCore(launcher.getTargetClassLoader(),target);
-        if(Objects.nonNull(this.core)) addTransformer(FabricLoader.getInstance());
-        else TILRef.logError("Cannot add coremod transformer patch with null CoreAPI instance!");
-        scheduleContainers();
-        TILDev.logInfo("Instantiated multiversionAdaptor");
+        this.core = scheduleContainers(initializeCore(launcher.getTargetClassLoader(),target));
+        if(Objects.nonNull(this.core)) TILDev.logInfo("Successfully nstantiated multiversionAdaptor");
     }
     
     String addCoreSources(FabricLauncher launcher) {
@@ -139,9 +137,9 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         }
     }
     
-    void addTransformer(FabricLoader loader) {
+    void addTransformer(FabricLoader loader, CoreAPI core) {
         if(loader instanceof FabricLoaderImpl)
-            TILFabricCoreModLoader.patchTransformer((FabricLoaderImpl)loader,this.core);
+            TILFabricCoreModLoader.patchTransformer((FabricLoaderImpl)loader,core);
         else TILRef.logError("Unknown FabricLoader type! Cannot add coremod transformer patch to {}",loader);
     }
     
@@ -225,10 +223,55 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         }
     }
     
+    @Nullable ModCandidateImpl buildCandidate(List<Path> paths, LoaderModMetadata metadata, String modid) {
+        TILRef.logDebug("Successfully built mod metadata for {}! Attempting some reflection magic",modid);
+        try {
+            return Methods.invokeStaticDirect(ModCandidateImpl.class,"createPlain",paths,metadata,
+                                              INSTANCE.isDevelopmentEnvironment(),Collections.emptyList());
+        } catch(Throwable t) {
+            TILRef.logFatal("Failed to build mod candidate for {}!",metadata.getId(),t);
+        }
+        return null;
+    }
+    
+    void buildCandidateContainer(Collection<ModContainerImpl> containers, MultiVersionModCandidate candidate,
+            MultiVersionModInfo info,
+            BiFunction<MultiVersionModCandidate,MultiVersionModInfo,LoaderModMetadata> metaBuilder) {
+        ModContainerImpl container = buildCandidateContainer(candidate,info,metaBuilder);
+        if(Objects.nonNull(container)) {
+            TILRef.logInfo("Successfully built mod container for {}!",info.getModID());
+            containers.add(container);
+        } else TILRef.logError("Failed to build mod container for {}",info.getModID());
+    }
+    
+    @Nullable ModContainerImpl buildCandidateContainer(MultiVersionModCandidate candidate, MultiVersionModInfo info,
+            BiFunction<MultiVersionModCandidate,MultiVersionModInfo,LoaderModMetadata> metaBuilder) {
+        List<Path> paths = new ArrayList<>();
+        loadCandidatePath(candidate,paths);
+        return buildContainer(paths,metaBuilder.apply(candidate,info),info.getModID());
+    }
+    
+    Collection<ModContainerImpl> buildCandidateContainers(CoreAPI core,
+            BiFunction<MultiVersionModCandidate,MultiVersionModInfo,LoaderModMetadata> metaBuilder) {
+        Collection<ModContainerImpl> containers = new ArrayList<>();
+        for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> fileEntry : core.getModInfo().entrySet())
+            for(MultiVersionModInfo info : fileEntry.getValue())
+                buildCandidateContainer(containers,fileEntry.getKey(),info,metaBuilder);
+        return containers;
+    }
+    
+    @Nullable ModContainerImpl buildContainer(List<Path> paths, LoaderModMetadata metadata, String modid) {
+        ModCandidateImpl candidate = buildCandidate(paths,metadata,modid);
+        if(Objects.nonNull(candidate)) {
+            TILRef.logDebug("Successfully built ModCandidateImpl instance for {}",modid);
+            return new ModContainerImpl(candidate);
+        }
+        return null;
+    }
+    
     @SuppressWarnings("unchecked")
     @Override public <T> T create(ModContainer mod, String value, Class<T> type) {
-        ClassLoader loader = //DEV ? ClassLoader.getSystemClassLoader() :
-                FabricLauncherBase.getLauncher().getTargetClassLoader();
+        ClassLoader loader = FabricLauncherBase.getLauncher().getTargetClassLoader();
         Object instance = ClassHelper.initialize(ClassHelper.findClass(value,loader));
         if(instance instanceof TILModInjectorFabric && Objects.nonNull(this.queuedContainers)) {
             TILDev.logInfo("Queuing {} new mod containers",this.queuedContainers.size());
@@ -237,85 +280,79 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         return (T)instance;
     }
     
-    CoreAPI initializeCore(ClassLoader classLoader, String classname) {
-        CoreAPI core = (CoreAPI)ClassHelper.initialize(ClassHelper.findClass(classname,classLoader));
-        if(Objects.nonNull(core)) {
-            TILRef.logInfo("Loading core mods");
-            core.loadCoreModInfo(classLoader);
-            core.instantiateCoreMods();
-            TILRef.logInfo("Writing mods");
-            core.writeModContainers(classLoader);
-        } else TILRef.logFatal("Failed in instantiate CoreAPI!");
+    CoreAPI initializeCore(ClassLoader targetLoader, String classname) {
+        CoreAPI core = (CoreAPI)ClassHelper.initialize(ClassHelper.findClass(classname,targetLoader));
+        if(Objects.isNull(core)) {
+            TILRef.logFatal("Failed to initialize CoreAPI instance for {} on {}!",classname,targetLoader);
+            return null;
+        }
+        TILRef.logInfo("Loading core mods");
+        core.loadCoreModInfo(targetLoader);
+        core.instantiateCoreMods();
+        addTransformer(FabricLoader.getInstance(),core);
+        TILRef.logDebug("Writing mods");
+        core.writeModContainers(targetLoader);
         return core;
     }
     
     Collection<ModContainerImpl> loadCandidateInfos(CoreAPI core) {
-        Collection<ModContainerImpl> candidates = new HashSet<>();
-        VersionOverrides versionOverrides = new VersionOverrides();
-        DependencyOverrides dependencyOverrides = new DependencyOverrides(INSTANCE.getConfigDir());
-        TILRef.logInfo("Finding multiversion mod candidates");
-        for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> fileEntry : core.getModInfo().entrySet()) {
-            MultiVersionModCandidate candidate = fileEntry.getKey();
-            TILRef.logInfo("Candidate at {} has {} mods",candidate.getFile().toPath(),fileEntry.getValue().size());
-            for(MultiVersionModInfo info : fileEntry.getValue()) {
-                LoaderModMetadata metadata = buildMetaData(core,candidate,info,versionOverrides,dependencyOverrides);
-                List<Path> paths = new ArrayList<>();
-                if(DEV) {
-                    try {
-                        URL url = ClassHelper.getSourceURL(CoreAPI.class);
-                        if(Objects.nonNull(url)) paths.add(Paths.get(url.toURI()));
-                    } catch(URISyntaxException ex) {
-                        TILRef.logError("Failed to get path for {}", core.getClass());
-                    }
-                } else paths.add(candidate.getFile().toPath());
-                //if(MODID.equals(info.getModID())) paths.addAll(this.loaderSources);
-                TILRef.logInfo("Source paths for {} are {}",info.getModID(),paths);
-                TILRef.logInfo("Successfully built mod metadata! Attempting some reflection magic");
-                Object mod = ReflectionHelper.invokeStaticMethod(ModCandidateImpl.class,"createPlain",
-                        new Class<?>[]{List.class,LoaderModMetadata.class,boolean.class,Collection.class},
-                        paths,metadata,INSTANCE.isDevelopmentEnvironment(),Collections.emptyList());
-                TILRef.logInfo("Successfully performed reflection magic",info);
-                if(mod instanceof ModCandidateImpl) {
-                    candidates.add(new ModContainerImpl((ModCandidateImpl)mod));
-                    TILRef.logInfo("Successfully collected mod candidate for {}",info);
-                } else TILRef.logError("Loaded object isn't a mod candidate?? {}",mod);
-            }
-        }
+        TILRef.logDebug("Finding multiversion mod candidates");
+        Collection<ModContainerImpl> containers = buildCandidateContainers(core,
+                (candidate,info) -> buildMetaData(core,candidate,info,
+                        new VersionOverrides(),new DependencyOverrides(INSTANCE.getConfigDir())));
+        TILRef.logInfo("Built {} multiversion mod containers",containers.size());
         TILFabricASMTarget.loadDefinitions();
-        return candidates;
+        return containers;
     }
     
-    void queueContainers(Collection<ModContainerImpl> containers) {
+    void loadCandidatePath(MultiVersionModCandidate candidate, List<Path> paths) {
+        if(DEV) {
+            try {
+                URL url = ClassHelper.getSourceURL(CoreAPI.class);
+                if(Objects.nonNull(url)) paths.add(FileHelper.toPath(url));
+            } catch(Exception ex) {
+                TILRef.logError("Failed to get path for {}", core.getClass());
+            }
+        } else paths.add(candidate.getFile().toPath());
+    }
+    
+    void scheduleContainer(EntrypointStorage storage, ModContainerImpl container, String entryPoint,
+            EntrypointMetadata metadata, Map<String,LanguageAdapter> adaptors) {
+        try {
+            storage.add(container,entryPoint,metadata,adaptors);
+        } catch(Exception ex) {
+            String modid = container.getMetadata().getId();
+            TILRef.logError("Failed to add entrypoint {} {} for {}",metadata,metadata.getValue(),modid,ex);
+        }
+    }
+    
+    void scheduleContainer(EntrypointStorage storage, ModContainerImpl container, Collection<String> entryPoints,
+            Map<String,LanguageAdapter> adaptors, Function<String,Collection<EntrypointMetadata>> metaGetter) {
+        for(String entryPoint : entryPoints)
+            for(EntrypointMetadata metadata : metaGetter.apply(entryPoint))
+                scheduleContainer(storage,container,entryPoint,metadata,adaptors);
+    }
+    
+    void scheduleContainers(Collection<ModContainerImpl> containers, Map<String,ModContainerImpl> modMap,
+            EntrypointStorage storage, Map<String,LanguageAdapter> adaptors) {
+        for(ModContainerImpl container : containers) {
+            LoaderModMetadata metadata = container.getMetadata();
+            modMap.put(metadata.getId(),container);
+            scheduleContainer(storage,container,metadata.getEntrypointKeys(),adaptors,metadata::getEntrypoints);
+        }
+    }
+    
+    CoreAPI scheduleContainers(@Nullable CoreAPI core) {
+        if(Objects.isNull(core)) return null;
+        Collection<ModContainerImpl> containers = loadCandidateInfos(core);
+        Map<String,ModContainerImpl> modMap = Fields.getDirect(INSTANCE,"modMap");
+        EntrypointStorage storage = Fields.getDirect(INSTANCE,"entrypointStorage");
+        Map<String,LanguageAdapter> adapters = new HashMap<>();
+        adapters.put("multiversionAdaptor",this);
+        scheduleContainers(containers,modMap,storage,adapters);
+        TILRef.logDebug("Adding {} mod containers to the queue",containers.size());
         if(Objects.isNull(this.queuedContainers)) this.queuedContainers = containers;
         else this.queuedContainers.addAll(containers);
-    }
-    
-    void scheduleContainers() {
-        Collection<ModContainerImpl> containers = loadCandidateInfos(this.core);
-        Object modMapObj = ReflectionHelper.getFieldInstance(INSTANCE,INSTANCE.getClass(),"modMap");
-        Object storageObj = ReflectionHelper.getFieldInstance(INSTANCE,INSTANCE.getClass(),"entrypointStorage");
-        if(modMapObj instanceof Map<?,?> && storageObj instanceof EntrypointStorage) {
-            @SuppressWarnings("unchecked")
-            Map<String,ModContainerImpl> modMap = (Map<String,ModContainerImpl>)modMapObj;
-            EntrypointStorage storage = (EntrypointStorage)storageObj;
-            Map<String,LanguageAdapter> adapters = new HashMap<>();
-            adapters.put("multiversionAdaptor",this);
-            for(ModContainerImpl container : containers) {
-                LoaderModMetadata metadata = container.getMetadata();
-                modMap.put(metadata.getId(),container);
-                for(String entrypoint : metadata.getEntrypointKeys()) {
-                    for(EntrypointMetadata entryMeta : metadata.getEntrypoints(entrypoint)) {
-                        try {
-                            storage.add(container,entrypoint,entryMeta,adapters);
-                        } catch(Exception ex) {
-                            TILRef.logError("Failed to add entrypoint {} {} for {}", entryMeta,
-                                            entryMeta.getValue(), metadata.getId(), ex);
-                        }
-                    }
-                }
-            }
-        } else TILDev.logError("modMap is {} and storage is {}",modMapObj,storageObj);
-        TILRef.logDebug("Adding {} mod containers to the queue",containers.size());
-        queueContainers(containers);
+        return core;
     }
 }

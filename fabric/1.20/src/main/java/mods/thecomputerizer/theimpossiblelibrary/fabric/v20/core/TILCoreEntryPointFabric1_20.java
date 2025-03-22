@@ -16,7 +16,7 @@ import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 public class TILCoreEntryPointFabric1_20 extends TILCoreEntryPointFabric {
     
     static final String DEBUG_OVERLAY = mapClass("net/minecraft/client/gui/components/DebugScreenOverlay","net/minecraft/class_340");
-    static final String GRAPHICS = mapClass("net/minecraft/client/gui/GuiGraphics", "net/minecraft/class_332");
+    static final String GRAPHICS = mapClass("net/minecraft/client/gui/GuiGraphics","net/minecraft/class_332");
     static final String GRAPHICS_POSE = mapDev("pose","method_51448");
     
     /**

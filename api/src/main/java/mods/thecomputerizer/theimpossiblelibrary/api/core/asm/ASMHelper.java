@@ -399,6 +399,7 @@ public class ASMHelper {
         }
     }
     
+    @IndirectCallers
     public static @Nullable byte[] toBytes(@Nullable ClassNode node) {
         return toBytes(node,0);
     }
@@ -414,9 +415,13 @@ public class ASMHelper {
     }
     
     public static ClassNode toClassNode(byte[] byteCode) {
+        return toClassNode(byteCode,0);
+    }
+    
+    public static ClassNode toClassNode(byte[] byteCode, int parsingOptions) {
         ClassNode node = new ClassNode();
         ClassReader reader = new ClassReader(byteCode);
-        reader.accept(node,0);
+        reader.accept(node,parsingOptions);
         return node;
     }
 

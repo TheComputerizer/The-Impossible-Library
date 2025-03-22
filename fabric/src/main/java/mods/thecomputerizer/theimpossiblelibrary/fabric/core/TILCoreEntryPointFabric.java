@@ -51,7 +51,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     }
     
     protected final CoreAPI core;
-   
+    
     public TILCoreEntryPointFabric() {
         this.core = CoreAPI.getInstance();
         TILRef.logInfo("Initialized core version handler {}",getClass());

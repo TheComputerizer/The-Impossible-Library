@@ -31,6 +31,12 @@ public class ASMRef {
     public static final String EMPTY_METHOD_DESC = EMPTY_METHOD.getDescriptor();
     public static final Type FILE_TYPE = Type.getType(File.class);
     public static final int FINAL = ACC_FINAL;
+    public static final int FRAME_APPEND = F_APPEND;
+    public static final int FRAME_CHOP = F_CHOP;
+    public static final int FRAME_FULL = F_FULL;
+    public static final int FRAME_NEW = F_NEW;
+    public static final int FRAME_SAME = F_SAME;
+    public static final int FRAME_SAME1 = F_SAME1;
     public static final int GETFIELD = Opcodes.GETFIELD;
     public static final int GETSTATIC = Opcodes.GETSTATIC;
     public static final int GREATER_THAN = IFGT;
