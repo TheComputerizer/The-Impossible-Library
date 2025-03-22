@@ -125,4 +125,8 @@ public class CompoundComponent1_20_6 extends CompoundTagAPI<CustomData> implemen
         if(api instanceof TagWrapper) this.wrapped.update(tag -> tag.put(key, api.unwrap()));
         else TILRef.logError("Cannot add data component to CompoundTag");
     }
+    
+    @Override public String toPrettyString() { //TODO Is there a way to pretty print components?
+        return this.wrapped.toString();
+    }
 }

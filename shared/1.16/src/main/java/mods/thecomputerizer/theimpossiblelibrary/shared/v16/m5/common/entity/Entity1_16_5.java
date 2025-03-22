@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
+import net.minecraft.command.impl.data.EntityDataAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -51,7 +52,7 @@ public class Entity1_16_5 extends EntityAPI<Entity,EntityType<?>> {
     
     @Override public CompoundTagAPI<?> getData() {
         CompoundNBT tag = new CompoundNBT();
-        if(Objects.nonNull(this.entity)) tag = this.entity.saveWithoutId(tag);
+        if(Objects.nonNull(this.entity)) tag = new EntityDataAccessor(this.entity).getData();
         return new CompoundTag1_16_5(tag);
     }
     

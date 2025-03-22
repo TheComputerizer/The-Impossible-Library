@@ -110,4 +110,8 @@ public class CompoundTag1_12_2 extends CompoundTagAPI<NBTTagCompound> {
     @Override public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.setTag(key,(NBTBase)tag.getWrapped());
     }
+    
+    @Override public String toPrettyString() { //TODO Is there a built in method for this in 1.12.2?
+        return toString();
+    }
 }

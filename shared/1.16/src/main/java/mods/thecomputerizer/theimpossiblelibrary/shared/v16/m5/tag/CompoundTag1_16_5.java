@@ -107,4 +107,8 @@ public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
     @Override public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.put(key,(INBT)tag.getWrapped());
     }
+    
+    @Override public String toPrettyString() {
+        return this.wrapped.getPrettyDisplay().getString();
+    }
 }

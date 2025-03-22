@@ -23,4 +23,5 @@ public abstract class CompoundTagAPI<T> extends BaseTagAPI<T> {
     public abstract void putShort(String key, short s);
     public abstract void putString(String key, String value);
     public abstract void putTag(String key, BaseTagAPI<?> tag);
+    public abstract String toPrettyString();
 }

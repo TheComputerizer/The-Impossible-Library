@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 
 public class CompoundTag1_21 extends CompoundTagAPI<CompoundTag> implements TagWrapper {
@@ -106,5 +107,9 @@ public class CompoundTag1_21 extends CompoundTagAPI<CompoundTag> implements TagW
 
     @Override public void putTag(String key, BaseTagAPI<?> tag) {
         this.wrapped.put(key,(Tag)tag.getWrapped());
+    }
+    
+    @Override public String toPrettyString() {
+        return NbtUtils.prettyPrint(this.wrapped,true);
     }
 }

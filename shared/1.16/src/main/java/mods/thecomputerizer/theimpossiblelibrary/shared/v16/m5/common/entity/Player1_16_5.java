@@ -15,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text.Text1_16_5;
+import net.minecraft.command.impl.data.EntityDataAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -57,7 +58,7 @@ public abstract class Player1_16_5<P extends PlayerEntity> extends PlayerAPI<P,E
     
     @Override public CompoundTagAPI<?> getData() {
         CompoundNBT tag = new CompoundNBT();
-        if(Objects.nonNull(this.entity)) tag = this.entity.saveWithoutId(tag);
+        if(Objects.nonNull(this.entity)) tag = new EntityDataAccessor(this.entity).getData();
         return new CompoundTag1_16_5(tag);
     }
 

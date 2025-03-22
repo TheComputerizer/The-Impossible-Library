@@ -162,6 +162,7 @@ def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviou
                    'command.CommandException': 'commands.CommandRuntimeException',
                    'command.CommandSource': 'commands.CommandSourceStack',
                    'command.ISuggestionProvider': 'commands.SharedSuggestionProvider',
+                   'command.impl.data.EntityDataAccessor': 'server.commands.data.EntityDataAccessor',
                    'command.': 'commands.',
                    'entity.passive.animal.AnimalEntity': 'world.entity.animal.Animal',
                    'entity.passive.animal.TameableEntity': 'world.entity.TamableAnimal',

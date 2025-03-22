@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.CompoundTag1_21;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.commands.data.EntityDataAccessor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -50,7 +51,7 @@ public class Living1_21 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public CompoundTagAPI<?> getData() {
         CompoundTag tag = new CompoundTag();
-        if(Objects.nonNull(this.entity)) tag = this.entity.saveWithoutId(tag);
+        if(Objects.nonNull(this.entity)) tag = new EntityDataAccessor(this.entity).getData();
         return new CompoundTag1_21(tag);
     }
 

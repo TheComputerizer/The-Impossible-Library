@@ -22,7 +22,7 @@ import java.util.jar.Manifest;
 public class MultiVersionModLocator implements IModLocator {
     
     static {
-        ForgeCoreLoader.fixIfNotJava8();
+        ForgeCoreLoader.fixFirstEntryPoint();
         Object instance = ForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
         if(Objects.isNull(instance))
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
@@ -84,6 +84,8 @@ public class MultiVersionModLocator implements IModLocator {
         else return this.fileSystems.get(modFile).getPath("",path);
     }
     
+    @Override public void scanFile(IModFile file, Consumer<Path> consumer) {}
+    
     @Override public void initArguments(Map<String,?> arguments) {
         TILRef.logInfo("Inkoved initArguments with arguments {}",arguments);
         if(Objects.nonNull(this.localLocator)) {
@@ -96,7 +98,6 @@ public class MultiVersionModLocator implements IModLocator {
     }
     
     @Override public boolean isValid(IModFile file) {
-        TILRef.logInfo("Inkoved isValid on IModLocator for file {}",file);
         return true;
     }
     
@@ -104,20 +105,15 @@ public class MultiVersionModLocator implements IModLocator {
         return "multiversionloader";
     }
     
-    @Override public void scanFile(IModFile file, Consumer<Path> pathConsumer) {
-        TILRef.logInfo("Inkoved scanFile on IModLocator for file {}",file);
-    }
-    
     @SuppressWarnings("unchecked")
     @Override public List<IModFile> scanMods() {
-        TILRef.logInfo("Scanning for mods!!!!!!!!!!!!!!!");
+        TILRef.logDebug("Scanning for mods");
         List<IModFile> files = null;
         try {
             this.fileSystems = Collections.emptyMap();
             if(Objects.nonNull(this.localLocator)) {
-                files = (List<IModFile>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),
-                                                                      "scanMods", this.localLocator,
-                                                                      new Class<?>[]{IModLocator.class}, this);
+                files = (List<IModFile>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),"scanMods",
+                        this.localLocator,new Class<?>[]{IModLocator.class}, this);
                 if(Objects.nonNull(files) && this.localLocator.getClass().getSimpleName().contains("1_16_5")) {
                     this.fileSystems = new HashMap<>();
                     for(IModFile file : files) {

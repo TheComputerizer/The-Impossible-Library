@@ -15,6 +15,8 @@ import org.burningwave.core.classes.Fields.NoSuchFieldException;
 
 import javax.annotation.Nullable;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -278,24 +280,34 @@ public class ForgeCoreLoader {
         return null;
     }
     
-    public static void fixIfNotJava8() {
-        if(!isJava8()) {
-            String pkg = ConsulterSupplyFunction.class.getPackage().getName();
-            ClassLoader thisLoader = ForgeCoreLoader.class.getClassLoader();
-            boolean newFormat = false;
-            Map<String,Object> packageLookup;
-            try {
-                packageLookup = Fields.getDirect(thisLoader,"packageLookup");
-            } catch(NoSuchFieldException ex) {
-                packageLookup = Fields.getDirect(thisLoader,"packageToOurModules");
-                newFormat = true;
-            }
-            Object module = packageLookup.get(pkg);
-            if(Objects.nonNull(module)) {
-                addResolvedModule(module,thisLoader,newFormat);
-                packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
-            } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
+    /**
+     * Sets up some important stuff needed to initialize the loading process.
+     */
+    public static void fixFirstEntryPoint() {
+        if(isJava8()) fixForJava8();
+        else fixForModuleSystem();
+    }
+    
+    private static void fixForJava8() {
+        //TODO Do URL source adding here?
+    }
+    
+    private static void fixForModuleSystem() {
+        String pkg = ConsulterSupplyFunction.class.getPackage().getName();
+        ClassLoader thisLoader = ForgeCoreLoader.class.getClassLoader();
+        boolean newFormat = false;
+        Map<String,Object> packageLookup;
+        try {
+            packageLookup = Fields.getDirect(thisLoader,"packageLookup");
+        } catch(NoSuchFieldException ex) {
+            packageLookup = Fields.getDirect(thisLoader,"packageToOurModules");
+            newFormat = true;
         }
+        Object module = packageLookup.get(pkg);
+        if(Objects.nonNull(module)) {
+            addResolvedModule(module,thisLoader,newFormat);
+            packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
+        } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
     }
     
     /**
@@ -438,7 +450,7 @@ public class ForgeCoreLoader {
             return bootInstance;
         }
         String version = getVersionStr();
-        Class<?> coreClass = loadAPI(version,bootLoader());
+        Class<?> coreClass = loadAPI(version,loader);
         try {
             return coreClass.newInstance();
         } catch(InstantiationException | IllegalAccessException ex) {
@@ -475,12 +487,18 @@ public class ForgeCoreLoader {
      * Returns the instance class
      */
     static Class<?> loadAPI(String version, ClassLoader loader) {
+        ClassLoader bootLoader = bootLoader();
         String className = versionClassName("core.TILCoreForge",version);
+        if(isJava8()) {
+            URL source = ClassHelper.getSourceURL(className,loader);
+            if(ClassHelper.loadURL((URLClassLoader)bootLoader,source)) LOGGER.info("Loaded source {}",source);
+            else LOGGER.error("Failed to load source {}",source);
+        }
         Class<?> clazz = null;
         try {
-            clazz = Driver.getClassByName(className,true,loader,Classes.getClass());
+            clazz = Class.forName(className,true,bootLoader);
         } catch(Exception ex) {
-            LOGGER.error("Failed to load class {} for {}",className,loader,ex);
+            LOGGER.error("Failed to load class {} for {}",className,bootLoader,ex);
         }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Forge-"+version+"]");
         LOGGER.debug("Successfully loaded CoreAPI instance {}",clazz);
