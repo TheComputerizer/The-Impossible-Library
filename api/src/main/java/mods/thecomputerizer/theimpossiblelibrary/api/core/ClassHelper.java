@@ -37,13 +37,18 @@ public class ClassHelper {
      * The className input here should be the relative path rather than the binary name of the class.
      */
     public static URL absoluteLocation(@Nullable URL url, String className) {
+        String locationStr = absoluteLocationStr(url,className);
+        return Objects.nonNull(locationStr) ? FileHelper.toURL(locationStr) : null;
+    }
+    
+    public static @Nullable String absoluteLocationStr(@Nullable URL url, String className) {
         if(Objects.isNull(url)) {
             TILRef.logError("Cannot extract class path of null URL for {}!",className);
             return null;
         }
         String urlStr = url.toString().replace("%20"," ");
         String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
-        return FileHelper.toURL(urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length()));
+        return urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length());
     }
     
     public static void addSource(Set<String> sources, Class<?> clazz) {
@@ -79,7 +84,7 @@ public class ClassHelper {
             try {
                 Default.add(burningWaveProperties());
             } catch(Throwable t) {
-                TILRef.logError("Failed to set default burningwave properties??",t);
+                TILRef.logWarn("Tried to set default BurningWave properties twice");
             }
             burningWaveInit = true;
         }
@@ -307,7 +312,6 @@ public class ClassHelper {
         return className.replace('.','/')+".class";
     }
     
-    @IndirectCallers
     public static @Nullable URL getSourceURL(@Nullable String className, ClassLoader loader) {
         if(Objects.nonNull(className) && !className.isEmpty()) {
             try {
@@ -329,6 +333,19 @@ public class ClassHelper {
                 else TILRef.logError("Cannot get source URL for class with null CodeSource! {}",clazz);
             } else TILRef.logError("Cannot get source URL for class with null ProtectionDomain! {}",clazz);
         } else TILRef.logError("Cannot get source URL for null class!");
+        return null;
+    }
+    
+    @IndirectCallers
+    public static @Nullable String getSourceURLStr(@Nullable String className, ClassLoader loader) {
+        if(Objects.nonNull(className) && !className.isEmpty()) {
+            try {
+                String relativePath = getResourcePath(className);
+                return absoluteLocationStr(loader.getResource(relativePath),relativePath);
+            } catch(Exception ex) {
+                TILRef.logError("Caught exception trying to get source URL for {} on {}",className,loader,ex);
+            }
+        } else TILRef.logError("Cannot get source URL for null or empty class name!");
         return null;
     }
     

@@ -32,7 +32,7 @@ Other: Registering stuff is not yet possible & a majority of the event wrappers 
 
 ### Forge
 - 1.12.2 → FUNCTIONAL
-- 1.16.5 → BROKEN
+- 1.16.5 → FUNCTIONAL
 - 1.18.2 → FUNCTIONAL
 - 1.19.2 → FUNCTIONAL
 - 1.19.4 → FUNCTIONAL

@@ -19,10 +19,10 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.ModFileFactory.ModFileInfoParser;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -54,11 +54,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 @SuppressWarnings("LoggingSimilarMessage")
 public class ForgeModLoading {
     
-    static {
-        ClassHelper.checkBurningWaveInit();
-    }
-    
-    static final Logger LOGGER = LoggerFactory.getLogger("NeoForge Mod Loading");
+    static final Logger LOGGER = LogManager.getLogger("NeoForge Mod Loading");
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     static final String MOD_CLASS_VISITOR = "net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor";
     static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";
@@ -113,13 +109,9 @@ public class ForgeModLoading {
     static void findFiles(MultiVersionLoaderAPI loader, Predicate<Path> filter, File... files) {
         TILRef.logInfo("[{}]: Loading {} mod files",loader.getName(),files.length);
         for(File mod : files) {
-            TILRef.logInfo("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
+            TILRef.logDebug("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
             checkPath(loader,mod.toPath(),filter);
         }
-    }
-    
-    public static void findPaths(ClassLoader classLoader, MultiVersionLoaderAPI loader) {
-        findPaths(classLoader,loader,null);
     }
     
     public static void findPaths(ClassLoader classLoader, MultiVersionLoaderAPI loader, Object locator) {
@@ -186,7 +178,7 @@ public class ForgeModLoading {
         Object core = CoreAPI.getInstance(loader);
         if(Objects.isNull(core))
             throw new RuntimeException("Failed to initialize multiversion mod loader! Cannot find CoreAPI on "+loader);
-        findPaths(loader,(MultiVersionLoaderAPI)CoreAPI.invoke(core,"getLoader"));
+        findPaths(loader,(MultiVersionLoaderAPI)CoreAPI.invoke(core,"getLoader"),locator);
         loadMods(loader,locator,core,candidateMap);
     }
     

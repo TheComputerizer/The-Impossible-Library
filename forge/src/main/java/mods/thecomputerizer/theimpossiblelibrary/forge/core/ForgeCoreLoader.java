@@ -45,7 +45,6 @@ public class ForgeCoreLoader {
             if(isJava8()) LOGGER.info("I see you are running Java 8. Good choice, but I'll be using burningwave anyways");
             else LOGGER.info("I see you are running Java 9+ so I'll be using burningwave to break its strong encapsulation");
         }
-        ClassHelper.checkBurningWaveInit();
     }
     
     /**
@@ -289,10 +288,13 @@ public class ForgeCoreLoader {
     }
     
     private static void fixForJava8() {
-        //TODO Do URL source adding here?
+        URL source = ClassHelper.getSourceURL(ForgeCoreLoader.class);
+        if(!ClassHelper.loadURL((URLClassLoader)bootLoader(),source))
+            LOGGER.error("Failed to load source {}",source);
     }
     
     private static void fixForModuleSystem() {
+        ClassHelper.checkBurningWaveInit();
         String pkg = ConsulterSupplyFunction.class.getPackage().getName();
         ClassLoader thisLoader = ForgeCoreLoader.class.getClassLoader();
         boolean newFormat = false;
@@ -443,14 +445,15 @@ public class ForgeCoreLoader {
      * Returns a CoreAPI instance on the input ClassLoader. Initializes the source if necessary
      */
     static @Nullable Object initCoreAPI(ClassLoader loader) {
-        LOGGER.debug("Starting CoreAPI init");
+        ClassHelper.checkBurningWaveInit();
+        LOGGER.info("Starting CoreAPI init");
         Object bootInstance = getBootLoadedCoreAPI();
         if(Objects.nonNull(bootInstance)) {
             LOGGER.info("Returning existing CoreAPI instance found in the BOOT layer");
             return bootInstance;
         }
         String version = getVersionStr();
-        Class<?> coreClass = loadAPI(version,loader);
+        Class<?> coreClass = loadAPI(version);
         try {
             return coreClass.newInstance();
         } catch(InstantiationException | IllegalAccessException ex) {
@@ -486,21 +489,24 @@ public class ForgeCoreLoader {
      * Define necessary classes for the versioned CoreAPI instance
      * Returns the instance class
      */
-    static Class<?> loadAPI(String version, ClassLoader loader) {
-        ClassLoader bootLoader = bootLoader();
+    static Class<?> loadAPI(String version) {
+        ClassLoader loader = bootLoader();
         String className = versionClassName("core.TILCoreForge",version);
-        if(isJava8()) {
-            URL source = ClassHelper.getSourceURL(className,loader);
-            if(ClassHelper.loadURL((URLClassLoader)bootLoader,source)) LOGGER.info("Loaded source {}",source);
-            else LOGGER.error("Failed to load source {}",source);
-        }
         Class<?> clazz = null;
         try {
-            clazz = Class.forName(className,true,bootLoader);
+            clazz = Class.forName(className,true,loader);
         } catch(Exception ex) {
-            LOGGER.error("Failed to load class {} for {}",className,bootLoader,ex);
+            LOGGER.error("Failed to load class {} for {}",className,loader,ex);
         }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Forge-"+version+"]");
+        else if(isJava8()) {
+            String forgeModLoading = "mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading";
+            try {
+                Class.forName(forgeModLoading,true,loader);
+            } catch(Exception ex) {
+                LOGGER.error("Failed to load class {} for {}",forgeModLoading,loader,ex);
+            }
+        }
         LOGGER.debug("Successfully loaded CoreAPI instance {}",clazz);
         return clazz;
     }

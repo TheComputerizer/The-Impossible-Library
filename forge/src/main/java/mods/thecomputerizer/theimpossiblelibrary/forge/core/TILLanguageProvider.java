@@ -80,12 +80,9 @@ public class TILLanguageProvider implements IModLanguageProvider {
         }
     }
     
-    @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent) {
-        TILRef.logInfo("LIFECYCLE EVENT {}",consumeEvent.get());
-    }
+    @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> ignored)  {}
     
     @Override public Consumer<ModFileScanData> getFileVisitor() {
-        TILRef.logInfo("GETTING FILE VISITOR");
         Consumer<ModFileScanData> visitor = scan -> {};
         if(Objects.nonNull(this.versionProvider)) visitor = versionProvider.getFileVisitor(this.core,this);
         else TILRef.logError("Version specific language provider not found! Did it fail to load?");
@@ -93,7 +90,6 @@ public class TILLanguageProvider implements IModLanguageProvider {
     }
     
     @Override public String name() {
-        TILRef.logInfo("GETTING NAME");
         return "multiversionprovider";
     }
 }

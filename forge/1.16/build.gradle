@@ -127,6 +127,13 @@ dependencies {
     runtimeOnly fg.deobf("$jei_artifact:$jei_1_16_5")
 }
 
+reobf {
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
+    }
+}
+
 jar {
     manifest {
         attributes([
@@ -135,19 +142,12 @@ jar {
     }
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
-
 shadowJar {
     [ base, forge ].forEach {
         from(it.jar.archiveFile.collect { zipTree it })
     }
     shared.afterEvaluate {
-        from(shared.jar.archiveFile.collect { zipTree it })
+        from(it.jar.archiveFile.collect { zipTree it })
         relocate "$shared_base_package", "$forge_base_package"
     }
 }

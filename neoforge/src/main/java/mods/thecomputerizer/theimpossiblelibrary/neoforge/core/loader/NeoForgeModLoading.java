@@ -115,7 +115,7 @@ public class NeoForgeModLoading {
     static void findFiles(MultiVersionLoaderAPI loader, Predicate<Path> filter, File... files) {
         TILRef.logInfo("[{}]: Loading {} mod files", loader.getName(), files.length);
         for(File mod : files) {
-            TILRef.logInfo("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
+            TILRef.logDebug("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
             checkPath(loader,mod.toPath(),filter);
         }
     }

@@ -29,6 +29,17 @@ def neoforge_1_20_4 = project ':neoforge:neoforge_1.20:neoforge_1.20.4'
 def neoforge_1_20_6 = project ':neoforge:neoforge_1.20:neoforge_1.20.6'
 def neoforge_1_21_1 = project ':neoforge:neoforge_1.21:neoforge_1.21.1'
 
+subprojects {
+    it.afterEvaluate {
+        it.tasks.withType(JavaCompile).forEach {
+            it.options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
+            it.outputs.cacheIf {
+                false //Prevent issues with parallelization
+            }
+        }
+    }
+}
+
 processResources {
     fabric.afterEvaluate {
         from it.processResources.outputs

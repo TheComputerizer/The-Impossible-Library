@@ -109,8 +109,7 @@ public abstract class CommonEventsFabric1_20 extends CommonEvents1_20 {
         ReflectionHelper.invokeMethod(wrapper.getClass(),"register",wrapper,new Class<?>[]{});
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public Object setEventResult(Result result) {
+    @Override public <E> E setEventResult(Result result) {
         return null;
     }
 }

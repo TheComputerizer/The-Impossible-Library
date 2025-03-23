@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import cpw.mods.modlauncher.Launcher;
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -9,6 +10,7 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -18,6 +20,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class MultiVersionModLocator implements IModLocator {
     
@@ -32,18 +36,19 @@ public class MultiVersionModLocator implements IModLocator {
     @Getter private Map<IModFile,FileSystem> fileSystems;
     
     public MultiVersionModLocator() {
-        ClassLoader loader = getClass().getClassLoader();
-        ClassLoader bootLoader = Launcher.class.getClassLoader();
-        TILRef.logInfo("Core Forge Locator plugin loaded on {}",loader);
-        if(!loader.equals(bootLoader))
-            TILRef.logInfo("That's the wrong ClassLoader... Retrieving locator instance from the right "+
-                           "ClassLoader {}",bootLoader);
-        Object instance = ForgeCoreLoader.initCoreAPI(bootLoader);
-        this.localLocator = Objects.nonNull(instance) ? ReflectionHelper.invokeMethod(instance.getClass(),
-                "getModLocator",instance,new Class<?>[]{ClassLoader.class},instance.getClass().getClassLoader()) :
-                null;
-        if(Objects.nonNull(this.localLocator)) TILRef.logInfo("Found mod locator {}",this.localLocator.getClass());
-        else TILRef.logFatal("Failed to find mod locator! Unable to load multiversion mods");
+        TILRef.logDebug("Core Forge Locator plugin loaded on {}",getClass().getClassLoader());
+        this.localLocator = createLocalLocator(ForgeCoreLoader.initCoreAPI(Launcher.class.getClassLoader()));
+        if(Objects.isNull(this.localLocator))
+            TILRef.logFatal("Failed to find mod locator! Unable to load multiversion mods");
+    }
+    
+    @Nullable Object createLocalLocator(@Nullable Object coreInstance) {
+        if(Objects.isNull(coreInstance)) return null;
+        ClassLoader loader = coreInstance.getClass().getClassLoader();
+        ClassHelper.checkBurningWaveInit();
+        Object locator = Methods.invoke(coreInstance,"getModLocator",loader);
+        if(Objects.nonNull(locator)) TILRef.logInfo("Found mod locator {}",locator.getClass());
+        return locator;
     }
     
     FileSystem fileSystemFor(IModFile file) {

@@ -91,7 +91,7 @@ public class TILModFileForge1_16_5 extends ModFile {
                 provider.addAdditionalLanguages(Collections.singletonList(langFile));
                 loadedProvider = true;
             }
-            TILRef.logInfo("Building IModFileInfo");
+            TILRef.logDebug("Building IModFileInfo");
             IConfigurable config = new TILFileConfigForge(this.infos.keySet());
             this.fileInfo = Constructors.newInstanceOf(ModFileInfo.class,this,config);
             if(Objects.isNull(this.fileInfo)) TILRef.logFatal("Failed to find construct ModFileInfo???");
