@@ -46,7 +46,7 @@ Other: Keybinds do not show up in the keybind menu in 1.19.2+
 
 ### NeoForge
 - 1.20.1 → FUNCTIONAL
-- 1.20.4 → BROKEN
+- 1.20.4 → PLAYABLE
 - 1.20.6 → LOADABLE
 - 1.21.1 → LOADABLE
 - 1.21.4 → PLANNED
