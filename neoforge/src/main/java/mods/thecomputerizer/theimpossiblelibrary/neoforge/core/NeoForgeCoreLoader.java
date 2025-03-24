@@ -339,24 +339,14 @@ public class NeoForgeCoreLoader {
                 Class<?> implClass = Class.forName(impl,false,loader);
                 Fields.setDirect(implClass,"module",module);
                 Fields.setDirect(implClass,"classLoader",loader);
-            } catch(ClassNotFoundException ex) {
-                LOGGER.error("Service class that was supposed to be moved was not found in the BOOT layer! {}",impl,ex);
-            }
+            } catch(ClassNotFoundException ignored) {} //The class won't be found when loading in 1.20.4
         }
         LOGGER.info("Sucessfully notified the ServicesCatalog that {} has been moved",impl);
     }
     
     private static void fixServiceFor(String service, String impl, Module module, ModuleLayer layer, boolean isRemoval) {
-        Object servicesCatalog = getServicesCatalog(layer);
-        Class<?> sClass = servicesCatalog.getClass();
-        String providerClassName = sClass.getName()+"$ServiceProvider";
-        Class<?> pClass;
-        try {
-            pClass = Class.forName(providerClassName);
-        } catch(ClassNotFoundException ex) {
-            LOGGER.error("Failed to find class {}",providerClassName,ex);
-            return;
-        }
+        Object servicesCatalog = getServicesCatalog(getModuleLayer("BOOT"));
+        Class<?> pClass = serviceProviderClass(servicesCatalog);
         Map<String,List<?>> map = new HashMap<>(Fields.getDirect(servicesCatalog,"map"));
         Object found = null;
         if(map.containsKey(service)) {
@@ -750,6 +740,17 @@ public class NeoForgeCoreLoader {
         Fields.setDirect(object,name,Collections.unmodifiableSet(set));
     }
     
+    public static void removeServiceFrom(String service, String impl, String layer) {
+        LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
+        String moduleName = "theimpossiblelibrary";
+        Object servicesCatalog = getServicesCatalog(getModuleLayer(layer));
+        Class<?> pClass = serviceProviderClass(servicesCatalog);
+        Map<String,List<?>> map = new HashMap<>(Fields.getDirect(servicesCatalog,"map"));
+        if(map.containsKey(service)) map.get(service).removeIf(provider ->
+                        impl.equals(Methods.invokeDirect(provider,"providerName")));
+        LOGGER.info("Sucessfully removed all service providers from {} layer for {}",layer,impl);
+    }
+    
     /**
      * Since this class is intially loaded in the SERVICE layer which has BOOT as a parent separate from PLUGIN,
      * we need a workaround for the PLUGIN layer thinking there are duplicate modules.
@@ -802,6 +803,19 @@ public class NeoForgeCoreLoader {
             //By this point the class is definitely in the GAME layer regardless of whether the module is correct
             Fields.setDirect(c,"module",getModuleFromLayer("GAME",name));
             LOGGER.info("Moved {} from module {} to module {}",c,actualName,name);
+        }
+    }
+    
+    public static @Nullable Class<?> serviceProviderClass(Object servicesCatalog) {
+        if(Objects.isNull(servicesCatalog)) return null;
+        Class<?> sClass = servicesCatalog.getClass();
+        String providerClassName = sClass.getName()+"$ServiceProvider";
+        Class<?> pClass;
+        try {
+            return Class.forName(providerClassName);
+        } catch(ClassNotFoundException ex) {
+            LOGGER.error("Failed to find class {}",providerClassName,ex);
+            return null;
         }
     }
     

@@ -18,8 +18,6 @@ public class MultiVersionModLocator implements IModLocator {
     
     private static final String IMPL_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge.core";
     private static final String NEOFORGE_PKG = "net.neoforged.neoforgespi";
-    private static final String MOD_LANGUAGE_IMPL = IMPL_PKG+".language.TILLanguageProvider";
-    private static final String MOD_LANGUAGE_SERVICE = NEOFORGE_PKG+".IModLanguageProvider";
     private static final String MOD_LOCATOR_IMPL = IMPL_PKG+".MultiVersionModLocator";
     private static final String MOD_LOCATOR_SERVICE = NEOFORGE_PKG+".locating.IModLocator";
     
@@ -29,10 +27,8 @@ public class MultiVersionModLocator implements IModLocator {
         Object instance = NeoForgeCoreLoader.initCoreAPI(loader);
         if(Objects.isNull(instance))
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
-        if(loader!=NeoForgeCoreLoader.bootLoader()) {
-            NeoForgeCoreLoader.fixService(MOD_LANGUAGE_SERVICE,MOD_LANGUAGE_IMPL,loader);
+        if(loader!=NeoForgeCoreLoader.bootLoader())
             NeoForgeCoreLoader.fixService(MOD_LOCATOR_SERVICE,MOD_LOCATOR_IMPL,loader,true);
-        }
     }
     
     private final Object localLocator;

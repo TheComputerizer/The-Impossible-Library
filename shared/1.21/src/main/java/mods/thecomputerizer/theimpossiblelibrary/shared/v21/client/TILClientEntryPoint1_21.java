@@ -1,12 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v21.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.DelegatingClientEntryPoint;
 import org.jetbrains.annotations.Nullable;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
-public class TILClientEntryPoint1_21 extends ClientEntryPoint {
+public class TILClientEntryPoint1_21 extends DelegatingClientEntryPoint {
     
     @Override public @Nullable ClientEntryPoint setDelegatedClientHandle() {
         return null;

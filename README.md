@@ -34,7 +34,7 @@ Other: Registering stuff is not yet possible & a majority of the event wrappers 
 - 1.12.2 → FUNCTIONAL
 - 1.16.5 → FUNCTIONAL
 - 1.18.2 → FUNCTIONAL
-- 1.19.2 → FUNCTIONAL
+- 1.19.2 → PLAYABLE
 - 1.19.4 → FUNCTIONAL
 - 1.20.1 → FUNCTIONAL
 - 1.20.4 → BROKEN

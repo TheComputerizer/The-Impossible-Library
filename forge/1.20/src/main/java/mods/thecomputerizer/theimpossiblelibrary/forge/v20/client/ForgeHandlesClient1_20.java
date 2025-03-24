@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.ForgeHandlesClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,7 @@ public class ForgeHandlesClient1_20 extends ForgeHandlesClient {
     
     @Override public void registerKeyBindingsEvent(Object eventObj) {
         RegisterKeyMappingsEvent event = (RegisterKeyMappingsEvent)eventObj;
+        TILRef.logInfo("Registering {} keybinds for 1.20",this.keys.size());
         for(KeyMapping key : this.keys) event.register(key);
         this.keys.clear();
         this.registeredKeys = true;

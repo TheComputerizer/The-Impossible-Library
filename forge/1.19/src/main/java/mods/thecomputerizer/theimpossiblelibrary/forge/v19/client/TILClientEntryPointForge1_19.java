@@ -48,9 +48,12 @@ public class TILClientEntryPointForge1_19 extends DelegatingClientEntryPoint {
         return null;
     }
     
-    @Override public void onClientSetup() {
+    @Override public void onClientSetup() {}
+    
+    @Override public void onPreRegistration() {
         IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) bus.addListener(TILClientEntryPointForge1_19::registerKeyMappings);
         else TILRef.logError("Failed to register keybinds!");
+        super.onPreRegistration();
     }
 }

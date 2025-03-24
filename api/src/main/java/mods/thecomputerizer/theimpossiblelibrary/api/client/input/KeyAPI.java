@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 @Getter
 public abstract class KeyAPI<K> extends AbstractWrapped<K> {
 
-
     protected KeyAPI(K keybind) {
         super(keybind);
     }

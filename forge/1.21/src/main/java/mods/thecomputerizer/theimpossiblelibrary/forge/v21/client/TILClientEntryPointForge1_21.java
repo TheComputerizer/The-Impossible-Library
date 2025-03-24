@@ -37,9 +37,10 @@ public class TILClientEntryPointForge1_21 extends TILClientEntryPoint1_21 {
         return null;
     }
     
-    @Override public void onClientSetup() {
+    @Override public void onPreRegistration() {
         IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) bus.addListener(TILClientEntryPointForge1_21::registerKeyMappings);
         else TILRef.logError("Failed to register keybinds!");
+        super.onPreRegistration();
     }
 }

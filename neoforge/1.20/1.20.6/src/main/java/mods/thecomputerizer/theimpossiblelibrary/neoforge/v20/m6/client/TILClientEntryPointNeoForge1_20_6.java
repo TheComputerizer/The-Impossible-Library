@@ -45,11 +45,15 @@ public class TILClientEntryPointNeoForge1_20_6 extends TILClientEntryPoint1_20 {
     
     @Override public void onClientSetup() {
         IEventBus bus = getModBus();
-        if(Objects.nonNull(bus)) {
-            bus.addListener(NetworkNeoForge1_20_6::registerPayloadClient);
-            bus.addListener(TILClientEntryPointNeoForge1_20_6::registerKeyMappings);
-        }
+        if(Objects.nonNull(bus)) bus.addListener(NetworkNeoForge1_20_6::registerPayloadClient);
         else TILRef.logError("Failed to register network payloads!");
         EventHelper.addListener(RENDER_OVERLAY_POST,NeoForgeClientHelpers::emulateForgeDebugTextEvent);
+    }
+    
+    @Override public void onPreRegistration() {
+        IEventBus bus = getModBus();
+        if(Objects.nonNull(bus)) bus.addListener(TILClientEntryPointNeoForge1_20_6::registerKeyMappings);
+        else TILRef.logError("Failed to register keybinds!");
+        super.onPreRegistration();
     }
 }
