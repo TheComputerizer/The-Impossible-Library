@@ -61,11 +61,11 @@ public class FutureCreativeTabForge1_21 extends FutureCreativeTab<CreativeModeTa
         }
         BuildCreativeModeTabContentsEvent event = (BuildCreativeModeTabContentsEvent)arg;
         if(event.getTab()!=this.wrapped) return;
-        this.suppliedItems.clear();
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
             if(!event.getEntries().contains(stack)) event.accept(stack);
-            this.suppliedItems.add(stack);
+            if(!this.suppliedItems.contains(stack)) this.suppliedItems.add(stack);
         }
+        stackSuppliers.clear();
     }
 }

@@ -59,7 +59,8 @@ public class FutureCreativeTabForge1_19_4 extends FutureCreativeTab<CreativeMode
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
             if(!event.getEntries().contains(stack)) event.accept(stack);
-            this.suppliedItems.add(stack);
+            if(!this.suppliedItems.contains(stack)) this.suppliedItems.add(stack);
         }
+        stackSuppliers.clear();
     }
 }

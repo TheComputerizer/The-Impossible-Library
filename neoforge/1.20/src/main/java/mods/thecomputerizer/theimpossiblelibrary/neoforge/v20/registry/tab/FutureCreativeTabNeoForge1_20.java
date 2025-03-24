@@ -60,11 +60,11 @@ public class FutureCreativeTabNeoForge1_20 extends FutureCreativeTab<CreativeMod
             return;
         }
         BuildCreativeModeTabContentsEvent event = (BuildCreativeModeTabContentsEvent)arg;
-        this.suppliedItems.clear();
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
             if(!event.getEntries().contains(stack)) event.accept(stack);
-            this.suppliedItems.add(stack);
+            if(!this.suppliedItems.contains(stack)) this.suppliedItems.add(stack);
         }
+        stackSuppliers.clear();
     }
 }

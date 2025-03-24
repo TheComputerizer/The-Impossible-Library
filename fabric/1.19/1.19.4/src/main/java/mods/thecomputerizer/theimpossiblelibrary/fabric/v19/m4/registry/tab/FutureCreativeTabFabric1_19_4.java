@@ -62,13 +62,13 @@ public class FutureCreativeTabFabric1_19_4 extends FutureCreativeTab<CreativeMod
             return;
         }
         FabricItemGroupEntries entries = (FabricItemGroupEntries)arg;
-        this.suppliedItems.clear();
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
             TabVisibility visibility = visibility(entries.getDisplayStacks(),entries.getSearchTabStacks(),stack);
             if(Objects.nonNull(visibility)) entries.accept(stack,visibility);
-            this.suppliedItems.add(stack);
+            if(!this.suppliedItems.contains(stack)) this.suppliedItems.add(stack);
         }
+        stackSuppliers.clear();
     }
     
     /**

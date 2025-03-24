@@ -32,13 +32,11 @@ public class TILLanguageProvider implements IModLanguageProvider {
     final Object versionProvider;
     
     public TILLanguageProvider() {
-        TILRef.logInfo("Init for TILLanguageProvider (NeoForge edition)");
+        TILRef.logInfo("Initializing multiversion language provider (NeoForge edition)");
         ClassLoader pluginLoader = NeoForgeCoreLoader.layerClassLoader("PLUGIN");
         this.core = NeoForgeCoreLoader.initCoreAPI(pluginLoader);
-        TILRef.logInfo("Attempting to get version provider");
         this.versionProvider = Objects.nonNull(this.core) ?
                 Methods.invoke(this.core,"getLaunguageProvider") : null;
-        TILRef.logInfo("Got version provider as {}",this.versionProvider);
         if(Objects.nonNull(this.versionProvider))
             TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
         else TILRef.logError("Initialized versioned language provider as null");
@@ -47,7 +45,6 @@ public class TILLanguageProvider implements IModLanguageProvider {
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> ignored) {}
     
     @Override public Consumer<ModFileScanData> getFileVisitor() {
-        TILRef.logInfo("Getting file visitor");
         Consumer<ModFileScanData> visitor = scan -> {};
         if(Objects.nonNull(this.versionProvider))
             visitor = Methods.invoke(this.versionProvider,"getFileVisitor",this.core,this);

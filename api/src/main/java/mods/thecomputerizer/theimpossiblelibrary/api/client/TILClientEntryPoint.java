@@ -49,12 +49,12 @@ public final class TILClientEntryPoint extends DelegatingClientEntryPoint {
     @Override public void onPreRegistration() {
         devTrace("onPreRegistration");
         EventHelper.initTILListeners(true,false,false,DEV);
+        if(DEV) KeyHelper.register(TEST_KEY);
         super.onPreRegistration();
     }
     
     @Override public void onClientSetup() {
         devTrace("onClientSetup");
-        if(DEV) KeyHelper.register(TEST_KEY);
     }
     
     @Override public void onLoadComplete() {
