@@ -12,6 +12,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.Builder;
+import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import static net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+import static net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_TAB_ONLY;
+import static net.minecraft.world.item.CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY;
 
 public class FutureCreativeTabFabric1_19_4 extends FutureCreativeTab<CreativeModeTab> {
     
@@ -60,8 +65,18 @@ public class FutureCreativeTabFabric1_19_4 extends FutureCreativeTab<CreativeMod
         this.suppliedItems.clear();
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
-            entries.accept(stack);
+            TabVisibility visibility = visibility(entries.getDisplayStacks(),entries.getSearchTabStacks(),stack);
+            if(Objects.nonNull(visibility)) entries.accept(stack,visibility);
             this.suppliedItems.add(stack);
         }
+    }
+    
+    /**
+     * Check if the stack exists before adding to the tab
+     */
+    private @Nullable TabVisibility visibility(List<ItemStack> display, List<ItemStack> search, ItemStack stack) {
+        if(display.contains(stack)) return search.contains(stack) ? SEARCH_TAB_ONLY : null;
+        if(search.contains(stack)) return display.contains(stack) ? PARENT_TAB_ONLY : null;
+        return PARENT_AND_SEARCH_TABS;
     }
 }

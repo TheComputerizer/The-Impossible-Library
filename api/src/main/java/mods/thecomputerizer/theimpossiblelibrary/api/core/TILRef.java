@@ -4,6 +4,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import org.apache.logging.log4j.Level;
@@ -83,7 +84,8 @@ public class TILRef {
         if(Objects.isNull(INSTANCE)) INSTANCE = new Reference(isClient.get(),dependencies,MODID,NAME,VERSION);
         return INSTANCE;
     }
-
+    
+    @IndirectCallers
     public static void log(Level level, String msg, Object ... args) {
         logNullable(level,msg,args);
     }
@@ -109,6 +111,7 @@ public class TILRef {
         else LOGGER.log(level,msg,args);
     }
 
+    @IndirectCallers
     public static void logTrace(String msg, Object ... args) {
         logNullable(TRACE,msg,args);
     }
@@ -117,9 +120,8 @@ public class TILRef {
         logNullable(WARN,msg,args);
     }
 
-    public static @Nullable ResourceLocationAPI<?> res(String path) {
+    public static ResourceLocationAPI<?> res(String path) {
         if(Objects.nonNull(INSTANCE)) return INSTANCE.getResource(path);
-        logError("Cannot get a ResourceLocation until the reference API has been initialized!");
-        return null;
+        throw new RuntimeException("Cannot get a ResourceLocation until the reference API has been initialized!");
     }
 }

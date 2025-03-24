@@ -9,6 +9,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.Builder;
+import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
@@ -17,9 +18,13 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static net.minecraft.world.item.CreativeModeTab.Row.TOP;
+import static net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS;
+import static net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_TAB_ONLY;
+import static net.minecraft.world.item.CreativeModeTab.TabVisibility.SEARCH_TAB_ONLY;
 
 public class FutureCreativeTabNeoForge1_21 extends FutureCreativeTab<CreativeModeTab> {
     
@@ -63,8 +68,18 @@ public class FutureCreativeTabNeoForge1_21 extends FutureCreativeTab<CreativeMod
         this.suppliedItems.clear();
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
-            event.accept(stack);
+            TabVisibility visibility = visibility(event.getParentEntries(),event.getSearchEntries(),stack);
+            if(Objects.nonNull(visibility)) event.accept(stack,visibility);
             this.suppliedItems.add(stack);
         }
+    }
+    
+    /**
+     * Check if the stack exists before adding to the tab
+     */
+    private @Nullable TabVisibility visibility(Set<ItemStack> parent, Set<ItemStack> search, ItemStack stack) {
+        if(parent.contains(stack)) return search.contains(stack) ? SEARCH_TAB_ONLY : null;
+        if(search.contains(stack)) return parent.contains(stack) ? PARENT_TAB_ONLY : null;
+        return PARENT_AND_SEARCH_TABS;
     }
 }

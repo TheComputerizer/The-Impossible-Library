@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m6.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.NeoForgeClientHelpers;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m6.network.NetworkNeoForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.TILClientEntryPoint1_20;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -44,9 +43,6 @@ public class TILClientEntryPointNeoForge1_20_6 extends TILClientEntryPoint1_20 {
     }
     
     @Override public void onClientSetup() {
-        IEventBus bus = getModBus();
-        if(Objects.nonNull(bus)) bus.addListener(NetworkNeoForge1_20_6::registerPayloadClient);
-        else TILRef.logError("Failed to register network payloads!");
         EventHelper.addListener(RENDER_OVERLAY_POST,NeoForgeClientHelpers::emulateForgeDebugTextEvent);
     }
     

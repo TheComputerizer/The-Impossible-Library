@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.WrappedCommand1_21.INFO;
 import static net.minecraft.core.registries.Registries.COMMAND_ARGUMENT_TYPE;
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
@@ -31,7 +30,7 @@ public class TILCommonEntryPointNeoForge1_21 extends TILCommonEntryPoint1_21 {
     public static void onRegisterCreativeTabs(RegisterEvent event) {
         if(event.getRegistryKey()==CREATIVE_MODE_TAB) CreativeTabBuilder1_21.onRegister(event);
         else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
-            ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester");
+            ResourceLocation registryName = TILRef.res("custom_suggester").unwrap();
             event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
             WrappedCommand1_21.registerArgType();
         }
@@ -59,16 +58,12 @@ public class TILCommonEntryPointNeoForge1_21 extends TILCommonEntryPoint1_21 {
     
     @Override public void onPreRegistration() {
         IEventBus bus = getModBus();
-        if(Objects.nonNull(bus)) bus.addListener(TILCommonEntryPointNeoForge1_21::onRegisterCreativeTabs);
-        super.onPreRegistration();
-    }
-    
-    @Override public void onCommonSetup() {
-        IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) {
+            TILRef.logError("Adding mod event listeners");
+            bus.addListener(NetworkNeoForge1_21::registerPayloads);
+            bus.addListener(TILCommonEntryPointNeoForge1_21::onRegisterCreativeTabs);
             bus.addListener(TILCommonEntryPointNeoForge1_21::onSupplyCreativeTabs);
-            bus.addListener(NetworkNeoForge1_21::registerPayloadServer);
-        } else TILRef.logError("Failed to register network payloads!");
-        super.onCommonSetup();
+        } else TILRef.logError("Failed to register creative tabs & network payloads!");
+        super.onPreRegistration();
     }
 }
