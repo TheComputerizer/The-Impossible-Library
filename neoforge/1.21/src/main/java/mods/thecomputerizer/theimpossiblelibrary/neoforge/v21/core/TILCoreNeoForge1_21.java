@@ -11,7 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreEntryPointNeoforge;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreEntryPointNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreNeoforge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.client.TILClientEntryPointNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.TILCommonEntryPointNeoForge1_21;
@@ -62,7 +62,7 @@ public abstract class TILCoreNeoForge1_21 extends TILCore1_21 implements TILCore
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {
-        return new TILCoreEntryPointNeoforge();
+        return new TILCoreEntryPointNeoForge(this);
     }
 
     @Override public MultiVersionLoaderAPI getLoader() {

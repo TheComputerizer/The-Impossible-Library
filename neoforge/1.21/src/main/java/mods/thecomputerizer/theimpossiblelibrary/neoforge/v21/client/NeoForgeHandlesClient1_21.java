@@ -25,6 +25,10 @@ public class NeoForgeHandlesClient1_21 extends NeoForgeHandlesClient {
         else ((BufferSource)source).endBatch();
     }
     
+    @Override protected float getPartialTick(Minecraft mc) {
+        return mc.getTimer().getGameTimeDeltaTicks();
+    }
+    
     @Override public void registerKeyBinding(KeyAPI<?> key) {
         if(this.registeredKeys) ArrayUtils.add(Minecraft.getInstance().options.keyMappings,key.unwrap());
         else this.keys.add(key.unwrap());

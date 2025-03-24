@@ -5,13 +5,28 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 
 import java.util.List;
+
+import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
 
 /**
  * Only keybinds & RenderType stuff needs to be handled in 1.20.4+
  */
 public abstract class NeoForgeHandlesClient extends SharedHandlesClient {
+    
+    protected float getPartialTick(Minecraft mc) {
+        return mc.getPartialTick();
+    }
+    
+    @SuppressWarnings("UnstableApiUsage")
+    @Override public void renderDebugText(Object graphicsObj, List<String> left, List<String> right) {
+        Minecraft mc = Minecraft.getInstance();
+        EVENT_BUS.post(new DebugText(mc.getWindow(),(GuiGraphics)graphicsObj,getPartialTick(mc),left,right));
+        renderDebugText(graphicsObj,left,true);
+        renderDebugText(graphicsObj,right,false);
+    }
     
     @Override public void renderDebugText(Object graphicsObj, List<String> text, boolean left) {
         if(text.isEmpty()) return;

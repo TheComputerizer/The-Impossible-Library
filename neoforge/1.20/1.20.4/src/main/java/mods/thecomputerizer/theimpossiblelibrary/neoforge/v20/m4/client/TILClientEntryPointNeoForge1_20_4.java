@@ -1,8 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.client;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.NeoForgeClientHelpers;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.TILClientEntryPoint1_20;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -11,8 +9,6 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-
-import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_POST;
 
 public class TILClientEntryPointNeoForge1_20_4 extends TILClientEntryPoint1_20 {
     
@@ -40,10 +36,6 @@ public class TILClientEntryPointNeoForge1_20_4 extends TILClientEntryPoint1_20 {
         if(this.extraData instanceof IEventBus bus) return bus;
         TILRef.logError("Extra data not set to instance of IEventBus {}",this.extraData);
         return null;
-    }
-    
-    @Override public void onClientSetup() {
-        EventHelper.addListener(RENDER_OVERLAY_POST,NeoForgeClientHelpers::emulateForgeDebugTextEvent);
     }
     
     @Override public void onPreRegistration() {
