@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.server.WrappedCommand1_20_6.INFO;
 import static net.minecraft.core.registries.Registries.COMMAND_ARGUMENT_TYPE;
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
@@ -31,8 +30,8 @@ public class TILCommonEntryPointNeoForge1_20_6 extends TILCommonEntryPoint1_20_6
     public static void onRegisterCreativeTabs(RegisterEvent event) {
         if(event.getRegistryKey()==CREATIVE_MODE_TAB) CreativeTabBuilder1_20.onRegister(event);
         else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
-            ResourceLocation registryName = new ResourceLocation(MODID,"custom_suggester");
-            event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
+            ResourceLocation registryName = TILRef.res("custom_suggester").unwrap();
+            event.register(COMMAND_ARGUMENT_TYPE, registryName, () -> INFO);
             WrappedCommand1_20_6.registerArgType();
         }
     }
@@ -53,22 +52,18 @@ public class TILCommonEntryPointNeoForge1_20_6 extends TILCommonEntryPoint1_20_6
             else TILRef.logError("Failed to set extra data! The mod container doesnt exist?");
         }
         if(this.extraData instanceof IEventBus bus) return bus;
-        TILRef.logError("Extra data not set to instance of IEventBus {}",this.extraData);
+        TILRef.logError("Extra data not set to instance of IEventBus {}", this.extraData);
         return null;
     }
     
     @Override public void onPreRegistration() {
         IEventBus bus = getModBus();
-        if(Objects.nonNull(bus)) bus.addListener(TILCommonEntryPointNeoForge1_20_6::onRegisterCreativeTabs);
-        super.onPreRegistration();
-    }
-    
-    @Override public void onCommonSetup() {
-        IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) {
+            TILRef.logInfo("Adding mod event listeners");
+            bus.addListener(TILCommonEntryPointNeoForge1_20_6::onRegisterCreativeTabs);
             bus.addListener(TILCommonEntryPointNeoForge1_20_6::onSupplyCreativeTabs);
             bus.addListener(NetworkNeoForge1_20_6::registerPayloads);
-        } else TILRef.logError("Failed to register network payloads!");
-        super.onCommonSetup();
+        }
+        super.onPreRegistration();
     }
 }

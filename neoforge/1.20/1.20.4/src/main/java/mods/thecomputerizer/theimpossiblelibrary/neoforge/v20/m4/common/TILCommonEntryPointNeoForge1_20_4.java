@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.server.WrappedCommand1_20_4.INFO;
 import static net.minecraft.core.registries.Registries.COMMAND_ARGUMENT_TYPE;
 import static net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB;
@@ -31,7 +30,7 @@ public class TILCommonEntryPointNeoForge1_20_4 extends TILCommonEntryPoint1_20_4
     public static void onRegisterCreativeTabs(RegisterEvent event) {
         if(event.getRegistryKey()==CREATIVE_MODE_TAB) CreativeTabBuilder1_20.onRegister(event);
         else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
-            ResourceLocation registryName = new ResourceLocation(MODID,"custom_suggester");
+            ResourceLocation registryName = TILRef.res("custom_suggester").unwrap();
             event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
             WrappedCommand1_20_4.registerArgType();
         }
@@ -59,16 +58,12 @@ public class TILCommonEntryPointNeoForge1_20_4 extends TILCommonEntryPoint1_20_4
     
     @Override public void onPreRegistration() {
         IEventBus bus = getModBus();
-        if(Objects.nonNull(bus)) bus.addListener(TILCommonEntryPointNeoForge1_20_4::onRegisterCreativeTabs);
-        super.onPreRegistration();
-    }
-    
-    @Override public void onCommonSetup() {
-        IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) {
+            TILRef.logInfo("Adding mod event listeners");
+            bus.addListener(TILCommonEntryPointNeoForge1_20_4::onRegisterCreativeTabs);
             bus.addListener(TILCommonEntryPointNeoForge1_20_4::onSupplyCreativeTabs);
             bus.addListener(NetworkNeoForge1_20_4::registerPayloads);
-        } else TILRef.logError("Failed to register network payloads!");
-        super.onCommonSetup();
+        }
+        super.onPreRegistration();
     }
 }

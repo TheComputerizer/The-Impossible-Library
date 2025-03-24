@@ -59,7 +59,7 @@ public class TILCommonEntryPointNeoForge1_21 extends TILCommonEntryPoint1_21 {
     @Override public void onPreRegistration() {
         IEventBus bus = getModBus();
         if(Objects.nonNull(bus)) {
-            TILRef.logError("Adding mod event listeners");
+            TILRef.logInfo("Adding mod event listeners");
             bus.addListener(NetworkNeoForge1_21::registerPayloads);
             bus.addListener(TILCommonEntryPointNeoForge1_21::onRegisterCreativeTabs);
             bus.addListener(TILCommonEntryPointNeoForge1_21::onSupplyCreativeTabs);
