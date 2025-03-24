@@ -7,9 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 
-/**
- * It took me way too long to figure out that the wrapper class determines the network direction for decoding.
- */
 public class MessageWrapperForge1_20_4 extends MessageWrapperAPI<ServerPlayer,Context> {
     
     static final ResourceLocation ID = TILRef.res("message_wrapper_forge").unwrap();

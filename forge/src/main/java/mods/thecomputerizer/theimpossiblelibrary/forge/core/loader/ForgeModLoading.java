@@ -54,7 +54,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 @SuppressWarnings("LoggingSimilarMessage")
 public class ForgeModLoading {
     
-    static final Logger LOGGER = LogManager.getLogger("NeoForge Mod Loading");
+    static final Logger LOGGER = LogManager.getLogger("Forge Mod Loading");
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
     static final String MOD_CLASS_VISITOR = "net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor";
     static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";

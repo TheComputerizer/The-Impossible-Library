@@ -9,9 +9,6 @@ import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 
 import javax.annotation.Nonnull;
 
-/**
- * It took me way too long to figure out that the wrapper class determines the network direction for decoding.
- */
 public class MessageWrapperForge1_21 extends MessageWrapperAPI<ServerPlayer,Context> implements CustomPacketPayload {
     
     static final Type<MessageWrapperForge1_21> TYPE = new Type<>(TILRef.res("message_wrapper_forge").unwrap());

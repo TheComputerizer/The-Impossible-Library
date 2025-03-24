@@ -394,6 +394,11 @@ public class ForgeCoreLoader {
         return ((Optional<?>)Methods.invokeDirect(layerManager,"getLayer",layerEnum)).orElse(null);
     }
     
+    static Object getServicesCatalog(Object moduleLayer) {
+        Object langAccess = Fields.getStaticDirect(ServiceLoader.class,"LANG_ACCESS");
+        return Methods.invokeDirect(langAccess,"getServicesCatalog",moduleLayer);
+    }
+    
     static String getVersionFromForgeVersion(String forgeVersion) {
         String ignore = "forge-";
         String actualVersion = forgeVersion.startsWith(ignore) ? forgeVersion.substring(ignore.length()) : forgeVersion;
@@ -763,6 +768,18 @@ public class ForgeCoreLoader {
         Fields.setDirect(object,name,Collections.unmodifiableSet(set));
     }
     
+    public static void removeServiceFrom(String service, String impl, String layer) {
+        ClassHelper.checkBurningWaveInit();
+        LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
+        String moduleName = "theimpossiblelibrary";
+        Object servicesCatalog = getServicesCatalog(getModuleLayer(layer));
+        Class<?> pClass = serviceProviderClass(servicesCatalog);
+        Map<String,List<?>> map = new HashMap<>(Fields.getDirect(servicesCatalog,"map"));
+        if(map.containsKey(service)) map.get(service).removeIf(provider ->
+                        impl.equals(Methods.invokeDirect(provider,"providerName")));
+        LOGGER.info("Sucessfully removed all service providers from {} layer for {}",layer,impl);
+    }
+    
     /**
      * Get name of resolved module via reflection since this is a Java 8 context
      */
@@ -794,6 +811,7 @@ public class ForgeCoreLoader {
         boolean newFormat = false;
         Map<String,Object> fromPkg; //Fix BOOT modules first
         try {
+            ClassHelper.checkBurningWaveInit();
             fromPkg = Fields.getDirect(loaderFrom,"packageLookup");
         } catch(NoSuchFieldException ex) {
             fromPkg = Fields.getDirect(loaderFrom,"packageToOurModules");
@@ -843,6 +861,19 @@ public class ForgeCoreLoader {
             //By this point the class is definitely in the GAME layer regardless of whether the module is correct
             Fields.setDirect(c,"module",getModuleFromLayer("GAME",name));
             LOGGER.info("Moved {} from module {} to module {}",c,actualName,name);
+        }
+    }
+    
+    public static @Nullable Class<?> serviceProviderClass(Object servicesCatalog) {
+        if(Objects.isNull(servicesCatalog)) return null;
+        Class<?> sClass = servicesCatalog.getClass();
+        String providerClassName = sClass.getName()+"$ServiceProvider";
+        Class<?> pClass;
+        try {
+            return Class.forName(providerClassName);
+        } catch(ClassNotFoundException ex) {
+            LOGGER.error("Failed to find class {}",providerClassName,ex);
+            return null;
         }
     }
     

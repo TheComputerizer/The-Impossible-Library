@@ -80,7 +80,7 @@ public class NetworkForge1_21 extends Network1_21<Channel<CustomPacketPayload>,N
                     .clientAcceptedVersions((status,version) -> true)
                     .serverAcceptedVersions((status,version) -> true).networkProtocolVersion(1)
                     .payloadChannel().any().bidirectional()
-                    .add(TYPE,streamCodec(),MessageWrapperForge1_21::handle).build();
+                    .addMain(TYPE,streamCodec(),MessageWrapperForge1_21::handle).build();
         }
         return this.network;
     }
