@@ -5,13 +5,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.NeoForgeHandlesClient;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.neoforged.bus.api.Event;
+import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,8 +29,9 @@ public class NeoForgeHandlesClient1_21 extends NeoForgeHandlesClient {
         else ((BufferSource)source).endBatch();
     }
     
-    @Override protected float getPartialTick(Minecraft mc) {
-        return mc.getTimer().getGameTimeDeltaTicks();
+    @SuppressWarnings("UnstableApiUsage")
+    @Override protected Event getDebugTextEvent(Minecraft mc, GuiGraphics graphics, List<String> left, List<String> right) {
+        return new DebugText(mc.getWindow(),graphics,mc.getTimer(),left,right);
     }
     
     @Override public void registerKeyBinding(KeyAPI<?> key) {

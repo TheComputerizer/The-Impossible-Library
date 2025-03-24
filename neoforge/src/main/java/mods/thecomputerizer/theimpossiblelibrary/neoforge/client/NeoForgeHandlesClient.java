@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 
 import java.util.List;
@@ -16,14 +17,13 @@ import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
  */
 public abstract class NeoForgeHandlesClient extends SharedHandlesClient {
     
-    protected float getPartialTick(Minecraft mc) {
-        return mc.getPartialTick();
+    @SuppressWarnings("UnstableApiUsage")
+    protected Event getDebugTextEvent(Minecraft mc, GuiGraphics graphics, List<String> left, List<String> right) {
+        return new DebugText(mc.getWindow(),graphics,mc.getPartialTick(),left,right);
     }
     
-    @SuppressWarnings("UnstableApiUsage")
     @Override public void renderDebugText(Object graphicsObj, List<String> left, List<String> right) {
-        Minecraft mc = Minecraft.getInstance();
-        EVENT_BUS.post(new DebugText(mc.getWindow(),(GuiGraphics)graphicsObj,getPartialTick(mc),left,right));
+        EVENT_BUS.post(getDebugTextEvent(Minecraft.getInstance(),(GuiGraphics)graphicsObj,left,right));
         renderDebugText(graphicsObj,left,true);
         renderDebugText(graphicsObj,right,false);
     }
