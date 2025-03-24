@@ -1,27 +1,36 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network;
 
+import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.network.Network1_20;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.SimpleChannel;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network.MessageWrapperForge1_20_6.TYPE;
 import static net.minecraftforge.network.NetworkDirection.*;
 import static net.minecraftforge.network.PacketDistributor.PLAYER;
 import static net.minecraftforge.network.PacketDistributor.SERVER;
 
-public class NetworkForge1_20_6 extends Network1_20<SimpleChannel,NetworkDirection<?>> {
-
-    private SimpleChannel network;
+public class NetworkForge1_20_6 extends Network1_20<Channel<CustomPacketPayload>,NetworkDirection<?>> {
+    
+    static <B extends ByteBuf> StreamCodec<B,MessageWrapperForge1_20_6> streamCodec() {
+        return StreamCodec.of((buf,payload) -> payload.encode(buf),
+                              MessageWrapperForge1_20_6::getInstance);
+    }
+    
+    private Channel<CustomPacketPayload> network;
 
     @Override public NetworkDirection<?> getDirFromName(String name) {
         return switch(name.toUpperCase()) {
@@ -63,16 +72,15 @@ public class NetworkForge1_20_6 extends Network1_20<SimpleChannel,NetworkDirecti
         if(dir==LOGIN_TO_CLIENT) return LOGIN_TO_SERVER;
         return LOGIN_TO_CLIENT;
     }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Override public SimpleChannel getNetwork() {
+    
+    @Override public Channel<CustomPacketPayload> getNetwork() {
         if(Objects.isNull(this.network)) {
             ResourceLocation name = TILRef.res("main_network").unwrap();
             this.network = ChannelBuilder.named(name)
                     .clientAcceptedVersions((status,version) -> true)
-                    .serverAcceptedVersions((status,version) -> true)
-                    .networkProtocolVersion(1)
-                    .simpleChannel();
+                    .serverAcceptedVersions((status,version) -> true).networkProtocolVersion(1)
+                    .payloadChannel().any().bidirectional()
+                    .add(TYPE,streamCodec(),MessageWrapperForge1_20_6::handle).build();
         }
         return this.network;
     }
@@ -85,43 +93,33 @@ public class NetworkForge1_20_6 extends Network1_20<SimpleChannel,NetworkDirecti
         return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
     }
 
-    //TODO I'm pretty sure the login directions need an extra flag to be set
-    @SuppressWarnings("unchecked") @Override public void registerMessage(MessageDirectionInfo<NetworkDirection<?>> dir, int id) {
-        Class<MessageWrapperForge1_20_6> msgClass = (Class<MessageWrapperForge1_20_6>)MessageWrapperForge1_20_6.getClass(dir.getDirection());
-        getNetwork().messageBuilder(msgClass,id,dir.getDirection())
-                .encoder(MessageWrapperForge1_20_6::encode)
-                .decoder(buf -> MessageWrapperForge1_20_6.getInstance(dir.getDirection(), buf))
-                .consumerNetworkThread(MessageWrapperForge1_20_6::handle)
-                .add();
-    }
+    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection<?>> dir, int id) {}
     
-    //TODO Does not support login direction
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        getNetwork().send(message,PLAYER.with((ServerPlayer)player));
+        getNetwork().send((MessageWrapperForge1_20_6)message,PLAYER.with((ServerPlayer)player));
     }
     
-    //TODO Does not support login direction
     @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
-        getNetwork().send(message,SERVER.noArg());
+        getNetwork().send((MessageWrapperForge1_20_6)message,SERVER.noArg());
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection<?> dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_6.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_6.getInstance();
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection<?> dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_6.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_6.getInstance();
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection<?> dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_6.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_6.getInstance();
         wrapper.setMessages(dir,messages);
         return wrapper;
     }

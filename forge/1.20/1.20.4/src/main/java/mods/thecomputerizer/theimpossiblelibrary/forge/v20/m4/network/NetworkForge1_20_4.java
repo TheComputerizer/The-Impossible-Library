@@ -64,15 +64,16 @@ public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirecti
         };
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network)) {
             ResourceLocation name = TILRef.res("main_network").unwrap();
             this.network = ChannelBuilder.named(name)
                     .clientAcceptedVersions((status,version) -> true)
                     .serverAcceptedVersions((status,version) -> true)
-                    .networkProtocolVersion(1)
-                    .simpleChannel();
+                    .networkProtocolVersion(1).simpleChannel()
+                    .messageBuilder(MessageWrapperForge1_20_4.class)
+                    .encoder(MessageWrapperForge1_20_4::encode).decoder(MessageWrapperForge1_20_4::getInstance)
+                    .consumerMainThread(MessageWrapperAPI::handle).add();
         }
         return this.network;
     }
@@ -85,43 +86,33 @@ public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirecti
         return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
     }
 
-    //TODO I'm pretty sure the login directions need an extra flag to be set
-    @SuppressWarnings("unchecked") @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
-        Class<MessageWrapperForge1_20_4> msgClass = (Class<MessageWrapperForge1_20_4>)MessageWrapperForge1_20_4.getClass(dir.getDirection());
-        getNetwork().messageBuilder(msgClass,id,dir.getDirection())
-                .encoder(MessageWrapperForge1_20_4::encode)
-                .decoder(buf -> MessageWrapperForge1_20_4.getInstance(dir.getDirection(),buf))
-                .consumerNetworkThread(MessageWrapperForge1_20_4::handle)
-                .add();
-    }
+    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {}
     
-    //TODO Does not support login direction
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
         getNetwork().send(message,PLAYER.with((ServerPlayer)player));
     }
     
-    //TODO Does not support login direction
     @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
         getNetwork().send(message,SERVER.noArg());
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance();
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance();
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance();
         wrapper.setMessages(dir,messages);
         return wrapper;
     }

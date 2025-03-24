@@ -1,88 +1,38 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
-import net.minecraftforge.network.NetworkDirection;
 
-import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_CLIENT;
-import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_SERVER;
-import static net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT;
+import javax.annotation.Nonnull;
 
 /**
  * It took me way too long to figure out that the wrapper class determines the network direction for decoding.
  */
-public abstract class MessageWrapperForge1_20_6 extends MessageWrapperAPI<ServerPlayer,Context> {
+public class MessageWrapperForge1_20_6 extends MessageWrapperAPI<ServerPlayer,Context> implements CustomPacketPayload {
     
-    public static MessageWrapperForge1_20_6 getInstance(NetworkDirection<?> dir) {
-        boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
-        boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
-        return login ? (client ? new ClientLogin() : new ServerLogin()) : (client ? new Client() : new Server());
+    static final Type<MessageWrapperForge1_20_6> TYPE = new Type<>(TILRef.res("message_wrapper_forge").unwrap());
+    
+    public static MessageWrapperForge1_20_6 getInstance() {
+        return new MessageWrapperForge1_20_6();
     }
     
-    public static MessageWrapperForge1_20_6 getInstance(NetworkDirection<?> dir, ByteBuf buf) {
-        boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
-        boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
-        return login ? (client ? new ClientLogin(buf) : new ServerLogin(buf)) :
-                (client ? new Client(buf) : new Server(buf));
+    public static MessageWrapperForge1_20_6 getInstance(ByteBuf buf) {
+        return new MessageWrapperForge1_20_6(buf);
     }
     
-    public static Class<? extends MessageWrapperForge1_20_6> getClass(NetworkDirection<?> dir) {
-        boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
-        boolean login = dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
-        return login ? (client ? ClientLogin.class : ServerLogin.class) : (client ? Client.class : Server.class);
-    }
-    
-    MessageWrapperForge1_20_6() {
+    public MessageWrapperForge1_20_6() {
         super();
     }
     
-    MessageWrapperForge1_20_6(ByteBuf buf) {
+    public MessageWrapperForge1_20_6(ByteBuf buf) {
         super(buf);
     }
     
-    public static final class Client extends MessageWrapperForge1_20_6 {
-        
-        Client() {
-            super();
-        }
-        
-        Client(ByteBuf buf) {
-            super(buf);
-        }
-    }
-    
-    public static final class ClientLogin extends MessageWrapperForge1_20_6 {
-        
-        ClientLogin() {
-            super();
-        }
-        
-        ClientLogin(ByteBuf buf) {
-            super(buf);
-        }
-    }
-    
-    public static final class Server extends MessageWrapperForge1_20_6 {
-        
-        Server() {
-            super();
-        }
-        
-        Server(ByteBuf buf) {
-            super(buf);
-        }
-    }
-    
-    public static final class ServerLogin extends MessageWrapperForge1_20_6 {
-        
-        ServerLogin() {
-            super();
-        }
-        
-        ServerLogin(ByteBuf buf) {
-            super(buf);
-        }
+    @Override public @Nonnull Type<MessageWrapperForge1_20_6> type() {
+        return TYPE;
     }
 }

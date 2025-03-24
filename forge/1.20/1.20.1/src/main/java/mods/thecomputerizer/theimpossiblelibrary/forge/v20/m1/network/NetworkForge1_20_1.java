@@ -64,7 +64,6 @@ public class NetworkForge1_20_1 extends Network1_20<SimpleChannel,NetworkDirecti
         };
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network))
             this.network = ChannelBuilder.named(TILRef.res("main_network").unwrap())
@@ -83,7 +82,6 @@ public class NetworkForge1_20_1 extends Network1_20<SimpleChannel,NetworkDirecti
         return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
     }
 
-    //TODO I'm pretty sure the login directions need an extra flag to be set
     @SuppressWarnings("unchecked") @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
         getNetwork().registerMessage(id,(Class<MessageWrapperForge1_20_1>)MessageWrapperForge1_20_1.getClass(dir.getDirection()),
                 MessageWrapperAPI::encode, buf -> MessageWrapperForge1_20_1.getInstance(dir.getDirection(), buf),
@@ -97,12 +95,10 @@ public class NetworkForge1_20_1 extends Network1_20<SimpleChannel,NetworkDirecti
                 },Optional.of(dir.getDirection()));
     }
     
-    //TODO Does not support login direction
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
         getNetwork().send(PLAYER.with(() -> (ServerPlayer)player),(MessageWrapperForge1_20_1)message);
     }
     
-    //TODO Does not support login direction
     @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
         getNetwork().sendToServer((MessageWrapperForge1_20_1)message);
     }
