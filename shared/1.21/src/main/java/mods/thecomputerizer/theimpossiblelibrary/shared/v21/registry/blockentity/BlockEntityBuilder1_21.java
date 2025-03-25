@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.blockentit
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI.BlockEntityCreator;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
@@ -20,8 +22,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static net.minecraftforge.registries.ForgeRegistries.BLOCK_ENTITY_TYPES;
-
 public class BlockEntityBuilder1_21 extends BlockEntityBuilderAPI {
     
     public BlockEntityBuilder1_21(@Nullable BlockEntityBuilderAPI parent) {
@@ -31,7 +31,10 @@ public class BlockEntityBuilder1_21 extends BlockEntityBuilderAPI {
     @Override public BlockEntityAPI<?,?> build() { //Stupid backwards reference
         final Block[] blocks = buildBlockArray(this.validBlocks.get());
         final Function<BlockEntityType<?>,BlockEntityCreator> creatorFunc = buildCreatorFunc();
-        final Supplier<BlockEntityType<?>> typeSupplier = () -> BLOCK_ENTITY_TYPES.getValue(this.registryName.unwrap());
+        final Supplier<BlockEntityType<?>> typeSupplier = () -> {
+            RegistryAPI<?> registry = RegistryHelper.getBlockEntityRegistry();
+            return Objects.nonNull(registry) ? (BlockEntityType<?>)registry.getValue(this.registryName) : null;
+        };
         BlockEntityAPI<?,?> entity = BlockEntity1_21.get(buildType((pos,state) -> (BlockEntity)creatorFunc.apply(typeSupplier.get())
                 .create(null,WrapperHelper.wrapPosition(pos),WrapperHelper.wrapState(state)).getEntity(),blocks));
         entity.setCreator(creatorFunc.apply(entity.unwrap()));
