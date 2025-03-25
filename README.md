@@ -39,10 +39,8 @@ Other: Registering stuff is not yet possible & a majority of the event wrappers 
 - 1.20.1 → FUNCTIONAL
 - 1.20.4 → BROKEN
 - 1.20.6 → BROKEN
-- 1.21.1 → PLAYABLE
+- 1.21.1 → FUNCTIONAL
 - 1.21.4 → PLANNED
-
-Other: Keybinds do not show up in the keybind menu in 1.19.2+
 
 ### NeoForge
 - 1.20.1 → FUNCTIONAL
@@ -50,8 +48,6 @@ Other: Keybinds do not show up in the keybind menu in 1.19.2+
 - 1.20.6 → FUNCTIONAL
 - 1.21.1 → FUNCTIONAL
 - 1.21.4 → PLANNED
-
-Other: Keybinds do not show up in the keybind menu
 
 ## Getting Started
 
@@ -87,7 +83,7 @@ Modrinth Project: https://modrinth.com/mod/the-impossible-library
 
 ## How to include this mod as a dependency
 
-You can just use curse maven like so
+You can use curse maven like so
 
 ```
 repositories {

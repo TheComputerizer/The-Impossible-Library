@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
@@ -20,6 +21,11 @@ public abstract class NeoForgeHandlesClient extends SharedHandlesClient {
     @SuppressWarnings("UnstableApiUsage")
     protected Event getDebugTextEvent(Minecraft mc, GuiGraphics graphics, List<String> left, List<String> right) {
         return new DebugText(mc.getWindow(),graphics,mc.getPartialTick(),left,right);
+    }
+    
+    //TODO Figure out why the check doesn't work in 1.20.6+
+    @Override public boolean isLoading(@Nullable Object minecraft) {
+        return false;
     }
     
     @Override public void renderDebugText(Object graphicsObj, List<String> left, List<String> right) {

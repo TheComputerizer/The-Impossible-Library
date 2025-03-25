@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.loading.ClientModLoader;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
@@ -32,6 +33,11 @@ public class NeoForgeHandlesClient1_21 extends NeoForgeHandlesClient {
     @SuppressWarnings("UnstableApiUsage")
     @Override protected Event getDebugTextEvent(Minecraft mc, GuiGraphics graphics, List<String> left, List<String> right) {
         return new DebugText(mc.getWindow(),graphics,mc.getTimer(),left,right);
+    }
+    
+    @SuppressWarnings("UnstableApiUsage")
+    @Override public boolean isLoading(@Nullable Object minecraft) {
+        return ClientModLoader.isLoading(); //Maybe?
     }
     
     @Override public void registerKeyBinding(KeyAPI<?> key) {
