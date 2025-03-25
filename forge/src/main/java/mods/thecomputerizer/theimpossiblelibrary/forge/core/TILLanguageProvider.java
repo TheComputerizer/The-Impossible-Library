@@ -30,18 +30,12 @@ public class TILLanguageProvider implements IModLanguageProvider {
     }
     
     final Object core;
-    final Object versionProvider;
     
     public TILLanguageProvider() {
         TILRef.logInfo("Initializing multiversion language provider (Forge edition)");
         ClassLoader pluginLoader = ForgeCoreLoader.layerClassLoader("PLUGIN");
         this.core = ForgeCoreLoader.initCoreAPI(pluginLoader);
-        this.versionProvider = Objects.nonNull(this.core) ?
-                Methods.invoke(this.core,"getLaunguageProvider") : null;
-        if(Objects.nonNull(this.versionProvider))
-            TILRef.logInfo("Successfully initialized versioned language provider as {} on {}",this.versionProvider,
-                    this.versionProvider.getClass().getClassLoader());
-        else TILRef.logError("Initialized versioned language provider as null");
+        TILRef.logInfo("Retrieved CoreAPI instance {} for multiversion language provider",this.core);
     }
     
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> ignored)  {}
@@ -69,13 +63,24 @@ public class TILLanguageProvider implements IModLanguageProvider {
                         }).collect(Collectors.toMap(loadModIDMapper,Function.identity(),(a,b)->a)));
     }
     
+    String getFixedClassName(String className) {
+        return className.contains("1_19") || className.contains("1_20") || className.contains("1_21") ?
+                className.substring(0,className.length()-2) : className;
+    }
+    
+    String getFixedPkg(String pkg) {
+        return pkg.contains("v19") || pkg.contains("v20") || pkg.contains("v21") ?
+                pkg.substring(0,pkg.length()-3) : pkg;
+    }
+    
     Class<?> getLanguageLoaderClass() {
         Object modLoader = Methods.invoke(this.core,"getModLoader");
         String pkg = "mods.thecomputerizer.theimpossiblelibrary";
         pkg = Methods.invoke(modLoader,"getPackageName",pkg);
         Object version = Methods.invoke(this.core,"getVersion");
-        pkg = Methods.invoke(version,"getPackageName",pkg);
-        String className = pkg+".core."+("TILLanguageLoader"+version).replace('.','_');
+        pkg = getFixedPkg(Methods.invoke(version,"getPackageName",pkg));
+        String className = getFixedClassName(("TILLanguageLoader"+version).replace('.','_'));
+        className = pkg+".core.loader."+className;
         try {
             return Class.forName(className,true,getClass().getClassLoader());
         } catch(ClassNotFoundException ex) {
