@@ -7,10 +7,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILForgeLanguageProvider;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.loader.TILLanguageLoader1_20;
+import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,6 +25,22 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 @IndirectCallers
 public class TILLanguageProvider1_20_4 implements TILForgeLanguageProvider {
+    
+    public TILLanguageProvider1_20_4() {
+        TILRef.logInfo("Instantiated 1.20.4 language provider (Forge edition)");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            List<EarlyLoadingException> errors = FMLLoader.getLoadingModList().getErrors();
+            TILRef.logInfo("There are {} loading errors",errors.size());
+            for(EarlyLoadingException exception : errors) {
+                List<ExceptionData> datas = exception.getAllData();
+                TILRef.logError("LOADING EXCEPTION FOUND WITH {} DATA INSTANCES",datas.size(),exception);
+                for(ExceptionData data : datas)
+                    TILRef.logError("EXCEPTION DATA: MESSAGE = {} | ARGS = {} | INFO = {}",data.getI18message(),
+                                    data.getArgs(),data.getModInfo());
+                TILRef.logError("CAUSED BY",exception.getCause());
+            }
+        }));
+    }
     
     @Override public Consumer<ModFileScanData> getFileVisitor(CoreAPI core, IModLanguageProvider provider) {
         return scan -> {

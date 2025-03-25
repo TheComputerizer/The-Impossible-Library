@@ -19,6 +19,10 @@ public class TypeHelper {
         return get(binaryClasspath.replace('.','/'));
     }
     
+    public static Type get(Class<?> c) {
+        return fromBinary(c.getName());
+    }
+    
     public static Type get(String className) {
         return Type.getType("L"+className+";");
     }

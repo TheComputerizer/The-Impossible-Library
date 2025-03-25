@@ -96,6 +96,10 @@ public abstract class CoreAPI {
         return version.getPackageName(loader,BASE_PACKAGE)+".core.TILCore"+loader+versionName;
     }
     
+    public static GameVersion gameVersion() {
+        return getInstance().getVersion();
+    }
+    
     public static CoreAPI getInstance() {
         return getInstance(CoreAPI.class.getClassLoader());
     }

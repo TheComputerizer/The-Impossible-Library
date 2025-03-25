@@ -3,9 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 import cpw.mods.modlauncher.Launcher;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +22,7 @@ import java.util.jar.Manifest;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
+@Getter
 public class MultiVersionModLocator implements IModLocator {
     
     static {
@@ -32,23 +32,28 @@ public class MultiVersionModLocator implements IModLocator {
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
     }
     
-    private final Object localLocator;
-    @Getter private Map<IModFile,FileSystem> fileSystems;
+    private Map<IModFile,FileSystem> fileSystems;
+    boolean failed;
     
     public MultiVersionModLocator() {
-        TILRef.logDebug("Core Forge Locator plugin loaded on {}",getClass().getClassLoader());
-        this.localLocator = createLocalLocator(ForgeCoreLoader.initCoreAPI(Launcher.class.getClassLoader()));
-        if(Objects.isNull(this.localLocator))
-            TILRef.logFatal("Failed to find mod locator! Unable to load multiversion mods");
+        TILRef.logInfo("Core Forge Locator plugin loaded on {}",getClass().getClassLoader());
+        setLoadingVersion(ForgeCoreLoader.initCoreAPI(Launcher.class.getClassLoader()));
     }
     
-    @Nullable Object createLocalLocator(@Nullable Object coreInstance) {
-        if(Objects.isNull(coreInstance)) return null;
-        ClassLoader loader = coreInstance.getClass().getClassLoader();
+    void setLoadingVersion(@Nullable Object coreInstance) {
+        if(Objects.isNull(coreInstance)) {
+            TILRef.logError("Failed to set Forge mod loading version with null CoreAPI instance!");
+            this.failed = true;
+            return;
+        }
         ClassHelper.checkBurningWaveInit();
-        Object locator = Methods.invoke(coreInstance,"getModLocator",loader);
-        if(Objects.nonNull(locator)) TILRef.logInfo("Found mod locator {}",locator.getClass());
-        return locator;
+        TILRef.logInfo("Initialized BurningWave");
+        String version = String.valueOf((Object)Methods.invoke(coreInstance,"gameVersion"));
+        TILRef.logInfo("Get version as {}",version);
+        String checkedVersion = version.substring(2).replace('.','_');
+        TILRef.logInfo("Checked version will be {}",checkedVersion);
+        ForgeModLoading.setFileVersion(getClass(),checkedVersion,version);
+        TILRef.logInfo("Successfully set Forge mod loading version ({},{})",checkedVersion,version);
     }
     
     FileSystem fileSystemFor(IModFile file) {
@@ -92,46 +97,43 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public void scanFile(IModFile file, Consumer<Path> consumer) {}
     
     @Override public void initArguments(Map<String,?> arguments) {
-        TILRef.logInfo("Inkoved initArguments with arguments {}",arguments);
-        if(Objects.nonNull(this.localLocator)) {
-            ClassLoader loader = getClass().getClassLoader();
-            TILDev.logInfo("Initializing mod locator with {}",loader);
-            ReflectionHelper.invokeMethod(this.localLocator.getClass(),"initFor",this.localLocator,
-                                          new Class<?>[]{ClassLoader.class,IModLocator.class},loader,this);
-        } else TILRef.logFatal("Locator is null and cannot load multiversion mods! Did it fail to initialize?");
-        TILRef.logInfo("Finished initArguments with localLocator {}",this.localLocator);
+        if(this.failed) {
+            TILRef.logWarn("Not initializing mod loading for MultiVersionModLocator that failed to load");
+            return;
+        }
+        TILRef.logInfo("Initializing Forge mod loading with args {}",arguments);
+        ForgeModLoading.initModLoading(getClass().getClassLoader(),this);
     }
     
     @Override public boolean isValid(IModFile file) {
-        return true;
+        return !this.failed;
     }
     
     @Override public String name() {
         return "multiversionloader";
     }
     
-    @SuppressWarnings("unchecked")
     @Override public List<IModFile> scanMods() {
-        TILRef.logDebug("Scanning for mods");
-        List<IModFile> files = null;
+        if(this.failed) {
+            TILRef.logWarn("Not scanning for mods with MultiVersionModLocator that failed to load");
+            return Collections.emptyList();
+        }
+        TILRef.logInfo("Scanning for mods");
+        this.fileSystems = Collections.emptyMap();
         try {
-            this.fileSystems = Collections.emptyMap();
-            if(Objects.nonNull(this.localLocator)) {
-                files = (List<IModFile>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),"scanMods",
-                        this.localLocator,new Class<?>[]{IModLocator.class}, this);
-                if(Objects.nonNull(files) && this.localLocator.getClass().getSimpleName().contains("1_16_5")) {
-                    this.fileSystems = new HashMap<>();
-                    for(IModFile file : files) {
-                        FileSystem fs = fileSystemFor(file);
-                        if(Objects.nonNull(fs)) this.fileSystems.put(file, fs);
-                    }
+            List<IModFile> files = ForgeModLoading.scanMods();
+            if(!files.isEmpty() && ForgeModLoading.isPathBased()) {
+                this.fileSystems = new HashMap<>();
+                for(IModFile file : files) {
+                    FileSystem fs = fileSystemFor(file);
+                    if(Objects.nonNull(fs)) this.fileSystems.put(file, fs);
                 }
-            } else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
+            }
+            TILRef.logInfo("Returing scanned mods {}",files);
+            return files;
         } catch(Throwable t) {
             TILRef.logError("Failed to scan mods",t);
             throw t;
         }
-        TILRef.logInfo("Returing scanned mods {}",files);
-        return Objects.nonNull(files) ? files : Collections.emptyList();
     }
 }

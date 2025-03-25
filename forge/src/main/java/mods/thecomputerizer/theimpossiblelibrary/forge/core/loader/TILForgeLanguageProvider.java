@@ -8,6 +8,5 @@ import java.util.function.Consumer;
 
 public interface TILForgeLanguageProvider {
     
-    default void fixMods() {}
     Consumer<ModFileScanData> getFileVisitor(CoreAPI core, IModLanguageProvider provider);
 }

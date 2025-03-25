@@ -118,6 +118,10 @@ public class ClassHelper {
         return Objects.nonNull(clazz) ? (simple ? clazz.getSimpleName() : clazz.getName()) : "";
     }
     
+    public static @Nullable Class<?> defineAndResolveClass(ClassLoader loader, String name, byte[] byteCode) {
+        return resolveClass(loader,defineClass(loader,name,byteCode));
+    }
+    
     /**
      * Find the byteCode of a class at the given URL defines it on the given ClassLoader.
      * Returns null if no valud byteCode was found from the URL.
@@ -152,7 +156,7 @@ public class ClassHelper {
             checkBurningWaveInit();
             return ClassLoaders.loadOrDefineByByteCode(buffer,loader);
         } catch(Throwable t) {
-            TILRef.logError("Failed to define class {} on {}",name,loader);
+            TILRef.logError("Failed to define class {} on {}",name,loader,t);
         }
         return null;
     }

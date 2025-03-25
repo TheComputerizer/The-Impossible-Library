@@ -35,8 +35,7 @@ public abstract class ModWriterFabric extends ModWriter {
     protected Pair<ClassWriter,Type> addInnerEntryPoint(ClassVisitor outerClass, boolean client, String innerName) {
         return addInnerClass(outerClass,innerName,inner -> {
             writeMethod(inner,cv -> ASMHelper.getConstructor(cv,PUBLIC),constructor ->
-                    ASMHelper.addSuperConstructor(constructor,OBJECT_TYPE.getInternalName(),EMPTY_METHOD_DESC,
-                                                  false));
+                    ASMHelper.addSuperConstructor(constructor,OBJECT_TYPE.getInternalName(),EMPTY_METHOD_DESC,false));
             String init = client ? "onInitializeClient" : "onInitializeServer";
             writeMethod(inner,cv -> ASMHelper.getMethod(cv,PUBLIC,init),
                         method -> addEntryHooks(method,true,init));

@@ -87,6 +87,11 @@ public class ASMRef {
     public static final int PUTFIELD = Opcodes.PUTFIELD;
     public static final int PUTSTATIC = Opcodes.PUTSTATIC;
     public static final int RETURN = Opcodes.RETURN;
+    public static final int RETURN_DOUBLE = DRETURN;
+    public static final int RETURN_FLOAT = FRETURN;
+    public static final int RETURN_INT_OR_BOOL = IRETURN; //Booleans are compiled into int values
+    public static final int RETURN_LONG = LRETURN;
+    public static final int RETURN_OBJ = ARETURN;
     public static final int STATIC = ACC_STATIC;
     public static final int STRICT = ACC_STRICT;
     public static final Type STRING_TYPE = Type.getType(String.class);

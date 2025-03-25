@@ -40,8 +40,14 @@ public class ASMHelper {
     }
     
     public static void addSuperConstructor(MethodVisitor constructor, String name, String desc, boolean isInterface) {
+        addSuperConstructor(constructor,name,desc,isInterface,0);
+    }
+    
+    public static void addSuperConstructor(MethodVisitor constructor, String name, String desc, boolean isInterface,
+            int parameterCount) {
         constructor.visitCode();
         constructor.visitVarInsn(ALOAD,0);
+        for(int i=0;i<parameterCount;i++) constructor.visitVarInsn(ALOAD,i+1);
         callInit(constructor,name,desc,isInterface);
     }
     
@@ -435,8 +441,11 @@ public class ASMHelper {
     }
     
     public static void writeDebugByteCode(String classpath, byte[] bytes) {
-        File debugDir = new File("/"+DATA_DIRECTORY,"asm_debug");
+        File debugDir = new File(DATA_DIRECTORY,"asm_debug");
         String filepath = classpath.replace('.',separatorChar)+".class";
-        writeByteCodeToFile(FileHelper.get(new File(debugDir,filepath),false),bytes);
+        File writeTo = FileHelper.get(new File(debugDir,filepath),true);
+        writeByteCodeToFile(writeTo,bytes);
+        if(Objects.nonNull(writeTo))
+            TILRef.logInfo("Wrote bytecode for {} to {}",classpath,writeTo.getAbsolutePath());
     }
 }

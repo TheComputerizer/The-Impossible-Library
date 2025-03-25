@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v19.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILLanguageLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider.IModLanguageLoader;
@@ -22,7 +23,7 @@ public class TILLanguageLoader1_19 extends TILLanguageLoader implements IModLang
     @Override public <T> T loadMod(IModInfo info, ModFileScanData scanResults, ModuleLayer layer) {
         String modid = info.getModId();
         try {
-            ClassLoader loader = layer.findModule(info.getOwningFile().moduleName()).orElseThrow().getClassLoader();
+            ClassLoader loader = ForgeCoreLoader.layerClassLoader("GAME");
             return super.loadModInner(info,loader,scanResults,layer);
         } catch(Throwable t) {
             String msg = "Failed to load mod "+modid;

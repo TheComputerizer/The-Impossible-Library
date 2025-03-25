@@ -356,7 +356,7 @@ public class ForgeCoreLoader {
      */
     static Object getLayerManager() {
         Environment env = INSTANCE.environment();
-        return ((Optional<?>)Methods.invokeDirect(env,"findModuleLayerManager")).orElse(null);
+        return ((Optional<?>)Methods.invoke(env,"findModuleLayerManager")).orElse(null);
     }
     
     @SuppressWarnings({"unchecked","SameParameterValue"})
@@ -391,7 +391,7 @@ public class ForgeCoreLoader {
             LOGGER.error("IModuleLayerManager instance not found in environment!");
             return null;
         }
-        return ((Optional<?>)Methods.invokeDirect(layerManager,"getLayer",layerEnum)).orElse(null);
+        return ((Optional<?>)Methods.invoke(layerManager,"getLayer",layerEnum)).orElse(null);
     }
     
     static Object getServicesCatalog(Object moduleLayer) {
@@ -829,7 +829,6 @@ public class ForgeCoreLoader {
         Object module = pkgs.get(pkg);
         String name = resolvedName(module);
         Map<String,Object> roots = Fields.getDirect(loaderTo,newFormat ? "ourModules" : "resolvedRoots");
-        roots.remove(name);
         Object config = Fields.getDirect(loaderTo,"configuration");
         removeFromUnmodifiableSetField(config,"modules",module);
         removeFromUnmodifiableMapField(config,"nameToModule",name);
@@ -844,6 +843,7 @@ public class ForgeCoreLoader {
         Fields.setDirect(layer,"nameToModule",map);
         Map<String,ClassLoader> parentLoaders = Fields.getDirect(loaderTo,newFormat ? "packageToParentLoader" : "parentLoaders");
         for(String p : packages) parentLoaders.put(p,loaderFrom);
+        roots.remove(name);
         
         //Deal with the module graph again ._.
         Map<?,Set<?>> graph = new HashMap<>(Fields.getDirect(config,"graph"));
