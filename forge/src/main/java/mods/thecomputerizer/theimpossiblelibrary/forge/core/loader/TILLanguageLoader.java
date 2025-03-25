@@ -14,7 +14,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 /**
  * Basically the same as FMLJavaModLanguageProvider$FMLModTarget but since it's private, we can't use it...
  */
-public abstract class TILLanguageLoader {
+public abstract class TILLanguageLoader { //TODO Use ASM to build extension
     
     private static final String MOD_CONTAINER = "net.minecraftforge.fml.javafmlmod.FMLModContainer";
     static boolean loadedNewCore;

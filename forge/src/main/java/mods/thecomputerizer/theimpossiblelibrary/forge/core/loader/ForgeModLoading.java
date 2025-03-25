@@ -439,12 +439,7 @@ public class ForgeModLoading {
     }
     
     @SuppressWarnings("unchecked")
-    public static void populateMultiversionData(Object infoMapObj, Object dataMap) {
-        if(Objects.isNull(infoMapObj)) {
-            LOGGER.error("Cannot populate multiversion data with null info map! Was the getter set up correctly?");
-            return;
-        }
-        Map<MultiVersionModInfo,MultiVersionModData> infoMap = (Map<MultiVersionModInfo,MultiVersionModData>)infoMapObj;
+    public static void populateMultiversionData(Map<MultiVersionModInfo,MultiVersionModData> infoMap, Object dataMap) {
         for(MultiVersionModData data : ((Map<String,MultiVersionModData>)dataMap).values()) {
             MultiVersionModInfo info = data.getInfo();
             if(infoMap.containsKey(info)) {
@@ -466,8 +461,16 @@ public class ForgeModLoading {
         if(Objects.isNull(instance)) LOGGER.error("Failed to get CoreAPI instance :(");
         Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
         for(ModFile candidate : CANDIDATE_MAP.values()) {
-            populateMultiversionData(FILE_INFO_MAP.get(candidate),data);
+            Map<MultiVersionModInfo,MultiVersionModData> map = FILE_INFO_MAP.get(candidate);
+            if(Objects.isNull(map)) {
+                LOGGER.error("Cannot populate multiversion data with null info map! Was the getter set up correctly?");
+                continue;
+            }
+            populateMultiversionData(map,data);
             String moduleName = Objects.nonNull(moduleNameGetter) ? moduleNameGetter.apply(candidate) : null;
+            if(Objects.isNull(moduleName)) //Only null in 1.16.5
+                for(MultiVersionModInfo info : map.keySet())
+                    moduleName = info.getModID();
             if(Objects.nonNull(moduleName) && MODID.equals(moduleName))
                 addScannedMod(langProviderModFile(candidate),mods);
             addScannedMod(candidate,mods);
@@ -512,7 +515,7 @@ public class ForgeModLoading {
         langProviderFileInfo = setLangProviderFileInfo(version);
         coreModEngineClass = "net.minecraftforge.coremod.CoreModEngine";
         coreModExtensions = setCoreModExtensions(version);
-        if(!pathBased) moduleNameGetter = file -> {
+        moduleNameGetter = pathBased ? file -> null : file -> {
             IModFileInfo fileInfo = Methods.invoke(file,"getModFileInfo");
             return Methods.invoke(fileInfo,"moduleName");
         };

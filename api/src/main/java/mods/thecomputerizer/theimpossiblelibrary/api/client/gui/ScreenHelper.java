@@ -34,12 +34,19 @@ public class ScreenHelper {
     }
     
     public static void open(Function<Integer,ScreenAPI> withGuiScale) {
-        open(withGuiScale.apply(ClientHelper.getGuiScale()));
+        final ScreenHelperAPI api = getAPI();
+        if(Objects.isNull(api)) {
+            TILRef.logError("Failed to open screen with GUI scale function since ScreenHelperAPI is null");
+            return;
+        }
+        ClientHelper.scheduleRunnable(() -> {
+            ScreenAPI screen = withGuiScale.apply(ClientHelper.getGuiScale());
+            api.open(screen);
+        });
     }
     
-    public static void open(ScreenAPI screen) {
-        ScreenHelperAPI api = getAPI();
-        if(Objects.nonNull(api)) api.open(screen);
+    public static void open(final ScreenAPI screen) {
+        open(i -> screen);
     }
     
     public static void playVanillaClickSound() {

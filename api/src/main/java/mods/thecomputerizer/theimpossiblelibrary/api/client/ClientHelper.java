@@ -3,6 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class ClientHelper {
     
@@ -140,24 +143,6 @@ public class ClientHelper {
         return checkValue(value,type,key) ? defaultValue : GenericUtils.parseNumber(value,defaultValue);
     }
     
-    /**
-     * Returns a direct map of lines read in from options.txt.
-     * Each line in the options.txt file is parsed as 'key:value'
-     */
-    public static Map<String,String> getOptionsCache() {
-        if(Objects.nonNull(optionsCache)) return optionsCache;
-        final Map<String,String> cacheBuilder = new HashMap<>();
-        for(String line : FileHelper.toLines("options.txt")) {
-            int split = line.indexOf(':');
-            if(split<=0) continue; //Index 0 places it at the start of the line, and we don't want empty keys
-            String key = line.substring(0,split);
-            String value = line.substring(split+1);
-            if(!value.isEmpty()) cacheBuilder.put(key,value);
-        }
-        optionsCache = Collections.unmodifiableMap(cacheBuilder);
-        return optionsCache;
-    }
-    
     public static int getDisplayHeight() {
         MinecraftAPI<?> api = getMinecraft();
         return Objects.nonNull(api) ? api.getDisplayHeight() : 1;
@@ -182,6 +167,24 @@ public class ClientHelper {
         return TILRef.getClientSubAPI(ClientAPI::getMinecraft);
     }
     
+    /**
+     * Returns a direct map of lines read in from options.txt.
+     * Each line in the options.txt file is parsed as 'key:value'
+     */
+    public static Map<String,String> getOptionsCache() {
+        if(Objects.nonNull(optionsCache)) return optionsCache;
+        final Map<String,String> cacheBuilder = new HashMap<>();
+        for(String line : FileHelper.toLines("options.txt")) {
+            int split = line.indexOf(':');
+            if(split<=0) continue; //Index 0 places it at the start of the line, and we don't want empty keys
+            String key = line.substring(0,split);
+            String value = line.substring(split+1);
+            if(!value.isEmpty()) cacheBuilder.put(key,value);
+        }
+        optionsCache = Collections.unmodifiableMap(cacheBuilder);
+        return optionsCache;
+    }
+    
     public static @Nullable PlayerAPI<?,?> getPlayer() {
         MinecraftAPI<?> api = getMinecraft();
         return Objects.nonNull(api) ? api.getPlayer() : null;
@@ -190,6 +193,18 @@ public class ClientHelper {
     public static RenderAPI getRenderer() {
         MinecraftAPI<?> api = getMinecraft();
         return Objects.nonNull(api) ? api.getRenderer() : null;
+    }
+    
+    @IndirectCallers
+    public static @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
+        MinecraftAPI<?> api = getMinecraft();
+        return Objects.nonNull(api) ? api.getTargetBlockEntity() : null;
+    }
+    
+    @IndirectCallers
+    public static @Nullable EntityAPI<?,?> getTargetEntity() {
+        MinecraftAPI<?> api = getMinecraft();
+        return Objects.nonNull(api) ? api.getTargetEntity() : null;
     }
     
     public static @Nullable MinecraftWindow getWindow() {
@@ -232,6 +247,17 @@ public class ClientHelper {
     }
     
     @IndirectCallers
+    public static <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {
+        MinecraftAPI<?> api = getMinecraft();
+        return Objects.nonNull(api) ? api.scheduleReturnable(supplier) : () -> null;
+    }
+    
+    public static void scheduleRunnable(Runnable runnable) {
+        MinecraftAPI<?> api = getMinecraft();
+        if(Objects.nonNull(api)) api.scheduleRunnable(runnable);
+    }
+    
+    @IndirectCallers
     public static void sendMessage(TextAPI<?> msg) {
         sendMessage(msg,null,false,false);
     }
@@ -252,13 +278,15 @@ public class ClientHelper {
     }
     
     public static void sendMessage(TextAPI<?> msg, @Nullable UUID uuid, boolean isStatusMsg, boolean isActionBar) {
-        MinecraftAPI<?> api = getMinecraft();
+        final MinecraftAPI<?> api = getMinecraft();
         if(Objects.isNull(api)) {
             TILRef.logWarn("Cannot send {}message `{}` since MinecraftAPI<?> is null",isStatusMsg ? "status " : "",
                            msg.getOriginal());
             return;
         }
-        if(isStatusMsg) api.sendStatusMessageToPlayer(msg,isActionBar);
-        else api.sendMessageToPlayer(msg,uuid);
+        scheduleRunnable(() -> {
+            if(isStatusMsg) api.sendStatusMessageToPlayer(msg,isActionBar);
+            else api.sendMessageToPlayer(msg,uuid);
+        });
     }
 }

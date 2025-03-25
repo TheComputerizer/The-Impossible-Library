@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v20.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILLanguageLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -13,6 +14,7 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
  */
 public class TILLanguageLoader1_20 extends TILLanguageLoader implements IModLanguageLoader {
     
+    @IndirectCallers
     public TILLanguageLoader1_20(CoreAPI core, String modClass, String modid, ModFileScanData scan) {
         super(core,modClass,modid,scan);
     }

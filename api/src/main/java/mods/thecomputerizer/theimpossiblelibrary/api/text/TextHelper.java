@@ -3,23 +3,26 @@ package mods.thecomputerizer.theimpossiblelibrary.api.text;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 public class TextHelper {
-
+    
+    @IndirectCallers
     public static String arrayToString(Object ... array) {
         return arrayToString(0,System.lineSeparator(),array);
     }
-
+    
+    @IndirectCallers
     public static String arrayToString(int limit, Object ... array) {
         return arrayToString(limit,System.lineSeparator(),array);
     }
-
+    
+    @IndirectCallers
     public static String arrayToString(String split, Object ... array) {
         return arrayToString(0,split,array);
     }
@@ -72,16 +75,19 @@ public class TextHelper {
         return builder.toString();
     }
 
-    public static TextHelperAPI<?> getHelper() {
-        return TILRef.getCommonSubAPI(CommonAPI::getTextHelper);
+    @SuppressWarnings("unchecked")
+    public static <S> TextHelperAPI<S> getHelper() {
+        return (TextHelperAPI<S>)TILRef.getCommonSubAPI(CommonAPI::getTextHelper);
     }
 
-    public static TextStringAPI<?> getLiteral(String text) {
-        return getHelper().getLiteral(text);
+    @SuppressWarnings("unchecked")
+    public static <S> TextStringAPI<S> getLiteral(String text) {
+        return (TextStringAPI<S>)getHelper().getLiteral(text);
     }
-
-    public static TextTranslationAPI<?> getTranslated(String key, Object ... args) {
-        return getHelper().getTranslated(key,args);
+    
+    @SuppressWarnings("unchecked")
+    public static <S> TextTranslationAPI<S> getTranslated(String key, Object ... args) {
+        return (TextTranslationAPI<S>)getHelper().getTranslated(key,args);
     }
 
     /**
@@ -95,6 +101,7 @@ public class TextHelper {
         return fromIterable(itr,0,System.lineSeparator());
     }
 
+    @IndirectCallers
     public static String fromIterable(Iterable<?> itr, int limit) {
         return fromIterable(itr,limit,System.lineSeparator());
     }
@@ -121,6 +128,7 @@ public class TextHelper {
     /**
      * Assumes the input string is camel case
      */
+    @IndirectCallers
     public static String makeCaseTypeFromCamel(String original, TextCasing type) {
         String[] words = TextCasing.CAMEL.split(original);
         if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
@@ -132,6 +140,7 @@ public class TextHelper {
     /**
      * Assumes the input string is kebab case
      */
+    @IndirectCallers
     public static String makeCaseTypeFromKebab(String original, TextCasing type) {
         String[] words = TextCasing.KEBAB.split(original);
         if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
@@ -143,6 +152,7 @@ public class TextHelper {
     /**
      * Assumes the input string is pascal case
      */
+    @IndirectCallers
     public static String makeCaseTypeFromPascal(String original, TextCasing type) {
         String[] words = TextCasing.PASCAL.split(original);
         if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
@@ -154,6 +164,7 @@ public class TextHelper {
     /**
      * Assumes the input string is snake case
      */
+    @IndirectCallers
     public static String makeCaseTypeFromSnake(String original, TextCasing type) {
         String[] words = TextCasing.SNAKE.split(original);
         if(type==TextCasing.CAMEL) return TextCasing.CAMEL.combine(words);
@@ -165,6 +176,7 @@ public class TextHelper {
     /**
      * Splits a string into a list of strings based on the system line separator
      */
+    @IndirectCallers
     public static List<String> newLineSplit(String original) {
         return Arrays.stream(original.split(System.lineSeparator())).collect(Collectors.toList());
     }
@@ -172,6 +184,7 @@ public class TextHelper {
     /**
      * Same as the above method with a limit on the maximum number of elements.
      */
+    @IndirectCallers
     public static List<String> newLineSplit(String original, int limit) {
         return Arrays.stream(original.split(System.lineSeparator(), limit)).collect(Collectors.toList());
     }
@@ -179,6 +192,7 @@ public class TextHelper {
     /**
      * Implementation of String#repeat for the versions that rely on Java 8
      */
+    @IndirectCallers
     public static String repeat(String base, int num) {
         StringBuilder builder = new StringBuilder();
         for(int i=0; i<num; i++) builder.append(base);
@@ -188,6 +202,7 @@ public class TextHelper {
     /**
      * Splits a string into a list of strings based on the input separator
      */
+    @IndirectCallers
     public static List<String> splitToList(String original, String splitBy) {
         return Arrays.stream(original.split(splitBy)).collect(Collectors.toList());
     }
@@ -195,6 +210,7 @@ public class TextHelper {
     /**
      * Same as the above method with a limit on the maximum number of elements.
      */
+    @IndirectCallers
     public static List<String> splitToList(String original, String splitBy, int limit) {
         return Arrays.stream(original.split(splitBy, limit)).collect(Collectors.toList());
     }

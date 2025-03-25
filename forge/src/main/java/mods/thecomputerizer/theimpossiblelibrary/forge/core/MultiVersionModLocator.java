@@ -47,18 +47,15 @@ public class MultiVersionModLocator implements IModLocator {
             return;
         }
         ClassHelper.checkBurningWaveInit();
-        TILRef.logInfo("Initialized BurningWave");
         String version = String.valueOf((Object)Methods.invoke(coreInstance,"gameVersion"));
-        TILRef.logInfo("Get version as {}",version);
         String checkedVersion = version.substring(2).replace('.','_');
-        TILRef.logInfo("Checked version will be {}",checkedVersion);
         ForgeModLoading.setFileVersion(getClass(),checkedVersion,version);
         TILRef.logInfo("Successfully set Forge mod loading version ({},{})",checkedVersion,version);
     }
     
     FileSystem fileSystemFor(IModFile file) {
         try {
-            return FileSystems.newFileSystem(file.getFilePath(), file.getClass().getClassLoader());
+            return FileSystems.newFileSystem(file.getFilePath(),file.getClass().getClassLoader());
         } catch(IOException ex) {
             TILRef.logError("Could not create file system for {}",file.getFilePath(),ex);
         }
@@ -126,7 +123,7 @@ public class MultiVersionModLocator implements IModLocator {
                 this.fileSystems = new HashMap<>();
                 for(IModFile file : files) {
                     FileSystem fs = fileSystemFor(file);
-                    if(Objects.nonNull(fs)) this.fileSystems.put(file, fs);
+                    if(Objects.nonNull(fs)) this.fileSystems.put(file,fs);
                 }
             }
             TILRef.logInfo("Returing scanned mods {}",files);
