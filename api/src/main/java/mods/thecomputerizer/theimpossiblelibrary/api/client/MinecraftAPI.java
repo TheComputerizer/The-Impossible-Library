@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Getter
 public abstract class MinecraftAPI<M> extends AbstractWrapped<M> {
@@ -74,6 +75,12 @@ public abstract class MinecraftAPI<M> extends AbstractWrapped<M> {
     public boolean isUnpausedAndFocused() {
         return isDisplayFocused() && !isPaused();
     }
+    
+    /**
+     * Note that the returned Supplier could resolve to null if it fails to execute
+     */
+    @IndirectCallers public abstract <T> Supplier<T> scheduleReturnable(Supplier<T> supplier);
+    @IndirectCallers public abstract void scheduleRunnable(Runnable runnable);
     
     @IndirectCallers
     public void sendMessageToPlayer(TextAPI<?> text) {

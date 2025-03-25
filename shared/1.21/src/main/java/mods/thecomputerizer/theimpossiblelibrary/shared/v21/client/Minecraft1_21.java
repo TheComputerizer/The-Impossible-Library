@@ -21,6 +21,9 @@ import net.minecraft.world.phys.HitResult;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import static net.minecraft.world.phys.HitResult.Type.BLOCK;
 
@@ -112,5 +115,21 @@ public class Minecraft1_21 extends MinecraftAPI<Minecraft> {
 
     @Override public boolean isPaused() {
         return Objects.nonNull(this.wrapped) && this.wrapped.isPaused();
+    }
+    
+    @Override public <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {
+        final CompletableFuture<T> future = this.wrapped.submit(supplier);
+        return () -> {
+            try {
+                future.get();
+            } catch(ExecutionException|InterruptedException ex) {
+                TILRef.logError("Failed to retrieve CompletableFuture instance!",ex);
+            }
+            return null;
+        };
+    }
+    
+    @Override public void scheduleRunnable(Runnable runnable) {
+        this.wrapped.submit(runnable).getNow(null);
     }
 }

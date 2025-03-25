@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static net.minecraft.util.math.BlockPos.ORIGIN;
@@ -156,5 +158,25 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
 
     @Override public boolean isPaused() {
         return Objects.nonNull(this.wrapped) && this.wrapped.isGamePaused();
+    }
+    
+    @Override public <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {
+        final ListenableFuture<T> future = this.wrapped.addScheduledTask(supplier::get);
+        return () -> {
+            try {
+                future.get();
+            } catch(ExecutionException|InterruptedException ex) {
+                TILRef.logError("Failed to retrieve ListenableFuture instance!",ex);
+            }
+            return null;
+        };
+    }
+    
+    @Override public void scheduleRunnable(Runnable runnable) {
+        try {
+            this.wrapped.addScheduledTask(runnable).get();
+        } catch(ExecutionException|InterruptedException ex) {
+            TILRef.logError("Failed to execute scheduled Runnable!",ex);
+        }
     }
 }
