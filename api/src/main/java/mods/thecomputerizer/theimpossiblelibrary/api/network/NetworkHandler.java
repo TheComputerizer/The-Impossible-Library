@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_ONLY;
@@ -100,17 +101,21 @@ public class NetworkHandler {
     }
 
     /**
-     * Message registration must happen before load is called
+     * Message registration must happen before load is called.
+     * The direction may be null in the case of a client receiver trying to register on the server side
      */
     private static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, Function<ByteBuf,M> decoder, DIR dir) {
+        if(Objects.isNull(dir)) return;
         MessageDirectionInfo<?> dirInfo = getOrInitDirectionInfo(dir);
         dirInfo.getInfoSet().add(new MessageInfo<>(clazz,dirInfo,decoder));
     }
 
     /**
      * Message registration must happen before load is called
+     * The direction may be null in the case of a client receiver trying to register on the server side
      */
     public static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, MessageHandlerAPI handler, DIR dir) {
+        if(Objects.isNull(dir)) return;
         MessageDirectionInfo<?> dirInfo = getOrInitDirectionInfo(dir);
         dirInfo.getInfoSet().add(new MessageInfo<>(clazz,dirInfo,handler));
     }
@@ -126,6 +131,7 @@ public class NetworkHandler {
      * Message registration must happen before load is called
      */
     public static void registerMsgs(Iterable<MessageInfo<?>> infos) {
-
+        for(MessageInfo<?> info : infos)
+            registerMsg(info.getMsgClass(),new MessageHandlerDefault(info::decode),info.getDirectionInfo().getDirection());
     }
 }

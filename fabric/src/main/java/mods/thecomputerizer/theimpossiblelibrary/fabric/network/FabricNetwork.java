@@ -252,6 +252,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     @Override default void registerMessage(MessageDirectionInfo<DIR> directionInfo, int id) {
+        if(Objects.isNull(directionInfo)) return;
         DIR dir = directionInfo.getDirection();
         ResourceLocation registryName = getRegistryNameFromDir(dir);
         if(Objects.isNull(registryName)) return;
