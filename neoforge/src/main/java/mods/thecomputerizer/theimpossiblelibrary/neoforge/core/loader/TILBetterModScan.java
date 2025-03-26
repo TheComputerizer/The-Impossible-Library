@@ -23,7 +23,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Setter @Getter
@@ -72,7 +71,6 @@ public class TILBetterModScan extends ModFileScanData {
             try {
                 Class<?> clazz = ClassHelper.resolveClass(target,ClassHelper.defineClass(target,className,bytes));
                 if(Objects.nonNull(clazz)) {
-                    TILRef.logInfo("Successfully defined {} in {}",clazz,clazz.getModule());
                     defined.add(clazz);
                     String pkg = className.substring(0,className.lastIndexOf('.'));
                     if(!className.contains("$") && !pkgs.contains(pkg)) outerClasses.add(clazz);
@@ -96,7 +94,6 @@ public class TILBetterModScan extends ModFileScanData {
             for(Class<?> c : defined)
                 NeoForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
             NeoForgeCoreLoader.exportAllModules();
-            LOGGER.info("Theoretically fixed all the modules");
         } catch(Throwable t) {
             TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
         }

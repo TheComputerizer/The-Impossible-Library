@@ -26,7 +26,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVer
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
@@ -72,11 +71,6 @@ public class TILBetterModScan extends ModFileScanData {
             try {
                 Class<?> clazz = ClassHelper.resolveClass(target,ClassHelper.defineClass(target,className,bytes));
                 if(Objects.nonNull(clazz)) {
-                    if(java8) TILRef.logInfo("Successfully defined {}",clazz);
-                    else {
-                        Object module = Methods.invoke(clazz,"getModule");
-                        TILRef.logInfo("Successfully defined {} in {}",clazz,module);
-                    }
                     defined.add(clazz);
                     String pkg = className.substring(0,className.lastIndexOf('.'));
                     if(!className.contains("$") && !pkgs.contains(pkg)) outerClasses.add(clazz);
@@ -111,7 +105,6 @@ public class TILBetterModScan extends ModFileScanData {
                 for(Class<?> c : defined)
                     ForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
                 ForgeCoreLoader.exportAllModules();
-                LOGGER.info("Theoretically fixed all the modules");
             } catch(Throwable t) {
                 TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
             }

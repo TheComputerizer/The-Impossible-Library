@@ -94,14 +94,10 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
     @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
         unmappedClass = unmappedClass.replace('.','/');
         FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
-        desc = desc.replace('.','/');
-        TILRef.logInfo("mapping method from class {} | method {} | desc {} | ClassLoader {})",unmappedClass,
-                       unmappedMethod,desc,getClass().getClassLoader());
-        return remapper.mapMethodName(unmappedClass,unmappedMethod,desc);
+        return remapper.mapMethodName(unmappedClass,unmappedMethod,desc.replace('.','/'));
     }
     
     @Override protected boolean modConstructed(String modid, Class<?> clazz) {
-        TILRef.logInfo("Attempting to inject `{}` for `{}` into the ASMDataTable",clazz,modid);
         ASMDataTable table = ModContainerWriter1_12_2.findASMTable(Loader.instance());
         if(Objects.nonNull(table)) {
             for(ModContainer container : Loader.instance().getActiveModList()) {

@@ -350,7 +350,6 @@ public class NeoForgeModLoading {
         ClassReader reader = new ClassReader(bytes);
         reader.accept(visitor,0);
         Methods.invokeDirect(visitor,"buildData",scan.getClasses(),scan.getAnnotations());
-        LOGGER.info("Successfully loaded & scanned mod class {}!",className);
     }
     
     private static void writeEntry(IModFile file, TILBetterModScan scan,
