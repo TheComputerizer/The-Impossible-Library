@@ -10,7 +10,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * Wrapper class for interfacing version/loader specific code. Extend MessageAPI to send a packet through the API
+ * Wrapper class for interfacing version/loader-specific code.
+ * Extend MessageAPI to send a packet through the API
  * Any class that extends this is required to have a constructor with a single PacketBuffer as an input
  */
 @SuppressWarnings("unused")

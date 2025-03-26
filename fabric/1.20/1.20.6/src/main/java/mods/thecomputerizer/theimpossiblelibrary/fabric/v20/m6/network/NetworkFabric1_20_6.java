@@ -20,11 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
-/**
- * Fabric doesn't have mod specific network channels or network direction API classes...
- */
 @SuppressWarnings("UnstableApiUsage")
-public class NetworkFabric1_20_6 extends Network1_20_6<Object,Object> {
+public class NetworkFabric1_20_6 extends Network1_20_6<Object,Object> { //TODO Can this implement FabricNetwork?
 
     @Override public Object getDirFromName(String name) {
         return switch(name.toUpperCase()) {
@@ -84,7 +81,7 @@ public class NetworkFabric1_20_6 extends Network1_20_6<Object,Object> {
     
     void registerClientReceiver(MessageDirectionInfo<Object> info) {
         Object dir = info.getDirection();
-        MessageWrapperFabric1_20_6 wrapper = MessageWrapperFabric1_20_6.getInstance(info.getDirection());
+        MessageWrapperFabric1_20_6 wrapper = MessageWrapperFabric1_20_6.getInstance(this,info.getDirection());
         Type<MessageWrapperFabric1_20_6> type = wrapper.type();
         PayloadTypeRegistry.playS2C().register(type,streamCodec(dir));
         ClientPlayNetworking.registerGlobalReceiver(type,(payload,ctx) -> {
@@ -95,7 +92,7 @@ public class NetworkFabric1_20_6 extends Network1_20_6<Object,Object> {
     
     void registerServerReceiver(MessageDirectionInfo<Object> info) {
         Object dir = info.getDirection();
-        MessageWrapperFabric1_20_6 wrapper = MessageWrapperFabric1_20_6.getInstance(dir);
+        MessageWrapperFabric1_20_6 wrapper = MessageWrapperFabric1_20_6.getInstance(this,dir);
         Type<MessageWrapperFabric1_20_6> type = wrapper.type();
         PayloadTypeRegistry.playC2S().register(type,streamCodec(dir));
         ServerPlayNetworking.registerGlobalReceiver(type,(payload,ctx) -> {
@@ -117,27 +114,27 @@ public class NetworkFabric1_20_6 extends Network1_20_6<Object,Object> {
     
     protected <B extends ByteBuf> StreamCodec<B,MessageWrapperFabric1_20_6> streamCodec(Object dir) {
         StreamEncoder<B,MessageWrapperFabric1_20_6> encoder = (buf,payload) -> payload.encode(buf);
-        StreamDecoder<B,MessageWrapperFabric1_20_6> decoder = buf -> MessageWrapperFabric1_20_6.getInstance(dir,buf);
+        StreamDecoder<B,MessageWrapperFabric1_20_6> decoder = buf -> MessageWrapperFabric1_20_6.getInstance(this,dir,buf);
         return StreamCodec.of(encoder,decoder);
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Object dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(this,dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(this,dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
     @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperFabric1_20_6.getInstance(this,dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }

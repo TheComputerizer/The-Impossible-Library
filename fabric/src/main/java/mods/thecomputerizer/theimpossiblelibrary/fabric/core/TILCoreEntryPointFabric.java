@@ -14,6 +14,7 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -119,7 +120,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     }
     
     @Override public List<String> classTargets() {
-        return Arrays.asList(KEYBOARD_HANDLER,DEBUG_OVERLAY,GUI);
+        return this.core.isClientSide() ? Arrays.asList(KEYBOARD_HANDLER,DEBUG_OVERLAY,GUI) : Collections.emptyList();
     }
     
     String customEventOwner(String name) {

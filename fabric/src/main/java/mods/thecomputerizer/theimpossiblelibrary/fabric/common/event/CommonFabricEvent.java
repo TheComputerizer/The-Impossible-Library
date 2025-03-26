@@ -31,11 +31,11 @@ public interface CommonFabricEvent {
     
     @SuppressWarnings("SuspiciousInvocationHandlerImplementation")
     default InvocationHandler createEventProxy(EventType<?> type) {
-        return ((proxy,method,args) -> {
+        return (proxy,method,args) -> {
             if(method.getReturnType()==Boolean.class) return (Boolean)registerReturn(type,args);
             registerInvoke(type,args);
             return null;
-        });
+        };
     }
     
     Event<?> getEventInstance();

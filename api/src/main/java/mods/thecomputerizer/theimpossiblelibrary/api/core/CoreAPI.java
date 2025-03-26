@@ -521,12 +521,38 @@ public abstract class CoreAPI {
             this.pkg = pkg;
         }
         
+        public String getClassExt() {
+            return getClassExt(true);
+        }
+        
+        public String getClassExt(boolean includeMinorVersion) {
+            String ext = this.name.replace('.','_');
+            return includeMinorVersion ? ext : ext.substring(0,ext.length()-2);
+        }
+        
         public String getPackageName(ModLoader loader, String base) {
             return getPackageName(loader.getPackageName(base));
         }
         
+        @IndirectCallers
+        public String getPackageName(ModLoader loader, String base, boolean includeMinorVersion) {
+            return getPackageName(loader.getPackageName(base),includeMinorVersion);
+        }
+        
         public String getPackageName(String base) {
-            return base+"."+this.pkg;
+            return base+"."+getPackageName();
+        }
+        
+        public String getPackageName(String base, boolean includeMinorVersion) {
+            return base+"."+getPackageName(includeMinorVersion);
+        }
+        
+        public String getPackageName() {
+            return getPackageName(true);
+        }
+        
+        public String getPackageName(boolean includeMinorVersion) {
+            return includeMinorVersion ? this.pkg : this.pkg.substring(0,this.pkg.length()-3);
         }
         
         @IndirectCallers
@@ -683,6 +709,14 @@ public abstract class CoreAPI {
         @Override public String toString() {
             return this.name;
         }
+        
+        public String withClassExt(String className) {
+            return className+getClassExt();
+        }
+        
+        public String withClassExt(String className, boolean includeMinorVersion) {
+            return className+getClassExt(includeMinorVersion);
+        }
     }
 
     public enum ModLoader {
@@ -697,6 +731,13 @@ public abstract class CoreAPI {
         ModLoader(String name) {
             this.name = name;
             this.pkg = name.toLowerCase();
+        }
+        
+        /**
+         * Assume the base package if no package name is supplied
+         */
+        public String getPackageName() {
+            return BASE_PACKAGE+"."+this.pkg;
         }
         
         public String getPackageName(String base) {
