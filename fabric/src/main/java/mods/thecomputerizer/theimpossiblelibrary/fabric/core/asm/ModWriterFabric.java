@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -15,6 +14,7 @@ import org.objectweb.asm.Type;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
@@ -32,7 +32,7 @@ public abstract class ModWriterFabric extends ModWriter {
         addEntryHooks(visitor,isStatic,method,false);
     }
     
-    protected Pair<ClassWriter,Type> addInnerEntryPoint(ClassVisitor outerClass, boolean client, String innerName) {
+    protected Entry<ClassWriter,Type> addInnerEntryPoint(ClassVisitor outerClass, boolean client, String innerName) {
         return addInnerClass(outerClass,innerName,inner -> {
             writeMethod(inner,cv -> ASMHelper.getConstructor(cv,PUBLIC),constructor ->
                     ASMHelper.addSuperConstructor(constructor,OBJECT_TYPE.getInternalName(),EMPTY_METHOD_DESC,false));
@@ -55,7 +55,7 @@ public abstract class ModWriterFabric extends ModWriter {
                             "checkDedicatedServerSetup","onInterModEnqueue");
     }
     
-    @Override protected void writeMod(ClassWriter writer, List<Pair<String,byte[]>> classBytes) {
+    @Override protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {
         super.writeMod(writer,classBytes);
         final String init = "onInitialize";
         writeMethod(writer,cv -> ASMHelper.getMethod(cv,PUBLIC,init),method -> {

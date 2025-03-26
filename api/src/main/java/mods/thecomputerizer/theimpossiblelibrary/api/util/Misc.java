@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -146,14 +146,14 @@ public class Misc {
      * Adds a trimmed lowercase string a collection after ensuring it is not null, empty, or blank
      */
     public static void lowerCaseAddCollection(Collection<String> c, String str) {
-        if(StringUtils.isNotBlank(str)) c.add(str.trim().toLowerCase());
+        if(TextHelper.isNotBlank(str)) c.add(str.trim().toLowerCase());
     }
 
     /**
      * Adds a trimmed lowercase string a map key after ensuring it is not null, empty, or blank
      */
     public static <V> void lowerCaseAddMap(Map<String,V> map, String str, V val) {
-        if(StringUtils.isNotBlank(str)) map.put(str.trim().toLowerCase(),val);
+        if(TextHelper.isNotBlank(str)) map.put(str.trim().toLowerCase(),val);
     }
 
     public static String removeAll(String str, String ... removals) {

@@ -5,13 +5,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
@@ -48,7 +48,7 @@ public abstract class ModWriterNeoForge extends ModWriter {
         });
     }
     
-    protected Pair<ClassWriter,Type> addInnerEventSubscriber(ClassVisitor outerClass, String modid, boolean modBus,
+    protected Entry<ClassWriter,Type> addInnerEventSubscriber(ClassVisitor outerClass, String modid, boolean modBus,
             boolean client, boolean server, String innerName, String ... entryMethods) {
         return addInnerClass(outerClass,innerName,inner -> {
             addEventSubscriber(inner,modid,modBus,client,server);

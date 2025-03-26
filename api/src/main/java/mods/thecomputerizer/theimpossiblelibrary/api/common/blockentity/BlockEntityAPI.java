@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI.BlockEntityCreator;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -45,7 +46,10 @@ public abstract class BlockEntityAPI<E,T> extends AbstractWrapped<T> implements 
     public abstract BlockPosAPI<?> getPos();
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        if(Objects.isNull(this.registryName) && Objects.nonNull(this.wrapped)) {
+            RegistryAPI<?> registry = getRegistry();
+            if(Objects.nonNull(registry)) this.registryName = registry.getKey(unwrap());
+        }
         return this.registryName;
     }
     

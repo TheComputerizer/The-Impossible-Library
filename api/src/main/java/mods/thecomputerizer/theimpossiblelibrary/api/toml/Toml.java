@@ -14,7 +14,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Matching;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Sorting;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -161,7 +160,7 @@ import java.util.Map.Entry;
     }
     
     public void addComment(String comment) {
-        if(StringUtils.isNotEmpty(comment)) this.comments = ArrayHelper.append(this.comments,comment,true);
+        if(TextHelper.isNotEmpty(comment)) this.comments = ArrayHelper.append(this.comments,comment,true);
     }
     
     public void addComments(Iterable<String> comments) {
@@ -615,7 +614,7 @@ import java.util.Map.Entry;
         }
         
         public void addComment(String comment) {
-            if(StringUtils.isNotEmpty(comment)) this.comments = ArrayHelper.append(this.comments,comment,true);
+            if(TextHelper.isNotEmpty(comment)) this.comments = ArrayHelper.append(this.comments,comment,true);
         }
         
         public void clearComments() {

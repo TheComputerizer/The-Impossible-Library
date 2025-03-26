@@ -6,9 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.iterator.WrapperableMappabl
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,11 +13,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map.Entry;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Read/write util methods with some addition specific string stuff
+ * Read/write util methods with some addition-specific string stuff
  */
 @SuppressWarnings("unchecked")
 public class IOUtils {
@@ -41,10 +40,10 @@ public class IOUtils {
         Set<String> aliasSet = new HashSet<>();
         for(Object arg : aliasArgList) {
             if(arg instanceof String) Misc.lowerCaseAddCollection(aliasSet,(String)arg);
-            else if(arg instanceof Pair<?,?>) {
-                Pair<?,?> argPair = (Pair<?,?>)arg;
-                Misc.lowerCaseAddCollection(aliasSet,argPair.getLeft().toString());
-                Misc.lowerCaseAddCollection(aliasSet,argPair.getRight().toString());
+            else if(arg instanceof Entry<?,?>) {
+                Entry<?,?> argPair = (Entry<?,?>)arg;
+                Misc.lowerCaseAddCollection(aliasSet,argPair.getKey().toString());
+                Misc.lowerCaseAddCollection(aliasSet,argPair.getValue().toString());
             } else if(arg instanceof String[]) {
                 for(String argArrElement : (String[]) arg)
                     Misc.lowerCaseAddCollection(aliasSet,argArrElement);
@@ -61,8 +60,8 @@ public class IOUtils {
         return CLASS_ALIASES.getKeyOrDefault(w -> Patterns.matchesAny(alias,w),Object.class);
     }
 
-    private static Pair<String,String> getClassNames(Class<?> clazz) {
-        return new ImmutablePair<>(clazz.getName(),clazz.getSimpleName());
+    private static Entry<String,String> getClassNames(Class<?> clazz) {
+        return new SimpleImmutableEntry<>(clazz.getName(),clazz.getSimpleName());
     }
 
     /**
@@ -70,7 +69,7 @@ public class IOUtils {
      */
     @IndirectCallers
     public static void lintCollections(Collection<String> ... collections) {
-        for(Collection<String> c : collections) c.removeIf(StringUtils::isBlank);
+        for(Collection<String> c : collections) c.removeIf(TextHelper::isBlank);
     }
     
     @IndirectCallers

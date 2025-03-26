@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
@@ -74,7 +75,10 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        if(Objects.isNull(this.registryName) && Objects.nonNull(this.wrapped)) {
+            RegistryAPI<?> registry = getRegistry();
+            if(Objects.nonNull(registry)) this.registryName = registry.getKey(unwrap());
+        }
         return this.registryName;
     }
     

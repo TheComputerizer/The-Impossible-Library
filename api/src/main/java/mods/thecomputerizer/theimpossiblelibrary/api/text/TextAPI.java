@@ -1,8 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.text;
 
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
-@SuppressWarnings("unused")
 public interface TextAPI<S> {
 
     /**
@@ -20,19 +19,21 @@ public interface TextAPI<S> {
     String getOriginal();
     
     default boolean isAppliedBlank() {
-        return StringUtils.isBlank(getApplied());
+        return TextHelper.isBlank(getApplied());
     }
     
+    @IndirectCallers
     default boolean isAppliedEmpty() {
-        return StringUtils.isEmpty(getApplied());
+        return TextHelper.isEmpty(getApplied());
     }
     
+    @IndirectCallers
     default boolean isOriginalBlank() {
-        return StringUtils.isBlank(getOriginal());
+        return TextHelper.isBlank(getOriginal());
     }
     
     default boolean isOriginalEmpty() {
-        return StringUtils.isEmpty(getOriginal());
+        return TextHelper.isEmpty(getOriginal());
     }
 
     TextAPI<S> setStyle(S style);

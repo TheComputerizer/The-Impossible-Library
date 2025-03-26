@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandle;
@@ -18,7 +19,7 @@ import java.util.function.Function;
 import static java.lang.reflect.Modifier.FINAL;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
-@SuppressWarnings("unused") public class ReflectionHelper {
+public class ReflectionHelper {
 
     public static final Lookup LOOKUP = MethodHandles.lookup();
 
@@ -26,6 +27,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
      * Finds a constructor of the given class with the specified args.
      * Returns null if the input class is null or the constructor does not exist.
      */
+    @IndirectCallers
     public static @Nullable Constructor<?> findConstructor(@Nullable Class<?> clazz, Class<?> ... args) {
         if(Objects.isNull(clazz)) return null;
         try {
@@ -48,8 +50,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
     }
     
+    @IndirectCallers
     public static MethodHandle findMethodHandle(@Nullable String className, String name, Class<?> ... args) {
-        return findMethodHandle(StringUtils.isBlank(className) ? null : ClassHelper.findClass(className),name,args);
+        return findMethodHandle(TextHelper.isBlank(className) ? null : ClassHelper.findClass(className), name, args);
     }
 
     public static MethodHandle findMethodHandle(@Nullable Class<?> clazz, String name, Class<?> ... args) {
@@ -68,7 +71,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
     }
     
     public static @Nullable Field getField(@Nullable String className, String fieldName) {
-        return getField(StringUtils.isBlank(className) ? null : ClassHelper.findClass(className),fieldName);
+        return getField(TextHelper.isBlank(className) ? null : ClassHelper.findClass(className),fieldName);
     }
 
     public static @Nullable Field getField(@Nullable Class<?> clazz, String fieldName) {
@@ -111,7 +114,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
             }
         });
     }
-
+    
+    @IndirectCallers
     public static Class<?> getInnerClass(Class<?> clazz, @Nullable String name) {
         return Misc.applyNullable(name,s -> {
             for(Class<?> categoryClass : clazz.getDeclaredClasses())
@@ -136,11 +140,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         return getMappedFieldInstance(null,clazz,DEV ? named : intermediary,desc);
     }
     
+    @IndirectCallers
     public static @Nullable Object getMappedFieldInstance(@Nullable Class<?> clazz, String fieldName,
             @Nullable Class<?> desc) {
         return getMappedFieldInstance(null,clazz,fieldName,desc);
     }
     
+    @IndirectCallers
     public static @Nullable Object getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
             String named, String intermediary, @Nullable Class<?> desc) {
         return getMappedFieldInstance(parent,clazz,DEV ? named : intermediary,desc);
@@ -151,8 +157,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         return getFieldInstance(parent,getMappedField(clazz,fieldName,desc));
     }
     
+    @IndirectCallers
     public static @Nullable Method getMethod(@Nullable String className, String name, Class<?> ... argTypes) {
-        return getMethod(StringUtils.isBlank(className) ? null : ClassHelper.findClass(className),name,argTypes);
+        return getMethod(TextHelper.isBlank(className) ? null : ClassHelper.findClass(className),name,argTypes);
     }
 
     public static @Nullable Method getMethod(@Nullable Class<?> clazz, String name, Class<?> ... argTypes) {
@@ -202,7 +209,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
     
     public static @Nullable Object invokeMethod(@Nullable String className, String name,
             @Nullable Function<Class<?>,Object> invokerFunc, Class<?>[] argTypes, Object ... args) {
-        if(StringUtils.isBlank(className)) {
+        if(TextHelper.isBlank(className)) {
             TILRef.logError("Tried to invoke method {} with null class name",name);
             return null;
         }
@@ -210,11 +217,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         return invokeMethod(clazz,name,Objects.nonNull(invokerFunc) ? invokerFunc.apply(clazz) : null,argTypes,args);
     }
     
+    @IndirectCallers
     public static @Nullable Object invokeStaticHandle(@Nullable MethodHandle handle, Object ... args) {
         return invokeHandle(handle,null,args);
     }
     
-    public static <T> @Nullable Object invokeStaticMethod(@Nullable Method method, Object ... args) {
+    @IndirectCallers
+    public static @Nullable Object invokeStaticMethod(@Nullable Method method, Object ... args) {
         return invokeMethod(method,null,args);
     }
     
@@ -223,6 +232,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         return invokeMethod(clazz,name,null,argTypes,args);
     }
     
+    @IndirectCallers
     public static @Nullable Object invokeStaticMethod(@Nullable String className, String name, Class<?>[] argTypes,
             Object ... args) {
         return invokeMethod(className,name,null,argTypes,args);
@@ -240,6 +250,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
         if(isFinal) setFieldModifiers(field,modifiers); //Change it back since fields are usually final for a reason
     }
     
+    @IndirectCallers
     public static void setFieldInstance(Class<?> clazz, String name, Object instance, Object value) {
         setFieldInstance(false,clazz,name,instance,value);
     }

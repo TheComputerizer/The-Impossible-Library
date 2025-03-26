@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static org.apache.logging.log4j.Level.*;
 
-@SuppressWarnings("unused") public class TILDev {
+public class TILDev {
 
     public static final boolean DEV = Boolean.parseBoolean(System.getProperty("til.dev")); //`-Dtil.dev=true`
     private static final String LOADER_FILE = System.getProperty("til.classpath.file",MODID+"-"+VERSION+".jar");
@@ -22,14 +23,17 @@ import static org.apache.logging.log4j.Level.*;
     public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(System.getProperty("til.classpath.coremods"));
     public static final Set<String> CLASSPATH_MODS = parseClasspathMods(System.getProperty("til.classpath.mods"));
     
+    @IndirectCallers
     public static <I> void devConsume(I input, Consumer<I> consumer) {
         if(DEV) consumer.accept(input);
     }
     
+    @IndirectCallers
     public static <I,R> @Nullable R devFunc(I input, Function<I,R> function) {
         return DEV ? function.apply(input) : null;
     }
     
+    @IndirectCallers
     public static <R> @Nullable R devSupply(Supplier<R> supplier) {
         return DEV ? supplier.get() : null;
     }
@@ -58,6 +62,7 @@ import static org.apache.logging.log4j.Level.*;
         log(FATAL,msg,args);
     }
     
+    @IndirectCallers
     public static void logFromASM(String msg, Object arg) {
         logError(msg,arg);
     }

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.font;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,7 +12,6 @@ import net.minecraftforge.client.event.RenderTooltipEvent.PostBackground;
 import net.minecraftforge.client.event.RenderTooltipEvent.PostText;
 import net.minecraftforge.client.event.RenderTooltipEvent.Pre;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
         List<String> textLines = new ArrayList<>();
         for(TextAPI<?> text : lines) {
             String asLine = text.getApplied();
-            if(StringUtils.isNotBlank(asLine)) textLines.add(asLine);
+            if(TextHelper.isNotBlank(asLine)) textLines.add(asLine);
         }
         if(!textLines.isEmpty()) {
             FontRenderer font = getWrapped();

@@ -3,16 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
-import org.apache.commons.lang3.StringUtils;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -28,50 +25,13 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.GETSTATIC;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKEVIRTUAL;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 
-@SuppressWarnings("unused") @Getter
+@Getter
 public abstract class CoreAPI {
 
     public static Object INSTANCE;
     static String BINARY = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
-    static String DESC = "Lmods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;";
-    static String OWNER = "mods/thecomputerizer/theimpossiblelibrary/api/core/CoreAPI";
-    static Type LOADER = Type.getType("Lmods/thecomputerizer/theimpossiblelibrary/api/core/loader/MultiVersionLoaderAPI;");
-    
-    public static void addClassLoadingURLS(ClassLoader ... loaders) {
-        Set<String> urls = new HashSet<>();
-        Object instance = findClassLoadingURLS(urls,CoreAPI.class.getClassLoader());
-        if(Objects.isNull(instance)) return;
-        TILRef.logInfo("Found {} sources to add {}",urls.size(),urls);
-        if(!urls.isEmpty()) {
-            TILRef.logInfo("Adding the above sources to {}",(Object)loaders);
-            Set<ClassLoader> loaderSet = new HashSet<>(Arrays.asList(loaders)); //Remove duplicate loaders
-            Method urlHandler = ReflectionHelper.getMethod(instance.getClass(),"addURLToClassLoader",
-                                                       ClassLoader.class,URL.class);
-            for(String urlString : urls) {
-                try {
-                    URL url = new URL(urlString);
-                    for(ClassLoader loader : loaderSet) ReflectionHelper.invokeMethod(urlHandler,instance,loader,url);
-                } catch(MalformedURLException ex) {
-                    TILRef.logError("Failed to get URL from source {}",urlString,ex);
-                }
-            }
-        } else TILRef.logWarn("Not adding sources from empty set");
-    }
-    
-    static @Nullable Object findClassLoadingURLS(Set<String> urls, ClassLoader coreLoader) {
-        Object coreInstance = findInstance(coreLoader);
-        if(Objects.isNull(coreInstance)) {
-            TILRef.logError("Cannot find class loading URLs for null instance from {}",coreLoader);
-            return null;
-        }
-        ReflectionHelper.invokeMethod(coreInstance.getClass(),"addSources",coreInstance,new Class<?>[]{
-                Set.class},urls);
-        return coreInstance;
-    }
     
     public static @Nullable Object findInstance(ClassLoader loader) {
         Class<?> coreClass = ClassHelper.findClass(BINARY,loader);
@@ -82,6 +42,7 @@ public abstract class CoreAPI {
         return ReflectionHelper.invokeStaticMethod(coreClass,"getInstance",new Class<?>[]{});
     }
     
+    @IndirectCallers
     public static String findLoadingClass() {
         return String.valueOf(findInstance(CoreAPI.class.getClassLoader())).split(" ")[0];
     }
@@ -96,6 +57,7 @@ public abstract class CoreAPI {
         return version.getPackageName(loader,BASE_PACKAGE)+".core.TILCore"+loader+versionName;
     }
     
+    @IndirectCallers
     public static GameVersion gameVersion() {
         return getInstance().getVersion();
     }
@@ -183,6 +145,7 @@ public abstract class CoreAPI {
         return getInstance().getVersion().isV19();
     }
     
+    @IndirectCallers
     public static boolean isV19_2() {
         return getInstance().getVersion().isV19_2();
     }
@@ -195,14 +158,17 @@ public abstract class CoreAPI {
         return getInstance().getVersion().isV20();
     }
     
+    @IndirectCallers
     public static boolean isV20_1() {
         return getInstance().getVersion().isV20_1();
     }
     
+    @IndirectCallers
     public static boolean isV20_4() {
         return getInstance().getVersion().isV20_4();
     }
     
+    @IndirectCallers
     public static boolean isV20_6() {
         return getInstance().getVersion().isV20_6();
     }
@@ -211,43 +177,53 @@ public abstract class CoreAPI {
         return getInstance().getVersion().isV21();
     }
     
+    @IndirectCallers
     public static boolean isV21_1() {
         return getInstance().getVersion().isV21_1();
     }
     
+    @IndirectCallers
     public static boolean isVersionAtLeast(@Nullable String versionStr) {
         return getInstance().getVersion().isAtLeast(versionStr);
     }
     
+    @IndirectCallers
     public static boolean isVersionAtLeast(GameVersion version) {
         return getInstance().getVersion().isAtLeast(version);
     }
     
+    @IndirectCallers
     public static boolean isVersionAtMost(@Nullable String versionStr) {
         return getInstance().getVersion().isAtMost(versionStr);
     }
     
+    @IndirectCallers
     public static boolean isVersionAtMost(GameVersion version) {
         return getInstance().getVersion().isAtMost(version);
     }
     
+    @IndirectCallers
     public static boolean isVersionGreaterThan(@Nullable String versionStr) {
         return getInstance().getVersion().isGreaterThan(versionStr);
     }
     
+    @IndirectCallers
     public static boolean isVersionGreaterThan(GameVersion version) {
         return getInstance().getVersion().isGreaterThan(version);
     }
     
+    @IndirectCallers
     public static boolean isVersionLessThan(@Nullable String versionStr) {
         return getInstance().getVersion().isLessThan(versionStr);
     }
     
+    @IndirectCallers
     public static boolean isVersionLessThan(GameVersion version) {
         return getInstance().getVersion().isLessThan(version);
     }
     
     @SuppressWarnings("DataFlowIssue")
+    @IndirectCallers
     public static Object parseFrom(Object unparsed, ClassLoader loader, boolean java8) {
         try {
             String className = String.valueOf(unparsed).split(" ")[0];
@@ -329,6 +305,7 @@ public abstract class CoreAPI {
     public abstract CoreEntryPoint getCoreVersionHandler();
     
     @SuppressWarnings("unchecked")
+    @IndirectCallers
     public <T> T getLaunguageProvider() {
         String name = "TILLanguageProvider"+this.version.name.replace(".","_");
         return ClassHelper.initialize((Class<T>)ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name));
@@ -350,6 +327,7 @@ public abstract class CoreAPI {
     }
     
     @SuppressWarnings("unchecked")
+    @IndirectCallers
     public <T> T getModLocator(ClassLoader loader) {
         String name = "MultiVersionModLocator"+this.version.name.replace(".","_");
         return (T)ClassHelper.initialize(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name,loader),this);
@@ -363,11 +341,6 @@ public abstract class CoreAPI {
 
     public abstract void initAPI();
     
-    public void injectGetLoader(MethodVisitor visitor) {
-        visitor.visitFieldInsn(GETSTATIC,OWNER,"INSTANCE",DESC);
-        visitor.visitMethodInsn(INVOKEVIRTUAL,OWNER,"getLoader",Type.getMethodDescriptor(LOADER),false);
-    }
-    
     public abstract void injectWrittenMod(Class<?> containerClass, String modid);
 
     public void instantiateCoreMods() {
@@ -378,6 +351,7 @@ public abstract class CoreAPI {
         }
     }
     
+    @IndirectCallers
     public void instantiateCoreMods(String containerName, Collection<MultiVersionCoreModInfo> infos) {
         if(infos.isEmpty()) {
             TILRef.logInfo("No coremods to instantiate for {}");
@@ -440,13 +414,14 @@ public abstract class CoreAPI {
     
     public abstract String mapMethodName(String unmappedClass, String unmappedMethod, String desc);
     
+    @IndirectCallers
     public String mapMethodName(String unmappedClass, String unmappedMethod, String desc, boolean asBinary) {
         return mapAsBinary(mapMethodName(unmappedMethod,unmappedMethod,desc),asBinary);
     }
 
     @SneakyThrows
     public void modConstructed(Package pkg, String modid, String name, String entryType) {
-        if(StringUtils.isBlank(modid) || StringUtils.isBlank(name)) {
+        if(TextHelper.isBlank(modid) || TextHelper.isBlank(name)) {
             TILRef.logFatal("Found CommonEntryPoint instance in package `{}` with a blank modid or name! "+
                     "Things may break or crash very soon.",pkg);
             return;
@@ -464,6 +439,7 @@ public abstract class CoreAPI {
     /**
      * Coremod pass-through stuff. Returns a new map.
      */
+    @IndirectCallers
     public Map<?,?> newMap() {
         return new HashMap<>();
     }
@@ -553,6 +529,7 @@ public abstract class CoreAPI {
             return base+"."+this.pkg;
         }
         
+        @IndirectCallers
         public boolean isCompatibleFabric() {
             return isV16() || isV18() || isV19() || isV20() || isV21();
         }
@@ -572,6 +549,7 @@ public abstract class CoreAPI {
             return isV16() || isV18() || isV19() || isV20() || isV21();
         }
         
+        @IndirectCallers
         public boolean isCompatibleNeoForge() {
             return isV20() || isV21();
         }

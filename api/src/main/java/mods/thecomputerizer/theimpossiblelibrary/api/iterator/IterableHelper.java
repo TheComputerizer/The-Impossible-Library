@@ -2,11 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.MutablePair;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 
 /**
@@ -142,7 +142,7 @@ import java.util.Map.Entry;
     }
 
     public static <K,V> Entry<K,V> getMapEntry(K key, V val, boolean mutable) {
-        return mutable ? new MutablePair<>(key,val) : new ImmutablePair<>(key,val);
+        return mutable ? new SimpleEntry<>(key,val) : new SimpleImmutableEntry<>(key,val);
     }
     
     /**

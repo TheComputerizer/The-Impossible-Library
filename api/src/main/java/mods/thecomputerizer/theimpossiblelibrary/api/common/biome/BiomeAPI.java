@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.biome;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -30,7 +31,10 @@ public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements Registry
     @IndirectCallers public abstract float getRainfall();
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        if(Objects.isNull(this.registryName) && Objects.nonNull(this.wrapped)) {
+            RegistryAPI<?> registry = getRegistry();
+            if(Objects.nonNull(registry)) this.registryName = registry.getKey(unwrap());
+        }
         return this.registryName;
     }
     

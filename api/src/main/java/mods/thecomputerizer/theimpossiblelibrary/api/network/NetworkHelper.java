@@ -3,14 +3,15 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network;
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
@@ -21,7 +22,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.Map.Entry;
 
-@SuppressWarnings("unused")
 public class NetworkHelper {
 
     public static <DIR> @Nullable DIR getDirFromName(String name) {
@@ -136,11 +136,13 @@ public class NetworkHelper {
         }
         return ret;
     }
-
+    
+    @IndirectCallers
     public static <K,V> Map<K,V> readMap(ByteBuf buf, Supplier<K> keyFunc, Supplier<V> valFunc) {
         return readMapEntries(buf,() -> IterableHelper.getMapEntry(keyFunc.get(),valFunc.get()));
     }
-
+    
+    @IndirectCallers
     public static @Nullable ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
         NetworkAPI<?,?> api = getNetworkAPI();
         return Objects.nonNull(api) ? api.readResourceLocation(buf) : null;
@@ -158,6 +160,7 @@ public class NetworkHelper {
         return strLength==0 ? "" : (String)buf.readCharSequence(strLength,StandardCharsets.UTF_8);
     }
     
+    @IndirectCallers
     public static CompoundTagAPI<?> readTag(ByteBuf buf) {
         return getNetworkAPI().readTag(buf);
     }
@@ -221,7 +224,8 @@ public class NetworkHelper {
         buf.writeInt(list.size());
         list.forEach(valFunc);
     }
-
+    
+    @IndirectCallers
     public static <K,V> void writeMap(ByteBuf buf, Map<K,V> map, Consumer<K> keyFunc, Consumer<V> valFunc) {
         writeSet(buf,map.entrySet(),entry -> {
             keyFunc.accept(entry.getKey());
@@ -247,7 +251,8 @@ public class NetworkHelper {
             else writeString(buf,val.toString());
         }
     }
-
+    
+    @IndirectCallers
     public static void writeResourceLocation(ByteBuf buf, ResourceLocationAPI<?> resource) {
         writeString(buf,resource.toString());
     }
@@ -262,7 +267,7 @@ public class NetworkHelper {
             TILRef.logError("Tried to write a null or empty string to a packet!");
             buf.writeInt(0);
         }
-        if(StringUtils.isNotBlank(string)) {
+        if(TextHelper.isNotBlank(string)) {
             ByteBuffer buffer = StandardCharsets.UTF_8.encode(string);
             string = StandardCharsets.UTF_8.decode(buffer).toString();
         }

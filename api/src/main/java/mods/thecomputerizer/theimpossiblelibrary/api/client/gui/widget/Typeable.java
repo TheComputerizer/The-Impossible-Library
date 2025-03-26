@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
 
@@ -18,14 +19,16 @@ public interface Typeable {
     }
     
     default boolean canPaste(@Nullable String text) {
-        return StringUtils.isNotEmpty(text);
+        return TextHelper.isNotEmpty(text);
     }
     
     boolean canType(char c);
     
+    @IndirectCallers
     default boolean canSelectAll() {
         return true;
     }
+    
     boolean onBackspace();
     boolean onKeyPressed(KeyStateCache cache, int keycode);
     boolean onCharTyped(char c);

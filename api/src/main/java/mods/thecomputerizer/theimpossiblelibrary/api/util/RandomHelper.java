@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("unused") public class RandomHelper {
+public class RandomHelper {
     
     public static <E> E getBasicRandomEntry(Collection<E> entries) {
         int index = entries.size();
@@ -39,6 +40,7 @@ import java.util.function.Function;
         return weight;
     }
 
+    @IndirectCallers
     public static <E extends WeightedEntry> @Nullable E getWeightedEntry(Random rand, Iterable<E> entries) {
         return getEntryAt(entries,rand.nextInt(getTotalWeight(entries)));
     }
@@ -52,6 +54,7 @@ import java.util.function.Function;
         }
     }
     
+    @IndirectCallers
     public static byte randomByte(byte range) {
         return randomByte((byte)0,range);
     }
@@ -63,10 +66,12 @@ import java.util.function.Function;
         return (byte)randomInt(b1,b2); //Is this really how it should be done?
     }
     
+    @IndirectCallers
     public static byte randomByte(String name, String unparsed, byte fallback) {
         return randomNum(name,unparsed,fallback,Byte::parseByte,RandomHelper::randomByte);
     }
     
+    @IndirectCallers
     public static double randomDouble(double range) {
         return randomDouble(0,range);
     }
@@ -79,10 +84,12 @@ import java.util.function.Function;
                 d1+ThreadLocalRandom.current().nextDouble()*Math.abs(d2-d1);
     }
     
+    @IndirectCallers
     public static double randomDouble(String name, String unparsed, double fallback) {
         return randomNum(name,unparsed,fallback,Double::parseDouble,RandomHelper::randomDouble);
     }
     
+    @IndirectCallers
     public static float randomFloat(float range) {
         return randomFloat(0,range);
     }
@@ -95,6 +102,7 @@ import java.util.function.Function;
                 f1+ThreadLocalRandom.current().nextFloat()*Math.abs(f2-f1);
     }
     
+    @IndirectCallers
     public static float randomFloat(String name, String unparsed, float fallback) {
         return randomNum(name,unparsed,fallback,Float::parseFloat,RandomHelper::randomFloat);
     }
@@ -111,10 +119,12 @@ import java.util.function.Function;
                 i1+ThreadLocalRandom.current().nextInt(Math.abs(i2-i1));
     }
     
+    @IndirectCallers
     public static int randomInt(String name, String unparsed, int fallback) {
         return randomNum(name,unparsed,fallback,Integer::parseInt,RandomHelper::randomInt);
     }
     
+    @IndirectCallers
     public static long randomLong(long range) {
         return randomLong(0,range);
     }
@@ -128,6 +138,7 @@ import java.util.function.Function;
         return l1>l2 ? rand.nextLong(l2,l1) : rand.nextLong(l1,l2);
     }
     
+    @IndirectCallers
     public static long randomLong(String name, String unparsed, long fallback) {
         return randomNum(name,unparsed,fallback,Long::parseLong,RandomHelper::randomLong);
     }
@@ -137,7 +148,7 @@ import java.util.function.Function;
      */
     private static <N extends Number> N randomNum(
             String name, String unparsed, N fallback, Function<String,N> fromString, BiFunction<N,N,N> fromRand) {
-        if(StringUtils.isBlank(unparsed)) {
+        if(TextHelper.isBlank(unparsed)) {
             TILRef.logWarn("String to parse blank value {} numerical parameter {}! Using fallback {}",
                            unparsed,name,fallback);
             return fallback;
@@ -149,6 +160,7 @@ import java.util.function.Function;
         return fromRand.apply(min,max);
     }
     
+    @IndirectCallers
     public static short randomShort(short range) {
         return randomShort((short)0,range);
     }
@@ -160,6 +172,7 @@ import java.util.function.Function;
         return (short)randomInt(s1,s2); //Is this really how it should be done?
     }
     
+    @IndirectCallers
     public static short randomShort(String name, String unparsed, short fallback) {
         return randomNum(name,unparsed,fallback,Short::parseShort,RandomHelper::randomShort);
     }

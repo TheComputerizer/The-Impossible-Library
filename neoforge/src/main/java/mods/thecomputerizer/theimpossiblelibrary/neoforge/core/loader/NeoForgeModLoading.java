@@ -25,7 +25,6 @@ import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModLocator.ModFileOrException;
 import net.neoforged.neoforgespi.locating.IModProvider;
 import net.neoforged.neoforgespi.locating.ModFileFactory.ModFileInfoParser;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.slf4j.Logger;
@@ -364,8 +363,8 @@ public class NeoForgeModLoading {
             return;
         }
         scan.setCore(data.getCandidate().getCore());
-        for(Pair<String,byte[]> classBytes : data.writeModClass())
-            writeClassBytes(file,scan,data,classBytes.getLeft(),classBytes.getRight());
+        for(Entry<String,byte[]> classBytes : data.writeModClass())
+            writeClassBytes(file,scan,data,classBytes.getKey(),classBytes.getValue());
         for(IModInfo mod : file.getModInfos()) {
             if(modid.equals(mod.getModId())) {
                 scan.setModClass(mod,info.getModClasspath());

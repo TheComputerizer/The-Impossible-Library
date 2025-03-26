@@ -24,7 +24,6 @@ dependencies {
     //noinspection VulnerableLibrariesLocal
     compileOnly "io.netty:netty-all:$netty_version" //Not shaded so vulnerable dependecies aren't an issue
     compileOnly "it.unimi.dsi:fastutil:$fast_version"
-    compileOnly "org.apache.commons:commons-lang3:$lang3_version"
     compileOnly "$log4j_artifact:$log4j_version"
     compileOnly "org.ow2.asm:asm-commons:$asm_version"
     compileOnly "org.ow2.asm:asm-util:$asm_version"

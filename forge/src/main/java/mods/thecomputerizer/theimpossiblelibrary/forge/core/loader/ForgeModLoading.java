@@ -27,7 +27,6 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModFile.Type;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.ModFileFactory.ModFileInfoParser;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
@@ -67,10 +66,7 @@ import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 public class ForgeModLoading {
     
     static final Logger LOGGER = LogManager.getLogger("Forge Mod Loading");
-    private static final String MANIFEST = "META-INF/MANIFEST.MF";
-    static final String MOD_CLASS_VISITOR = "net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor";
-    static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";
-    static final String SCANNER = "net.minecraftforge.fml.loading.moddiscovery.Scanner";
+    
     static final BiConsumer<TILBetterModScan,Object> AFTER_WRITING_MODS = (scan,language) -> {
         LOGGER.debug("Injecting scan data into the language loader");
         Consumer<ModFileScanData> visitor = Methods.invokeDirect(language,"getFileVisitor");
@@ -78,7 +74,12 @@ public class ForgeModLoading {
     };
     static final Map<MultiVersionModCandidate,ModFile> CANDIDATE_MAP = new HashMap<>();
     static final Map<Object,Map<MultiVersionModInfo,MultiVersionModData>> FILE_INFO_MAP = new HashMap<>();
-    static Function<Object,String> moduleNameGetter = file -> null;
+    static final String MANIFEST = "META-INF/MANIFEST.MF";
+    static final String MOD_CLASS_VISITOR = "net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor";
+    static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";
+    static final String SCANNER = "net.minecraftforge.fml.loading.moddiscovery.Scanner";
+    static final String SELF_ENTRYPOINT = "mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint";
+    
     static Function<ModFile,IModFileInfo> langProviderFileInfo;
     static BiFunction<URL,String,Path> urlToPath;
     static BiFunction<Path,Object,Manifest> pathToManifest;
@@ -88,13 +89,15 @@ public class ForgeModLoading {
     static Class<?> dynamicModFileClass;
     static boolean fixedCoreMods;
     @Getter static boolean pathBased;
-    static boolean locatorBased;
-    static String workingVersion;
+    @Getter static boolean locatorBased;
+    @Getter static String workingVersion;
     
     @SuppressWarnings("unchecked")
-    private static <F> void addScannedMod(Object file, List<F> mods) {
-        if(locatorBased) mods.add((F)file);
-        else {
+    private static <F> void addScannedMod(Object file, List<F> mods, String type) {
+        if(locatorBased) {
+            Fields.setDirect(file,"modFileType",getModFileType(type));
+            mods.add((F)file);
+        } else {
             final String fileClassName = "net.minecraftforge.forgespi.locating.IModLocator$ModFileOrException";
             final Class<?> fileClass = ClassHelper.findClass(fileClassName);
             mods.add(Constructors.newInstanceOf(fileClass,file,null));
@@ -214,10 +217,6 @@ public class ForgeModLoading {
         return null;
     }
     
-    /**
-     * Called via the dynamically generated ModFile extension class
-     */
-    @IndirectCallers
     public static Type getModFileType(String name) {
         if(Objects.isNull(name) || name.isEmpty()) {
             LOGGER.error("Null or empty mod file type! LIBRARY will be assumed");
@@ -295,7 +294,7 @@ public class ForgeModLoading {
         List<Config> mods = initConfigMods(config,infos);
         config.add("mods",mods);
         if(!mods.isEmpty() && !MODID.equals(mods.get(0).get("modId")))
-            config.add("dependencies",Collections.singletonList(initConfigDependencies()));
+            config.add("dependencies",new ArrayList<>(Collections.singletonList(initConfigDependencies())));
         return wrapConfig(config);
     }
     
@@ -347,7 +346,7 @@ public class ForgeModLoading {
         mod.set("logoFile","logo.png");
         mod.set("authors","The_Computerizer");
         mod.set("description","Multiversion language loader for "+NAME);
-        config.set("mods", Collections.singletonList(mod));
+        config.set("mods",new ArrayList<>(Collections.singletonList(mod)));
         return config;
     }
     
@@ -460,20 +459,20 @@ public class ForgeModLoading {
         CoreAPI instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) LOGGER.error("Failed to get CoreAPI instance :(");
         Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
-        for(ModFile candidate : CANDIDATE_MAP.values()) {
-            Map<MultiVersionModInfo,MultiVersionModData> map = FILE_INFO_MAP.get(candidate);
+        for(Entry<MultiVersionModCandidate,ModFile> candidateEntry : CANDIDATE_MAP.entrySet()) {
+            ModFile candidateFile = candidateEntry.getValue();
+            Map<MultiVersionModInfo,MultiVersionModData> map = FILE_INFO_MAP.get(candidateFile);
             if(Objects.isNull(map)) {
                 LOGGER.error("Cannot populate multiversion data with null info map! Was the getter set up correctly?");
                 continue;
             }
             populateMultiversionData(map,data);
-            String moduleName = Objects.nonNull(moduleNameGetter) ? moduleNameGetter.apply(candidate) : null;
-            if(Objects.isNull(moduleName)) //Only null in 1.16.5
-                for(MultiVersionModInfo info : map.keySet())
-                    moduleName = info.getModID();
-            if(Objects.nonNull(moduleName) && MODID.equals(moduleName))
-                addScannedMod(langProviderModFile(candidate),mods);
-            addScannedMod(candidate,mods);
+            if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
+                LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
+                addScannedMod(langProviderModFile(candidateFile),mods,"LANGPROVIDER");
+            }
+            LOGGER.info("Adding scanned mod {}",candidateFile);
+            addScannedMod(candidateFile,mods,"MOD");
         }
         return Collections.unmodifiableList(mods);
     }
@@ -515,10 +514,6 @@ public class ForgeModLoading {
         langProviderFileInfo = setLangProviderFileInfo(version);
         coreModEngineClass = "net.minecraftforge.coremod.CoreModEngine";
         coreModExtensions = setCoreModExtensions(version);
-        moduleNameGetter = pathBased ? file -> null : file -> {
-            IModFileInfo fileInfo = Methods.invoke(file,"getModFileInfo");
-            return Methods.invoke(fileInfo,"moduleName");
-        };
         final Class<?> lClass = ClassHelper.findClass("net.minecraftforge.fml.loading."+
                 (pathBased ? "LibraryFinder" : "ClasspathLocatorUtils"));
         final String arg2 = pathBased ? "manifest_jar" : MANIFEST;
@@ -636,8 +631,8 @@ public class ForgeModLoading {
             LOGGER.warn("Skipping mod injection for {} since no data exists",modid);
             return;
         }
-        for(Pair<String,byte[]> classBytes : data.writeModClass())
-            writeClassBytes(file,scan,visitorClass,data,classBytes.getLeft(),classBytes.getRight());
+        for(Entry<String,byte[]> classBytes : data.writeModClass())
+            writeClassBytes(file,scan,visitorClass,data,classBytes.getKey(),classBytes.getValue());
     }
     
     /**

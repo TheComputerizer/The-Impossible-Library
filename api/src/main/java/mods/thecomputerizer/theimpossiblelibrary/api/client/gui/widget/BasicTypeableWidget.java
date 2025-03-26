@@ -8,9 +8,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
 
@@ -19,7 +20,6 @@ import java.util.Objects;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.LEFT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.RIGHT;
 
-@SuppressWarnings("unused")
 public class BasicTypeableWidget extends TextWidget implements Clickable, Selectable, Tickable, Typeable {
     
     public static BasicTypeableWidget from(TextAPI<?> text) {
@@ -82,26 +82,32 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
         return from(TextBuffer.literalBuilder(literal).setColor(color).build(),x,y,charLimit);
     }
     
+    @IndirectCallers
     public static BasicTypeableWidget translated(String key, Object[] args) {
         return from(TextBuffer.translated(key,args),0d,0d,-1);
     }
     
+    @IndirectCallers
     public static BasicTypeableWidget translated(String key, Object[] args, ColorCache color) {
         return from(TextBuffer.translatedBuilder(key,args).setColor(color).build(),0d,0d,-1);
     }
     
+    @IndirectCallers
     public static BasicTypeableWidget translated(String key, Object[] args, double x, double y) {
         return from(TextBuffer.translated(key,args),x,y,-1);
     }
     
+    @IndirectCallers
     public static BasicTypeableWidget translated(String key, Object[] args, ColorCache color, double x, double y) {
         return from(TextBuffer.translatedBuilder(key,args).setColor(color).build(),x,y,-1);
     }
     
+    @IndirectCallers
     public static BasicTypeableWidget translated(String key, Object[] args, double x, double y, int charLimit) {
         return from(TextBuffer.translated(key,args),x,y,charLimit);
     }
     
+    @IndirectCallers
     public static BasicTypeableWidget translated(String key, Object[] args, ColorCache color, double x, double y,
             int charLimit) {
         return from(TextBuffer.translatedBuilder(key,args).setColor(color).build(),x,y,charLimit);
@@ -137,7 +143,7 @@ public class BasicTypeableWidget extends TextWidget implements Clickable, Select
     }
     
     @Override public boolean canPaste(@Nullable String text) {
-        return canInteract(false) && StringUtils.isNotEmpty(text) &&
+        return canInteract(false) && TextHelper.isNotEmpty(text) &&
                (this.charLimit<=0 || this.charLimit>textLength());
     }
     

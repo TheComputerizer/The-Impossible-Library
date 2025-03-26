@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.DynamicArray;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -16,12 +16,11 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-@SuppressWarnings("unused")
 public class ArrayHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] original, T toAppend, boolean allowDuplicates) {
-        if(!allowDuplicates && ArrayUtils.contains(original,toAppend)) return original;
+        if(!allowDuplicates && contains(original,toAppend)) return original;
         if(Objects.isNull(toAppend)) {
             TILRef.logError("Cannot append null value to array! Use Misc#expandArray to do that.");
             return original;
@@ -30,10 +29,18 @@ public class ArrayHelper {
         expanded[expanded.length-1] = toAppend;
         return expanded;
     }
-
-    public static <E> int countOccurrences(E[] array, E occurance) {
+    
+    public static <E> boolean contains(E[] array, E value) {
+        for(E a : array)
+            if((Objects.isNull(a) && Objects.isNull(value)) ||
+               (Objects.nonNull(a) && Objects.nonNull(value) && a.equals(value))) return true;
+        return false;
+    }
+    
+    @IndirectCallers
+    public static int countOccurrences(Object array, Object occurance) {
         int count = 0;
-        for(E element : array)
+        for(Object element : (Object[])array)
             if((Objects.isNull(element) && Objects.isNull(occurance)) || element.equals(occurance)) count++;
         return count;
     }
@@ -42,6 +49,7 @@ public class ArrayHelper {
      * Creates an array with the input dimensions. Ensures the length is at least 0.
      */
     @SuppressWarnings("unchecked")
+    @IndirectCallers
     public static <T> T[] create(Class<T> clazz, int length) {
         return (T[])Array.newInstance(clazz,Math.max(length,0));
     }
@@ -84,7 +92,6 @@ public class ArrayHelper {
             int next = findFirstOccurrenceAfter(array, element, i);
             if(next!=-1) replacements[next] = true;
         }
-        int newLength = array.length-countOccurrences(replacements, true);
         int first = findFirstOccurrence(replacements, true);
         while(first!=-1) {
             if(replaceValues) {
@@ -130,6 +137,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Boolean arrays
      */
+    @IndirectCallers
     public static boolean[] fixBoxedPrimitive(Boolean ... boxed) {
         boolean[] primitive = new boolean[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -139,6 +147,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Boolean arrays
      */
+    @IndirectCallers
     public static byte[] fixBoxedPrimitive(Byte ... boxed) {
         byte[] primitive = new byte[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -148,6 +157,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Character arrays
      */
+    @IndirectCallers
     public static char[] fixBoxedPrimitive(Character ... boxed) {
         char[] primitive = new char[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -157,6 +167,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Double arrays
      */
+    @IndirectCallers
     public static double[] fixBoxedPrimitive(Double ... boxed) {
         double[] primitive = new double[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -166,6 +177,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Float arrays
      */
+    @IndirectCallers
     public static float[] fixBoxedPrimitive(Float ... boxed) {
         float[] primitive = new float[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -175,6 +187,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Integer arrays
      */
+    @IndirectCallers
     public static int[] fixBoxedPrimitive(Integer ... boxed) {
         int[] primitive = new int[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -184,6 +197,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Long arrays
      */
+    @IndirectCallers
     public static long[] fixBoxedPrimitive(Long ... boxed) {
         long[] primitive = new long[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -193,6 +207,7 @@ public class ArrayHelper {
     /**
      * Probably should be avoided but serves as an easy way to unbox Short arrays
      */
+    @IndirectCallers
     public static short[] fixBoxedPrimitive(Short ... boxed) {
         short[] primitive = new short[boxed.length];
         for(int i=0; i<boxed.length; i++) primitive[i] = boxed[i];
@@ -241,13 +256,15 @@ public class ArrayHelper {
             if(e==element) return true;
         return false;
     }
-
+    
+    @IndirectCallers
     public static <E> boolean hasElementAfter(E[] array, E element, int index) {
         for(int i=index+1;i<array.length;i++)
             if(array[i]==element) return true;
         return false;
     }
-
+    
+    @IndirectCallers
     public static <E> boolean hasElementExceptAt(E[] array, E element, int index) {
         for(int i=0;i<array.length;i++) {
             if(i==index) continue;
@@ -256,6 +273,7 @@ public class ArrayHelper {
         return false;
     }
     
+    @IndirectCallers
     public static int[] intRange(int min, int max) {
         return intRange(min,max,true);
     }
@@ -346,11 +364,13 @@ public class ArrayHelper {
         }
         return array;
     }
-
+    
+    @IndirectCallers
     public static <E> void supplyArray(E[] array, Function<Integer,E> func) {
         for(int i=0; i<array.length; i++) array[i] = func.apply(i);
     }
-
+    
+    @IndirectCallers
     public static <E,F> void supplyArray(E[] array, F thing, BiFunction<F,Integer,E> func) {
         for(int i=0; i<array.length; i++) array[i] = func.apply(thing,i);
     }
@@ -363,6 +383,7 @@ public class ArrayHelper {
     }
 
     @SuppressWarnings("unchecked")
+    @IndirectCallers
     public static <E,F> Object supplyArrayCreation(Class<E> clazz, int size, F thing, BiFunction<F,Integer,?> func) {
         E[] array = create(clazz,size);
         for(int i=0; i<array.length; i++) array[i] = (E)func.apply(thing,i);

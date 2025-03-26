@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -63,7 +62,7 @@ public class ModWriter1_12_2 extends ModWriter {
         
     }
     
-    @Override protected void writeMod(ClassWriter writer, List<Pair<String,byte[]>> classBytes) {
+    @Override protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {
         super.writeMod(writer,classBytes);
         for(Entry<String,String[]> entryPoint : this.entryPointMethods.entrySet()) {
             String methodName = entryPoint.getKey();

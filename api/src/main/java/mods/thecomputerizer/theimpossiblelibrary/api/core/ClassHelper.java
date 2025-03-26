@@ -4,8 +4,8 @@ import io.github.toolfactory.jvm.util.BufferHandler;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.apache.commons.lang3.StringUtils;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 
 import javax.annotation.Nullable;
@@ -166,7 +166,7 @@ public class ClassHelper {
     }
 
     public static String descriptor(String classpath) {
-        return StringUtils.isNotBlank(classpath) ? "L"+internalName(classpath)+";" : "";
+        return TextHelper.isNotBlank(classpath) ? "L"+internalName(classpath)+";" : "";
     }
     
     /**
@@ -452,7 +452,7 @@ public class ClassHelper {
      * Builds a signature via class descriptors
      */
     public static String signatureDesc(String desc, String ... parameterDescs) {
-        if(StringUtils.isBlank(desc)) return "";
+        if(TextHelper.isBlank(desc)) return "";
         StringBuilder builder = new StringBuilder(desc.substring(0,desc.length()-1)).append("<");
         if(ArrayHelper.isNotEmpty(parameterDescs))
             for(String parameter : parameterDescs) builder.append(parameter);
@@ -464,7 +464,7 @@ public class ClassHelper {
      */
     @IndirectCallers
     public static String signatureInternal(String name, String ... parameterNames) {
-        if(StringUtils.isBlank(name)) return "";
+        if(TextHelper.isBlank(name)) return "";
         return signatureDesc("L"+name+";",ArrayHelper.mapTo(parameterNames,String.class,p -> "L"+p+";"));
     }
     
@@ -519,6 +519,6 @@ public class ClassHelper {
      */
     public static String withPkgName(@Nullable Package pkg, String simpleName) {
         simpleName = Objects.nonNull(simpleName) ? simpleName.replace(" ","").replace('/','.') : null;
-        return Objects.nonNull(pkg) && StringUtils.isNotBlank(pkg.getName()) ? pkg.getName()+"."+simpleName : simpleName;
+        return Objects.nonNull(pkg) && TextHelper.isNotBlank(pkg.getName()) ? pkg.getName()+"."+simpleName : simpleName;
     }
 }

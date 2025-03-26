@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.NeoForgeHandlesClient;
 import net.minecraft.client.KeyMapping;
@@ -8,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ public class NeoForgeHandlesClient1_20 extends NeoForgeHandlesClient {
     }
     
     @Override public void registerKeyBinding(KeyAPI<?> key) {
-        if(this.registeredKeys) ArrayUtils.add(Minecraft.getInstance().options.keyMappings,key.unwrap());
+        if(this.registeredKeys) ArrayHelper.append(Minecraft.getInstance().options.keyMappings,key.unwrap(),false);
         else this.keys.add(key.unwrap());
     }
     

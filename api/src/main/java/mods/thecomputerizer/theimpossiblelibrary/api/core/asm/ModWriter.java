@@ -4,19 +4,19 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -75,28 +75,28 @@ public abstract class ModWriter {
         ASMHelper.addField(visitor,PUBLIC_FINAL,"entryPoint",this.entryPoint,null,null);
     }
     
-    protected Pair<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,
+    protected Entry<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,
             Consumer<ClassVisitor> innerWriter) {
         return addInnerClass(outerClass,innerName,innerWriter,true,true);
     }
     
-    protected Pair<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,
+    protected Entry<ClassWriter,Type> addInnerClass(ClassVisitor outerClass, String innerName,
             Consumer<ClassVisitor> innerWriter, boolean client, boolean server) {
         Type innerType = TypeHelper.inner(this.modType,innerName);
         ClassWriter writer = ASMHelper.getWriter(this.javaVersion,PUBLIC_STATIC_FINAL,innerType,modInterfaces(client,server));
         writer.visitOuterClass(this.modTypeInternal,null,null);
         outerClass.visitInnerClass(innerType.getInternalName(),this.modTypeInternal,innerName,PUBLIC_STATIC_FINAL);
         innerWriter.accept(writer);
-        return new ImmutablePair<>(writer,innerType);
+        return new SimpleImmutableEntry<>(writer, innerType);
     }
     
-    public final List<Pair<String,byte[]>> buildModClass() {
-        List<Pair<String,byte[]>> classBytes = new ArrayList<>();
+    public final List<Entry<String,byte[]>> buildModClass() {
+        List<Entry<String,byte[]>> classBytes = new ArrayList<>();
         ClassWriter writer = ASMHelper.getWriter(this.javaVersion,PUBLIC,this.modType,modInterfaces(true,true));
         writeMod(writer,classBytes);
         finishWritingClass(writer,this.modType,(classpath,bytes) -> {
             TILRef.logDebug("Wrote bytecode for `{}` entrypoint to `{}`",this.info.getModID(),classpath);
-            classBytes.add(new ImmutablePair<>(classpath, bytes));
+            classBytes.add(new SimpleImmutableEntry<>(classpath, bytes));
         });
         return classBytes;
     }
@@ -184,15 +184,15 @@ public abstract class ModWriter {
         });
     }
     
-    protected void writeInnerClass(Pair<ClassWriter,Type> writerPair, List<Pair<String,byte[]>> classBytes) {
+    protected void writeInnerClass(Entry<ClassWriter,Type> writerPair, List<Entry<String,byte[]>> classBytes) {
         writeInnerClass(writerPair,(classpath,bytes) -> {
             TILRef.logDebug("Finished writing inner class {}",classpath);
-            classBytes.add(new ImmutablePair<>(classpath,bytes));
+            classBytes.add(new SimpleImmutableEntry<>(classpath,bytes));
         });
     }
     
-    protected void writeInnerClass(Pair<ClassWriter,Type> writerPair, BiConsumer<String,byte[]> byteCodeAcceptor) {
-        finishWritingClass(writerPair.getLeft(),writerPair.getRight(),byteCodeAcceptor);
+    protected void writeInnerClass(Entry<ClassWriter,Type> writerPair, BiConsumer<String,byte[]> byteCodeAcceptor) {
+        finishWritingClass(writerPair.getKey(),writerPair.getValue(),byteCodeAcceptor);
     }
     
     protected final void writeMethod(ClassVisitor visitor, Function<ClassVisitor,MethodVisitor> methodGetter,
@@ -210,7 +210,7 @@ public abstract class ModWriter {
         annotation.visitEnd();
     }
     
-    protected void writeMod(ClassWriter writer, List<Pair<String,byte[]>> classBytes) {
+    protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {
         writeClassInit(writer);
         writeConstructor(writer);
     }

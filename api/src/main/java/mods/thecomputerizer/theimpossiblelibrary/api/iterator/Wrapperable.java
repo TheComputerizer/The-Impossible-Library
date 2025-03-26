@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import org.apache.commons.lang3.mutable.MutableInt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -430,9 +430,9 @@ public class Wrapperable<E> implements Iterable<E> {
 
     public int size() {
         if(this.iterable instanceof Collection<?>) return ((Collection<E>)this.iterable).size();
-        final MutableInt sizeCounter = new MutableInt();
-        this.iterable.forEach(e -> sizeCounter.add(1));
-        return sizeCounter.getValue();
+        AtomicInteger counter = new AtomicInteger();
+        this.iterable.forEach(e -> counter.addAndGet(1));
+        return counter.get();
     }
 
     @Override public Spliterator<E> spliterator() {

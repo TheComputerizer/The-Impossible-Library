@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.state.BooleanProperty;
@@ -10,14 +11,12 @@ import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IntegerProperty;
 import net.minecraft.state.Property;
 import net.minecraft.util.IStringSerializable;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
 public class BlockHelper1_16_5 implements BlockHelperAPI {
     
     static final Map<String,MaterialColor> COLOR_BY_NAME = buildColorMap();
@@ -134,12 +133,12 @@ public class BlockHelper1_16_5 implements BlockHelperAPI {
     }
     
     @Override public Material1_16_5 getMaterialByName(String name) {
-        Material mat = StringUtils.isBlank(name) ? Material.WOOD : MATERIAL_BY_NAME.getOrDefault(name,Material.WOOD);
+        Material mat = TextHelper.isBlank(name) ? Material.WOOD : MATERIAL_BY_NAME.getOrDefault(name, Material.WOOD);
         return new Material1_16_5(mat);
     }
     
     @Override public MaterialColor1_16_5 getMaterialColorByName(String name) {
-        MaterialColor color = StringUtils.isBlank(name) ? MaterialColor.GRASS :
+        MaterialColor color = TextHelper.isBlank(name) ? MaterialColor.GRASS :
                 COLOR_BY_NAME.getOrDefault(name,MaterialColor.GRASS);
         return new MaterialColor1_16_5(color);
     }

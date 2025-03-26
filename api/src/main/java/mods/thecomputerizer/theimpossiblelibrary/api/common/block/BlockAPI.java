@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
@@ -18,7 +19,10 @@ public abstract class BlockAPI<B> extends AbstractWrapped<B> implements Registry
     @IndirectCallers public abstract BlockStateAPI<?> getDefaultState();
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        if(Objects.isNull(this.registryName) && Objects.nonNull(this.wrapped)) {
+            RegistryAPI<?> registry = getRegistry();
+            if(Objects.nonNull(registry)) this.registryName = registry.getKey(unwrap());
+        }
         return this.registryName;
     }
     

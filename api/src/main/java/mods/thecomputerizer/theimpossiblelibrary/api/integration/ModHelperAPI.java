@@ -4,7 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public abstract class ModHelperAPI {
     protected void addMod(Map<String,ModAPI> map, @Nullable ModAPI mod) {
         if(Objects.nonNull(mod) && mod.isCompatible(this.loader,this.side,this.version)) {
             String id = mod.getID();
-            if(StringUtils.isNotBlank(id)) map.put(id,mod);
+            if(TextHelper.isNotBlank(id)) map.put(id, mod);
         }
     }
 

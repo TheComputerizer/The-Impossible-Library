@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -9,7 +10,6 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.util.IStringSerializable;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -132,12 +132,12 @@ public class BlockHelper1_12_2 implements BlockHelperAPI {
     }
     
     @Override public Material1_12_2 getMaterialByName(String name) {
-        Material mat = StringUtils.isBlank(name) ? Material.WOOD : MATERIAL_BY_NAME.getOrDefault(name,Material.WOOD);
+        Material mat = TextHelper.isBlank(name) ? Material.WOOD : MATERIAL_BY_NAME.getOrDefault(name, Material.WOOD);
         return new Material1_12_2(mat);
     }
     
     @Override public MaterialColor1_12_2 getMaterialColorByName(String name) {
-        MapColor color = StringUtils.isBlank(name) ? MapColor.GRASS : COLOR_BY_NAME.getOrDefault(name,MapColor.GRASS);
+        MapColor color = TextHelper.isBlank(name) ? MapColor.GRASS : COLOR_BY_NAME.getOrDefault(name,MapColor.GRASS);
         return new MaterialColor1_12_2(color);
     }
 }

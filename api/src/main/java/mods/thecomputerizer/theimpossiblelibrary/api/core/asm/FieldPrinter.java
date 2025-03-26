@@ -2,11 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.FieldVisitor;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 public class FieldPrinter extends FieldVisitor implements BytecodePrinter {
@@ -34,9 +34,9 @@ public class FieldPrinter extends FieldVisitor implements BytecodePrinter {
     }
 
     protected AnnotationPrinter parseAnnotation(String desc) {
-        Pair<String,String> pkgPair = ClassPrinter.splitPackage(ClassPrinter.getClassPath(desc));
-        this.parent.addImport(pkgPair.getLeft());
-        AnnotationPrinter printer = new AnnotationPrinter(this.api,this.parent,pkgPair.getRight());
+        Entry<String,String> pkgPair = ClassPrinter.splitPackage(ClassPrinter.getClassPath(desc));
+        this.parent.addImport(pkgPair.getKey());
+        AnnotationPrinter printer = new AnnotationPrinter(this.api,this.parent,pkgPair.getValue());
         this.annotations = ArrayHelper.append(this.annotations,printer,false);
         return printer;
     }

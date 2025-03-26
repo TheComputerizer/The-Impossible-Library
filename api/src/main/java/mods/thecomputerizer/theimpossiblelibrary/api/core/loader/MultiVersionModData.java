@@ -3,10 +3,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map.Entry;
 
 @Getter
 public class MultiVersionModData {
@@ -27,8 +27,8 @@ public class MultiVersionModData {
     public File getSource() {
         return this.candidate.getFile();
     }
-
-    public List<Pair<String,byte[]>> writeModClass() {
+    
+    public List<Entry<String,byte[]>> writeModClass() {
         return this.writer.buildModClass();
     }
 }

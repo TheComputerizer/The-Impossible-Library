@@ -4,11 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.asm.ModWriterForge;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA17;
 import static org.objectweb.asm.Type.VOID_TYPE;
@@ -27,7 +27,7 @@ public class ModWriterForge1_18_2 extends ModWriterForge {
         return super.getEventMethod(className);
     }
     
-    @Override protected void writeMod(ClassWriter writer, List<Pair<String,byte[]>> classBytes) {
+    @Override protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {
         super.writeMod(writer,classBytes);
         writeInnerClass(addInnerEventSubscriber(writer,this.info.getModID(),true,true,
                 false,"LoaderClient","clientSetup"),classBytes);

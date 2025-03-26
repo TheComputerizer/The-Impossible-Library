@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
@@ -18,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.Map.Entry;
 
 import static net.minecraft.launchwrapper.Launch.classLoader;
 import static net.minecraftforge.fml.common.discovery.ContainerType.JAR;
@@ -67,9 +67,9 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
         for(MultiVersionModData data : getModDataValues()) {
             CANDIDATE_MAP.putIfAbsent(data.getSource(),new InjectedModCandidate1_12_2(
                     data.getRoot(),data.getSource()));
-            for(Pair<String,byte[]> classBytes : data.writeModClass()) {
-                String classpath = classBytes.getLeft();
-                byte[] bytes = classBytes.getRight();
+            for(Entry<String,byte[]> classBytes : data.writeModClass()) {
+                String classpath = classBytes.getKey();
+                byte[] bytes = classBytes.getValue();
                 ASMHelper.writeDebugByteCode(classpath,bytes);
                 Class<?> clazz = ClassHelper.defineClass(classLoader,classpath,bytes);
                 ModContainerWriter1_12_2.cacheClass(classLoader,classpath,clazz);
@@ -117,7 +117,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
 
     private boolean appendToTable(ModContainer container, String pkgName, ASMDataTable table) {
         TILDev.logDebug("Iterating over {} possible containers to check for type {}",
-                this.containerMap.values().size(),container.getClass());
+                        this.containerMap.size(), container.getClass());
         for(ContainerData data : this.containerMap.values()) {
             TILDev.logDebug("Stored container is type {}",data.container.getClass());
             if(data.container==container) {
@@ -140,10 +140,10 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
             parser.validate();
             ModContainer container = ModContainerFactory.instance().build(parser,getModContainer(),this);
             if(Objects.nonNull(container)) {
-                Pair<String,String> pkgPair = ClassPrinter.splitPackage(classpath);
-                getClassList().add(pkgPair.getRight());
+                Entry<String,String> pkgPair = ClassPrinter.splitPackage(classpath);
+                getClassList().add(pkgPair.getKey());
                 addContainer(container);
-                getContainedPackages().add(pkgPair.getLeft());
+                getContainedPackages().add(pkgPair.getValue());
                 container.bindMetadata(new InjectedMetaDataCollection(info));
                 container.setClassVersion(parser.getClassVersion());
                 this.containerMap.put(info.getModID(),new ContainerData(container,parser));

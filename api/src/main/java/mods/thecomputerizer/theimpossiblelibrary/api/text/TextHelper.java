@@ -4,8 +4,8 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
-import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,6 +74,14 @@ public class TextHelper {
         builder.append("]");
         return builder.toString();
     }
+    
+    public static int count(String s, char c) {
+        if(isEmpty(s)) return 0;
+        int count = 0;
+        for(char sc : s.toCharArray())
+            if(sc==c) count++;
+        return count;
+    }
 
     @SuppressWarnings("unchecked")
     public static <S> TextHelperAPI<S> getHelper() {
@@ -122,7 +130,26 @@ public class TextHelper {
             }
         }
         String val = joiner.toString();
-        return StringUtils.isNotEmpty(val) ? val : null;
+        return TextHelper.isNotEmpty(val) ? val : null;
+    }
+    
+    public static boolean isBlank(@Nullable String s) {
+        if(Objects.isNull(s) || s.isEmpty()) return true;
+        for(char c : s.toCharArray())
+            if(!Character.isWhitespace(c)) return false;
+        return true;
+    }
+    
+    public static boolean isEmpty(@Nullable String s) {
+        return Objects.isNull(s) || s.isEmpty();
+    }
+    
+    public static boolean isNotBlank(@Nullable String s) {
+        return !isBlank(s);
+    }
+    
+    public static boolean isNotEmpty(@Nullable String s) {
+        return !isEmpty(s);
     }
 
     /**

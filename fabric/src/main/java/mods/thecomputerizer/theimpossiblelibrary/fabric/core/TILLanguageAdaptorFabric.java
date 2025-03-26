@@ -34,7 +34,6 @@ import net.fabricmc.loader.impl.metadata.ParseMetadataException;
 import net.fabricmc.loader.impl.metadata.VersionOverrides;
 import net.fabricmc.loader.impl.util.UrlUtil;
 import net.fabricmc.loader.impl.util.log.Log;
-import org.apache.commons.lang3.tuple.Pair;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 
 import javax.annotation.Nullable;
@@ -89,9 +88,6 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     public TILLanguageAdaptorFabric() {
         FabricLauncher launcher = FabricLauncherBase.getLauncher();
         String target = addCoreSources(launcher);
-        Class<?> pairCls = ClassHelper.findClass("org.apache.commons.lang3.tuple.Pair",ClassLoader.getSystemClassLoader());
-        if(Objects.nonNull(pairCls)) launcher.addToClassPath(UrlUtil.getCodeSource(pairCls));
-        else TILRef.logFatal("Failed to load Pair class! Mod writing will likely break");
         this.core = scheduleContainers(initializeCore(launcher.getTargetClassLoader(),target));
         if(Objects.nonNull(this.core)) TILDev.logInfo("Successfully nstantiated multiversionAdaptor");
     }
@@ -216,9 +212,9 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
     @SneakyThrows
     void buildModClasses(CoreAPI core, MultiVersionModCandidate candidate, MultiVersionModInfo info) {
-        for(Pair<String,byte[]> classBytes : core.getModData(new File("."),candidate,info).writeModClass()) {
-            String name = classBytes.getLeft();
-            TILFabricASMTarget.registerDefinition(name,classBytes.getRight());
+        for(Entry<String,byte[]> classBytes : core.getModData(new File("."),candidate,info).writeModClass()) {
+            String name = classBytes.getKey();
+            TILFabricASMTarget.registerDefinition(name,classBytes.getValue());
             TILRef.logInfo("Built mod entrypoint at {}",name);
         }
     }

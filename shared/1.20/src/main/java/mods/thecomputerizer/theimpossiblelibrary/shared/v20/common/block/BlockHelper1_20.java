@@ -3,13 +3,13 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.MapColor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -91,15 +91,11 @@ public class BlockHelper1_20 implements BlockHelperAPI {
     }
     
     @Override public Material1_20 getMaterialByName(String name) { //TODO figure out how to handle materials in 1.20+
-        //if(StringUtils.isBlank(name)) return new Material1_20(WOOD);
-        //Field field = ReflectionHelper.getField(Material.class, name.toUpperCase());
-        //if(Objects.nonNull(field)) return new Material1_20(ReflectionHelper.getFieldInstance(null, field));
-        //return new Material1_20(AIR);
         return null;
     }
     
     @Override public MaterialColor1_20 getMaterialColorByName(String name) {
-        MapColor color = StringUtils.isBlank(name) ? MapColor.GRASS :
+        MapColor color = TextHelper.isBlank(name) ? MapColor.GRASS :
                 COLOR_BY_NAME.getOrDefault(name,MapColor.GRASS);
         return new MaterialColor1_20(color);
     }

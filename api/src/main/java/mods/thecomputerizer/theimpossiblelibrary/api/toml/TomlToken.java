@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +64,7 @@ public class TomlToken {
             this.comment.step(c,index);
         }
         if(c=='\n') {
-            if(!this.comment.building && !this.entry.building && !this.table.building && StringUtils.isEmpty(this.lineBuilder.toString()))
+            if(!this.comment.building && !this.entry.building && !this.table.building && TextHelper.isEmpty(this.lineBuilder.toString()))
                 this.reader.emptyLine();
             this.lineBuilder = new StringBuilder();
             this.lineNumber++;
@@ -91,7 +92,7 @@ public class TomlToken {
             pushLast(c);
         }
         
-        abstract void checkEnd(char c, int index) throws TomlParsingException;
+        @IndirectCallers abstract void checkEnd(char c, int index) throws TomlParsingException;
         abstract boolean checkStart(char c, int index) throws TomlParsingException;
         
         abstract void end(String line, int lineNumber, int index) throws TomlParsingException;

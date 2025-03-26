@@ -3,9 +3,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,8 +20,9 @@ public class DynamicArray {
     private final Class<?> typeClass;
     private final boolean isOptional;
 
+    @IndirectCallers
     public DynamicArray(String unparsed) {
-        this(StringUtils.countMatches(unparsed,'['),unparsed.replaceAll(Patterns.ARRAY_DEF.pattern(),""));
+        this(TextHelper.count(unparsed, '['),unparsed.replaceAll(Patterns.ARRAY_DEF.pattern(),""));
     }
 
     public DynamicArray(int bracketCount, String type) {
@@ -37,7 +39,7 @@ public class DynamicArray {
 
     public DynamicArray(int bracketCount, Class<?> clazz) {
         String name = clazz.getName();
-        this.bracketCount = bracketCount<0 ? StringUtils.countMatches(name,'[') : bracketCount;
+        this.bracketCount = bracketCount<0 ? TextHelper.count(name,'[') : bracketCount;
         name = name.replaceAll(Patterns.ARRAY_DEF.pattern(),"");
         this.isOptional = false;
         if(name.startsWith("L")) {

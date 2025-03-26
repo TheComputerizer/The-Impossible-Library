@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
@@ -17,7 +18,10 @@ public abstract class ItemAPI<I> extends AbstractWrapped<I> implements RegistryE
     public abstract ItemStackAPI<?> defaultStack();
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.registryName)) this.registryName = getRegistry().getKey(unwrap());
+        if(Objects.isNull(this.registryName) && Objects.nonNull(this.wrapped)) {
+            RegistryAPI<?> registry = getRegistry();
+            if(Objects.nonNull(registry)) this.registryName = registry.getKey(unwrap());
+        }
         return this.registryName;
     }
     

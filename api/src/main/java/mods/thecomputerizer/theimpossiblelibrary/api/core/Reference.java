@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import org.apache.logging.log4j.Level;
@@ -9,6 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+
+import static org.apache.logging.log4j.Level.ALL;
+import static org.apache.logging.log4j.Level.OFF;
 
 /**
  * Global constants API.
@@ -51,7 +55,7 @@ public class Reference {
     }
     
     /**
-     * StringUtils can't be used here since fabric is picky about which classes are allowed to load early
+     * TextHelper can probably be used here, but fabric is picky about which classes are allowed to load early
      */
     boolean isNotBlank(@Nullable String str) {
         if(Objects.isNull(str) || str.isEmpty()) return false;
@@ -63,9 +67,10 @@ public class Reference {
     public void log(Level level, String msg, Object ... args) {
         this.logger.log(level,msg,args);
     }
-
+    
+    @IndirectCallers
     public void logAll(String msg, Object ... args) {
-        this.logger.log(Level.ALL,msg,args);
+        this.logger.log(ALL,msg,args);
     }
 
     public void logDebug(String msg, Object ... args) {
@@ -83,11 +88,13 @@ public class Reference {
     public void logInfo(String msg, Object ... args) {
         this.logger.info(msg,args);
     }
-
+    
+    @IndirectCallers
     public void logOff(String msg, Object ... args) {
-        this.logger.log(Level.OFF,msg,args);
+        this.logger.log(OFF,msg,args);
     }
-
+    
+    @IndirectCallers
     public void logTrace(String msg, Object ... args) {
         this.logger.trace(msg,args);
     }

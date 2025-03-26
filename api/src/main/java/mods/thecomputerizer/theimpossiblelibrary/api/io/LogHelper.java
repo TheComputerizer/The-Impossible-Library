@@ -3,8 +3,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.io;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelper;
-import org.apache.commons.lang3.StringUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
@@ -25,7 +26,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns.BRACKETS_LITERAL;
 import static org.apache.logging.log4j.Level.*;
 
-@SuppressWarnings("unused")
 public class LogHelper {
     
     public static ModLogger create(String modid) {
@@ -36,17 +36,20 @@ public class LogHelper {
         return new ModLogger(modid,name);
     }
     
+    @IndirectCallers
     public static void logCollection(
             ModLogger logger, Level level, String msg, Collection<Object> elements) {
         logger.log(level,collectionToString(msg,elements,Object::toString,0));
     }
-
+    
+    @IndirectCallers
     public static void logCollection(
             ModLogger logger, Level level, String msg, Collection<Object> elements,
             Function<Object,String> toString) {
         logger.log(level,collectionToString(msg,elements,toString,0));
     }
-
+    
+    @IndirectCallers
     public static void logCollection(
             ModLogger logger, Level level, String msg, Collection<Object> elements,
             Function<Object,String> toString, int perLine) {
@@ -68,7 +71,7 @@ public class LogHelper {
                 count++;
             }
         }
-        return StringUtils.isNotEmpty(msg) ? msg+" "+joiner : joiner.toString();
+        return TextHelper.isNotEmpty(msg) ? msg+" "+joiner : joiner.toString();
     }
     
     private static String fixRegex(@Nullable Object value) {
@@ -111,7 +114,8 @@ public class LogHelper {
         public void error(String message, Object ... parameters) {
             log(ERROR,message,parameters);
         }
-
+        
+        @IndirectCallers
         public void fatal(String message, Object ... parameters) {
             log(FATAL,message,parameters);
         }
@@ -140,11 +144,11 @@ public class LogHelper {
         }
         
         /**
-         Gets the name of a mod from a given modid or returns the modid if it cannot be found
+         * Gets the name of a mod from a given modid or returns the modid if it cannot be found
          */
         private String getModName(String modid) {
             String name = ModHelper.getModName(modid);
-            return StringUtils.isNotBlank(name) ? name : modid;
+            return TextHelper.isNotBlank(name) ? name : modid;
         }
 
         public void info(String message, Object ... parameters) {
@@ -168,15 +172,18 @@ public class LogHelper {
                 this.writer = initWriter();
             } else writeMessage(message);
         }
-
+        
+        @IndirectCallers
         public void off(String message, Object ... parameters) {
             log(OFF,message,parameters);
         }
-
+        
+        @IndirectCallers
         public void trace(String message, Object ... parameters) {
             log(TRACE,message,parameters);
         }
-
+        
+        @IndirectCallers
         public void warn(String message, Object ... parameters) {
             log(WARN,message,parameters);
         }

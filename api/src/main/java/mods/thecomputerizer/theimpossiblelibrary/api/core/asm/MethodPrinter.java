@@ -2,13 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -33,16 +32,16 @@ public class MethodPrinter extends MethodVisitor implements BytecodePrinter {
 
     protected void computeTypes(String desc) {
         Type methodType = Type.getMethodType(desc);
-        Pair<String,String> pair = ClassPrinter.splitPackage(methodType.getReturnType().getClassName());
-        this.parent.addImport(pair.getLeft());
-        this.returnType = pair.getRight();
+        Entry<String,String> pair = ClassPrinter.splitPackage(methodType.getReturnType().getClassName());
+        this.parent.addImport(pair.getKey());
+        this.returnType = pair.getValue();
         StringBuilder builder = new StringBuilder();
         StringJoiner joiner = new StringJoiner(", ");
         for(Type type : methodType.getArgumentTypes()) {
             pair = ClassPrinter.splitPackage(type.getClassName());
-            this.parent.addImport(pair.getLeft());
-            String name = pair.getRight();
-            if(StringUtils.isBlank(name)) joiner.add(name+" ?");
+            this.parent.addImport(pair.getKey());
+            String name = pair.getValue();
+            if(TextHelper.isBlank(name)) joiner.add(name+" ?");
             else {
                 char varChar = name.toLowerCase().charAt(0);
                 int charCount = 0;
@@ -70,9 +69,9 @@ public class MethodPrinter extends MethodVisitor implements BytecodePrinter {
     }
 
     protected AnnotationPrinter parseAnnotation(String desc) {
-        Pair<String,String> pkgPair = ClassPrinter.splitPackage(ClassPrinter.getClassPath(desc));
-        this.parent.addImport(pkgPair.getLeft());
-        AnnotationPrinter printer = new AnnotationPrinter(this.api,this.parent,pkgPair.getRight());
+        Entry<String,String> pkgPair = ClassPrinter.splitPackage(ClassPrinter.getClassPath(desc));
+        this.parent.addImport(pkgPair.getKey());
+        AnnotationPrinter printer = new AnnotationPrinter(this.api,this.parent,pkgPair.getValue());
         this.annotations = ArrayHelper.append(this.annotations,printer,false);
         return printer;
     }
@@ -80,9 +79,9 @@ public class MethodPrinter extends MethodVisitor implements BytecodePrinter {
     protected String[] parseExcpections(String[] exceptions) {
         if(Objects.nonNull(exceptions)) {
             for(int i=0;i<exceptions.length;i++) {
-                Pair<String,String> pkgPair = ClassPrinter.splitPackage(ClassPrinter.getClassPath(exceptions[i]));
-                this.parent.addImport(pkgPair.getLeft());
-                exceptions[i] = pkgPair.getRight();
+                Entry<String,String> pkgPair = ClassPrinter.splitPackage(ClassPrinter.getClassPath(exceptions[i]));
+                this.parent.addImport(pkgPair.getKey());
+                exceptions[i] = pkgPair.getValue();
             }
             return exceptions;
         }

@@ -36,11 +36,13 @@ public interface RegistryEntryAPI<V> extends Wrapped<V> {
     }
 
     default RegistryAPI<?> getRegistry() {
-        return RegistryHelper.getRegistry(getWrappedClass());
+        Class<?> wrappedClass = getWrappedClass();
+        return Objects.nonNull(wrappedClass) ? RegistryHelper.getRegistry(wrappedClass) : null;
     }
     
     default ResourceLocationAPI<?> getRegistryName() {
-        return getRegistry().getKey(unwrap());
+        RegistryAPI<?> registry = getRegistry();
+        return Objects.nonNull(registry) && Objects.nonNull(getWrapped()) ? registry.getKey(unwrap()) : null;
     }
     
     default ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {

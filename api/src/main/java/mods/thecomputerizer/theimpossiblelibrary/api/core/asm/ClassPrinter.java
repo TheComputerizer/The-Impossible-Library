@@ -3,16 +3,16 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.asm;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.*;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 
@@ -61,14 +61,14 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
     /**
      * Assumes the classpath has been parsed already.
      * If the package is null it will be an empty string.
-     * If the class name is null or blank it will be substituted with '?'.
+     * If the class name is null or blank, it will be substituted with '?'.
      * Returns a pair of the package & name of the class respectively.
      */
-    public static Pair<String,String> splitPackage(String classpath) {
+    public static Entry<String,String> splitPackage(String classpath) {
         int index = classpath.lastIndexOf('.');
         String pkgName = index==-1 ? "" : classpath.substring(0,index);
         String clsName = classpath.substring(index+1);
-        return new ImmutablePair<>(pkgName,StringUtils.isNotBlank(clsName) ? clsName : "?");
+        return new SimpleImmutableEntry<>(pkgName,TextHelper.isNotBlank(clsName) ? clsName : "?");
     }
 
     protected final ClassPrinter parent;
@@ -83,6 +83,7 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
     protected MethodPrinter[] methods;
     protected ClassPrinter[] innerClasses;
 
+    @IndirectCallers
     public ClassPrinter(int api) { // ASM4 | ASM5 | ASM6 | ASM7 | ASM8 | ASM9
         this(api,null);
     }
@@ -93,7 +94,7 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
     }
 
     public void addImport(String pkg) {
-        if(StringUtils.isBlank(pkg) || pkg.equals(this.pkgName) || pkg.equals("java.lang")) return;
+        if(TextHelper.isBlank(pkg) || pkg.equals(this.pkgName) || pkg.equals("java.lang")) return;
         if(Objects.nonNull(this.parent)) this.parent.addImport(pkg);
         else this.imports = ArrayHelper.append(this.imports,pkg,false);
     }
@@ -147,24 +148,24 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
     }
 
     protected void getPackageLines(Collection<String> lines) {
-        if(StringUtils.isNotBlank(this.pkgName)) {
+        if(TextHelper.isNotBlank(this.pkgName)) {
             lines.add("package "+this.pkgName+";");
             lines.add("");
         }
     }
 
     protected AnnotationPrinter parseAnnotation(String desc) {
-        Pair<String,String> pkgPair = splitPackage(getClassPath(desc));
-        addImport(pkgPair.getLeft());
-        AnnotationPrinter printer = new AnnotationPrinter(this.api,this,pkgPair.getRight());
+        Entry<String,String> pkgPair = splitPackage(getClassPath(desc));
+        addImport(pkgPair.getKey());
+        AnnotationPrinter printer = new AnnotationPrinter(this.api,this,pkgPair.getValue());
         this.annotations = ArrayHelper.append(this.annotations,printer,false);
         return printer;
     }
 
     protected FieldPrinter parseField(int access, String name, String typeName, Object value) {
-        Pair<String,String> pkgPair = splitPackage(getClassPath(typeName));
-        addImport(pkgPair.getLeft());
-        FieldPrinter printer = new FieldPrinter(this.api,this,access,name,pkgPair.getRight(),value);
+        Entry<String,String> pkgPair = splitPackage(getClassPath(typeName));
+        addImport(pkgPair.getKey());
+        FieldPrinter printer = new FieldPrinter(this.api,this,access,name,pkgPair.getValue(),value);
         this.fields = ArrayHelper.append(this.fields,printer,false);
         return printer;
     }
@@ -172,7 +173,7 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
     protected void parseInnerClass(int access, String name, String desc) {
         ClassPrinter printer = new ClassPrinter(this.api,this);
         printer.access = parseClassAccess(access);
-        printer.name = Objects.nonNull(name) ? name : splitPackage(getClassPath(desc)).getRight();
+        printer.name = Objects.nonNull(name) ? name : splitPackage(getClassPath(desc)).getValue();
         this.innerClasses = ArrayHelper.append(this.innerClasses,printer,false);
     }
 
@@ -185,9 +186,9 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
         String[] classpaths = ArrayHelper.forEach(interfaces,(itf,i) -> interfaces[i] = getClassPath(itf));
         this.interfaces = new String[classpaths.length];
         for(int i=0;i<classpaths.length;i++) {
-            Pair<String,String> pkgPair = splitPackage(classpaths[i]);
-            addImport(pkgPair.getLeft());
-            String name = pkgPair.getRight();
+            Entry<String,String> pkgPair = splitPackage(classpaths[i]);
+            addImport(pkgPair.getKey());
+            String name = pkgPair.getValue();
             this.interfaces[i] = name.equals("?") ? null : name;
         }
         this.interfaces = ArrayHelper.removeAllOccurrencesOf(this.interfaces, "?");
@@ -200,16 +201,16 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
     }
 
     protected void parseName(String classpath) {
-        Pair<String,String> pkgPair = splitPackage(classpath);
-        this.pkgName = pkgPair.getLeft();
-        this.name = pkgPair.getRight();
+        Entry<String,String> pkgPair = splitPackage(classpath);
+        this.pkgName = pkgPair.getKey();
+        this.name = pkgPair.getValue();
     }
 
     protected void parseSuper(String classpath) {
-        Pair<String,String> pkgPair = splitPackage(classpath);
-        addImport(pkgPair.getLeft());
-        String name = pkgPair.getRight();
-        this.superName = name.equals("?") || (pkgPair.getLeft().equals("java.lang") && name.equals("Object")) ? null : name;
+        Entry<String,String> pkgPair = splitPackage(classpath);
+        addImport(pkgPair.getKey());
+        String name = pkgPair.getValue();
+        this.superName = name.equals("?") || (pkgPair.getKey().equals("java.lang") && name.equals("Object")) ? null : name;
     }
 
     public List<String> toLines() {

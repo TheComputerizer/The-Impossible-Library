@@ -33,7 +33,8 @@ public class TILLanguageProvider implements IModLanguageProvider {
     
     public TILLanguageProvider() {
         TILRef.logInfo("Initializing multiversion language provider (Forge edition)");
-        ClassLoader pluginLoader = ForgeCoreLoader.layerClassLoader("PLUGIN");
+        ClassLoader pluginLoader = ForgeCoreLoader.isJava8() ? getClass().getClassLoader() :
+                ForgeCoreLoader.layerClassLoader("PLUGIN");
         this.core = ForgeCoreLoader.initCoreAPI(pluginLoader);
         TILRef.logInfo("Retrieved CoreAPI instance {} for multiversion language provider",this.core);
     }
