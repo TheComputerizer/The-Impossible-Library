@@ -309,12 +309,14 @@ import java.util.Map.Entry;
     }
     
     /**
-     Returns the fully qualified path of this table including all non-root parent tables.
+     * Returns the fully qualified path of this table including all non-root parent tables.
+     * Note that this is assumed to be called for writing purposes and will encapsulate the name in quotes if necessary
      */
     public String getPath() {
         if("root".equals(this.name)) return "";
         String path = Objects.nonNull(this.parent) ? this.parent.getPath() : "";
-        return path.isEmpty() ? this.name : path+"."+this.name;
+        return path.isEmpty() ? TomlHelper.encapsulateTableName(this.name) :
+                path+"."+TomlHelper.encapsulateTableName(this.name);
     }
     
     public Toml getTable(String name) {
@@ -469,7 +471,7 @@ import java.util.Map.Entry;
     }
     
     /**
-     Write this table to a StringBuilder with optional formatting and comments enabled.
+     * Write this table to a StringBuilder with optional formatting and comments enabled.
      * @param builder A StringBuilder output of the written table
      * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
      */
@@ -478,7 +480,7 @@ import java.util.Map.Entry;
     }
     
     /**
-     Write this table to a StringBuilder with optional formatting.
+     * Write this table to a StringBuilder with optional formatting.
      * @param builder A StringBuilder output of the written table
      * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
      * @param comments Enables the writing of comments
@@ -504,7 +506,7 @@ import java.util.Map.Entry;
             if(ArrayHelper.isNotEmpty(tomls)) {
                 boolean array = tomls.length>1;
                 for(Toml toml : tomls) {
-                    String tableName = (array ? "[[" : "[")+toml.getPath()+(array ? "]]" : "]");
+                    String tableName = TomlHelper.encapsulateTablePath(toml.getPath(),array);
                     builder.append(tabs!=-1 ? tableName : TextHelper.withTabs(tableName,tabs)).append("\n");
                     toml.write(builder,tabs==-1 ? -1 : tabs+1,comments);
                     if("root".equals(this.name) && tabs!=-1) builder.append("\n");
@@ -514,7 +516,7 @@ import java.util.Map.Entry;
     }
     
     /**
-     Write this table to a collection of strings with optional formatting and comments enabled.
+     * Write this table to a collection of strings with optional formatting and comments enabled.
      * @param lines A collections of strings where each entry is assumed to be a separate line
      * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
      */
@@ -523,7 +525,7 @@ import java.util.Map.Entry;
     }
     
     /**
-     Write this table to a collection of strings with optional formatting.
+     * Write this table to a collection of strings with optional formatting.
      * @param lines A collections of strings where each entry is assumed to be a separate line
      * @param tabs The number of tabs to use when writing the table. Set -1 to disable formatting entirely
      * @param comments Enables the writing of comments
@@ -549,7 +551,7 @@ import java.util.Map.Entry;
             if(ArrayHelper.isNotEmpty(tomls)) {
                 boolean array = tomls.length>1;
                 for(Toml toml : tomls) {
-                    String tableName = (array ? "[[" : "[")+toml.getPath()+(array ? "]]" : "]");
+                    String tableName = TomlHelper.encapsulateTablePath(toml.getPath(),array);
                     lines.add(tabs==-1 ? tableName : TextHelper.withTabs(tableName,tabs));
                     toml.write(lines,tabs==-1 ? -1 : tabs+1,comments);
                     if("root".equals(this.name) && tabs!=-1) lines.add("");

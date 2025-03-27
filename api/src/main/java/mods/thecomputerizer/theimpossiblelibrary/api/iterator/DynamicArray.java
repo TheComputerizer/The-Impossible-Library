@@ -22,7 +22,7 @@ public class DynamicArray {
 
     @IndirectCallers
     public DynamicArray(String unparsed) {
-        this(TextHelper.count(unparsed, '['),unparsed.replaceAll(Patterns.ARRAY_DEF.pattern(),""));
+        this(TextHelper.count(unparsed,'['),unparsed.replaceAll(Patterns.ARRAY_DEF.pattern(),""));
     }
 
     public DynamicArray(int bracketCount, String type) {

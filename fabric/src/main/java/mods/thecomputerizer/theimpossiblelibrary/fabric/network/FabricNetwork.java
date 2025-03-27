@@ -157,7 +157,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     @Nullable default Object createHandlerProxy(DIR dir, boolean newType) {
         if(Objects.isNull(dir)) return null;
         boolean client = isDirToClient(dir);
-        return createHandlerProxy(dir,client,newType,client ? PLAY_CLIENT_HANDLER_CLASS : PLAY_SERVER_HANDLER_CLASS);
+        return createHandlerProxy(dir,newType,client,client ? PLAY_CLIENT_HANDLER_CLASS : PLAY_SERVER_HANDLER_CLASS);
     }
     
     default @Nullable Object createHandlerProxy(Object dir, boolean newType, boolean client, @Nullable Class<?> c) {
@@ -186,7 +186,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
                 TILRef.logDebug("InvocationHandler success for {} ({})",dir,c);
             } catch(Throwable t) {
                 TILRef.logError("Failed to execute InvocationHandler for proxy instance of {} (direction={})",
-                                c,dir);
+                                c,dir,t);
             }
             return null;
         };
@@ -215,7 +215,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
                 TILRef.logDebug("InvocationHandler success for {} ({})",dir,c);
             } catch(Throwable t) {
                 TILRef.logError("Failed to execute InvocationHandler for proxy instance of {} (direction={})",
-                                c,dir);
+                                c,dir,t);
             }
             return null;
         };
@@ -403,7 +403,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logError("Failed to create PlayChannelHandler proxy for dirction {} ({})",dir,registryName);
             return;
         }
-        if(registerWithProxy(client,registryName,proxy)) PROXY_MAP.put(registryName,proxy);
+        if(registerWithProxy(client,type,proxy)) PROXY_MAP.put(registryName,proxy);
     }
     
     default boolean registerWithProxy(boolean client, Object registerAs, Object proxy) {

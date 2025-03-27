@@ -66,8 +66,7 @@ public class TextHelper {
         StringBuilder builder = new StringBuilder();
         builder.append("[ ");
         for(Object element : generics) {
-            if(element instanceof String)
-                builder.append("\"").append(element).append("\" ");
+            if(element instanceof String) builder.append("\"").append(element).append("\" ");
             else builder.append(element);
         }
         builder.append("]");
@@ -231,7 +230,7 @@ public class TextHelper {
      */
     @IndirectCallers
     public static List<String> newLineSplit(String original, int limit) {
-        return Arrays.stream(original.split(System.lineSeparator(), limit)).collect(Collectors.toList());
+        return Arrays.stream(original.split(System.lineSeparator(),limit)).collect(Collectors.toList());
     }
 
     /**
@@ -240,7 +239,7 @@ public class TextHelper {
     @IndirectCallers
     public static String repeat(String base, int num) {
         StringBuilder builder = new StringBuilder();
-        for(int i=0; i<num; i++) builder.append(base);
+        for(int i=0;i<num;i++) builder.append(base);
         return builder.toString();
     }
 
@@ -265,13 +264,13 @@ public class TextHelper {
      */
     public static String withTabs(String original, int tabs) {
         StringBuilder builder = new StringBuilder();
-        for(int i=0; i <tabs; i++) builder.append("\t");
+        for(int i=0;i<tabs;i++) builder.append("\t");
         return builder.append(original).toString();
     }
 
     public enum TextCasing {
 
-        CAMEL("camel", (input) -> input.split("(?=\\p{Upper})"), (words) -> {
+        CAMEL("camel",input -> input.split("(?=\\p{Upper})"),words -> {
             StringBuilder builder = new StringBuilder();
             if(Objects.isNull(words) || words.length==0) return builder.toString();
             for(int i=0;i<words.length;i++) {
@@ -280,14 +279,14 @@ public class TextHelper {
             }
             return builder.toString();
         }),
-        PASCAL("pascal", (input) -> input.split("(?<=.)(?=\\p{Upper})"), (words) -> {
+        PASCAL("pascal",input -> input.split("(?<=.)(?=\\p{Upper})"),words -> {
             StringBuilder builder = new StringBuilder();
             if(Objects.isNull(words)) return builder.toString();
             for(String word : words)
                 builder.append(capitalize(word));
             return builder.toString();
         }),
-        SNAKE("snake", (input) -> input.split("_"), (words) -> {
+        SNAKE("snake",input -> input.split("_"),words -> {
             StringBuilder builder = new StringBuilder();
             if(Objects.isNull(words) || words.length==0) return builder.toString();
             for(int i=0;i<words.length;i++) {
@@ -296,7 +295,7 @@ public class TextHelper {
             }
             return builder.toString();
         }),
-        KEBAB("kebab", (input) -> input.split("-"), (words) -> {
+        KEBAB("kebab",input -> input.split("-"),words -> {
             StringBuilder builder = new StringBuilder();
             if(Objects.isNull(words) || words.length==0) return builder.toString();
             for(int i=0;i<words.length;i++) {
@@ -326,8 +325,7 @@ public class TextHelper {
         public static final Map<String, TextCasing> BY_NAME = new HashMap<>();
 
         static {
-            for (TextCasing casing : values())
-                BY_NAME.putIfAbsent(casing.name,casing);
+            for(TextCasing casing : values()) BY_NAME.putIfAbsent(casing.name,casing);
         }
     }
 }

@@ -31,7 +31,7 @@ public class TILCoreEntryPointFabric extends CoreEntryPoint {
     static final String ARRAYLIST = "java/util/ArrayList";
     static final String DEBUG_OVERLAY = mapClass("net.minecraft.client.gui.components.DebugScreenOverlay", "net.minecraft.class_340");
     static final String[] DEBUG_LIST_FIELDS = new String[]{"theimpossiblelibrary$left","theimpossiblelibrary$right"};
-    static final String CUSTOM_EVENTS = "mods/thecomputerizer/theimpossiblelibrary/fabric/common/event/CustomFabricEvents";
+    static final String CUSTOM_EVENTS = "mods/thecomputerizer/theimpossiblelibrary/fabric/client/event/CustomClientFabricEvents";
     static final String FABRIC_EVENT = "net/fabricmc/fabric/api/event/Event";
     protected static final String GUI = mapClass("net.minecraft.client.gui.Gui", "net.minecraft.class_329");
     static final String KEYBOARD_HANDLER = mapClass("net.minecraft.client.KeyboardHandler", "net.minecraft.class_309");
