@@ -39,6 +39,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
@@ -149,7 +150,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     static NbtAccounter unlimitedAccounter() {
-        return atLeastV20_6() ? Methods.invokeStaticDirect(NbtAccounter.class,"unlimitedHeap") :
+        return atLeastV20_6() ? Methods.invokeStaticDirect(NbtAccounter.class,DEV ? "unlimitedHeap" : "method_53898") :
                 Fields.getStaticDirect(NbtAccounter.class,"UNLIMITED");
     }
     

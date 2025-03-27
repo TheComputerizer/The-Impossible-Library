@@ -1,8 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -35,6 +40,9 @@ public abstract class CommonAPI {
     private TextHelperAPI<?> textHelper;
     private ToolHelperAPI toolHelper;
     private WrapperAPI wrapper;
+    protected CoreAPI core;
+    protected ModLoader modLoader;
+    protected GameVersion version;
 
     public BlockHelperAPI getBlockHelper() {
         if(Objects.isNull(this.blockHelper)) this.blockHelper = initBlockHelper().get();
@@ -51,9 +59,23 @@ public abstract class CommonAPI {
         return this.commonEvents;
     }
     
+    public CoreAPI getCore() {
+        if(Objects.isNull(this.core)) this.core = CoreAPI.getInstance();
+        return this.core;
+    }
+    
     public ModHelperAPI getModHelper() {
         if(Objects.isNull(this.modHelper)) this.modHelper = initModHelper().get();
         return this.modHelper;
+    }
+    
+    public ModLoader getModLoader() {
+        if(Objects.isNull(this.modLoader)) {
+            CoreAPI core = getCore();
+            if(Objects.isNull(core)) TILRef.logError("Failed to set ModLoader for CommonAPI with null CoreAPI!");
+            else this.modLoader = core.getModLoader();
+        }
+        return this.modLoader;
     }
     
     public NetworkAPI<?,?> getNetwork() {
@@ -106,6 +128,15 @@ public abstract class CommonAPI {
         return this.toolHelper;
     }
     
+    public GameVersion getVersion() {
+        if(Objects.isNull(this.version)) {
+            CoreAPI core = getCore();
+            if(Objects.isNull(core)) TILRef.logError("Failed to set GameVersion for CommonAPI with null CoreAPI!");
+            else this.version = core.getVersion();
+        }
+        return this.version;
+    }
+    
     public WrapperAPI getWrapper() {
         if(Objects.isNull(this.wrapper)) this.wrapper = initWrapper().get();
         return this.wrapper;
@@ -126,4 +157,9 @@ public abstract class CommonAPI {
     public abstract Supplier<TextHelperAPI<?>> initTextHelper();
     public abstract Supplier<ToolHelperAPI> initToolHelper();
     public abstract Supplier<WrapperAPI> initWrapper();
+    
+    protected final String qualifyMsg(String msg) {
+        String modLoader = String.valueOf(getModLoader()).toUpperCase();
+        return "["+modLoader+" "+(this instanceof ClientAPI ? "CLIENT" : "COMMON")+" ("+getVersion()+")]: "+msg;
+    }
 }

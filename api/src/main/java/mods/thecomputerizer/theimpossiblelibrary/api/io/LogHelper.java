@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -37,27 +38,75 @@ public class LogHelper {
     }
     
     @IndirectCallers
-    public static void logCollection(
-            ModLogger logger, Level level, String msg, Collection<Object> elements) {
+    public static void logCollection(ModLogger logger, Level level, String msg, Collection<Object> elements) {
         logger.log(level,collectionToString(msg,elements,Object::toString,0));
     }
     
     @IndirectCallers
-    public static void logCollection(
-            ModLogger logger, Level level, String msg, Collection<Object> elements,
+    public static void logCollection(ModLogger logger, Level level, String msg, Collection<Object> elements,
             Function<Object,String> toString) {
         logger.log(level,collectionToString(msg,elements,toString,0));
     }
     
     @IndirectCallers
-    public static void logCollection(
-            ModLogger logger, Level level, String msg, Collection<Object> elements,
+    public static void logCollection(ModLogger logger, Level level, String msg, Collection<Object> elements,
             Function<Object,String> toString, int perLine) {
         logger.log(level,collectionToString(msg,elements,toString,perLine));
     }
+    
+    @IndirectCallers
+    public static void logAndThrow(Logger logger, Level level, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        if(level==FATAL) logFatalAndThrow(logger,msg,t,args);
+        else if(level==ERROR) logErrorAndThrow(logger,msg,t,args);
+        else if(level==WARN) logWarnAndThrow(logger,msg,t,args);
+        else if(level==INFO) logInfoAndThrow(logger,msg,t,args);
+        else if(level==DEBUG) logDebugAndThrow(logger,msg,t,args);
+        else if(level==TRACE) logTraceAndThrow(logger,msg,t,args);
+        else {
+            TILRef.logWarn("Log level '{}' not supported for LogHelper#logAndThrow! Assuming ERROR level");
+            logErrorAndThrow(logger,msg,t,args);
+        }
+    }
+    
+    public static void logDebugAndThrow(Logger logger, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        logger.debug(msg,args,t);
+        throw new RuntimeException(injectParameters(msg,args),t);
+    }
+    
+    public static void logErrorAndThrow(Logger logger, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        logger.error(msg,args,t);
+        throw new RuntimeException(injectParameters(msg,args),t);
+    }
+    
+    public static void logFatalAndThrow(Logger logger, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        logger.fatal(msg,args,t);
+        throw new RuntimeException(injectParameters(msg,args),t);
+    }
+    
+    public static void logInfoAndThrow(Logger logger, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        logger.info(msg,args,t);
+        throw new RuntimeException(injectParameters(msg,args),t);
+    }
+    
+    public static void logTraceAndThrow(Logger logger, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        logger.trace(msg,args,t);
+        throw new RuntimeException(injectParameters(msg,args),t);
+    }
+    
+    public static void logWarnAndThrow(Logger logger, String msg, Throwable t, Object ... args)
+            throws RuntimeException {
+        logger.warn(msg,args,t);
+        throw new RuntimeException(injectParameters(msg,args),t);
+    }
 
-    public static String collectionToString(
-            String msg, Collection<Object> elements, Function<Object, String> toString, int perLine) {
+    public static String collectionToString(String msg, Collection<Object> elements, Function<Object,String> toString,
+            int perLine) {
         StringJoiner joiner = new StringJoiner(" ");
         int count = 0;
         for(Object element : elements) {

@@ -4,6 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.LogHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
@@ -19,6 +21,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.client.Client1_21;
 
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOGGER;
+
 public abstract class ClientFabric1_21 extends Client1_21 {
     
     @Override protected Supplier<ClientEventsAPI> initClientEvents() {
@@ -30,7 +34,21 @@ public abstract class ClientFabric1_21 extends Client1_21 {
     }
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {
-        return NetworkFabric1_21::new;
+        TILRef.logInfo(qualifyMsg("Initializing network supplier"));
+        try {
+            return () -> {
+                TILRef.logInfo(qualifyMsg("Constructing network"));
+                try {
+                    return new NetworkFabric1_21();
+                } catch(Throwable t) {
+                    LogHelper.logErrorAndThrow(LOGGER,qualifyMsg("Failed to construct network!"),t);
+                    throw t;
+                }
+            };
+        } catch(Throwable t) {
+            LogHelper.logErrorAndThrow(LOGGER,qualifyMsg("Failed to initialize network supplier!"),t);
+        }
+        return () -> null; //unreachable
     }
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {
