@@ -1,20 +1,34 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicMutableWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
@@ -24,6 +38,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl.LOGIN;
 import static net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl.PLAY;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
@@ -40,16 +55,23 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     Object CLIENT_PLAY = getStaticField(IMPL_CLIENT_CLASS,"PLAY");
     String PLAY_CLIENT = fabricPkg("api.client.networking.v1.ClientPlayNetworking");
     Class<?> PLAY_CLIENT_CLASS = getClassIfClient(PLAY_CLIENT);
-    Class<?> PLAY_CLIENT_HANDLER_CLASS = getClassIfClient(PLAY_CLIENT+"$PlayChannelHandler");
+    Class<?> PLAY_CLIENT_HANDLER_CLASS = getHandlerClassIfClient(PLAY_CLIENT,
+            "PlayChannelHandler","PlayPayloadHandler");
     Map<ResourceLocation,Object> PROXY_MAP = new HashMap<>();
     String PLAY_SERVER = fabricPkg("api.networking.v1.ServerPlayNetworking");
     Class<?> PLAY_SERVER_CLASS = tryGetClass(PLAY_SERVER);
-    Class<?> PLAY_SERVER_HANDLER_CLASS = tryGetClass(PLAY_SERVER+"$PlayChannelHandler");
+    Class<?> PLAY_SERVER_HANDLER_CLASS = tryGetHandlerClass(PLAY_SERVER,
+            "PlayChannelHandler","PlayPayloadHandler");
     @SuppressWarnings("UnstableApiUsage")
     Object SERVER_LOGIN = LOGIN;
     @SuppressWarnings("UnstableApiUsage")
     Object SERVER_PLAY = PLAY;
+    NbtAccounter UNLIMITED_ACCOUNTER = unlimitedAccounter();
     MutableWrapped<Class<?>> WRAPPED_WRAPPER_CLASS = new BasicMutableWrapped<>();
+    
+    static boolean atLeastV20_6() {
+        return CoreAPI.isVersionAtLeast(V20_6);
+    }
     
     static String fabricPkg(String pkg) {
         return "net.fabricmc.fabric."+pkg;
@@ -57,6 +79,10 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     
     static @Nullable Class<?> getClassIfClient(String className) {
         return CoreAPI.isClient() ? tryGetClass(className) : null;
+    }
+    
+    static @Nullable Class<?> getHandlerClassIfClient(String baseClass, String oldHandler, String newHandler) {
+        return CoreAPI.isClient() ? tryGetHandlerClass(baseClass,oldHandler,newHandler) : null;
     }
     
     static @Nullable Object getStaticField(@Nullable Class<?> c, String fieldName) {
@@ -109,26 +135,39 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
      * The class might not exist
      */
     static @Nullable Class<?> tryGetClass(String className) {
+        Class<?> c;
         try {
-            return ClassHelper.findClass(className);
+            c = ClassHelper.findClass(className);
         } catch(Throwable t) {
             TILRef.logError("Failed to get class {}",className,t);
+            return null;
         }
-        return null;
+        if(Objects.isNull(c)) TILRef.logError("Failed to get class {}",className);
+        return c;
     }
     
-    @Nullable default Object createHandlerProxy(DIR dir) {
+    static @Nullable Class<?> tryGetHandlerClass(String baseClass, String oldHandler, String newHandler) {
+        return tryGetClass(baseClass+"$"+(atLeastV20_6() ? newHandler : oldHandler));
+    }
+    
+    static NbtAccounter unlimitedAccounter() {
+        return atLeastV20_6() ? Methods.invokeStaticDirect(NbtAccounter.class,"unlimitedHeap") :
+                Fields.getStaticDirect(NbtAccounter.class,"UNLIMITED");
+    }
+    
+    @Nullable default Object createHandlerProxy(DIR dir, boolean newType) {
         if(Objects.isNull(dir)) return null;
         boolean client = isDirToClient(dir);
-        return createHandlerProxy(dir,client,client ? PLAY_CLIENT_HANDLER_CLASS : PLAY_SERVER_HANDLER_CLASS);
+        return createHandlerProxy(dir,client,newType,client ? PLAY_CLIENT_HANDLER_CLASS : PLAY_SERVER_HANDLER_CLASS);
     }
     
-    default @Nullable Object createHandlerProxy(Object dir, boolean client, @Nullable Class<?> c) {
+    default @Nullable Object createHandlerProxy(Object dir, boolean newType, boolean client, @Nullable Class<?> c) {
         if(Objects.isNull(c)) {
             TILRef.logError("Cannot create proxy with null class for {} dir {}",client ? "client" : "server",dir);
             return null;
         }
-        return Proxy.newProxyInstance(c.getClassLoader(),new Class<?>[]{c},createInvoker(dir,client,c));
+        InvocationHandler invoker = newType ? createInvokerCustomPayload(dir,client,c) : createInvoker(dir,client,c);
+        return Proxy.newProxyInstance(c.getClassLoader(),new Class<?>[]{c},invoker);
     }
     
     default InvocationHandler createInvoker(final Object dir, boolean client, final Class<?> c) {
@@ -154,10 +193,48 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         };
     }
     
+    /**
+     * Network registration stuff is a bit different in 1.20.6+ and needs a different InvocationHandler
+     */
+    default InvocationHandler createInvokerCustomPayload(final Object dir, boolean client, final Class<?> c) {
+        return (proxy,method,args) -> {
+            String methodName = method.getName();
+            if(!"receive".equals(methodName)) {
+                TILRef.logDebug("InvocationHandler method '{}' was not 'receive'",methodName);
+                try {
+                    return method.invoke(proxy,args);
+                } catch(Throwable t) {
+                    TILRef.logError("Failed to execute non receive method ({}) for InvocationHandler",methodName,t);
+                }
+                return null;
+            }
+            try {
+                MessageWrapperFabric wrapper = (MessageWrapperFabric)args[0];
+                PacketSender sender = Methods.invoke(args[1],"responseSender");
+                ServerPlayer player = client ? null : Methods.invoke(args[1],"player");
+                receiveAndRespond(wrapper,sender,player);
+                TILRef.logDebug("InvocationHandler success for {} ({})",dir,c);
+            } catch(Throwable t) {
+                TILRef.logError("Failed to execute InvocationHandler for proxy instance of {} (direction={})",
+                                c,dir);
+            }
+            return null;
+        };
+    }
+    
     default FriendlyByteBuf encodeMessage(MessageWrapperAPI<?,?> message) {
         FriendlyByteBuf buf = PacketByteBufs.create();
         message.encode(buf);
         return buf;
+    }
+    
+    /**
+     * Unwraps MessageDirectionInfo with checks to ensure it is able to get unwrapped on the current side
+     */
+    default @Nullable DIR getCheckedDir(MessageDirectionInfo<DIR> info) {
+        if(Objects.isNull(info)) return null;
+        DIR dir = info.getDirection();
+        return isDirToClient(dir) ? (CoreAPI.isClient() ? dir : null) : dir;
     }
     
     @SuppressWarnings("unchecked")
@@ -238,12 +315,29 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         return dir==CLIENT_LOGIN || dir==SERVER_LOGIN;
     }
     
-    @SuppressWarnings("unchecked")
+    @Override default ResourceLocationAPI<?> readResourceLocation(ByteBuf buf) {
+        return ResourceHelper.getResource(NetworkHelper.readString(buf));
+    }
+    
+    @Override default CompoundTagAPI<?> readTag(ByteBuf buf) {
+        try(ByteBufInputStream stream = new ByteBufInputStream(buf)) {
+            TagHelper.getWrapped(NbtIo.read(stream,UNLIMITED_ACCOUNTER));
+        } catch(IOException ex) {
+            TILRef.logError("Failed to write tag to buffer", ex);
+        }
+        return TagHelper.makeCompoundTag();
+    }
+    
     default <P,CTX,M extends MessageWrapperAPI<P,CTX>> void receiveAndRespond(Object dir, Object buf, CTX ctx,
             @Nullable P player) {
         Class<?> wrapperClass = getWrapperClass();
         if(Objects.isNull(wrapperClass)) return;
         M wrapper = Methods.invokeStaticDirect(wrapperClass,"getInstance",this,dir,buf);
+        receiveAndRespond(wrapper,ctx,player);
+    }
+    
+    @SuppressWarnings("unchecked")
+    default <P,CTX,M extends MessageWrapperAPI<P,CTX>> void receiveAndRespond(M wrapper, CTX ctx, @Nullable P player) {
         M response = (M)wrapper.handle(ctx);
         if(Objects.nonNull(response)) {
             if(Objects.nonNull(player)) response.setPlayer(player);
@@ -252,15 +346,15 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     @Override default void registerMessage(MessageDirectionInfo<DIR> directionInfo, int id) {
-        if(Objects.isNull(directionInfo)) return;
-        DIR dir = directionInfo.getDirection();
+        DIR dir = getCheckedDir(directionInfo);
+        if(Objects.isNull(dir)) return;
         ResourceLocation registryName = getRegistryNameFromDir(dir);
         if(Objects.isNull(registryName)) return;
         if(PROXY_MAP.containsKey(registryName)) {
             TILRef.logWarn("Tried to register sided network receiver {} twice!",registryName);
             return;
         }
-        Object proxy = createHandlerProxy(dir);
+        Object proxy = createHandlerProxy(dir,false);
         if(Objects.isNull(proxy)) {
             TILRef.logError("Failed to create PlayChannelHandler proxy for dirction {} ({})",dir,registryName);
             return;
@@ -268,22 +362,71 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         if(registerWithProxy(isDirToClient(dir),registryName,proxy)) PROXY_MAP.put(registryName,proxy);
     }
     
-    default boolean registerWithProxy(boolean client, ResourceLocation registryName, Object proxy) {
+    /**
+     * Network registration stuff is a bit different in 1.20.6+ and needs to be handled separately
+     */
+    default void registerMessageCustomPayload(MessageDirectionInfo<DIR> directionInfo,
+            Function<DIR,Object> codecBuilder) {
+        DIR dir = getCheckedDir(directionInfo);
+        if(Objects.isNull(dir)) return;
+        MessageWrapperAPI<?,?> wrapper = getWrapper(dir);
+        if(Objects.isNull(wrapper)) return;
+        ResourceLocation registryName = getRegistryName(wrapper);
+        if(Objects.isNull(registryName)) return;
+        if(PROXY_MAP.containsKey(registryName)) {
+            TILRef.logWarn("Tried to register sided network receiver {} twice!",registryName);
+            return;
+        }
+        Object type = Methods.invoke(wrapper,"type");
+        if(Objects.isNull(type)) return;
+        String registryClassName = fabricPkg("api.networking.v1.PayloadTypeRegistry");
+        Class<?> c = tryGetClass(registryClassName);
+        if(Objects.isNull(c)) {
+            TILRef.logError("Failed to get class payload registry class {}",registryClassName);
+            return;
+        }
+        boolean client = isDirToClient(dir);
+        String methodName = "play"+(client ? "S2C" : "C2S");
+        Object registry = Methods.invokeStatic(c,methodName);
+        if(Objects.isNull(registry)) {
+            TILRef.logError("Failed to get payload registry from {}#{}",registryClassName,methodName);
+            return;
+        }
+        Object codec = codecBuilder.apply(dir);
+        try {
+            Methods.invoke(registry,"register",type,codec);
+        } catch(Throwable t) {
+            TILRef.logError("Failed to register payload codec for type {} ({})",type,codec,t);
+            return;
+        }
+        Object proxy = createHandlerProxy(dir,true);
+        if(Objects.isNull(proxy)) {
+            TILRef.logError("Failed to create PlayChannelHandler proxy for dirction {} ({})",dir,registryName);
+            return;
+        }
+        if(registerWithProxy(client,registryName,proxy)) PROXY_MAP.put(registryName,proxy);
+    }
+    
+    default boolean registerWithProxy(boolean client, Object registerAs, Object proxy) {
         Class<?> c = client ? PLAY_CLIENT_CLASS : PLAY_SERVER_CLASS;
         if(Objects.isNull(c)) {
             TILRef.logError("Cannot register PlayChannelHandler proxy to null class!");
             return false;
         }
         try {
-            Methods.invokeStatic(c,"registerGlobalReceiver",registryName,proxy);
+            Methods.invokeStatic(c,"registerGlobalReceiver",registerAs,proxy);
             return true;
         } catch(Throwable t) {
-            TILRef.logError("Failed to invoke registerGlobalReceiver for {} using ({},{})",c,registryName,proxy,t);
+            TILRef.logError("Failed to invoke registerGlobalReceiver for {} using ({},{})",c,registerAs,proxy,t);
         }
         return false;
     }
     
     @Override default <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
+        sendToPlayer(message,player,atLeastV20_6());
+    }
+    
+    default <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player, boolean newType) {
         if(Objects.isNull(PLAY_SERVER_CLASS)) {
             TILRef.logError("Cannot send message to player {} since class {} was not found",player,PLAY_SERVER);
             return;
@@ -292,11 +435,16 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logError("Cannot send null message to {}!",player);
             return;
         }
-        FriendlyByteBuf buf = encodeMessage(message);
-        Methods.invokeStaticDirect(PLAY_SERVER_CLASS,"send",player,getRegistryName(message),buf);
+        Object[] args = newType ? new Object[]{player,message} :
+                new Object[]{player,getRegistryName(message),encodeMessage(message)};
+        Methods.invokeStaticDirect(PLAY_SERVER_CLASS,"send",args);
     }
     
-    default <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
+    @Override default <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
+        sendToServer(message,atLeastV20_6());
+    }
+    
+    default <M extends MessageWrapperAPI<?,?>> void sendToServer(M message, boolean newType) {
         if(Objects.isNull(PLAY_CLIENT_CLASS)) {
             TILRef.logError("Cannot send message to the server since class {} was not found",PLAY_CLIENT);
             return;
@@ -305,8 +453,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logError("Cannot send null message to the server!");
             return;
         }
-        FriendlyByteBuf buf = encodeMessage(message);
-        Methods.invokeStaticDirect(PLAY_CLIENT_CLASS,"send",getRegistryName(message),buf);
+        Object[] args = newType ? new Object[]{message} : new Object[]{getRegistryName(message),encodeMessage(message)};
+        Methods.invokeStaticDirect(PLAY_CLIENT_CLASS,"send",args);
     }
     
     @Override default <CTX> MessageWrapperAPI<?,CTX> wrapMessage(DIR dir, MessageAPI<CTX> message) {
@@ -326,5 +474,13 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         MessageWrapperAPI<?,CTX> wrapper = getWrapper(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
+    }
+    
+    @Override default void writeTag(ByteBuf buf, CompoundTagAPI<?> tag) {
+        try(ByteBufOutputStream stream = new ByteBufOutputStream(buf)) {
+            NbtIo.write((CompoundTag)tag.getWrapped(),stream);
+        } catch(IOException ex) {
+            TILRef.logError("Failed to write tag to buffer",ex);
+        }
     }
 }

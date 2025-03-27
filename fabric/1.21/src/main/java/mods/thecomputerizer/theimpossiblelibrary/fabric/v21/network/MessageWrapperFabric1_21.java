@@ -1,112 +1,62 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v21.network;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.impl.networking.client.ClientNetworkingImpl;
-import net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.network.MessageWrapperFabric;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import java.util.Map;
 
-@SuppressWarnings("UnstableApiUsage")
-public abstract class MessageWrapperFabric1_21 extends MessageWrapperAPI<ServerPlayer,PacketSender> implements CustomPacketPayload {
+public class MessageWrapperFabric1_21 extends MessageWrapperFabric implements CustomPacketPayload {
     
-    public static MessageWrapperFabric1_21 getInstance(Object dir) {
-        boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
-        boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
-        return login ? (client ? new ClientLogin() : new ServerLogin()) : (client ? new Client() : new Server());
+    static final Type<MessageWrapperFabric1_21> TYPE = new Type<>(ID);
+    static final Type<MessageWrapperFabric1_21> TYPE_CLIENT_LOGIN = new Type<>(ID_CLIENT_LOGIN);
+    static final Type<MessageWrapperFabric1_21> TYPE_CLIENT_PLAY = new Type<>(ID_CLIENT_PLAY);
+    static final Type<MessageWrapperFabric1_21> TYPE_SERVER_LOGIN = new Type<>(ID_SERVER_LOGIN);
+    static final Type<MessageWrapperFabric1_21> TYPE_SERVER_PLAY = new Type<>(ID_SERVER_PLAY);
+    static final Map<ResourceLocation,Type<MessageWrapperFabric1_21>> BY_LOCATION = Map.of(ID,TYPE,ID_CLIENT_LOGIN,
+            TYPE_CLIENT_LOGIN,ID_CLIENT_PLAY,TYPE_CLIENT_PLAY, ID_SERVER_LOGIN,TYPE_SERVER_LOGIN,ID_SERVER_PLAY,
+            TYPE_SERVER_PLAY);
+    
+    @IndirectCallers
+    public static MessageWrapperFabric1_21 getInstance() {
+        return new MessageWrapperFabric1_21(TYPE);
     }
     
-    public static MessageWrapperFabric1_21 getInstance(Object dir, ByteBuf buf) {
-        boolean client = dir==ClientNetworkingImpl.PLAY || dir==ClientNetworkingImpl.LOGIN;
-        boolean login = dir==ClientNetworkingImpl.LOGIN || dir==ServerNetworkingImpl.LOGIN;
-        return login ? (client ? new ClientLogin(buf) : new ServerLogin(buf)) :
-                (client ? new Client(buf) : new Server(buf));
+    @IndirectCallers
+    public static MessageWrapperFabric1_21 getInstance(ByteBuf buf) {
+        return new MessageWrapperFabric1_21(TYPE,buf);
     }
     
-    MessageWrapperFabric1_21() {
-        super();
+    @IndirectCallers
+    public static MessageWrapperFabric1_21 getInstance(NetworkAPI<?,?> network, Object dir) {
+        return new MessageWrapperFabric1_21(getType(isClient(network,dir),isLogin(network,dir)));
     }
     
-    MessageWrapperFabric1_21(ByteBuf buf) {
-        super(buf);
+    public static MessageWrapperFabric1_21 getInstance(NetworkAPI<?,?> network, Object dir, ByteBuf buf) {
+        return new MessageWrapperFabric1_21(getType(isClient(network,dir),isLogin(network,dir)),buf);
     }
     
-    @Override public abstract @NotNull Type<MessageWrapperFabric1_21> type();
-    
-    public static final class Client extends MessageWrapperFabric1_21 {
-        
-        static ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MODID,"message_play_to_client");
-        static Type<MessageWrapperFabric1_21> TYPE = new Type<>(ID);
-        
-        Client() {
-            super();
-        }
-        
-        Client(ByteBuf buf) {
-            super(buf);
-        }
-        
-        @Override public @NotNull Type<MessageWrapperFabric1_21> type() {
-            return TYPE;
-        }
+    private static Type<MessageWrapperFabric1_21> getType(boolean client, boolean login) {
+        return BY_LOCATION.get(getRegistryName(client,login));
     }
     
-    public static final class ClientLogin extends MessageWrapperFabric1_21 {
-        
-        static ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MODID,"message_login_to_client");
-        static Type<MessageWrapperFabric1_21> TYPE = new Type<>(ID);
-        
-        ClientLogin() {
-            super();
-        }
-        
-        ClientLogin(ByteBuf buf) {
-            super(buf);
-        }
-        
-        @Override public @NotNull Type<MessageWrapperFabric1_21> type() {
-            return TYPE;
-        }
+    private final Type<MessageWrapperFabric1_21> type;
+    
+    MessageWrapperFabric1_21(Type<MessageWrapperFabric1_21> type) {
+        super(type.id());
+        this.type = type;
     }
     
-    public static final class Server extends MessageWrapperFabric1_21 {
-        
-        static ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MODID,"message_play_to_server");
-        static Type<MessageWrapperFabric1_21> TYPE = new Type<>(ID);
-        
-        Server() {
-            super();
-        }
-        
-        Server(ByteBuf buf) {
-            super(buf);
-        }
-        
-        @Override public @NotNull Type<MessageWrapperFabric1_21> type() {
-            return TYPE;
-        }
+    MessageWrapperFabric1_21(Type<MessageWrapperFabric1_21> type, ByteBuf buf) {
+        super(type.id(),buf);
+        this.type = type;
     }
     
-    public static final class ServerLogin extends MessageWrapperFabric1_21 {
-        
-        static ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(MODID,"message_login_to_server");
-        static Type<MessageWrapperFabric1_21> TYPE = new Type<>(ID);
-        
-        ServerLogin() {
-            super();
-        }
-        
-        ServerLogin(ByteBuf buf) {
-            super(buf);
-        }
-        
-        @Override public @NotNull Type<MessageWrapperFabric1_21> type() {
-            return TYPE;
-        }
+    @Override public @NotNull Type<MessageWrapperFabric1_21> type() {
+        return this.type;
     }
 }
