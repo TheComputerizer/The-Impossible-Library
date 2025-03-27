@@ -33,10 +33,9 @@ public class TextHelper {
         StringBuilder builder = new StringBuilder();
         int index = 1;
         for(Object element : array) {
-            if (Objects.nonNull(element)) {
+            if(Objects.nonNull(element)) {
                 String asString = element.toString();
-                if (!asString.trim().isEmpty())
-                    builder.append(asString);
+                if(!asString.trim().isEmpty()) builder.append(asString);
             }
             if(index<array.length && index<limit) {
                 builder.append(split);
@@ -78,8 +77,8 @@ public class TextHelper {
     public static int count(String s, char c) {
         if(isEmpty(s)) return 0;
         int count = 0;
-        for(char sc : s.toCharArray())
-            if(sc==c) count++;
+        for(int i=0;i<s.length();i++)
+            if(s.charAt(i)==c) count++;
         return count;
     }
     
@@ -89,6 +88,42 @@ public class TextHelper {
         for(String ending : endings)
             if(s.endsWith(ending)) return true;
         return false;
+    }
+    
+    /**
+     * Converts an iterable of strings to a single string with newline characters with an optional limiter.
+     * The limit input determines the maximum number of elements that can be read in before it gets cut off.
+     * Setting the limit to zero or below will disable it.
+     * Returns null if the input list is empty or null.
+     * If an element in the input list is empty, null, or has only whitespace,
+     * it will be replaced with a newline character or be removed if it is the final element.
+     */
+    public static String fromIterable(Iterable<?> itr) {
+        return fromIterable(itr,0,System.lineSeparator());
+    }
+    
+    @IndirectCallers
+    public static String fromIterable(Iterable<?> itr, int limit) {
+        return fromIterable(itr,limit,System.lineSeparator());
+    }
+    
+    public static String fromIterable(Iterable<?> itr, String split) {
+        return fromIterable(itr,0,split);
+    }
+    
+    public static String fromIterable(Iterable<?> itr, int limit, String split) {
+        if(Objects.isNull(itr)) return null;
+        int count = 0;
+        StringJoiner joiner = new StringJoiner(split);
+        for(Object value : itr) {
+            joiner.add(String.valueOf(value));
+            if(limit>0) {
+                count++;
+                if(count>=limit) break;
+            }
+        }
+        String val = joiner.toString();
+        return TextHelper.isNotEmpty(val) ? val : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -105,46 +140,21 @@ public class TextHelper {
     public static <S> TextTranslationAPI<S> getTranslated(String key, Object ... args) {
         return (TextTranslationAPI<S>)getHelper().getTranslated(key,args);
     }
-
-    /**
-     * Converts an iterable of strings to a single string with newline characters with an optional limiter. The limit
-     * input determines the maximum number of elements that can be read in before it gets cut off. Setting the limit to zero
-     * or below will disable it. Returns null if the input list is empty or null. If an element in the input list is
-     * empty, null, or has only whitespace, it will be replaced with a newline character or be removed if it is the final
-     * element.
-     */
-    public static String fromIterable(Iterable<?> itr) {
-        return fromIterable(itr,0,System.lineSeparator());
-    }
-
+    
     @IndirectCallers
-    public static String fromIterable(Iterable<?> itr, int limit) {
-        return fromIterable(itr,limit,System.lineSeparator());
+    public static List<String> hangingIndent(List<String> lines) {
+        return hangingIndent(lines,"    ");
     }
-
-    public static String fromIterable(Iterable<?> itr, String split) {
-        return fromIterable(itr,0,split);
-    }
-
-    public static String fromIterable(Iterable<?> itr, int limit, String split) {
-        if(Objects.isNull(itr)) return null;
-        int count = 0;
-        StringJoiner joiner = new StringJoiner(split);
-        for(Object value : itr) {
-            joiner.add(String.valueOf(value));
-            if(limit>0) {
-                count++;
-                if(count>=limit) break;
-            }
-        }
-        String val = joiner.toString();
-        return TextHelper.isNotEmpty(val) ? val : null;
+    
+    public static List<String> hangingIndent(List<String> lines, String prefix) {
+        for(int i=1;i<lines.size();i++) lines.set(i,prefix+lines.get(i));
+        return lines;
     }
     
     public static boolean isBlank(@Nullable String s) {
         if(Objects.isNull(s) || s.isEmpty()) return true;
-        for(char c : s.toCharArray())
-            if(!Character.isWhitespace(c)) return false;
+        for(int i=0;i<s.length();i++)
+            if(!Character.isWhitespace(s.charAt(i))) return false;
         return true;
     }
     

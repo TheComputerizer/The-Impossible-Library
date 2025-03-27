@@ -39,8 +39,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
-import static net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl.LOGIN;
-import static net.fabricmc.fabric.impl.networking.server.ServerNetworkingImpl.PLAY;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
@@ -51,6 +49,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     
     String IMPL_CLIENT = fabricPkg("impl.networking.client.ClientNetworkingImpl");
     Class<?> IMPL_CLIENT_CLASS = getClassIfClient(IMPL_CLIENT);
+    String IMPL_SERVER = fabricPkg("impl.networking.server.ServerNetworkingImpl");
+    Class<?> IMPL_SERVER_CLASS = tryGetClass(IMPL_SERVER);
     Object CLIENT_LOGIN = getStaticField(IMPL_CLIENT_CLASS,"LOGIN");
     Object CLIENT_PLAY = getStaticField(IMPL_CLIENT_CLASS,"PLAY");
     String PLAY_CLIENT = fabricPkg("api.client.networking.v1.ClientPlayNetworking");
@@ -62,10 +62,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     Class<?> PLAY_SERVER_CLASS = tryGetClass(PLAY_SERVER);
     Class<?> PLAY_SERVER_HANDLER_CLASS = tryGetHandlerClass(PLAY_SERVER,
             "PlayChannelHandler","PlayPayloadHandler");
-    @SuppressWarnings("UnstableApiUsage")
-    Object SERVER_LOGIN = LOGIN;
-    @SuppressWarnings("UnstableApiUsage")
-    Object SERVER_PLAY = PLAY;
+    Object SERVER_LOGIN = getStaticField(IMPL_SERVER_CLASS,"LOGIN");
+    Object SERVER_PLAY = getStaticField(IMPL_SERVER_CLASS,"PLAY");
     NbtAccounter UNLIMITED_ACCOUNTER = unlimitedAccounter();
     MutableWrapped<Class<?>> WRAPPED_WRAPPER_CLASS = new BasicMutableWrapped<>();
     

@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabricTest;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.core.asm.ModWriterFabric1_20;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v20.core.loader.MultiVersionLoaderFabric1_20;
@@ -88,9 +87,5 @@ public abstract class TILCoreFabric1_20 extends TILCore1_20 implements TILCoreFa
     
     @Override public String unmapClass(String className) {
         return mapper().unmapClassName("intermediary",className);
-    }
-    
-    @Override protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
-        return TILCommonEntryPointFabricTest.class;
     }
 }

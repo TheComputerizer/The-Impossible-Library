@@ -45,8 +45,9 @@ public class MethodPrinter extends MethodVisitor implements BytecodePrinter {
             else {
                 char varChar = name.toLowerCase().charAt(0);
                 int charCount = 0;
-                for(char c : builder.toString().toCharArray())
-                    if(c==varChar) charCount++;
+                String toString = builder.toString();
+                for(int i=0;i<toString.length();i++)
+                    if(toString.charAt(i)==varChar) charCount++;
                 builder.append(varChar);
                 joiner.add(name+" "+varChar+(charCount==0 ? "" : charCount));
             }
