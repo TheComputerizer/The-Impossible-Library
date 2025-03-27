@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -50,7 +49,7 @@ public class Common1_12_2 extends CommonAPI {
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelper1_12_2(CoreAPI.getInstance().getSide());
+        return () -> new ModHelper1_12_2(getSide());
     }
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {

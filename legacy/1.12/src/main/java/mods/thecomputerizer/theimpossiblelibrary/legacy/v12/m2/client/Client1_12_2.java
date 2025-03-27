@@ -12,7 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -47,10 +46,6 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.text.TextHelper1_
 import java.util.function.Supplier;
 
 public class Client1_12_2 extends ClientAPI {
-
-    @Override public MinecraftAPI<?> getMinecraft() {
-        return Minecraft1_12_2.getInstance();
-    }
     
     @Override public Supplier<BlockHelperAPI> initBlockHelper() {
         return BlockHelper1_12_2::new;
@@ -73,7 +68,7 @@ public class Client1_12_2 extends ClientAPI {
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelper1_12_2(CoreAPI.getInstance().getSide());
+        return () -> new ModHelper1_12_2(getSide());
     }
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {
@@ -130,5 +125,9 @@ public class Client1_12_2 extends ClientAPI {
     
     @Override public Supplier<WrapperAPI> initWrapper() {
         return Wrapper1_12_2::new;
+    }
+    
+    @Override protected Supplier<MinecraftAPI<?>> minecraftGetter() {
+        return Minecraft1_12_2::getInstance;
     }
 }

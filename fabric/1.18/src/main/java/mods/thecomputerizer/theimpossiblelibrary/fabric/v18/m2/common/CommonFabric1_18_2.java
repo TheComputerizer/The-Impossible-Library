@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -26,7 +26,7 @@ public class CommonFabric1_18_2 extends Common1_18_2 {
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelperFabric1_18_2(CoreAPI.getInstance().getSide());
+        return () -> new ModHelperFabric1_18_2(getSide());
     }
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {

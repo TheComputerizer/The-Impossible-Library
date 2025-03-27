@@ -376,7 +376,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logWarn("Tried to register sided network receiver {} twice!",registryName);
             return;
         }
-        Object type = Methods.invoke(wrapper,"type");
+        Object type = Methods.invoke(wrapper,DEV ? "type" : "method_56479");
         if(Objects.isNull(type)) return;
         String registryClassName = fabricPkg("api.networking.v1.PayloadTypeRegistry");
         Class<?> c = tryGetClass(registryClassName);

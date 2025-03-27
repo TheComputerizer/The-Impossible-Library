@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.SharedHandlesCommon;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -33,7 +32,7 @@ public class ClientForge1_16_5 extends Client1_16_5 {
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelperForge1_16_5(CoreAPI.getInstance().getSide());
+        return () -> new ModHelperForge1_16_5(getSide());
     }
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {

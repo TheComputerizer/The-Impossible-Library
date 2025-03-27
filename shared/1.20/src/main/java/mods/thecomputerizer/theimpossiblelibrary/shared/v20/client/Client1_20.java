@@ -29,10 +29,6 @@ import java.util.function.Supplier;
 
 public abstract class Client1_20 extends ClientAPI {
     
-    @Override public MinecraftAPI<?> getMinecraft() {
-        return Minecraft1_20.getInstance();
-    }
-    
     @Override public Supplier<BlockHelperAPI> initBlockHelper() {
         return BlockHelper1_20::new;
     }
@@ -75,5 +71,9 @@ public abstract class Client1_20 extends ClientAPI {
     
     @Override public Supplier<WrapperAPI> initWrapper() {
         return Wrapper1_20::new;
+    }
+    
+    @Override public Supplier<MinecraftAPI<?>> minecraftGetter() {
+        return Minecraft1_20::getInstance;
     }
 }

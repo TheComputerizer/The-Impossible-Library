@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v19.m4.client;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
@@ -21,16 +21,12 @@ import java.util.function.Supplier;
 
 public class ClientFabric1_19_4 extends ClientFabric1_19 {
     
-    @Override public MinecraftAPI<?> getMinecraft() {
-        return Minecraft1_19_4.getInstance();
-    }
-    
     @Override public Supplier<CommonEventsAPI> initCommonEvents() {
         return CommonEventsFabric1_19_4::new;
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelperFabric1_19_4(CoreAPI.getInstance().getSide());
+        return () -> new ModHelperFabric1_19_4(getSide());
     }
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {
@@ -47,5 +43,9 @@ public class ClientFabric1_19_4 extends ClientFabric1_19 {
     
     @Override public Supplier<WrapperAPI> initWrapper() {
         return Wrapper1_19_4::new;
+    }
+    
+    @Override public Supplier<MinecraftAPI<?>> minecraftGetter() {
+        return Minecraft1_19_4::getInstance;
     }
 }

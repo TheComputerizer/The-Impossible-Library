@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
@@ -22,7 +21,7 @@ public class CommonForge1_19_4 extends CommonForge1_19 {
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelperForge1_19_4(CoreAPI.getInstance().getSide());
+        return () -> new ModHelperForge1_19_4(getSide());
     }
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {

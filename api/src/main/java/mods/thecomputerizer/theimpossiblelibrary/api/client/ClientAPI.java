@@ -17,30 +17,33 @@ public abstract class ClientAPI extends CommonAPI {
     private SharedHandlesClient sharedHandles;
     private SoundHelperAPI soundHelper;
 
-    public ClientEventsAPI getClientEvents() {
-        if(Objects.isNull(this.clientEvents)) this.clientEvents = initClientEvents().get();
+    public final ClientEventsAPI getClientEvents() {
+        if(Objects.isNull(this.clientEvents)) this.clientEvents = safelySupply(initClientEvents(),"ClientEvents");
         return this.clientEvents;
     }
     
-    public KeyHelperAPI getKeyHelper() {
-        if(Objects.isNull(this.keyHelper)) this.keyHelper = initKeyHelper().get();
+    public final KeyHelperAPI getKeyHelper() {
+        if(Objects.isNull(this.keyHelper)) this.keyHelper = safelySupply(initKeyHelper(),"ClientEvents");
         return this.keyHelper;
     }
     
-    public abstract MinecraftAPI<?> getMinecraft();
+    public final MinecraftAPI<?> getMinecraft() {
+        return safelySupply(minecraftGetter(),"Minecraft");
+    }
     
-    public ScreenHelperAPI getScreenHelper() {
-        if(Objects.isNull(this.screenHelper)) this.screenHelper = initScreenHelper().get();
+    public final ScreenHelperAPI getScreenHelper() {
+        if(Objects.isNull(this.screenHelper)) this.screenHelper = safelySupply(initScreenHelper(),"ScreenHelper");
         return this.screenHelper;
     }
     
-    public SharedHandlesClient getSharedHandlesClient() {
-        if(Objects.isNull(this.sharedHandles)) this.sharedHandles = initSharedHandlesClient().get();
+    public final SharedHandlesClient getSharedHandlesClient() {
+        if(Objects.isNull(this.sharedHandles))
+            this.sharedHandles = safelySupply(initSharedHandlesClient(),"SharedHandlesClient");
         return this.sharedHandles;
     }
     
-    public SoundHelperAPI getSoundHelper() {
-        if(Objects.isNull(this.soundHelper)) this.soundHelper = initSoundHelper().get();
+    public final SoundHelperAPI getSoundHelper() {
+        if(Objects.isNull(this.soundHelper)) this.soundHelper = safelySupply(initSoundHelper(),"SoundHelper");
         return this.soundHelper;
     }
     
@@ -49,4 +52,5 @@ public abstract class ClientAPI extends CommonAPI {
     protected abstract Supplier<ScreenHelperAPI> initScreenHelper();
     protected abstract Supplier<SharedHandlesClient> initSharedHandlesClient();
     protected abstract Supplier<SoundHelperAPI> initSoundHelper();
+    protected abstract Supplier<MinecraftAPI<?>> minecraftGetter();
 }

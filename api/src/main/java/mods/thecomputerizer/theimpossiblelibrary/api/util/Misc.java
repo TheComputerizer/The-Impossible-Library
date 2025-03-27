@@ -11,8 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -159,6 +162,86 @@ public class Misc {
     public static String removeAll(String str, String ... removals) {
         for(String removal : removals) str = str.replaceAll(removal,"");
         return str;
+    }
+    
+    public static <V,W> BiConsumer<V,W> safeBiConsumer(BiConsumer<V,W> biConsumer) {
+        return safeBiConsumer(biConsumer,t -> {
+            throw new RuntimeException("Consumer handle failed!",t);
+        });
+    }
+    
+    public static <V,W> BiConsumer<V,W> safeBiConsumer(BiConsumer<V,W> biConsumer, Consumer<Throwable> onThrow) {
+        return (val1,val2) -> {
+            try {
+                biConsumer.accept(val1,val2);
+            } catch(Throwable t) {
+                onThrow.accept(t);
+            }
+        };
+    }
+    
+    public static <A,B,V> BiFunction<A,B,V> safeBiFunction(BiFunction<A,B,V> biFunction) {
+        return safeBiFunction(biFunction,t -> {
+            throw new RuntimeException("BiFunction handle failed!",t);
+        });
+    }
+    
+    public static <A,B,V> BiFunction<A,B,V> safeBiFunction(BiFunction<A,B,V> biFunction, Function<Throwable,V> onThrow) {
+        return (arg1,arg2) -> {
+            try {
+                return biFunction.apply(arg1,arg2);
+            } catch(Throwable t) {
+                return onThrow.apply(t);
+            }
+        };
+    }
+    
+    public static <V> Consumer<V> safeConsumer(Consumer<V> consumer) {
+        return safeConsumer(consumer,t -> {
+            throw new RuntimeException("Consumer handle failed!",t);
+        });
+    }
+    
+    public static <V> Consumer<V> safeConsumer(Consumer<V> consumer, Consumer<Throwable> onThrow) {
+        return value -> {
+            try {
+                consumer.accept(value);
+            } catch(Throwable t) {
+                onThrow.accept(t);
+            }
+        };
+    }
+    
+    public static <A,V> Function<A,V> safeFunction(Function<A,V> function) {
+        return safeFunction(function,t -> {
+            throw new RuntimeException("Function handle failed!",t);
+        });
+    }
+    
+    public static <A,V> Function<A,V> safeFunction(Function<A,V> function, Function<Throwable,V> onThrow) {
+        return arg -> {
+            try {
+                return function.apply(arg);
+            } catch(Throwable t) {
+                return onThrow.apply(t);
+            }
+        };
+    }
+    
+    public static <V> Supplier<V> safeSupplier(Supplier<V> supplier) {
+        return safeSupplier(supplier,t -> {
+            throw new RuntimeException("Supplier handle failed!",t);
+        });
+    }
+    
+    public static <V> Supplier<V> safeSupplier(Supplier<V> supplier, Function<Throwable,V> onThrow) {
+        return () -> {
+            try {
+                return supplier.get();
+            } catch(Throwable t) {
+                return onThrow.apply(t);
+            }
+        };
     }
     
     @SuppressWarnings("unchecked")

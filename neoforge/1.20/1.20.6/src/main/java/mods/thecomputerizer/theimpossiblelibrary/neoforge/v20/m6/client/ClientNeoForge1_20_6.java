@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
@@ -29,10 +28,6 @@ import java.util.function.Supplier;
 
 public class ClientNeoForge1_20_6 extends ClientNeoForge1_20 {
     
-    @Override public MinecraftAPI<?> getMinecraft() {
-        return Minecraft1_20_6.getInstance();
-    }
-    
     @Override protected Supplier<ClientEventsAPI> initClientEvents() {
         return ClientEventsNeoForge1_20_6::new;
     }
@@ -42,7 +37,7 @@ public class ClientNeoForge1_20_6 extends ClientNeoForge1_20 {
     }
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
-        return () -> new ModHelperNeoForge1_20_6(CoreAPI.getInstance().getSide());
+        return () -> new ModHelperNeoForge1_20_6(getSide());
     }
     
     @Override public Supplier<NetworkAPI<?,?>> initNetwork() {
@@ -71,5 +66,9 @@ public class ClientNeoForge1_20_6 extends ClientNeoForge1_20 {
     
     @Override public Supplier<WrapperAPI> initWrapper() {
         return Wrapper1_20_6::new;
+    }
+    
+    @Override public Supplier<MinecraftAPI<?>> minecraftGetter() {
+        return Minecraft1_20_6::getInstance;
     }
 }
