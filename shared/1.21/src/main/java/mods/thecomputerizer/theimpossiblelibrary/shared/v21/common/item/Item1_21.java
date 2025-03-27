@@ -4,13 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class Item1_21 extends ItemAPI<Item> {
 
     public Item1_21(Object item) {
-        super((Item)item);
+        super(item instanceof Holder<?> ? (Item)((Holder<?>)item).value() : (Item)item);
     }
     
     @Override public ItemStackAPI<?> defaultStack() {

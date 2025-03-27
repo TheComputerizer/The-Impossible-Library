@@ -43,7 +43,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     protected RegistryAccess access;
     
     public Biome1_21(Object biome) {
-        super((Biome)biome);
+        super(biome instanceof Holder<?> ? (Biome)((Holder<?>)biome).value() : (Biome)biome);
     }
     
     @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {

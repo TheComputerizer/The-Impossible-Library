@@ -10,7 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.client.event.ClientE
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.CUSTOM_TICK;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomComonFabricEvents.CUSTOM_TICK;
 
 public class ClientEventsFabric1_21 extends ClientEvents1_21 {
 

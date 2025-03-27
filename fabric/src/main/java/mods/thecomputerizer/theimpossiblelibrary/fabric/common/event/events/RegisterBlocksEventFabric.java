@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.RegistryEventFabric;
 import net.fabricmc.fabric.api.event.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.REGISTER_BLOCKS;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomComonFabricEvents.REGISTER_BLOCKS;
 
 public abstract class RegisterBlocksEventFabric extends RegisterBlocksEventWrapper<Object[]> implements RegistryEventFabric {
     

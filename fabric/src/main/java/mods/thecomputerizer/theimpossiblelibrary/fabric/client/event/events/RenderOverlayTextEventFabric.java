@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.DEBUG;
-import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.RENDER_DEBUG_INFO;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.CustomClientFabricEvents.RENDER_DEBUG_INFO;
 
 public class RenderOverlayTextEventFabric extends RenderOverlayTextEventWrapper<Object[]> implements ClientFabricEvent {
     

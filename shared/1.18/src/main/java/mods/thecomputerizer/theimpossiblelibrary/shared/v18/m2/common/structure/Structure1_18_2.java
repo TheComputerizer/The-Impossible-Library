@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.LevelAccessor;
@@ -17,7 +18,8 @@ import static net.minecraft.core.Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY;
 public class Structure1_18_2 extends StructureAPI<ConfiguredStructureFeature<?,?>> {
     
     public Structure1_18_2(Object structure) {
-        super((ConfiguredStructureFeature<?,?>)structure);
+        super(structure instanceof Holder<?> ? (ConfiguredStructureFeature<?,?>)((Holder<?>)structure).value() :
+                      (ConfiguredStructureFeature<?,?>)structure);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

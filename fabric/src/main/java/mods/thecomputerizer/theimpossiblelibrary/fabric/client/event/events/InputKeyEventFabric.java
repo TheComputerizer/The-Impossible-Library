@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabri
 import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.client.KeyMapping;
 
-import static mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents.KEY_PRESSED;
+import static mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.CustomClientFabricEvents.KEY_PRESSED;
 
 public class InputKeyEventFabric extends InputKeyEventWrapper<Object[]> implements ClientFabricEvent {
     

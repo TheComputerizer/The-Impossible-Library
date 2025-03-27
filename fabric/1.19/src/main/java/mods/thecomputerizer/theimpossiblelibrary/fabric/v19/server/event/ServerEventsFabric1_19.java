@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomFabricEvents;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomComonFabricEvents;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.server.event.events.ServerTickEventFabric1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.event.ServerEvents1_19;
 
@@ -24,7 +24,7 @@ public class ServerEventsFabric1_19 extends ServerEvents1_19 {
     }
     
     @Override public void postCustomTick(CustomTick ticker) {
-        CustomFabricEvents.CUSTOM_TICK.invoker().onTick(ticker);
+        CustomComonFabricEvents.CUSTOM_TICK.invoker().onTick(ticker);
     }
     
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {

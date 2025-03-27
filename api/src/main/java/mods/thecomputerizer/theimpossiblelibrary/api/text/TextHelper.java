@@ -82,6 +82,14 @@ public class TextHelper {
             if(sc==c) count++;
         return count;
     }
+    
+    @IndirectCallers
+    public static boolean endsWithAny(String s, String ... endings) {
+        if(isEmpty(s)) return false;
+        for(String ending : endings)
+            if(s.endsWith(ending)) return true;
+        return false;
+    }
 
     @SuppressWarnings("unchecked")
     public static <S> TextHelperAPI<S> getHelper() {

@@ -39,7 +39,7 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     protected RegistryAccess access;
     
     public Biome1_18_2(Object biome) {
-        super((Biome)biome);
+        super(biome instanceof Holder<?> ? (Biome)((Holder<?>)biome).value() : (Biome)biome);
     }
     
     @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
