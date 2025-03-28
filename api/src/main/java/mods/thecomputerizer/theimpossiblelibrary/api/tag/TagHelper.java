@@ -35,11 +35,11 @@ public class TagHelper {
                     "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!");
     
     public static File getDataDirectory() {
-        return new File("/"+DATA_DIRECTORY);
+        return new File(DATA_DIRECTORY);
     }
     
     public static File getDataDirectory(@Nullable File parent) {
-        File file = Objects.nonNull(parent) ? new File(parent,"/"+DATA_DIRECTORY) : getDataDirectory();
+        File file = Objects.nonNull(parent) ? new File(parent,DATA_DIRECTORY) : getDataDirectory();
         try {
             if(!file.exists()) Files.createDirectory(file.toPath());
         } catch(IOException ex) {
