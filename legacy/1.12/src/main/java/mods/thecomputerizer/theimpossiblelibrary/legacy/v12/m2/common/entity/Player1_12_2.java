@@ -35,6 +35,10 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     protected Player1_12_2(P player) {
         super(player,(EntityEntry)Entity1_12_2.getEntry(player));
     }
+    
+    @Override public boolean canTarget() {
+        return false;
+    }
 
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
         return this.entity.getActivePotionEffects().stream().map(WrapperHelper::wrapEffectInstance).collect(Collectors.toList());
@@ -42,6 +46,10 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
 
     @Override public int getAir() {
         return this.entity.getAir();
+    }
+    
+    @Override public EntityAPI<?,?> getAttackTarget() {
+        return null;
     }
 
     /**

@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.CompoundTag1_12_2;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityTameable;
@@ -34,10 +35,18 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
     public Living1_12_2(Object living) {
         super((EntityLivingBase)living,(EntityEntry)Entity1_12_2.getEntry(living));
     }
+    
+    @Override public boolean canTarget() {
+        return this.entity instanceof EntityLiving;
+    }
 
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
         return this.entity.getActivePotionEffects().stream().map(WrapperHelper::wrapEffectInstance)
                 .collect(Collectors.toList());
+    }
+    
+    @Override public EntityAPI<?,?> getAttackTarget() {
+        return WrapperHelper.wrapEntity(canTarget() ? ((EntityLiving)this.entity).getAttackTarget() : null);
     }
 
     @Override public Box getBoundingBox() {

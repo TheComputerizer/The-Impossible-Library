@@ -16,6 +16,7 @@ import net.minecraft.server.commands.data.EntityDataAccessor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +26,8 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET;
 
 public class Living1_20 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
@@ -36,9 +39,21 @@ public class Living1_20 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
         super(living,living.getType());
     }
     
+    @Override public boolean canTarget() {
+        return this.entity instanceof Mob;
+    }
+    
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
         return this.entity.getActiveEffects().stream().map(WrapperHelper::wrapEffectInstance)
                 .collect(Collectors.toList());
+    }
+    
+    @Override public EntityAPI<?,?> getAttackTarget() {
+        if(!canTarget()) return null;
+        Mob mob = (Mob)this.entity;
+        if(mob.getBrain().hasMemoryValue(ATTACK_TARGET))
+            return WrapperHelper.wrapEntity(mob.getBrain().getMemory(ATTACK_TARGET).orElse(null));
+        return WrapperHelper.wrapEntity(mob.getTarget());
     }
     
     @Override public Box getBoundingBox() {

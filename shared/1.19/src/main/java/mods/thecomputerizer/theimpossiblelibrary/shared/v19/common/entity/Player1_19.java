@@ -35,12 +35,21 @@ public abstract class Player1_19<P extends Player> extends PlayerAPI<P,EntityTyp
         super((P)player,(((P)player).getType()));
     }
     
+    @Override public boolean canTarget() {
+        return false;
+    }
+    
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        return this.entity.getActiveEffects().stream().map(WrapperHelper::wrapEffectInstance).collect(Collectors.toList());
+        return this.entity.getActiveEffects().stream().map(WrapperHelper::wrapEffectInstance)
+                .collect(Collectors.toList());
     }
     
     @Override public int getAir() {
         return this.entity.getAirSupply();
+    }
+    
+    @Override public EntityAPI<?,?> getAttackTarget() {
+        return null;
     }
     
     @Override public BlockPosAPI<?> getBedPos(DimensionAPI<?> dimension) { //TODO 1.16.5 dimension specific respawn pos

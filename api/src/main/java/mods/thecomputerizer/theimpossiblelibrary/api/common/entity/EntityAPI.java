@@ -33,6 +33,8 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         this.entity = entity;
     }
     
+    @IndirectCallers public abstract boolean canTarget();
+    
     @Override public boolean equals(Object other) {
         if(super.equals(other) && other instanceof EntityAPI<?,?>) {
             Object entity = getEntity();
@@ -44,6 +46,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
 
     public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
+    @IndirectCallers public abstract EntityAPI<?,?> getAttackTarget();
     public abstract Box getBoundingBox();
     public abstract CompoundTagAPI<?> getData();
     public abstract DimensionAPI<?> getDimension();
