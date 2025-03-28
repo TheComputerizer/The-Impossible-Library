@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
@@ -67,6 +68,10 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     Object SERVER_PLAY = getStaticField(IMPL_SERVER_CLASS,"PLAY");
     NbtAccounter UNLIMITED_ACCOUNTER = unlimitedAccounter();
     MutableWrapped<Class<?>> WRAPPED_WRAPPER_CLASS = new BasicMutableWrapped<>();
+    
+    static boolean atLeastV20_4() {
+        return CoreAPI.isVersionAtLeast(V20_4);
+    }
     
     static boolean atLeastV20_6() {
         return CoreAPI.isVersionAtLeast(V20_6);
@@ -150,8 +155,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     static NbtAccounter unlimitedAccounter() {
-        return atLeastV20_6() ? Methods.invokeStaticDirect(NbtAccounter.class,DEV ? "unlimitedHeap" : "method_53898") :
-                Fields.getStaticDirect(NbtAccounter.class,"UNLIMITED");
+        return atLeastV20_4() ? Methods.invokeStaticDirect(NbtAccounter.class,DEV ? "unlimitedHeap" : "method_53898") :
+                Fields.getStaticDirect(NbtAccounter.class,DEV ? "UNLIMITED" : "field_11556");
     }
     
     @Nullable default Object createHandlerProxy(DIR dir, boolean newType) {
