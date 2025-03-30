@@ -12,7 +12,7 @@ public abstract class LivingEntityAPI<L,V> extends EntityAPI<L,V> {
     
     @IndirectCallers
     public float getHealthPercent() {
-        return getMaxHealth()/getHealth();
+        return getHealth()/getMaxHealth();
     }
 
     public abstract float getMaxHealth();

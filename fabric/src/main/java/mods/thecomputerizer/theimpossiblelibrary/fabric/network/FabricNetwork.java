@@ -324,10 +324,20 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     @Override default CompoundTagAPI<?> readTag(ByteBuf buf) {
+        if(Objects.isNull(buf)) {
+            TILRef.logWarn("Tried to read tag from null ByteBuf");
+            return TagHelper.makeCompoundTag();
+        }
+        NbtAccounter accounter = Objects.nonNull(UNLIMITED_ACCOUNTER) ? UNLIMITED_ACCOUNTER : unlimitedAccounter();
+        if(Objects.isNull(accounter)) {
+            TILRef.logWarn("Cannot read tag with null UNLIMITED_ACCOUNTER field");
+            return TagHelper.makeCompoundTag();
+        }
         try(ByteBufInputStream stream = new ByteBufInputStream(buf)) {
-            TagHelper.getWrapped(NbtIo.read(stream,UNLIMITED_ACCOUNTER));
-        } catch(IOException ex) {
-            TILRef.logError("Failed to write tag to buffer", ex);
+            Object tag = NbtIo.read(stream,accounter);
+            if(Objects.nonNull(tag)) return (CompoundTagAPI<?>)TagHelper.getWrapped(tag);
+        } catch(Exception ex) {
+            TILRef.logError("Failed to write tag to buffer",ex);
         }
         return TagHelper.makeCompoundTag();
     }
