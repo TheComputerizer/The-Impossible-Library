@@ -19,20 +19,28 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.DATA_DIR
 @SuppressWarnings("SameParameterValue")
 public class TagHelper {
     private static final List<String> EXPLANATION = Arrays.asList("Hi!",
-            "This folder is used to store data used by The Impossible Library and other mods that might use it as a " +
-                    "dependency\n",
-            "--------------------------------------------------\n",
+            "This folder is used to store data used by The Impossible Library and other mods that might use it as a "+
+                    "dependency. It might also contain some debug files such classes generated via ASM.\n\n",
+            "----------------------------------------------------------------------------------------------------\n\n",
             "For mod developers:",
-            "If you registered any global data through The Impossible Library, this is where that gets stored! So if " +
-                    "you see your modid here, everything is working as intended.\n",
-            "--------------------------------------------------\n",
+            "\tIf you registered any global data through The Impossible Library, this is where that gets stored! If "+
+                    "your modid is here, everything is working as intended.\n",
+            "\tIf you generated a class via ASM that isn't working, you can find a copy of it within the 'asm_debug' "+
+            "\tsubdirectory to help with the debugging process.\n\n",
+            "----------------------------------------------------------------------------------------------------\n\n",
             "For modpack creators:",
-            "This is where mods that utilize the global data system implemented by The Impossible Library have their " +
-                    "data stored! If you want to quickly reset a specific mod's data, you can delete its file here.\n",
-            "--------------------------------------------------\n",
+            "\tThis is where mods that utilize the global data system implemented by The Impossible Library have " +
+                    "their data stored!\n",
+            "\tIf you want to quickly reset a specific mod's data, you can try removing the .dat file corresponding "+
+                    "to its modid here.\n",
+            "\tThis folder does not need to be exported when packaging a modpack unless the globally saved data for "+
+                    "some mod that depends on The Impossible Library is vital to the experience of the pack\n\n",
+            "----------------------------------------------------------------------------------------------------\n\n",
             "For players:",
-            "You probably do not have to worry about this folder, but if a specific mod is breaking that appears here, " +
-                    "you can try deleting the data and seeing if the problem is fixed. Remember to report issues!");
+            "\tYou probably don't have to worry about this folder, but if you can tell that a specific mod is "+
+                    "breaking and there looks to be a .dat file with its modid, you can try removing it.",
+            "\tThere are no guaruntees whether this will do anything as it depends entirely on the mod.",
+            "\tRemember to report issues!");
     
     public static File getDataDirectory() {
         return new File(DATA_DIRECTORY);
@@ -49,8 +57,9 @@ public class TagHelper {
     }
     
     private static CompoundTagAPI<?> getFileData(File directory, String modid, boolean createIfAbsent) throws IOException {
-        File dataFile = new File(directory,modid+".dat");
+        File dataFile = FileHelper.get(new File(directory,modid+".dat").toPath(),createIfAbsent);
         if(dataFile.exists()) return readFromFile(dataFile);
+        TILRef.logError("Failed to create data file for {} in directory {}",modid,directory);
         return makeCompoundTag();
     }
 

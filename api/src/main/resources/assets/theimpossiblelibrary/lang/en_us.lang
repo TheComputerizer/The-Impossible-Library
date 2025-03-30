@@ -1,2 +1,16 @@
+help.theimpossiblelibrary.data_folder.explanation.main.header=This folder is used to store data used by The Impossible Library and other mods that might use it as a dependency. It might also contain some debug files such classes generated via ASM.
+help.theimpossiblelibrary.data_folder.explanation.mod.header=For mod developers:
+help.theimpossiblelibrary.data_folder.explanation.mod.line.1=If you registered any global data through The Impossible Library, this is where that gets stored! If your modid is here, everything is working as intended.
+help.theimpossiblelibrary.data_folder.explanation.mod.line.2=If you generated a class via ASM that isn't working, you can find a copy of it within the 'asm_debug' subdirectory to help with the debugging process.
+help.theimpossiblelibrary.data_folder.explanation.pack.header=For modpack creators:
+help.theimpossiblelibrary.data_folder.explanation.pack.line.1=This is where mods that utilize the global data system implemented by The Impossible Library have their data stored!
+help.theimpossiblelibrary.data_folder.explanation.pack.line.2=If you want to quickly reset a specific mod's data, you can try removing the .dat file corresponding to its modid here.
+help.theimpossiblelibrary.data_folder.explanation.pack.line.3=This folder does not need to be exported when packaging a modpack unless the globally saved data for some mod that depends on The Impossible Library is vital to the experience of the pack
+help.theimpossiblelibrary.data_folder.explanation.player.header=For players:
+help.theimpossiblelibrary.data_folder.explanation.player.line.1=You probably don't have to worry about this folder, but if you can tell that a specific mod is breaking and there looks to be a .dat file with its modid, you can try removing it.
+help.theimpossiblelibrary.data_folder.explanation.player.line.2=There are no guaruntees whether this will do anything as it depends entirely on the mod.
+help.theimpossiblelibrary.data_folder.explanation.player.line.3=Remember to report issues!
+help.theimpossiblelibrary.data_folder.explanation.separator=----------------------------------------------------------------------------------------------------
+
 key.test=Test Key
 key.categories.theimpossiblelibrary=The Impossible Library
