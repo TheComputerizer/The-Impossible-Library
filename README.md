@@ -1,12 +1,9 @@
 # The-Impossible-Library
-This is the multiversion branch (THIS BRANCH IS WIP AND HAS NOT BEEN RELEASED YET)
-
 This mod was originally made to offer mod devs methods for doing things that are typically thought of as impossible, 
 hacky, tedious, or maybe even require a third party java library. 
 It now additionally serves as an API that can be used to _**load and run**_ mods on multiple versions & mod loaders.
 
 ## Supported Versions
-
 The status indicators are as follows:
 - BROKEN → The API has been implemented in this version, but it is not yet able to load.
 - FUNCTIONAL → There are no known major issues specific to this version.
@@ -88,7 +85,8 @@ You can use curse maven like so
 ```
 repositories {
     maven {
-        url = uri('https://www.cursemaven.com')
+        name = 'CurseMaven'
+        url = uri 'https://www.cursemaven.com'
         content {
             includeGroup 'curse.maven'
         }
@@ -99,7 +97,7 @@ dependencies {
   implementation fg.deobf('curse.maven:the-impossible-library-661115:fileID')
 }
 ```
-The file ID for the latest version of `0.4.0` is `UNRELEASED`
+The file ID for the latest version of `0.4.0` is `6369281`
 
 Alternatively, if you wish to use the modrinth maven, you can do it like this
 ```
@@ -107,7 +105,7 @@ Alternatively, if you wish to use the modrinth maven, you can do it like this
 repositories {
     maven {
         name = 'Modrinth'
-        url = uri('https://api.modrinth.com/maven')
+        url = uri 'https://api.modrinth.com/maven'
         content {
             includeGroup 'maven.modrinth'
         }
@@ -118,4 +116,4 @@ dependencies {
   implementation fg.deobf('maven.modrinth:the-impossible-library:fileVersion-universal')
 }
 ```
-The where the latest file version is `UNRELEASED`
+The where the latest file version is `0.4.0`

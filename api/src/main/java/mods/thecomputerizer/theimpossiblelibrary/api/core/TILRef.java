@@ -29,7 +29,7 @@ public class TILRef {
     public static final String DESCRIPTION = "Multiversion API & mod loader with helpers to do things deemed impossible";
     public static final String MODID = "theimpossiblelibrary";
     public static final String NAME = "The Impossible Library";
-    public static final String VERSION = "0.4.0";
+    public static final String VERSION = "0.4.1";
     @Setter private static CommonAPI API;
     /**
      * Enable to disable server stuff
