@@ -60,7 +60,7 @@ public class RandomHelper {
     }
     
     /**
-     Automatically determines min/max
+     * Automatically determines min/max
      */
     public static byte randomByte(byte b1, byte b2) {
         return (byte)randomInt(b1,b2); //Is this really how it should be done?
@@ -77,11 +77,12 @@ public class RandomHelper {
     }
     
     /**
-     Automatically determines min/max
+     * Automatically determines min/max
      */
     public static double randomDouble(double d1, double d2) {
-        return d1>=d2 ? d2+ThreadLocalRandom.current().nextDouble()*Math.abs(d1-d2) :
-                d1+ThreadLocalRandom.current().nextDouble()*Math.abs(d2-d1);
+        if(d1==d2) return d1;
+        double min = Math.min(d1,d2);
+        return min+(ThreadLocalRandom.current().nextDouble()*(Math.max(d1,d2)-min));
     }
     
     @IndirectCallers
@@ -95,11 +96,12 @@ public class RandomHelper {
     }
     
     /**
-     Automatically determines min/max
+     * Automatically determines min/max
      */
     public static float randomFloat(float f1, float f2) {
-        return f1>=f2 ? f2+ThreadLocalRandom.current().nextFloat()*Math.abs(f1-f2) :
-                f1+ThreadLocalRandom.current().nextFloat()*Math.abs(f2-f1);
+        if(f1==f2) return f1;
+        float min = Math.min(f1,f2);
+        return min+(ThreadLocalRandom.current().nextFloat()*(Math.max(f1,f2)-min));
     }
     
     @IndirectCallers
@@ -112,11 +114,12 @@ public class RandomHelper {
     }
     
     /**
-     Automatically determines min/max
+     * Automatically determines min/max
      */
     public static int randomInt(int i1, int i2) {
-        return i1>i2 ? i2+ThreadLocalRandom.current().nextInt(Math.abs(i1-i2)) :
-                i1+ThreadLocalRandom.current().nextInt(Math.abs(i2-i1));
+        if(i1==i2) return i1;
+        int min = Math.min(i1,i2);
+        return min+ThreadLocalRandom.current().nextInt(Math.max(i1,i2)-min);
     }
     
     @IndirectCallers
@@ -130,12 +133,12 @@ public class RandomHelper {
     }
     
     /**
-     Automatically determines min/max
+     * Automatically determines min/max
      */
     public static long randomLong(long l1, long l2) {
-        ThreadLocalRandom rand = ThreadLocalRandom.current();
-        if(l1==l2) return l1==0 ? 0 : rand.nextLong(Math.abs(l1))*(l1>0 ? 1 : -1);
-        return l1>l2 ? rand.nextLong(l2,l1) : rand.nextLong(l1,l2);
+        if(l1==l2) return l1;
+        long min = Math.min(l1,l2);
+        return min+ThreadLocalRandom.current().nextLong(Math.max(l1,l2)-min);
     }
     
     @IndirectCallers
@@ -166,7 +169,7 @@ public class RandomHelper {
     }
     
     /**
-     Automatically determines min/max
+     * Automatically determines min/max
      */
     public static short randomShort(short s1, short s2) {
         return (short)randomInt(s1,s2); //Is this really how it should be done?
