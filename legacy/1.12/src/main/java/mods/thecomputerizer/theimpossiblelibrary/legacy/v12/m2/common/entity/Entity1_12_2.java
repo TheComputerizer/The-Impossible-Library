@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,9 +103,13 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     @Override public boolean isAnimal() {
         return this.entity instanceof EntityAnimal;
     }
-
+    
     @Override public boolean isAlive() {
         return !this.entity.isDead;
+    }
+    
+    @Override public boolean isHostile() {
+        return this.entity instanceof IMob;
     }
 
     @Override public boolean isLiving() {

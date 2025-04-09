@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.CompoundTag1_
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,6 +101,10 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
 
     @Override public boolean isAnimal() {
         return this.entity instanceof EntityAnimal;
+    }
+    
+    @Override public boolean isHostile() {
+        return this.entity instanceof IMob;
     }
 
     @Override public boolean isLiving() {

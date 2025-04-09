@@ -19,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 
@@ -109,6 +110,10 @@ public class Living1_19 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public boolean isAnimal() {
         return this.entity instanceof Animal;
+    }
+    
+    @Override public boolean isHostile() {
+        return this.entity instanceof Enemy;
     }
     
     @Override public boolean isLiving() {

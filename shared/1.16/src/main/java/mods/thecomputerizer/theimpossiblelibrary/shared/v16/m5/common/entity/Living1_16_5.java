@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -110,6 +111,10 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public boolean isAnimal() {
         return this.entity instanceof AnimalEntity;
+    }
+    
+    @Override public boolean isHostile() {
+        return this.entity instanceof IMob;
     }
     
     @Override public boolean isLiving() {

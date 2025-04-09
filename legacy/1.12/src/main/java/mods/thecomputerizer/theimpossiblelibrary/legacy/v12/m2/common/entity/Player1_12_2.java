@@ -137,6 +137,10 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     @Override public boolean isFlying() {
         return this.entity.isElytraFlying();
     }
+    
+    @Override public boolean isHostile() {
+        return false;
+    }
 
     @Override public boolean isLiving() {
         return true;

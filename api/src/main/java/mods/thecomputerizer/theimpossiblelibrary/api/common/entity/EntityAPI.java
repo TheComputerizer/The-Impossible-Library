@@ -90,6 +90,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     public abstract WorldAPI<?> getWorld();
     @IndirectCallers public abstract boolean isAlive();
     @IndirectCallers public abstract boolean isAnimal();
+    @IndirectCallers public abstract boolean isHostile();
     public abstract boolean isLiving();
     public abstract boolean isPlayer();
     @IndirectCallers public abstract boolean isOwnedBy(EntityAPI<?,?> owner);
