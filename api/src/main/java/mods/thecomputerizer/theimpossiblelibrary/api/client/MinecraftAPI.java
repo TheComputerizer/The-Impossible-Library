@@ -32,6 +32,7 @@ public abstract class MinecraftAPI<M> extends AbstractWrapped<M> {
     }
 
     public abstract void addResourcePackFolder(File dir);
+    public abstract @Nullable Object getCurrentScreen();
     public abstract int getDisplayHeight();
     public abstract int getDisplayWidth();
     public abstract int getGUIScale();

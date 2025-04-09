@@ -143,6 +143,13 @@ public class ClientHelper {
         return checkValue(value,type,key) ? defaultValue : GenericUtils.parseNumber(value,defaultValue);
     }
     
+    @IndirectCallers
+    public static @Nullable Object getCurrentScreen() {
+        final MinecraftAPI<?> mc = getMinecraft();
+        if(Objects.isNull(mc)) return null;
+        return mc.scheduleReturnable(mc::getCurrentScreen).get();
+    }
+    
     public static int getDisplayHeight() {
         MinecraftAPI<?> api = getMinecraft();
         return Objects.nonNull(api) ? api.getDisplayHeight() : 1;

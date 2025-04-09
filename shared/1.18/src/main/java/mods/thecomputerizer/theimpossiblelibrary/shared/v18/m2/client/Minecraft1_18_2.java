@@ -39,6 +39,10 @@ public class Minecraft1_18_2 extends MinecraftAPI<Minecraft> {
     
     @Override public void addResourcePackFolder(File dir) {}
     
+    @Override public @Nullable Object getCurrentScreen() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.screen : null;
+    }
+    
     @Override public int getDisplayHeight() {
         return this.wrapped.getWindow().getHeight();
     }

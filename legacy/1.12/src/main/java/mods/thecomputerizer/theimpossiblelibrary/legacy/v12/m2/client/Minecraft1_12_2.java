@@ -64,6 +64,10 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
         }
     }
     
+    @Override public @Nullable Object getCurrentScreen() {
+        return Objects.nonNull(this.wrapped) ? this.wrapped.currentScreen : null;
+    }
+    
     @Override public int getDisplayHeight() {
         return this.wrapped.displayHeight;
     }
