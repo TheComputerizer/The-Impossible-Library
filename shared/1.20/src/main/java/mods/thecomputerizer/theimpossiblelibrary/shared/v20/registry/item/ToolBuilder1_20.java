@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAPI;
@@ -30,11 +31,7 @@ public class ToolBuilder1_20 extends ToolBuilderAPI {
     @Override public ItemAPI<?> build() {
         mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties properties = buildProperties();
         Item item = getItem(properties,this.toolTier.unwrap());
-        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = property.getKey().unwrap();
-            net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity,seed) ->
-                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
-        }
+        if(CoreAPI.isClient()) registerTextureProperties(item);
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
         CreativeTabAPI<?> tab = properties.getCreativeTab();
@@ -54,6 +51,14 @@ public class ToolBuilder1_20 extends ToolBuilderAPI {
                 this.effectiveBlocks.forEach(block -> blocks.add(block.unwrap()));
                 return new TILCustomTool1_20(tier,this.damageModifier,this.speedModifier,blocks,properties);
             }
+        }
+    }
+    
+    private void registerTextureProperties(Item item) {
+        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
+            ResourceLocation location = property.getKey().unwrap();
+            net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity,seed) ->
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
     }
 }

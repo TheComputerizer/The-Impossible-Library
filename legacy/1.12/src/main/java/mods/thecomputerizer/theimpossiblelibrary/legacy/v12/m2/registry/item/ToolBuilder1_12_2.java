@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
@@ -34,12 +35,7 @@ public class ToolBuilder1_12_2 extends ToolBuilderAPI {
         Item item = getItem(properties,this.toolTier.unwrap());
         CreativeTabAPI<?> tab = properties.getCreativeTab();
         if(Objects.nonNull(tab)) tab.addStack(() -> WrapperHelper.wrapItemStack(new ItemStack(item)));
-        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = property.getKey().unwrap();
-            IItemPropertyGetter getter = (stack,world,entity) ->
-                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world));
-            item.addPropertyOverride(location,getter);
-        }
+        if(CoreAPI.isClient()) registerTextureProperties(item);
         return WrapperHelper.wrapItem(item);
     }
     
@@ -55,6 +51,15 @@ public class ToolBuilder1_12_2 extends ToolBuilderAPI {
                 this.effectiveBlocks.forEach(block -> blocks.add(block.unwrap()));
                 return new TILCustomTool1_12_2(this.damageModifier,this.speedModifier,material,blocks,properties);
             }
+        }
+    }
+    
+    private void registerTextureProperties(Item item) {
+        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
+            ResourceLocation location = property.getKey().unwrap();
+            IItemPropertyGetter getter = (stack,world,entity) ->
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world));
+            item.addPropertyOverride(location,getter);
         }
     }
 }

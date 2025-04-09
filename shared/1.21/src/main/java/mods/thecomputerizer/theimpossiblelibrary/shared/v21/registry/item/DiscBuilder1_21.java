@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.DiscBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
@@ -31,11 +32,7 @@ public class DiscBuilder1_21 extends DiscBuilderAPI {
     @Override public ItemAPI<?> build() {
         mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties properties = buildProperties();
         Item item = new TILDiscItem1_21(properties,getJukeboxSong());
-        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = property.getKey().unwrap();
-            ItemProperties.register(item,location,(stack,world,entity,seed) ->
-                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
-        }
+        if(CoreAPI.isClient()) registerTextureProperties(item);
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
         CreativeTabAPI<?> tab = properties.getCreativeTab();
@@ -43,13 +40,21 @@ public class DiscBuilder1_21 extends DiscBuilderAPI {
         return wrapped;
     }
     
+    @SuppressWarnings("unchecked")
+    @Override protected <S> S defaultSound() {
+        return (S)EXPERIENCE_ORB_PICKUP;
+    }
+    
     ResourceKey<JukeboxSong> getJukeboxSong() { //TODO Figure how to to convert a SoundEvent to a JukeboxSong
         SoundEvent sound = getSound();
         return null;
     }
     
-    @SuppressWarnings("unchecked")
-    @Override protected <S> S defaultSound() {
-        return (S)EXPERIENCE_ORB_PICKUP;
+    private void registerTextureProperties(Item item) {
+        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
+            ResourceLocation location = property.getKey().unwrap();
+            ItemProperties.register(item,location,(stack,world,entity,seed) ->
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
+        }
     }
 }

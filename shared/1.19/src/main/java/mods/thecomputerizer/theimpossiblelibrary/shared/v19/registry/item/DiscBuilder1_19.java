@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
@@ -8,8 +9,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.DiscBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.RecordItem;
 
 import javax.annotation.Nullable;
@@ -29,11 +30,7 @@ public class DiscBuilder1_19 extends DiscBuilderAPI {
     @Override public ItemAPI<?> build() {
         mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties properties = buildProperties();
         RecordItem item = new TILDiscItem1_19(getSound(),properties,this.lengthInSeconds);
-        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = property.getKey().unwrap();
-            ItemProperties.register(item,location,(stack,world,entity,seed) ->
-                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
-        }
+        if(CoreAPI.isClient()) registerTextureProperties(item);
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
         if(VERSION==V19_4) {
@@ -46,5 +43,13 @@ public class DiscBuilder1_19 extends DiscBuilderAPI {
     @SuppressWarnings("unchecked")
     @Override protected <S> S defaultSound() {
         return (S)EXPERIENCE_ORB_PICKUP;
+    }
+    
+    private void registerTextureProperties(Item item) {
+        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
+            ResourceLocation location = property.getKey().unwrap();
+            net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity,seed) ->
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
+        }
     }
 }

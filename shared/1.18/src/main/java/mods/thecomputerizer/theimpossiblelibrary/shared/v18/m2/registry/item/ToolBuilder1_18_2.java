@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
@@ -26,12 +27,8 @@ public class ToolBuilder1_18_2 extends ToolBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        Item item = getItem(buildProperties(), this.toolTier.unwrap());
-        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = property.getKey().unwrap();
-            net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity,seed) ->
-                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
-        }
+        Item item = getItem(buildProperties(),this.toolTier.unwrap());
+        if(CoreAPI.isClient()) registerTextureProperties(item);
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
         return wrapped;
@@ -49,6 +46,14 @@ public class ToolBuilder1_18_2 extends ToolBuilderAPI {
                 this.effectiveBlocks.forEach(block -> blocks.add(block.unwrap()));
                 return new TILCustomTool1_18_2(tier,this.damageModifier,this.speedModifier,blocks,properties);
             }
+        }
+    }
+    
+    private void registerTextureProperties(Item item) {
+        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
+            ResourceLocation location = property.getKey().unwrap();
+            net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity,seed) ->
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
     }
 }
