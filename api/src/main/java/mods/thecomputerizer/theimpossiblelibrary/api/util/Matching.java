@@ -1,5 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 /**
@@ -23,6 +28,21 @@ public enum Matching {
         for(Matching matcher : matchers)
             if(matcher.matches(value,checkThis)) return true;
         return false;
+    }
+    
+    @IndirectCallers
+    public static Set<String> matchingValuesAll(Collection<String> values, String checkThis, Matching ... matchers) {
+        Set<String> matches = new HashSet<>();
+        for(String value : values)
+            if(matchesAll(value,checkThis,matchers)) matches.add(value);
+        return matches;
+    }
+    
+    public static Set<String> matchingValuesAny(Collection<String> values, String checkThis, Matching ... matchers) {
+        Set<String> matches = new HashSet<>();
+        for(String value : values)
+            if(matchesAny(value,checkThis,matchers)) matches.add(value);
+        return matches;
     }
     
     final BiFunction<String,String,Boolean> matcher;

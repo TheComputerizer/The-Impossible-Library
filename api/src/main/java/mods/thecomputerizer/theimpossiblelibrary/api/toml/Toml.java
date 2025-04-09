@@ -221,13 +221,68 @@ import java.util.Map.Entry;
         table.parent = this;
     }
     
+    public void clear() {
+        clear(true,true,true);
+    }
+    
+    public void clear(boolean tables) {
+        clear(true,true,tables);
+    }
+    
+    public void clear(boolean entries, boolean tables) {
+        clear(true,entries,tables);
+    }
+    
+    public void clear(boolean comments, boolean entries, boolean tables) {
+        if(!comments && !entries && !tables) {
+            TILRef.logInfo("Toml#clear called but comments, entries, & tables are all false? "+
+                           "Nothing will be cleared");
+            return;
+        }
+        if(comments) clearAllComments();
+        if(entries) clearAllEntries();
+        if(tables) clearAllTables();
+    }
+    
     public void clearAllComments() {
         clearComments();
         clearAllEntryComments();
     }
     
+    public void clearAllEntries() {
+        this.entries.clear();
+    }
+    
     public void clearAllEntryComments() {
         for(TomlEntry<?> entry : this.entries.values()) entry.clearComments();
+    }
+    
+    public void clearAllTables() {
+        this.tables.clear();
+    }
+    
+    public void clearAnyMatching(String toMatch, Matching ... matchers) {
+        clearAnyMatching(toMatch,true,true,true,matchers);
+    }
+    
+    public void clearAnyMatching(String toMatch, boolean tables, Matching ... matchers) {
+        clearAnyMatching(toMatch,true,true,tables,matchers);
+    }
+    
+    public void clearAnyMatching(String toMatch, boolean entries, boolean tables, Matching ... matchers) {
+        clearAnyMatching(toMatch,true,entries,tables,matchers);
+    }
+    
+    public void clearAnyMatching(String toMatch, boolean comments, boolean entries, boolean tables,
+            Matching ... matchers) {
+        if(!comments && !entries && !tables) {
+            TILRef.logInfo("Toml#clearAnyMatching called but comments, entries, & tables are all false? "+
+                           "Nothing will be cleared");
+            return;
+        }
+        if(comments) clearAnyCommentsMatching(toMatch,matchers);
+        if(entries) clearEntriesMatching(toMatch,matchers);
+        if(tables) clearTablesMatching(toMatch,matchers);
     }
     
     public void clearAnyCommentsMatching(String toMatch, Matching ... matchers) {
@@ -244,6 +299,11 @@ import java.util.Map.Entry;
                 Matching.matchesAny(comment,toMatch,matchers));
     }
     
+    public void clearEntriesMatching(String toMatch, Matching ... matchers) {
+        Collection<String> removals = Matching.matchingValuesAny(this.entries.keySet(),toMatch,matchers);
+        for(String removal : removals) this.entries.remove(removal);
+    }
+    
     public void clearEntryCommentsMatching(String key, String toMatch, Matching ... matchers) {
         TomlEntry<?> entry = getEntry(key);
         if(Objects.nonNull(entry)) entry.clearCommentsMatching(toMatch,matchers);
@@ -252,6 +312,11 @@ import java.util.Map.Entry;
     public void clearEntryComments(String key) {
         TomlEntry<?> entry = getEntry(key);
         if(Objects.nonNull(entry)) entry.clearComments();
+    }
+    
+    public void clearTablesMatching(String toMatch, Matching ... matchers) {
+        Collection<String> removals = Matching.matchingValuesAny(this.tables.keySet(),toMatch,matchers);
+        for(String removal : removals) this.tables.remove(removal);
     }
     
     public Collection<TomlEntry<?>> getAllEntries() {
@@ -304,6 +369,203 @@ import java.util.Map.Entry;
         return map;
     }
     
+    /**
+     * Return a potentially empty generic optional depending on whether the value is present
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getOptional(String name) {
+        TomlEntry<T> entry = (TomlEntry<T>)getEntry(name);
+        return Objects.nonNull(entry) ? Optional.of(entry.value) : Optional.empty();
+    }
+    
+    /**
+     * Return a generic optional of the value if it is present or the defVal input.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getOptional(String name, @Nullable T defVal) {
+        TomlEntry<T> entry = (TomlEntry<T>)getEntry(name);
+        return Optional.ofNullable(Objects.nonNull(entry) ? entry.value : defVal);
+    }
+    
+    /**
+     * Return a potentially empty list optional depending on whether the value is present
+     */
+    public Optional<List<?>> getOptionalArray(String name) {
+        TomlEntry<List<?>> entry = getEntryArray(name);
+        return Objects.nonNull(entry) ? Optional.of(entry.value) : Optional.empty();
+    }
+    
+    /**
+     * Return a list optional of the value if it is present or the defVal input.
+     */
+    public Optional<List<?>> getOptionalArray(String name, @Nullable List<?> defVal) {
+        TomlEntry<List<?>> entry = getEntryArray(name);
+        return Optional.ofNullable(Objects.nonNull(entry) ? entry.value : defVal);
+    }
+    
+    /**
+     * Return a potentially empty boolean optional depending on whether the value is present
+     */
+    public Optional<Boolean> getOptionalBool(String name) {
+        TomlEntry<Boolean> entry = getEntryBool(name);
+        return Objects.nonNull(entry) ? Optional.of(entry.value) : Optional.empty();
+    }
+    
+    /**
+     * Return a boolean optional of the value if it is present or the defVal input.
+     */
+    public Optional<Boolean> getOptionalBool(String name, boolean defVal) {
+        TomlEntry<Boolean> entry = getEntryBool(name);
+        return Optional.of(Objects.nonNull(entry) ? entry.value : defVal);
+    }
+    
+    /**
+     * Return a potentially empty byte optional depending on whether the value is present
+     */
+    public Optional<Byte> getOptionalByte(String name) {
+        Number number = getValueNumber(name);
+        return Objects.nonNull(number) ? Optional.of(number.byteValue()) : Optional.empty();
+    }
+    
+    /**
+     * Return a byte optional of the value if it is present or the defVal input.
+     */
+    public Optional<Byte> getOptionalByte(String name, byte defVal) {
+        Number number = getValueNumber(name);
+        return Optional.of(Objects.nonNull(number) ? number.byteValue() : defVal);
+    }
+    
+    /**
+     * Return a potentially empty double optional depending on whether the value is present
+     */
+    public Optional<Double> getOptionalDouble(String name) {
+        Number number = getValueNumber(name);
+        return Objects.nonNull(number) ? Optional.of(number.doubleValue()) : Optional.empty();
+    }
+    
+    /**
+     * Return a double optional of the value if it is present or the defVal input.
+     */
+    public Optional<Double> getOptionalDouble(String name, double defVal) {
+        Number number = getValueNumber(name);
+        return Optional.of(Objects.nonNull(number) ? number.doubleValue() : defVal);
+    }
+    
+    /**
+     * Return a potentially empty float optional depending on whether the value is present
+     */
+    public Optional<Float> getOptionalFloat(String name) {
+        Number number = getValueNumber(name);
+        return Objects.nonNull(number) ? Optional.of(number.floatValue()) : Optional.empty();
+    }
+    
+    /**
+     * Return a float optional of the value if it is present or the defVal input.
+     */
+    public Optional<Float> getOptionalFloat(String name, float defVal) {
+        Number number = getValueNumber(name);
+        return Optional.of(Objects.nonNull(number) ? number.floatValue() : defVal);
+    }
+    
+    /**
+     * Return a potentially empty int optional depending on whether the value is present
+     */
+    public Optional<Integer> getOptionalInt(String name) {
+        Number number = getValueNumber(name);
+        return Objects.nonNull(number) ? Optional.of(number.intValue()) : Optional.empty();
+    }
+    
+    /**
+     * Return an int optional of the value if it is present or the defVal input.
+     */
+    public Optional<Integer> getOptionalInt(String name, int defVal) {
+        Number number = getValueNumber(name);
+        return Optional.of(Objects.nonNull(number) ? number.intValue() : defVal);
+    }
+    
+    /**
+     * Return a potentially empty long optional depending on whether the value is present
+     */
+    public Optional<Long> getOptionalLong(String name) {
+        Number number = getValueNumber(name);
+        return Objects.nonNull(number) ? Optional.of(number.longValue()) : Optional.empty();
+    }
+    
+    /**
+     * Return a long optional of the value if it is present or the defVal input.
+     */
+    public Optional<Long> getOptionalLong(String name, long defVal) {
+        Number number = getValueNumber(name);
+        return Optional.of(Objects.nonNull(number) ? number.longValue() : defVal);
+    }
+    
+    /**
+     * Return a potentially empty number optional depending on whether the value is present
+     */
+    public Optional<Number> getOptionalNumber(String name) {
+        return Optional.ofNullable(getValueNumber(name));
+    }
+    
+    /**
+     * Return a number optional of the value if it is present or the defVal input.
+     */
+    public Optional<Number> getOptionalNumber(String name, @Nullable Number defVal) {
+        Number number = getValueNumber(name);
+        return Optional.ofNullable(Objects.nonNull(number) ? number : defVal);
+    }
+    
+    /**
+     * Return a potentially empty short optional depending on whether the value is present
+     */
+    public Optional<Short> getOptionalShort(String name) {
+        Number number = getValueNumber(name);
+        return Objects.nonNull(number) ? Optional.of(number.shortValue()) : Optional.empty();
+    }
+    
+    /**
+     * Return a short optional of the value if it is present or the defVal input.
+     */
+    public Optional<Short> getOptionalShort(String name, short defVal) {
+        Number number = getValueNumber(name);
+        return Optional.of(Objects.nonNull(number) ? number.shortValue() : defVal);
+    }
+    
+    /**
+     * Return a potentially empty string optional depending on whether the value is present
+     */
+    public Optional<String> getOptionalString(String name) {
+        TomlEntry<String> entry = getEntryString(name);
+        return Objects.nonNull(entry) ? Optional.of(entry.value) : Optional.empty();
+    }
+    
+    /**
+     * Return a string optional of the value if it is present or the defVal input.
+     */
+    public Optional<String> getOptionalString(String name, @Nullable String defVal) {
+        TomlEntry<String> entry = getEntryString(name);
+        return Optional.ofNullable(Objects.nonNull(entry) ? entry.value : defVal);
+    }
+    
+    public Optional<Toml> getOptionalTable(String name) {
+        Toml[] tomls = this.tables.get(name);
+        return ArrayHelper.isNotEmpty(tomls) ? Optional.of(tomls[0]) : Optional.empty();
+    }
+    
+    public Optional<Toml> getOptionalTable(String name, @Nullable Toml defVal) {
+        Toml[] tomls = this.tables.get(name);
+        return Optional.ofNullable(ArrayHelper.isNotEmpty(tomls) ? tomls[0] : defVal);
+    }
+    
+    public Optional<Toml[]> getOptionalTables(String name) {
+        Toml[] tomls = this.tables.get(name);
+        return Optional.of(ArrayHelper.isNotEmpty(tomls) ? tomls : new Toml[]{});
+    }
+    
+    public Optional<Toml[]> getOptionalTables(String name, @Nullable Toml[] defVal) {
+        Toml[] tomls = this.tables.get(name);
+        return Optional.ofNullable(ArrayHelper.isNotEmpty(tomls) ? tomls : defVal);
+    }
+    
     public <V> V getOrSetValue(String key, V def) {
         return hasEntry(key) ? getValue(key) : addEntry(key,def).value;
     }
@@ -328,14 +590,30 @@ import java.util.Map.Entry;
         return this.tables.get(name);
     }
     
-    @SuppressWarnings("unchecked") public <T> T getValue(String name) {
+    public <T> T getValue(String name) {
+        return getValue(name,null);
+    }
+    
+    @SuppressWarnings("unchecked") public <T> T getValue(String name, @Nullable T defVal) {
         TomlEntry<T> entry = (TomlEntry<T>)getEntry(name);
-        return Objects.nonNull(entry) ? entry.value : null;
+        return Objects.nonNull(entry) ? entry.value : defVal;
     }
     
     public List<?> getValueArray(String name) {
+        return getValueArray(name,null);
+    }
+    
+    public List<?> getValueArray(String name, @Nullable List<?> defVal) {
         TomlEntry<List<?>> entry = getEntryArray(name);
-        return Objects.nonNull(entry) ? entry.value : null;
+        return Objects.nonNull(entry) ? entry.value : defVal;
+    }
+    
+    public List<?> getValueArrayOrEmpty(String name) {
+        return getValueArray(name,new ArrayList<>());
+    }
+    
+    public boolean getValueBool(String name) {
+        return getValueBool(name,false);
     }
     
     public boolean getValueBool(String name, boolean defVal) {
@@ -343,9 +621,17 @@ import java.util.Map.Entry;
         return Objects.nonNull(entry) ? entry.value : defVal;
     }
     
+    public byte getValueByte(String name) {
+        return getValueByte(name,(byte)0);
+    }
+    
     public byte getValueByte(String name, byte defVal) {
         Number number = getValueNumber(name);
         return Objects.nonNull(number) ? number.byteValue() : defVal;
+    }
+    
+    public double getValueDouble(String name) {
+        return getValueDouble(name,0d);
     }
     
     public double getValueDouble(String name, double defVal) {
@@ -353,14 +639,26 @@ import java.util.Map.Entry;
         return Objects.nonNull(number) ? number.doubleValue() : defVal;
     }
     
+    public float getValueFloat(String name) {
+        return getValueFloat(name,0f);
+    }
+    
     public float getValueFloat(String name, float defVal) {
         TomlEntry<Float> entry = getEntryFloat(name);
         return Objects.nonNull(entry) ? entry.value : defVal;
     }
     
+    public int getValueInt(String name) {
+        return getValueInt(name,0);
+    }
+    
     public int getValueInt(String name, int defVal) {
         TomlEntry<Integer> entry = getEntryInt(name);
         return Objects.nonNull(entry) ? entry.value : defVal;
+    }
+    
+    public long getValueLong(String name) {
+        return getValueLong(name,0L);
     }
     
     public long getValueLong(String name, long defVal) {
@@ -369,8 +667,16 @@ import java.util.Map.Entry;
     }
     
     public Number getValueNumber(String name) {
+        return getValueNumber(name,null);
+    }
+    
+    public Number getValueNumber(String name, @Nullable Number defVal) {
         TomlEntry<Number> entry = getEntryNumber(name);
-        return Objects.nonNull(entry) ? entry.value: null;
+        return Objects.nonNull(entry) ? entry.value: defVal;
+    }
+    
+    public short getValueShort(String name) {
+        return getValueShort(name,(short)0);
     }
     
     public short getValueShort(String name, short defVal) {
@@ -379,8 +685,12 @@ import java.util.Map.Entry;
     }
     
     public String getValueString(String name) {
+        return getValueString(name,null);
+    }
+    
+    public String getValueString(String name, @Nullable String defVal) {
         TomlEntry<String> entry = getEntryString(name);
-        return Objects.nonNull(entry) ? entry.value : null;
+        return Objects.nonNull(entry) ? entry.value : defVal;
     }
     
     public boolean hasEntry(String name) {
