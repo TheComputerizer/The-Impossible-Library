@@ -73,8 +73,14 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         return new Vector3(x(),y(),z());
     }
     
+    /**
+     * Rounds to the CENTER of the block which is the relative position (0.5,0.5,0.5)
+     */
     @IndirectCallers public BlockPosAPI<?> getPosRounded() {
-        return PosHelper.getPos(((int)x())+0.5d,((int)y())+0.5d,((int)z())+0.5d);
+        double x = PosHelper.roundToCenter(x());
+        double y = PosHelper.roundToCenter(y());
+        double z = PosHelper.roundToCenter(z());
+        return PosHelper.getPos(x,y,z);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

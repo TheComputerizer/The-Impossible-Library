@@ -16,5 +16,13 @@ public class PosHelper {
     public static BlockPosAPI<?> getPos(int x, int y, int z) {
         return getPos(new Vector3(x,y,z));
     }
-
+    
+    /**
+     * Rounds the input value to the nearest 0.5 (0 -> 0.5, 0.75 -> 0.5, 1 -> 1.5, etc.)
+     */
+    public static double roundToCenter(double v) {
+        int lower = (int)Math.floor(v*2d);
+        if(Math.abs(lower%2)!=1) lower++; //Round up to an odd number if even
+        return ((double)lower)/2d;
+    }
 }
