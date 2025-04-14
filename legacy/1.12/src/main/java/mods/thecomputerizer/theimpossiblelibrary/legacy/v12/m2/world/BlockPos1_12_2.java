@@ -19,11 +19,11 @@ public class BlockPos1_12_2 extends BlockPosAPI<BlockPos> {
     }
 
     public BlockPos1_12_2(BlockPos pos) {
-        this(pos,new Vector3(pos.getX(), pos.getY(), pos.getZ()));
+        this(pos,new Vector3(pos.getX(),pos.getY(),pos.getZ()));
     }
 
     public BlockPos1_12_2(Vector3 posVec) {
-        this(new BlockPos(posVec.iX(),posVec.iY(),posVec.iZ()),posVec);
+        this(new BlockPos(posVec.dX(),posVec.dY(),posVec.dZ()),posVec);
     }
 
     public BlockPos1_12_2(double x, double y, double z) {

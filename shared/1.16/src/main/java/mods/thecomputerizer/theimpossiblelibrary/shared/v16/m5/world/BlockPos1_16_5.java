@@ -23,7 +23,7 @@ public class BlockPos1_16_5 extends BlockPosAPI<BlockPos> {
     }
 
     public BlockPos1_16_5(Vector3 posVec) {
-        this(new BlockPos(posVec.iX(),posVec.iY(),posVec.iZ()),posVec);
+        this(new BlockPos(posVec.dX(),posVec.dY(),posVec.dZ()),posVec);
     }
 
     public BlockPos1_16_5(double x, double y, double z) {

@@ -74,7 +74,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     }
     
     @IndirectCallers public BlockPosAPI<?> getPosRounded() {
-        return PosHelper.getPos(Math.round(x()),Math.round(y()),Math.round(z()));
+        return PosHelper.getPos(((int)x())+0.5d,((int)y())+0.5d,((int)z())+0.5d);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
