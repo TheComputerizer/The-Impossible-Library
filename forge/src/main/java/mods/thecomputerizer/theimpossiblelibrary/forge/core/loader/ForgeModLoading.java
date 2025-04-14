@@ -613,18 +613,33 @@ public class ForgeModLoading {
     
     private static BiFunction<Path,Object,Manifest> setPathToManifest() {
         if(pathBased) return (path,locator) -> {
-            Optional<Manifest> optional = Methods.invoke(locator,"findManifest",path);
-            return optional.orElse(null);
+            try {
+                Optional<Manifest> optional = Methods.invoke(locator, "findManifest", path);
+                return optional.orElse(null);
+            } catch(Throwable ignoredT) {
+                LOGGER.warn("Failed to get manifest from path {}",path);
+            }
+            return null;
         };
         final Class<?> jarClass = ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
         if(locatorBased) return (path,ignored) -> {
-            Object jar = Methods.invokeStatic(jarClass,"from",path);
-            return Methods.invoke(jar,"getManifest");
+            try {
+                Object jar = Methods.invokeStatic(jarClass,"from", path);
+                return Methods.invoke(jar,"getManifest");
+            } catch(Throwable ignoredT) {
+                LOGGER.warn("Failed to get manifest from path {}",path);
+            }
+            return null;
         };
         return (path,ignored) -> {
-            Object jar = Methods.invokeStatic(jarClass,"from",path);
-            Object dataProvider = Methods.invoke(jar,"moduleDataProvider");
-            return Objects.nonNull(dataProvider) ? Methods.invoke(dataProvider,"getManifest") : null;
+            try {
+                Object jar = Methods.invokeStatic(jarClass, "from", path);
+                Object dataProvider = Methods.invoke(jar, "moduleDataProvider");
+                return Objects.nonNull(dataProvider) ? Methods.invoke(dataProvider, "getManifest") : null;
+            } catch(Throwable ignoredT) {
+                LOGGER.warn("Failed to get manifest from path {}",path);
+            }
+            return null;
         };
     }
     
