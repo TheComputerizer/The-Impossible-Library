@@ -59,7 +59,6 @@ public class ModWriter1_12_2 extends ModWriter {
                             "onServerStopping");
         mapEntryPointMethod(redirects,types,"serverStopped",getEventMethod("FMLServerStoppedEvent"),
                             "onServerStopped");
-        
     }
     
     @Override protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {

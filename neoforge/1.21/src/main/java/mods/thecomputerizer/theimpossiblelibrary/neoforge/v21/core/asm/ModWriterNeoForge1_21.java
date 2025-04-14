@@ -15,6 +15,9 @@ import static org.objectweb.asm.Type.VOID_TYPE;
 
 public class ModWriterNeoForge1_21 extends ModWriterNeoForge {
     
+    protected static final Type EVENT_SUBSCRIBER = TypeHelper.neofml("common/EventBusSubscriber");
+    protected static final Type EVENT_SUBSCRIBER_BUS = TypeHelper.neofml("common/EventBusSubscriber$Bus");
+    
     public ModWriterNeoForge1_21(CoreAPI core, MultiVersionModInfo info) {
         super(core,info,JAVA21);
     }
@@ -25,6 +28,14 @@ public class ModWriterNeoForge1_21 extends ModWriterNeoForge {
             return TypeHelper.method(VOID_TYPE,TypeHelper.neoforge("event/server/"+className));
         }
         return super.getEventMethod(className);
+    }
+    
+    @Override protected Type getEventSubscriberBusType() {
+        return EVENT_SUBSCRIBER_BUS;
+    }
+    
+    @Override protected Type getEventSubscriberType() {
+        return EVENT_SUBSCRIBER;
     }
     
     @Override protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {

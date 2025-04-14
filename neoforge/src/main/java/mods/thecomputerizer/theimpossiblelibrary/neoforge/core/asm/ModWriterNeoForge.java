@@ -39,9 +39,9 @@ public abstract class ModWriterNeoForge extends ModWriter {
     
     protected void addEventSubscriber(ClassVisitor visitor, String modid, boolean modBus, boolean client,
             boolean server) {
-        writeClassAnnotation(visitor,EVENT_SUBSCRIBER,annotation -> {
+        writeClassAnnotation(visitor,getEventSubscriberType(),annotation -> {
             annotation.visit("modid",modid);
-            if(modBus) annotation.visitEnum("bus",EVENT_SUBSCRIBER_BUS.getDescriptor(),"MOD");
+            if(modBus) annotation.visitEnum("bus",getEventSubscriberBusType().getDescriptor(),"MOD");
             if((client && !server) || (!client && server))
                 writeAnnotationArray(annotation,"value",array ->
                         array.visitEnum(null,DIST.getDescriptor(),client ? "CLIENT" : "DEDICATED_SERVER"));
@@ -70,6 +70,14 @@ public abstract class ModWriterNeoForge extends ModWriter {
     @Override protected Type getEventMethod(String className) {
         className = (className.startsWith("FMLServer") ? "server" : "lifecycle")+"/"+className;
         return TypeHelper.method(VOID_TYPE,TypeHelper.neofml("event/"+className));
+    }
+    
+    protected Type getEventSubscriberBusType() {
+        return EVENT_SUBSCRIBER_BUS;
+    }
+    
+    protected Type getEventSubscriberType() {
+        return EVENT_SUBSCRIBER;
     }
     
     @Override protected void mappedEntryPointMethods(Map<String,String[]> redirects, Map<String,Type> types) {
