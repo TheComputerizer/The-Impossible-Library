@@ -86,12 +86,13 @@ public class MultiVersionModLocator implements IModLocator {
     /**
      * Used in 1.16.5
      */
-    public Path findPath(IModFile modFile, String ... path) {
-        if(path.length<1) throw new IllegalArgumentException("Missing path");
-        else return this.fileSystems.get(modFile).getPath("",path);
+    public Path findPath(IModFile modFile, String ... paths) {
+        if(paths.length<1) throw new IllegalArgumentException("Missing path");
+        else {
+            ForgeModLoading.queryCoreMods(paths);
+            return this.fileSystems.get(modFile).getPath("",paths);
+        }
     }
-    
-    @Override public void scanFile(IModFile file, Consumer<Path> consumer) {}
     
     @Override public void initArguments(Map<String,?> arguments) {
         if(this.failed) {
@@ -109,6 +110,8 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public String name() {
         return "multiversionloader";
     }
+    
+    @Override public void scanFile(IModFile file, Consumer<Path> consumer) {}
     
     @Override public List<IModFile> scanMods() {
         if(this.failed) {

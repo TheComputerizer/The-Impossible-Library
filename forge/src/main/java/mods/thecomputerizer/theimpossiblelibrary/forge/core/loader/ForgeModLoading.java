@@ -204,6 +204,68 @@ public class ForgeModLoading {
         Fields.setStaticDirect(engineClass,"ALLOWED_PACKAGES",allowed);
     }
     
+    private static byte[] generateModFileExtension(String className) {
+        Class<?> pathOrJarClass = pathBased ? Path.class :
+                ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
+        Class<?> locatorClass = locatorBased ? IModLocator.class :
+                ClassHelper.findClass("net.minecraftforge.forgespi.locating.IModProvider");
+        ClassWriter writer = ASMHelper.getWriter(JAVA8,ASMRef.PUBLIC,TypeHelper.fromBinary(className),
+                                                 TypeHelper.get(ModFile.class));
+        if(Objects.isNull(pathOrJarClass) || Objects.isNull(locatorClass)) {
+            LOGGER.error("Cannot add dynamic ModFile creator! Found null parameter class {} or {}",
+                         pathOrJarClass,locatorClass);
+            return null;
+        }
+        String constructorDesc = TypeHelper.voidMethodDesc(
+                pathOrJarClass,locatorClass,ModFileInfoParser.class,String.class);
+        String superDesc = pathBased ? TypeHelper.voidMethodDesc(pathOrJarClass,locatorClass,ModFileInfoParser.class) :
+                constructorDesc;
+        String modFile = TypeHelper.get(ModFile.class).getInternalName();
+        String modLoading = TypeHelper.get(ForgeModLoading.class).getInternalName();
+        String writeModsDesc = TypeHelper.methodDesc(ModFileScanData.class,ModFile.class);
+        String identifyModsDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,BOOLEAN_TYPE,OBJECT_TYPE);
+        
+        MethodVisitor constructor = writer.visitMethod(PUBLIC,"<init>",constructorDesc,null,null);
+        constructor.visitCode();
+        for(int i=0;i<(pathBased ? 4 : 5);i++) constructor.visitVarInsn(ALOAD,i);
+        constructor.visitMethodInsn(INVOKESPECIAL,modFile,"<init>",superDesc,false);
+        constructor.visitInsn(RETURN);
+        ASMHelper.finishMethod(constructor);
+        
+        MethodVisitor compileContent = writer.visitMethod(PUBLIC,"compileContent",
+                                                          TypeHelper.methodDesc(ModFileScanData.class),null,null);
+        compileContent.visitCode();
+        compileContent.visitVarInsn(ALOAD,0);
+        compileContent.visitMethodInsn(INVOKESTATIC,modLoading,"writeMods",writeModsDesc,false);
+        compileContent.visitInsn(RETURN_OBJ);
+        ASMHelper.finishMethod(compileContent);
+        
+        MethodVisitor identifyMods = writer.visitMethod(PUBLIC,"identifyMods","()Z",null,null);
+        identifyMods.visitCode();
+        identifyMods.visitVarInsn(ALOAD,0);
+        identifyMods.visitMethodInsn(INVOKESPECIAL,modFile,"identifyMods","()Z",false);
+        identifyMods.visitVarInsn(ALOAD,0);
+        identifyMods.visitMethodInsn(INVOKESTATIC,modLoading,"identifyMods",identifyModsDesc,false);
+        identifyMods.visitInsn(RETURN_INT_OR_BOOL);
+        ASMHelper.finishMethod(identifyMods);
+        
+        if(!pathBased) { //Workaround for Sinytra Connector directly invoking ModFileParser#getCoreMods
+            String findResourceDesc = TypeHelper.methodDesc(Path.class,String[].class);
+            String queryCoreModsDesc = TypeHelper.voidMethodDesc(String[].class);
+            
+            MethodVisitor findResource = writer.visitMethod(PUBLIC,"findResource",findResourceDesc,null,null);
+            findResource.visitCode();
+            for(int i=0;i<2;i++) findResource.visitVarInsn(ALOAD,i);
+            findResource.visitMethodInsn(INVOKESTATIC,modLoading,"queryCoreMods",queryCoreModsDesc,false);
+            for(int i=0;i<2;i++) findResource.visitVarInsn(ALOAD,i);
+            findResource.visitMethodInsn(INVOKESPECIAL,modFile,"findResource",findResourceDesc,false);
+            findResource.visitInsn(RETURN_OBJ);
+            ASMHelper.finishMethod(findResource);
+        }
+        
+        return writer.toByteArray();
+    }
+    
     private static Object getCoreMods(Object file) {
         return Methods.invoke(file,"getCoreMods");
     }
@@ -239,19 +301,19 @@ public class ForgeModLoading {
         }
     }
     
+    private static boolean hasCoreModPath(String ... paths) {
+        for(String path : paths)
+            if(path.contains("coremods.json")) return true;
+        return false;
+    }
+    
     /**
      * Called via the dynamically generated ModFile extension class
      */
     @IndirectCallers
     public static boolean identifyMods(boolean result, Object file) {
         LOGGER.debug("Identifying mods");
-        if(result) {
-            Object coremods = getCoreMods(file);
-            if(!fixedCoreMods && coremods instanceof Collection<?> && !((Collection<?>)coremods).isEmpty()) {
-                fixCoreModPackages();
-                fixedCoreMods = true;
-            }
-        }
+        if(result) queryCoreMods(file);
         LOGGER.debug("Finished identifying mods");
         return result;
     }
@@ -367,54 +429,6 @@ public class ForgeModLoading {
         }
     }
     
-    private static byte[] generateModFileExtension(String className) {
-        Class<?> pathOrJarClass = pathBased ? Path.class :
-                ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
-        Class<?> locatorClass = locatorBased ? IModLocator.class :
-                ClassHelper.findClass("net.minecraftforge.forgespi.locating.IModProvider");
-        ClassWriter writer = ASMHelper.getWriter(JAVA8,ASMRef.PUBLIC,TypeHelper.fromBinary(className),
-                                                 TypeHelper.get(ModFile.class));
-        if(Objects.isNull(pathOrJarClass) || Objects.isNull(locatorClass)) {
-            LOGGER.error("Cannot add dynamic ModFile creator! Found null parameter class {} or {}",
-                         pathOrJarClass,locatorClass);
-            return null;
-        }
-        String constructorDesc = TypeHelper.voidMethodDesc(
-                pathOrJarClass,locatorClass,ModFileInfoParser.class,String.class);
-        String superDesc = pathBased ? TypeHelper.voidMethodDesc(pathOrJarClass,locatorClass,ModFileInfoParser.class) :
-                constructorDesc;
-        String modFile = TypeHelper.get(ModFile.class).getInternalName();
-        String modLoading = TypeHelper.get(ForgeModLoading.class).getInternalName();
-        String writeModsDesc = TypeHelper.methodDesc(ModFileScanData.class,ModFile.class);
-        String identifyModsDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,BOOLEAN_TYPE,OBJECT_TYPE);
-        
-        MethodVisitor constructor = writer.visitMethod(PUBLIC,"<init>",constructorDesc,null,null);
-        constructor.visitCode();
-        for(int i=0;i<(pathBased ? 4 : 5);i++) constructor.visitVarInsn(ALOAD,i);
-        constructor.visitMethodInsn(INVOKESPECIAL,modFile,"<init>",superDesc,false);
-        constructor.visitInsn(RETURN);
-        ASMHelper.finishMethod(constructor);
-        
-        MethodVisitor compileContent = writer.visitMethod(PUBLIC,"compileContent",
-                TypeHelper.methodDesc(ModFileScanData.class),null,null);
-        compileContent.visitCode();
-        compileContent.visitVarInsn(ALOAD,0);
-        compileContent.visitMethodInsn(INVOKESTATIC,modLoading,"writeMods",writeModsDesc,false);
-        compileContent.visitInsn(RETURN_OBJ);
-        ASMHelper.finishMethod(compileContent);
-        
-        MethodVisitor identifyMods = writer.visitMethod(PUBLIC,"identifyMods","()Z",null,null);
-        identifyMods.visitCode();
-        identifyMods.visitVarInsn(ALOAD,0);
-        identifyMods.visitMethodInsn(INVOKESPECIAL,modFile,"identifyMods","()Z",false);
-        identifyMods.visitVarInsn(ALOAD,0);
-        identifyMods.visitMethodInsn(INVOKESTATIC,modLoading,"identifyMods",identifyModsDesc,false);
-        identifyMods.visitInsn(RETURN_INT_OR_BOOL);
-        ASMHelper.finishMethod(identifyMods);
-        
-        return writer.toByteArray();
-    }
-    
     private static void loadMods(ClassLoader loader, Object locator, Object core) {
         Class<?>[] withLoader = new Class<?>[]{ClassLoader.class};
         CoreAPI.invoke(core,"loadCoreModInfo",withLoader,loader);
@@ -445,6 +459,22 @@ public class ForgeModLoading {
                 LOGGER.debug("Populated data for {}",info);
                 infoMap.put(info,data);
             }
+        }
+    }
+    
+    public static void queryCoreMods(String ... resourcePaths) {
+        if(!fixedCoreMods && hasCoreModPath(resourcePaths)) {
+            fixCoreModPackages();
+            fixedCoreMods = true;
+        }
+    }
+    
+    public static void queryCoreMods(Object file) {
+        if(fixedCoreMods) return;
+        Object coremods = getCoreMods(file);
+        if(coremods instanceof Collection<?> && !((Collection<?>)coremods).isEmpty()) {
+            fixCoreModPackages();
+            fixedCoreMods = true;
         }
     }
     

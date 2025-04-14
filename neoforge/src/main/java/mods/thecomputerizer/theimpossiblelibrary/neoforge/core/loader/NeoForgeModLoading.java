@@ -157,15 +157,15 @@ public class NeoForgeModLoading {
         return Methods.invoke(file,"getCoreMods");
     }
     
+    private static boolean hasCoreModPath(String ... paths) {
+        for(String path : paths)
+            if(path.contains("coremods.json")) return true;
+        return false;
+    }
+    
     public static boolean identifyMods(boolean result, Object file) {
         LOGGER.debug("Identifying mods");
-        if(result) {
-            Object coremods = getCoreMods(file);
-            if(!fixedCoreMods && coremods instanceof Collection<?> && !((Collection<?>)coremods).isEmpty()) {
-                fixCoreModPackages();
-                fixedCoreMods = true;
-            }
-        }
+        if(result) queryCoreMods(file);
         LOGGER.debug("Finished identifying mods");
         return result;
     }
@@ -294,6 +294,22 @@ public class NeoForgeModLoading {
                 infoMap.put(info,data);
                 LOGGER.debug("Populated data for {}",info);
             }
+        }
+    }
+    
+    public static void queryCoreMods(String ... resourcePaths) {
+        if(!fixedCoreMods && hasCoreModPath(resourcePaths)) {
+            fixCoreModPackages();
+            fixedCoreMods = true;
+        }
+    }
+    
+    public static void queryCoreMods(Object file) {
+        if(fixedCoreMods) return;
+        Object coremods = getCoreMods(file);
+        if(coremods instanceof Collection<?> && !((Collection<?>)coremods).isEmpty()) {
+            fixCoreModPackages();
+            fixedCoreMods = true;
         }
     }
     

@@ -14,6 +14,7 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModLocator;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -35,6 +36,11 @@ public class TILModFileNeoForge1_20 extends ModFile {
     
     @Override public ModFileScanData compileContent() {
         return NeoForgeModLoading.writeMods(this);
+    }
+    
+    @Override public Path findResource(String ... paths) {
+        NeoForgeModLoading.queryCoreMods(paths);
+        return super.findResource(paths);
     }
     
     @Override public boolean identifyMods() {
