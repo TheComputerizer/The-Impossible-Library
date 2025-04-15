@@ -20,7 +20,7 @@ public class TILCoreEntryPointFabric1_20 extends TILCoreEntryPointFabric {
     static final String GRAPHICS_POSE = mapDev("pose","method_51448");
     
     /**
-     * Load local GuiGraphics & call GuiGraphics#pose to load its PoseStack
+     * Load local GuiGraphics and call GuiGraphics#pose to load its PoseStack
      */
     @Override protected void loadLocalPoseStack(int index) {
         insVar(ALOAD,index);

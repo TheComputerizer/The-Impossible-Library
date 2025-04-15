@@ -134,6 +134,7 @@ reobf {
     }
 }
 
+
 jar {
     manifest {
         attributes([
@@ -155,5 +156,5 @@ shadowJar {
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.dependsOn 'reobfJar'
 tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.mustRunAfter ':forge:jar'
-tasks.jar.mustRunAfter ':shared:shared_1.16:jar'
+tasks.jar.mustRunAfter ':forge:reobfJar'
+tasks.jar.mustRunAfter ':shared:shared_1.16:reobfJar'

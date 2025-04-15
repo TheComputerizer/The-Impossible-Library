@@ -78,5 +78,5 @@ artifacts {
     dev jar
 }
 
-tasks.jar.mustRunAfter ':forge:jar'
-tasks.jar.mustRunAfter ':shared:shared_1.19:jar'
+tasks.jar.mustRunAfter ':forge:reobfJar'
+tasks.jar.mustRunAfter ':shared:shared_1.19:reobfJar'

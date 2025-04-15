@@ -14,7 +14,7 @@ import java.util.List;
 import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
 
 /**
- * Only keybinds & RenderType stuff needs to be handled in 1.20.4+
+ * Only keybinds and RenderType stuff needs to be handled in 1.20.4+
  */
 public abstract class NeoForgeHandlesClient extends SharedHandlesClient {
     

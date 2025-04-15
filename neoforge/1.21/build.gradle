@@ -78,6 +78,7 @@ artifacts {
     dev jar
 }
 
+tasks.classes.mustRunAfter ':shared:shared_1.21:reobfJar'
 tasks.classes.mustRunAfter ':neoforge:jar'
 afterEvaluate {
     [ 'cacheVersionManifest1.21.1', 'neoFormUnzipAdditionalSources', 'neoFormListLibraries' ].forEach {
