@@ -1,3 +1,6 @@
+import static org.gradle.api.logging.LogLevel.INFO
+import static org.gradle.api.logging.LogLevel.QUIET
+
 /**
  * NeoForge implementation for 1.21.1
  */
@@ -6,16 +9,25 @@ buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                plugin_portal_content.split(';').each {grp ->
+                unimined_plugin_portal.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'NeoForge'
-            url = uri 'https://maven.neoforged.net/releases'
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
             content {
-                neoforge_content.split(';').each {grp ->
+                unimined_releases.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
+            content {
+                unimined_snapshots.split(';').each {grp ->
                     includeGroup grp
                 }
             }
@@ -23,13 +35,13 @@ buildscript {
     }
     dependencies {
         classpath "$shadow_plugin:$shadow_version"
-        classpath "$neoforge_gradle_plugin:$neoforge_gradle_version"
+        classpath "$unimined_plugin:$unimined_version"
     }
 }
 
 apply from: rootProject.file('gradle\\java21-module.gradle')
 
-plugins.apply 'net.neoforged.gradle.userdev'
+plugins.apply 'xyz.wagyourtail.unimined'
 
 def base = project ':api'
 def neoforge = project ':neoforge'
@@ -37,25 +49,18 @@ def neoforge_specific = project ':neoforge:neoforge_1.21'
 def shared = project ':shared:shared_1.21'
 def shared_specific = project ':shared:shared_1.21:shared_1.21.1'
 
-subsystems {
-    parchment {
-        minecraftVersion = minecraft_1_21_1
-        mappingsVersion = parchment_1_21_1
+unimined.minecraft {
+    version minecraft_1_21_1
+    mappings {
+        parchment parchment_1_21_1
     }
-}
-
-runs {
-    configureEach {
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
-        systemProperty 'forge.logging.console.level', 'debug'
-        modSource sourceSets.main
-    }
-    client {
-        systemProperty 'forge.enabledGameTestNamespaces', mod_id
-    }
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', mod_id
-        programArgument '--nogui'
+    neoForge {
+        loader neoforge_1_21_1
+        runs.auth.username = minecraft_username
+        runs.all {
+            systemProperty 'foundation.verbose', 'true'
+            return
+        }
     }
 }
 
@@ -77,9 +82,6 @@ repositories {
 }
 
 dependencies {
-    //noinspection VulnerableLibrariesLocal
-    implementation "$neoforge_mc:$neoforge_1_21_1"
-
     compileOnlyApi base
     compileOnlyApi project(path: ':neoforge', configuration: 'dev')
     compileOnlyApi neoforge_specific
@@ -109,6 +111,14 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    finalizedBy shadowJar
+    mustRunAfter ':neoforge:neoforge_1.21:build'
+    mustRunAfter ':shared:shared_1.21:shared_1.21.1:build'
+}
+
+sourcesJar {
+    mustRunAfter ':neoforge:neoforge_1.21:build'
+    mustRunAfter ':shared:shared_1.21:shared_1.21.1:build'
 }
 
 shadowJar {
@@ -123,12 +133,11 @@ shadowJar {
     }
 }
 
-tasks.assemble.dependsOn shadowJar
-tasks.jar.finalizedBy shadowJar
-tasks.jar.mustRunAfter ':neoforge:neoforge_1.21:jar'
-tasks.jar.mustRunAfter ':shared:shared_1.21:classes'
-afterEvaluate {
-    [ 'cacheVersionManifest1.21.1', 'neoFormUnzipAdditionalSources', 'neoFormListLibraries' ].forEach {
-        tasks.named(it).get().mustRunAfter ':neoforge:neoforge_1.21:idePostSync'
+tasks.remapJar {
+    doFirst {
+        logging.captureStandardOutput INFO
+    }
+    doLast {
+        logging.captureStandardOutput QUIET
     }
 }

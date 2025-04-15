@@ -71,11 +71,15 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    mustRunAfter ':forge:build'
+    mustRunAfter ':shared:shared_1.20:build'
+}
+
+sourcesJar {
+    mustRunAfter ':forge:build'
+    mustRunAfter ':shared:shared_1.20:build'
 }
 
 artifacts {
     dev jar
 }
-
-tasks.jar.mustRunAfter ':forge:reobfJar'
-tasks.jar.mustRunAfter ':shared:shared_1.20:reobfJar'

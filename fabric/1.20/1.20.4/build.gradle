@@ -102,6 +102,8 @@ processTestResources {
 
 compileJava {
     source fabric_specific.sourceSets.main.allJava
+    mustRunAfter ':fabric:fabric_1.20:fabric_1.20.1:build'
+    mustRunAfter ':shared:shared_1.20:shared_1.20.4:build'
 }
 
 compileTestJava {
@@ -111,6 +113,12 @@ compileTestJava {
 jar {
     setArchiveBaseName mod_id
     from(fabric_specific.jar.archiveFile.collect { zipTree it })
+    finalizedBy shadowJar
+}
+
+sourcesJar {
+    mustRunAfter ':fabric:fabric_1.20:fabric_1.20.1:build'
+    mustRunAfter ':shared:shared_1.20:shared_1.20.4:build'
 }
 
 shadowJar {
@@ -123,6 +131,3 @@ shadowJar {
 
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.finalizedBy remapJar
-tasks.jar.finalizedBy shadowJar
-tasks.compileJava.mustRunAfter ':fabric:fabric_1.20:build'
-tasks.compileJava.mustRunAfter ':shared:shared_1.20:shared_1.20.4:build'

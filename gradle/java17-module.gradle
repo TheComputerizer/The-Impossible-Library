@@ -1,9 +1,8 @@
-/**
- * Shade JOML up to 1.19.2 for API usage
- */
 apply from: rootProject.file('shared.gradle')
 
-java.toolchain.languageVersion = JavaLanguageVersion.of 17
+compileJava {
+    options.release = 17
+}
 
 apply from: rootProject.file('gradle\\lombok.gradle')
 apply from: rootProject.file('gradle\\shadow.gradle')

@@ -34,6 +34,19 @@ def neoforge_1_20_4 = project ':neoforge:neoforge_1.20:neoforge_1.20.4'
 def neoforge_1_20_6 = project ':neoforge:neoforge_1.20:neoforge_1.20.6'
 def neoforge_1_21_1 = project ':neoforge:neoforge_1.21:neoforge_1.21.1'
 
+def fabric_projects = [ fabric_1_16_5, fabric_1_18_2, fabric_1_19_2, fabric_1_19_4, fabric_1_20_1, fabric_1_20_4,
+        fabric_1_20_6, fabric_1_21_1
+]
+
+def shadow_projects = [ cleanroom, legacy_1_12_2, forge_1_16_5, forge_1_18_2, forge_1_19_2, forge_1_19_4, forge_1_20_1,
+        forge_1_20_4, neoforge_1_20_4, forge_1_20_6, neoforge_1_20_6, forge_1_21_1, neoforge_1_21_1
+]
+
+def jar_projects = [ cleanroom, legacy_1_12_2, fabric_1_16_5, forge_1_16_5, fabric_1_18_2, forge_1_18_2, fabric_1_19_2,
+        forge_1_19_2, fabric_1_19_4, forge_1_19_4, fabric_1_20_1, forge_1_20_1, fabric_1_20_4, forge_1_20_4,
+        neoforge_1_20_4, fabric_1_20_6, forge_1_20_6, neoforge_1_20_6, fabric_1_21_1, forge_1_21_1, neoforge_1_21_1
+]
+
 def all_projects = [ project(':api'), fabric, project('forge'), project(':legacy'), project('neoforge'), cleanroom,
         legacy_1_12_2, fabric_1_16_5, forge_1_16_5, fabric_1_18_2, forge_1_18_2, project(':fabric:fabric_1.19'),
         project(':forge:forge_1.19'), fabric_1_19_2, forge_1_19_2, fabric_1_19_4, forge_1_19_4,
@@ -66,27 +79,23 @@ processTestResources {
     }
 }
 
+javadoc {
+    afterEvaluate {
+        classpath = files(all_projects.collect { it.sourceSets.main.compileClasspath })
+    }
+}
+
 jar {
-    legacy_1_12_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_16_5.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_16_5.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_18_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_18_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_19_2.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_19_2.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_19_4.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_19_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_20_1.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_20_1.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_20_4.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_20_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    neoforge_1_20_4.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_20_6.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_20_6.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    neoforge_1_20_6.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    fabric_1_21_1.afterEvaluate { from(it.remapJar.archiveFile.collect { zipTree it }) }
-    forge_1_21_1.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
-    neoforge_1_21_1.afterEvaluate { from(it.shadowJar.archiveFile.collect { zipTree it }) }
+    fabric_projects.forEach {
+        it.afterEvaluate {
+            from(it.remapJar.archiveFile.collect { zipTree it })
+        }
+    }
+    shadow_projects.forEach {
+        it.afterEvaluate {
+            from(it.shadowJar.archiveFile.collect { zipTree it })
+        }
+    }
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -100,13 +109,15 @@ jar {
     }
 }
 
-javadoc {
-    all_projects.forEach {p ->
-        source p.sourceSets.main.allJava
+sourcesJar {
+    all_projects.forEach {
+        it.afterEvaluate {
+            from(it.sourcesJar.archiveFile.collect { zipTree it })
+        }
     }
 }
 
-[ ':legacy:1.12:shadowJar',
+[ ':legacy:1.12:shadowJar', ':legacy:cleanroom:shadowJar',
   ':fabric:fabric_1.16:remapJar', ':forge:forge_1.16:shadowJar',
   ':fabric:fabric_1.18:remapJar', ':forge:forge_1.18:shadowJar',
   ':fabric:fabric_1.19:fabric_1.19.2:remapJar', ':forge:forge_1.19:forge_1.19.2:shadowJar',

@@ -110,7 +110,7 @@ dependencies {
 
     compileOnlyApi base
     compileOnlyApi project(path: ':forge', configuration: 'dev')
-    compileOnlyApi shared
+    compileOnlyApi project(path: ':shared:shared_1.16', configuration: 'dev')
 
     //mod support dependencies
     implementation "$betterweather_artifact:$betterweather_1_16_5"
@@ -141,6 +141,14 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    mustRunAfter ':forge:build'
+    mustRunAfter ':shared:shared_1.16:build'
+    finalizedBy 'reobfJar'
+}
+
+sourcesJar {
+    mustRunAfter ':forge:build'
+    mustRunAfter ':shared:shared_1.16:build'
 }
 
 shadowJar {
@@ -155,6 +163,3 @@ shadowJar {
 
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.dependsOn 'reobfJar'
-tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.mustRunAfter ':forge:reobfJar'
-tasks.jar.mustRunAfter ':shared:shared_1.16:reobfJar'

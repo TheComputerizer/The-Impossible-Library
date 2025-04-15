@@ -135,6 +135,14 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    mustRunAfter ':forge:forge_1.19:forge_1.19.2:build'
+    mustRunAfter ':shared:shared_1.19:shared_1.19.4:build'
+    finalizedBy 'reobfJar'
+}
+
+sourcesJar {
+    mustRunAfter ':forge:forge_1.19:forge_1.19.2:build'
+    mustRunAfter ':shared:shared_1.19:shared_1.19.4:build'
 }
 
 def remapThese = [ 'block.AbstractBlock': 'world.level.block.state.BlockBehaviour',
@@ -285,6 +293,3 @@ shadowJar {
 
 tasks.assemble.dependsOn shadowJar
 tasks.shadowJar.dependsOn 'reobfJar'
-tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.mustRunAfter ':forge:forge_1.19:reobfJar'
-tasks.jar.mustRunAfter ':shared:shared_1.19:shared_1.19.4:reobfJar'

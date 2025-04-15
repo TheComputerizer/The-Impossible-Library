@@ -75,10 +75,14 @@ processTestResources {
 
 jar {
     setArchiveBaseName mod_id
+    dependsOn ':shared:build'
+    mustRunAfter ':shared:shared_1.19:build'
+}
+
+sourcesJar {
+    mustRunAfter ':shared:shared_1.19:build'
 }
 
 artifacts {
     dev jar
 }
-
-tasks.jar.dependsOn ':shared:build'

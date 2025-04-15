@@ -43,7 +43,6 @@ plugins.apply 'net.minecraftforge.gradle'
 plugins.apply 'org.parchmentmc.librarian.forgegradle'
 
 def base = project ':api'
-def forge = project ':forge'
 def shared = project ':shared:shared_1.19'
 
 minecraft {
@@ -72,11 +71,15 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    mustRunAfter ':forge:build'
+    mustRunAfter ':shared:shared_1.19:build'
+}
+
+sourcesJar {
+    mustRunAfter ':forge:build'
+    mustRunAfter ':shared:shared_1.19:build'
 }
 
 artifacts {
     dev jar
 }
-
-tasks.jar.mustRunAfter ':forge:reobfJar'
-tasks.jar.mustRunAfter ':shared:shared_1.19:reobfJar'

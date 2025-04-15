@@ -25,7 +25,7 @@ buildscript {
     }
     dependencies {
         classpath "$loom_plugin:$loom_version"
-        classpath "$shadow_plugin:$shadow_version"
+        classpath "$shadow_plugin:$shadow_java8_version"
     }
 }
 
@@ -75,10 +75,13 @@ processTestResources {
 jar {
     setArchiveBaseName mod_id
     from(base.jar.archiveFile.collect { zipTree it })
+    mustRunAfter ':api:build'
+}
+
+sourcesJar {
+    mustRunAfter ':api:build'
 }
 
 artifacts {
     dev jar
 }
-
-tasks.compileJava.mustRunAfter ':api:build'

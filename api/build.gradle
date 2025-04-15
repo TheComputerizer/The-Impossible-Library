@@ -1,6 +1,10 @@
 apply from: rootProject.file('shared.gradle')
 apply from: rootProject.file('gradle\\lombok.gradle')
 
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of 8
+}
+
 repositories {
     mavenCentral()
     maven {

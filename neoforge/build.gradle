@@ -1,3 +1,6 @@
+import static org.gradle.api.logging.LogLevel.INFO
+import static org.gradle.api.logging.LogLevel.QUIET
+
 /**
  * Common builds and sources relevant to all NeoForge modules. Based in 1.20.4
  */
@@ -6,16 +9,25 @@ buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                plugin_portal_content.split(';').each {grp ->
+                unimined_plugin_portal.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'NeoForge'
-            url = uri 'https://maven.neoforged.net/releases'
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
             content {
-                neoforge_content.split(';').each {grp ->
+                unimined_releases.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
+            content {
+                unimined_snapshots.split(';').each {grp ->
                     includeGroup grp
                 }
             }
@@ -23,20 +35,28 @@ buildscript {
     }
     dependencies {
         classpath "$shadow_plugin:$shadow_version"
-        classpath "$neoforge_gradle_plugin:$neoforge_gradle_version"
+        classpath "$unimined_plugin:$unimined_version"
     }
 }
 
 apply from: rootProject.file('gradle\\java17-module.gradle')
 
-plugins.apply 'net.neoforged.gradle.userdev'
+plugins.apply 'xyz.wagyourtail.unimined'
 
 def base = project ':api'
 
-subsystems {
-    parchment {
-        minecraftVersion = minecraft_1_20_4
-        mappingsVersion = parchment_1_20_4
+unimined.minecraft {
+    version minecraft_1_20_4
+    mappings {
+        parchment parchment_1_20_4
+    }
+    neoForge {
+        loader neoforge_1_20_4
+        runs.auth.username = minecraft_username
+        runs.all {
+            systemProperty 'foundation.verbose', 'true'
+            return
+        }
     }
 }
 
@@ -48,8 +68,6 @@ configurations {
 }
 
 dependencies {
-    implementation "$neoforge_mc:$neoforge_1_20_4"
-
     api base
 }
 
@@ -61,10 +79,19 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    mustRunAfter ':api:build'
+    mustRunAfter ':shared:build'
 }
 
 artifacts {
     dev jar
 }
 
-tasks.classes.mustRunAfter ':api:jar'
+tasks.remapJar {
+    doFirst {
+        logging.captureStandardOutput INFO
+    }
+    doLast {
+        logging.captureStandardOutput QUIET
+    }
+}

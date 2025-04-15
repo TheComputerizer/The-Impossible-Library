@@ -1,9 +1,12 @@
-/**
- * Java 21 means that this module is in 1.20.6+ and JOML should not be shaded
- */
 apply from: rootProject.file('shared.gradle')
 
-java.toolchain.languageVersion = JavaLanguageVersion.of 21
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of 21
+}
+
+compileJava {
+    options.release = 21
+}
 
 apply from: rootProject.file('gradle\\lombok.gradle')
 apply from: rootProject.file('gradle\\shadow.gradle')

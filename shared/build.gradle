@@ -3,6 +3,10 @@
  */
 apply from: rootProject.file('shared.gradle')
 
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of 8
+}
+
 def base = project ':api'
 
 configurations {

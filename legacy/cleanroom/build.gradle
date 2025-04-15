@@ -49,7 +49,7 @@ unimined.minecraft {
         mcp 'stable', legacy_mappings_1_12_2
     }
     cleanroom {
-        loader "0.3.0-alpha"
+        loader cleanroom_loader_version
         runs.auth.username = minecraft_username
         runs.all {
             systemProperty 'foundation.verbose', 'true'
@@ -142,6 +142,10 @@ jar {
     dependsOn ':legacy:build'
 }
 
+shadowJar {
+    from(base.jar.archiveFile.collect { zipTree it })
+}
+
 tasks.remapJar {
     doFirst {
         logging.captureStandardOutput INFO
@@ -149,8 +153,4 @@ tasks.remapJar {
     doLast {
         logging.captureStandardOutput QUIET
     }
-}
-
-shadowJar {
-    from(base.jar.archiveFile.collect { zipTree it })
 }

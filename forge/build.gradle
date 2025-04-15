@@ -80,10 +80,13 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
+    mustRunAfter ':api:build'
+}
+
+sourcesJar {
+    mustRunAfter ':api:build'
 }
 
 artifacts {
     dev jar
 }
-
-tasks.jar.mustRunAfter ':api:jar'
