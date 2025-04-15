@@ -79,7 +79,7 @@ public class NetworkNeoForge1_21 extends Network1_21<Object,Object> {
     }
     
     /**
-     * Messages are registered with RegisterPayloadHandlerEvent via registerPayloadClient & registerPayloadServer
+     * Messages are registered with RegisterPayloadHandlerEvent via registerPayloadClient and registerPayloadServer
      */
     @Override public void registerMessage(MessageDirectionInfo<Object> dir, int id) {}
     

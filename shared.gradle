@@ -26,10 +26,16 @@ jar {
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 17
     withSourcesJar()
+    withJavadocJar()
 }
 
 processResources {
     duplicatesStrategy = EXCLUDE
+}
+
+javadocJar {
+    duplicatesStrategy = EXCLUDE
+    setArchiveBaseName "$mod_id"
 }
 
 sourcesJar {

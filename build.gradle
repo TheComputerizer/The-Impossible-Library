@@ -109,10 +109,20 @@ jar {
     }
 }
 
+javadocJar {
+    all_projects.forEach {
+        it.afterEvaluate {
+            from(it.javadocJar.archiveFile.collect { zipTree it })
+            mustRunAfter it.javadocJar
+        }
+    }
+}
+
 sourcesJar {
     all_projects.forEach {
         it.afterEvaluate {
             from(it.sourcesJar.archiveFile.collect { zipTree it })
+            mustRunAfter it.sourcesJar
         }
     }
 }

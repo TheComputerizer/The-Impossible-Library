@@ -71,7 +71,7 @@ public class NetworkNeoForge1_20_4 extends Network1_20_4<Object,Object> {
     }
     
     /**
-     * Messages are registered with RegisterPayloadHandlerEvent via registerPayloadClient & registerPayloadServer
+     * Messages are registered with RegisterPayloadHandlerEvent via registerPayloadClient and registerPayloadServer
      */
     @Override public void registerMessage(MessageDirectionInfo<Object> dir, int id) {}
     
