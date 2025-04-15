@@ -83,7 +83,7 @@ repositories {
     }
     maven {
         name = 'CurseMaven'
-        url = uri 'https://www.cursemaven.com'
+        url = uri 'https://curse.cleanroommc.com/'
         content {
             includeGroup 'curse.maven'
         }
@@ -109,19 +109,19 @@ dependencies {
     compileOnlyApi shared
 
     //mod support dependencies
-    implementation fg.deobf("$blueskies_artifact:$blueskies_1_18_2")
-    implementation fg.deobf("$bookshelf_artifact-$bookshelf_forge_1_18_2")
-    implementation fg.deobf("$champions_artifact:$champions_1_18_2")
-    implementation fg.deobf("$configured_artifact:$configured_1_18_2")
-    implementation fg.deobf("$coroutil_artifact:$coroutil_forge_1_18_2")
-    implementation fg.deobf("$enhanced_celestials_artifact:$enhanced_celestials_1_18_2")
-    implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_1_18_2")
-    implementation fg.deobf("$game_stages_artifact-$game_stages_1_18_2")
-    implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_1_18_2")
-    implementation fg.deobf("$structure_gel_api_artifact:$structure_gel_api_1_18_2")
-    implementation fg.deobf("$weather2_artifact:$weather2_1_18_2")
+    implementation "$blueskies_artifact:$blueskies_1_18_2"
+    implementation "$bookshelf_artifact-$bookshelf_forge_1_18_2"
+    implementation "$champions_artifact:$champions_1_18_2"
+    implementation "$configured_artifact:$configured_1_18_2"
+    implementation "$coroutil_artifact:$coroutil_forge_1_18_2"
+    implementation "$enhanced_celestials_artifact:$enhanced_celestials_1_18_2"
+    implementation "$infernal_mobs_artifact:$infernal_mobs_1_18_2"
+    implementation "$game_stages_artifact-$game_stages_1_18_2"
+    implementation "$serene_seasons_artifact:$serene_seasons_1_18_2"
+    implementation "$structure_gel_api_artifact:$structure_gel_api_1_18_2"
+    implementation "$weather2_artifact:$weather2_1_18_2"
 
-    runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_18_2")
+    runtimeOnly "$jei_artifact:$jei_forge_1_18_2"
 }
 
 reobf {

@@ -85,7 +85,7 @@ repositories {
     }
     maven {
         name = 'CurseMaven'
-        url = uri 'https://www.cursemaven.com'
+        url = uri 'https://curse.cleanroommc.com/'
         content {
             includeGroup 'curse.maven'
         }
@@ -110,16 +110,16 @@ dependencies {
     compileOnlyApi shared_specific
 
     //mod support dependencies
-    implementation fg.deobf("$blueskies_artifact:$blueskies_1_19_4")
-    implementation fg.deobf("$bookshelf_artifact-$bookshelf_forge_1_19_4")
-    implementation fg.deobf("$configured_artifact:$configured_1_19_4")
-    implementation fg.deobf("$enhanced_celestials_artifact:$enhanced_celestials_1_19_4")
-    implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_1_19_4")
-    implementation fg.deobf("$game_stages_artifact-$game_stages_1_19_4")
-    implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_1_19_4")
-    implementation fg.deobf("$structure_gel_api_artifact:$structure_gel_api_1_19_4")
+    implementation "$blueskies_artifact:$blueskies_1_19_4"
+    implementation "$bookshelf_artifact-$bookshelf_forge_1_19_4"
+    implementation "$configured_artifact:$configured_1_19_4"
+    implementation "$enhanced_celestials_artifact:$enhanced_celestials_1_19_4"
+    implementation "$infernal_mobs_artifact:$infernal_mobs_1_19_4"
+    implementation "$game_stages_artifact-$game_stages_1_19_4"
+    implementation "$serene_seasons_artifact:$serene_seasons_1_19_4"
+    implementation "$structure_gel_api_artifact:$structure_gel_api_1_19_4"
 
-    runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_19_4")
+    runtimeOnly "$jei_artifact:$jei_forge_1_19_4"
 }
 
 reobf {

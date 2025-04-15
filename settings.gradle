@@ -16,7 +16,7 @@ plugins {
 
 rootProject.name = 'The_Impossible_Library'
 
-def paths = [                                    ':api',     ':legacy:1.12',
+def paths = [            ':api',              ':legacy:1.12',         ':legacy:cleanroom',
   ':fabric:1.16',        ':forge:1.16',                                                        ':shared:1.16',
   ':fabric:1.18',        ':forge:1.18',                                                        ':shared:1.18',
   ':fabric:1.19',        ':forge:1.19',                                                        ':shared:1.19',
@@ -40,7 +40,7 @@ paths.forEach {
     String name = split.first()
     if(split.length>1) {
         String last = split.last()
-        if(name=='api' || name=='legacy') name = last
+        if(name=='api' || name=='cleanroom' || name=='legacy') name = last
         else name = name+"_"+last
     }
     findProject(it)?.name = name

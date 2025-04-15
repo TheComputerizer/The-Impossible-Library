@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 /**
  * Holder specifically for creative tab registration in forge/neoforge 1.19.4+.
- * Acts as an intermediary between CreativeTabBuilderAPI & CreativeTabAPI before the required registry event is fired
+ * Acts as an intermediary between CreativeTabBuilderAPI and CreativeTabAPI before the required registry event is fired
  */
 public abstract class FutureCreativeTab<T> extends MutableWrapped<T> {
     

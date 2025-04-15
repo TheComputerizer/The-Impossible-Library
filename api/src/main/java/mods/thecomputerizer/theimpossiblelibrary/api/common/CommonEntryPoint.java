@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 /**
  * Common entrypoint API
- * Handle run order: this -> client -> server -> custom
+ * Handle run order: this, client, server, custom
  * It is highly recommended to define delegate handlers statically to avoid any duplicates in the entrypoint chain.
  */
 public abstract class CommonEntryPoint {

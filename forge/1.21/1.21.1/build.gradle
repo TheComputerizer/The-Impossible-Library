@@ -78,7 +78,7 @@ minecraft {
 repositories {
     maven {
         name = 'CurseMaven'
-        url = uri 'https://www.cursemaven.com'
+        url = uri 'https://curse.cleanroommc.com/'
         content {
             includeGroup 'curse.maven'
         }
@@ -102,12 +102,12 @@ dependencies {
     compileOnlyApi shared
     compileOnlyApi shared_specific
 
-    implementation fg.deobf("$configured_artifact:$configured_forge_1_21_1")
-    implementation fg.deobf("$infernal_mobs_artifact:$infernal_mobs_forge_1_21_1")
-    implementation fg.deobf("$serene_seasons_artifact:$serene_seasons_forge_1_21_1")
+    implementation "$configured_artifact:$configured_forge_1_21_1"
+    implementation "$infernal_mobs_artifact:$infernal_mobs_forge_1_21_1"
+    implementation "$serene_seasons_artifact:$serene_seasons_forge_1_21_1"
 
-    runtimeOnly fg.deobf("$glitchcore_artifact:$glitchcore_forge_1_21_1")
-    runtimeOnly fg.deobf("$jei_artifact:$jei_forge_1_21_1")
+    runtimeOnly "$glitchcore_artifact:$glitchcore_forge_1_21_1"
+    runtimeOnly "$jei_artifact:$jei_forge_1_21_1"
 }
 
 jar {

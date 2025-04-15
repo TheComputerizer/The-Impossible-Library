@@ -62,7 +62,7 @@ public class ClassPrinter extends ClassVisitor implements BytecodePrinter { //TO
      * Assumes the classpath has been parsed already.
      * If the package is null it will be an empty string.
      * If the class name is null or blank, it will be substituted with '?'.
-     * Returns a pair of the package & name of the class respectively.
+     * Returns a pair of the package and name of the class respectively.
      */
     public static Entry<String,String> splitPackage(String classpath) {
         int index = classpath.lastIndexOf('.');

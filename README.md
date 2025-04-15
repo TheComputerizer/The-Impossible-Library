@@ -86,7 +86,7 @@ You can use curse maven like so
 repositories {
     maven {
         name = 'CurseMaven'
-        url = uri 'https://www.cursemaven.com'
+        url = uri 'https://curse.cleanroommc.com/'
         content {
             includeGroup 'curse.maven'
         }

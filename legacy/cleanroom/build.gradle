@@ -1,74 +1,60 @@
+import static org.gradle.api.logging.LogLevel.INFO
+import static org.gradle.api.logging.LogLevel.QUIET
+
 buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                plugin_portal_content.split(';').each {grp ->
+                unimined_plugin_portal.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'Forge'
-            url = uri 'https://maven.minecraftforge.net/'
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
             content {
-                forge_content.split(';').each {grp ->
+                unimined_releases.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'Garden of Fancy'
-            url = uri 'https://maven.gofancy.wtf/releases'
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
             content {
-                includeGroup 'wtf.gofancy.fancygradle'
+                unimined_snapshots.split(';').each {grp ->
+                    includeGroup grp
+                }
             }
         }
     }
     dependencies {
         classpath "$shadow_plugin:$shadow_version"
-        classpath "$forge_gradle_plugin:$forge_gradle_version"
-        classpath "$fancy_gradle_plugin:$fancy_gradle_version"
+        classpath "$unimined_plugin:$unimined_version"
     }
 }
 
-apply from: rootProject.file('gradle\\java8-module.gradle')
+apply from: rootProject.file('gradle\\java23-module.gradle')
 
-plugins.apply 'net.minecraftforge.gradle'
-plugins.apply 'wtf.gofancy.fancygradle'
+plugins.apply 'xyz.wagyourtail.unimined'
 
 def base = project ':api'
 def legacy = project ':legacy'
 
-fancyGradle {
-    patches {
-        resources
-        coremods
-        asm
-        mergetool
+unimined.minecraft {
+    version minecraft_1_12_2
+    def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+    mappings {
+        mcp 'stable', legacy_mappings_1_12_2
     }
-}
-
-sourceSets {
-    main.output.resourcesDir = rootProject.file 'legacy/1.12/run_client/TILResources'
-}
-
-minecraft {
-    mappings channel: 'stable', version: legacy_mappings_1_12_2
-    runs {
-        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
-        client {
-            workingDirectory file('run_client')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            //noinspection GroovyAssignabilityCheck
+    cleanroom {
+        loader "0.3.0-alpha"
+        runs.auth.username = minecraft_username
+        runs.all {
+            systemProperty 'foundation.verbose', 'true'
             jvmArgs args
-        }
-        server {
-            workingDirectory file('run_server')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            //noinspection GroovyAssignabilityCheck
-            jvmArgs args
+            return
         }
     }
 }
@@ -78,7 +64,9 @@ repositories {
         name = 'CleanroomMC'
         url = uri 'https://maven.cleanroommc.com'
         content {
-            includeGroup 'mezz'
+            [ 'com.cleanroommc', 'mezz' ].forEach {grp ->
+                includeGroup grp
+            }
         }
     }
     maven {
@@ -100,17 +88,16 @@ repositories {
 }
 
 dependencies {
-    //noinspection VulnerableLibrariesLocal
-    minecraft "$forge_mc:$forge_1_12_2"
+    api base
+    api legacy
 
     annotationProcessor "$gson_artifact:$gson_annotation"
     annotationProcessor "$guava_artifact:$guava_annotation"
 
+    compileOnly "$cleanroom_mixin_artifact:$cleanroom_mixin_version"
     compileOnly "$dynamic_surroundings_artifact:$dynamic_surroundings_1_12_2"
+    compileOnly "$lwjglx_artifact:$lwjglx_version"
     compileOnly "$orelib_artifact:$orelib_1_12_2"
-
-    api base
-    api legacy
 
     //mod support dependencies
     implementation "$bloodmoon_artifact:$bloodmoon_1_12_2"
@@ -151,20 +138,19 @@ jar {
                 'ForceLoadAsMod': true
         ])
     }
+    finalizedBy shadowJar
+    dependsOn ':legacy:build'
 }
 
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
+tasks.remapJar {
+    doFirst {
+        logging.captureStandardOutput INFO
+    }
+    doLast {
+        logging.captureStandardOutput QUIET
     }
 }
 
 shadowJar {
     from(base.jar.archiveFile.collect { zipTree it })
 }
-
-tasks.assemble.dependsOn shadowJar
-tasks.shadowJar.dependsOn 'reobfJar'
-tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.dependsOn ':legacy:build'

@@ -18,7 +18,7 @@ public class PosHelper {
     }
     
     /**
-     * Rounds the input value to the nearest 0.5 (0 -> 0.5, 0.75 -> 0.5, 1 -> 1.5, etc.)
+     * Rounds the input value to the nearest 0.5 (0 = 0.5, 0.75 = 0.5, 1 = 1.5, etc.)
      */
     public static double roundToCenter(double v) {
         int lower = (int)Math.floor(v*2d);

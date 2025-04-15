@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is basically just a better implementation of Map<Vector3,Collection<Tuple<Vector3,Vector3>>>
+ * This is basically just a fancy Map
  */
 public class TriangleMapper {
 

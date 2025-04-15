@@ -445,7 +445,7 @@ public abstract class CoreAPI {
     }
     
     /**
-     * Returns the input string with the current ModLoader & GameVersion appended
+     * Returns the input string with the current ModLoader and GameVersion appended
      */
     public String qualify(String str) {
         String qualified = this.modLoader+" "+this.version;

@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.structure;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -11,7 +10,6 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenScatteredFeature;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,10 +17,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
+
 public class StructureRef {
 
     private static final Set<StructureRef> REFS = addVanillaRefs();
-    private static Field featureGenerator;
+    private static final String FEATURE_GEN_FIELD = DEV ? "scatteredFeatureGenerator" : "field_186007_z";
 
     private static void addVanillaRef(Set<StructureRef> refs, String id, String name,
                                       @Nullable BiFunction<WorldServer, BlockPos,Boolean> posCheck) {
@@ -52,14 +53,8 @@ public class StructureRef {
         return refs;
     }
     
-    private static void findFeatureGenerator() {
-        featureGenerator = ReflectionHelper.getMappedField(ChunkGeneratorOverworld.class,
-                "scatteredFeatureGenerator","field_186007_z",MapGenScatteredFeature.class);
-    }
-    
     private static MapGenScatteredFeature getFeatureGenerator(IChunkGenerator generator) {
-        if(Objects.isNull(featureGenerator)) findFeatureGenerator();
-        return (MapGenScatteredFeature)ReflectionHelper.getFieldInstance(generator,featureGenerator);
+        return Fields.getDirect(generator,FEATURE_GEN_FIELD);
     }
     
     public static Collection<StructureRef> getRegisteredStructures() {
