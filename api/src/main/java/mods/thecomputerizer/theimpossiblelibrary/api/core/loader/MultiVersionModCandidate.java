@@ -125,7 +125,7 @@ public class MultiVersionModCandidate {
         if(Objects.nonNull(clazz)) return clazz;
         CoreAPI core = CoreAPI.getInstance();
         ModLoader modLoader = core.getModLoader();
-        if(modLoader.isNeoForge() || (modLoader.isForge() && !core.getVersion().isV16())) {
+        if(modLoader.isNeoForge() || (modLoader.isForge() && !CoreAPI.isV16())) {
             String path = ClassHelper.getResourcePath(name);
             URL source = this.classpath ? loader.getResource(path) :
                     ClassHelper.getJarResource(this.file.getAbsolutePath(),path);

@@ -174,8 +174,15 @@ public class ASMHelper {
      * Do not call ClassWriter#visitEnd before this
      */
     public static byte[] finishWriting(ClassWriter writer, Type type, boolean debugOutput) {
+        return finishWriting(writer,type.getInternalName(),debugOutput);
+    }
+    
+    /**
+     * Do not call ClassWriter#visitEnd before this
+     */
+    public static byte[] finishWriting(ClassWriter writer, String internalName, boolean debugOutput) {
         writer.visitEnd();
-        String name = type.getInternalName().replace('/','.');
+        String name = internalName.replace('/','.');
         byte[] bytes = writer.toByteArray();
         if(debugOutput) writeDebugByteCode(name,bytes);
         return bytes;
@@ -329,6 +336,15 @@ public class ASMHelper {
     public static ClassWriter getWriter(int javaVer, int access, Type type, String signature, String[] interfaces) {
         return getWriter(javaVer,access,type,signature,OBJECT_TYPE,interfaces);
     }
+    
+    public static ClassWriter getWriter(int javaVer, int access, String internalName, String internalSuperName) {
+        return getWriter(javaVer,access,internalName,null,internalSuperName,new String[]{});
+    }
+    
+    @IndirectCallers
+    public static ClassWriter getWriter(int javaVer, int access, String internalName, Type superType) {
+        return getWriter(javaVer,access,internalName,null,superType.getInternalName(),new String[]{});
+    }
 
     public static ClassWriter getWriter(int javaVer, int access, Type type, Type superType) {
         return getWriter(javaVer,access,type,null,superType,new String[]{});
@@ -341,8 +357,13 @@ public class ASMHelper {
 
     public static ClassWriter getWriter(int javaVer, int access, Type type, String signature, Type superType,
                                         String[] interfaces) {
+        return getWriter(javaVer,access,type.getInternalName(),signature,superType.getInternalName(),interfaces);
+    }
+    
+    public static ClassWriter getWriter(int javaVer, int access, String internalName, String signature,
+            String internalSuperName, String[] interfaces) {
         ClassWriter writer = new ClassWriter(COMPUTE_FRAMES);
-        writer.visit(javaVer,access,type.getInternalName(),signature,superType.getInternalName(),interfaces);
+        writer.visit(javaVer,access,internalName,signature,internalSuperName,interfaces);
         return writer;
     }
     

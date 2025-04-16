@@ -16,11 +16,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.*;
 import java.util.Map.Entry;
 
 import static net.minecraft.launchwrapper.Launch.classLoader;
 import static net.minecraftforge.fml.common.discovery.ContainerType.JAR;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class InjectedModCandidate1_12_2 extends ModCandidate {
 
@@ -63,19 +66,26 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
 
     private static Map<File,InjectedModCandidate1_12_2> getCandidateMap() {
         if(Objects.nonNull(CANDIDATE_MAP)) return CANDIDATE_MAP;
+        boolean java8 = CoreAPI.isJava8();
+        CodeSource source = null;
+        if(!java8) {
+            ProtectionDomain pd = InjectedModCandidate1_12_2.class.getProtectionDomain();
+            source = Objects.nonNull(pd) ? pd.getCodeSource() : null;
+        }
         CANDIDATE_MAP = new HashMap<>();
         for(MultiVersionModData data : getModDataValues()) {
             CANDIDATE_MAP.putIfAbsent(data.getSource(),new InjectedModCandidate1_12_2(
                     data.getRoot(),data.getSource()));
             for(Entry<String,byte[]> classBytes : data.writeModClass()) {
-                String classpath = classBytes.getKey();
+                String className = classBytes.getKey();
                 byte[] bytes = classBytes.getValue();
-                ASMHelper.writeDebugByteCode(classpath,bytes);
-                Class<?> clazz = ClassHelper.defineClass(classLoader,classpath,bytes);
-                ModContainerWriter1_12_2.cacheClass(classLoader,classpath,clazz);
+                ASMHelper.writeDebugByteCode(className,bytes);
+                Class<?> clazz = java8 ? ClassHelper.defineClass(classLoader,className,bytes) :
+                        Methods.invoke(classLoader,"defineClass",className,bytes,source);
+                ModContainerWriter1_12_2.cacheClass(classLoader,className,clazz);
                 InjectedModCandidate1_12_2 candidate = CANDIDATE_MAP.get(data.getSource());
-                candidate.injectMod(data.getInfo(),classpath,bytes);
-                TILRef.logInfo("Successfully loaded mod class {}!",classpath);
+                candidate.injectMod(data.getInfo(),className,bytes);
+                TILRef.logInfo("Successfully loaded mod class {}!",className);
             }
         }
         return CANDIDATE_MAP;

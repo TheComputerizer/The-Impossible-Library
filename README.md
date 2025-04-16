@@ -12,7 +12,7 @@ The status indicators are as follows:
 - PLAYABLE → Worlds are able to load in this version, but there may be stability issues
 
 ### Cleanroom
-- 1.12.2 → PLANNED
+- 1.12.2 → FUNCTIONAL
 
 ### Fabric/Quilt
 - 1.16.5 → FUNCTIONAL
