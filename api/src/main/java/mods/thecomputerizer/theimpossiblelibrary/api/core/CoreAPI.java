@@ -30,8 +30,10 @@ import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoade
 @Getter
 public abstract class CoreAPI {
 
+    static final String JAVA_VERSION = System.getProperty("java.version");
     public static Object INSTANCE;
     static String BINARY = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
+    static int javaVersionCache;
     
     public static @Nullable Object findInstance(ClassLoader loader) {
         Class<?> coreClass = ClassHelper.findClass(BINARY,loader);
@@ -98,6 +100,30 @@ public abstract class CoreAPI {
     
     public static boolean isForge() {
         return getInstance().getModLoader()==FORGE;
+    }
+    
+    public static boolean isJava8() {
+        return javaVersion()==8;
+    }
+    
+    @IndirectCallers
+    public static boolean isJava17() {
+        return javaVersion()==17;
+    }
+    
+    @IndirectCallers
+    public static boolean isJava17OrLater() {
+        return javaVersion()>=17;
+    }
+    
+    @IndirectCallers
+    public static boolean isJava21() {
+        return javaVersion()==21;
+    }
+    
+    @IndirectCallers
+    public static boolean isJava21OrLater() {
+        return javaVersion()>=21;
     }
     
     public static boolean isLegacy() {
@@ -220,6 +246,23 @@ public abstract class CoreAPI {
     @IndirectCallers
     public static boolean isVersionLessThan(GameVersion version) {
         return getInstance().getVersion().isLessThan(version);
+    }
+    
+    /**
+     * Should return 8, 17, 21, etc.
+     */
+    public static int javaVersion() {
+        if(javaVersionCache>0) return javaVersionCache;
+        TILRef.logInfo("Parsing java version from {}",JAVA_VERSION);
+        if(JAVA_VERSION.startsWith("1.")) return 8;
+        String majorVersion = JAVA_VERSION.split("\\.")[0].split("_")[0];
+        try {
+            javaVersionCache = Integer.parseInt(majorVersion);
+        } catch(Exception ex) {
+            TILRef.logError("Failed to parse java version from {} (split from {})",majorVersion,JAVA_VERSION,ex);
+            javaVersionCache = 17; //Next best guess after Java 8
+        }
+        return javaVersionCache;
     }
     
     @SuppressWarnings("DataFlowIssue")

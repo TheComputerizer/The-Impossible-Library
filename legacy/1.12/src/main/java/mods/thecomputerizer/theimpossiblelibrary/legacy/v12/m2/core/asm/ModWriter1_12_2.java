@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.EMPTY_METHOD;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA21;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.PUBLIC;
 import static org.objectweb.asm.Type.VOID_TYPE;
@@ -24,7 +25,7 @@ public class ModWriter1_12_2 extends ModWriter {
     private static final Type MOD_ANNOTATION = TypeHelper.fml("common/Mod");
     
     public ModWriter1_12_2(CoreAPI core, MultiVersionModInfo info) {
-        super(core,info,JAVA8);
+        super(core,info,CoreAPI.isJava8() ? JAVA8 : JAVA21);
     }
     
     @Override protected void addClassAnnotations(ClassVisitor visitor) {

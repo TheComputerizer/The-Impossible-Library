@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
@@ -57,7 +58,7 @@ public class ModContainerWriter1_12_2 {
 
     public static String writeModContainer(LaunchClassLoader launchLoader, String modid, String classpath) {
         Type type = Type.getType(classpath.replace('.','/'));
-        ClassWriter writer = ASMHelper.getWriter(JAVA8,PUBLIC,type,INJECTEDMODCONTAINER);
+        ClassWriter writer = ASMHelper.getWriter(CoreAPI.isJava8() ? JAVA8 : JAVA21,PUBLIC,type,INJECTEDMODCONTAINER);
         writeClinit(writer,modid);
         writeConstructor(writer,type);
         byte[] bytes = ASMHelper.finishWriting(writer,type,true);
