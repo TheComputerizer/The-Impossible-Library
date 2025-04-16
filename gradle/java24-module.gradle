@@ -1,11 +1,7 @@
 apply from: rootProject.file('shared.gradle')
 
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of 23
-}
-
 compileJava {
-    options.release = 23
+    options.release = 24
 }
 
 apply from: rootProject.file('gradle\\lombok.gradle')

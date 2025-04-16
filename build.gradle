@@ -6,11 +6,6 @@
  */
 apply from: rootProject.file('shared.gradle')
 
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of 23
-    withJavadocJar()
-}
-
 def cleanroom = project ':legacy:cleanroom'
 def fabric = project ':fabric'
 def legacy_1_12_2 = project ':legacy:1.12'

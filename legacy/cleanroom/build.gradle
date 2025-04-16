@@ -35,13 +35,14 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java23-module.gradle')
+apply from: rootProject.file('gradle\\java21-module.gradle')
 
 plugins.apply 'xyz.wagyourtail.unimined'
 
 def base = project ':api'
 def legacy = project ':legacy'
 
+//noinspection GroovyAssignabilityCheck
 unimined.minecraft {
     version minecraft_1_12_2
     def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
