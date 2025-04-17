@@ -1,6 +1,8 @@
 apply from: rootProject.file('shared.gradle')
 apply from: rootProject.file('gradle\\lombok.gradle')
 
+injectConstants()
+
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
 }
@@ -43,4 +45,28 @@ processResources {
 
 artifacts {
     dev jar
+}
+
+def injectConstants() {
+    def path = "api/src/main/java/${ "${api_package}.core.TILRef".replace '.', '/'}.java"
+    def target = file("${rootProject.projectDir}/$path")
+    def replacements = [ 'MODID = "': "MODID = \"$mod_id\";",
+                         'NAME ="': "NAME = \"$mod_name\";",
+                         'VERSION = "': "VERSION = \"$mod_version\";" ]
+    List<String> lines = new ArrayList<>()
+    target.eachLine { line ->
+        replacements.each {entry ->
+            String key = entry.key
+            if(line.contains(key)) {
+                int index = line.indexOf key
+                line = "${line.substring(0,index)}${entry.value}"
+            }
+        }
+        lines.add line
+    }
+    target.withWriter {writer ->
+        lines.forEach {line ->
+            writer.writeLine line
+        }
+    }
 }

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v21.world;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 public class BlockPos1_21 extends BlockPosAPI<BlockPos> {
     
@@ -23,7 +24,7 @@ public class BlockPos1_21 extends BlockPosAPI<BlockPos> {
     }
     
     public BlockPos1_21(Vector3 posVec) {
-        this(new BlockPos(posVec.iX(),posVec.iY(),posVec.iZ()),posVec);
+        this(new BlockPos(Mth.floor(posVec.dX()),Mth.floor(posVec.dY()),Mth.floor(posVec.dZ())),posVec);
     }
     
     public BlockPos1_21(double x, double y, double z) {

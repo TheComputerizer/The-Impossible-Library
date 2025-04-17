@@ -22,21 +22,21 @@ import static org.apache.logging.log4j.Level.*;
  * Base reference API for global constants specific to this library
  */
 public class TILRef {
-
+    
     public static final String DATA_DIRECTORY = "impossible_data";
     public static final Logger LOGGER = LogManager.getLogger("The Impossible Library");
     public static final String BASE_PACKAGE = "mods.thecomputerizer.theimpossiblelibrary";
     public static final String DESCRIPTION = "Multiversion API & mod loader with helpers to do things deemed impossible";
     public static final String MODID = "theimpossiblelibrary";
     public static final String NAME = "The Impossible Library";
-    public static final String VERSION = "0.4.4";
+    public static final String VERSION = "0.4.5";
     @Setter private static CommonAPI API;
     /**
      * Enable to disable server stuff
      */
     public static boolean CLIENT_ONLY;
     private static Reference INSTANCE;
-
+    
     /**
      * Should only exist on the client
      */
@@ -49,22 +49,22 @@ public class TILRef {
         logError("The client API can only be retrieved from the client side!");
         return null;
     }
-
+    
     public static <A> @Nullable A getClientSubAPI(Function<ClientAPI,A> getter) {
         if(CoreAPI.isClient()) return getter.apply(getClientAPI());
         else logError("Cannot get client sub API {} since this is not the client side!");
         return null;
     }
-
+    
     public static CommonAPI getCommonAPI() {
         if(Objects.isNull(API)) CoreAPI.getInstance().initAPI();
         return API;
     }
-
+    
     public static <A> A getCommonSubAPI(Function<CommonAPI,A> getter) {
         return getter.apply(getCommonAPI());
     }
-
+    
     public static String getNetworkVersion() {
         return MODID+VERSION.replace('.','_');
     }
@@ -89,37 +89,37 @@ public class TILRef {
     public static void log(Level level, String msg, Object ... args) {
         logNullable(level,msg,args);
     }
-
+    
     public static void logDebug(String msg, Object ... args) {
         logNullable(DEBUG,msg,args);
     }
-
+    
     public static void logError(String msg, Object ... args) {
         logNullable(ERROR,msg,args);
     }
-
+    
     public static void logFatal(String msg, Object ... args) {
         logNullable(FATAL,msg,args);
     }
-
+    
     public static void logInfo(String msg, Object ... args) {
         logNullable(INFO,msg,args);
     }
-
+    
     private static void logNullable(Level level, String msg, Object ... args) {
         if(Objects.nonNull(INSTANCE)) INSTANCE.log(level,msg,args);
         else LOGGER.log(level,msg,args);
     }
-
+    
     @IndirectCallers
     public static void logTrace(String msg, Object ... args) {
         logNullable(TRACE,msg,args);
     }
-
+    
     public static void logWarn(String msg, Object ... args) {
         logNullable(WARN,msg,args);
     }
-
+    
     public static ResourceLocationAPI<?> res(String path) {
         if(Objects.nonNull(INSTANCE)) return INSTANCE.getResource(path);
         throw new RuntimeException("Cannot get a ResourceLocation until the reference API has been initialized!");
