@@ -40,6 +40,7 @@ buildscript {
 apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
 
 plugins.apply 'xyz.wagyourtail.unimined'
+unimined.useGlobalCache = false
 
 def base = project ':api'
 

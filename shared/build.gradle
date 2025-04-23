@@ -1,6 +1,3 @@
-import static org.gradle.api.logging.LogLevel.INFO
-import static org.gradle.api.logging.LogLevel.QUIET
-
 //file:noinspection GroovyAssignabilityCheck
 /**
  * Pass through parent module for shared version modules
@@ -78,6 +75,7 @@ def neoforge_versions = [ 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shar
 
 subprojects {sub ->
     plugins.apply 'xyz.wagyourtail.unimined'
+    unimined.useGlobalCache = false
     boolean neoforge_compatible = neoforge_versions.contains sub.name
     sourceSets {
         fabric {

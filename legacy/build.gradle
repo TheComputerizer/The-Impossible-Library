@@ -68,6 +68,7 @@ tasks.jar.dependsOn ':api:build'
 
 subprojects { sub ->
     plugins.apply 'xyz.wagyourtail.unimined'
+    unimined.useGlobalCache = false
     unimined.minecraft {
         version minecraft_1_12_2
         def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
