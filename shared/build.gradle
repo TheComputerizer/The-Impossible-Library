@@ -1,7 +1,45 @@
+import static org.gradle.api.logging.LogLevel.INFO
+import static org.gradle.api.logging.LogLevel.QUIET
+
+//file:noinspection GroovyAssignabilityCheck
 /**
  * Pass through parent module for shared version modules
  */
-apply from: rootProject.file('shared.gradle')
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                unimined_plugin_portal.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
+            content {
+                unimined_releases.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
+            content {
+                unimined_snapshots.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+    }
+    dependencies {
+        classpath "$shadow_plugin:$shadow_version"
+        classpath "$unimined_plugin:$unimined_version"
+    }
+}
+
+apply from: rootProject.file('gradle\\scripts\\shared.gradle')
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
@@ -16,11 +54,16 @@ configurations {
     }
 }
 
+artifacts {
+    dev jar
+}
+
 jar {
     from(base.jar.archiveFile.collect {
         include 'mods/**'
         zipTree it
     })
+    dependsOn ':api:build'
 }
 
 processResources {
@@ -31,8 +74,25 @@ processTestResources {
     from base.processTestResources.outputs
 }
 
-artifacts {
-    dev jar
-}
+def neoforge_versions = [ 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ]
 
-tasks.jar.dependsOn ':api:build'
+subprojects {sub ->
+    plugins.apply 'xyz.wagyourtail.unimined'
+    boolean neoforge_compatible = neoforge_versions.contains sub.name
+    sourceSets {
+        fabric {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
+        }
+        forge {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
+        }
+        if(neoforge_compatible) {
+            neoforge {
+                compileClasspath += sourceSets.main.output
+                runtimeClasspath += sourceSets.main.output
+            }
+        }
+    }
+}

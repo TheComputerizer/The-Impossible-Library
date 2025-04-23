@@ -1,30 +1,31 @@
+//file:noinspection GroovyAssignabilityCheck
+
 /**
  * Common builds and sources relevant to all Forge modules. Based in 1.16.5
  */
-//file:noinspection GroovyAssignabilityCheck
 buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                plugin_portal_content.split(';').each {grp ->
+                unimined_plugin_portal.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'Forge'
-            url = uri 'https://maven.minecraftforge.net/'
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
             content {
-                forge_content.split(';').each {grp ->
+                unimined_releases.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'ParchmentMC'
-            url = uri 'https://maven.parchmentmc.org'
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
             content {
-                parchment_content.split(';').each {grp ->
+                unimined_snapshots.split(';').each {grp ->
                     includeGroup grp
                 }
             }
@@ -32,20 +33,26 @@ buildscript {
     }
     dependencies {
         classpath "$shadow_plugin:$shadow_version"
-        classpath "$forge_gradle_plugin:$forge_gradle_version"
-        classpath "$parchment_plugin:$parchment_plugin_version"
+        classpath "$unimined_plugin:$unimined_version"
     }
 }
 
-apply from: rootProject.file('gradle\\java8-module.gradle')
+apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
 
-plugins.apply 'net.minecraftforge.gradle'
-plugins.apply 'org.parchmentmc.librarian.forgegradle'
+plugins.apply 'xyz.wagyourtail.unimined'
 
 def base = project ':api'
 
-minecraft {
-    mappings channel: 'parchment', version: "$parchment_1_16_5-$minecraft_1_16_5"
+unimined.minecraft {
+    version minecraft_1_16_5
+    mappings {
+        mojmap()
+        devFallbackNamespace "official" // ensure the same fallback namespace
+    }
+    minecraftForge {
+        loader forge_1_16_5
+    }
+    defaultRemapJar = false
 }
 
 configurations {
@@ -55,11 +62,22 @@ configurations {
     }
 }
 
-dependencies {
-    //noinspection VulnerableLibrariesLocal
-    minecraft "${forge_mc}:${forge_1_16_5}"
+artifacts {
+    dev jar
+}
 
+dependencies {
     api base
+}
+
+jar {
+    manifest {
+        attributes([
+                'Implementation-Title': mod_name,
+                'Implementation-Version': mod_version
+        ])
+    }
+    mustRunAfter ':api:build'
 }
 
 processResources {
@@ -72,21 +90,6 @@ processTestResources {
     from base.processTestResources.outputs
 }
 
-jar {
-    manifest {
-        attributes([
-                'FMLAT': mod_accesstransformer,
-                'Implementation-Title': mod_name,
-                'Implementation-Version': mod_version
-        ])
-    }
-    mustRunAfter ':api:build'
-}
-
 sourcesJar {
     mustRunAfter ':api:build'
-}
-
-artifacts {
-    dev jar
 }

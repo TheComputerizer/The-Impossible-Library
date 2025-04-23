@@ -1,4 +1,41 @@
-apply from: rootProject.file('shared.gradle')
+import static org.gradle.api.logging.LogLevel.INFO
+import static org.gradle.api.logging.LogLevel.QUIET
+
+buildscript {
+    repositories {
+        gradlePluginPortal() {
+            content {
+                unimined_plugin_portal.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
+            content {
+                unimined_releases.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
+            content {
+                unimined_snapshots.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+    }
+    dependencies {
+        classpath "$shadow_plugin:$shadow_version"
+        classpath "$unimined_plugin:$unimined_version"
+    }
+}
+
+apply from: rootProject.file('gradle\\scripts\\shared.gradle')
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
@@ -28,3 +65,41 @@ processTestResources {
 }
 
 tasks.jar.dependsOn ':api:build'
+
+subprojects { sub ->
+    plugins.apply 'xyz.wagyourtail.unimined'
+    unimined.minecraft {
+        version minecraft_1_12_2
+        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+        mappings {
+            mcp 'stable', legacy_mappings_1_12_2
+        }
+        if('cleanroom'==sub.name) {
+            cleanroom {
+                loader cleanroom_loader_version
+                runs.all {
+                    systemProperty 'foundation.verbose', 'true'
+                    jvmArgs args
+                    return
+                }
+            }
+        } else {
+            minecraftForge {
+                loader forge_1_12_2
+                runs.all {
+                    systemProperty 'foundation.verbose', 'true'
+                    jvmArgs args
+                    return
+                }
+            }
+        }
+    }
+    tasks.remapJar {
+        doFirst {
+            logging.captureStandardOutput INFO
+        }
+        doLast {
+            logging.captureStandardOutput QUIET
+        }
+    }
+}

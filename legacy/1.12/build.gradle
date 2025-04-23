@@ -1,77 +1,9 @@
-buildscript {
-    repositories {
-        gradlePluginPortal() {
-            content {
-                plugin_portal_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'Forge'
-            url = uri 'https://maven.minecraftforge.net/'
-            content {
-                forge_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'Garden of Fancy'
-            url = uri 'https://maven.gofancy.wtf/releases'
-            content {
-                includeGroup 'wtf.gofancy.fancygradle'
-            }
-        }
-    }
-    dependencies {
-        classpath "$shadow_plugin:$shadow_version"
-        classpath "$forge_gradle_plugin:$forge_gradle_version"
-        classpath "$fancy_gradle_plugin:$fancy_gradle_version"
-    }
-}
 
-apply from: rootProject.file('gradle\\java8-module.gradle')
 
-plugins.apply 'net.minecraftforge.gradle'
-plugins.apply 'wtf.gofancy.fancygradle'
+apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
 
 def base = project ':api'
 def legacy = project ':legacy'
-
-fancyGradle {
-    patches {
-        resources
-        coremods
-        asm
-        mergetool
-    }
-}
-
-sourceSets {
-    main.output.resourcesDir = rootProject.file 'legacy/1.12/run_client/TILResources'
-}
-
-minecraft {
-    mappings channel: 'stable', version: legacy_mappings_1_12_2
-    runs {
-        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
-        client {
-            workingDirectory file('run_client')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            //noinspection GroovyAssignabilityCheck
-            jvmArgs args
-        }
-        server {
-            workingDirectory file('run_server')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', forge_log_level
-            //noinspection GroovyAssignabilityCheck
-            jvmArgs args
-        }
-    }
-}
 
 repositories {
     maven {
@@ -100,9 +32,6 @@ repositories {
 }
 
 dependencies {
-    //noinspection VulnerableLibrariesLocal
-    minecraft "$forge_mc:$forge_1_12_2"
-
     annotationProcessor "$gson_artifact:$gson_annotation"
     annotationProcessor "$guava_artifact:$guava_annotation"
 
@@ -151,13 +80,8 @@ jar {
                 'ForceLoadAsMod': true
         ])
     }
-}
-
-reobf {
-    shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
+    jar.finalizedBy shadowJar
+    dependsOn ':legacy:build'
 }
 
 shadowJar {
@@ -165,6 +89,3 @@ shadowJar {
 }
 
 tasks.assemble.dependsOn shadowJar
-tasks.shadowJar.dependsOn 'reobfJar'
-tasks.jar.finalizedBy 'reobfJar'
-tasks.jar.dependsOn ':legacy:build'

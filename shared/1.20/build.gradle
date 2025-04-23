@@ -1,53 +1,42 @@
-/**
- * Shared implementations for anything based in 1.20. Compiles against Forge
- */
 //file:noinspection GroovyAssignabilityCheck
-buildscript {
-    repositories {
-        gradlePluginPortal() {
-            content {
-                plugin_portal_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'Forge'
-            url = uri 'https://maven.minecraftforge.net/'
-            content {
-                forge_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'ParchmentMC'
-            url = uri 'https://maven.parchmentmc.org'
-            content {
-                parchment_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
+
+/**
+ * Shared implementations for 1.20
+ */
+apply from: rootProject.file('gradle\\scripts\\java17-module.gradle')
+
+unimined.minecraft {
+    version minecraft_1_20_1
+    mappings {
+        mojmap()
+        devFallbackNamespace 'official'
     }
-    dependencies {
-        classpath "$shadow_plugin:$shadow_version"
-        classpath "$forge_gradle_plugin:$forge_gradle_version"
-        classpath "$parchment_plugin:$parchment_plugin_version"
+    defaultRemapJar = false
+}
+
+unimined.minecraft(sourceSets.fabric) {
+    combineWith sourceSets.main
+    fabric {
+        loader fabric_loader
     }
 }
 
-apply from: rootProject.file('gradle\\java17-module.gradle')
+unimined.minecraft(sourceSets.forge) {
+    combineWith sourceSets.main
+    minecraftForge {
+        loader forge_1_20_1
+    }
+}
 
-plugins.apply 'net.minecraftforge.gradle'
-plugins.apply 'org.parchmentmc.librarian.forgegradle'
+unimined.minecraft(sourceSets.neoforge) {
+    combineWith sourceSets.main
+    neoForge {
+        loader neoforge_1_20_1
+    }
+}
 
 def base = project ':api'
 def shared = project ':shared'
-
-minecraft {
-    mappings channel: 'parchment', version: "$parchment_1_20_1-$minecraft_1_20_1"
-}
 
 configurations {
     dev {
@@ -56,12 +45,25 @@ configurations {
     }
 }
 
+artifacts {
+    dev jar
+}
+
 dependencies {
-    //noinspection VulnerableLibrariesLocal
-    minecraft "$forge_mc:$forge_1_20_1"
+    //common dependencies
     compileOnlyApi base
     compileOnlyApi shared
 }
+
+jar {
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
+    }
+    mustRunAfter ':shared:build'
+}
+
 
 processResources {
     from shared.processResources.outputs
@@ -71,11 +73,6 @@ processTestResources {
     from shared.processTestResources.outputs
 }
 
-jar {
-    setArchiveBaseName mod_id
-    dependsOn ':shared:build'
-}
-
-artifacts {
-    dev jar
+sourcesJar {
+    mustRunAfter ':shared:build'
 }

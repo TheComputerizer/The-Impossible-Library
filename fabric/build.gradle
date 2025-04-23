@@ -29,8 +29,8 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java8-module.gradle')
-apply from: rootProject.file('gradle\\fabric.gradle')
+apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
+apply from: rootProject.file('gradle\\scripts\\fabric.gradle')
 
 plugins.apply 'fabric-loom'
 

@@ -1,8 +1,0 @@
-apply from: rootProject.file('shared.gradle')
-
-compileJava {
-    options.release = 21
-}
-
-apply from: rootProject.file('gradle\\lombok.gradle')
-apply from: rootProject.file('gradle\\shadow.gradle')

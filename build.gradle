@@ -4,93 +4,63 @@
  * Shading and relocation must happen within each module to properly respect reobfuscation.
  * Any necessary reobfuscations must happen in the version the deobfuscations happened in.
  */
-apply from: rootProject.file('shared.gradle')
+apply from: rootProject.file('gradle\\scripts\\shared.gradle')
 
-def cleanroom = project ':legacy:cleanroom'
-def fabric = project ':fabric'
-def legacy_1_12_2 = project ':legacy:1.12'
-def fabric_1_16_5 = project ':fabric:fabric_1.16'
-def fabric_1_18_2 = project ':fabric:fabric_1.18'
-def fabric_1_19_2 = project ':fabric:fabric_1.19:fabric_1.19.2'
-def fabric_1_19_4 = project ':fabric:fabric_1.19:fabric_1.19.4'
-def fabric_1_20_1 = project ':fabric:fabric_1.20:fabric_1.20.1'
-def fabric_1_20_4 = project ':fabric:fabric_1.20:fabric_1.20.4'
-def fabric_1_20_6 = project ':fabric:fabric_1.20:fabric_1.20.6'
-def fabric_1_21_1 = project ':fabric:fabric_1.21:fabric_1.21.1'
-def forge_1_16_5 = project ':forge:forge_1.16'
-def forge_1_18_2 = project ':forge:forge_1.18'
-def forge_1_19_2 = project ':forge:forge_1.19:forge_1.19.2'
-def forge_1_19_4 = project ':forge:forge_1.19:forge_1.19.4'
-def forge_1_20_1 = project ':forge:forge_1.20:forge_1.20.1'
-def forge_1_20_4 = project ':forge:forge_1.20:forge_1.20.4'
-def forge_1_20_6 = project ':forge:forge_1.20:forge_1.20.6'
-def forge_1_21_1 = project ':forge:forge_1.21:forge_1.21.1'
-def neoforge_1_20_4 = project ':neoforge:neoforge_1.20:neoforge_1.20.4'
-def neoforge_1_20_6 = project ':neoforge:neoforge_1.20:neoforge_1.20.6'
-def neoforge_1_21_1 = project ':neoforge:neoforge_1.21:neoforge_1.21.1'
+def base = ':api'
+def cleanroom = ':legacy:cleanroom'
+def fabric = ':fabric'
+def forge = ':forge'
+def legacy = ':legacy'
+def legacy_1_12_2 = ':legacy:1.12'
+def neoforge = ':neoforge'
+def shared_1_16_5 = ':shared:shared_1.16'
+def shared_1_18_2 = ':shared:shared_1.18'
+def shared_1_19 = ':shared:shared_1.19'
+def shared_1_19_2 = ':shared:shared_1.19:shared_1.19.2'
+def shared_1_19_4 = ':shared:shared_1.19:shared_1.19.4'
+def shared_1_20 = ':shared:shared_1.20'
+def shared_1_20_1 = ':shared:shared_1.20:shared_1.20.1'
+def shared_1_20_4 = ':shared:shared_1.20:shared_1.20.4'
+def shared_1_20_6 = ':shared:shared_1.20:shared_1.20.6'
+def shared_1_21 = ':shared:shared_1.21'
+def shared_1_21_1 = ':shared:shared_1.21:shared_1.21.1'
 
-def fabric_projects = [ fabric_1_16_5, fabric_1_18_2, fabric_1_19_2, fabric_1_19_4, fabric_1_20_1, fabric_1_20_4,
-        fabric_1_20_6, fabric_1_21_1
-]
+def shadow_projects = [ legacy_1_12_2, shared_1_16_5, shared_1_18_2, shared_1_19_2, shared_1_19_4, shared_1_20_1,
+        shared_1_20_4, shared_1_20_6, shared_1_21_1 ]
 
-def shadow_projects = [ cleanroom, legacy_1_12_2, forge_1_16_5, forge_1_18_2, forge_1_19_2, forge_1_19_4, forge_1_20_1,
-        forge_1_20_4, neoforge_1_20_4, forge_1_20_6, neoforge_1_20_6, forge_1_21_1, neoforge_1_21_1
-]
+def all_projects = [ base, fabric, forge, legacy, neoforge, cleanroom, legacy_1_12_2, shared_1_16_5, shared_1_18_2,
+        shared_1_19, shared_1_19_2, shared_1_19_4, shared_1_20, shared_1_20_1, shared_1_20_4, shared_1_20_6,
+        shared_1_21, shared_1_21_1 ]
 
-def jar_projects = [ cleanroom, legacy_1_12_2, fabric_1_16_5, forge_1_16_5, fabric_1_18_2, forge_1_18_2, fabric_1_19_2,
-        forge_1_19_2, fabric_1_19_4, forge_1_19_4, fabric_1_20_1, forge_1_20_1, fabric_1_20_4, forge_1_20_4,
-        neoforge_1_20_4, fabric_1_20_6, forge_1_20_6, neoforge_1_20_6, fabric_1_21_1, forge_1_21_1, neoforge_1_21_1
-]
-
-def all_projects = [ project(':api'), fabric, project('forge'), project(':legacy'), project('neoforge'), cleanroom,
-        legacy_1_12_2, fabric_1_16_5, forge_1_16_5, fabric_1_18_2, forge_1_18_2, project(':fabric:fabric_1.19'),
-        project(':forge:forge_1.19'), fabric_1_19_2, forge_1_19_2, fabric_1_19_4, forge_1_19_4,
-        project(':fabric:fabric_1.20'), project(':forge:forge_1.20'), project(':neoforge:neoforge_1.20'), fabric_1_20_1,
-        forge_1_20_1, fabric_1_20_4, forge_1_20_4, neoforge_1_20_4, fabric_1_20_6, forge_1_20_6, neoforge_1_20_6,
-        project(':fabric:fabric_1.21'), project(':forge:forge_1.21'), project(':neoforge:neoforge_1.21'), fabric_1_21_1,
-        forge_1_21_1, neoforge_1_21_1
-]
-
-subprojects {
-    it.afterEvaluate {
-        it.tasks.withType(JavaCompile).forEach {
-            it.options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
-            it.outputs.cacheIf {
-                false //Prevent issues with parallelization
-            }
+afterEvaluate {self ->
+    all_projects.forEach {name ->
+        project(name).tasks.withType(JavaCompile).forEach {compile ->
+            compile.options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
         }
-    }
-}
-
-processResources {
-    fabric.afterEvaluate {
-        from it.processResources.outputs
-    }
-}
-
-processTestResources {
-    fabric.afterEvaluate {
-        from it.processTestResources.outputs
     }
 }
 
 javadoc {
-    afterEvaluate {
-        classpath = files(all_projects.collect { it.sourceSets.main.compileClasspath })
+    doLast {
+        classpath = files(all_projects.collect {name ->
+            project(name).sourceSets.main.compileClasspath
+        })
+    }
+}
+
+javadocJar {
+    doLast {
+        all_projects.forEach {name ->
+            def p = project name
+            from(p.javadocJar.archiveFile.collect {zip ->
+                zipTree zip
+            })
+            mustRunAfter p.javadocJar
+        }
     }
 }
 
 jar {
-    fabric_projects.forEach {
-        it.afterEvaluate {
-            from(it.remapJar.archiveFile.collect { zipTree it })
-        }
-    }
-    shadow_projects.forEach {
-        it.afterEvaluate {
-            from(it.shadowJar.archiveFile.collect { zipTree it })
-        }
-    }
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -102,33 +72,37 @@ jar {
                 'TILMultiversionMods': common_entrypoint
         ])
     }
+    doLast {
+        shadow_projects.forEach {name ->
+            def p = project name
+            from(p.shadowJar.archiveFile.collect {zip ->
+                zipTree zip
+            })
+            mustRunAfter p.shadowJar
+        }
+    }
 }
 
-javadocJar {
-    all_projects.forEach {
-        it.afterEvaluate {
-            from(it.javadocJar.archiveFile.collect { zipTree it })
-            mustRunAfter it.javadocJar
-        }
+processResources {
+    doLast {
+        from project(fabric).processResources.outputs
+    }
+}
+
+processTestResources {
+    doLast {
+        from project(fabric).processTestResources.outputs
     }
 }
 
 sourcesJar {
-    all_projects.forEach {
-        it.afterEvaluate {
-            from(it.sourcesJar.archiveFile.collect { zipTree it })
-            mustRunAfter it.sourcesJar
+    doLast {
+        all_projects.forEach {name ->
+            def p = project name
+            from(p.sourcesJar.archiveFile.collect {zip ->
+                zipTree zip
+            })
+            mustRunAfter p.sourcesJar
         }
     }
 }
-
-[ ':legacy:1.12:shadowJar', ':legacy:cleanroom:shadowJar',
-  ':fabric:fabric_1.16:remapJar', ':forge:forge_1.16:shadowJar',
-  ':fabric:fabric_1.18:remapJar', ':forge:forge_1.18:shadowJar',
-  ':fabric:fabric_1.19:fabric_1.19.2:remapJar', ':forge:forge_1.19:forge_1.19.2:shadowJar',
-  ':fabric:fabric_1.19:fabric_1.19.4:remapJar', ':forge:forge_1.19:forge_1.19.4:shadowJar',
-  ':fabric:fabric_1.20:fabric_1.20.1:remapJar', ':forge:forge_1.20:forge_1.20.1:shadowJar',
-  ':fabric:fabric_1.20:fabric_1.20.4:remapJar', ':forge:forge_1.20:forge_1.20.4:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.4:assemble',
-  ':fabric:fabric_1.20:fabric_1.20.6:remapJar', ':forge:forge_1.20:forge_1.20.6:shadowJar', ':neoforge:neoforge_1.20:neoforge_1.20.6:assemble',
-  ':fabric:fabric_1.21:fabric_1.21.1:remapJar', ':forge:forge_1.21:forge_1.21.1:shadowJar', ':neoforge:neoforge_1.21:neoforge_1.21.1:assemble'
-].forEach { tasks.jar.mustRunAfter it }

@@ -1,10 +1,10 @@
+//file:noinspection GroovyAssignabilityCheck
 import static org.gradle.api.logging.LogLevel.INFO
 import static org.gradle.api.logging.LogLevel.QUIET
 
 /**
  * Common builds and sources relevant to all NeoForge modules. Based in 1.20.4
  */
-//file:noinspection GroovyAssignabilityCheck
 buildscript {
     repositories {
         gradlePluginPortal() {
@@ -39,7 +39,7 @@ buildscript {
     }
 }
 
-apply from: rootProject.file('gradle\\java17-module.gradle')
+apply from: rootProject.file('gradle\\scripts\\java17-module.gradle')
 
 plugins.apply 'xyz.wagyourtail.unimined'
 
@@ -52,7 +52,6 @@ unimined.minecraft {
     }
     neoForge {
         loader neoforge_1_20_4
-        runs.auth.username = minecraft_username
         runs.all {
             systemProperty 'foundation.verbose', 'true'
             return

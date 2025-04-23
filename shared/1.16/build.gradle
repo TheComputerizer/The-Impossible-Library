@@ -1,67 +1,116 @@
-/**
- * Shared implementations for anything based in 1.16. Compiles against Forge
- */
 //file:noinspection GroovyAssignabilityCheck
-buildscript {
-    repositories {
-        gradlePluginPortal() {
-            content {
-                plugin_portal_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'Forge'
-            url = uri 'https://maven.minecraftforge.net/'
-            content {
-                forge_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'ParchmentMC'
-            url = uri 'https://maven.parchmentmc.org'
-            content {
-                parchment_content.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-    }
-    dependencies {
-        classpath "$shadow_plugin:$shadow_version"
-        classpath "$forge_gradle_plugin:$forge_gradle_version"
-        classpath "$parchment_plugin:$parchment_plugin_version"
+
+/**
+ * Shared implementations for 1.16
+ */
+apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
+
+unimined.minecraft {
+    version minecraft_1_16_5
+    mappings {
+        mojmap()
+        devFallbackNamespace 'official'
     }
 }
 
-apply from: rootProject.file('gradle\\java8-module.gradle')
+unimined.minecraft(sourceSets.fabric) {
+    combineWith sourceSets.main
+    fabric {
+        loader fabric_loader
+        runs.all {
+            systemProperty 'foundation.verbose', 'true'
+            return
+        }
+    }
+}
 
-plugins.apply 'net.minecraftforge.gradle'
-plugins.apply 'org.parchmentmc.librarian.forgegradle'
+unimined.minecraft(sourceSets.forge) {
+    combineWith sourceSets.main
+    minecraftForge {
+        loader forge_1_16_5
+        runs.all {
+            systemProperty 'foundation.verbose', 'true'
+            return
+        }
+    }
+}
 
 def base = project ':api'
+def fabric_base = project ':fabric'
+def forge_base = project ':forge'
 def shared = project ':shared'
 
-minecraft {
-    mappings channel: 'parchment', version: "$parchment_1_16_5-$minecraft_1_16_5"
-}
-
-configurations {
-    dev {
-        canBeResolved = false
-        canBeConsumed = true
+repositories {
+    maven {
+        name = 'CurseMaven'
+        url = uri 'https://curse.cleanroommc.com/'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven {
+        name = 'BlameJared'
+        url = uri 'https://maven.blamejared.com'
+        content {
+            [ 'bookshelf', 'gamestages' ].forEach {
+                includeGroup "net.darkhax.$it"
+            }
+        }
+    }
+    maven {
+        name = 'Modding Legacy'
+        url = uri 'https://maven.moddinglegacy.com/maven'
+        content {
+            includeGroup 'com.legacy'
+        }
+    }
+    maven {
+        name = 'ModMaven'
+        url = uri 'https://modmaven.dev'
+        content {
+            includeGroup 'mezz.jei'
+        }
+    }
+    maven {
+        name 'Modrinth'
+        url = uri 'https://api.modrinth.com/maven'
+        content {
+            includeGroup 'maven.modrinth'
+        }
     }
 }
 
 dependencies {
-    //noinspection VulnerableLibrariesLocal
-    minecraft "$forge_mc:$forge_1_16_5"
+    //common dependencies
     compileOnlyApi base
     compileOnlyApi shared
+
+    //fabric dependencies
+    fabricCompileOnly project(path: ':fabric', configuration: 'dev')
+    buildModDependencies('fabric', '16_5').each {mod ->
+        fabricImplementation mod
+    }
+    fabricRuntimeOnly "$architectury_artifact:$architectury_fabric_1_16_5"
+    fabricRuntimeOnly "$rei_artifact:$rei_fabric_1_16_5"
+
+    //forge dependencies
+    forgeCompileOnly project(path: ':forge', configuration: 'dev')
+    buildModDependencies('forge', '16_5').each {mod ->
+        forgeImplementation mod
+    }
+    forgeRuntimeOnly "$jei_artifact:$jei_1_16_5"
 }
+
+jar {
+    manifest {
+        attributes([
+                'Implementation-Version': mod_version
+        ])
+    }
+    finalizedBy shadowJar
+    mustRunAfter ':shared:build'
+}
+
 
 processResources {
     from shared.processResources.outputs
@@ -71,11 +120,15 @@ processTestResources {
     from shared.processTestResources.outputs
 }
 
-jar {
-    setArchiveBaseName mod_id
-    dependsOn ':shared:build'
+shadowJar {
+    [ base, fabric_base, forge_base, shared ].forEach {
+        from(it.jar.archiveFile.collect { zipTree it })
+    }
+    shadowJar.finalizedBy remapJar
 }
 
-artifacts {
-    dev jar
+sourcesJar {
+    mustRunAfter ':shared:build'
 }
+
+tasks.assemble.dependsOn shadowJar

@@ -1,0 +1,101 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+//Setup project extension so builds that apply the script can actually call the functions
+ext.buildModDependencies = this.&buildModDependencies as MethodClosure
+ext.fabricVersion = this.&fabricVersion as MethodClosure
+ext.forgeVersion = this.&forgeVersion as MethodClosure
+ext.minecraftVersion = this.&minecraftVersion as MethodClosure
+ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
+ext.parchmentVersion = this.&parchmentVersion as MethodClosure
+ext.projectMCVersion = this.&projectMCVersion as MethodClosure
+ext.propertyString = this.&propertyString as MethodClosure
+ext.withMCVersion = this.&withMCVersion as MethodClosure
+
+String[] buildModDependencies(String loader, String version) {
+    String[] mods = propertyString("mod_support_${loader}_1_$version").split ';'
+    String[] ret = new String[mods.length]
+    for(int i=0;i<mods.length;i++) {
+        String mod = mods[i]
+        String separator = 'bookshelf'==mod || 'game_stages'==mod ? '-' : ':'
+        String versionQualifier = ''
+        switch(version) {
+            case '18_2': {
+                if('bookshelf'==mod || 'coroutil'==mod) versionQualifier = "${loader}_"
+                break
+            }
+            case '19_2': {
+                if('bookshelf'==mod) versionQualifier = "${loader}_"
+                break
+            }
+            case '19_4': {
+                if('bookshelf'==mod) versionQualifier = "${loader}_"
+                break
+            }
+            case '20_1': {
+                if('bookshelf'==mod || 'configured'==mod || 'glitchcore'==mod || 'serene_seasons'==mod)
+                    versionQualifier = "${loader}_"
+                break
+            }
+            case '20_4': {
+                if('bookshelf'==mod || 'configured'==mod || 'glitchcore'==mod || 'infernal_mobs'==mod ||
+                        'serene_seasons'==mod)
+                    versionQualifier = "${loader}_"
+                break
+            }
+            case '20_6': {
+                if('bookshelf'==mod || 'configured'==mod || 'glitchcore'==mod || 'infernal_mobs'==mod ||
+                        'serene_seasons'==mod)
+                    versionQualifier = "${loader}_"
+                break
+            }
+            case '21_1': {
+                if('bookshelf'==mod || 'configured'==mod || 'glitchcore'==mod || 'infernal_mobs'==mod ||
+                        'serene_seasons'==mod)
+                    versionQualifier = "${loader}_"
+                break
+            }
+        }
+        ret[i] = "${property("${mod}_artifact")}$separator${property("${mod}_${versionQualifier}1_$version")}"
+    }
+    return ret
+}
+
+String fabricVersion(Project project) {
+    return withMCVersion(project,'fabric')
+}
+
+String forgeVersion(Project project) {
+    return withMCVersion(project,'forge')
+}
+
+String minecraftVersion(Project project) {
+    return withMCVersion(project,'minecraft')
+}
+
+String neoforgeVersion(Project project) {
+    return withMCVersion(project,'neoforge')
+}
+
+String parchmentVersion(Project project) {
+    return withMCVersion(project,'parchment')
+}
+
+static String projectMCVersion(Project project) {
+    String mc_version = project.name.split('_').last().replace('.','_')
+    switch(mc_version) {
+        case '1_16': return '1_16_5'.toString()
+        case '1_18': return '1_18_2'
+        case '1_19': return '1_19_2'
+        case '1_20': return '1_20_1'
+        case '1_21': return '1_21_1'
+        default: return mc_version
+    }
+}
+
+String propertyString(String name) {
+    return String.valueOf(property(name))
+}
+
+String withMCVersion(Project project, String type) {
+    return propertyString("${type}_${projectMCVersion(project)}")
+}

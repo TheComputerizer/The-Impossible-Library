@@ -1,6 +1,6 @@
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
-apply from: rootProject.file('gradle\\shaded-deps.gradle')
+apply from: rootProject.file('gradle\\scripts\\shaded-deps.gradle')
 
 plugins.apply 'com.gradleup.shadow'
 

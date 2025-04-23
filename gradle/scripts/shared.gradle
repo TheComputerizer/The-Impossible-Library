@@ -4,6 +4,8 @@ plugins.apply 'idea'
 plugins.apply 'java'
 plugins.apply 'java-library'
 
+apply from: rootProject.file('gradle\\scripts\\functions.gradle')
+
 group = base_package
 version = mod_version
 
@@ -28,13 +30,13 @@ java {
     withJavadocJar()
 }
 
-processResources {
-    duplicatesStrategy = EXCLUDE
-}
-
 javadocJar {
     duplicatesStrategy = EXCLUDE
     setArchiveBaseName "$mod_id"
+}
+
+processResources {
+    duplicatesStrategy = EXCLUDE
 }
 
 sourcesJar {
