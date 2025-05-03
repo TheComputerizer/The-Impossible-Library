@@ -8,15 +8,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.MusicDiscItem;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.RecordItem;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
-import static net.minecraft.util.SoundEvents.EXPERIENCE_ORB_PICKUP;
+import static net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP;
 
 public class DiscBuilder1_16_5 extends DiscBuilderAPI {
     
@@ -25,7 +25,7 @@ public class DiscBuilder1_16_5 extends DiscBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        MusicDiscItem item = new TILDiscItem1_16_5(getSound(),buildProperties());
+        RecordItem item = new TILDiscItem1_16_5(getSound(),buildProperties());
         if(CoreAPI.isClient()) registerTextureProperties(item);
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
@@ -40,7 +40,7 @@ public class DiscBuilder1_16_5 extends DiscBuilderAPI {
     private void registerTextureProperties(Item item) {
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
-            net.minecraft.item.ItemModelsProperties.register(item,location,(stack,world,entity) ->
+            net.minecraft.client.renderer.item.ItemProperties.register(item,location,(stack,world,entity) ->
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }
     }

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.ShapeWidget;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 
@@ -14,7 +15,7 @@ public class RenderablePNG extends Renderable {
 
     protected final ShapeWidget texture;
 
-    public RenderablePNG(ResourceLocationAPI<?> source, Map<String, Object> parameters) throws IOException {
+    public RenderablePNG(ResourceLocationAPI<?> source, Map<String,Parameter<?>> parameters) throws IOException {
         super(parameters);
         if(!source.getPath().endsWith(".png"))
             throw new IOException("Tried to initialize a non png file to a png " +
@@ -24,8 +25,8 @@ public class RenderablePNG extends Renderable {
     }
     
     @Override public void pos(RenderContext ctx) {
-        this.texture.setX(getAllignmentX()+getParameterAs("x",0d));
-        this.texture.setY(getAllignmentY()+getParameterAs("y",0d));
+        this.texture.setX(getAllignmentX()+getParameterAsDouble("x",0d));
+        this.texture.setY(getAllignmentY()+getParameterAsDouble("y",0d));
     }
     
     protected void postRender(RenderAPI renderer) {

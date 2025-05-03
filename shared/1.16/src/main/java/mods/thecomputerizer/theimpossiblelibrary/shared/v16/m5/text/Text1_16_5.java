@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
-import static net.minecraft.util.text.TextFormatting.RESET;
+import static net.minecraft.ChatFormatting.RESET;
 
 public abstract class Text1_16_5 implements TextAPI<Style> {
     
@@ -14,11 +14,11 @@ public abstract class Text1_16_5 implements TextAPI<Style> {
         return applied.endsWith(resetStr) ? applied.substring(0,applied.length()-resetStr.length()) : applied;
     }
     
-    @SuppressWarnings("unchecked") @Override public ITextComponent getAsComponent() {
+    @SuppressWarnings("unchecked") @Override public Component getAsComponent() {
         return getComponent();
     }
     
-    public abstract ITextComponent getComponent();
+    public abstract Component getComponent();
     
     @Override public String toString() {
         return getAppliedNoReset();

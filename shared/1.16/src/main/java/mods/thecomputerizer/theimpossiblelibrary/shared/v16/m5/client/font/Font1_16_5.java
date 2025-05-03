@@ -1,17 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.font;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.network.chat.Component;
 
-import static net.minecraft.util.text.TextFormatting.RESET;
+import static net.minecraft.ChatFormatting.RESET;
 
-public class Font1_16_5 extends FontAPI<FontRenderer> {
+public class Font1_16_5 extends FontAPI<Font> {
     
     public Font1_16_5() {
         super(mc -> ((Minecraft)mc.unwrap()).font);
@@ -24,7 +24,8 @@ public class Font1_16_5 extends FontAPI<FontRenderer> {
     
     @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
             Object source, boolean transparent, int bgColor, int light) {
-        getWrapped().drawInBatch((ITextComponent)text,x,y,color,shadow,(Matrix4f)matrix,(IRenderTypeBuffer)source,
+        
+        getWrapped().drawInBatch((Component)text,x,y,color,shadow,(Matrix4f)matrix,(MultiBufferSource)source,
                                  transparent,bgColor,light);
     }
     
@@ -41,8 +42,8 @@ public class Font1_16_5 extends FontAPI<FontRenderer> {
         return getWrapped().lineHeight;
     }
     
-    protected MatrixStack getMatrix(RenderAPI renderer) {
-        return (MatrixStack)renderer.getMatrix();
+    protected PoseStack getMatrix(RenderAPI renderer) {
+        return (PoseStack)renderer.getMatrix();
     }
     
     @Override public int getStringWidth(String str) {
@@ -50,7 +51,7 @@ public class Font1_16_5 extends FontAPI<FontRenderer> {
     }
     
     @Override public String trimStringTo(String str, int width, boolean withReset) {
-        String trimmed = getWrapped().plainSubstrByWidth(str, width);
+        String trimmed = getWrapped().plainSubstrByWidth(str,width);
         String reset = RESET.toString();
         return !withReset && trimmed.endsWith(reset) ? trimmed.substring(0,trimmed.length()-reset.length()) : trimmed;
     }

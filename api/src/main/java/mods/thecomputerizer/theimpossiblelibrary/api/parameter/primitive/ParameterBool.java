@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class ParameterBool extends Parameter<Boolean> {
 
@@ -21,6 +22,15 @@ public class ParameterBool extends Parameter<Boolean> {
         ParameterBool copy = new ParameterBool(this.defaultValue);
         copy.value = this.value;
         return copy;
+    }
+    
+    @Override public boolean getAsBoolean(String name) {
+        return this.value;
+    }
+    
+    @Override protected <V extends Number> V getAsNumber(@Nullable Object value, Function<Number,V> fromNumber,
+            Function<String,V> fromString) {
+        return fromNumber.apply(this.value ? 1 : 0);
     }
     
     @Override public boolean isBool() {

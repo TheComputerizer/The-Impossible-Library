@@ -1,14 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.TILParameterMap;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
-public abstract class Renderable {
+public abstract class Renderable implements TILParameterMap {
 
-    private final Map<String,Object> parameters;
+    private final Map<String,Parameter<?>> parameters;
     private long totalTimer;
     private long maxFadeIn;
     private long fadeInTimer;
@@ -18,7 +18,7 @@ public abstract class Renderable {
     /**
      * Preload a renderable object with parameters.
      */
-    public Renderable(Map<String, Object> parameters) {
+    public Renderable(Map<String,Parameter<?>> parameters) {
         this.parameters = parameters;
     }
     
@@ -27,52 +27,48 @@ public abstract class Renderable {
     }
     
     protected double getAllignmentX() {
-        String alignment = getParameterAs("horizontal_alignment","center");
+        String alignment = getParameterAsString("horizontal_alignment","center");
         return "center".equals(alignment) ? 0d : ("right".equals(alignment) ? 1d : -1d);
     }
     
     protected double getAllignmentY() {
-        String alignment = getParameterAs("vertical_alignment","center");
+        String alignment = getParameterAsString("vertical_alignment","center");
         return "center".equals(alignment) ? 0d : ("top".equals(alignment) ? 1d : -1d);
     }
     
     public float getOpacity() {
-        float def = getParameterAs("opacity",1f);
+        float def = getParameterAsFloat("opacity",1f);
         if(this.fadeInTimer>0) return def*(1-(((float)this.fadeInTimer)/((float)this.maxFadeIn)));
         if(this.fadeOutTimer<this.maxFadeOut) return def*(((float)this.fadeOutTimer)/((float)this.maxFadeOut));
         return def;
     }
-
-    /**
-     * Gets parameter by name and tries to cast it to whatever the default input is. The default is returned if the
-     * parameter name does not exist or the cast fails. Note that you must input both the default value and the class
-     * of the default value separately for the cast to work properly
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T getParameterAs(String name, T defVal) {
-        try {
-            T casted = GenericUtils.castGenericType(this.parameters.get(name),(Class<T>)defVal.getClass());
-            return Objects.nonNull(casted) ? casted : defVal;
-        } catch(ClassCastException | NumberFormatException ex) {
-            TILRef.logDebug("Failed to parse value from parameter with name {}!",name,ex);
-        }
-        return defVal;
+    
+    @Override public Parameter<?> getParameter(String name) {
+        return this.parameters.get(name);
     }
     
     public void initializeTimers() {
-        this.totalTimer = getParameterAs("time",100L);
-        this.maxFadeIn = getParameterAs("fade_in",20L);
-        this.fadeInTimer = getParameterAs("fade_in",20L);
-        this.maxFadeOut = getParameterAs("fade_out",20L);
-        this.fadeOutTimer = getParameterAs("fade_out",20L);
+        this.totalTimer = getParameterAsLong("time",100L);
+        this.maxFadeIn = getParameterAsLong("fade_in",20L);
+        this.fadeInTimer = getParameterAsLong("fade_in",20L);
+        this.maxFadeOut = getParameterAsLong("fade_out",20L);
+        this.fadeOutTimer = getParameterAsLong("fade_out",20L);
+    }
+    
+    @Override public Collection<String> keys() {
+        return this.parameters.keySet();
+    }
+    
+    @Override public Collection<Parameter<?>> parameters() {
+        return this.parameters.values();
     }
     
     public abstract void pos(RenderContext ctx);
     
     public void scale(RenderContext ctx) {
         double smallerScale = ctx.getScale().getSmallerDimensionScale();
-        float x = (float)(getParameterAs("scale_x",1d)*0.25d*(ctx.isWide() ? smallerScale : 1d));
-        float y = (float)(getParameterAs("scale_y",1d)*0.25d*(ctx.isWide() ? 1d : smallerScale));
+        float x = (float)(getParameterAsDouble("scale_x",1d)*0.25d*(ctx.isWide() ? smallerScale : 1d));
+        float y = (float)(getParameterAsDouble("scale_y",1d)*0.25d*(ctx.isWide() ? 1d : smallerScale));
         ctx.getRenderer().scale(x,y,1f);
         translateScaled(ctx,x,y);
     }
@@ -92,7 +88,7 @@ public abstract class Renderable {
     
     public boolean tick() {
         if(this.totalTimer<=0) {
-            if(getParameterAs("loop",false)) {
+            if(getParameterAsBoolean("loop",false)) {
                 initializeTimers();
                 return true;
             }

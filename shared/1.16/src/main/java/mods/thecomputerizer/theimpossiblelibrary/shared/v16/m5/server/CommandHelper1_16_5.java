@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
-import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.commands.arguments.EntityArgument;
 
 public class CommandHelper1_16_5 extends CommandHelperAPI { //TODO Arg names?
 

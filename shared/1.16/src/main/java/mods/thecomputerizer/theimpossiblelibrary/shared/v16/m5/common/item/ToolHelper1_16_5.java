@@ -1,14 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolHelperAPI;
-import net.minecraft.item.ItemTier;
+import net.minecraft.world.item.Tier;
 
-import static net.minecraft.item.ItemTier.*;
+import static net.minecraft.world.item.Tiers.*;
 
 public class ToolHelper1_16_5 implements ToolHelperAPI {
     
     @Override public ToolTier1_16_5 getTier(String name) {
-        ItemTier tier = WOOD;
+        Tier tier = WOOD;
         switch(name.toUpperCase()) {
             case "STONE": {
                 tier = STONE;

@@ -10,12 +10,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 
 import java.io.IOException;
 
-import static net.minecraft.nbt.NBTSizeTracker.UNLIMITED;
+import static net.minecraft.nbt.NbtAccounter.UNLIMITED;
 
 public abstract class Network1_16_5<N,DIR> implements NetworkAPI<N,DIR> {
 
@@ -25,7 +25,7 @@ public abstract class Network1_16_5<N,DIR> implements NetworkAPI<N,DIR> {
     
     @Override public CompoundTagAPI<?> readTag(ByteBuf buf) {
         try(ByteBufInputStream stream = new ByteBufInputStream(buf)) {
-            TagHelper.getWrapped(CompressedStreamTools.read(stream,UNLIMITED));
+            TagHelper.getWrapped(NbtIo.read(stream,UNLIMITED));
         } catch(IOException ex) {
             TILRef.logError("Failed to write tag to buffer",ex);
         }
@@ -34,7 +34,7 @@ public abstract class Network1_16_5<N,DIR> implements NetworkAPI<N,DIR> {
     
     @Override public void writeTag(ByteBuf buf, CompoundTagAPI<?> tag) {
         try(ByteBufOutputStream stream = new ByteBufOutputStream(buf)) {
-            CompressedStreamTools.write((CompoundNBT)tag.getWrapped(), stream);
+            NbtIo.write((CompoundTag)tag.getWrapped(), stream);
         } catch(IOException ex) {
             TILRef.logError("Failed to write tag to buffer",ex);
         }

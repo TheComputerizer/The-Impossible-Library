@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.PrimitiveTagAPI;
-import net.minecraft.nbt.NumberNBT;
+import net.minecraft.nbt.NumericTag;
 
-public class PrimitiveTag1_16_5 extends PrimitiveTagAPI<NumberNBT> {
+public class PrimitiveTag1_16_5 extends PrimitiveTagAPI<NumericTag> {
 
-    public PrimitiveTag1_16_5(NumberNBT tag) {
+    public PrimitiveTag1_16_5(NumericTag tag) {
         super(tag);
     }
 

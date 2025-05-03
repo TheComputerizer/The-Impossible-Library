@@ -7,41 +7,41 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Objects;
 
-public class BlockEntity1_16_5 extends BlockEntityAPI<TileEntity,TileEntityType<?>> {
+public class BlockEntity1_16_5 extends BlockEntityAPI<BlockEntity,BlockEntityType<?>> {
     
     /**
      * Assumes the input object will never be null
      */
     public static BlockEntity1_16_5 entity(Object tile) {
-        return new BlockEntity1_16_5((TileEntity)tile);
+        return new BlockEntity1_16_5((BlockEntity)tile);
     }
     
     /**
      * Assumes the input object will never be null
      */
     public static BlockEntity1_16_5 get(Object obj) {
-        return obj instanceof TileEntity ? entity(obj) : type(obj);
+        return obj instanceof BlockEntity ? entity(obj) : type(obj);
     }
     
     /**
      * Assumes the input object will never be null
      */
     public static BlockEntity1_16_5 type(Object type) {
-        return new BlockEntity1_16_5((TileEntityType<?>)type);
+        return new BlockEntity1_16_5((BlockEntityType<?>)type);
     }
     
-    BlockEntity1_16_5(TileEntity tile) {
+    BlockEntity1_16_5(BlockEntity tile) {
         super(tile,tile.getType());
     }
 
-    BlockEntity1_16_5(TileEntityType<?> type) {
+    BlockEntity1_16_5(BlockEntityType<?> type) {
         super(null,type);
     }
     
@@ -54,7 +54,7 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<TileEntity,TileEntityType<
     }
     
     @Override public CompoundTagAPI<?> readTagFrom() {
-        return new CompoundTag1_16_5(Objects.nonNull(this.entity) ? this.entity.serializeNBT() : new CompoundNBT());
+        return new CompoundTag1_16_5(Objects.nonNull(this.entity) ? this.entity.getUpdateTag() : new CompoundTag());
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

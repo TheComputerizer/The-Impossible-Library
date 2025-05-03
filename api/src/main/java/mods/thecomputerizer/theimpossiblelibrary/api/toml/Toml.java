@@ -6,6 +6,8 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.ParameterHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.toml.TomlReader.TableBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
@@ -701,6 +703,12 @@ import java.util.Map.Entry;
         return this.tables.containsKey(name);
     }
     
+    public Map<String,Parameter<?>> parameterizeEntries() {
+        Map<String,Parameter<?>> map =  new LinkedHashMap<>(); //Preserve insertion order
+        for(TomlEntry<?> entry : this.entries.values()) map.put(entry.key,entry.parameterize());
+        return map;
+    }
+    
     /**
      Removes all tables with the given name regardless of whether they are singular or in an array
      */
@@ -936,6 +944,10 @@ import java.util.Map.Entry;
         public void clearCommentsMatching(String toMatch, Matching ... matchers) {
             this.comments = ArrayHelper.removeMatching(this.comments,toMatch,comment ->
                     Matching.matchesAny(comment,toMatch,matchers));
+        }
+        
+        Parameter<?> parameterize() {
+            return ParameterHelper.parameterize(this.value.getClass(),this.value);
         }
         
         void setComments(List<String> comments) {

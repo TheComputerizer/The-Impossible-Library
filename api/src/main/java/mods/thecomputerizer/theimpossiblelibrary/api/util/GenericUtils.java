@@ -216,11 +216,14 @@ public class GenericUtils {
         return defaultValue;
     }
     
-    public static Object parsePrimitive(String unparsed, Class<?> valType) {
-        if(valType==void.class || valType==Void.class) return null;
-        if(valType==boolean.class || valType==Boolean.class) return Boolean.parseBoolean(unparsed);
+    @SuppressWarnings("unchecked")
+    public static <V> V parsePrimitive(String unparsed, Class<V> valType) {
+        Object ret = null;
+        if(valType!=void.class && valType!=Void.class)
+            ret = valType==boolean.class || valType==Boolean.class ? Boolean.parseBoolean(unparsed) :
+                    parseNumber(unparsed,valType);
         //Every other primitive type is a number
-        return parseNumber(unparsed,valType);
+        return (V)ret;
     }
 
     private static List<?> readFromList(ListTagAPI<?> list) {

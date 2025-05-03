@@ -2,24 +2,24 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.entity;
 
 import com.mojang.authlib.GameProfile;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity.Player1_16_5;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.client.network.play.NetworkPlayerInfo;
-import net.minecraft.world.GameType;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.level.GameType;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
-import static net.minecraft.world.GameType.NOT_SET;
+import static net.minecraft.world.level.GameType.NOT_SET;
 
-public class ClientPlayer1_16_5 extends Player1_16_5<ClientPlayerEntity> {
+public class ClientPlayer1_16_5 extends Player1_16_5<LocalPlayer> {
     
     public ClientPlayer1_16_5(Object player) {
         super(player);
     }
     
-    private GameType getGamemode(@Nullable ClientPlayNetHandler handler, GameProfile profile) {
-        NetworkPlayerInfo info = Objects.nonNull(handler) ? handler.getPlayerInfo(profile.getId()) : null;
+    private GameType getGamemode(@Nullable ClientPacketListener handler, GameProfile profile) {
+        PlayerInfo info = Objects.nonNull(handler) ? handler.getPlayerInfo(profile.getId()) : null;
         GameType type = Objects.nonNull(info) ? info.getGameMode() : null;
         return Objects.nonNull(type) ? type : NOT_SET;
     }

@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ToolTierAPI;
-import net.minecraft.item.ItemTier;
+import net.minecraft.world.item.Tier;
 
-public class ToolTier1_16_5 extends ToolTierAPI<ItemTier> {
+public class ToolTier1_16_5 extends ToolTierAPI<Tier> {
     
-    public ToolTier1_16_5(ItemTier tier) {
+    public ToolTier1_16_5(Tier tier) {
         super(tier);
     }
     

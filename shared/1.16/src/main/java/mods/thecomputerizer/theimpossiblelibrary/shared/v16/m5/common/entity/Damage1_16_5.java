@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class Damage1_16_5 extends DamageAPI {
     

@@ -2,19 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import org.jetbrains.annotations.Nullable;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI.ZERO;
 
-@ParametersAreNonnullByDefault
 public class TILBlockEntityProvider1_16_5 extends TILBasicBlock1_16_5 {
     
     public static TILBlockEntityProvider1_16_5 tileFrom(BlockProperties properties) {
@@ -27,8 +24,9 @@ public class TILBlockEntityProvider1_16_5 extends TILBasicBlock1_16_5 {
         super(vanillaProperties,properties);
     }
     
-    @Override public @Nullable TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return (TileEntity)this.properties.createBlockEntity(world instanceof IWorld ? WrapperHelper.wrapWorld(world) : null,
+    @Override public @Nullable BlockEntity createTileEntity(BlockState state, BlockGetter world) {
+        BlockEntity
+        return (BlockEntity)this.properties.createBlockEntity(world instanceof LevelAccessor ? WrapperHelper.wrapWorld(world) : null,
                                                              ZERO,WrapperHelper.wrapState(state)).getEntity();
     }
     

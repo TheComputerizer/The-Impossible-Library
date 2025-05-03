@@ -11,25 +11,25 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
-import net.minecraft.command.impl.data.EntityDataAccessor;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.commands.data.EntityDataAccessor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static net.minecraft.entity.ai.brain.memory.MemoryModuleType.ATTACK_TARGET;
+import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET;
 
 public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
@@ -42,7 +42,7 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     }
     
     @Override public boolean canTarget() {
-        return this.entity instanceof MobEntity;
+        return this.entity instanceof Mob;
     }
     
     @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
@@ -52,7 +52,7 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public EntityAPI<?,?> getAttackTarget() {
         if(!canTarget()) return null;
-        MobEntity mob = (MobEntity)this.entity;
+        Mob mob = (Mob)this.entity;
         if(mob.getBrain().hasMemoryValue(ATTACK_TARGET))
             return WrapperHelper.wrapEntity(mob.getBrain().getMemory(ATTACK_TARGET).orElse(null));
         return WrapperHelper.wrapEntity(mob.getTarget());
@@ -62,12 +62,12 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
         return Objects.nonNull(this.entity) ? getBoundingBox(this.entity.getBoundingBox()) : null;
     }
     
-    protected Box getBoundingBox(AxisAlignedBB box) {
+    protected Box getBoundingBox(AABB box) {
         return new Box(box.minX,box.minY,box.minZ,box.maxX,box.maxY,box.maxZ);
     }
     
     @Override public CompoundTagAPI<?> getData() {
-        CompoundNBT tag = new CompoundNBT();
+        CompoundTag tag = new CompoundTag();
         if(Objects.nonNull(this.entity)) tag = new EntityDataAccessor(this.entity).getData();
         return new CompoundTag1_16_5(tag);
     }
@@ -110,11 +110,11 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     }
     
     @Override public boolean isAnimal() {
-        return this.entity instanceof AnimalEntity;
+        return this.entity instanceof Animal;
     }
     
     @Override public boolean isHostile() {
-        return this.entity instanceof IMob;
+        return this.entity instanceof Enemy;
     }
     
     @Override public boolean isLiving() {
@@ -122,11 +122,11 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     }
     
     @Override public boolean isPlayer() {
-        return this.entity instanceof PlayerEntity;
+        return this.entity instanceof Player;
     }
     
     @Override public boolean isOwnedBy(EntityAPI<?,?> owner) {
-        return this.entity instanceof TameableEntity && ((TameableEntity)this.entity).getOwner()==this.entity;
+        return this.entity instanceof TamableAnimal && ((TamableAnimal)this.entity).getOwner()==this.entity;
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

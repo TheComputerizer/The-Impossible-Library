@@ -3,17 +3,17 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.container
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.world.entity.player.Inventory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlayerInventory1_16_5 extends PlayerInventoryAPI<PlayerInventory> {
+public class PlayerInventory1_16_5 extends PlayerInventoryAPI<Inventory> {
     
     public PlayerInventory1_16_5(Object inventory) {
-        super((PlayerInventory)inventory);
+        super((Inventory)inventory);
     }
     
     @Override public Collection<ItemStackAPI<?>> getArmorStacks() {

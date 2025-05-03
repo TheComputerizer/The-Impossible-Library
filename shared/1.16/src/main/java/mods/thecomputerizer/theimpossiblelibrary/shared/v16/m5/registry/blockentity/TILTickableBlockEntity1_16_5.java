@@ -2,17 +2,17 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.blocken
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class TILTickableBlockEntity1_16_5 extends TILBasicBlockEntity1_16_5 implements ITickableTileEntity {
+public class TILTickableBlockEntity1_16_5 extends TILBasicBlockEntity1_16_5 implements TickableBlockEntity {
     
     protected final Consumer<BlockEntityAPI<?,?>> onTick;
     
-    public TILTickableBlockEntity1_16_5(TileEntityType<?> type, Consumer<BlockEntityAPI<?,?>> onTick) {
+    public TILTickableBlockEntity1_16_5(BlockEntityType<?> type, Consumer<BlockEntityAPI<?,?>> onTick) {
         super(type);
         this.onTick = onTick;
     }

@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.sound;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 
 public class SoundEvent1_16_5 extends SoundEventAPI<SoundEvent> {
 

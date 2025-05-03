@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class ParameterString extends Parameter<String> {
 
@@ -21,6 +22,15 @@ public class ParameterString extends Parameter<String> {
         ParameterString copy = new ParameterString(this.defaultValue);
         copy.value = this.value;
         return copy;
+    }
+    
+    @Override protected <V extends Number> V getAsNumber(@Nullable Object value, Function<Number,V> fromNumber,
+            Function<String,V> fromString) {
+        return fromString.apply(this.value);
+    }
+    
+    @Override public String getAsString() {
+        return this.value;
     }
     
     @Override public boolean isBool() {

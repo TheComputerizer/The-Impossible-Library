@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class RenderHelper {
         return Objects.nonNull(ctx) ? ctx.getScaledStringWidth(str) : 0d;
     }
 
-    public static RenderablePNG initPNG(ResourceLocationAPI<?> source, Map<String,Object> parameters) {
+    public static RenderablePNG initPNG(ResourceLocationAPI<?> source, Map<String,Parameter<?>> parameters) {
         try {
             boolean isAnimated = parameters.containsKey("animated") && Boolean.parseBoolean(parameters.get("animated").toString());
             return isAnimated ? new RenderableAnimated(source,parameters) : new RenderablePNG(source,parameters);

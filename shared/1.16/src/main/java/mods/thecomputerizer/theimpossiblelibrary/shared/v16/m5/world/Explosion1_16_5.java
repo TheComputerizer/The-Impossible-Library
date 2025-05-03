@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
-import net.minecraft.world.Explosion;
+import net.minecraft.world.level.Explosion;
 
 public class Explosion1_16_5 extends ExplosionAPI<Explosion> {
     

@@ -6,12 +6,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
-import static net.minecraft.util.SoundEvents.UI_BUTTON_CLICK;
+import static net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK;
 
 public class ScreenHelper1_16_5 implements ScreenHelperAPI {
     

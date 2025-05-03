@@ -1,23 +1,23 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextStringAPI;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.Objects;
 
 public class TextString1_16_5 extends Text1_16_5 implements TextStringAPI<Style> {
     
     private final TextHelper1_16_5 helper;
-    private final IFormattableTextComponent component;
+    private final MutableComponent component;
     private final String original;
     
     public TextString1_16_5(TextHelper1_16_5 helper, String original) {
         this.helper = helper;
         if(Objects.isNull(original)) original = "";
         this.original = original;
-        this.component = new StringTextComponent(original);
+        this.component = new TextComponent(original);
     }
     
     @Override public String getApplied() {
@@ -32,7 +32,7 @@ public class TextString1_16_5 extends Text1_16_5 implements TextStringAPI<Style>
         return this.original;
     }
     
-    @Override public IFormattableTextComponent getComponent() {
+    @Override public MutableComponent getComponent() {
         return this.component;
     }
     

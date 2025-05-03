@@ -16,35 +16,35 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.biome.Biome1_16_5;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructureManager;
-import net.minecraft.world.raid.Raid;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.StructureFeatureManager;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static net.minecraft.world.LightType.BLOCK;
-import static net.minecraft.world.LightType.SKY;
+import static net.minecraft.world.level.LightLayer.BLOCK;
+import static net.minecraft.world.level.LightLayer.SKY;
 
-public class World1_16_5 extends WorldAPI<IWorld> {
+public class World1_16_5 extends WorldAPI<LevelAccessor> {
     
     public World1_16_5(Object world) {
-        super((IWorld)world);
+        super((LevelAccessor)world);
     }
     
     @Override public boolean canSnowAt(BlockPosAPI<?> api) {
@@ -60,9 +60,9 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     
     @Override public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
         List<BlockEntityAPI<?,?>> entities = new ArrayList<>();
-        if(this.wrapped instanceof World) {
+        if(this.wrapped instanceof Level) {
             synchronized(this.wrapped) {
-                for(TileEntity tile : ((World)this.wrapped).blockEntityList) {
+                for(BlockEntity tile : ((Level)this.wrapped).blockEntityList) {
                     BlockPos pos = tile.getBlockPos();
                     if(box.isInside(pos.getX(),pos.getY(),pos.getZ()))
                         entities.add(WrapperHelper.wrapBlockEntity(tile));
@@ -73,7 +73,7 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos) {
-        TileEntity tile = this.wrapped.getBlockEntity(pos.unwrap());
+        BlockEntity tile = this.wrapped.getBlockEntity(pos.unwrap());
         return Objects.nonNull(tile) ? WrapperHelper.wrapBlockEntity(tile) : null;
     }
 
@@ -97,12 +97,12 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
-        return getEntitiesInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
+        return getEntitiesInBox(new AABB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
     
     private List<EntityAPI<?,?>> getEntitiesInBox(Object box) {
         List<EntityAPI<?,?>> entities = new ArrayList<>();
-        for(Entity entity : this.wrapped.getEntitiesOfClass(Entity.class, (AxisAlignedBB)box))
+        for(Entity entity : this.wrapped.getEntitiesOfClass(Entity.class,(AABB)box))
             entities.add(WrapperHelper.wrapEntity(entity));
         return entities;
     }
@@ -120,12 +120,12 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
-        return getLivingInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
+        return getLivingInBox(new AABB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
     
     private List<LivingEntityAPI<?,?>> getLivingInBox(Object box) {
         List<LivingEntityAPI<?,?>> entities = new ArrayList<>();
-        for(LivingEntity entity : this.wrapped.getEntitiesOfClass(LivingEntity.class, (AxisAlignedBB)box))
+        for(LivingEntity entity : this.wrapped.getEntitiesOfClass(LivingEntity.class,(AABB)box))
             entities.add(WrapperHelper.wrapLivingEntity(entity));
         return entities;
     }
@@ -135,7 +135,7 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     private Raid getRaid(BlockPosAPI<?> pos) {
-        return this.wrapped.isClientSide() ? null : ((ServerWorld)this.wrapped).getRaidAt(pos.unwrap());
+        return this.wrapped.isClientSide() ? null : ((ServerLevel)this.wrapped).getRaidAt(pos.unwrap());
     }
     
     @Override public @Nullable String getRaidStatus(BlockPosAPI<?> pos) {
@@ -158,11 +158,11 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public StructureAPI<?> getStructureAt(BlockPosAPI<?> api) {
-        if(this.wrapped instanceof ServerWorld) {
-            StructureManager manager = ((ServerWorld)this.wrapped).structureFeatureManager();
+        if(this.wrapped instanceof ServerLevel) {
+            StructureFeatureManager manager = ((ServerLevel)this.wrapped).structureFeatureManager();
             BlockPos pos = api.unwrap();
             for(Object structure : RegistryHelper.getStructureRegistry().getValues())
-                if(manager.getStructureAt(pos,false,(Structure<?>)structure).isValid())
+                if(manager.getStructureAt(pos,false,(StructureFeature<?>)structure).isValid())
                     return WrapperHelper.wrapStructure(structure);
         }
         return null;
@@ -181,15 +181,15 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public boolean isDaytime() {
-        return this.wrapped instanceof World && getTimeDay()<13000L;
+        return this.wrapped instanceof Level && getTimeDay()<13000L;
     }
     
     @Override public boolean isNighttime() {
-        return this.wrapped instanceof World && getTimeDay()>=13000L;
+        return this.wrapped instanceof Level && getTimeDay()>=13000L;
     }
     
     @Override public boolean isRaining() {
-        return this.wrapped instanceof World && ((World)this.wrapped).isRaining();
+        return this.wrapped instanceof Level && ((Level)this.wrapped).isRaining();
     }
     
     @Override public boolean isSkyVisible(BlockPosAPI<?> pos) {
@@ -197,7 +197,7 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public boolean isStorming() {
-        return this.wrapped instanceof World && ((World)this.wrapped).isThundering();
+        return this.wrapped instanceof Level && ((Level)this.wrapped).isThundering();
     }
 
     @Override public boolean isSunrise() {
@@ -221,15 +221,14 @@ public class World1_16_5 extends WorldAPI<IWorld> {
     }
     
     @Override public void spawnItem(ItemStackAPI<?> stack, Vector3 pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
-        if(this.wrapped instanceof World && !this.wrapped.isClientSide()) {
-            ItemEntity item = new ItemEntity((World)this.wrapped,pos.dX(),pos.dY(),pos.dZ(),stack.unwrap());
+        if(this.wrapped instanceof Level && !this.wrapped.isClientSide()) {
+            ItemEntity item = new ItemEntity((Level)this.wrapped,pos.dX(),pos.dY(),pos.dZ(),stack.unwrap());
             item.setDefaultPickUpDelay();
             spawnEntity(WrapperHelper.wrapEntity(item),onSpawn);
         }
     }
     
-    @Override public void spawnItem(
-            ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
+    @Override public void spawnItem(ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
         if(!this.wrapped.isClientSide()) {
             ItemStackAPI<?> stack = WrapperHelper.wrapItemStack(new ItemStack(api.unwrap()));

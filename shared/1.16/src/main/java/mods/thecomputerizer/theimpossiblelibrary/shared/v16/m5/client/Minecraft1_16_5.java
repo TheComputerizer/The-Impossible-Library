@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client;
 
+import com.mojang.blaze3d.platform.Window;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
@@ -10,22 +11,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.font.Font1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.render.Render1_16_5;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
-import static net.minecraft.util.math.RayTraceResult.Type.BLOCK;
+import static net.minecraft.world.phys.HitResult.Type.BLOCK;
 
 public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     
@@ -59,31 +59,31 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
         return WrapperHelper.wrapPlayer(this.wrapped.player);
     }
     
-    private @Nullable RayTraceResult getTarget() {
+    private @Nullable HitResult getTarget() {
         return Objects.nonNull(this.wrapped) ? this.wrapped.hitResult : null;
     }
     
     @Override public @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
-        RayTraceResult target = getTarget();
-        if(target instanceof BlockRayTraceResult && target.getType()==BLOCK) {
-            BlockPos pos = ((BlockRayTraceResult)target).getBlockPos();
-            World world = this.wrapped.level;
+        HitResult target = getTarget();
+        if(target instanceof BlockHitResult && target.getType()==BLOCK) {
+            BlockPos pos = ((BlockHitResult)target).getBlockPos();
+            Level world = this.wrapped.level;
             return Objects.nonNull(world) ? WrapperHelper.wrapBlockEntity(world.getBlockEntity(pos)) : null;
         }
         return null;
     }
     
     @Override public @Nullable EntityAPI<?,?> getTargetEntity() {
-        RayTraceResult target = getTarget();
-        return target instanceof EntityRayTraceResult ?
-                WrapperHelper.wrapEntity(((EntityRayTraceResult)target).getEntity()) : null;
+        HitResult target = getTarget();
+        return target instanceof EntityHitResult ?
+                WrapperHelper.wrapEntity(((EntityHitResult)target).getEntity()) : null;
     }
     
     /**
      * TODO Cache this?
      */
     @Override public MinecraftWindow getWindow() {
-        MainWindow window = Objects.nonNull(this.wrapped) ? this.wrapped.getWindow() : null;
+        Window window = Objects.nonNull(this.wrapped) ? this.wrapped.getWindow() : null;
         if(Objects.isNull(window)) {
             TILRef.logFatal("Unable to get MinecraftWindow since the Minecraft main window is null?");
             return new MinecraftWindow(1d,1d,0);

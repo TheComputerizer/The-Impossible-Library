@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.spawn;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 
 public class SpawnEntry1_16_5 extends SpawnEntryAPI<LivingEntity> { //TODO
 

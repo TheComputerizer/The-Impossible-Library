@@ -6,17 +6,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.Entity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class CommandSender1_16_5 extends CommandSenderAPI<CommandContext<CommandSource>> {
+public class CommandSender1_16_5 extends CommandSenderAPI<CommandContext<CommandSourceStack>> {
 
     @SuppressWarnings("unchecked")
     public CommandSender1_16_5(Object context) {
-        super((CommandContext<CommandSource>)context);
+        super((CommandContext<CommandSourceStack>)context);
     }
     
     @Override public @Nullable EntityAPI<?,?> getEntity() {

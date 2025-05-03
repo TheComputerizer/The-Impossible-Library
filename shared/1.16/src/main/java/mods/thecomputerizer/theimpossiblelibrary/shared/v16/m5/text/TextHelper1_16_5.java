@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
-import net.minecraft.util.text.Style;
+import net.minecraft.network.chat.Style;
 
 public class TextHelper1_16_5 implements TextHelperAPI<Style> {
 

@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
 public class Block1_16_5 extends BlockAPI<Block> {
 

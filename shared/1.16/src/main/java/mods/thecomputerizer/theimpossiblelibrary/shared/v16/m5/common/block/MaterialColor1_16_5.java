@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialColorAPI;
-import net.minecraft.block.material.MaterialColor;
+import net.minecraft.world.level.material.MaterialColor;
 
 public class MaterialColor1_16_5 extends MaterialColorAPI<MaterialColor> {
     

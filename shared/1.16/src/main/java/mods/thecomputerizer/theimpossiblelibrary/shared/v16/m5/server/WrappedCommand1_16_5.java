@@ -20,21 +20,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.commands.CommandRuntimeException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.EntityArgument;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
-@ParametersAreNonnullByDefault
 public class WrappedCommand1_16_5 {
 
-    public static int execute(CommandContext<CommandSource> ctx, CommandAPI wrapped) throws CommandException {
+    public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandRuntimeException {
         wrapped.prepareExceptionInfo();
         String exKey = wrapped.getExceptionKey();
         exKey = Objects.nonNull(exKey) ? exKey : "";
@@ -45,12 +43,12 @@ public class WrappedCommand1_16_5 {
             return 1;
         } catch(Exception ex) {
             TILRef.logError("Caught exception for command {}! Rethrowing as CommandException",wrapped.getRootName(),ex);
-            throw new CommandException(TextHelper.getTranslated(exKey,exArgs).getAsComponent());
+            throw new CommandRuntimeException(TextHelper.getTranslated(exKey,exArgs).getAsComponent());
         }
     }
 
-    private static ArgumentBuilder<CommandSource,?> getArg(CommandAPI command) {
-        ArgumentBuilder<CommandSource,?> arg = getBuilder(command);
+    private static ArgumentBuilder<CommandSourceStack,?> getArg(CommandAPI command) {
+        ArgumentBuilder<CommandSourceStack,?> arg = getBuilder(command);
         for(CommandAPI subcmd : command.getSubCommands()) arg.then(getArg(subcmd));
         if(command.isExecutionNode()) arg.executes(ctx -> execute(ctx,command));
         return arg;
@@ -62,7 +60,7 @@ public class WrappedCommand1_16_5 {
         return input.substring(input.indexOf(" ")+1).split(" ");
     }
 
-    private static ArgumentBuilder<CommandSource,?> getBuilder(CommandAPI command) {
+    private static ArgumentBuilder<CommandSourceStack,?> getBuilder(CommandAPI command) {
         String name = command.getName();
         switch(command.getType()) {
             case BOOLEAN: return Commands.argument(name,BoolArgumentType.bool());
@@ -85,8 +83,8 @@ public class WrappedCommand1_16_5 {
     
     @SuppressWarnings("unchecked")
     public static void register(Object dispatcherObj, CommandAPI wrapped) {
-        CommandDispatcher<CommandSource> dispatcher = (CommandDispatcher<CommandSource>)dispatcherObj;
-        LiteralArgumentBuilder<CommandSource> root = Commands.literal(wrapped.getName());
+        CommandDispatcher<CommandSourceStack> dispatcher = (CommandDispatcher<CommandSourceStack>)dispatcherObj;
+        LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(wrapped.getName());
         for(CommandAPI subcmd : wrapped.getSubCommands()) root.then(getArg(subcmd));
         if(wrapped.isExecutionNode()) root.executes(ctx -> execute(ctx,wrapped));
         dispatcher.register(root);
@@ -103,7 +101,7 @@ public class WrappedCommand1_16_5 {
         public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> ctx, final SuggestionsBuilder builder) {
             MinecraftServerAPI<?> server = ServerHelper.getAPI();
             CommandSenderAPI<?> sender = WrapperHelper.wrapCommandSender(ctx);
-            return ISuggestionProvider.suggest(this.command.getTabCompletions(server,sender,builder.getInput(),builder.getRemaining()),builder);
+            return SharedSuggestionProvider.suggest(this.command.getTabCompletions(server,sender,builder.getInput(),builder.getRemaining()),builder);
         }
         
         @Override public String parse(StringReader reader) {

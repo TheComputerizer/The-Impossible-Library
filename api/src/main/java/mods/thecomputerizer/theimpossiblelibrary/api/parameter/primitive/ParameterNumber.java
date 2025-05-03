@@ -3,6 +3,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.parameter.primitive;
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
 
+import javax.annotation.Nullable;
+import java.util.function.Function;
+
 @SuppressWarnings("unused")
 public abstract class ParameterNumber<N extends Number> extends Parameter<N> {
 
@@ -50,6 +53,63 @@ public abstract class ParameterNumber<N extends Number> extends Parameter<N> {
 
     public float floatValue() {
         return this.value.floatValue();
+    }
+    
+    @Override public boolean getAsBoolean(String name) {
+        return doubleValue()!=0d;
+    }
+    
+    @Override public byte getAsByte() {
+        return byteValue();
+    }
+    
+    @Override public byte getAsByte(String name) {
+        return byteValue();
+    }
+    
+    @Override public double getAsDouble() {
+        return doubleValue();
+    }
+    
+    @Override public double getAsDouble(String name) {
+        return doubleValue();
+    }
+    
+    @Override public float getAsFloat() {
+        return floatValue();
+    }
+    
+    @Override public float getAsFloat(String name) {
+        return floatValue();
+    }
+    
+    @Override public int getAsInt() {
+        return intValue();
+    }
+    
+    @Override public int getAsInt(String name) {
+        return intValue();
+    }
+    
+    @Override public long getAsLong() {
+        return longValue();
+    }
+    
+    @Override public long getAsLong(String name) {
+        return longValue();
+    }
+    
+    @Override protected <V extends Number> V getAsNumber(@Nullable Object value, Function<Number,V> fromNumber,
+            Function<String,V> fromString) {
+        return fromNumber.apply(this.value);
+    }
+    
+    @Override public short getAsShort() {
+        return shortValue();
+    }
+    
+    @Override public short getAsShort(String name) {
+        return shortValue();
     }
 
     public int intValue() {

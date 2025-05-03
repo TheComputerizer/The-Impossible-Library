@@ -5,10 +5,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ItemStack1_16_5 extends ItemStackAPI<ItemStack> {
@@ -30,7 +30,7 @@ public class ItemStack1_16_5 extends ItemStackAPI<ItemStack> {
     }
 
     @Override public @Nullable CompoundTag1_16_5 getTag() {
-        CompoundNBT tag = this.wrapped.getTag();
+        CompoundTag tag = this.wrapped.getTag();
         return Objects.nonNull(tag) ? new CompoundTag1_16_5(tag) : null;
     }
 

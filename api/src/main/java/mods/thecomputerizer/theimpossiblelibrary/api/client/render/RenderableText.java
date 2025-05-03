@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.TextWidget;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextBuffer.Builder;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
@@ -9,6 +10,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.RED;
 
 /**
  * Used to simulate a title command but with more versatility
@@ -22,24 +25,24 @@ public class RenderableText extends Renderable {
     private String text = "";
     private String subtext = "";
     
-    public RenderableText(Map<String, Object> parameters) {
+    public RenderableText(Map<String,Parameter<?>> parameters) {
         super(parameters);
         this.titleWidget = TextWidget.literal("");
         this.subtitleWidget = TextWidget.literal("");
-        this.potentialText = getParameterAs("titles",new ArrayList<>());
-        this.potentialSubtext = getParameterAs("subtitles",new ArrayList<>());
+        this.potentialText = getParameterAsList("titles",new ArrayList<>());
+        this.potentialSubtext = getParameterAsList("subtitles",new ArrayList<>());
     }
     
     private TextBuffer createSubtitleBuffer(float opacity, int spacing) {
         return new Builder(TextHelper.getLiteral(this.subtext))
-                .setColor(ColorHelper.getColor(getParameterAs("subtitle_color","white")).withAlpha(opacity))
+                .setColor(getParameterAsColor("subtitle_color").withAlpha(opacity))
                 .setLineSpacing(spacing)
                 .build();
     }
     
     private TextBuffer createTitleBuffer(float opacity, int spacing) {
         return new Builder(TextHelper.getLiteral(this.text))
-                .setColor(ColorHelper.getColor(getParameterAs("title_color","red")).withAlpha(opacity))
+                .setColor(getParameterAsColor("title_color",RED).withAlpha(opacity))
                 .setLineSpacing(spacing*5)
                 .build();
     }
@@ -53,8 +56,8 @@ public class RenderableText extends Renderable {
     }
     
     @Override public void pos(RenderContext ctx) {
-        double x = getAllignmentX()+getParameterAs("x",0d);
-        double y = getAllignmentY()+getParameterAs("y",0d);
+        double x = getAllignmentX()+getParameterAsDouble("x",0d);
+        double y = getAllignmentY()+getParameterAsDouble("y",0d);
         this.titleWidget.setX(x);
         this.titleWidget.setY(y);
         this.subtitleWidget.setX(x);
@@ -71,9 +74,9 @@ public class RenderableText extends Renderable {
             this.subtitleWidget.setColor(this.subtitleWidget.getWrapped().getColor());
             ctx.getRenderer().pushMatrix();
             pos(ctx);
-            scaleTitle(ctx,getParameterAs("scale_x",1f),getParameterAs("scale_y",1f));
+            scaleTitle(ctx,getParameterAsFloat("scale_x",1f),getParameterAsFloat("scale_y",1f));
             this.titleWidget.draw(ctx,VectorHelper.zero3D(),0d,0d);
-            scaleSubtitle(ctx,getParameterAs("subtitle_scale",1f));
+            scaleSubtitle(ctx,getParameterAsFloat("subtitle_scale",1f));
             this.subtitleWidget.draw(ctx,VectorHelper.zero3D(),0d,0d);
             ctx.getRenderer().popMatrix();
         }

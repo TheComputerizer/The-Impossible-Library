@@ -1,15 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.Property;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockState1_16_5 extends BlockStateAPI<BlockState> {
 

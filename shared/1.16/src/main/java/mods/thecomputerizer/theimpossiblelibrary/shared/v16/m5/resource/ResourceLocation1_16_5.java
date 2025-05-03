@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.resource;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class ResourceLocation1_16_5 extends ResourceLocationAPI<ResourceLocation> {
     

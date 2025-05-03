@@ -2,13 +2,13 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.effect;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import net.minecraft.potion.Effect;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 
-public class Effect1_16_5 extends EffectAPI<Effect> {
+public class Effect1_16_5 extends EffectAPI<MobEffect> {
 
     public Effect1_16_5(Object effect) {
-        super((Effect)effect);
+        super((MobEffect)effect);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

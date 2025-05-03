@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import net.minecraft.server.MinecraftServer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Path;

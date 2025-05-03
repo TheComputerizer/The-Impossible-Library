@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class ParameterList<E> extends Parameter<List<E>> { //TODO Does not currently support nested lists
 
@@ -29,6 +30,18 @@ public class ParameterList<E> extends Parameter<List<E>> { //TODO Does not curre
         ParameterList<E> copy = new ParameterList<>(this.type,this.defaultValue);
         copy.value = this.value;
         return copy;
+    }
+    
+    @Override public List<?> getAsList() {
+        return getValue();
+    }
+    
+    @Override protected <N extends Number> N getAsNumber(Function<Number,N> fromNumber, Function<String,N> fromString) {
+        return getAsNumber(getAsString(),fromNumber,fromString);
+    }
+    
+    @Override public String getAsString() {
+        return Objects.isNull(this.value) || this.value.isEmpty() ? null : String.valueOf(this.value.get(0));
     }
     
     @Override public boolean isBool() {

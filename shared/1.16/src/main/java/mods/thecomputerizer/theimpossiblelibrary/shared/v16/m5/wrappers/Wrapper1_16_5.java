@@ -56,12 +56,11 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.BlockPos1_1
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.Dimension1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.Explosion1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world.World1_16_5;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-
-import static net.minecraft.item.ItemStack.EMPTY;
+import static net.minecraft.world.item.ItemStack.EMPTY;
 
 public class Wrapper1_16_5 implements WrapperAPI {
 
@@ -126,10 +125,10 @@ public class Wrapper1_16_5 implements WrapperAPI {
     }
     
     @Override public @Nullable <P> PlayerAPI<P,?> wrapPlayer(@Nullable Object player) {
-        return getAs(player,p -> p instanceof ServerPlayerEntity ? wrapPlayerServer(p) : wrapPlayerClient(p));
+        return getAs(player,p -> p instanceof ServerPlayer ? wrapPlayerServer(p) : wrapPlayerClient(p));
     }
     
-    private <E extends PlayerEntity> PlayerAPI<E,?> wrapPlayerClient(@Nullable Object player) {
+    private <E extends Player> PlayerAPI<E,?> wrapPlayerClient(@Nullable Object player) {
         return getAs(player,ClientPlayer1_16_5::new);
     }
     
@@ -137,7 +136,7 @@ public class Wrapper1_16_5 implements WrapperAPI {
         return getAs(inventory,PlayerInventory1_16_5::new);
     }
     
-    private <E extends PlayerEntity> PlayerAPI<E,?> wrapPlayerServer(@Nullable Object player) {
+    private <E extends Player> PlayerAPI<E,?> wrapPlayerServer(@Nullable Object player) {
         return getAs(player,ServerPlayer1_16_5::new);
     }
     

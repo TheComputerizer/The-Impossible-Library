@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
@@ -9,12 +9,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.fonts.TextInputUtil;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.SharedConstants;
+import net.minecraft.client.gui.font.TextFieldHelper;
+import net.minecraft.client.gui.screens.Screen;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
@@ -68,18 +68,18 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
             if(Screen.isCopy(keyCode)) {
                 String copied = this.wrapped.onCopy();
                 if(Objects.nonNull(copied)) {
-                    TextInputUtil.setClipboardContents(minecraft(),copied);
+                    TextFieldHelper.setClipboardContents(minecraft(), copied);
                     return true;
                 }
             }
             if(Screen.isPaste(keyCode)) {
-                String pasted = TextInputUtil.getClipboardContents(minecraft());
+                String pasted = TextFieldHelper.getClipboardContents(minecraft());
                 if(this.wrapped.onPaste(pasted)) return true;
             }
             if(Screen.isCut(keyCode)) {
                 String copied = this.wrapped.onCut();
                 if(Objects.nonNull(copied)) {
-                    TextInputUtil.setClipboardContents(minecraft(),copied);
+                    TextFieldHelper.setClipboardContents(minecraft(),copied);
                     return true;
                 }
             }
@@ -126,7 +126,7 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
         Minecraft.getInstance().keyboardHandler.setSendRepeatsToGui(false);
     }
     
-    @Override public void render(@Nonnull MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+    @Override public void render(@NotNull PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
         if(Objects.nonNull(this.wrapped)) {
             RenderContext ctx = RenderContext.get(ClientHelper.getMinecraft());
             ctx.setPartialTicks(partialTicks);
@@ -137,7 +137,7 @@ public class ScreenWrapper1_16_5 extends Screen implements Wrapped<ScreenAPI> {
         }
     }
     
-    @Override public void resize(@Nonnull Minecraft mc, int width, int height) {
+    @Override public void resize(@NotNull Minecraft mc, int width, int height) {
         super.resize(mc,width,height);
         MinecraftAPI<?> minecraft = ClientHelper.getMinecraft();
         if(Objects.nonNull(this.wrapped) && Objects.nonNull(minecraft))

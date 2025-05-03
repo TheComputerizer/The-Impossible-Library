@@ -14,65 +14,65 @@ import java.util.Objects;
 public class Tag1_16_5 implements TagAPI {
     
     @SuppressWarnings("unchecked") @Override public <T> BaseTagAPI<T> getWrapped(T tag) {
-        if(tag instanceof CompoundNBT) return (BaseTagAPI<T>)new CompoundTag1_16_5((CompoundNBT)tag);
-        if(tag instanceof ListNBT) return (BaseTagAPI<T>)new ListTag1_16_5((ListNBT)tag);
-        if(tag instanceof NumberNBT) return (BaseTagAPI<T>)new PrimitiveTag1_16_5((NumberNBT)tag);
-        if(tag instanceof StringNBT) return (BaseTagAPI<T>)new StringTag1_16_5((StringNBT)tag);
+        if(tag instanceof CompoundTag) return (BaseTagAPI<T>)new CompoundTag1_16_5((CompoundTag)tag);
+        if(tag instanceof ListTag) return (BaseTagAPI<T>)new ListTag1_16_5((ListTag)tag);
+        if(tag instanceof NumericTag) return (BaseTagAPI<T>)new PrimitiveTag1_16_5((NumericTag)tag);
+        if(tag instanceof StringTag) return (BaseTagAPI<T>)new StringTag1_16_5((StringTag)tag);
         return null;
     }
     
     @Override public CompoundTag1_16_5 makeCompoundTag() {
-        return new CompoundTag1_16_5(new CompoundNBT());
+        return new CompoundTag1_16_5(new CompoundTag());
     }
 
     @Override public ListTag1_16_5 makeListTag() {
-        return new ListTag1_16_5(new ListNBT());
+        return new ListTag1_16_5(new ListTag());
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(boolean b) {
-        return new PrimitiveTag1_16_5(ByteNBT.valueOf(b));
+        return new PrimitiveTag1_16_5(ByteTag.valueOf(b));
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(byte b) {
-        return new PrimitiveTag1_16_5(ByteNBT.valueOf(b));
+        return new PrimitiveTag1_16_5(ByteTag.valueOf(b));
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(double d) {
-        return new PrimitiveTag1_16_5(DoubleNBT.valueOf(d));
+        return new PrimitiveTag1_16_5(DoubleTag.valueOf(d));
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(float f) {
-        return new PrimitiveTag1_16_5(FloatNBT.valueOf(f));
+        return new PrimitiveTag1_16_5(FloatTag.valueOf(f));
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(int i) {
-        return new PrimitiveTag1_16_5(IntNBT.valueOf(i));
+        return new PrimitiveTag1_16_5(IntTag.valueOf(i));
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(long l) {
-        return new PrimitiveTag1_16_5(LongNBT.valueOf(l));
+        return new PrimitiveTag1_16_5(LongTag.valueOf(l));
     }
     
     @Override public PrimitiveTag1_16_5 makePrimitiveTag(short s) {
-        return new PrimitiveTag1_16_5(ShortNBT.valueOf(s));
+        return new PrimitiveTag1_16_5(ShortTag.valueOf(s));
     }
     
     @Override public StringTag1_16_5 makeStringTag(String value) {
-        return new StringTag1_16_5(StringNBT.valueOf(value));
+        return new StringTag1_16_5(StringTag.valueOf(value));
     }
     
     @Override public CompoundTag1_16_5 readFromFile(File file) throws IOException {
-        CompoundNBT tag = null;
+        CompoundTag tag = null;
         try {
-            tag = CompressedStreamTools.read(file);
+            tag = NbtIo.read(file);
         } catch(EOFException ex) {
             TILRef.logWarn("Empty data file {}",file.toPath(),ex.getMessage());
         }
-        if(Objects.isNull(tag)) tag = new CompoundNBT();
+        if(Objects.isNull(tag)) tag = new CompoundTag();
         return new CompoundTag1_16_5(tag);
     }
 
     @Override public void writeToFile(CompoundTagAPI<?> tag, File file) throws IOException {
-        if(!tag.isEmpty()) CompressedStreamTools.write(tag.unwrap(),file);
+        if(!tag.isEmpty()) NbtIo.write(tag.unwrap(),file);
     }
 }

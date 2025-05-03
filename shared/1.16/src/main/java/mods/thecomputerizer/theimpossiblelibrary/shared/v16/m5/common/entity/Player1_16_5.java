@@ -15,21 +15,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text.Text1_16_5;
-import net.minecraft.command.impl.data.EntityDataAccessor;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.commands.data.EntityDataAccessor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public abstract class Player1_16_5<P extends PlayerEntity> extends PlayerAPI<P,EntityType<?>> {
+public abstract class Player1_16_5<P extends Player> extends PlayerAPI<P,EntityType<?>> {
 
     @SuppressWarnings("unchecked")
     protected Player1_16_5(Object player) {
@@ -60,12 +60,12 @@ public abstract class Player1_16_5<P extends PlayerEntity> extends PlayerAPI<P,E
         return Objects.nonNull(this.entity) ? getBoundingBox(this.entity.getBoundingBox()) : null;
     }
     
-    protected Box getBoundingBox(AxisAlignedBB box) {
+    protected Box getBoundingBox(AABB box) {
         return new Box(box.minX,box.minY,box.minZ,box.maxX,box.maxY,box.maxZ);
     }
     
     @Override public CompoundTagAPI<?> getData() {
-        CompoundNBT tag = new CompoundNBT();
+        CompoundTag tag = new CompoundTag();
         if(Objects.nonNull(this.entity)) tag = new EntityDataAccessor(this.entity).getData();
         return new CompoundTag1_16_5(tag);
     }

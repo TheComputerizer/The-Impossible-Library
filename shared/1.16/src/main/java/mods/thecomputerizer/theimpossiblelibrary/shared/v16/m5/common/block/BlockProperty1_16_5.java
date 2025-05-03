@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
-import net.minecraft.state.Property;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.Collection;
 import java.util.Optional;

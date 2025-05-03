@@ -10,18 +10,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.OFFHAND;
+import static net.minecraft.world.InteractionHand.MAIN_HAND;
+import static net.minecraft.world.InteractionHand.OFF_HAND;
 
 public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     
@@ -36,7 +37,7 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     }
     
     @Override public <A> Box getAABB(A aabb) {
-        AxisAlignedBB box = (AxisAlignedBB)aabb;
+        AABB box = (AABB)aabb;
         return ShapeHelper.box(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
     
@@ -62,7 +63,7 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     }
     
     @Override public <H> Hand getHand(H hand) {
-        return hand==net.minecraft.util.Hand.MAIN_HAND ? MAINHAND : OFFHAND;
+        return hand==MAIN_HAND ? MAINHAND : OFFHAND;
     }
     
     @Override public <B> OverlayType getOverlayBlockType(B blockType) {
@@ -101,7 +102,7 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     }
     
     @Override public <V> Vector3 getVec3d(V vector) {
-        net.minecraft.util.math.vector.Vector3d vec = (net.minecraft.util.math.vector.Vector3d)vector;
+        com.mojang.math.Vector3d vec = (com.mojang.math.Vector3d)vector;
         return new Vector3(vec.x,vec.y,vec.z);
     }
     
@@ -117,7 +118,7 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     
     @SuppressWarnings("unchecked")
     @Override public <B> B setAABB(Box box) {
-        return (B)new AxisAlignedBB(box.minX(),box.minY(),box.minZ(),box.maxX(),box.maxY(),box.maxZ());
+        return (B)new AABB(box.minX(),box.minY(),box.minZ(),box.maxX(),box.maxY(),box.maxZ());
     }
     
     @SuppressWarnings("unchecked")
@@ -145,11 +146,11 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     
     @SuppressWarnings("unchecked")
     @Override public <H> H setHand(Hand hand) {
-        return (H)(hand==MAINHAND ? net.minecraft.util.Hand.MAIN_HAND : net.minecraft.util.Hand.OFF_HAND);
+        return (H)(hand==MAINHAND ? MAIN_HAND : OFF_HAND);
     }
     
     @SuppressWarnings("unchecked")
     @Override public <V> V setVec3d(Vector3 vector) {
-        return (V)new net.minecraft.util.math.vector.Vector3d(vector.dX(),vector.dY(),vector.dZ());
+        return (V)new com.mojang.math.Vector3d(vector.dX(),vector.dY(),vector.dZ());
     }
 }

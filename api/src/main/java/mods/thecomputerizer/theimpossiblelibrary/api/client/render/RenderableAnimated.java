@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.render;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.parameter.Parameter;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 
@@ -19,9 +20,9 @@ public class RenderableAnimated extends RenderablePNG {
     private long prevMillis;
     private long milliCounter;
 
-    public RenderableAnimated(ResourceLocationAPI<?> source, Map<String, Object> parameters) throws IOException {
+    public RenderableAnimated(ResourceLocationAPI<?> source, Map<String,Parameter<?>> parameters) throws IOException {
         super(source,parameters);
-        int fps = getParameterAs("fps",20);
+        int fps = getParameterAsInt("fps",20);
         this.millisPerFrame = (long)(1000f/((float)fps));
         this.milliCounter = 0;
         this.frames = source.getSpriteFrames();

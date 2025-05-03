@@ -1,12 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.render;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 
-import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.*;
+import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 
 public class VertexWrapper1_16_5 extends VertexWrapper {
     
@@ -16,7 +16,7 @@ public class VertexWrapper1_16_5 extends VertexWrapper {
     public VertexWrapper1_16_5(int mode, VertexFormat format, int numVertices, int ... vertexSizes) {
         super(mode,numVertices,vertexSizes);
         this.format = format;
-        this.buffer = Tessellator.getInstance().getBuilder();
+        this.buffer = Tesselator.getInstance().getBuilder();
     }
     
     @Override protected void begin() {
@@ -24,7 +24,7 @@ public class VertexWrapper1_16_5 extends VertexWrapper {
     }
     
     @Override protected void draw() {
-        Tessellator.getInstance().end();
+        Tesselator.getInstance().end();
     }
 
     @Override protected void onVertexEnded(Number[][] numbers) {

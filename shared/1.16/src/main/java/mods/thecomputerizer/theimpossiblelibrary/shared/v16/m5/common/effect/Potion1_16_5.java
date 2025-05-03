@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.effect;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import net.minecraft.potion.Potion;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.alchemy.Potion;
 
 public class Potion1_16_5 extends PotionAPI<Potion> {
 

@@ -3,20 +3,20 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListTag1_16_5 extends ListTagAPI<ListNBT> {
+public class ListTag1_16_5 extends ListTagAPI<ListTag> {
 
-    public ListTag1_16_5(ListNBT tag) {
+    public ListTag1_16_5(ListTag tag) {
         super(tag);
     }
 
     @Override public void addTag(BaseTagAPI<?> tag) {
-        this.wrapped.add((INBT)tag.getWrapped());
+        this.wrapped.add((Tag)tag.getWrapped());
     }
     
     @Override public CompoundTag1_16_5 asCompoundTag() {

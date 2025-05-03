@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.world;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public class BlockPos1_16_5 extends BlockPosAPI<BlockPos> {
     

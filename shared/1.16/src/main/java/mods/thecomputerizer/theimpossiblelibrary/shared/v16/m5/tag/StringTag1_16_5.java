@@ -1,11 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.StringTagAPI;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.StringTag;
 
-public class StringTag1_16_5 extends StringTagAPI<StringNBT> {
+public class StringTag1_16_5 extends StringTagAPI<StringTag> {
 
-    public StringTag1_16_5(StringNBT tag) {
+    public StringTag1_16_5(StringTag tag) {
         super(tag);
     }
     

@@ -9,12 +9,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemTier;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tier;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -27,14 +26,14 @@ public class ToolBuilder1_16_5 extends ToolBuilderAPI {
     }
     
     @Override public ItemAPI<?> build() {
-        Item item = getItem(buildProperties(),this.toolTier.unwrap());
+        Item item = getItem(buildProperties(), this.toolTier.unwrap());
         if(CoreAPI.isClient()) registerTextureProperties(item);
         ItemAPI<?> wrapped = WrapperHelper.wrapItem(item);
         wrapped.setRegistryName(this.registryName);
         return wrapped;
     }
     
-    private Item getItem(ItemProperties properties, ItemTier tier) {
+    private Item getItem(ItemProperties properties, Tier tier) {
         switch(this.toolType) {
             case AXE: return new TILItemAxe1_16_5(tier,this.damageModifier,this.speedModifier,properties);
             case HOE: return new TILItemHoe1_16_5(tier,(int)this.damageModifier,this.speedModifier,properties);

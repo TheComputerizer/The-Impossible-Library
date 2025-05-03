@@ -1,34 +1,34 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.text;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextStyleAPI;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
 
-import static net.minecraft.util.text.Style.EMPTY;
+import static net.minecraft.network.chat.Style.EMPTY;
 
 public class TextStyle1_16_5 implements TextStyleAPI<Style> {
 
-    private static final Style AQUA = EMPTY.withColor(TextFormatting.AQUA);
-    private static final Style BLACK = EMPTY.withColor(TextFormatting.BLACK);
-    private static final Style BLUE = EMPTY.withColor(TextFormatting.BLUE);
+    private static final Style AQUA = EMPTY.withColor(ChatFormatting.AQUA);
+    private static final Style BLACK = EMPTY.withColor(ChatFormatting.BLACK);
+    private static final Style BLUE = EMPTY.withColor(ChatFormatting.BLUE);
     private static final Style BOLD = EMPTY.withBold(true);
-    private static final Style DARK_AQUA = EMPTY.withColor(TextFormatting.DARK_AQUA);
-    private static final Style DARK_BLUE = EMPTY.withColor(TextFormatting.DARK_BLUE);
-    private static final Style DARK_GRAY = EMPTY.withColor(TextFormatting.DARK_GRAY);
-    private static final Style DARK_GREEN = EMPTY.withColor(TextFormatting.DARK_GREEN);
-    private static final Style DARK_PURPLE = EMPTY.withColor(TextFormatting.DARK_PURPLE);
-    private static final Style DARK_RED = EMPTY.withColor(TextFormatting.DARK_RED);
-    private static final Style GOLD = EMPTY.withColor(TextFormatting.GOLD);
-    private static final Style GRAY = EMPTY.withColor(TextFormatting.GRAY);
-    private static final Style GREEN = EMPTY.withColor(TextFormatting.GREEN);
+    private static final Style DARK_AQUA = EMPTY.withColor(ChatFormatting.DARK_AQUA);
+    private static final Style DARK_BLUE = EMPTY.withColor(ChatFormatting.DARK_BLUE);
+    private static final Style DARK_GRAY = EMPTY.withColor(ChatFormatting.DARK_GRAY);
+    private static final Style DARK_GREEN = EMPTY.withColor(ChatFormatting.DARK_GREEN);
+    private static final Style DARK_PURPLE = EMPTY.withColor(ChatFormatting.DARK_PURPLE);
+    private static final Style DARK_RED = EMPTY.withColor(ChatFormatting.DARK_RED);
+    private static final Style GOLD = EMPTY.withColor(ChatFormatting.GOLD);
+    private static final Style GRAY = EMPTY.withColor(ChatFormatting.GRAY);
+    private static final Style GREEN = EMPTY.withColor(ChatFormatting.GREEN);
     private static final Style ITALICS = EMPTY.withItalic(true);
-    private static final Style LIGHT_PURPLE = EMPTY.withColor(TextFormatting.LIGHT_PURPLE);
-    private static final Style OBFUSCATED = EMPTY.applyFormat(TextFormatting.OBFUSCATED);
-    private static final Style RED = EMPTY.withColor(TextFormatting.RED);
-    private static final Style STRIKETHROUGH = EMPTY.applyFormat(TextFormatting.STRIKETHROUGH);
-    private static final Style UNDERLINE = EMPTY.applyFormat(TextFormatting.UNDERLINE);
-    private static final Style WHITE = EMPTY.withColor(TextFormatting.WHITE);
-    private static final Style YELLOW = EMPTY.withColor(TextFormatting.YELLOW);
+    private static final Style LIGHT_PURPLE = EMPTY.withColor(ChatFormatting.LIGHT_PURPLE);
+    private static final Style OBFUSCATED = EMPTY.applyFormat(ChatFormatting.OBFUSCATED);
+    private static final Style RED = EMPTY.withColor(ChatFormatting.RED);
+    private static final Style STRIKETHROUGH = EMPTY.applyFormat(ChatFormatting.STRIKETHROUGH);
+    private static final Style UNDERLINE = EMPTY.applyFormat(ChatFormatting.UNDERLINE);
+    private static final Style WHITE = EMPTY.withColor(ChatFormatting.WHITE);
+    private static final Style YELLOW = EMPTY.withColor(ChatFormatting.YELLOW);
 
     @Override public Style aqua() {
         return AQUA;

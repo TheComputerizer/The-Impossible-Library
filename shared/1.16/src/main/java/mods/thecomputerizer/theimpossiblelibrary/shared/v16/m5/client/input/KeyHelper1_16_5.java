@@ -8,14 +8,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Modifie
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberPad;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
-import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.KeyMapping;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyHelper1_16_5 implements KeyHelperAPI {
     
     @Override public KeyAPI<?> create(String id, String category, int keyCode) {
-        return new Key1_16_5(new KeyBinding(id,keyCode,category));
+        return new Key1_16_5(new KeyMapping(id, keyCode, category));
     }
     
     @Override public int getKeyCode(Action actionKey) {

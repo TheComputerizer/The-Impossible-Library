@@ -4,14 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
 
-import static net.minecraft.block.material.Material.AIR;
-import static net.minecraft.block.material.Material.REPLACEABLE_WATER_PLANT;
-import static net.minecraft.block.material.Material.WATER;
-import static net.minecraft.block.material.Material.WATER_PLANT;
-import static net.minecraft.block.material.PushReaction.BLOCK;
-import static net.minecraft.block.material.PushReaction.DESTROY;
+import static net.minecraft.world.level.material.Material.AIR;
+import static net.minecraft.world.level.material.Material.REPLACEABLE_WATER_PLANT;
+import static net.minecraft.world.level.material.Material.WATER;
+import static net.minecraft.world.level.material.Material.WATER_PLANT;
+import static net.minecraft.world.level.material.PushReaction.BLOCK;
+import static net.minecraft.world.level.material.PushReaction.DESTROY;
 
 public class Material1_16_5 extends MaterialAPI<Material> {
 

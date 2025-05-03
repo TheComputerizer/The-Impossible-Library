@@ -5,21 +5,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.IWorld;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.dimension.DimensionType;
 
 import java.util.Objects;
 import java.util.StringJoiner;
 
 public class Dimension1_16_5 extends DimensionAPI<DimensionType> {
     
-    private final DynamicRegistries registries;
+    private final RegistryAccess registries;
     private final String name;
     
     public Dimension1_16_5(WorldAPI<?> world, Object dimension) {
         super(world,(DimensionType)dimension);
-        this.registries = ((IWorld)world.getWrapped()).registryAccess();
+        this.registries = ((LevelAccessor)world.getWrapped()).registryAccess();
         this.name = calculateName();
     }
     

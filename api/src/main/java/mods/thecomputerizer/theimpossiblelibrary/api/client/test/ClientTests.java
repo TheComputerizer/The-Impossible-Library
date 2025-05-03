@@ -38,13 +38,13 @@ public class ClientTests {
 
     private static void renderableTitleTest(Toml transitions) {
         TILDev.logWarn("TITLE TEST");
-        RenderHelper.addRenderable(new RenderableText(transitions.getTable("title").getEntryValuesAsMap()));
+        RenderHelper.addRenderable(new RenderableText(transitions.getTable("title").parameterizeEntries()));
     }
 
     private static void renderableImageTest(Toml transitions) {
         TILDev.logWarn("IMAGE TEST");
         Toml image = transitions.getTable("image");
-        RenderHelper.addRenderable(RenderHelper.initPNG(TILRef.res(image.getValueString("name")),image.getEntryValuesAsMap()));
+        RenderHelper.addRenderable(RenderHelper.initPNG(TILRef.res(image.getValueString("name")),image.parameterizeEntries()));
     }
 
     private static void guiTest() {

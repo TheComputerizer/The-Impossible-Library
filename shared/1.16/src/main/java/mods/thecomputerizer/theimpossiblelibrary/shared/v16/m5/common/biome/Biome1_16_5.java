@@ -7,20 +7,20 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 
 import java.util.Objects;
 
-import static net.minecraft.util.registry.Registry.BIOME_REGISTRY;
+import static net.minecraft.core.Registry.BIOME_REGISTRY;
 
 @Setter
 public class Biome1_16_5 extends BiomeAPI<Biome> {
     
-    protected DynamicRegistries access;
+    protected RegistryAccess access;
     
     public Biome1_16_5(Object biome) {
         super((Biome)biome);
@@ -33,7 +33,7 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     @Override public ResourceLocationAPI<?> getRegistryName() {
         if(Objects.isNull(this.registryName)) {
             if(Objects.isNull(this.access))
-                this.access = (DynamicRegistries)TILRef.getCommonHandles().builtInRegistryAccess();
+                this.access = (RegistryAccess)TILRef.getCommonHandles().builtInRegistryAccess();
             this.registryName = getRegistryName(this.access);
         }
         return this.registryName;
@@ -41,11 +41,11 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
         if(Objects.isNull(this.registryName))
-            this.registryName = getRegistryName(((IWorld)world.unwrap()).registryAccess());
+            this.registryName = getRegistryName(((LevelAccessor)world.unwrap()).registryAccess());
         return this.registryName;
     }
     
-    private ResourceLocationAPI<?> getRegistryName(DynamicRegistries access) {
+    private ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
         Registry<Biome> registry = access.registry(BIOME_REGISTRY).orElse(null);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
     }

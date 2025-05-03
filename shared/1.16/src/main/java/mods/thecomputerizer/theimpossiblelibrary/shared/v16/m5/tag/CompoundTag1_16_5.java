@@ -3,12 +3,12 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
-public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
+public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundTag> {
 
-    public CompoundTag1_16_5(CompoundNBT tag) {
+    public CompoundTag1_16_5(CompoundTag tag) {
         super(tag);
     }
     
@@ -105,7 +105,7 @@ public class CompoundTag1_16_5 extends CompoundTagAPI<CompoundNBT> {
     }
 
     @Override public void putTag(String key, BaseTagAPI<?> tag) {
-        this.wrapped.put(key,(INBT)tag.getWrapped());
+        this.wrapped.put(key,(Tag)tag.getWrapped());
     }
     
     @Override public String toPrettyString() {

@@ -19,7 +19,7 @@ public class ParameterHelper {
      * Does not support collections
      */
     @SuppressWarnings("unchecked") @IndirectCallers
-    public static <E> Parameter<E> parameterize(Class<E> type, E element) {
+    public static <E> Parameter<E> parameterize(Class<?> type, E element) {
         if(Collection.class.isAssignableFrom(type))
             return (Parameter<E>)new ParameterList<>(String.class,(List<String>)element); //TODO Should this really be restricted to lists of strings?
         switch(type.getSimpleName()) {
