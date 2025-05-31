@@ -9,8 +9,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.NumberP
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Symbol;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI.Action.DOWN;

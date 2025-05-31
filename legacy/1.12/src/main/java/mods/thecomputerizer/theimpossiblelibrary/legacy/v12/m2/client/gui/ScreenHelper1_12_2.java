@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.resource.Resource
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ScreenHelper1_12_2 implements ScreenHelperAPI {

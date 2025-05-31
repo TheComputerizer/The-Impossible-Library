@@ -11,6 +11,7 @@ unimined.minecraft {
         mojmap()
         devFallbackNamespace 'official'
     }
+    defaultRemapJar = false
 }
 
 unimined.minecraft(sourceSets.fabric) {
@@ -22,6 +23,7 @@ unimined.minecraft(sourceSets.fabric) {
             return
         }
     }
+    defaultRemapJar = true
 }
 
 unimined.minecraft(sourceSets.forge) {
@@ -33,6 +35,7 @@ unimined.minecraft(sourceSets.forge) {
             return
         }
     }
+    defaultRemapJar = true
 }
 
 def base = project ':api'
@@ -79,19 +82,18 @@ dependencies {
     compileOnlyApi shared
 
     //fabric dependencies
+    fabricCompileOnly base
+    fabricCompileOnly shared
     fabricCompileOnly project(path: ':fabric', configuration: 'dev')
-    buildModDependencies('fabric', '18_2').each {mod ->
-        fabricImplementation mod
-    }
-    fabricRuntimeOnly "$architectury_artifact:$architectury_fabric_1_18_2"
-    fabricRuntimeOnly "$jei_artifact:$jei_fabric_1_18_2"
+    fabricImplementation fabric.bundles.mods.get1().get18().get2().implementation
+    fabricRuntimeOnly fabric.bundles.mods.get1().get18().get2().runtime
 
     //forge dependencies
+    forgeCompileOnly base
+    forgeCompileOnly shared
     forgeCompileOnly project(path: ':forge', configuration: 'dev')
-    buildModDependencies('forge', '18_2').each {mod ->
-        forgeImplementation mod
-    }
-    forgeRuntimeOnly "$jei_artifact:$jei_forge_1_18_2"
+    forgeImplementation forge.bundles.mods.get1().get18().get2().implementation
+    forgeRuntimeOnly forge.bundles.mods.get1().get18().get2().runtime
 }
 
 jar {
@@ -117,7 +119,7 @@ shadowJar {
     [ base, fabric_base, forge_base, shared ].forEach {
         from(it.jar.archiveFile.collect { zipTree it })
     }
-    shadowJar.finalizedBy remapJar
+    shadowJar.finalizedBy 'remapJar'
 }
 
 sourcesJar {

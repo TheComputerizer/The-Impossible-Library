@@ -30,8 +30,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class WrapperHelper {
 

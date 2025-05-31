@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.parameter;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 

@@ -23,8 +23,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.Ite
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.item.ToolBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.sound.SoundBuilder1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.tab.CreativeTabBuilder1_16_5;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

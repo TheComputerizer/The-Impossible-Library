@@ -12,8 +12,8 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.burningwave.core.classes.Fields.NoSuchFieldException;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;

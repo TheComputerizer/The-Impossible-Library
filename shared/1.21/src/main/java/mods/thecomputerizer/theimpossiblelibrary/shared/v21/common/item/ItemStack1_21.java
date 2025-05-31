@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.component.Compou
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_DATA;

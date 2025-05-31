@@ -7,8 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK;

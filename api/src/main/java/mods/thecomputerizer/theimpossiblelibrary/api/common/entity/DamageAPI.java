@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unused") @Getter
 public abstract class DamageAPI {

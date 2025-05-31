@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.toml;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

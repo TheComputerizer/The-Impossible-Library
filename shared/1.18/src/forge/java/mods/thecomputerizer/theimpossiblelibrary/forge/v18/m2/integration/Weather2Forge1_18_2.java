@@ -11,8 +11,8 @@ import weather2.ServerTickHandler;
 import weather2.weathersystem.WeatherManager;
 import weather2.weathersystem.storm.WeatherEntityConfig;
 import weather2.weathersystem.storm.WeatherObject;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 

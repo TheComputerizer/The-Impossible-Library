@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

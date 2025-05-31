@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.entity;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.entity.EntityBuilderAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class EntityBuilder1_18_2 extends EntityBuilderAPI {
     

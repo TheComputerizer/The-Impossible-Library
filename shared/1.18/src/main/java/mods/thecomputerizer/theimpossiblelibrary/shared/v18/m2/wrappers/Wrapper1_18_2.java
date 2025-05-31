@@ -58,8 +58,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.world.Explosion1_
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.world.World1_18_2;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 import static net.minecraft.world.item.ItemStack.EMPTY;
 

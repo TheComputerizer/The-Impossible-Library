@@ -9,8 +9,8 @@ import corgitaco.betterweather.weather.event.Cloudy;
 import corgitaco.betterweather.weather.event.Rain;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.BetterWeatherAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class BetterWeatherForge1_16_5 extends BetterWeatherAPI {

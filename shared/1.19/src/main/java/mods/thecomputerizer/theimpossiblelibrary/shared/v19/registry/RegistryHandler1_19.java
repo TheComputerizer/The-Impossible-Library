@@ -23,8 +23,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.item.ItemBu
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.item.ToolBuilder1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.sound.SoundBuilder1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.tab.CreativeTabBuilder1_19;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

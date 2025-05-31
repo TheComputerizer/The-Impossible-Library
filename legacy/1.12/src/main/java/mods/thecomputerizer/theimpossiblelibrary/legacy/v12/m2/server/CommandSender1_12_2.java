@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class CommandSender1_12_2 extends CommandSenderAPI<ICommandSender> {

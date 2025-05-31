@@ -11,8 +11,8 @@ import top.theillusivec4.champions.api.IChampion.Server;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.Rank;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;

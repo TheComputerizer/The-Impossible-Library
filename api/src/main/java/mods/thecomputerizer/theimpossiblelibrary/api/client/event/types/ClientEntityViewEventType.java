@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.event.types;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public abstract class ClientEntityViewEventType<E> extends ClientRenderEventType<E> {
 

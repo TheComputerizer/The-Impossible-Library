@@ -5,8 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockPropert
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI.ZERO;

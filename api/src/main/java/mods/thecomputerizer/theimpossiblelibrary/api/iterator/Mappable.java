@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiFunction;

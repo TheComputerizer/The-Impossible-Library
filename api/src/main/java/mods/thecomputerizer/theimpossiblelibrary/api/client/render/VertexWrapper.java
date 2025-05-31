@@ -4,8 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector4;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public abstract class VertexWrapper {

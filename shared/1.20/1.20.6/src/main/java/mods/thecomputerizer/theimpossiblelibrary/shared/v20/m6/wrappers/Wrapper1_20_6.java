@@ -5,8 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.advancement.Advancement1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.item.ItemStack1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.wrappers.Wrapper1_20;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 import static net.minecraft.world.item.ItemStack.EMPTY;
 

@@ -1,0 +1,27 @@
+[bundles]
+    burningwave = [ 'burningwave-core', 'burningwave-driver' ]
+    legacy-annotations = [ 'google-gson', 'google-guava' ]
+
+[libraries]
+    burningwave-core = { group = 'org.burningwave', name = 'core', version.ref = 'burningwave-core' }
+    burningwave-driver = { group = 'org.burningwave', name = 'jvm-driver', version.ref = 'burningwave-driver' }
+    google-gson = { group = 'com.google.code.gson', name = 'gson', version.ref = 'gson' }
+    google-guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
+    google-jsr = { group = 'com.google.code.findbugs', name = 'jsr305', version.ref = 'jsr' }
+    log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
+    lombok = { group = 'org.projectlombok', name = 'lombok', version.ref = 'lombok' }
+
+[plugins]
+    shadow = { id = 'com.gradleup.shadow', version.ref = 'shadow' }
+    unimined = { id = 'xyz.wagyourtail.unimined', version.ref = 'unimined' }
+
+[versions]
+    burningwave-core = '12.+'
+    burningwave-driver = '12.+'
+    gson = '2.8.+'
+    guava = '32.1.+'
+    jsr = '3.0.+'
+    log4j = '2.+'
+    lombok = '1.+'
+    shadow = '9.+'
+    unimined = '1.+'

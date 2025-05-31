@@ -7,8 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelesti
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 

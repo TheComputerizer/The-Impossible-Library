@@ -14,8 +14,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.E
 import mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 

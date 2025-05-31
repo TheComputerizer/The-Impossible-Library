@@ -12,8 +12,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppli
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier3D;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorSuppliers.VectorSupplier4D;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;

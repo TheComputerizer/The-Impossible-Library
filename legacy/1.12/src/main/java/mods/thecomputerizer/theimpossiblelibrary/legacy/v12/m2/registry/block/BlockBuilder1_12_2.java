@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilder
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

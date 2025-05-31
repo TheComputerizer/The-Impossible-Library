@@ -13,8 +13,8 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.loading.ClientModLoader;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;

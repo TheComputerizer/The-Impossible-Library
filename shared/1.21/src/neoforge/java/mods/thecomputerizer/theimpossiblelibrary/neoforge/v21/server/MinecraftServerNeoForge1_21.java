@@ -4,8 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.server.MinecraftServ
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
 public class MinecraftServerNeoForge1_21 extends MinecraftServer1_21 {

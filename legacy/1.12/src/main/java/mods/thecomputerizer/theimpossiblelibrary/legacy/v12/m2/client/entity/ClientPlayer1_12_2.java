@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.entity;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Player1_12_2;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ClientPlayer1_12_2 extends Player1_12_2<EntityPlayerSP> {

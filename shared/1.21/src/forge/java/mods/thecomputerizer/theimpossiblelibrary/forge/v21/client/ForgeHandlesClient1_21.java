@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;

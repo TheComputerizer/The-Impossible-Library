@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public abstract class BlockStateAPI<S> extends AbstractWrapped<S> {
 

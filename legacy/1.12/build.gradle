@@ -3,7 +3,7 @@
 apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
 
 def base = project ':api'
-def legacy = project ':legacy'
+def legacy_base = project ':legacy'
 
 repositories {
     maven {
@@ -32,47 +32,33 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor "$gson_artifact:$gson_annotation"
-    annotationProcessor "$guava_artifact:$guava_annotation"
-
-    compileOnly "$dynamic_surroundings_artifact:$dynamic_surroundings_1_12_2"
-    compileOnly "$orelib_artifact:$orelib_1_12_2"
-
     api base
-    api legacy
+    api legacy_base
 
-    //mod support dependencies
-    implementation "$bloodmoon_artifact:$bloodmoon_1_12_2"
-    implementation "$bookshelf_artifact-$bookshelf_1_12_2"
-    implementation "$champions_artifact:$champions_1_12_2"
-    implementation "$coroutil_artifact:$coroutil_1_12_2"
-    implementation "$game_stages_artifact-$game_stages_1_12_2"
-    implementation "$infernal_mobs_artifact:$infernal_mobs_1_12_2"
-    implementation "$nyx_artifact:$nyx_1_12_2"
-    implementation "$serene_seasons_artifact:$serene_seasons_1_12_2"
-    implementation "$weather2_remastered_artifact:$weather2_1_12_2"
-
-    runtimeOnly "$hei_artifact:$hei_1_12_2"
+    annotationProcessor libs.bundles.legacy.annotations
+    compileOnly legacy.bundles.mods.get1().get12().get2().compile
+    implementation legacy.bundles.mods.get1().get12().get2().implementation
+    runtimeOnly legacy.bundles.mods.get1().get12().get2().runtime
 }
 
 compileJava {
-    source base.sourceSets.main.allJava, legacy.sourceSets.main.allJava
+    source base.sourceSets.main.allJava, legacy_base.sourceSets.main.allJava
 }
 
 compileTestJava {
-    source base.sourceSets.test.allJava, legacy.sourceSets.test.allJava
+    source base.sourceSets.test.allJava, legacy_base.sourceSets.test.allJava
 }
 
 processResources {
-    from legacy.processResources.outputs
+    from legacy_base.processResources.outputs
 }
 
 processTestResources {
-    from legacy.processTestResources.outputs
+    from legacy_base.processTestResources.outputs
 }
 
 jar {
-    from(legacy.jar.archiveFile.collect { zipTree it })
+    from(legacy_base.jar.archiveFile.collect { zipTree it })
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,

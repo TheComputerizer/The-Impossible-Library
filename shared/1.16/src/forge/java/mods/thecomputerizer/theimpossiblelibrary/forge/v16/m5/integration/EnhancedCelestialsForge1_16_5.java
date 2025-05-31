@@ -9,8 +9,8 @@ import corgitaco.enhancedcelestials.lunarevent.HarvestMoon;
 import corgitaco.enhancedcelestials.lunarevent.Moon;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelestialsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class EnhancedCelestialsForge1_16_5 extends EnhancedCelestialsAPI {

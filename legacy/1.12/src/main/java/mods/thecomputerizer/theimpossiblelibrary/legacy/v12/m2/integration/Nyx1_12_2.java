@@ -4,8 +4,8 @@ import de.ellpeck.nyx.capabilities.NyxWorld;
 import de.ellpeck.nyx.lunarevents.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.NyxAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class Nyx1_12_2 extends NyxAPI {

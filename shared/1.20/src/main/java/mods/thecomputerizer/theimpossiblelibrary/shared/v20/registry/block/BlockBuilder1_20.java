@@ -6,8 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyA
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
 import net.minecraft.world.level.block.state.properties.Property;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

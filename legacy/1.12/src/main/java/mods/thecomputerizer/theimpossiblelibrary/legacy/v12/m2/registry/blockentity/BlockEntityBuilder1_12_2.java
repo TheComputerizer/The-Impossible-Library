@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blocken
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class BlockEntityBuilder1_12_2 extends BlockEntityBuilderAPI {

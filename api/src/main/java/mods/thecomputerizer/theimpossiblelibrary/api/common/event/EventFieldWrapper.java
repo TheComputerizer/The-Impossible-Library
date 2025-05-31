@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;

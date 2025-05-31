@@ -6,8 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.FutureCreativeTab;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.world.item.CreativeModeTab;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 import java.util.function.Supplier;
 

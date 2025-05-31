@@ -5,8 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.ForgeHandlesClient
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.client.ClientRegistry;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ForgeHandlesClient1_18_2 extends ForgeHandlesClient {

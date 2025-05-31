@@ -56,3 +56,13 @@ paths.forEach {
     }
     findProject(it)?.name = name
 }
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        [ 'fabric', 'forge', 'legacy', 'neoforge' ].forEach {loader ->
+            create(loader) {
+                from(files("gradle/${loader}.versions.toml"))
+            }
+        }
+    }
+}

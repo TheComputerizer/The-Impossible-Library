@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;

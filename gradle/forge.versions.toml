@@ -1,0 +1,232 @@
+[bundles]
+    mods-1_16_5-implementation = [ 'betterweather-1_16_5', 'blueskies-1_16_5', 'champions-1_16_5', 'configured-1_16_5',
+        'coroutil-1_16_5', 'dsurround-1_16_5', 'enhancedcelestials-1_16_5', 'gamestages-1_16_5', 'sereneseasons-1_16_5',
+        'structuregel-1_16_5' ]
+    mods-1_16_5-runtime = [ 'architectury-1_16_5', 'jei-1_16_5' ]
+    mods-1_18_2-implementation = [ 'blueskies-1_18_2', 'bookshelf-1_18_2', 'champions-1_18_2', 'configured-1_18_2',
+        'coroutil-1_18_2', 'enhancedcelestials-1_18_2', 'gamestages-1_18_2', 'infernalmobs-1_18_2',
+        'sereneseasons-1_18_2', 'structuregel-1_18_2', 'weather2-1_18_2' ]
+    mods-1_18_2-runtime = [ 'architectury-1_18_2', 'jei-1_18_2' ]
+    mods-1_19_2-implementation = [ 'blueskies-1_19_2', 'bookshelf-1_19_2', 'configured-1_19_2', 'coroutil-1_19_2',
+        'enhancedcelestials-1_19_2', 'gamestages-1_19_2', 'infernalmobs-1_19_2', 'sereneseasons-1_19_2',
+        'structuregel-1_19_2' ]
+    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'jei-1_19_2' ]
+    mods-1_19_4-implementation = [ 'blueskies-1_19_4', 'bookshelf-1_19_4', 'coroutil-1_19_4', 'coroutil-1_19_4',
+        'enhancedcelestials-1_19_4', 'gamestages-1_19_4', 'infernalmobs-1_19_4', 'sereneseasons-1_19_4',
+        'structuregel-1_19_4' ]
+    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
+    mods-1_20_1-implementation = [ 'blueskies-1_20_1', 'bookshelf-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
+        'enhancedcelestials-1_20_1', 'gamestages-1_20_1', 'glitchcore-1_20_1', 'infernalmobs-1_20_1',
+        'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
+    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
+    mods-1_20_4-implementation = [ 'blueskies-1_20_4', 'bookshelf-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
+        'glitchcore-1_20_1', 'infernalmobs-1_20_4', 'sereneseasons-1_20_4', 'structuregel-1_20_4' ]
+    mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
+    mods-1_20_6-implementation = [ 'configured-1_20_6', 'coroutil-1_20_6', 'glitchcore-1_20_6', 'infernalmobs-1_20_6',
+        'sereneseasons-1_20_6' ]
+    mods-1_20_6-runtime = [ 'jei-1_20_6' ]
+    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'glitchcore-1_21_1',
+        'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_1-runtime = [ 'jei-1_21_1' ]
+
+[libraries]
+    architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }
+    architectury-1_18_2 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_18_2' }
+    architectury-1_19_2 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_19_2' }
+    architectury-1_19_4 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_19_4' }
+    architectury-1_20_1 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_1' }
+    architectury-1_20_4 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_4' }
+
+    betterweather-1_16_5 = { group = 'curse.maven', name = 'betterweather-400714', version.ref = 'betterweather-1_16_5' }
+
+    blueskies-1_16_5 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_16_5' }
+    blueskies-1_18_2 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_18_2' }
+    blueskies-1_19_2 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_19_2' }
+    blueskies-1_19_4 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_19_4' }
+    blueskies-1_20_1 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_20_1' }
+    blueskies-1_20_4 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_20_4' }
+
+    bookshelf-1_16_5 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.16.5', version.ref = 'bookshelf-1_16_5' }
+    bookshelf-1_18_2 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.18.2', version.ref = 'bookshelf-1_18_2' }
+    bookshelf-1_19_2 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.19.2', version.ref = 'bookshelf-1_19_2' }
+    bookshelf-1_19_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.19.4', version.ref = 'bookshelf-1_19_4' }
+    bookshelf-1_20_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.20.1', version.ref = 'bookshelf-1_20_1' }
+    bookshelf-1_20_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.20.4', version.ref = 'bookshelf-1_20_4' }
+    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.21.1', version.ref = 'bookshelf-1_21_1' }
+
+    champions-1_16_5 = { group = 'curse.maven', name = 'champions-307152', version.ref = 'champions-1_16_5' }
+    champions-1_18_2 = { group = 'curse.maven', name = 'champions-307152', version.ref = 'champions-1_18_2' }
+
+    configured-1_16_5 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_16_5' }
+    configured-1_18_2 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_18_2' }
+    configured-1_19_2 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_19_2' }
+    configured-1_19_4 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_19_4' }
+    configured-1_20_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_1' }
+    configured-1_20_4 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_4' }
+    configured-1_20_6 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_6' }
+    configured-1_21_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_21_1' }
+
+    coroutil-1_16_5 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_16_5' }
+    coroutil-1_18_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_18_2' }
+    coroutil-1_19_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_19_2' }
+    coroutil-1_19_4 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_19_4' }
+    coroutil-1_20_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_1' }
+    coroutil-1_20_4 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_4' }
+    coroutil-1_20_6 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_6' }
+    coroutil-1_21_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_21_1' }
+
+    dsurround-1_16_5 = { group = 'curse.maven', name = 'dsurround-238891', version.ref = 'dsurround-1_16_5' }
+
+    enhancedcelestials-1_16_5 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_16_5' }
+    enhancedcelestials-1_18_2 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_18_2' }
+    enhancedcelestials-1_19_2 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_19_2' }
+    enhancedcelestials-1_19_4 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_19_4' }
+    enhancedcelestials-1_20_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_20_1' }
+
+    gamestages-1_16_5 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.16.5', version.ref = 'gamestages-1_16_5' }
+    gamestages-1_18_2 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.18.2', version.ref = 'gamestages-1_18_2' }
+    gamestages-1_19_2 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.19.2', version.ref = 'gamestages-1_19_2' }
+    gamestages-1_19_4 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.19.4', version.ref = 'gamestages-1_19_4' }
+    gamestages-1_20_1 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.20.1', version.ref = 'gamestages-1_20_1' }
+
+    glitchcore-1_20_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_1' }
+    glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
+    glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
+    glitchcore-1_21_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_21_1' }
+
+    infernalmobs-1_18_2 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_18_2' }
+    infernalmobs-1_19_2 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_19_2' }
+    infernalmobs-1_19_4 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_19_4' }
+    infernalmobs-1_20_1 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_20_1' }
+    infernalmobs-1_20_4 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_20_4' }
+    infernalmobs-1_20_6 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_20_6' }
+    infernalmobs-1_21_1 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_21_1' }
+
+    jei-1_16_5 = { group = 'mezz.jei', name = 'jei-1.16.5', version.ref = 'jei-1_16_5' }
+    jei-1_18_2 = { group = 'mezz.jei', name = 'jei-1.18.2-forge', version.ref = 'jei-1_18_2' }
+    jei-1_19_2 = { group = 'mezz.jei', name = 'jei-1.19.2-forge', version.ref = 'jei-1_19_2' }
+    jei-1_19_4 = { group = 'mezz.jei', name = 'jei-1.19.4-forge', version.ref = 'jei-1_19_4' }
+    jei-1_20_1 = { group = 'mezz.jei', name = 'jei-1.20.1-forge', version.ref = 'jei-1_20_1' }
+    jei-1_20_4 = { group = 'mezz.jei', name = 'jei-1.20.4-forge', version.ref = 'jei-1_20_4' }
+    jei-1_20_6 = { group = 'mezz.jei', name = 'jei-1.20.6-forge', version.ref = 'jei-1_20_6' }
+    jei-1_21_1 = { group = 'mezz.jei', name = 'jei-1.21.1-forge', version.ref = 'jei-1_21_1' }
+
+    sereneseasons-1_16_5 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_16_5' }
+    sereneseasons-1_18_2 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_18_2' }
+    sereneseasons-1_19_2 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_19_2' }
+    sereneseasons-1_19_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_19_4' }
+    sereneseasons-1_20_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_1' }
+    sereneseasons-1_20_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_4' }
+    sereneseasons-1_20_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_6' }
+    sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
+
+    structuregel-1_16_5 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_16_5' }
+    structuregel-1_18_2 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_18_2' }
+    structuregel-1_19_2 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_19_2' }
+    structuregel-1_19_4 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_19_4' }
+    structuregel-1_20_1 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_20_1' }
+    structuregel-1_20_4 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_20_4' }
+
+    weather2-1_18_2 = { group = 'curse.maven', name = 'weather2-237746', version.ref = 'weather2-1_18_2' }
+    weather2-1_20_1 = { group = 'curse.maven', name = 'weather2-237746', version.ref = 'weather2-1_20_1' }
+
+[versions]
+    architectury-1_16_5 = '1.32.68+forge'
+    architectury-1_18_2 = '4.12.94+forge'
+    architectury-1_19_2 = '6.6.92+forge'
+    architectury-1_19_4 = '8.2.91+forge'
+    architectury-1_20_1 = '9.2.14+forge'
+    architectury-1_20_4 = '11.1.17+minecraftforge'
+
+    betterweather-1_16_5 = '3420517'
+
+    blueskies-1_16_5 = '3411324'
+    blueskies-1_18_2 = '3788736'
+    blueskies-1_19_2 = '3966273'
+    blueskies-1_19_4 = '4525734'
+    blueskies-1_20_1 = '5010316'
+    blueskies-1_20_4 = '5083225'
+
+    bookshelf-1_16_5 = '10.4.33'
+    bookshelf-1_18_2 = '13.3.56'
+    bookshelf-1_19_2 = '16.3.20'
+    bookshelf-1_19_4 = '18.0.6'
+    bookshelf-1_20_1 = '20.2.13'
+    bookshelf-1_20_4 = '23.1.11'
+    bookshelf-1_21_1 = '21.1.10'
+
+    champions-1_16_5 = '4297614'
+    champions-1_18_2 = '4297619'
+
+    configured-1_16_5 = '4462830'
+    configured-1_18_2 = '4462832'
+    configured-1_19_2 = '4462837'
+    configured-1_19_4 = '4462894'
+    configured-1_20_1 = '5180900'
+    configured-1_20_4 = '5105022'
+    configured-1_20_6 = '5340193'
+    configured-1_21_1 = '5873784'
+
+    coroutil-1_16_5 = '5008360'
+    coroutil-1_18_2 = '5008370'
+    coroutil-1_19_2 = '5010127'
+    coroutil-1_19_4 = '5008379'
+    coroutil-1_20_1 = '5096038'
+    coroutil-1_20_4 = '5600650'
+    coroutil-1_20_6 = '5600651'
+    coroutil-1_21_1 = '5600664'
+
+    dsurround-1_16_5 = '3502320'
+
+    enhancedcelestials-1_16_5 = '3532022'
+    enhancedcelestials-1_18_2 = '3785992'
+    enhancedcelestials-1_19_2 = '4598311'
+    enhancedcelestials-1_19_4 = '4598338'
+    enhancedcelestials-1_20_1 = '5695587'
+
+    gamestages-1_16_5 = '7.3.14'
+    gamestages-1_18_2 = '8.1.3'
+    gamestages-1_19_2 = '11.1.5'
+    gamestages-1_19_4 = '13.0.1'
+    gamestages-1_20_1 = '15.0.2'
+
+    glitchcore-1_20_1 = '5787839'
+    glitchcore-1_20_4 = '5088441'
+    glitchcore-1_20_6 = '5352263'
+    glitchcore-1_21_1 = '5660738'
+
+    infernalmobs-1_18_2 = '4149699'
+    infernalmobs-1_19_2 = '4375427'
+    infernalmobs-1_19_4 = '4721549'
+    infernalmobs-1_20_1 = '5470117'
+    infernalmobs-1_20_4 = '5077903'
+    infernalmobs-1_20_6 = '5313240'
+    infernalmobs-1_21_1 = '5754793'
+
+    jei-1_16_5 = '7.8.0.1012'
+    jei-1_18_2 = '10.2.1.1008'
+    jei-1_19_2 = '11.8.1.1033'
+    jei-1_19_4 = '13.1.0.18'
+    jei-1_20_1 = '15.20.0.104'
+    jei-1_20_4 = '17.3.1.4'
+    jei-1_20_6 = '18.0.0.65'
+    jei-1_21_1 = '19.21.0.246'
+
+    sereneseasons-1_16_5 = '4537666'
+    sereneseasons-1_18_2 = '3804257'
+    sereneseasons-1_19_2 = '4037228'
+    sereneseasons-1_19_4 = '4577599'
+    sereneseasons-1_20_1 = '5790653'
+    sereneseasons-1_20_4 = '5206531'
+    sereneseasons-1_20_6 = '5420642'
+    sereneseasons-1_21_1 = '5753500'
+
+    structuregel-1_16_5 = '3498310'
+    structuregel-1_18_2 = '4804138'
+    structuregel-1_19_2 = '4765558'
+    structuregel-1_19_4 = '4489758'
+    structuregel-1_20_1 = '5278429'
+    structuregel-1_20_4 = '5453126'
+
+    weather2-1_18_2 = '4426524'
+    weather2-1_20_1 = '5244118'

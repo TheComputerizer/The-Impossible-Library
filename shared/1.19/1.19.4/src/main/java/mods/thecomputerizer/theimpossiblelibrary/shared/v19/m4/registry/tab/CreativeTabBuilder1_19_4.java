@@ -6,8 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.FutureCreative
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.tab.CreativeTabBuilder1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.tab.FutureCreativeTab1_19;
 import net.minecraft.world.item.CreativeModeTab;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

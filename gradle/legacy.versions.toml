@@ -1,0 +1,36 @@
+[bundles]
+    mods-1_12_2-compile = [ 'dsurround-1_12_2', 'orelib-1_12_2' ]
+    mods-1_12_2-implementation = [ 'bloodmoon-1_12_2', 'blueskies-1_12_2', 'bookshelf-1_12_2', 'champions-1_12_2',
+        'coroutil-1_12_2', 'gamestages-1_12_2', 'infernalmobs-1_12_2', 'nyx-1_12_2', 'sereneseasons-1_12_2',
+        'weather2-1_12_2' ]
+    mods-1_12_2-runtime = [ 'hei-1_12_2' ]
+
+[libraries]
+    bloodmoon-1_12_2 = { group = 'curse.maven', name = 'bloodmoon-226321', version.ref = 'bloodmoon-1_12_2' }
+    blueskies-1_12_2 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_12_2' }
+    bookshelf-1_12_2 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-1.12.2', version.ref = 'bookshelf-1_12_2' }
+    champions-1_12_2 = { group = 'curse.maven', name = 'champions-307152', version.ref = 'champions-1_12_2' }
+    coroutil-1_12_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_12_2' }
+    dsurround-1_12_2 = { group = 'curse.maven', name = 'dsurround-238891', version.ref = 'dsurround-1_12_2' }
+    gamestages-1_12_2 = { group = 'net.darkhax.gamestages', name = 'GameStages-1.12.2', version.ref = 'gamestages-1_12_2' }
+    hei-1_12_2 = { group = 'mezz', name = 'jei', version.ref = 'hei-1_12_2' }
+    infernalmobs-1_12_2 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_12_2' }
+    nyx-1_12_2 = { group = 'curse.maven', name = 'nyx-349214', version.ref = 'nyx-1_12_2' }
+    orelib-1_12_2 = { group = 'curse.maven', name = 'orelib-307806', version.ref = 'orelib-1_12_2' }
+    sereneseasons-1_12_2 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_12_2' }
+    weather2-1_12_2 = { group = 'curse.maven', name = 'weather2-695602', version.ref = 'weather2-1_12_2' }
+
+[versions]
+    bloodmoon-1_12_2 = '2537917'
+    blueskies-1_12_2 = '2827455'
+    bookshelf-1_12_2 = '2.3.590'
+    champions-1_12_2 = '3177947'
+    coroutil-1_12_2 = '2902920'
+    dsurround-1_12_2 = '3497269'
+    gamestages-1_12_2 = '2.0.123'
+    hei-1_12_2 = '4.28.0'
+    infernalmobs-1_12_2 = '3431758'
+    nyx-1_12_2 = '3161738'
+    orelib-1_12_2 = '2820815'
+    sereneseasons-1_12_2 = '2799213'
+    weather2-1_12_2 = '4907644'

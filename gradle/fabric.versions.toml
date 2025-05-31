@@ -1,0 +1,159 @@
+[bundles]
+    mods-1_16_5-implementation = [ 'cloth-1_16_5', 'coroutil-1_16_5', 'modmenu-1_16_5' ]
+    mods-1_16_5-runtime = [ 'architectury-1_16_5', 'rei-1_16_5' ]
+    mods-1_18_2-implementation = [ 'bookshelf-1_18_2', 'cloth-1_18_2', 'coroutil-1_18_2', 'modmenu-1_18_2' ]
+    mods-1_18_2-runtime = [ 'architectury-1_18_2', 'jei-1_18_2' ]
+    mods-1_19_2-implementation = [ 'bookshelf-1_19_2', 'cloth-1_19_2', 'coroutil-1_19_2', 'modmenu-1_19_2' ]
+    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'jei-1_19_2' ]
+    mods-1_19_4-implementation = [ 'bookshelf-1_19_4', 'cloth-1_19_4', 'coroutil-1_19_4', 'modmenu-1_19_4' ]
+    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
+    mods-1_20_1-implementation = [ 'bookshelf-1_20_1', 'cloth-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
+        'glitchcore-1_20_1', 'modmenu-1_20_1', 'sereneseasons-1_20_1' ]
+    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
+    mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'cloth-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
+        'glitchcore-1_20_4', 'modmenu-1_20_4', 'sereneseasons-1_20_4' ]
+    mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
+    mods-1_20_6-implementation = [ 'cloth-1_20_6', 'configured-1_20_6', 'coroutil-1_20_6', 'glitchcore-1_20_6',
+        'modmenu-1_20_6', 'sereneseasons-1_20_6' ]
+    mods-1_20_6-runtime = [ 'architectury-1_20_6', 'jei-1_20_6' ]
+    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'cloth-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1',
+        'glitchcore-1_21_1', 'modmenu-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_1-runtime = [ 'architectury-1_21_1', 'jei-1_21_1' ]
+
+[libraries]
+    architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }
+    architectury-1_18_2 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_18_2' }
+    architectury-1_19_2 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_19_2' }
+    architectury-1_19_4 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_19_4' }
+    architectury-1_20_1 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_1' }
+    architectury-1_20_4 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_4' }
+    architectury-1_20_6 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_6' }
+    architectury-1_21_1 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_21_1' }
+
+    bookshelf-1_18_2 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.18.2', version.ref = 'bookshelf-1_18_2' }
+    bookshelf-1_19_2 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.19.2', version.ref = 'bookshelf-1_19_2' }
+    bookshelf-1_19_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.19.4', version.ref = 'bookshelf-1_19_4' }
+    bookshelf-1_20_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.20.1', version.ref = 'bookshelf-1_20_1' }
+    bookshelf-1_20_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.20.4', version.ref = 'bookshelf-1_20_4' }
+    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.21.1', version.ref = 'bookshelf-1_21_1' }
+
+    cloth-1_16_5 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_16_5' }
+    cloth-1_18_2 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_18_2' }
+    cloth-1_19_2 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_19_2' }
+    cloth-1_19_4 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_19_4' }
+    cloth-1_20_1 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_20_1' }
+    cloth-1_20_4 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_20_4' }
+    cloth-1_20_6 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_20_6' }
+    cloth-1_21_1 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_21_1' }
+
+    configured-1_20_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_1' }
+    configured-1_20_4 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_4' }
+    configured-1_20_6 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_6' }
+    configured-1_21_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_21_1' }
+
+    coroutil-1_16_5 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_16_5' }
+    coroutil-1_18_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_18_2' }
+    coroutil-1_19_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_19_2' }
+    coroutil-1_19_4 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_19_4' }
+    coroutil-1_20_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_1' }
+    coroutil-1_20_4 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_4' }
+    coroutil-1_20_6 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_6' }
+    coroutil-1_21_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_21_1' }
+
+    glitchcore-1_20_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_1' }
+    glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
+    glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
+    glitchcore-1_21_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_21_1' }
+
+    jei-1_18_2 = { group = 'mezz.jei', name = 'jei-1.18.2-fabric', version.ref = 'jei-1_18_2' }
+    jei-1_19_2 = { group = 'mezz.jei', name = 'jei-1.19.2-fabric', version.ref = 'jei-1_19_2' }
+    jei-1_19_4 = { group = 'mezz.jei', name = 'jei-1.19.4-fabric', version.ref = 'jei-1_19_4' }
+    jei-1_20_1 = { group = 'mezz.jei', name = 'jei-1.20.1-fabric', version.ref = 'jei-1_20_1' }
+    jei-1_20_4 = { group = 'mezz.jei', name = 'jei-1.20.4-fabric', version.ref = 'jei-1_20_4' }
+    jei-1_20_6 = { group = 'mezz.jei', name = 'jei-1.20.6-fabric', version.ref = 'jei-1_20_6' }
+    jei-1_21_1 = { group = 'mezz.jei', name = 'jei-1.21.1-fabric', version.ref = 'jei-1_21_1' }
+
+    modmenu-1_16_5 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_16_5' }
+    modmenu-1_18_2 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_18_2' }
+    modmenu-1_19_2 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_19_2' }
+    modmenu-1_19_4 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_19_4' }
+    modmenu-1_20_1 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_20_1' }
+    modmenu-1_20_4 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_20_4' }
+    modmenu-1_20_6 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_20_6' }
+    modmenu-1_21_1 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_21_1' }
+
+    rei-1_16_5 = { group = 'maven.modrinth', name = 'rei', version.ref = 'rei-1_16_5' }
+
+    sereneseasons-1_20_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_1' }
+    sereneseasons-1_20_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_4' }
+    sereneseasons-1_20_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_6' }
+    sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
+
+[versions]
+    architectury-1_16_5 = '1.32.68+fabric'
+    architectury-1_18_2 = '4.12.94+fabric'
+    architectury-1_19_2 = '6.6.92+fabric'
+    architectury-1_19_4 = '8.2.91+fabric'
+    architectury-1_20_1 = '9.2.14+fabric'
+    architectury-1_20_4 = '11.1.17+fabric'
+    architectury-1_20_6 = '12.1.4+fabric'
+    architectury-1_21_1 = '13.0.8+fabric'
+
+    bookshelf-1_18_2 = '13.3.56'
+    bookshelf-1_19_2 = '16.3.20'
+    bookshelf-1_19_4 = '18.0.6'
+    bookshelf-1_20_1 = '20.2.13'
+    bookshelf-1_20_4 = '23.1.11'
+    bookshelf-1_21_1 = '21.1.10'
+
+    cloth-1_16_5 = '4.17.101'
+    cloth-1_18_2 = '6.5.102'
+    cloth-1_19_2 = '8.3.134+fabric'
+    cloth-1_19_4 = '10.1.135+fabric'
+    cloth-1_20_1 = '11.1.136+fabric'
+    cloth-1_20_4 = '13.0.138+fabric'
+    cloth-1_20_6 = '14.0.139+fabric'
+    cloth-1_21_1 = '15.0.140+fabric'
+
+    configured-1_20_1 = '5180902'
+    configured-1_20_4 = '5105023'
+    configured-1_20_6 = '5340195'
+    configured-1_21_1 = '5873787'
+
+    coroutil-1_16_5 = '5008368'
+    coroutil-1_18_2 = '5008373'
+    coroutil-1_19_2 = '5010129'
+    coroutil-1_19_4 = '5008382'
+    coroutil-1_20_1 = '5110802'
+    coroutil-1_20_4 = '5600648'
+    coroutil-1_20_6 = '5600652'
+    coroutil-1_21_1 = '5600660'
+
+    glitchcore-1_20_1 = '5787838'
+    glitchcore-1_20_4 = '5088443'
+    glitchcore-1_20_6 = '5352265'
+    glitchcore-1_21_1 = '5660741'
+
+    jei-1_18_2 = '10.2.1.1008'
+    jei-1_19_2 = '11.8.1.1033'
+    jei-1_19_4 = '13.1.0.18'
+    jei-1_20_1 = '15.20.0.104'
+    jei-1_20_4 = '17.3.1.4'
+    jei-1_20_6 = '18.0.0.65'
+    jei-1_21_1 = '19.21.0.246'
+
+    modmenu-1_16_5 = '1.16.23'
+    modmenu-1_18_2 = '3.2.5'
+    modmenu-1_19_2 = '4.2.0-beta.2'
+    modmenu-1_19_4 = '6.3.1'
+    modmenu-1_20_1 = '7.2.2'
+    modmenu-1_20_4 = '9.2.0'
+    modmenu-1_20_6 = '10.0.0'
+    modmenu-1_21_1 = '11.0.2'
+
+    rei-1_16_5 = '5.10.177+fabric'
+
+    sereneseasons-1_20_1 = '5790654'
+    sereneseasons-1_20_4 = '5206535'
+    sereneseasons-1_20_6 = '5420643'
+    sereneseasons-1_21_1 = '5753502'

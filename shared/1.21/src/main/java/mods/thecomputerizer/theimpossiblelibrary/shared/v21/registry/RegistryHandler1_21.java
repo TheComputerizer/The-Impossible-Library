@@ -21,8 +21,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.item.ItemBl
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.item.ItemBuilder1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.item.ToolBuilder1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.sound.SoundBuilder1_21;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

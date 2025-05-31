@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class BlockState1_19 extends BlockStateAPI<BlockState> {
 

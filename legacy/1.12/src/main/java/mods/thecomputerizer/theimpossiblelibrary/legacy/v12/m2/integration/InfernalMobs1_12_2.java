@@ -5,8 +5,8 @@ import atomicstryker.infernalmobs.common.MobModifier;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.InfernalMobsAPI;
 import net.minecraft.entity.EntityLivingBase;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class InfernalMobs1_12_2 extends InfernalMobsAPI {

@@ -58,8 +58,8 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.Explosion1_
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 import static net.minecraft.item.ItemStack.EMPTY;
 

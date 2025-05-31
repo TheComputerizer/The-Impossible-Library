@@ -3,8 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientPlayerEventType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.ITEM_TOOLTIP;

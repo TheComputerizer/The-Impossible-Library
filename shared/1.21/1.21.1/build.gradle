@@ -1,6 +1,3 @@
-import static org.gradle.api.logging.LogLevel.INFO
-import static org.gradle.api.logging.LogLevel.QUIET
-
 //file:noinspection GroovyAssignabilityCheck
 
 /**
@@ -14,6 +11,7 @@ unimined.minecraft {
         mojmap()
         devFallbackNamespace 'official'
     }
+    defaultRemapJar = false
 }
 
 unimined.minecraft(sourceSets.fabric) {
@@ -25,6 +23,7 @@ unimined.minecraft(sourceSets.fabric) {
             return
         }
     }
+    defaultRemapJar = true
 }
 
 unimined.minecraft(sourceSets.forge) {
@@ -36,6 +35,7 @@ unimined.minecraft(sourceSets.forge) {
             return
         }
     }
+    defaultRemapJar = true
 }
 
 unimined.minecraft(sourceSets.neoforge) {
@@ -47,6 +47,7 @@ unimined.minecraft(sourceSets.neoforge) {
             return
         }
     }
+    defaultRemapJar = true
 }
 
 def base = project ':api'
@@ -96,26 +97,28 @@ dependencies {
     compileOnlyApi project(path: ':shared:shared_1.21', configuration: 'dev')
 
     //fabric dependencies
+    fabricCompileOnly base
+    fabricCompileOnly shared
+    fabricCompileOnly project(path: ':shared:shared_1.21', configuration: 'dev')
     fabricCompileOnly project(path: ':fabric', configuration: 'dev')
-    buildModDependencies('fabric', '21_1').each {mod ->
-        fabricImplementation mod
-    }
-    fabricRuntimeOnly "$architectury_artifact:$architectury_fabric_1_21_1"
-    fabricRuntimeOnly "$jei_artifact:$jei_fabric_1_21_1"
+    fabricImplementation fabric.bundles.mods.get1().get21().get1().implementation
+    fabricRuntimeOnly fabric.bundles.mods.get1().get21().get1().runtime
 
     //forge dependencies
+    forgeCompileOnly base
+    forgeCompileOnly shared
+    forgeCompileOnly project(path: ':shared:shared_1.21', configuration: 'dev')
     forgeCompileOnly project(path: ':forge', configuration: 'dev')
-    buildModDependencies('forge', '21_1').each {mod ->
-        forgeImplementation mod
-    }
-    forgeRuntimeOnly "$jei_artifact:$jei_forge_1_21_1"
+    forgeImplementation forge.bundles.mods.get1().get21().get1().implementation
+    forgeRuntimeOnly forge.bundles.mods.get1().get21().get1().runtime
 
     //neoorge dependencies
+    neoforgeCompileOnly base
+    neoforgeCompileOnly shared
+    neoforgeCompileOnly project(path: ':shared:shared_1.21', configuration: 'dev')
     neoforgeCompileOnly project(path: ':neoforge', configuration: 'dev')
-    buildModDependencies('neoforge', '21_1').each {mod ->
-        neoforgeImplementation mod
-    }
-    neoforgeRuntimeOnly "$jei_artifact:$jei_neoforge_1_21_1"
+    neoforgeImplementation neoforge.bundles.mods.get1().get21().get1().implementation
+    neoforgeRuntimeOnly neoforge.bundles.mods.get1().get21().get1().runtime
 }
 
 jar {
@@ -142,7 +145,7 @@ shadowJar {
     [ base, fabric_base, forge_base, neoforge_base, shared, shared_specific ].forEach {
         from(it.jar.archiveFile.collect { zipTree it })
     }
-    shadowJar.finalizedBy remapJar
+    shadowJar.finalizedBy 'remapJar'
 }
 
 sourcesJar {

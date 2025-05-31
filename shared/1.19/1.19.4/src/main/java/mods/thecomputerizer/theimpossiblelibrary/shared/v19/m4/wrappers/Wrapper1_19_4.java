@@ -11,8 +11,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.tab.Crea
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.world.Dimension1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.world.World1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.wrappers.Wrapper1_19;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class Wrapper1_19_4 extends Wrapper1_19 {
     

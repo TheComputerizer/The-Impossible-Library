@@ -5,8 +5,8 @@ import c4.champions.common.capability.IChampionship;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ChampionsAPI;
 import net.minecraft.entity.EntityLiving;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class Champions1_12_2 extends ChampionsAPI {

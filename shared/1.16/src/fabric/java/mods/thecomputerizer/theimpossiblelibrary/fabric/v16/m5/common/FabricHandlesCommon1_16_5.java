@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.FabricHandlesCommon;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.level.biome.Biome;
 
 import java.util.Collections;
 import java.util.Set;

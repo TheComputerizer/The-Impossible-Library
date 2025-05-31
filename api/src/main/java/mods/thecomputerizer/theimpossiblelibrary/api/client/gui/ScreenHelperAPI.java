@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.client.gui;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.TextureWrapper;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public interface ScreenHelperAPI {
 

@@ -4,8 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.core.FabricHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.server.MinecraftServer1_20;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;

@@ -5,8 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.item.ItemStac
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.component.CompoundComponent1_20_6;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.component.CustomData;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static net.minecraft.core.component.DataComponents.CUSTOM_DATA;

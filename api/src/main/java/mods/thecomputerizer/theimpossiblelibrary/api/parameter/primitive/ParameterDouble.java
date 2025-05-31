@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.parameter.primitive;
 
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ParameterDouble extends ParameterNumber<Double> {

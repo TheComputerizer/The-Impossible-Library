@@ -8,8 +8,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicMutableWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
