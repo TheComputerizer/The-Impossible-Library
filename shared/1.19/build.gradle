@@ -3,33 +3,6 @@
 /**
  * Shared implementations for 1.19
  */
-apply from: rootProject.file('gradle\\scripts\\java17-module.gradle')
-
-unimined.minecraft {
-    version minecraft_1_19_2
-    mappings {
-        mojmap()
-        devFallbackNamespace 'official'
-    }
-    defaultRemapJar = false
-}
-
-unimined.minecraft(sourceSets.fabric) {
-    combineWith sourceSets.main
-    fabric {
-        loader fabric_loader
-    }
-}
-
-unimined.minecraft(sourceSets.forge) {
-    combineWith sourceSets.main
-    minecraftForge {
-        loader forge_1_19_2
-    }
-}
-
-def base = project ':api'
-def shared = project ':shared'
 
 configurations {
     dev {
@@ -40,32 +13,4 @@ configurations {
 
 artifacts {
     dev jar
-}
-
-dependencies {
-    //common dependencies
-    compileOnlyApi base
-    compileOnlyApi shared
-}
-
-jar {
-    manifest {
-        attributes([
-                'Implementation-Version': mod_version
-        ])
-    }
-    mustRunAfter ':shared:build'
-}
-
-
-processResources {
-    from shared.processResources.outputs
-}
-
-processTestResources {
-    from shared.processTestResources.outputs
-}
-
-sourcesJar {
-    mustRunAfter ':shared:build'
 }

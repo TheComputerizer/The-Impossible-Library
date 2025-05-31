@@ -1,15 +1,3 @@
-repositories {
-    maven {
-        name 'ParchmentMC'
-        url = uri 'https://maven.parchmentmc.org'
-        content {
-            parchment_content.split(';').each {grp ->
-                includeGroup grp
-            }
-        }
-    }
-}
-
 dependencies {
     compileOnly "$jsr_artifact:$jsr_version"
     compileOnly "$log4j_artifact:$log4j_version"

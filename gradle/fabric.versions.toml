@@ -35,7 +35,7 @@
     bookshelf-1_19_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.19.4', version.ref = 'bookshelf-1_19_4' }
     bookshelf-1_20_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.20.1', version.ref = 'bookshelf-1_20_1' }
     bookshelf-1_20_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.20.4', version.ref = 'bookshelf-1_20_4' }
-    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Fabric-1.21.1', version.ref = 'bookshelf-1_21_1' }
+    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'bookshelf-fabric-1.21.1', version.ref = 'bookshelf-1_21_1' }
 
     cloth-1_16_5 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_16_5' }
     cloth-1_18_2 = { group = 'maven.modrinth', name = 'cloth-config', version.ref = 'cloth-1_18_2' }
@@ -73,14 +73,14 @@
     jei-1_20_6 = { group = 'mezz.jei', name = 'jei-1.20.6-fabric', version.ref = 'jei-1_20_6' }
     jei-1_21_1 = { group = 'mezz.jei', name = 'jei-1.21.1-fabric', version.ref = 'jei-1_21_1' }
 
-    modmenu-1_16_5 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_16_5' }
-    modmenu-1_18_2 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_18_2' }
-    modmenu-1_19_2 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_19_2' }
-    modmenu-1_19_4 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_19_4' }
-    modmenu-1_20_1 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_20_1' }
-    modmenu-1_20_4 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_20_4' }
-    modmenu-1_20_6 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_20_6' }
-    modmenu-1_21_1 = { group = 'maven.modrinth', name = 'modmenu', version.ref = 'modmenu-1_21_1' }
+    modmenu-1_16_5 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_16_5' }
+    modmenu-1_18_2 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_18_2' }
+    modmenu-1_19_2 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_19_2' }
+    modmenu-1_19_4 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_19_4' }
+    modmenu-1_20_1 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_20_1' }
+    modmenu-1_20_4 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_20_4' }
+    modmenu-1_20_6 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_20_6' }
+    modmenu-1_21_1 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_21_1' }
 
     rei-1_16_5 = { group = 'maven.modrinth', name = 'rei', version.ref = 'rei-1_16_5' }
 
@@ -149,7 +149,7 @@
     modmenu-1_20_1 = '7.2.2'
     modmenu-1_20_4 = '9.2.0'
     modmenu-1_20_6 = '10.0.0'
-    modmenu-1_21_1 = '11.0.2'
+    modmenu-1_21_1 = '11.0.3'
 
     rei-1_16_5 = '5.10.177+fabric'
 

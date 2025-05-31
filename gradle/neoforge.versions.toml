@@ -15,7 +15,7 @@
     architectury-1_21_1 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_21_1' }
 
     bookshelf-1_20_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-NeoForge-1.20.4', version.ref = 'bookshelf-1_20_4' }
-    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-NeoForge-1.21.1', version.ref = 'bookshelf-1_21_1' }
+    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'bookshelf-neoforge-1.21.1', version.ref = 'bookshelf-1_21_1' }
 
     configured-1_20_4 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_4' }
     configured-1_20_6 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_6' }

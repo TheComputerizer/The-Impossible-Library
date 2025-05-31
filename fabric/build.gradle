@@ -1,3 +1,5 @@
+//file:noinspection GroovyAssignabilityCheck
+
 /**
  * Common builds and sources relevant to all Fabric modules
  *
@@ -8,33 +10,54 @@ buildscript {
     repositories {
         gradlePluginPortal() {
             content {
-                plugin_portal_content.split(';').each {grp ->
+                unimined_plugin_portal.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
         maven {
-            name = 'Fabric'
-            url = uri 'https://maven.fabricmc.net/'
+            name = 'WagYourMaven Releases'
+            url = uri 'https://maven.wagyourtail.xyz/releases'
             content {
-                fabric_content.split(';').each {grp ->
+                unimined_releases.split(';').each {grp ->
+                    includeGroup grp
+                }
+            }
+        }
+        maven {
+            name = 'WagYourMaven Snapshots'
+            url = uri 'https://maven.wagyourtail.xyz/snapshots'
+            content {
+                unimined_snapshots.split(';').each {grp ->
                     includeGroup grp
                 }
             }
         }
     }
     dependencies {
-        classpath "$loom_plugin:$loom_version"
-        classpath "$shadow_plugin:$shadow_java8_version"
+        classpath "$shadow_plugin:$shadow_version"
+        classpath "$unimined_plugin:$unimined_version"
     }
 }
 
 apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
 apply from: rootProject.file('gradle\\scripts\\fabric.gradle')
 
-plugins.apply 'fabric-loom'
+plugins.apply 'xyz.wagyourtail.unimined'
 
 def base = project ':api'
+
+unimined.minecraft {
+    version minecraft_1_16_5
+    mappings {
+        mojmap()
+        devFallbackNamespace "official" // ensure the same fallback namespace
+    }
+    fabric {
+        loader fabric_loader
+    }
+    defaultRemapJar = false
+}
 
 configurations {
     dev {
@@ -43,20 +66,13 @@ configurations {
     }
 }
 
-dependencies {
-    minecraft "$fabric_mc:$minecraft_1_16_5"
-    mappings loom.layered() {
-        officialMojangMappings()
-        parchment "$parchment_data-$minecraft_1_16_5:$parchment_1_16_5@zip"
-    }
-
-    compileOnlyApi base
-
-    modImplementation "$fabric_loader_artifact:$fabric_loader"
-    modImplementation "$fabric_api_artifact:$fabric_1_16_5"
+artifacts {
+    dev jar
 }
 
-loom.mixin.add sourceSets.main, mod_refmap
+dependencies {
+    api base
+}
 
 processResources {
     def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
@@ -73,15 +89,16 @@ processTestResources {
 }
 
 jar {
-    setArchiveBaseName mod_id
+    manifest {
+        attributes([
+                'Implementation-Title': mod_name,
+                'Implementation-Version': mod_version
+        ])
+    }
     from(base.jar.archiveFile.collect { zipTree it })
     mustRunAfter ':api:build'
 }
 
 sourcesJar {
     mustRunAfter ':api:build'
-}
-
-artifacts {
-    dev jar
 }

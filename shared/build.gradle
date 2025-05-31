@@ -71,25 +71,142 @@ processTestResources {
     from base.processTestResources.outputs
 }
 
+def java21_versions = [ 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ]
 def neoforge_versions = [ 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ]
+def parent_versions = [ 'shared_1.19', 'shared_1.20', 'shared_1.21' ]
+def singleton_versions = [ 'shared_1.16', 'shared_1.18' ]
 
 subprojects {sub ->
     plugins.apply 'xyz.wagyourtail.unimined'
-    boolean neoforge_compatible = neoforge_versions.contains sub.name
+    def sub_name = sub.name
+    def java_version = 'shared_1.16'==sub_name ? '8' : (java21_versions.contains(sub_name) ? '21' : '17')
+    sub.apply from: rootProject.file("gradle\\scripts\\java$java_version-module.gradle")
+    boolean neoforge_compatible = neoforge_versions.contains sub_name
+    boolean is_runnable = !parent_versions.contains(sub_name)
+    boolean has_parent = is_runnable && !singleton_versions.contains(sub_name)
+    String parent_path = has_parent ? ":shared:${sub_name.substring(0,sub_name.length()-2)}" : null
     sourceSets {
         fabric {
-            compileClasspath += sourceSets.main.output
-            runtimeClasspath += sourceSets.main.output
+            compileClasspath+=sourceSets.main.output
+            runtimeClasspath+=sourceSets.main.output
         }
         forge {
-            compileClasspath += sourceSets.main.output
-            runtimeClasspath += sourceSets.main.output
+            compileClasspath+=sourceSets.main.output
+            runtimeClasspath+=sourceSets.main.output
         }
         if(neoforge_compatible) {
             neoforge {
-                compileClasspath += sourceSets.main.output
-                runtimeClasspath += sourceSets.main.output
+                compileClasspath+=sourceSets.main.output
+                runtimeClasspath+=sourceSets.main.output
             }
         }
+    }
+    uniminedCommon sub
+    uniminedFabric sub, is_runnable
+    uniminedForge sub, is_runnable
+    if(neoforge_compatible) uniminedNeoforge sub, is_runnable
+    repositories {
+        if(is_runnable) {
+            maven {
+                name = 'CurseMaven'
+                url = uri 'https://curse.cleanroommc.com/'
+                content {
+                    includeGroup 'curse.maven'
+                }
+            }
+            maven {
+                name = 'BlameJared'
+                url = uri 'https://maven.blamejared.com'
+                content {
+                    [ 'com.blamejared.crafttweaker', 'net.darkhax.bookshelf', 'net.darkhax.gamestages',
+                      'org.openzen.zencode' ].forEach { grp ->
+                        includeGroup grp
+                    }
+                }
+            }
+            maven {
+                name = 'ModMaven'
+                url = uri 'https://modmaven.dev'
+                content {
+                    includeGroup 'mezz.jei'
+                }
+            }
+            maven {
+                name 'Modrinth'
+                url = uri 'https://api.modrinth.com/maven'
+                content {
+                    includeGroup 'maven.modrinth'
+                }
+            }
+            maven {
+                name = 'Terraformers'
+                url = uri 'https://maven.terraformersmc.com/'
+                content {
+                    includeGroup 'com.terraformersmc'
+                }
+            }
+        }
+    }
+    def shared = project ':shared'
+    dependencies {
+        //common dependencies
+        compileOnlyApi base
+        compileOnlyApi shared
+
+        if(is_runnable) {
+            //fabric dependencies
+            fabricCompileOnly base
+            fabricCompileOnly shared
+            fabricCompileOnly project(path: ':fabric', configuration: 'dev')
+            fabricImplementation modsBundle(sub, 'fabric', 'implementation')
+            fabricRuntimeOnly modsBundle(sub, 'fabric', 'runtime')
+
+            //forge dependencies
+            forgeCompileOnly base
+            forgeCompileOnly shared
+            forgeCompileOnly project(path: ':forge', configuration: 'dev')
+            forgeImplementation modsBundle(sub, 'forge', 'implementation')
+            forgeRuntimeOnly modsBundle(sub, 'forge', 'runtime')
+
+            //neforge dependencies
+            if(neoforge_compatible) {
+                neoforgeCompileOnly base
+                neoforgeCompileOnly shared
+                neoforgeCompileOnly project(path: ':neoforge', configuration: 'dev')
+                neoforgeImplementation modsBundle(sub, 'neoforge', 'implementation')
+                neoforgeRuntimeOnly modsBundle(sub, 'neoforge', 'runtime')
+            }
+
+            //parent dependencies
+            if(has_parent) {
+                compileOnlyApi project(path: parent_path, configuration: 'dev')
+                fabricCompileOnly project(path: parent_path, configuration: 'dev')
+                forgeCompileOnly project(path: parent_path, configuration: 'dev')
+                if(neoforge_compatible) neoforgeCompileOnly project(path: parent_path, configuration: 'dev')
+            }
+        }
+    }
+    jar {
+        manifest {
+            attributes([
+                    'Implementation-Version': mod_version
+            ])
+        }
+        if(is_runnable) finalizedBy shadowJar
+        mustRunAfter ':shared:build'
+        if(has_parent) mustRunAfter "$parent_path:build"
+    }
+
+    processResources {
+        from shared.processResources.outputs
+    }
+
+    processTestResources {
+        from shared.processTestResources.outputs
+    }
+
+    sourcesJar {
+        mustRunAfter ':shared:build'
+        if(has_parent) mustRunAfter "$parent_path:build"
     }
 }

@@ -52,7 +52,7 @@
     bookshelf-1_19_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.19.4', version.ref = 'bookshelf-1_19_4' }
     bookshelf-1_20_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.20.1', version.ref = 'bookshelf-1_20_1' }
     bookshelf-1_20_4 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.20.4', version.ref = 'bookshelf-1_20_4' }
-    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-Forge-1.21.1', version.ref = 'bookshelf-1_21_1' }
+    bookshelf-1_21_1 = { group = 'net.darkhax.bookshelf', name = 'bookshelf-forge-1.21.1', version.ref = 'bookshelf-1_21_1' }
 
     champions-1_16_5 = { group = 'curse.maven', name = 'champions-307152', version.ref = 'champions-1_16_5' }
     champions-1_18_2 = { group = 'curse.maven', name = 'champions-307152', version.ref = 'champions-1_18_2' }

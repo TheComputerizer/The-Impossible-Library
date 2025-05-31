@@ -3,52 +3,6 @@
 /**
  * Shared implementations for 1.20.6
  */
-apply from: rootProject.file('gradle\\scripts\\java21-module.gradle')
-
-unimined.minecraft {
-    version minecraft_1_20_6
-    mappings {
-        mojmap()
-        devFallbackNamespace 'official'
-    }
-    defaultRemapJar = false
-}
-
-unimined.minecraft(sourceSets.fabric) {
-    combineWith sourceSets.main
-    fabric {
-        loader fabric_loader
-        runs.all {
-            systemProperty 'foundation.verbose', 'true'
-            return
-        }
-    }
-    defaultRemapJar = true
-}
-
-unimined.minecraft(sourceSets.forge) {
-    combineWith sourceSets.main
-    minecraftForge {
-        loader forge_1_20_6
-        runs.all {
-            systemProperty 'foundation.verbose', 'true'
-            return
-        }
-    }
-    defaultRemapJar = true
-}
-
-unimined.minecraft(sourceSets.neoforge) {
-    combineWith sourceSets.main
-    neoForge {
-        loader neoforge_1_20_6
-        runs.all {
-            systemProperty 'foundation.verbose', 'true'
-            return
-        }
-    }
-    defaultRemapJar = true
-}
 
 def base = project ':api'
 def fabric_base = project ':fabric'
@@ -59,87 +13,16 @@ def shared_specific = project ':shared:shared_1.20'
 
 repositories {
     maven {
-        name = 'CurseMaven'
-        url = uri 'https://curse.cleanroommc.com/'
+        name = 'Nucleoid'
+        url = uri 'https://maven.nucleoid.xyz/'
         content {
-            includeGroup 'curse.maven'
+            includeGroup 'eu.pb4'
         }
     }
-    maven {
-        name = 'BlameJared'
-        url = uri 'https://maven.blamejared.com'
-        content {
-            [ 'bookshelf', 'gamestages' ].forEach {
-                includeGroup "net.darkhax.$it"
-            }
-        }
-    }
-    maven {
-        name = 'ModMaven'
-        url = uri 'https://modmaven.dev'
-        content {
-            includeGroup 'mezz.jei'
-        }
-    }
-    maven {
-        name 'Modrinth'
-        url = uri 'https://api.modrinth.com/maven'
-        content {
-            includeGroup 'maven.modrinth'
-        }
-    }
-}
-
-dependencies {
-    //common dependencies
-    compileOnlyApi base
-    compileOnlyApi shared
-    compileOnlyApi project(path: ':shared:shared_1.20', configuration: 'dev')
-
-    //fabric dependencies
-    fabricCompileOnly base
-    fabricCompileOnly shared
-    fabricCompileOnly project(path: ':shared:shared_1.20', configuration: 'dev')
-    fabricCompileOnly project(path: ':fabric', configuration: 'dev')
-    fabricImplementation fabric.bundles.mods.get1().get20().get6().implementation
-    fabricRuntimeOnly fabric.bundles.mods.get1().get20().get6().runtime
-
-    //forge dependencies
-    forgeCompileOnly base
-    forgeCompileOnly shared
-    forgeCompileOnly project(path: ':shared:shared_1.20', configuration: 'dev')
-    forgeCompileOnly project(path: ':forge', configuration: 'dev')
-    forgeImplementation forge.bundles.mods.get1().get20().get6().implementation
-    forgeRuntimeOnly forge.bundles.mods.get1().get20().get6().runtime
-
-    //neoorge dependencies
-    neoforgeCompileOnly base
-    neoforgeCompileOnly shared
-    neoforgeCompileOnly project(path: ':shared:shared_1.20', configuration: 'dev')
-    neoforgeCompileOnly project(path: ':neoforge', configuration: 'dev')
-    neoforgeImplementation neoforge.bundles.mods.get1().get20().get6().implementation
-    neoforgeRuntimeOnly neoforge.bundles.mods.get1().get20().get6().runtime
 }
 
 jar {
-    manifest {
-        attributes([
-                'Implementation-Version': mod_version
-        ])
-    }
-    finalizedBy shadowJar
-    mustRunAfter ':shared:build'
-    mustRunAfter ':shared:shared_1.20:build'
     mustRunAfter ':shared:shared_1.20:shared_1.20.4:build'
-}
-
-
-processResources {
-    from shared.processResources.outputs
-}
-
-processTestResources {
-    from shared.processTestResources.outputs
 }
 
 shadowJar {
@@ -150,8 +33,6 @@ shadowJar {
 }
 
 sourcesJar {
-    mustRunAfter ':shared:build'
-    mustRunAfter ':shared:shared_1.20:build'
     mustRunAfter ':shared:shared_1.20:shared_1.20.4:build'
 }
 

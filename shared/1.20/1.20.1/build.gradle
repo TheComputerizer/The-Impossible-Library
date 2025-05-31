@@ -3,40 +3,6 @@
 /**
  * Shared implementations for 1.20.1
  */
-apply from: rootProject.file('gradle\\scripts\\java17-module.gradle')
-
-unimined.minecraft {
-    version minecraft_1_20_1
-    mappings {
-        mojmap()
-        devFallbackNamespace 'official'
-    }
-    defaultRemapJar = false
-}
-
-unimined.minecraft(sourceSets.fabric) {
-    combineWith sourceSets.main
-    fabric {
-        loader fabric_loader
-        runs.all {
-            systemProperty 'foundation.verbose', 'true'
-            return
-        }
-    }
-    defaultRemapJar = true
-}
-
-unimined.minecraft(sourceSets.forge) {
-    combineWith sourceSets.main
-    minecraftForge {
-        loader forge_1_20_1
-        runs.all {
-            systemProperty 'foundation.verbose', 'true'
-            return
-        }
-    }
-    defaultRemapJar = true
-}
 
 def base = project ':api'
 def fabric_base = project ':fabric'
@@ -44,93 +10,11 @@ def forge_base = project ':forge'
 def shared = project ':shared'
 def shared_specific = project ':shared:shared_1.20'
 
-repositories {
-    maven {
-        name = 'CurseMaven'
-        url = uri 'https://curse.cleanroommc.com/'
-        content {
-            includeGroup 'curse.maven'
-        }
-    }
-    maven {
-        name = 'BlameJared'
-        url = uri 'https://maven.blamejared.com'
-        content {
-            [ 'com.blamejared.crafttweaker', 'net.darkhax.bookshelf', 'net.darkhax.gamestages',
-              'org.openzen.zencode' ].forEach { grp ->
-                includeGroup grp
-            }
-        }
-    }
-    maven {
-        name = 'ModMaven'
-        url = uri 'https://modmaven.dev'
-        content {
-            includeGroup 'mezz.jei'
-        }
-    }
-    maven {
-        name 'Modrinth'
-        url = uri 'https://api.modrinth.com/maven'
-        content {
-            includeGroup 'maven.modrinth'
-        }
-    }
-}
-
-dependencies {
-    //common dependencies
-    compileOnlyApi base
-    compileOnlyApi shared
-    compileOnlyApi project(path: ':shared:shared_1.20', configuration: 'dev')
-
-    //fabric dependencies
-    fabricCompileOnly base
-    fabricCompileOnly shared
-    fabricCompileOnly project(path: ':shared:shared_1.20', configuration: 'dev')
-    fabricCompileOnly project(path: ':fabric', configuration: 'dev')
-    fabricImplementation fabric.bundles.mods.get1().get20().get1().implementation
-    fabricRuntimeOnly fabric.bundles.mods.get1().get20().get1().runtime
-
-    //forge dependencies
-    forgeCompileOnly base
-    forgeCompileOnly shared
-    forgeCompileOnly project(path: ':shared:shared_1.20', configuration: 'dev')
-    forgeCompileOnly project(path: ':forge', configuration: 'dev')
-    forgeImplementation forge.bundles.mods.get1().get20().get1().implementation
-    forgeRuntimeOnly forge.bundles.mods.get1().get20().get1().runtime
-}
-
-jar {
-    manifest {
-        attributes([
-                'Implementation-Version': mod_version
-        ])
-    }
-    finalizedBy shadowJar
-    mustRunAfter ':shared:build'
-    mustRunAfter ':shared:shared_1.20:build'
-}
-
-
-processResources {
-    from shared.processResources.outputs
-}
-
-processTestResources {
-    from shared.processTestResources.outputs
-}
-
 shadowJar {
     [ base, fabric_base, forge_base, shared, shared_specific ].forEach {
         from(it.jar.archiveFile.collect { zipTree it })
     }
     shadowJar.finalizedBy 'remapJar'
-}
-
-sourcesJar {
-    mustRunAfter ':shared:build'
-    mustRunAfter ':shared:shared_1.20:build'
 }
 
 tasks.assemble.dependsOn shadowJar
