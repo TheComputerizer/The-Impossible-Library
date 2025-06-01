@@ -1,4 +1,0 @@
-dependencies {
-    compileOnly "$jsr_artifact:$jsr_version"
-    compileOnly "$log4j_artifact:$log4j_version"
-}

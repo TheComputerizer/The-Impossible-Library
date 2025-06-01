@@ -1,16 +1,11 @@
-//file:noinspection GroovyAssignabilityCheck
-
 /**
  * Shared implementations for 1.20
  */
-
-configurations {
-    dev {
-        canBeResolved = false
-        canBeConsumed = true
-    }
+plugins {
+    alias libs.plugins.unimined
 }
 
-artifacts {
-    dev jar
-}
+uniminedCommon project
+uniminedFabric project, false
+uniminedForge project, false
+uniminedNeoforge project, false

@@ -4,7 +4,11 @@
  * Shading and relocation must happen within each module to properly respect reobfuscation.
  * Any necessary reobfuscations must happen in the version the deobfuscations happened in.
  */
-apply from: rootProject.file('gradle\\scripts\\shared.gradle')
+allprojects {sub ->
+    sub.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
+}
+
+extendFrom project, 'shared'
 
 def base = ':api'
 def cleanroom = ':legacy:cleanroom'

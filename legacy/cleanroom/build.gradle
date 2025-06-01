@@ -1,93 +1,21 @@
 //file:noinspection GroovyAssignabilityCheck
-import static org.gradle.api.logging.LogLevel.INFO
-import static org.gradle.api.logging.LogLevel.QUIET
 
-apply from: rootProject.file('gradle\\scripts\\java21-module.gradle')
+/**
+ * 1.12.2 cleanroom build
+ */
 
-plugins.apply 'xyz.wagyourtail.unimined'
-
-def base = project ':api'
-def legacy_base = project ':legacy'
-
-repositories {
-    maven {
-        name = 'CleanroomMC'
-        url = uri 'https://maven.cleanroommc.com'
-        content {
-            [ 'com.cleanroommc', 'mezz' ].forEach {grp ->
-                includeGroup grp
-            }
-        }
-    }
-    maven {
-        name = 'CurseMaven'
-        url = uri 'https://curse.cleanroommc.com/'
-        content {
-            includeGroup 'curse.maven'
-        }
-    }
-    maven {
-        name = 'BlameJared'
-        url = uri 'https://maven.blamejared.com'
-        content {
-            [ 'bookshelf', 'gamestages' ].forEach {grp ->
-                includeGroup "net.darkhax.$grp"
-            }
-        }
-    }
+plugins {
+    alias libs.plugins.shadow
+    alias libs.plugins.unimined
 }
+
+extendFrom project, 'shadow'
+
+uniminedCore project, 'cleanroom', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+remapJarDefaults project
 
 dependencies {
-    api base
-    api legacy_base
-
-    compileOnly "$cleanroom_mixin_artifact:$cleanroom_mixin_version"
-    compileOnly "$lwjglx_artifact:$lwjglx_version"
-
-    annotationProcessor libs.bundles.legacy.annotations
-    compileOnly legacy.bundles.mods.get1().get12().get2().compile
-    implementation legacy.bundles.mods.get1().get12().get2().implementation
-    runtimeOnly legacy.bundles.mods.get1().get12().get2().runtime
+    compileOnly legacy.bundles.cleanroom.compile
 }
 
-compileJava {
-    source base.sourceSets.main.allJava, legacy_base.sourceSets.main.allJava
-}
-
-compileTestJava {
-    source base.sourceSets.test.allJava, legacy_base.sourceSets.test.allJava
-}
-
-processResources {
-    from legacy_base.processResources.outputs
-}
-
-processTestResources {
-    from legacy_base.processTestResources.outputs
-}
-
-jar {
-    from(legacy_base.jar.archiveFile.collect { zipTree it })
-    manifest {
-        attributes([
-                'FMLCorePlugin': legacy_entrypoint,
-                'FMLCorePluginContainsFMLMod': true,
-                'ForceLoadAsMod': true
-        ])
-    }
-    finalizedBy shadowJar
-    dependsOn ':legacy:build'
-}
-
-shadowJar {
-    from(base.jar.archiveFile.collect { zipTree it })
-}
-
-tasks.remapJar {
-    doFirst {
-        logging.captureStandardOutput INFO
-    }
-    doLast {
-        logging.captureStandardOutput QUIET
-    }
-}
+setSharedShadowJar ':api', ':legacy'

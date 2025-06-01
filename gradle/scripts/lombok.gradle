@@ -7,7 +7,6 @@ repositories {
 }
 
 dependencies {
-    def lombok_full = "$lombok_group:$lombok_name:$lombok_version".toString()
-    annotationProcessor lombok_full
-    compileOnly lombok_full
+    annotationProcessor libs.lombok
+    compileOnly libs.lombok
 }

@@ -1,64 +1,23 @@
 //file:noinspection GroovyAssignabilityCheck
+
 /**
  * Pass through parent module for shared version modules
  */
-buildscript {
-    repositories {
-        gradlePluginPortal() {
-            content {
-                unimined_plugin_portal.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'WagYourMaven Releases'
-            url = uri 'https://maven.wagyourtail.xyz/releases'
-            content {
-                unimined_releases.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'WagYourMaven Snapshots'
-            url = uri 'https://maven.wagyourtail.xyz/snapshots'
-            content {
-                unimined_snapshots.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-    }
-    dependencies {
-        classpath "$shadow_plugin:$shadow_version"
-        classpath "$unimined_plugin:$unimined_version"
-    }
-}
 
-apply from: rootProject.file('gradle\\scripts\\shared.gradle')
+extendFrom project, 'shared'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
 }
 
+setDev
+
 def base = project ':api'
 
-configurations {
-    dev {
-        canBeResolved = false
-        canBeConsumed = true
-    }
-}
-
-artifacts {
-    dev jar
-}
-
 jar {
-    from(base.jar.archiveFile.collect {
+    from(base.jar.archiveFile.collect {entry ->
         include 'mods/**'
-        zipTree it
+        zipTree entry
     })
     dependsOn ':api:build'
 }
@@ -77,7 +36,6 @@ def parent_versions = [ 'shared_1.19', 'shared_1.20', 'shared_1.21' ]
 def singleton_versions = [ 'shared_1.16', 'shared_1.18' ]
 
 subprojects {sub ->
-    plugins.apply 'xyz.wagyourtail.unimined'
     def sub_name = sub.name
     def java_version = 'shared_1.16'==sub_name ? '8' : (java21_versions.contains(sub_name) ? '21' : '17')
     sub.apply from: rootProject.file("gradle\\scripts\\java$java_version-module.gradle")
@@ -101,10 +59,7 @@ subprojects {sub ->
             }
         }
     }
-    uniminedCommon sub
-    uniminedFabric sub, is_runnable
-    uniminedForge sub, is_runnable
-    if(neoforge_compatible) uniminedNeoforge sub, is_runnable
+    if(!is_runnable) setDev
     repositories {
         if(is_runnable) {
             maven {
@@ -189,24 +144,35 @@ subprojects {sub ->
     jar {
         manifest {
             attributes([
+                    'Implementation-Title': mod_name,
                     'Implementation-Version': mod_version
             ])
         }
-        if(is_runnable) finalizedBy shadowJar
+        if(is_runnable) {
+            afterEvaluate {
+                finalizedBy 'shadowJar'
+            }
+        }
         mustRunAfter ':shared:build'
         if(has_parent) mustRunAfter "$parent_path:build"
     }
-
     processResources {
         from shared.processResources.outputs
     }
-
     processTestResources {
         from shared.processTestResources.outputs
     }
-
     sourcesJar {
         mustRunAfter ':shared:build'
         if(has_parent) mustRunAfter "$parent_path:build"
+    }
+    if(is_runnable) {
+        afterEvaluate {
+            def shaded_projects = [ ':api', ':fabric', ':forge', ':shared' ]
+            if(neoforge_compatible) shaded_projects+=':neoforge'
+            if(has_parent) shaded_projects+=parent_path
+            setSharedShadowJar shaded_projects.toArray(new String[0])
+            tasks.assemble.dependsOn 'shadowJar'
+        }
     }
 }

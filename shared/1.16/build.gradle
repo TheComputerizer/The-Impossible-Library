@@ -3,10 +3,16 @@
 /**
  * Shared implementations for 1.16
  */
-def base = project ':api'
-def fabric_base = project ':fabric'
-def forge_base = project ':forge'
-def shared = project ':shared'
+plugins {
+    alias libs.plugins.shadow
+    alias libs.plugins.unimined
+}
+
+extendFrom project, 'shadow'
+
+uniminedCommon project
+uniminedFabric project, true
+uniminedForge project, true
 
 repositories {
     maven {
@@ -17,12 +23,3 @@ repositories {
         }
     }
 }
-
-shadowJar {
-    [ base, fabric_base, forge_base, shared ].forEach {
-        from(it.jar.archiveFile.collect { zipTree it })
-    }
-    shadowJar.finalizedBy 'remapJar'
-}
-
-tasks.assemble.dependsOn shadowJar

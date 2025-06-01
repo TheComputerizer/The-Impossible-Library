@@ -1,7 +1,12 @@
 //file:noinspection GroovyAssignabilityCheck
 import org.codehaus.groovy.runtime.MethodClosure
 
+import static org.gradle.api.logging.LogLevel.INFO
+import static org.gradle.api.logging.LogLevel.QUIET
+
 //Setup project extension so builds that apply the script can actually call the functions
+ext.extendFrom = this.&extendFrom as MethodClosure
+ext.extendRunnable = this.&extendRunnable as MethodClosure
 ext.fabricVersion = this.&fabricVersion as MethodClosure
 ext.forgeVersion = this.&forgeVersion as MethodClosure
 ext.minecraftVersion = this.&minecraftVersion as MethodClosure
@@ -10,11 +15,23 @@ ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
 ext.parchmentVersion = this.&parchmentVersion as MethodClosure
 ext.projectMCVersion = this.&projectMCVersion as MethodClosure
 ext.propertyString = this.&propertyString as MethodClosure
+ext.remapJarDefaults = this.&remapJarDefaults as MethodClosure
+ext.setDev = this.&setDev as MethodClosure
+ext.setSharedShadowJar = this.&setSharedShadowJar as MethodClosure
+ext.uniminedCore = this.&uniminedCore as MethodClosure
 ext.uniminedCommon = this.&uniminedCommon as MethodClosure
 ext.uniminedFabric = this.&uniminedFabric as MethodClosure
 ext.uniminedForge = this.&uniminedForge as MethodClosure
 ext.uniminedNeoforge = this.&uniminedNeoforge as MethodClosure
 ext.withMCVersion = this.&withMCVersion as MethodClosure
+
+static void extendFrom(Project project, String file_name) {
+    project.apply from: project.rootProject.file("gradle\\scripts\\${file_name}.gradle")
+}
+
+static void extendRunnable(Project project, int java_version) {
+    extendFrom project, "java$java_version-module"
+}
 
 String fabricVersion(Project project) {
     return withMCVersion(project,'fabric')
@@ -24,13 +41,27 @@ String forgeVersion(Project project) {
     return withMCVersion(project,'forge')
 }
 
+static boolean isLegacy(Project project) {
+    def p_name = project.name
+    return p_name.contains('legacy') || p_name.contains('12') || p_name.contains('cleanroom')
+}
+
+/**
+ * Assumed the input project has a version association
+ */
+static boolean mappingStyleOfficial(Project project) {
+    def p_name = project.name
+    return p_name.contains('21') || p_name.contains('20.6') || p_name.contains('20_6')
+}
+
 String minecraftVersion(Project project) {
     return withMCVersion(project,'minecraft')
 }
 
 static Provider<ExternalModuleDependencyBundle> modsBundle(Project project, String loader, String type) {
+    if('cleanroom'==project.name || '1.12'==project.name) return project.legacy.bundles.mods.'1'.'12'.'2'."$type"
     String[] mc = projectMCVersion(project).split '_'
-    return project."$loader".bundles.mods.get1()."get${mc[1]}"()."get${mc[2]}"()."$type"
+    return project."$loader".bundles.mods.'1'."${mc[1]}"."${mc[2]}"."$type"
 }
 
 String neoforgeVersion(Project project) {
@@ -57,18 +88,122 @@ String propertyString(String name) {
     return String.valueOf(property(name))
 }
 
-def uniminedCommon(Project project) {
-    project.unimined.minecraft {
-        version minecraftVersion(project)
-        mappings {
-            mojmap()
-            devFallbackNamespace 'official'
+static void remapJarDefaults(Project project) {
+    project.tasks.remapJar {
+        doFirst {
+            logging.captureStandardOutput INFO
         }
-        defaultRemapJar = false
+        doLast {
+            logging.captureStandardOutput QUIET
+        }
     }
 }
 
-def uniminedFabric(Project project, boolean is_runnable) {
+void setDev() {
+    configurations {
+        dev {
+            canBeResolved = false
+            canBeConsumed = true
+        }
+    }
+    artifacts {
+        dev jar
+    }
+}
+
+void setSharedShadowJar(String ... project_names) {
+    shadowJar {
+        project_names.each {p_name ->
+            from(project(p_name).jar.archiveFile.collect {entry ->
+                zipTree entry
+            })
+        }
+        shadowJar.finalizedBy 'remapJar'
+    }
+}
+
+static void uniminedCore(Project project, String loader_name, boolean is_runnable, List<String> args) {
+    def p_name = project.name
+    project.logger.lifecycle("Setting up core unimined stuff for $p_name")
+    boolean loader_base = !p_name.contains('1') || p_name.contains('cleanroom')
+    boolean legacy_project = isLegacy(project)
+    project.unimined.minecraft {
+        if(legacy_project) version project.minecraft_1_12_2
+        else if(loader_base) version project.propertyString("minecraft_1_${'neoforge'==loader_name ? '20_4' : '16_5'}")
+        else version project.minecraftVersion(project)
+        mappings {
+            if(legacy_project) mcp 'stable', project.legacy_mappings_1_12_2
+            else {
+                boolean official_style = mappingStyleOfficial(project)
+                if(!official_style) intermediary()
+                mojmap()
+                if('neoforge'==loader_name) parchment loader_base ? project.parchment_1_20_4 : parchmentVersion(project)
+                devFallbackNamespace official_style ? 'official' : 'intermediary'
+            }
+        }
+        switch(loader_name) {
+            case 'cleanroom': {
+                cleanroom {
+                    loader project.cleanroom_loader_version
+                    if(is_runnable) {
+                        runs.all {
+                            systemProperty 'foundation.verbose', 'true'
+                            if(!args.isEmpty()) jvmArgs args
+                            return
+                        }
+                    }
+                }
+                break
+            }
+            case 'fabric': {
+                fabric {
+                    loader project.fabric_loader
+                    if(is_runnable) {
+                        runs.all {
+                            systemProperty 'foundation.verbose', 'true'
+                            if(!args.isEmpty()) jvmArgs args
+                            return
+                        }
+                    }
+                }
+                break
+            }
+            case 'forge': {
+                minecraftForge {
+                    loader legacy_project ? project.forge_1_12_2 : project.forge_1_16_5
+                    if(is_runnable) {
+                        runs.all {
+                            systemProperty 'foundation.verbose', 'true'
+                            if(!args.isEmpty()) jvmArgs args
+                            return
+                        }
+                    }
+                }
+                break
+            }
+            case 'neoforge': {
+                neoForge {
+                    loader project.neoforge_1_20_4
+                    if(is_runnable) {
+                        runs.all {
+                            systemProperty 'foundation.verbose', 'true'
+                            if(!args.isEmpty()) jvmArgs args
+                            return
+                        }
+                    }
+                }
+                break
+            }
+        }
+        if(!is_runnable) defaultRemapJar = false
+    }
+}
+
+static void uniminedCommon(Project project) {
+    uniminedCore project, 'none', false, []
+}
+
+void uniminedFabric(Project project, boolean is_runnable) {
     project.unimined.minecraft(project.sourceSets.fabric) {
         combineWith project.sourceSets.main
         if(is_runnable) defaultRemapJar = true
@@ -83,7 +218,7 @@ def uniminedFabric(Project project, boolean is_runnable) {
     }
 }
 
-def uniminedForge(Project project, boolean is_runnable) {
+void uniminedForge(Project project, boolean is_runnable) {
     project.unimined.minecraft(project.sourceSets.forge) {
         combineWith project.sourceSets.main
         if(is_runnable) defaultRemapJar = true
@@ -98,7 +233,7 @@ def uniminedForge(Project project, boolean is_runnable) {
     }
 }
 
-def uniminedNeoforge(Project project, boolean is_runnable) {
+void uniminedNeoforge(Project project, boolean is_runnable) {
     project.unimined.minecraft(project.sourceSets.neoforge) {
         combineWith project.sourceSets.main
         if(is_runnable) defaultRemapJar = true

@@ -1,41 +1,8 @@
-import static org.gradle.api.logging.LogLevel.INFO
-import static org.gradle.api.logging.LogLevel.QUIET
+/**
+ * Common base for all legacy builds (pre 1.16)
+ */
 
-buildscript {
-    repositories {
-        gradlePluginPortal() {
-            content {
-                unimined_plugin_portal.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'WagYourMaven Releases'
-            url = uri 'https://maven.wagyourtail.xyz/releases'
-            content {
-                unimined_releases.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'WagYourMaven Snapshots'
-            url = uri 'https://maven.wagyourtail.xyz/snapshots'
-            content {
-                unimined_snapshots.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-    }
-    dependencies {
-        classpath "$shadow_plugin:$shadow_version"
-        classpath "$unimined_plugin:$unimined_version"
-    }
-}
-
-apply from: rootProject.file('gradle\\scripts\\shared.gradle')
+extendFrom project, 'shared'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
@@ -67,40 +34,66 @@ processTestResources {
 tasks.jar.dependsOn ':api:build'
 
 subprojects { sub ->
-    plugins.apply 'xyz.wagyourtail.unimined'
-    unimined.useGlobalCache = false
-    unimined.minecraft {
-        version minecraft_1_12_2
-        def args = [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
-        mappings {
-            mcp 'stable', legacy_mappings_1_12_2
-        }
-        if('cleanroom'==sub.name) {
-            cleanroom {
-                loader cleanroom_loader_version
-                runs.all {
-                    systemProperty 'foundation.verbose', 'true'
-                    jvmArgs args
-                    return
-                }
+    extendRunnable sub, 'cleanroom'==sub.name ? 21 : 8
+    repositories {
+        maven {
+            name = 'CleanroomMC'
+            url = uri 'https://maven.cleanroommc.com'
+            content {
+                includeGroup 'mezz'
             }
-        } else {
-            minecraftForge {
-                loader forge_1_12_2
-                runs.all {
-                    systemProperty 'foundation.verbose', 'true'
-                    jvmArgs args
-                    return
+        }
+        maven {
+            name = 'CurseMaven'
+            url = uri 'https://curse.cleanroommc.com/'
+            content {
+                includeGroup 'curse.maven'
+            }
+        }
+        maven {
+            name = 'BlameJared'
+            url = uri 'https://maven.blamejared.com'
+            content {
+                [ 'bookshelf', 'gamestages' ].forEach {grp ->
+                    includeGroup "net.darkhax.$grp"
                 }
             }
         }
     }
-    tasks.remapJar {
-        doFirst {
-            logging.captureStandardOutput INFO
+    def legacy_base = project ':legacy'
+    dependencies {
+        api base
+        api legacy_base
+
+        annotationProcessor libs.bundles.legacy.annotations
+        compileOnly modsBundle(sub, 'legacy', 'compile')
+        implementation modsBundle(sub, 'legacy', 'implementation')
+        runtimeOnly modsBundle(sub, 'legacy', 'runtime')
+    }
+    compileJava {
+        source base.sourceSets.main.allJava, legacy_base.sourceSets.main.allJava
+    }
+    compileTestJava {
+        source base.sourceSets.test.allJava, legacy_base.sourceSets.test.allJava
+    }
+    processResources {
+        from legacy_base.processResources.outputs
+    }
+    processTestResources {
+        from legacy_base.processTestResources.outputs
+    }
+    jar {
+        from(legacy_base.jar.archiveFile.collect { zipTree it })
+        manifest {
+            attributes([
+                    'FMLCorePlugin': legacy_entrypoint,
+                    'FMLCorePluginContainsFMLMod': true,
+                    'ForceLoadAsMod': true,
+                    'Implementation-Title': mod_name,
+                    'Implementation-Version': mod_version
+            ])
         }
-        doLast {
-            logging.captureStandardOutput QUIET
-        }
+        finalizedBy 'shadowJar'
+        dependsOn ':legacy:build'
     }
 }

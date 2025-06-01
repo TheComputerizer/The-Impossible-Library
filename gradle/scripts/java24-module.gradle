@@ -1,8 +1,7 @@
-apply from: rootProject.file('gradle\\scripts\\shared.gradle')
+extendFrom project, 'shared'
 
 compileJava {
     options.release = 24
 }
 
-apply from: rootProject.file('gradle\\scripts\\lombok.gradle')
-apply from: rootProject.file('gradle\\scripts\\shadow.gradle')
+extendFrom project, 'lombok'

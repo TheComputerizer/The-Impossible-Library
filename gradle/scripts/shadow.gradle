@@ -2,8 +2,6 @@ import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 apply from: rootProject.file('gradle\\scripts\\shaded-deps.gradle')
 
-plugins.apply 'com.gradleup.shadow'
-
 configurations {
     shadow.extendsFrom shaded
 }

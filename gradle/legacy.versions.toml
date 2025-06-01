@@ -1,4 +1,5 @@
 [bundles]
+    cleanroom-compile = [ 'cleanroom-lwjglx', 'cleanroom-mixin' ]
     mods-1_12_2-compile = [ 'dsurround-1_12_2', 'orelib-1_12_2' ]
     mods-1_12_2-implementation = [ 'bloodmoon-1_12_2', 'blueskies-1_12_2', 'bookshelf-1_12_2', 'champions-1_12_2',
         'coroutil-1_12_2', 'gamestages-1_12_2', 'infernalmobs-1_12_2', 'nyx-1_12_2', 'sereneseasons-1_12_2',
@@ -9,6 +10,8 @@
     bloodmoon-1_12_2 = { group = 'curse.maven', name = 'bloodmoon-226321', version.ref = 'bloodmoon-1_12_2' }
     blueskies-1_12_2 = { group = 'curse.maven', name = 'blueskies-312918', version.ref = 'blueskies-1_12_2' }
     bookshelf-1_12_2 = { group = 'net.darkhax.bookshelf', name = 'Bookshelf-1.12.2', version.ref = 'bookshelf-1_12_2' }
+    cleanroom-lwjglx = { group = 'com.cleanroommc', name = 'lwjglx', version.ref = 'cleanroom-lwjglx' }
+    cleanroom-mixin = { group = 'com.cleanroommc', name = 'sponge-mixin', version.ref = 'cleanroom-mixin' }
     champions-1_12_2 = { group = 'curse.maven', name = 'champions-307152', version.ref = 'champions-1_12_2' }
     coroutil-1_12_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_12_2' }
     dsurround-1_12_2 = { group = 'curse.maven', name = 'dsurround-238891', version.ref = 'dsurround-1_12_2' }
@@ -24,6 +27,8 @@
     bloodmoon-1_12_2 = '2537917'
     blueskies-1_12_2 = '2827455'
     bookshelf-1_12_2 = '2.3.590'
+    cleanroom-mixin = '0.+'
+    cleanroom-lwjglx = '1.+'
     champions-1_12_2 = '3177947'
     coroutil-1_12_2 = '2902920'
     dsurround-1_12_2 = '3497269'

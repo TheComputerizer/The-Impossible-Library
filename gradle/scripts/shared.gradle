@@ -4,8 +4,6 @@ plugins.apply 'idea'
 plugins.apply 'java'
 plugins.apply 'java-library'
 
-apply from: rootProject.file('gradle\\scripts\\functions.gradle')
-
 group = base_package
 version = mod_version
 

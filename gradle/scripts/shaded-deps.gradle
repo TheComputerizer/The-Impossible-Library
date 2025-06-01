@@ -13,7 +13,5 @@ repositories {
 }
 
 dependencies {
-    shaded("$burningwave_group:$burningwave_name:$burningwave_version") { transitive = false }
-    shaded("$burningwave_group:$burningwave_driver_name:$burningwave_driver_version") { transitive = false }
-    shaded("$toolfactory_group:$toolfactory_name:$toolfactory_version") { transitive = false }
+    shaded(libs.bundles.burningwave) { transitive = false }
 }

@@ -1,77 +1,18 @@
+//file:noinspection GroovyAssignabilityCheck
 
+/**
+ * 1.12.2 forge build
+ */
 
-apply from: rootProject.file('gradle\\scripts\\java8-module.gradle')
-
-def base = project ':api'
-def legacy_base = project ':legacy'
-
-repositories {
-    maven {
-        name = 'CleanroomMC'
-        url = uri 'https://maven.cleanroommc.com'
-        content {
-            includeGroup 'mezz'
-        }
-    }
-    maven {
-        name = 'CurseMaven'
-        url = uri 'https://curse.cleanroommc.com/'
-        content {
-            includeGroup 'curse.maven'
-        }
-    }
-    maven {
-        name = 'BlameJared'
-        url = uri 'https://maven.blamejared.com'
-        content {
-            [ 'bookshelf', 'gamestages' ].forEach {grp ->
-                includeGroup "net.darkhax.$grp"
-            }
-        }
-    }
+plugins {
+    alias libs.plugins.shadow
+    alias libs.plugins.unimined
 }
 
-dependencies {
-    api base
-    api legacy_base
+extendFrom project, 'shadow'
 
-    annotationProcessor libs.bundles.legacy.annotations
-    compileOnly legacy.bundles.mods.get1().get12().get2().compile
-    implementation legacy.bundles.mods.get1().get12().get2().implementation
-    runtimeOnly legacy.bundles.mods.get1().get12().get2().runtime
-}
-
-compileJava {
-    source base.sourceSets.main.allJava, legacy_base.sourceSets.main.allJava
-}
-
-compileTestJava {
-    source base.sourceSets.test.allJava, legacy_base.sourceSets.test.allJava
-}
-
-processResources {
-    from legacy_base.processResources.outputs
-}
-
-processTestResources {
-    from legacy_base.processTestResources.outputs
-}
-
-jar {
-    from(legacy_base.jar.archiveFile.collect { zipTree it })
-    manifest {
-        attributes([
-                'FMLCorePlugin': legacy_entrypoint,
-                'FMLCorePluginContainsFMLMod': true,
-                'ForceLoadAsMod': true
-        ])
-    }
-    jar.finalizedBy shadowJar
-    dependsOn ':legacy:build'
-}
-
-shadowJar {
-    from(base.jar.archiveFile.collect { zipTree it })
-}
+uniminedCore project, 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+remapJarDefaults project
+setSharedShadowJar ':api', ':legacy'
 
 tasks.assemble.dependsOn shadowJar

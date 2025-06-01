@@ -1,70 +1,18 @@
-//file:noinspection GroovyAssignabilityCheck
-import static org.gradle.api.logging.LogLevel.INFO
-import static org.gradle.api.logging.LogLevel.QUIET
-
 /**
  * Common builds and sources relevant to all NeoForge modules. Based in 1.20.4
  */
-buildscript {
-    repositories {
-        gradlePluginPortal() {
-            content {
-                unimined_plugin_portal.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'WagYourMaven Releases'
-            url = uri 'https://maven.wagyourtail.xyz/releases'
-            content {
-                unimined_releases.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-        maven {
-            name = 'WagYourMaven Snapshots'
-            url = uri 'https://maven.wagyourtail.xyz/snapshots'
-            content {
-                unimined_snapshots.split(';').each {grp ->
-                    includeGroup grp
-                }
-            }
-        }
-    }
-    dependencies {
-        classpath "$shadow_plugin:$shadow_version"
-        classpath "$unimined_plugin:$unimined_version"
-    }
+plugins {
+    alias libs.plugins.unimined
+    alias libs.plugins.shadow
 }
 
-apply from: rootProject.file('gradle\\scripts\\java17-module.gradle')
+extendRunnable project, 17
 
-plugins.apply 'xyz.wagyourtail.unimined'
+uniminedCore project, 'neoforge', false, []
+
+setDev
 
 def base = project ':api'
-
-unimined.minecraft {
-    version minecraft_1_20_4
-    mappings {
-        parchment parchment_1_20_4
-    }
-    neoForge {
-        loader neoforge_1_20_4
-        runs.all {
-            systemProperty 'foundation.verbose', 'true'
-            return
-        }
-    }
-}
-
-configurations {
-    dev {
-        canBeResolved = false
-        canBeConsumed = true
-    }
-}
 
 dependencies {
     api base
@@ -80,17 +28,4 @@ jar {
     }
     mustRunAfter ':api:build'
     mustRunAfter ':shared:build'
-}
-
-artifacts {
-    dev jar
-}
-
-tasks.remapJar {
-    doFirst {
-        logging.captureStandardOutput INFO
-    }
-    doLast {
-        logging.captureStandardOutput QUIET
-    }
 }

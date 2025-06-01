@@ -5,9 +5,6 @@ pluginManagement {
                 settings_plugin_content.split(';').each {grp ->
                     includeGroup grp
                 }
-                unimined_plugin_portal.split(';').each {grp ->
-                    includeGroup grp
-                }
             }
         }
         maven {
@@ -31,8 +28,8 @@ pluginManagement {
     }
 }
 
-plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.+'
+plugins { //Settings plugins can't use version catalogs since the catalogs haven't initialized yet
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '+'
 }
 
 rootProject.name = 'The_Impossible_Library'

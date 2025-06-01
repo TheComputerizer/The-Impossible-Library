@@ -1,5 +1,11 @@
-apply from: rootProject.file('gradle\\scripts\\shared.gradle')
-apply from: rootProject.file('gradle\\scripts\\lombok.gradle')
+/**
+ * Base project for the main API & any version-agnostic code that isn't modloader-specific
+ */
+
+extendFrom project, 'shared'
+extendFrom project, 'lombok'
+
+setDev
 
 injectConstants()
 
@@ -18,35 +24,14 @@ repositories {
     }
 }
 
-configurations {
-    dev {
-        canBeResolved = false
-        canBeConsumed = true
-    }
-}
-
 dependencies {
-    compileOnly "$jsr_artifact:$jsr_version"
-    //noinspection VulnerableLibrariesLocal
-    compileOnly "io.netty:netty-all:$netty_version" //Not shaded so vulnerable dependecies aren't an issue
-    compileOnly "it.unimi.dsi:fastutil:$fast_version"
-    compileOnly "$log4j_artifact:$log4j_version"
-    compileOnly "org.ow2.asm:asm-commons:$asm_version"
-    compileOnly "org.ow2.asm:asm-util:$asm_version"
-
-    implementation "$burningwave_group:$burningwave_name:$burningwave_version"
-    implementation "$burningwave_group:$burningwave_driver_name:$burningwave_driver_version"
-    implementation "$toolfactory_group:$toolfactory_name:$toolfactory_version"
+    compileOnly libs.bundles.api.compile
+    implementation libs.bundles.burningwave
 }
 
 processResources {
     from sourceSets.main.resources.srcDirs
 }
-
-artifacts {
-    dev jar
-}
-
 def injectConstants() {
     def path = "api/src/main/java/${ "${api_package}.core.TILRef".replace '.', '/'}.java"
     def target = file("${rootProject.projectDir}/$path")
