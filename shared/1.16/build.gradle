@@ -14,12 +14,8 @@ uniminedCommon project
 uniminedFabric project, true
 uniminedForge project, true
 
-repositories {
-    maven {
-        name = 'Modding Legacy'
-        url = uri 'https://maven.moddinglegacy.com/maven'
-        content {
-            includeGroup 'com.legacy'
-        }
-    }
-}
+setSharedDependencies false, false, 'cf', 'ct', 'jei', 'legacy', 'modrinth', 'modmenu'
+
+inheritResources ':shared'
+
+setJarsRunAfter true, ':shared'

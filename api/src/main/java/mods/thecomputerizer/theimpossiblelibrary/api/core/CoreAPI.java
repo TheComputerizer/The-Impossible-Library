@@ -265,7 +265,6 @@ public abstract class CoreAPI {
         return javaVersionCache;
     }
     
-    @SuppressWarnings("DataFlowIssue")
     @IndirectCallers
     public static Object parseFrom(Object unparsed, ClassLoader loader, boolean java8) {
         try {

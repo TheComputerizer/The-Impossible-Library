@@ -13,16 +13,7 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'SonaType'
-        url = uri 'https://oss.sonatype.org/content/repositories/public/'
-        content {
-            includeGroup 'it.unimi.dsi'
-        }
-    }
-}
+setRepositories 'central', 'fast'
 
 dependencies {
     compileOnly libs.bundles.api.compile
@@ -32,6 +23,7 @@ dependencies {
 processResources {
     from sourceSets.main.resources.srcDirs
 }
+
 def injectConstants() {
     def path = "api/src/main/java/${ "${api_package}.core.TILRef".replace '.', '/'}.java"
     def target = file("${rootProject.projectDir}/$path")

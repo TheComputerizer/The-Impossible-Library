@@ -12,22 +12,14 @@ java {
 
 setDev
 
-def base = project ':api'
+inheritResources ':api'
 
 jar {
-    from(base.jar.archiveFile.collect {entry ->
+    from(project(':api').jar.archiveFile.collect {entry ->
         include 'mods/**'
         zipTree entry
     })
     dependsOn ':api:build'
-}
-
-processResources {
-    from base.processResources.outputs
-}
-
-processTestResources {
-    from base.processTestResources.outputs
 }
 
 def java21_versions = [ 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ]
@@ -42,7 +34,6 @@ subprojects {sub ->
     boolean neoforge_compatible = neoforge_versions.contains sub_name
     boolean is_runnable = !parent_versions.contains(sub_name)
     boolean has_parent = is_runnable && !singleton_versions.contains(sub_name)
-    String parent_path = has_parent ? ":shared:${sub_name.substring(0,sub_name.length()-2)}" : null
     sourceSets {
         fabric {
             compileClasspath+=sourceSets.main.output
@@ -60,87 +51,6 @@ subprojects {sub ->
         }
     }
     if(!is_runnable) setDev
-    repositories {
-        if(is_runnable) {
-            maven {
-                name = 'CurseMaven'
-                url = uri 'https://curse.cleanroommc.com/'
-                content {
-                    includeGroup 'curse.maven'
-                }
-            }
-            maven {
-                name = 'BlameJared'
-                url = uri 'https://maven.blamejared.com'
-                content {
-                    [ 'com.blamejared.crafttweaker', 'net.darkhax.bookshelf', 'net.darkhax.gamestages',
-                      'org.openzen.zencode' ].forEach { grp ->
-                        includeGroup grp
-                    }
-                }
-            }
-            maven {
-                name = 'ModMaven'
-                url = uri 'https://modmaven.dev'
-                content {
-                    includeGroup 'mezz.jei'
-                }
-            }
-            maven {
-                name 'Modrinth'
-                url = uri 'https://api.modrinth.com/maven'
-                content {
-                    includeGroup 'maven.modrinth'
-                }
-            }
-            maven {
-                name = 'Terraformers'
-                url = uri 'https://maven.terraformersmc.com/'
-                content {
-                    includeGroup 'com.terraformersmc'
-                }
-            }
-        }
-    }
-    def shared = project ':shared'
-    dependencies {
-        //common dependencies
-        compileOnlyApi base
-        compileOnlyApi shared
-
-        if(is_runnable) {
-            //fabric dependencies
-            fabricCompileOnly base
-            fabricCompileOnly shared
-            fabricCompileOnly project(path: ':fabric', configuration: 'dev')
-            fabricImplementation modsBundle(sub, 'fabric', 'implementation')
-            fabricRuntimeOnly modsBundle(sub, 'fabric', 'runtime')
-
-            //forge dependencies
-            forgeCompileOnly base
-            forgeCompileOnly shared
-            forgeCompileOnly project(path: ':forge', configuration: 'dev')
-            forgeImplementation modsBundle(sub, 'forge', 'implementation')
-            forgeRuntimeOnly modsBundle(sub, 'forge', 'runtime')
-
-            //neforge dependencies
-            if(neoforge_compatible) {
-                neoforgeCompileOnly base
-                neoforgeCompileOnly shared
-                neoforgeCompileOnly project(path: ':neoforge', configuration: 'dev')
-                neoforgeImplementation modsBundle(sub, 'neoforge', 'implementation')
-                neoforgeRuntimeOnly modsBundle(sub, 'neoforge', 'runtime')
-            }
-
-            //parent dependencies
-            if(has_parent) {
-                compileOnlyApi project(path: parent_path, configuration: 'dev')
-                fabricCompileOnly project(path: parent_path, configuration: 'dev')
-                forgeCompileOnly project(path: parent_path, configuration: 'dev')
-                if(neoforge_compatible) neoforgeCompileOnly project(path: parent_path, configuration: 'dev')
-            }
-        }
-    }
     jar {
         manifest {
             attributes([
@@ -148,29 +58,12 @@ subprojects {sub ->
                     'Implementation-Version': mod_version
             ])
         }
-        if(is_runnable) {
-            afterEvaluate {
-                finalizedBy 'shadowJar'
-            }
-        }
-        mustRunAfter ':shared:build'
-        if(has_parent) mustRunAfter "$parent_path:build"
-    }
-    processResources {
-        from shared.processResources.outputs
-    }
-    processTestResources {
-        from shared.processTestResources.outputs
-    }
-    sourcesJar {
-        mustRunAfter ':shared:build'
-        if(has_parent) mustRunAfter "$parent_path:build"
     }
     if(is_runnable) {
         afterEvaluate {
             def shaded_projects = [ ':api', ':fabric', ':forge', ':shared' ]
             if(neoforge_compatible) shaded_projects+=':neoforge'
-            if(has_parent) shaded_projects+=parent_path
+            if(has_parent) shaded_projects+=getParentPath(":$sub_name")
             setSharedShadowJar shaded_projects.toArray(new String[0])
             tasks.assemble.dependsOn 'shadowJar'
         }

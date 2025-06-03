@@ -12,10 +12,8 @@ uniminedCore project, 'forge', false, []
 
 setDev
 
-def base = project ':api'
-
 dependencies {
-    api base
+    api project(':api')
 }
 
 jar {
@@ -25,19 +23,16 @@ jar {
                 'Implementation-Version': mod_version
         ])
     }
-    mustRunAfter ':api:build'
 }
 
 processResources {
-    from(base.processResources.outputs) {
+    from(project(':api').processResources.outputs) {
         exclude 'fabric.mod.json'
     }
 }
 
 processTestResources {
-    from base.processTestResources.outputs
+    from project(':api').processTestResources.outputs
 }
 
-sourcesJar {
-    mustRunAfter ':api:build'
-}
+setJarsRunAfter true, ':api'

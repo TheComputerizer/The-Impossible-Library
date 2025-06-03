@@ -1,3 +1,4 @@
+//file:noinspection DependencyNotationArgument
 //file:noinspection GroovyAssignabilityCheck
 
 /**
@@ -12,10 +13,29 @@ plugins {
 extendFrom project, 'shadow'
 
 uniminedCore project, 'cleanroom', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
-remapJarDefaults project
+
+setRepositories 'cf', 'ct', 'hei'
 
 dependencies {
+    api project(':api')
+    api project(':legacy')
+
+    annotationProcessor libs.bundles.legacy.annotations
+
     compileOnly legacy.bundles.cleanroom.compile
+    compileOnly modsBundle(project, 'legacy', 'compile')
+
+    implementation modsBundle(project, 'legacy', 'implementation')
+
+    runtimeOnly modsBundle(project, 'legacy', 'runtime')
 }
+
+inheritCompileSources ':api', ':legacy'
+
+inheritResources ':legacy'
+
+setJarsRunAfter true, ':legacy'
+
+remapJarDefaults project
 
 setSharedShadowJar ':api', ':legacy'

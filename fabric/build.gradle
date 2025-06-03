@@ -14,37 +14,35 @@ uniminedCore project, 'fabric', false, []
 
 setDev
 
-def base = project ':api'
-
 dependencies {
-    api base
+    Provider<String> dep_provider = fabric.versions.api.'1'.'16'.'5'
+    modImplementation fabricApi.fabric(dep_provider.get())
 }
 
 processResources {
     def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
     inputs.properties replacements
-    from(base.processResources.outputs) {
-        filesMatching('fabric.mod.json') {
+    from(project(':api').processResources.outputs) {
+        filesMatching('fabric.mod.json') {copy_details ->
             expand replacements
         }
     }
 }
 
 processTestResources {
-    from base.processTestResources.outputs
+    from project(':api').processTestResources.outputs
 }
 
 jar {
+    from(project(':api').jar.archiveFile.collect {entry ->
+        zipTree entry
+    })
     manifest {
         attributes([
                 'Implementation-Title': mod_name,
                 'Implementation-Version': mod_version
         ])
     }
-    from(base.jar.archiveFile.collect { zipTree it })
-    mustRunAfter ':api:build'
 }
 
-sourcesJar {
-    mustRunAfter ':api:build'
-}
+setJarsRunAfter true, ':api'

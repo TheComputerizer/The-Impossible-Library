@@ -13,3 +13,9 @@ extendFrom project, 'shadow'
 uniminedCommon project
 uniminedFabric project, true
 uniminedForge project, true
+
+setSharedDependencies false, false, 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
+
+inheritResources ':shared'
+
+setJarsRunAfter true, ':shared'

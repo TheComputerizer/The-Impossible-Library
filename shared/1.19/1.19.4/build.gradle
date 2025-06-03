@@ -14,10 +14,9 @@ uniminedCommon project
 uniminedFabric project, true
 uniminedForge project, true
 
-jar {
-    mustRunAfter ':shared:shared_1.19:shared_1.19.2:build'
-}
+setSharedDependencies false, true, 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
 
-sourcesJar {
-    mustRunAfter ':shared:shared_1.19:shared_1.19.2:build'
-}
+inheritResources ':shared'
+
+def parent_path = getParentPath(name)
+setJarsRunAfter false, ':shared', parent_path, "$parent_path:shared_1.19.2"

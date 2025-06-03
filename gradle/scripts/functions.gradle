@@ -1,14 +1,21 @@
 //file:noinspection GroovyAssignabilityCheck
 import org.codehaus.groovy.runtime.MethodClosure
 
+import java.util.function.Consumer
+
 import static org.gradle.api.logging.LogLevel.INFO
 import static org.gradle.api.logging.LogLevel.QUIET
 
 //Setup project extension so builds that apply the script can actually call the functions
+ext.commonMavenArtifact = this.&commonMavenArtifact as MethodClosure
 ext.extendFrom = this.&extendFrom as MethodClosure
 ext.extendRunnable = this.&extendRunnable as MethodClosure
 ext.fabricVersion = this.&fabricVersion as MethodClosure
 ext.forgeVersion = this.&forgeVersion as MethodClosure
+ext.getParentPath = this.&getParentPath as MethodClosure
+ext.getProjectPath = this.&getProjectPath as MethodClosure
+ext.inheritCompileSources = this.&inheritCompileSources as MethodClosure
+ext.inheritResources = this.&inheritResources as MethodClosure
 ext.minecraftVersion = this.&minecraftVersion as MethodClosure
 ext.modsBundle = this.&modsBundle as MethodClosure
 ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
@@ -17,13 +24,70 @@ ext.projectMCVersion = this.&projectMCVersion as MethodClosure
 ext.propertyString = this.&propertyString as MethodClosure
 ext.remapJarDefaults = this.&remapJarDefaults as MethodClosure
 ext.setDev = this.&setDev as MethodClosure
+ext.setJarsRunAfter = this.&setJarsRunAfter as MethodClosure
+ext.setSharedDependencies = this.&setSharedDependencies as MethodClosure
 ext.setSharedShadowJar = this.&setSharedShadowJar as MethodClosure
+ext.setRepositories = this.&setRepositories as MethodClosure
 ext.uniminedCore = this.&uniminedCore as MethodClosure
 ext.uniminedCommon = this.&uniminedCommon as MethodClosure
 ext.uniminedFabric = this.&uniminedFabric as MethodClosure
 ext.uniminedForge = this.&uniminedForge as MethodClosure
 ext.uniminedNeoforge = this.&uniminedNeoforge as MethodClosure
 ext.withMCVersion = this.&withMCVersion as MethodClosure
+
+
+static Consumer<RepositoryHandler> commonMavenArtifact(Project project, String id) {
+    Consumer<RepositoryHandler> consumer = handler -> {
+        if('central'==id) {
+            handler.mavenCentral()
+            return
+        }
+        def maven_data = commonMavenData id
+        int size = maven_data.size()
+        if(size>1) {
+            handler.maven {
+                name = maven_data.get(0)
+                url = project.uri maven_data.get(1)
+                if(size>2) {
+                    def included_groups = maven_data.subList(2,maven_data.size())
+                    content {
+                        included_groups.forEach {grp ->
+                            includeGroup grp
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return consumer
+}
+
+@SuppressWarnings('GroovyFallthrough')
+private static List<String> commonMavenData(String id) {
+    switch(id) {
+        case 'blamejared': case 'bookshelf': case 'crafttweaker': case 'ct': case 'darkhax': case 'gamestages':
+        case 'jared': case 'zencode': case 'zen':
+            return [ 'BlameJared', 'https://maven.blamejared.com', 'com.blamejared.crafttweaker', 'net.darkhax.bookshelf',
+              'net.darkhax.gamestages', 'org.openzen.zencode' ]
+        case 'cf': case 'curse': case 'curseforge': case 'cursemaven':
+            return [ 'CurseMaven', 'https://curse.cleanroommc.com/', 'curse.maven' ]
+        case 'cleanroom': case 'hei':
+            return [ 'CleanroomMC', 'https://maven.cleanroommc.com', 'mezz' ]
+        case 'fast': case 'fastutil': case 'sonatype':
+            return [ 'SonaType', 'https://oss.sonatype.org/content/repositories/public/', 'it.unimi.dsi' ]
+        case 'jei': case 'modmaven':
+            return [ 'ModMaven', 'https://modmaven.dev', 'mezz.jei' ]
+        case 'legacy': case 'moddinglegacy':
+            return [ 'Modding Legacy', 'https://maven.moddinglegacy.com/maven', 'com.legacy' ]
+        case 'modrinth':
+            return [ 'Modrinth', 'https://api.modrinth.com/maven', 'maven.modrinth' ]
+        case 'modmenu': case 'terraformers': case 'terraformersmc':
+            return [ 'Terraformers', 'https://maven.terraformersmc.com/', 'com.terraformersmc' ]
+        case 'nucleoid': case 'pb4': case 'placeholder':
+            return [ 'Nucleoid', 'https://maven.nucleoid.xyz/', 'eu.pb4']
+        default: return  []
+    }
+}
 
 static void extendFrom(Project project, String file_name) {
     project.apply from: project.rootProject.file("gradle\\scripts\\${file_name}.gradle")
@@ -41,9 +105,57 @@ String forgeVersion(Project project) {
     return withMCVersion(project,'forge')
 }
 
+static String getParentPath(String project_name) {
+    int num_parents = project_name.count '.'
+    switch(num_parents) {
+        case 1: return "${project_name.split('_')[0]}"
+        case 2: return "${project_name.split('_')[0]}${project_name.substring(0,project_name.length()-2)}"
+        default: return project_name.contains('cleanroom') ? ':legacy' : null
+    }
+}
+
+static String getProjectPath(String project_name) {
+    int num_parents = project_name.count '.'
+    switch(num_parents) {
+        case 1: return "${project_name.split('_')[0]}$project_name"
+        case 2: return "${project_name.split('_')[0]}${project_name.substring(0,project_name.length()-2)}$project_name"
+        default: return project_name.contains('cleanroom') ? ':legacy:cleanroom' : project_name
+    }
+}
+
+void inheritCompileSources(String ... parent_names) {
+    compileJava {
+        parent_names.each {parent_name ->
+            source project(parent_name).sourceSets.main.allJava
+        }
+    }
+    compileTestJava {
+        parent_names.each {parent_name ->
+            source project(parent_name).sourceSets.test.allJava
+        }
+    }
+}
+
+void inheritResources(String ... parent_names) {
+    processResources {
+        parent_names.each {parent_name ->
+            from project(parent_name).processResources.outputs
+        }
+    }
+    processTestResources {
+        parent_names.each {parent_name ->
+            from project(parent_name).processTestResources.outputs
+        }
+    }
+}
+
 static boolean isLegacy(Project project) {
     def p_name = project.name
     return p_name.contains('legacy') || p_name.contains('12') || p_name.contains('cleanroom')
+}
+
+static boolean isMinorVersion(Project project) {
+    return project.name.count('.')>=2
 }
 
 /**
@@ -111,6 +223,58 @@ void setDev() {
     }
 }
 
+void setJarsRunAfter(boolean finalized_by_shadow, String ... parent_names) {
+    jar {
+        parent_names.each {parent_name ->
+            mustRunAfter "${getProjectPath(parent_name)}:build"
+        }
+        if(finalized_by_shadow) finalizedBy 'shadowJar'
+    }
+    sourcesJar {
+        parent_names.each {parent_name ->
+            mustRunAfter "${getProjectPath(parent_name)}:build"
+        }
+    }
+}
+
+void setSharedDependencies(boolean neoforge, boolean extra_parent, String ... maven_ids) {
+    logger.lifecycle('setSharedDependencies start')
+    setRepositories maven_ids
+    dependencies {
+        logger.lifecycle('dependencies block start')
+        def p_name = project.name
+        def needs_parent = extra_parent && [ 'shared_1.19.4', 'shared_1.20.4', 'shared_1.20.6' ].contains(p_name)
+        if(needs_parent) {
+            logger.lifecycle('shared dependencies needs parent')
+            compileOnlyApi project.parent
+            logger.lifecycle("applied parent")
+        }
+        if(p_name.contains('shared')) {
+            def versions = p_name.split('_')[1].split '\\.'
+            def dep_provider = fabric.versions.api.'1'."${versions[1]}"
+            if(versions.length==3) dep_provider = dep_provider."${versions[2]}"
+            else dep_provider = dep_provider.asProvider()
+            fabricImplementation fabricApi.fabric(dep_provider.get())
+        }
+        if(extra_parent || name.contains('16') || name.contains('18')) {
+            def types = neoforge ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
+            types.forEach { loader ->
+                logger.lifecycle("extra parent check for loader $loader")
+                if(needs_parent) {
+                    logger.lifecycle('extra parent needs parent')
+                    "${loader}CompileOnly" project.parent
+                    logger.lifecycle('applied extra parent parent')
+                }
+                logger.lifecycle('applying mod bundles')
+                "${loader}Implementation" modsBundle(project, loader, 'implementation')
+                "${loader}RuntimeOnly" modsBundle(project, loader, 'runtime')
+            }
+        }
+        logger.lifecycle('end dependencies block')
+    }
+    logger.lifecycle('end setSharedDependencies')
+}
+
 void setSharedShadowJar(String ... project_names) {
     shadowJar {
         project_names.each {p_name ->
@@ -122,15 +286,32 @@ void setSharedShadowJar(String ... project_names) {
     }
 }
 
+void setRepositories(String ... maven_ids) {
+    project.repositories {handler ->
+        maven_ids.each {id ->
+            def consumer = commonMavenArtifact project, id
+            if(consumer!=null) consumer.accept handler
+        }
+    }
+}
+
 static void uniminedCore(Project project, String loader_name, boolean is_runnable, List<String> args) {
     def p_name = project.name
     project.logger.lifecycle("Setting up core unimined stuff for $p_name")
-    boolean loader_base = !p_name.contains('1') || p_name.contains('cleanroom')
+    boolean loader_base = !p_name.contains('1') && !p_name.contains('cleanroom')
     boolean legacy_project = isLegacy(project)
     project.unimined.minecraft {
-        if(legacy_project) version project.minecraft_1_12_2
-        else if(loader_base) version project.propertyString("minecraft_1_${'neoforge'==loader_name ? '20_4' : '16_5'}")
-        else version project.minecraftVersion(project)
+        combineWith project.project(':api'), project.project(':api').sourceSets.main
+        if(!loader_base) {
+            if(legacy_project) version project.minecraft_1_12_2
+            else version project.minecraftVersion(project)
+            def parent_project = project.parent
+            if(isMinorVersion(project)) {
+                if([ 'shared_1.19.2', 'shared_1.20.1', 'shared_1.21.1' ].contains(p_name))
+                    combineWith parent_project.parent, parent_project.parent.sourceSets.main
+            }
+            else combineWith parent_project, parent_project.sourceSets.main
+        } else version project.propertyString("minecraft_1_${'neoforge'==loader_name ? '20_4' : '16_5'}")
         mappings {
             if(legacy_project) mcp 'stable', project.legacy_mappings_1_12_2
             else {
@@ -206,6 +387,10 @@ static void uniminedCommon(Project project) {
 void uniminedFabric(Project project, boolean is_runnable) {
     project.unimined.minecraft(project.sourceSets.fabric) {
         combineWith project.sourceSets.main
+        combineWith project.project(':fabric'), project.project(':fabric').sourceSets.main
+        def allowed_names = [ 'shared_1.19.2', 'shared_1.20.1', 'shared_1.21.1' ]
+        if(isMinorVersion(project) && allowed_names.contains(project.name))
+            combineWith project.parent, project.parent.sourceSets.fabric
         if(is_runnable) defaultRemapJar = true
         fabric {
             loader fabric_loader
@@ -221,6 +406,10 @@ void uniminedFabric(Project project, boolean is_runnable) {
 void uniminedForge(Project project, boolean is_runnable) {
     project.unimined.minecraft(project.sourceSets.forge) {
         combineWith project.sourceSets.main
+        combineWith project.project(':forge'), project.project(':forge').sourceSets.main
+        def allowed_names = [ 'shared_1.19.2', 'shared_1.20.1', 'shared_1.21.1' ]
+        if(isMinorVersion(project) && allowed_names.contains(project.name))
+            combineWith project.parent, project.parent.sourceSets.forge
         if(is_runnable) defaultRemapJar = true
         minecraftForge {
             loader forgeVersion(project)
@@ -236,6 +425,10 @@ void uniminedForge(Project project, boolean is_runnable) {
 void uniminedNeoforge(Project project, boolean is_runnable) {
     project.unimined.minecraft(project.sourceSets.neoforge) {
         combineWith project.sourceSets.main
+        combineWith project.project(':neoforge'), project.project(':neoforge').sourceSets.main
+        def allowed_names = [ 'shared_1.21.1' ]
+        if(isMinorVersion(project) && allowed_names.contains(project.name))
+            combineWith project.parent, project.parent.sourceSets.neoforge
         if(is_runnable) defaultRemapJar = true
         neoForge {
             loader neoforgeVersion(project)

@@ -13,3 +13,9 @@ extendFrom project, 'shadow'
 uniminedCommon project
 uniminedFabric project, true
 uniminedForge project, true
+
+setSharedDependencies false, true, 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
+
+inheritResources ':shared'
+
+setJarsRunAfter false, ':shared', getParentPath(name)

@@ -1,5 +1,6 @@
 [bundles]
-    api-compile = [ 'asm-commons', 'asm-util', 'fastutil', 'google-jsr', 'log4j-core', 'netty-all' ]
+    api-compile = [ 'asm-commons', 'asm-util', 'fastutil', 'google-jsr', 'jetbrains-annotations', 'log4j-core',
+        'netty-all' ]
     burningwave = [ 'burningwave-core', 'burningwave-driver', 'toolfactory-driver' ]
     legacy-annotations = [ 'google-gson', 'google-guava' ]
 
@@ -13,6 +14,7 @@
     google-gson = { group = 'com.google.code.gson', name = 'gson', version.ref = 'gson' }
     google-guava = { group = 'com.google.guava', name = 'guava', version.ref = 'guava' }
     google-jsr = { group = 'com.google.code.findbugs', name = 'jsr305', version.ref = 'jsr' }
+    jetbrains-annotations = { group = 'org.jetbrains', name = 'annotations', version.ref = 'jetbrains-annotations' }
     log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
     lombok = { group = 'org.projectlombok', name = 'lombok', version.ref = 'lombok' }
     netty-all = { group = 'io.netty', name = 'netty-all', version.ref = 'netty-all' }
@@ -29,6 +31,7 @@
     fastutil = '7.1.0'
     gson = '2.8.+'
     guava = '32.1.+'
+    jetbrains-annotations = '+'
     jsr = '3.0.+'
     log4j = '2.+'
     lombok = '1.+'

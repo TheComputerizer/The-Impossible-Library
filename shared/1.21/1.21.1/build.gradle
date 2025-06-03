@@ -15,12 +15,8 @@ uniminedFabric project, true
 uniminedForge project, true
 uniminedNeoforge project, true
 
-repositories {
-    maven {
-        name = 'Nucleoid'
-        url = uri 'https://maven.nucleoid.xyz/'
-        content {
-            includeGroup 'eu.pb4'
-        }
-    }
-}
+setSharedDependencies false, true, 'cf', 'ct', 'jei', 'modrinth', 'modmenu', 'pb4'
+
+inheritResources ':shared'
+
+setJarsRunAfter false, ':shared', getParentPath(name)

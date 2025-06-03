@@ -8,3 +8,9 @@ plugins {
 uniminedCommon project
 uniminedFabric project, false
 uniminedForge project, false
+
+setSharedDependencies false, false
+
+inheritResources ':shared'
+
+setJarsRunAfter false, ':shared'

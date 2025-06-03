@@ -9,3 +9,9 @@ uniminedCommon project
 uniminedFabric project, false
 uniminedForge project, false
 uniminedNeoforge project, false
+
+setSharedDependencies false, false
+
+inheritResources ':shared'
+
+setJarsRunAfter false, ':shared'

@@ -12,20 +12,20 @@ uniminedCore project, 'neoforge', false, []
 
 setDev
 
-def base = project ':api'
-
 dependencies {
-    api base
+    api project(':api')
 }
 
 jar {
-    from(base.jar.archiveFile.collect { zipTree it })
+    from(project(':api').jar.archiveFile.collect {entry ->
+        zipTree entry
+    })
     manifest {
         attributes([
                 'Implementation-Title': mod_name,
                 'Implementation-Version': mod_version
         ])
     }
-    mustRunAfter ':api:build'
-    mustRunAfter ':shared:build'
 }
+
+setJarsRunAfter false, ':api', ':shared'
