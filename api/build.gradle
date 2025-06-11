@@ -2,10 +2,11 @@
  * Base project for the main API & any version-agnostic code that isn't modloader-specific
  */
 
-extendFrom project, 'shared'
-extendFrom project, 'lombok'
+extendFrom 'shared'
+extendFrom 'lombok'
+extendFrom 'nonshaded-deps'
 
-setDev
+setDev()
 
 injectConstants()
 
@@ -17,7 +18,6 @@ setRepositories 'central', 'fast'
 
 dependencies {
     compileOnly libs.bundles.api.compile
-    implementation libs.bundles.burningwave
 }
 
 processResources {

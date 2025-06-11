@@ -1,0 +1,13 @@
+repositories {
+    mavenCentral() {
+        content {
+            [ toolfactory_group, burningwave_group ].forEach {
+                includeGroup it
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation libs.bundles.burningwave
+}

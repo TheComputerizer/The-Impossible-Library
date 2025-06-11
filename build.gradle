@@ -8,7 +8,7 @@ allprojects {sub ->
     sub.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
 }
 
-extendFrom project, 'shared'
+extendFrom 'shared'
 
 def base = ':api'
 def cleanroom = ':legacy:cleanroom'

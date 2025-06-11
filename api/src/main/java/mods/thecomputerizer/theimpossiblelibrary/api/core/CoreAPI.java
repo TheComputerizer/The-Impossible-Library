@@ -269,9 +269,17 @@ public abstract class CoreAPI {
     public static Object parseFrom(Object unparsed, ClassLoader loader, boolean java8) {
         try {
             String className = String.valueOf(unparsed).split(" ")[0];
-            Class<?> coreClass = java8 ? ClassHelper.findClass(className,loader) :
-                    ClassHelper.syncDirect(loader,unparsed.getClass());
-            return coreClass.newInstance();
+            Class<?> coreClass;
+            if(java8) {
+                coreClass = ClassHelper.findClass(className,loader);
+                if(Objects.nonNull(coreClass)) return coreClass.newInstance();
+                TILRef.logError("Failed to parse CoreAPI class from {} on loader {}",className,loader);
+            } else {
+                coreClass = ClassHelper.syncDirect(loader,unparsed.getClass());
+                if(Objects.nonNull(coreClass)) return coreClass.newInstance();
+                TILRef.logError("Failed to parse synced CoreAPI class from {} on loader {}",className,loader);
+            }
+            return null;
         } catch(NullPointerException | IllegalAccessException | InstantiationException ex) {
             TILRef.logError("Unable to parse CoreAPI instance from {}",unparsed,ex);
         }

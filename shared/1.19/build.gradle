@@ -5,9 +5,9 @@ plugins {
     alias libs.plugins.unimined
 }
 
-uniminedCommon project
-uniminedFabric project, false
-uniminedForge project, false
+uniminedCommon()
+uniminedFabric false
+uniminedForge false
 
 setSharedDependencies false, false
 

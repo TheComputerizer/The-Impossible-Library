@@ -1,16 +1,14 @@
-//file:noinspection GroovyAssignabilityCheck
-
 /**
  * Pass through parent module for shared version modules
  */
 
-extendFrom project, 'shared'
+extendFrom 'shared'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
 }
 
-setDev
+setDev()
 
 inheritResources ':api'
 
@@ -28,12 +26,12 @@ def parent_versions = [ 'shared_1.19', 'shared_1.20', 'shared_1.21' ]
 def singleton_versions = [ 'shared_1.16', 'shared_1.18' ]
 
 subprojects {sub ->
-    def sub_name = sub.name
-    def java_version = 'shared_1.16'==sub_name ? '8' : (java21_versions.contains(sub_name) ? '21' : '17')
-    sub.apply from: rootProject.file("gradle\\scripts\\java$java_version-module.gradle")
-    boolean neoforge_compatible = neoforge_versions.contains sub_name
+    String sub_name = sub.name
+    boolean neoforge_compatible = neoforge_versions.contains(sub_name)
     boolean is_runnable = !parent_versions.contains(sub_name)
     boolean has_parent = is_runnable && !singleton_versions.contains(sub_name)
+    sub.extendRunnable 'shared_1.16'==sub_name ? 8 : (java21_versions.contains(sub_name) ? 21 : 17)
+    if(!is_runnable) extendFrom 'nonshaded-deps'
     sourceSets {
         fabric {
             compileClasspath+=sourceSets.main.output
@@ -50,7 +48,7 @@ subprojects {sub ->
             }
         }
     }
-    if(!is_runnable) setDev
+    if(!is_runnable) setDev()
     jar {
         manifest {
             attributes([

@@ -1,18 +1,16 @@
 /**
- * Common builds and sources relevant to all Fabric modules
- *
- * Base is 1.16.5
+ * Common builds and sources relevant to all Fabric modules. Based in 1.16.5
  */
 plugins {
     alias libs.plugins.unimined
-    alias libs.plugins.shadow
 }
 
-extendRunnable project, 8
+extendRunnable 8
+extendFrom 'nonshaded-deps'
 
-uniminedCore project, 'fabric', false, []
+uniminedCore 'fabric', false, []
 
-setDev
+setDev()
 
 dependencies {
     Provider<String> dep_provider = fabric.versions.api.'1'.'16'.'5'

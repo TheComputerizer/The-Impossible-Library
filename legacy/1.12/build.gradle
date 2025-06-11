@@ -10,9 +10,9 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendFrom project, 'shadow'
+extendFrom 'shadow'
 
-uniminedCore project, 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+uniminedCore 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
 
 setRepositories 'cf', 'ct', 'hei'
 
@@ -22,11 +22,11 @@ dependencies {
 
     annotationProcessor libs.bundles.legacy.annotations
 
-    compileOnly modsBundle(project, 'legacy', 'compile')
+    compileOnly modsBundle('legacy', 'compile')
 
-    implementation modsBundle(project, 'legacy', 'implementation')
+    implementation modsBundle('legacy', 'implementation')
 
-    runtimeOnly modsBundle(project, 'legacy', 'runtime')
+    runtimeOnly modsBundle('legacy', 'runtime')
 }
 
 inheritCompileSources ':api', ':legacy'
@@ -35,7 +35,7 @@ inheritResources ':legacy'
 
 setJarsRunAfter true, ':legacy'
 
-remapJarDefaults project
+remapJarDefaults
 
 setSharedShadowJar ':api', ':legacy'
 

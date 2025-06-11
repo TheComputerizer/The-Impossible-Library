@@ -3,14 +3,14 @@
  */
 plugins {
     alias libs.plugins.unimined
-    alias libs.plugins.shadow
 }
 
-extendRunnable project, 8
+extendRunnable 8
+extendFrom 'nonshaded-deps'
 
-uniminedCore project, 'forge', false, []
+uniminedCore 'forge', false, []
 
-setDev
+setDev()
 
 dependencies {
     api project(':api')

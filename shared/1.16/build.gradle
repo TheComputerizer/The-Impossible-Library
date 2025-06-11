@@ -1,5 +1,3 @@
-//file:noinspection GroovyAssignabilityCheck
-
 /**
  * Shared implementations for 1.16
  */
@@ -8,11 +6,11 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendFrom project, 'shadow'
+extendFrom 'shadow'
 
-uniminedCommon project
-uniminedFabric project, true
-uniminedForge project, true
+uniminedCommon()
+uniminedFabric true
+uniminedForge true
 
 setSharedDependencies false, false, 'cf', 'ct', 'jei', 'legacy', 'modrinth', 'modmenu'
 

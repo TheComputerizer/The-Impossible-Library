@@ -3,23 +3,20 @@
  */
 plugins {
     alias libs.plugins.unimined
-    alias libs.plugins.shadow
 }
 
-extendRunnable project, 17
+extendRunnable 17
+extendFrom 'nonshaded-deps'
 
-uniminedCore project, 'neoforge', false, []
+uniminedCore 'neoforge', false, []
 
-setDev
+setDev()
 
 dependencies {
     api project(':api')
 }
 
 jar {
-    from(project(':api').jar.archiveFile.collect {entry ->
-        zipTree entry
-    })
     manifest {
         attributes([
                 'Implementation-Title': mod_name,
@@ -28,4 +25,14 @@ jar {
     }
 }
 
-setJarsRunAfter false, ':api', ':shared'
+processResources {
+    from(project(':api').processResources.outputs) {
+        exclude 'fabric.mod.json'
+    }
+}
+
+processTestResources {
+    from project(':api').processTestResources.outputs
+}
+
+setJarsRunAfter true, ':api'

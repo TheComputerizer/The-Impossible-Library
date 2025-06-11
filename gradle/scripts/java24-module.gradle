@@ -1,7 +1,7 @@
-extendFrom project, 'shared'
+extendFrom 'shared'
 
 compileJava {
     options.release = 24
 }
 
-extendFrom project, 'lombok'
+extendFrom 'lombok'

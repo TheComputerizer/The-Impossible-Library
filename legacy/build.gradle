@@ -2,7 +2,7 @@
  * Common base for all legacy builds (pre 1.16)
  */
 
-extendFrom project, 'shared'
+extendFrom 'shared'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
@@ -34,7 +34,7 @@ processTestResources {
 setJarsRunAfter false, ':api'
 
 subprojects {sub ->
-    extendRunnable sub, 'cleanroom'==sub.name ? 21 : 8
+    sub.extendRunnable 'cleanroom'==sub.name ? 21 : 8
     jar {
         sub.afterEvaluate {
             from(project(':legacy').jar.archiveFile.collect {entry ->
