@@ -13,9 +13,8 @@ uniminedFabric true
 uniminedForge true
 uniminedNeoforge true
 
-setSharedDependencies false, true, 'cf', 'ct', 'jei', 'modrinth', 'modmenu', 'pb4'
+setSharedDependencies 'cf', 'ct', 'jei', 'modrinth', 'modmenu', 'pb4'
 
 inheritResources ':shared'
 
-def parent_path = getParentPath(name)
-setJarsRunAfter false, ':shared', parent_path, "$parent_path:shared_1.20.4"
+setJarsRunAfter true, ':shared', ':shared_1.20', ':shared_1.20.4'

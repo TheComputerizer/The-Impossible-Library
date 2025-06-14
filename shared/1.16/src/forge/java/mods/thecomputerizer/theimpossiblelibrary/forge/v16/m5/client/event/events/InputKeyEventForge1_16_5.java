@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.even
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.InputKeyEventForge;
-import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,6 +16,6 @@ public class InputKeyEventForge1_16_5 extends InputKeyEventForge<KeyInputEvent> 
     }
     
     @Override public boolean isKey(KeyAPI<?> key) {
-        return ((KeyBinding)key.unwrap()).matches(this.event.getKey(), this.event.getScanCode());
+        return ((KeyMapping)key.unwrap()).matches(this.event.getKey(), this.event.getScanCode());
     }
 }

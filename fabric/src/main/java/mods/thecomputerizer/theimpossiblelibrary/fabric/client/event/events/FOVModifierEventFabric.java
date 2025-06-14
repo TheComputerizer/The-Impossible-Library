@@ -17,7 +17,6 @@ public class FOVModifierEventFabric extends FOVModifierEventWrapper<Object[]> im
         return null;
     }
     
-    @SuppressWarnings("NullableProblems") 
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> {});
     }

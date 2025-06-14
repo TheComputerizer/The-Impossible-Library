@@ -17,8 +17,8 @@ public class RenderWorldLastEventFabric extends RenderWorldLastEventWrapper<Obje
         return LAST;
     }
     
-    @SuppressWarnings("NullableProblems") 
     @Override protected RenderContext initRenderer(@NotNull Object[] args) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(((WorldRenderContext)args[0]).matrixStack()));
+        return EventHelper.initRenderer(
+                ctx -> ctx.getRenderer().setMatrix(((WorldRenderContext)args[0]).matrixStack()));
     }
 }

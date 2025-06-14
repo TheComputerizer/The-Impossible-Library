@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 
-import javax.annotation.Nonnull;
+
 
 public class MessageWrapperForge1_20_6 extends MessageWrapperAPI<ServerPlayer,Context> implements CustomPacketPayload {
     
@@ -29,7 +29,7 @@ public class MessageWrapperForge1_20_6 extends MessageWrapperAPI<ServerPlayer,Co
         super(buf);
     }
     
-    @Override public @Nonnull Type<MessageWrapperForge1_20_6> type() {
+    @Override public Type<MessageWrapperForge1_20_6> type() {
         return TYPE;
     }
 }

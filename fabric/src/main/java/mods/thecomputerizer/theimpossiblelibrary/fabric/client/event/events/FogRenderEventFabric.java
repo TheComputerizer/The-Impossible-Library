@@ -17,7 +17,6 @@ public class FogRenderEventFabric extends FogRenderEventWrapper<Object[]> implem
         return null;
     }
     
-    @SuppressWarnings("NullableProblems")
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> {});
     }

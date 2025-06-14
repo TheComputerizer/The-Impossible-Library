@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Pre;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_PRE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -23,7 +23,7 @@ public class RenderOverlayPreEventForge extends RenderOverlayPreEventWrapper<Pre
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull Pre event) {
+    @Override protected RenderContext initRenderer(Pre event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
     }
     

@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent.ComputeCameraAngles;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CAMERA_SETUP;
 
@@ -20,7 +20,7 @@ public class CameraSetupEventNeoForge extends CameraSetupEventWrapper<ComputeCam
         CAMERA_SETUP.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull ComputeCameraAngles event) {
+    @Override protected RenderContext initRenderer(ComputeCameraAngles event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getPartialTick()));
     }
     

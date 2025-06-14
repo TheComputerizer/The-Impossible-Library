@@ -15,7 +15,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Objects;
@@ -26,7 +25,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 import static org.lwjgl.input.Keyboard.KEY_BACK;
 import static org.lwjgl.input.Keyboard.KEY_ESCAPE;
 
-@ParametersAreNonnullByDefault
+
 public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI> {
     
     private static final Set<ScreenWrapper1_12_2> TICKERS = new HashSet<>();

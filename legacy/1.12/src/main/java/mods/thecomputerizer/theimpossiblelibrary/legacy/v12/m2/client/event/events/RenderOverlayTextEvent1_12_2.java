@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Text;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class RenderOverlayTextEvent1_12_2 extends RenderOverlayTextEventWrapper<
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull Text event) {
+    @Override protected RenderContext initRenderer(Text event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks(event.getPartialTicks()));
     }
     

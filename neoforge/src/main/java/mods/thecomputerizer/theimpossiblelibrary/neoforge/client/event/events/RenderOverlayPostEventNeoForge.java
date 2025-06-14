@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent.Post;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_POST;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -19,7 +19,7 @@ public class RenderOverlayPostEventNeoForge extends RenderOverlayPostEventWrappe
         RENDER_OVERLAY_POST.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull Post event) {
+    @Override protected RenderContext initRenderer(Post event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     

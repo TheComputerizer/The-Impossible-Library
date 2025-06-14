@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.server;
 
-import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandAPI;
 import net.minecraft.command.CommandBase;
@@ -10,14 +9,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
 public class WrappedCommand1_12_2 extends CommandBase {
 
     private final CommandAPI wrapped;

@@ -19,7 +19,6 @@ public class RenderOverlayBlockEventFabric extends RenderOverlayBlockEventWrappe
         return BEFORE_BLOCK_OUTLINE;
     }
     
-    @SuppressWarnings("NullableProblems")
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> {
             WorldRenderContext worldRender = (WorldRenderContext)event[0];

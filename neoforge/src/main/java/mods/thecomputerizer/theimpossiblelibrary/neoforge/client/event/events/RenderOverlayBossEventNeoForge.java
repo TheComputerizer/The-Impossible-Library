@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.BossEventProgress;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BOSS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -24,7 +24,7 @@ public class RenderOverlayBossEventNeoForge extends RenderOverlayBossEventWrappe
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull BossEventProgress event) {
+    @Override protected RenderContext initRenderer(BossEventProgress event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     

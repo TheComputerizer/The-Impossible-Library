@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.block;
 
-import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
@@ -17,15 +16,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map.Entry;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.SUCCESS;
 import static net.minecraft.util.EnumBlockRenderType.MODEL;
 
-@SuppressWarnings("deprecation")
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILBasicBlock1_12_2 extends Block {
     
     public static IProperty<?>[] iProperties;
@@ -52,10 +48,12 @@ public class TILBasicBlock1_12_2 extends Block {
         return new BlockStateContainer(this,propertiesArray);
     }
     
+    @SuppressWarnings("deprecation")
     @Override public EnumBlockRenderType getRenderType(IBlockState state) {
         return MODEL;
     }
     
+    @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
         return this.getDefaultState();
     }

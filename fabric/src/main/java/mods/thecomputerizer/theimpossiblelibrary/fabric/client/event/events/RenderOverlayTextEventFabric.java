@@ -20,7 +20,6 @@ public class RenderOverlayTextEventFabric extends RenderOverlayTextEventWrapper<
         return RENDER_DEBUG_INFO;
     }
     
-    @SuppressWarnings("NullableProblems") 
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event[0]));
     }

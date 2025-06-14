@@ -6,11 +6,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.FogDensityEventForge;
 
-import javax.annotation.Nonnull;
+
 
 public class FogDensityEventForge1_19 extends FogDensityEventForge<Object> {
     
-    @Override protected RenderContext initRenderer(@Nonnull Object event) {
+    @Override protected RenderContext initRenderer(Object event) {
         return null;
     }
     

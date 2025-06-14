@@ -17,7 +17,6 @@ public class FogDensityEventFabric extends FogDensityEventWrapper<Object[]> impl
         return null;
     }
     
-    @SuppressWarnings("NullableProblems") 
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> {});
     }

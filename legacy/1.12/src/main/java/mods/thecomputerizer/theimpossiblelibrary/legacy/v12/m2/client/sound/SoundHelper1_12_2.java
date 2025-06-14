@@ -12,7 +12,6 @@ import java.util.Objects;
 import static net.minecraft.client.audio.ISound.AttenuationType.NONE;
 import static net.minecraft.util.SoundCategory.MASTER;
 
-@SuppressWarnings({"ConstantValue","UnreachableCode"})
 public class SoundHelper1_12_2 implements SoundHelperAPI {
     
     @Override public float getCategoryVolume(String name) {

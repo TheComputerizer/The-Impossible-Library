@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 
-import javax.annotation.Nonnull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -19,7 +19,7 @@ public interface WithItemProperties {
     
     GameVersion VERSION = CoreAPI.getInstance().getVersion();
     
-    @Nonnull ItemProperties getProperties();
+    ItemProperties getProperties();
     
     default Collection<TextAPI<?>> getTooltipLines(Supplier<ItemStackAPI<?>> stack, Supplier<WorldAPI<?>> world) {
         ItemProperties properties = getProperties();

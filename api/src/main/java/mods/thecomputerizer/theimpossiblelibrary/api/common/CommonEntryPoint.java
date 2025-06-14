@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -282,7 +282,7 @@ public abstract class CommonEntryPoint {
     /**
      * Assumes all the parents are null or have all been checked and that the handler is not null
      */
-    protected boolean verifyNoDuplicatesInner(@Nonnull CommonEntryPoint handler) {
+    protected boolean verifyNoDuplicatesInner(CommonEntryPoint handler) {
         if(handler==this) return false;
         if(Objects.nonNull(this.delegatedClientHandle) && !this.delegatedClientHandle.verifyNoDuplicatesInner(handler))
             return false;

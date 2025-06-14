@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.network.Network1_16_5;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
@@ -62,7 +62,6 @@ public class NetworkForge1_16_5 extends Network1_16_5<SimpleChannel,NetworkDirec
         }
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network))
             this.network = ChannelBuilder.named(TILRef.res("main_network").unwrap())
@@ -97,7 +96,7 @@ public class NetworkForge1_16_5 extends Network1_16_5<SimpleChannel,NetworkDirec
     
     //TODO Does not support login direction
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        getNetwork().send(PLAYER.with(() -> (ServerPlayerEntity)player),(MessageWrapperForge1_16_5)message);
+        getNetwork().send(PLAYER.with(() -> (ServerPlayer)player), (MessageWrapperForge1_16_5)message);
     }
     
     //TODO Does not support login direction

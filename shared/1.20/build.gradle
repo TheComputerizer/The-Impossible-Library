@@ -10,7 +10,7 @@ uniminedFabric false
 uniminedForge false
 uniminedNeoforge false
 
-setSharedDependencies false, false
+setSharedDependencies()
 
 inheritResources ':shared'
 

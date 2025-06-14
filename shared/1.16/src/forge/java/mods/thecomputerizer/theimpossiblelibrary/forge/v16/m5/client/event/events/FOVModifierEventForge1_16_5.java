@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.FOVMo
 import net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOV_MODIFIER;
 
@@ -20,7 +20,7 @@ public class FOVModifierEventForge1_16_5 extends FOVModifierEventForge<FOVModifi
         FOV_MODIFIER.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull FOVModifier event) {
+    @Override protected RenderContext initRenderer(FOVModifier event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     

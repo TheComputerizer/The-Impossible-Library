@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.FogRe
 import net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_RENDER;
 
@@ -20,7 +20,7 @@ public class FogRenderEventForge1_16_5 extends FogRenderEventForge<RenderFogEven
         FOG_RENDER.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderFogEvent event) {
+    @Override protected RenderContext initRenderer(RenderFogEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     

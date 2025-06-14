@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BLOCK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.BLOCK;
@@ -23,7 +23,7 @@ public class RenderOverlayBlockEventNeoForge extends RenderOverlayBlockEventWrap
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderBlockScreenEffectEvent event) {
+    @Override protected RenderContext initRenderer(RenderBlockScreenEffectEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
     }
     

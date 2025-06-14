@@ -9,7 +9,7 @@ uniminedCommon()
 uniminedFabric false
 uniminedForge false
 
-setSharedDependencies false, false
+setSharedDependencies()
 
 inheritResources ':shared'
 

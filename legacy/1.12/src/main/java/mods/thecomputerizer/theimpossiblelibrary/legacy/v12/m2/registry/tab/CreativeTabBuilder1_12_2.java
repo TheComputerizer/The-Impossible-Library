@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 import static net.minecraft.item.ItemStack.EMPTY;
@@ -20,7 +20,7 @@ public class CreativeTabBuilder1_12_2 extends CreativeTabBuilderAPI<ItemStack> {
             return null;
         }
         CreativeTabs tab = new CreativeTabs(this.registryName.getPath()) {
-            @Override public @Nonnull ItemStack createIcon() {
+            @Override public ItemStack createIcon() {
                 return getBuilderIcon();
             }
         };

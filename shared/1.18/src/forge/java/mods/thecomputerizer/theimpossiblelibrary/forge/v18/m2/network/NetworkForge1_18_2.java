@@ -64,7 +64,6 @@ public class NetworkForge1_18_2 extends Network1_18_2<SimpleChannel,NetworkDirec
         };
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network))
             this.network = ChannelBuilder.named(TILRef.res("main_network").unwrap())

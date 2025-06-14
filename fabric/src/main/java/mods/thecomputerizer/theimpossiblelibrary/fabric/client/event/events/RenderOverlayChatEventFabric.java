@@ -19,7 +19,6 @@ public class RenderOverlayChatEventFabric extends RenderOverlayChatEventWrapper<
         return EVENT;
     }
     
-    @SuppressWarnings("NullableProblems")
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> {
             WorldRenderContext worldRender = (WorldRenderContext)event[0];

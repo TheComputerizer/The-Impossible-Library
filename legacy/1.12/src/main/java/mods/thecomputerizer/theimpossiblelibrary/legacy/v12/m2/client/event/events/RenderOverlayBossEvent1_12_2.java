@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BOSS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -23,7 +23,7 @@ public class RenderOverlayBossEvent1_12_2 extends RenderOverlayBossEventWrapper<
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull BossInfo event) {
+    @Override protected RenderContext initRenderer(BossInfo event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks(event.getPartialTicks()));
     }
     

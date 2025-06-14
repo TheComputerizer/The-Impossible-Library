@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
-import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
@@ -19,16 +18,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILCustomTool1_12_2 extends ItemTool implements WithItemProperties {
     
     private final ItemProperties properties;
@@ -58,7 +55,7 @@ public class TILCustomTool1_12_2 extends ItemTool implements WithItemProperties 
         }));
     }
     
-    @Override public @Nonnull ItemProperties getProperties() {
+    @Override public ItemProperties getProperties() {
         return this.properties;
     }
 }

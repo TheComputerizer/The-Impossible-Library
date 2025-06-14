@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.Rende
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_WORLD_LAST;
 
@@ -17,7 +17,7 @@ public class RenderWorldLastEventForge1_16_5 extends RenderWorldLastEventForge<R
         RENDER_WORLD_LAST.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderWorldLastEvent event) {
+    @Override protected RenderContext initRenderer(RenderWorldLastEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
     }
 }

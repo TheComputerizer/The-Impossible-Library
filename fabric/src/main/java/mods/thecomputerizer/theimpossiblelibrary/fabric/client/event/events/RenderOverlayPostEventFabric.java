@@ -19,7 +19,6 @@ public class RenderOverlayPostEventFabric extends RenderOverlayPostEventWrapper<
         return AFTER_TRANSLUCENT;
     }
     
-    @SuppressWarnings("NullableProblems")
     @Override protected RenderContext initRenderer(@NotNull Object[] event) {
         return EventHelper.initRenderer(ctx -> {
             WorldRenderContext worldRender = (WorldRenderContext)event[0];

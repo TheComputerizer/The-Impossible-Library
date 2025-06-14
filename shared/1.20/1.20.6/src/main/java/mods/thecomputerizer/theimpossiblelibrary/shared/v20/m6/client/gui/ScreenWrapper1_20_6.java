@@ -13,7 +13,7 @@ import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.StringUtil;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
@@ -120,7 +120,7 @@ public class ScreenWrapper1_20_6 extends Screen implements Wrapped<ScreenAPI> {
         super.onClose();
     }
     
-    @Override public void render(@Nonnull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if(Objects.nonNull(this.wrapped)) {
             RenderContext ctx = RenderContext.get(ClientHelper.getMinecraft());
             ctx.setPartialTicks(partialTicks);
@@ -131,7 +131,7 @@ public class ScreenWrapper1_20_6 extends Screen implements Wrapped<ScreenAPI> {
         }
     }
     
-    @Override public void resize(@Nonnull Minecraft mc, int width, int height) {
+    @Override public void resize(Minecraft mc, int width, int height) {
         super.resize(mc,width,height);
         MinecraftAPI<?> minecraft = ClientHelper.getMinecraft();
         if(Objects.nonNull(this.wrapped) && Objects.nonNull(minecraft))

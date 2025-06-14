@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
-import mcp.MethodsReturnNonnullByDefault;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
@@ -22,16 +21,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILDiscItem1_12_2 extends ItemRecord implements WithItemProperties {
     
     protected final ItemProperties properties;
@@ -67,7 +64,7 @@ public class TILDiscItem1_12_2 extends ItemRecord implements WithItemProperties 
         }));
     }
     
-    @Override public @Nonnull ItemProperties getProperties() {
+    @Override public ItemProperties getProperties() {
         return this.properties;
     }
 }

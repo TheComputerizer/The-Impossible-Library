@@ -7,13 +7,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@ParametersAreNonnullByDefault
+
 public class TILTickableBlockEntity1_12_2 extends TILBasicBlockEntity1_12_2 implements ITickable {
     
     protected static final Map<ResourceLocation,Consumer<BlockEntityAPI<?,?>>> onTickMap = new HashMap<>();

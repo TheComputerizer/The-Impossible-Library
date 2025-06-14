@@ -12,8 +12,8 @@ uniminedCommon()
 uniminedFabric true
 uniminedForge true
 
-setSharedDependencies false, true, 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
+setSharedDependencies 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
 
 inheritResources ':shared'
 
-setJarsRunAfter false, ':shared', getParentPath(name)
+setJarsRunAfter true, ':shared', ':shared_1.20'

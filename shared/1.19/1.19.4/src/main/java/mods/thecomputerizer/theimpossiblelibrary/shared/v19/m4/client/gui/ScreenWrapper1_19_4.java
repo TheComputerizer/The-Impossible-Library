@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.client.gui.ScreenWrapper1_19;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 public class ScreenWrapper1_19_4 extends ScreenWrapper1_19 {
@@ -25,7 +25,7 @@ public class ScreenWrapper1_19_4 extends ScreenWrapper1_19 {
     
     @Override public void removed() {}
     
-    @Override public void render(@Nonnull PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
+    @Override public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
         if(Objects.nonNull(this.wrapped)) {
             RenderContext ctx = RenderContext.get(ClientHelper.getMinecraft());
             ctx.setPartialTicks(partialTicks);

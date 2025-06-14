@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResult;
@@ -16,15 +15,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILDiscItem1_19 extends RecordItem implements WithItemProperties {
     
     static Properties tab(Properties iProperties, ItemProperties properties) {
@@ -38,7 +36,6 @@ public class TILDiscItem1_19 extends RecordItem implements WithItemProperties {
     
     protected final ItemProperties properties;
     
-    @SuppressWarnings("deprecation")
     public TILDiscItem1_19(SoundEvent sound, ItemProperties properties, int length) {
         super(0,sound,tab(new Properties().stacksTo(properties.getStackSize()),properties),length);
         this.properties = properties;
@@ -49,7 +46,7 @@ public class TILDiscItem1_19 extends RecordItem implements WithItemProperties {
                 .forEach(text -> components.add(text.getAsComponent()));
     }
     
-    @Override public InteractionResult useOn(UseOnContext ctx) {
+    @Override public @NotNull InteractionResult useOn(UseOnContext ctx) {
         return EventHelper.setActionResult(getUseResult(() -> {
             TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
                     null,ctx.getHand(),ctx.getClickedFace());
@@ -58,7 +55,7 @@ public class TILDiscItem1_19 extends RecordItem implements WithItemProperties {
         }));
     }
     
-    @Override public @Nonnull ItemProperties getProperties() {
+    @Override public ItemProperties getProperties() {
         return this.properties;
     }
 }

@@ -12,8 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

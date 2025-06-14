@@ -14,9 +14,8 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
+
 public class TILBlockEntityProvider1_18_2 extends TILBasicBlock1_18_2 implements EntityBlock {
     
     public static TILBlockEntityProvider1_18_2 tileFrom(BlockProperties properties) {

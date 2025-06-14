@@ -4,8 +4,8 @@
  * Shading and relocation must happen within each module to properly respect reobfuscation.
  * Any necessary reobfuscations must happen in the version the deobfuscations happened in.
  */
-allprojects {sub ->
-    sub.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
+allprojects {p ->
+    p.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
 }
 
 extendFrom 'shared'
@@ -29,40 +29,9 @@ def shared_1_20_6 = ':shared:shared_1.20:shared_1.20.6'
 def shared_1_21 = ':shared:shared_1.21'
 def shared_1_21_1 = ':shared:shared_1.21:shared_1.21.1'
 
-def shadow_projects = [ legacy_1_12_2, shared_1_16_5, shared_1_18_2, shared_1_19_2, shared_1_19_4, shared_1_20_1,
-        shared_1_20_4, shared_1_20_6, shared_1_21_1 ]
-
 def all_projects = [ base, fabric, forge, legacy, neoforge, cleanroom, legacy_1_12_2, shared_1_16_5, shared_1_18_2,
         shared_1_19, shared_1_19_2, shared_1_19_4, shared_1_20, shared_1_20_1, shared_1_20_4, shared_1_20_6,
         shared_1_21, shared_1_21_1 ]
-
-afterEvaluate {self ->
-    all_projects.forEach {name ->
-        project(name).tasks.withType(JavaCompile).forEach {compile ->
-            compile.options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
-        }
-    }
-}
-
-javadoc {
-    doLast {
-        classpath = files(all_projects.collect {name ->
-            project(name).sourceSets.main.compileClasspath
-        })
-    }
-}
-
-javadocJar {
-    doLast {
-        all_projects.forEach {name ->
-            def p = project name
-            from(p.javadocJar.archiveFile.collect {zip ->
-                zipTree zip
-            })
-            mustRunAfter p.javadocJar
-        }
-    }
-}
 
 jar {
     manifest {
@@ -76,37 +45,51 @@ jar {
                 'TILMultiversionMods': common_entrypoint
         ])
     }
-    doLast {
-        shadow_projects.forEach {name ->
-            def p = project name
-            from(p.shadowJar.archiveFile.collect {zip ->
-                zipTree zip
-            })
-            mustRunAfter p.shadowJar
+}
+
+afterEvaluate {self ->
+    def resolved_projects = all_projects.collect {p_name ->
+        self.project(p_name)
+    }
+    resolved_projects.forEach {sub ->
+        sub.tasks.withType(JavaCompile).forEach {compile ->
+            compile.options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
         }
-    }
-}
-
-processResources {
-    doLast {
-        from project(fabric).processResources.outputs
-    }
-}
-
-processTestResources {
-    doLast {
-        from project(fabric).processTestResources.outputs
-    }
-}
-
-sourcesJar {
-    doLast {
-        all_projects.forEach {name ->
-            def p = project name
-            from(p.sourcesJar.archiveFile.collect {zip ->
-                zipTree zip
-            })
-            mustRunAfter p.sourcesJar
+        sub.afterEvaluate {s ->
+            if(isProjectRunnable(s)) {
+                self.jar {
+                    def archive_task = getArchiveTask(s, 'shadowJar')
+                    from(archive_task.archiveFile.collect {entry ->
+                        zipTree entry
+                    })
+                    mustRunAfter archive_task
+                }
+            }
+            self.javadoc {
+                classpath+=classpathCompile(s, 'main')
+            }
+            self.javadocJar {
+                def archive_task = getArchiveTask(s, 'javadocJar')
+                from(archive_task.archiveFile.collect {zip ->
+                    zipTree zip
+                })
+                mustRunAfter archive_task
+            }
+            if('fabric'==s.name) {
+                self.processResources {
+                    from getTaskOutputs(s, 'processResources')
+                }
+                self.processTestResources {
+                    from getTaskOutputs(s, 'processTestResources')
+                }
+            }
+            self.sourcesJar {
+                def archive_task = getArchiveTask(s, 'sourcesJar')
+                from(archive_task.archiveFile.collect {entry ->
+                    zipTree entry
+                })
+                mustRunAfter archive_task
+            }
         }
     }
 }

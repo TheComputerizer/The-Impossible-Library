@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent.Post;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_POST;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -23,7 +23,7 @@ public class RenderOverlayPostEventForge1_19 extends RenderOverlayPostEventWrapp
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull Post event) {
+    @Override protected RenderContext initRenderer(Post event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
     }
     

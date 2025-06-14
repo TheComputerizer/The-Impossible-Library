@@ -5,12 +5,12 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable 8
+extendRunnable()
 extendFrom 'nonshaded-deps'
 
-uniminedCore 'forge', false, []
-
 setDev()
+
+uniminedCore 'forge', false, []
 
 dependencies {
     api project(':api')
@@ -26,13 +26,13 @@ jar {
 }
 
 processResources {
-    from(project(':api').processResources.outputs) {
+    from(getTaskOutputs(project(':api'), 'processResources')) {
         exclude 'fabric.mod.json'
     }
 }
 
 processTestResources {
-    from project(':api').processTestResources.outputs
+    from getTaskOutputs(project(':api'), 'processTestResources')
 }
 
-setJarsRunAfter true, ':api'
+setJarsRunAfter false, ':api'

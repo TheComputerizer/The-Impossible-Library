@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.BlockNotifyNeighborEventForge;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 

@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent.Chat;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_CHAT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -24,7 +24,7 @@ public class RenderOverlayChatEventForge1_21 extends RenderOverlayChatEventWrapp
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull Chat event) {
+    @Override protected RenderContext initRenderer(Chat event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     

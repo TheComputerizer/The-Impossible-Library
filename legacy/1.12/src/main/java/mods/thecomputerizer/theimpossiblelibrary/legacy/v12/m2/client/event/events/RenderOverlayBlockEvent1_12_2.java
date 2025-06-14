@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BLOCK;
 
@@ -22,7 +22,7 @@ public class RenderOverlayBlockEvent1_12_2 extends RenderOverlayBlockEventWrappe
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderBlockOverlayEvent event) {
+    @Override protected RenderContext initRenderer(RenderBlockOverlayEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks(event.getRenderPartialTicks()));
     }
     

@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_WORLD_LAST;
 import static net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL;
@@ -22,7 +22,7 @@ public class RenderWorldLastEventNeoForge extends RenderWorldLastEventWrapper<Re
         super.setEvent(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderLevelStageEvent event) {
+    @Override protected RenderContext initRenderer(RenderLevelStageEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
     }
 }

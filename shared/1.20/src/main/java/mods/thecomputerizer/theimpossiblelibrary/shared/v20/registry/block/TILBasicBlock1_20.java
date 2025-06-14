@@ -4,7 +4,6 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,16 +14,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Collections;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.SUCCESS;
 import static net.minecraft.world.InteractionResult.PASS;
 
-@SuppressWarnings("deprecation")
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault @Getter
+@SuppressWarnings("deprecation") @Getter
 public class TILBasicBlock1_20 extends Block {
     
     public static Collection<Property<?>> stateProperties = Collections.emptyList();
@@ -46,7 +44,7 @@ public class TILBasicBlock1_20 extends Block {
         for(Property<?> property : stateProperties) builder.add(property);
     }
     
-    @Override public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+    @Override public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
         if(this.properties.hasUseResult()) {
             return this.properties.getUseResult(TILItemUseContext.wrap(player,level,pos,state,hand,null))==SUCCESS ?

@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.event.eve
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterBlocksEventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.block.Block1_12_2;
 import net.minecraft.block.Block;
 import net.minecraftforge.event.RegistryEvent.Register;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

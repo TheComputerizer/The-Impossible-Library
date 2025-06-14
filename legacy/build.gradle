@@ -8,6 +8,8 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
 }
 
+setDev()
+
 dependencies {
     compileOnlyApi project(':api')
 }
@@ -17,7 +19,7 @@ processResources {
                          'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
                          'mod_name': mod_name, 'mod_version': version ]
     inputs.properties replacements
-    def parentResources =  project(':api').processResources.outputs
+    def parentResources =  getTaskOutputs(project(':api'), 'processResources')
     from(parentResources) {
         exclude 'fabric.mod.json', 'mcmod.info', 'META-INF/mods.toml'
     }
@@ -28,16 +30,17 @@ processResources {
 }
 
 processTestResources {
-    from project(':api').processTestResources.outputs
+    from getTaskOutputs(project(':api'), 'processTestResources')
 }
 
 setJarsRunAfter false, ':api'
 
 subprojects {sub ->
-    sub.extendRunnable 'cleanroom'==sub.name ? 21 : 8
+    //noinspection GrUnresolvedAccess
+    sub.extendRunnable()
     jar {
         sub.afterEvaluate {
-            from(project(':legacy').jar.archiveFile.collect {entry ->
+            from(getArchiveTaskFile(project(':legacy'), 'jar').collect {entry ->
                 zipTree entry
             })
             manifest {

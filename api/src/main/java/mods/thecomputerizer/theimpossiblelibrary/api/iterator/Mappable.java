@@ -2,9 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 /**
  * Wrapper used for bundling generic helper methods with a final Map instance
  */
-@ParametersAreNonnullByDefault
+
 public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
 
     public static <K,V> Mappable<K,V> make(Supplier<Map<K,V>> supplier) {
@@ -50,17 +50,20 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         this.map.clear();
     }
 
-    @Override public @Nullable V compute(@Nullable K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    @Override public @Nullable V compute(@Nullable K key,
+            @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
         if(Objects.isNull(key)) return null;
         return this.map.computeIfPresent(key,remappingFunc);
     }
 
-    @Override public @Nullable V computeIfAbsent(@Nullable K key, Function<? super K, ? extends V> mappingFunc) {
+    @Override public @Nullable V computeIfAbsent(@Nullable K key,
+            @NotNull Function<? super K, ? extends V> mappingFunc) {
         if(Objects.isNull(key)) return null;
         return this.map.computeIfAbsent(key,mappingFunc);
     }
 
-    @Override public @Nullable V computeIfPresent(@Nullable K key, BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
+    @Override public @Nullable V computeIfPresent(@Nullable K key,
+            @NotNull BiFunction<? super K, ? super V, ? extends V> remappingFunc) {
         if(Objects.isNull(key)) return null;
         return this.map.computeIfPresent(key,remappingFunc);
     }
@@ -73,7 +76,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return this.map.containsValue(value);
     }
 
-    @Override public @Nonnull Set<Entry<K,V>> entrySet() {
+    @Override public @NotNull Set<Entry<K,V>> entrySet() {
         return this.map.entrySet();
     }
 
@@ -110,7 +113,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return !isEmpty();
     }
 
-    @Override public @Nonnull Iterator<Entry<K,V>> iterator() {
+    @Override public @NotNull Iterator<Entry<K,V>> iterator() {
         return entrySet().iterator();
     }
     
@@ -119,7 +122,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return Objects.isNull(key) || !containsKey(key);
     }
 
-    @Override public @Nonnull Set<K> keySet() {
+    @Override public @NotNull Set<K> keySet() {
         return this.map.keySet();
     }
     
@@ -132,7 +135,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return Objects.nonNull(key) ? this.map.put(key,value) : null;
     }
 
-    @Override public void putAll(Map<? extends K, ? extends V> otherMap) {
+    @Override public void putAll(@NotNull Map<? extends K, ? extends V> otherMap) {
         this.map.putAll(otherMap);
     }
 
@@ -161,7 +164,7 @@ public class Mappable<K,V> implements Map<K,V>, Iterable<Map.Entry<K,V>> {
         return this.map.toString();
     }
 
-    @Override public @Nonnull Collection<V> values() {
+    @Override public @NotNull Collection<V> values() {
         return this.map.values();
     }
 }

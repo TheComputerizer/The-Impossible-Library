@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemPropertie
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -17,14 +16,13 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILCustomTool1_18_2 extends TieredItem implements WithItemProperties {
     
     static Properties tab(Properties iProperties, ItemProperties properties) {
@@ -44,7 +42,7 @@ public class TILCustomTool1_18_2 extends TieredItem implements WithItemPropertie
                 .forEach(text -> components.add(text.getAsComponent()));
     }
     
-    @Override public InteractionResult useOn(UseOnContext ctx) {
+    @Override public @NotNull InteractionResult useOn(UseOnContext ctx) {
         return EventHelper.setActionResult(getUseResult(() -> {
             TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
                     null,ctx.getHand(),ctx.getClickedFace());
@@ -53,7 +51,7 @@ public class TILCustomTool1_18_2 extends TieredItem implements WithItemPropertie
         }));
     }
     
-    @Override public @Nonnull ItemProperties getProperties() {
+    @Override public ItemProperties getProperties() {
         return this.properties;
     }
 }

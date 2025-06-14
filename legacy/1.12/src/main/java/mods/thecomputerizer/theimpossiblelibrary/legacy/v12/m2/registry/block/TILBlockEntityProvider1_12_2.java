@@ -7,11 +7,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI.ZERO;
 
-@ParametersAreNonnullByDefault
+
 public class TILBlockEntityProvider1_12_2 extends TILBasicBlock1_12_2 implements ITileEntityProvider {
     
     public TILBlockEntityProvider1_12_2(BlockProperties properties) {

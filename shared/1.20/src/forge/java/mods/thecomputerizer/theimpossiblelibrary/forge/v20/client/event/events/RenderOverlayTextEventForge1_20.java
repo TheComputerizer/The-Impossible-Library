@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class RenderOverlayTextEventForge1_20 extends RenderOverlayTextEventWrapp
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull DebugText event) {
+    @Override protected RenderContext initRenderer(DebugText event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     

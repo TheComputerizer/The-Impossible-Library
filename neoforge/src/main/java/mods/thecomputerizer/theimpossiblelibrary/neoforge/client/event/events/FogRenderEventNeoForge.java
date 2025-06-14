@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent.RenderFog;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_RENDER;
 
@@ -24,7 +24,7 @@ public class FogRenderEventNeoForge extends FogRenderEventWrapper<RenderFog> {
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderFog event) {
+    @Override protected RenderContext initRenderer(RenderFog event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getPartialTick()));
     }
     

@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_DENSITY;
 
@@ -24,7 +24,7 @@ public class FogDensityEvent1_12_2 extends FogDensityEventWrapper<FogDensity> {
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull FogDensity event) {
+    @Override protected RenderContext initRenderer(FogDensity event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     

@@ -5,12 +5,12 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable 8
+extendRunnable()
 extendFrom 'nonshaded-deps'
 
-uniminedCore 'fabric', false, []
-
 setDev()
+
+uniminedCore 'fabric', false, []
 
 dependencies {
     Provider<String> dep_provider = fabric.versions.api.'1'.'16'.'5'
@@ -20,7 +20,7 @@ dependencies {
 processResources {
     def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
     inputs.properties replacements
-    from(project(':api').processResources.outputs) {
+    from(getTaskOutputs(project(':api'), 'processResources')) {
         filesMatching('fabric.mod.json') {copy_details ->
             expand replacements
         }
@@ -28,11 +28,11 @@ processResources {
 }
 
 processTestResources {
-    from project(':api').processTestResources.outputs
+    from getTaskOutputs(project(':api'), 'processTestResources')
 }
 
 jar {
-    from(project(':api').jar.archiveFile.collect {entry ->
+    from(getArchiveTaskFile(project(':api'), 'jar').collect {entry ->
         zipTree entry
     })
     manifest {
@@ -43,4 +43,4 @@ jar {
     }
 }
 
-setJarsRunAfter true, ':api'
+setJarsRunAfter false, ':api'

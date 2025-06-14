@@ -5,7 +5,7 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable 17
+extendRunnable()
 extendFrom 'nonshaded-deps'
 
 uniminedCore 'neoforge', false, []
@@ -26,13 +26,13 @@ jar {
 }
 
 processResources {
-    from(project(':api').processResources.outputs) {
+    from(getTaskOutputs(project(':api'), 'processResources')) {
         exclude 'fabric.mod.json'
     }
 }
 
 processTestResources {
-    from project(':api').processTestResources.outputs
+    from getTaskOutputs(project(':api'), 'processTestResources')
 }
 
-setJarsRunAfter true, ':api'
+setJarsRunAfter false, ':api'

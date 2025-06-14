@@ -34,7 +34,6 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -44,7 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
-@ParametersAreNonnullByDefault
+
 public class WrappedCommand1_19 {
     
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();

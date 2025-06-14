@@ -139,6 +139,7 @@ public abstract class CommandAPI {
         return true;
     }
     
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isValidInput(String input) {
         switch(getType()) {
             case BOOLEAN: return Misc.equalsAny(input,"true","false");

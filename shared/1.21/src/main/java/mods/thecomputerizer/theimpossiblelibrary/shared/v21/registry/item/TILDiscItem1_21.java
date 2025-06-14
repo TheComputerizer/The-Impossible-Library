@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionResult;
@@ -15,13 +14,12 @@ import net.minecraft.world.item.JukeboxSong;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class TILDiscItem1_21 extends Item implements WithItemProperties {
     
     static Properties optionallyJukeboxPlayable(ItemProperties properties, @Nullable ResourceKey<JukeboxSong> songKey) {
@@ -42,7 +40,7 @@ public class TILDiscItem1_21 extends Item implements WithItemProperties {
                 .forEach(text -> components.add(text.getAsComponent()));
     }
     
-    @Override public InteractionResult useOn(UseOnContext ctx) {
+    @Override public @NotNull InteractionResult useOn(UseOnContext ctx) {
         return EventHelper.setActionResult(getUseResult(() -> {
             TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
                     null,ctx.getHand(),ctx.getClickedFace());
@@ -51,7 +49,7 @@ public class TILDiscItem1_21 extends Item implements WithItemProperties {
         }));
     }
     
-    @Override public @Nonnull ItemProperties getProperties() {
+    @Override public ItemProperties getProperties() {
         return this.properties;
     }
 }

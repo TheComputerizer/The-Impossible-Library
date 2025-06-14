@@ -55,7 +55,6 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     /**
      * The bed location can be null, so I'm not sure why the compiler is complaining about it
      */
-    @SuppressWarnings({"UnreachableCode","ConstantValue"})
     @Override public BlockPosAPI<?> getBedPos(DimensionAPI<?> dimension) {
         BlockPos pos = this.entity.getBedLocation(((DimensionType)dimension.unwrap()).getId());
         return Objects.nonNull(pos) ? WrapperHelper.wrapPosition(pos) : null;

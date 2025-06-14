@@ -13,42 +13,24 @@ setDev()
 inheritResources ':api'
 
 jar {
-    from(project(':api').jar.archiveFile.collect {entry ->
+    from(getArchiveTaskFile(project(':api'), 'jar').collect {entry ->
         include 'mods/**'
         zipTree entry
     })
     dependsOn ':api:build'
 }
 
-def java21_versions = [ 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ]
-def neoforge_versions = [ 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ]
-def parent_versions = [ 'shared_1.19', 'shared_1.20', 'shared_1.21' ]
-def singleton_versions = [ 'shared_1.16', 'shared_1.18' ]
-
 subprojects {sub ->
-    String sub_name = sub.name
-    boolean neoforge_compatible = neoforge_versions.contains(sub_name)
-    boolean is_runnable = !parent_versions.contains(sub_name)
-    boolean has_parent = is_runnable && !singleton_versions.contains(sub_name)
-    sub.extendRunnable 'shared_1.16'==sub_name ? 8 : (java21_versions.contains(sub_name) ? 21 : 17)
-    if(!is_runnable) extendFrom 'nonshaded-deps'
-    sourceSets {
-        fabric {
-            compileClasspath+=sourceSets.main.output
-            runtimeClasspath+=sourceSets.main.output
-        }
-        forge {
-            compileClasspath+=sourceSets.main.output
-            runtimeClasspath+=sourceSets.main.output
-        }
-        if(neoforge_compatible) {
-            neoforge {
-                compileClasspath+=sourceSets.main.output
-                runtimeClasspath+=sourceSets.main.output
-            }
-        }
+    boolean neoforge_compatible = isProjectNeoforgeCompatible(sub)
+    boolean is_runnable = isProjectRunnable(sub)
+    boolean minor_version = isProjectMinorVersion(sub)
+    //noinspection GrUnresolvedAccess
+    sub.extendRunnable()
+    if(!is_runnable) {
+        sub.extendFrom 'nonshaded-deps'
+        sub.setDev()
     }
-    if(!is_runnable) setDev()
+    sub.setLoaderConfigs neoforge_compatible
     jar {
         manifest {
             attributes([
@@ -61,7 +43,7 @@ subprojects {sub ->
         afterEvaluate {
             def shaded_projects = [ ':api', ':fabric', ':forge', ':shared' ]
             if(neoforge_compatible) shaded_projects+=':neoforge'
-            if(has_parent) shaded_projects+=getParentPath(":$sub_name")
+            if(minor_version) shaded_projects+=sub.parent.path
             setSharedShadowJar shaded_projects.toArray(new String[0])
             tasks.assemble.dependsOn 'shadowJar'
         }

@@ -26,12 +26,11 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
-@ParametersAreNonnullByDefault
+
 public class WrappedCommand1_18_2 {
 
     public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandRuntimeException {

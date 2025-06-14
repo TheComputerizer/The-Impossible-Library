@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.DebugText;
 
-import javax.annotation.Nonnull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class RenderOverlayTextEventNeoForge extends RenderOverlayTextEventWrappe
         RENDER_OVERLAY_TEXT.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull DebugText event) {
+    @Override protected RenderContext initRenderer(DebugText event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getGuiGraphics()));
     }
     

@@ -12,9 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
+
 public class TILBlockEntityProvider1_21 extends TILBasicBlock1_21 implements EntityBlock {
     
     public static TILBlockEntityProvider1_21 tileFrom(BlockProperties properties) {

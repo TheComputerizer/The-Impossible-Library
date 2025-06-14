@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.EntityEnteringChunkEventForge;
 import net.minecraftforge.event.entity.EntityEvent.EnteringSection;
-import net.minecraftforge.event.level.ChunkEvent.Load;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.ENTITY_ENTERING_CHUNK;

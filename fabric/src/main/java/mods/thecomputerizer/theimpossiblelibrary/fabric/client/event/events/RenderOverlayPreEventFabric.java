@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.fabric.client.event.ClientFabri
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.event.Event;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
 import static net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents.START;
@@ -20,7 +20,7 @@ public class RenderOverlayPreEventFabric extends RenderOverlayPreEventWrapper<Ob
         return START;
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull Object[] event) {
+    @Override protected RenderContext initRenderer(Object[] event) {
         return EventHelper.initRenderer(ctx -> {
             WorldRenderContext worldRender = (WorldRenderContext)event[0];
             ctx.getRenderer().setMatrix(worldRender.matrixStack());

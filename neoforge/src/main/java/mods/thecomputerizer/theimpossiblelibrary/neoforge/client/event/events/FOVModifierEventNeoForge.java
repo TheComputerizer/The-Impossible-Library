@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOV_MODIFIER;
 
@@ -20,7 +20,7 @@ public class FOVModifierEventNeoForge extends FOVModifierEventWrapper<ComputeFov
         FOV_MODIFIER.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull ComputeFovModifierEvent event) {
+    @Override protected RenderContext initRenderer(ComputeFovModifierEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks(0f));
     }
     

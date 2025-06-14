@@ -29,7 +29,6 @@ public class BlockEntityBuilder1_18_2 extends BlockEntityBuilderAPI {
         super(parent);
     }
     
-    @SuppressWarnings("deprecation")
     @Override public BlockEntityAPI<?,?> build() { //Stupid backwards reference
         final Block[] blocks = buildBlockArray(this.validBlocks.get());
         final Function<BlockEntityType<?>,BlockEntityCreator> creatorFunc = buildCreatorFunc();
@@ -51,7 +50,7 @@ public class BlockEntityBuilder1_18_2 extends BlockEntityBuilderAPI {
         return array;
     }
     
-    @SuppressWarnings({"unchecked","DataFlowIssue"})
+    @SuppressWarnings("unchecked")
     <T extends BlockEntity> BlockEntityType<T> buildType(BiFunction<BlockPos,BlockState,BlockEntity> supplier, Block ...blocks) {
         return Builder.of((pos,state) -> (T)supplier.apply(pos,state),blocks).build(null);
     }

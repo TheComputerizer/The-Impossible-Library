@@ -6,8 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBui
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 import static net.minecraft.world.item.ItemStack.EMPTY;
@@ -20,7 +20,7 @@ public class CreativeTabBuilder1_18_2 extends CreativeTabBuilderAPI<ItemStack> {
             return null;
         }
         CreativeModeTab tab = new CreativeModeTab(this.registryName.getPath()) {
-            @Override public @Nonnull ItemStack makeIcon() {
+            @Override public @NotNull ItemStack makeIcon() {
                 return getBuilderIcon();
                 
             }

@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.Camer
 import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CAMERA_SETUP;
 
@@ -19,7 +19,7 @@ public class CameraSetupEventForge1_16_5 extends CameraSetupEventForge<CameraSet
         CAMERA_SETUP.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull CameraSetup event) {
+    @Override protected RenderContext initRenderer(CameraSetup event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     

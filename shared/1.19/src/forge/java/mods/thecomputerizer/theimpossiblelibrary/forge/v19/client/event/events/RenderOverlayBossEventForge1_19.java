@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent.BossEventProgress;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BOSS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
@@ -24,7 +24,7 @@ public class RenderOverlayBossEventForge1_19 extends RenderOverlayBossEventWrapp
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull BossEventProgress event) {
+    @Override protected RenderContext initRenderer(BossEventProgress event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
     }
     

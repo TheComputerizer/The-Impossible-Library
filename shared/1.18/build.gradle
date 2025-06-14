@@ -12,7 +12,7 @@ uniminedCommon()
 uniminedFabric true
 uniminedForge true
 
-setSharedDependencies false, false, 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
+setSharedDependencies 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
 
 inheritResources ':shared'
 

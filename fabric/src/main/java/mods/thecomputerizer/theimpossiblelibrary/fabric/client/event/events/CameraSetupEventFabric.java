@@ -16,7 +16,6 @@ public class CameraSetupEventFabric extends CameraSetupEventWrapper<Object[]> im
         return null;
     }
     
-    @SuppressWarnings("NullableProblems") 
     @Override protected RenderContext initRenderer(@NotNull Object[] args) {
         return EventHelper.initRenderer(ctx -> {});
     }

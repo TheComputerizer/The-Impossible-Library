@@ -52,7 +52,7 @@ public class BlockEntityBuilder1_21 extends BlockEntityBuilderAPI {
         return array;
     }
     
-    @SuppressWarnings({"unchecked","DataFlowIssue"})
+    @SuppressWarnings("unchecked")
     <T extends BlockEntity> BlockEntityType<T> buildType(BiFunction<BlockPos,BlockState,BlockEntity> supplier, Block ...blocks) {
         return Builder.of((pos,state) -> (T)supplier.apply(pos,state),blocks).build(null);
     }

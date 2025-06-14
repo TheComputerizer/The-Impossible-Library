@@ -28,7 +28,6 @@ public class MinecraftServer1_12_2 extends MinecraftServerAPI<MinecraftServer> {
         if(Objects.nonNull(server)) server.commandManager.executeCommand(server,command);
     }
     
-    @SuppressWarnings({"ConstantValue","UnreachableCode"})
     @Override public @Nullable PlayerAPI<?,?> getPlayerByUUID(String uuid) {
         EntityPlayerMP player = getServer().getPlayerList().getPlayerByUUID(UUID.fromString(uuid));
         return Objects.nonNull(player) ? WrapperHelper.wrapPlayer(player) : null;

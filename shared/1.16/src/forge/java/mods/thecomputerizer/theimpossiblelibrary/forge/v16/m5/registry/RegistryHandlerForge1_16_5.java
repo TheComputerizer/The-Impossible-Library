@@ -4,16 +4,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.Registry1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.RegistryHandler1_16_5;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.Potion;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -26,13 +26,13 @@ public class RegistryHandlerForge1_16_5 extends RegistryHandler1_16_5 {
     @Override protected void collectRegistries(Set<? super Registry1_16_5<?>> registries) {
         this.biome = getRegistry(registries,BIOMES,"biome",Biome.class);
         this.block = getRegistry(registries,BLOCKS,"block",Block.class);
-        this.blockEntity = getRegistry(registries,TILE_ENTITIES,"block_entity",TileEntityType.class);
-        this.effect = getRegistry(registries,POTIONS,"effect",Effect.class);
+        this.blockEntity = getRegistry(registries,TILE_ENTITIES,"block_entity",BlockEntityType.class);
+        this.effect = getRegistry(registries,POTIONS,"effect",MobEffect.class);
         this.entity = getRegistry(registries,ENTITIES,"entity",EntityType.class);
         this.item = getRegistry(registries,ITEMS,"item",Item.class);
         this.potion = getRegistry(registries,POTION_TYPES,"potion",Potion.class);
         this.sound = getRegistry(registries,SOUND_EVENTS,"sound",SoundEvent.class);
-        this.structure = getRegistry(registries,STRUCTURE_FEATURES,"structure",Structure.class);
+        this.structure = getRegistry(registries,STRUCTURE_FEATURES,"structure",StructureFeature.class);
     }
     
     @SuppressWarnings("unchecked")

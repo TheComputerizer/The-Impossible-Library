@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWra
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
-import javax.annotation.Nonnull;
+
 import java.util.Objects;
 
 @Getter
@@ -22,7 +22,7 @@ public abstract class ClientRenderEventType<E> extends ClientEventWrapper<E> {
         return Objects.nonNull(this.renderer) ? this.renderer.getPartialTicks() : 0f;
     }
 
-    protected abstract RenderContext initRenderer(@Nonnull E event);
+    protected abstract RenderContext initRenderer(E event);
 
     @Override protected void populate() {
         this.renderer = Objects.nonNull(this.event) ? initRenderer(this.event) : null;

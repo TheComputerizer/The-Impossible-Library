@@ -2,7 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.iterator;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -314,7 +315,7 @@ public class Wrapperable<E> implements Iterable<E> {
         return !isList() && !isSet();
     }
 
-    @Override public @Nonnull Iterator<E> iterator() {
+    @Override public @NotNull Iterator<E> iterator() {
         return this.iterable.iterator();
     }
 

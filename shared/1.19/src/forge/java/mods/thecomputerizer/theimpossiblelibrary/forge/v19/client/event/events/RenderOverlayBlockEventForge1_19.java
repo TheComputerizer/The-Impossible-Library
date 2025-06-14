@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.Rende
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BLOCK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.BLOCK;
@@ -19,7 +19,7 @@ public class RenderOverlayBlockEventForge1_19 extends RenderOverlayBlockEventFor
         RENDER_OVERLAY_BLOCK.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull RenderBlockScreenEffectEvent event) {
+    @Override protected RenderContext initRenderer(RenderBlockScreenEffectEvent event) {
         return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getPoseStack()));
     }
     

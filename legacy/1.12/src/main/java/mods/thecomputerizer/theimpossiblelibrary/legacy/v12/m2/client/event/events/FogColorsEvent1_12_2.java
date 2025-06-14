@@ -9,7 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import net.minecraftforge.client.event.EntityViewRenderEvent.FogColors;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOG_COLORS;
 
@@ -24,7 +24,7 @@ public class FogColorsEvent1_12_2 extends FogColorsEventWrapper<FogColors> {
         this.event.setCanceled(true);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull FogColors event) {
+    @Override protected RenderContext initRenderer(FogColors event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getRenderPartialTicks()));
     }
     

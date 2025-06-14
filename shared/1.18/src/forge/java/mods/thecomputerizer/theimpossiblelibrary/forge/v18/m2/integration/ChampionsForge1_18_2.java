@@ -11,7 +11,7 @@ import top.theillusivec4.champions.api.IChampion.Server;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.Rank;
 
-import javax.annotation.Nonnull;import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 
 public class ChampionsForge1_18_2 extends ChampionsAPI {
 
-    @SuppressWarnings("DataFlowIssue")
     public @Nullable IChampion getCapability(EntityAPI<?,?> api) {
         return ChampionCapability.getCapability((Entity)api.unwrap()).orElse(null);
     }
@@ -33,13 +32,13 @@ public class ChampionsForge1_18_2 extends ChampionsAPI {
         return Objects.nonNull(cap) ? (entity.getWorld().isServer() ? getServer(cap) : getClient(cap)) : null;
     }
 
-    private ChampionData getClient(@Nonnull IChampion cap) {
+    private ChampionData getClient(IChampion cap) {
         Client client = cap.getClient();
         Collection<String> affixes = getAffixNames(client.getAffixes());
         return new ChampionData(null,affixes,client.getRank().map(Tuple::getA).orElse(-1));
     }
 
-    private ChampionData getServer(@Nonnull IChampion cap) {
+    private ChampionData getServer(IChampion cap) {
         Server server = cap.getServer();
         Collection<String> affixes = getAffixNames(server.getAffixes());
         return new ChampionData(null,affixes,server.getRank().map(Rank::getTier).orElse(-1));

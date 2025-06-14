@@ -10,7 +10,7 @@ import net.minecraftforge.client.event.EntityViewRenderEvent.FieldOfView;
 import net.minecraftforge.client.event.FOVModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import javax.annotation.Nonnull;
+
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.FOV_MODIFIER;
 
@@ -21,7 +21,7 @@ public class FOVModifierEventForge1_18_2 extends FOVModifierEventForge<FieldOfVi
         FOV_MODIFIER.invoke(event);
     }
     
-    @Override protected RenderContext initRenderer(@Nonnull FieldOfView event) {
+    @Override protected RenderContext initRenderer(FieldOfView event) {
         return EventHelper.initRenderer(ctx -> ctx.setPartialTicks((float)event.getPartialTicks()));
     }
     

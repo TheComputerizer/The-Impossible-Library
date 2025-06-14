@@ -21,7 +21,6 @@ public class ToolTier1_18_2 extends ToolTierAPI<Tier> {
         return this.wrapped.getEnchantmentValue();
     }
     
-    @SuppressWarnings("deprecation")
     @Override public int getLevel() {
         return this.wrapped.getLevel();
     }

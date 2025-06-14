@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
@@ -13,7 +13,7 @@ import static net.minecraftforge.fml.network.NetworkDirection.PLAY_TO_CLIENT;
 /**
  * It took me way too long to figure out that the wrapper class determines the network direction for decoding.
  */
-public abstract class MessageWrapperForge1_16_5 extends MessageWrapperAPI<ServerPlayerEntity,Context> {
+public abstract class MessageWrapperForge1_16_5 extends MessageWrapperAPI<ServerPlayer,Context> {
     
     public static MessageWrapperForge1_16_5 getInstance(NetworkDirection dir) {
         boolean client = dir==LOGIN_TO_CLIENT || dir==PLAY_TO_CLIENT;
