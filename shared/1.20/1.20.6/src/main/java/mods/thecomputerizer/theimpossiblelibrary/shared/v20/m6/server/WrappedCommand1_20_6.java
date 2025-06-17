@@ -45,7 +45,6 @@ import static com.mojang.brigadier.exceptions.CommandSyntaxException.BUILT_IN_EX
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
-
 public class WrappedCommand1_20_6 {
     
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();

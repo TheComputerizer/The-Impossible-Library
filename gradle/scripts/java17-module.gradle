@@ -4,4 +4,8 @@ compileJava {
     options.release = 17
 }
 
+java {
+    toolchain.setLanguageVersion JavaLanguageVersion.of(17)
+}
+
 extendFrom 'lombok'

@@ -87,10 +87,6 @@ static List<Project> combinedProjects(Project project) {
 
 static Consumer<RepositoryHandler> commonMavenArtifact(Project project, String id) {
     Consumer<RepositoryHandler> consumer = handler -> {
-        if('central'==id) {
-            handler.mavenCentral()
-            return
-        }
         def maven_data = commonMavenData id
         int size = maven_data.size()
         if(size>1) {
@@ -515,8 +511,11 @@ void setSharedShadowJar(String ... project_names) {
 void setRepositories(String ... maven_ids) {
     project.repositories {handler ->
         maven_ids.each {id ->
-            def consumer = commonMavenArtifact project, id
-            if(consumer!=null) consumer.accept handler
+            if('central'==id) mavenCentral()
+            else {
+                def consumer = commonMavenArtifact project, id
+                if(consumer!=null) consumer.accept handler
+            }
         }
     }
 }
@@ -531,6 +530,7 @@ static SourceSetOutput sourceSetOutput(Project project, String source_name) {
 
 void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
     logger.lifecycle "Setting up core unimined stuff for $name"
+    unimined.useGlobalCache = false
     unimined.minecraft {
         def mc_version = minecraftVersion()
         logger.lifecycle "Got unimined minecraft version for $name as $mc_version"
@@ -540,16 +540,13 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
             combineWith combined_project, sourceSetOf(combined_project, 'main')
         }
         mappings {
-            if(isLegacyProject()) {
-                if(!isCleanroomProject()) searge()
-                mcp 'stable', legacy_mappings_1_12_2
-            } else {
-                def fallback_mappings = 'intermediary'
-                if(mappingStyleOfficial()) fallback_mappings = 'official'
-                else intermediary()
+            if(isLegacyProject()) mcp 'stable', legacy_mappings_1_12_2
+            else {
+                boolean production_official_mappings = mappingStyleOfficial()
+                if(!production_official_mappings) intermediary()
                 mojmap()
-                parchment parchmentVersion()
-                devFallbackNamespace fallback_mappings
+                if(isJava8()) parchment mc_version, parchmentVersion()
+                devNamespace 'mojmap'
             }
         }
         switch(loader_name) {
@@ -602,7 +599,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                 break
             }
         }
-        if(!is_runnable) defaultRemapJar = false
+        defaultRemapJar = false
     }
     logger.lifecycle "Finished setting up core unimined stuff for $name"
 }
@@ -616,7 +613,6 @@ void uniminedCommon() {
 void uniminedFabric(boolean is_runnable) {
     unimined.minecraft(sourceSets.fabric) {
         combineWith sourceSets.main
-        if(is_runnable) defaultRemapJar = true
         fabric {
             loader fabric_loader
             if(is_runnable) {
@@ -633,7 +629,6 @@ void uniminedFabric(boolean is_runnable) {
 void uniminedForge(boolean is_runnable) {
     unimined.minecraft(sourceSets.forge) {
         combineWith sourceSets.main
-        if(is_runnable) defaultRemapJar = true
         minecraftForge {
             loader forgeVersion()
             if(is_runnable) {
@@ -650,7 +645,6 @@ void uniminedForge(boolean is_runnable) {
 void uniminedNeoforge(boolean is_runnable) {
     unimined.minecraft(sourceSets.neoforge) {
         combineWith sourceSets.main
-        if(is_runnable) defaultRemapJar = true
         neoForge {
             loader neoforgeVersion()
             if(is_runnable) {

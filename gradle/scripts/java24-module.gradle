@@ -4,4 +4,8 @@ compileJava {
     options.release = 24
 }
 
+java {
+    toolchain.setLanguageVersion JavaLanguageVersion.of(24)
+}
+
 extendFrom 'lombok'
