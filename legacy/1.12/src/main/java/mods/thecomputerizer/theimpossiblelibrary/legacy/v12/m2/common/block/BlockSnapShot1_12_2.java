@@ -6,6 +6,6 @@ import net.minecraftforge.common.util.BlockSnapshot;
 public class BlockSnapShot1_12_2 extends BlockSnapshotAPI<BlockSnapshot> {
 
     public BlockSnapShot1_12_2(Object snapshot) {
-        super((BlockSnapshot)snapshot);
+        super(snapshot);
     }
 }

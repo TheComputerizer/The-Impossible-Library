@@ -7,6 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockE
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.blockentity.BlockEntity1_19;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -20,8 +22,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static net.minecraftforge.registries.ForgeRegistries.BLOCK_ENTITY_TYPES;
-
 public class BlockEntityBuilder1_19 extends BlockEntityBuilderAPI {
     
     public BlockEntityBuilder1_19(@Nullable BlockEntityBuilderAPI parent) {
@@ -31,7 +31,7 @@ public class BlockEntityBuilder1_19 extends BlockEntityBuilderAPI {
     @Override public BlockEntityAPI<?,?> build() { //Stupid backwards reference
         final Block[] blocks = buildBlockArray(this.validBlocks.get());
         final Function<BlockEntityType<?>,BlockEntityCreator> creatorFunc = buildCreatorFunc();
-        final Supplier<BlockEntityType<?>> typeSupplier = () -> BLOCK_ENTITY_TYPES.getValue(this.registryName.unwrap());
+        final Supplier<BlockEntityType<?>> typeSupplier = () -> getRegistry().get((ResourceLocation)this.registryName.unwrap());
         BlockEntityAPI<?,?> entity = BlockEntity1_19.get(buildType((pos,state) -> (BlockEntity)creatorFunc.apply(typeSupplier.get())
                 .create(null,WrapperHelper.wrapPosition(pos),WrapperHelper.wrapState(state)).getEntity(),blocks));
         entity.setCreator(creatorFunc.apply(entity.unwrap()));
@@ -58,5 +58,9 @@ public class BlockEntityBuilder1_19 extends BlockEntityBuilderAPI {
         return type -> (world,pos,state) -> WrapperHelper.wrapBlockEntity((Objects.nonNull(this.onTick) ?
                 new TILTickableBlockEntity1_19(type,pos.unwrap(),state.unwrap(),this.onTick) :
                 new TILBasicBlockEntity1_19(type,pos.unwrap(),state.unwrap())));
+    }
+    
+    protected Registry<BlockEntityType<?>> getRegistry() {
+        return Registry.BLOCK_ENTITY_TYPE;
     }
 }

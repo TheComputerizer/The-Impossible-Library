@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.v19.common.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.CustomComonFabricEvents;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.event.events.*;
@@ -89,6 +88,7 @@ public abstract class CommonEventsFabric1_19 extends CommonEvents1_19 {
         WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventFabric());
         WORLD_SAVE.setConnector(new WorldSaveEventFabric());
         WORLD_UNLOAD.setConnector(new WorldUnloadEventFabric());
+        //defineRegistryEvents()
         super.defineEvents();
     }
     
@@ -103,7 +103,6 @@ public abstract class CommonEventsFabric1_19 extends CommonEvents1_19 {
     }
     
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
-        TILRef.logInfo("Trying to register event wrapper {}",wrapper);
         ReflectionHelper.invokeMethod(wrapper.getClass(),"register",wrapper,new Class<?>[]{});
     }
     

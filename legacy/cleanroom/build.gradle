@@ -1,15 +1,14 @@
 //file:noinspection DependencyNotationArgument
-//file:noinspection GroovyAssignabilityCheck
 
 /**
  * 1.12.2 cleanroom build
  */
-
 plugins {
     alias libs.plugins.shadow
     alias libs.plugins.unimined
 }
 
+extendRunnable()
 extendFrom 'shadow'
 
 uniminedCore 'cleanroom', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
@@ -34,8 +33,8 @@ inheritCompileSources ':api', ':legacy'
 
 inheritResources ':legacy'
 
+addProjectJars ':legacy'
+
 setJarsRunAfter true, ':legacy'
 
-remapJarDefaults
-
-setSharedShadowJar ':api', ':legacy'
+setSharedShadowJar()

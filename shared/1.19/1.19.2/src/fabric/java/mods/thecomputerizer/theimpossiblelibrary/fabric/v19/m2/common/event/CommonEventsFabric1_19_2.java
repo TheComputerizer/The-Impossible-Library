@@ -11,9 +11,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 
 public class CommonEventsFabric1_19_2 extends CommonEventsFabric1_19 {
     
-    @Override
-    
-    protected void defineRegistryEvents() {
+    @Override protected void defineRegistryEvents() {
         REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventFabric1_19_2());
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventFabric1_19_2());
         REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventFabric1_19_2());

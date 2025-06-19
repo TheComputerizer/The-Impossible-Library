@@ -1,11 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotAPI;
-import net.minecraftforge.common.util.BlockSnapshot;
 
-public class BlockSnapShot1_20 extends BlockSnapshotAPI<BlockSnapshot> {
+public class BlockSnapShot1_20<S> extends BlockSnapshotAPI<S> {
 
     public BlockSnapShot1_20(Object snapshot) {
-        super((BlockSnapshot)snapshot);
+        super(snapshot);
     }
 }

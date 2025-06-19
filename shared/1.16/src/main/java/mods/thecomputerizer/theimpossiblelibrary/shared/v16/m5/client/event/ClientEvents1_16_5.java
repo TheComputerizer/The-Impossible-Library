@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
@@ -11,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     }
     
     @Override public <A> ActionResult getActionResult(A result) {
-        switch((ActionResultType)result) {
+        switch((InteractionResult)result) {
             case CONSUME: return ActionResult.CONSUME;
             case PASS: return ActionResult.PASS;
             case SUCCESS: return ActionResult.SUCCESS;
@@ -62,41 +62,6 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     
     @Override public <H> Hand getHand(H hand) {
         return hand==MAIN_HAND ? MAINHAND : OFFHAND;
-    }
-    
-    @Override public <B> OverlayType getOverlayBlockType(B blockType) {
-        switch((RenderBlockOverlayEvent.OverlayType)blockType) {
-            case FIRE: return OverlayType.FIRE;
-            case WATER: return OverlayType.WATER;
-            default: return OverlayType.BLOCK;
-        }
-    }
-    
-    @Override public <E> OverlayType getOverlayElementType(E elementType) {
-        switch((ElementType)elementType) {
-            case AIR: return OverlayType.AIR;
-            case ARMOR: return OverlayType.ARMOR;
-            case BOSSHEALTH: return OverlayType.BOSSHEALTH;
-            case BOSSINFO: return OverlayType.BOSSINFO;
-            case CHAT: return OverlayType.CHAT;
-            case CROSSHAIRS: return OverlayType.CROSSHAIRS;
-            case DEBUG: return OverlayType.DEBUG;
-            case EXPERIENCE: return OverlayType.EXPERIENCE;
-            case FOOD: return OverlayType.FOOD;
-            case FPS_GRAPH: return OverlayType.FPS_GRAPH;
-            case HEALTH: return OverlayType.HEALTH;
-            case HEALTHMOUNT: return OverlayType.HEALTHMOUNT;
-            case HELMET: return OverlayType.HELMET;
-            case HOTBAR: return OverlayType.HOTBAR;
-            case JUMPBAR: return OverlayType.JUMPBAR;
-            case PLAYER_LIST: return OverlayType.PLAYER_LIST;
-            case PORTAL: return OverlayType.PORTAL;
-            case POTION_ICONS: return OverlayType.POTION_ICONS;
-            case SUBTITLES: return OverlayType.SUBTITLES;
-            case TEXT: return OverlayType.TEXT;
-            case VIGNETTE: return OverlayType.VIGNETTE;
-            default: return OverlayType.ALL;
-        }
     }
     
     @Override public <V> Vector3 getVec3d(V vector) {
@@ -122,10 +87,10 @@ public abstract class ClientEvents1_16_5 implements ClientEventsAPI {
     @SuppressWarnings("unchecked")
     @Override public <A> A setActionResult(ActionResult result) {
         switch(result) {
-            case CONSUME: return (A)ActionResultType.CONSUME;
-            case PASS: return (A)ActionResultType.PASS;
-            case SUCCESS: return (A)ActionResultType.SUCCESS;
-            default: return (A)ActionResultType.FAIL;
+            case CONSUME: return (A)InteractionResult.CONSUME;
+            case PASS: return (A)InteractionResult.PASS;
+            case SUCCESS: return (A)InteractionResult.SUCCESS;
+            default: return (A)InteractionResult.FAIL;
         }
     }
     

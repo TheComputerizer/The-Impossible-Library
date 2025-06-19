@@ -2,8 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.sound;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class SoundEvent1_16_5 extends SoundEventAPI<SoundEvent> {
 
@@ -13,6 +14,6 @@ public class SoundEvent1_16_5 extends SoundEventAPI<SoundEvent> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
 }

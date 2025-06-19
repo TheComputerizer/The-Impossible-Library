@@ -12,7 +12,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
@@ -95,6 +94,6 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
 }

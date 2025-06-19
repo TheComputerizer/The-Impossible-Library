@@ -8,7 +8,13 @@ import java.util.function.Consumer;
 
 public interface ClientEventsAPI extends CommonEventsAPI {
     
-    <B> OverlayType getOverlayBlockType(B blockType);
-    <E> OverlayType getOverlayElementType(E elementType);
+    default <T> OverlayType getOverlayBlockType(T blockType) {
+        return (OverlayType)blockType;
+    }
+
+    default <T> OverlayType getOverlayElementType(T elementType) {
+        return (OverlayType)elementType;
+    }
+    
     RenderContext initRenderer(Consumer<RenderContext> setters);
 }

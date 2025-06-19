@@ -7,9 +7,14 @@ import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForg
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.event.ClientEvents1_20;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
-import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
 
 public abstract class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
+    
+    private static final String NEOFORGE_CLASS = "net.neoforged.neoforge.common.NeoForge";
+    private static final String NEOFORGE_BUS = "EVENT_BUS";
+    
+    public ClientEventsNeoForge1_20() {
+    }
 
     @Override public void defineEvents() {
         CAMERA_SETUP.setConnector(new CameraSetupEventNeoForge());
@@ -31,11 +36,8 @@ public abstract class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
         PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventNeoForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventNeoForge());
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventNeoForge());
-        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventNeoForge());
-        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventNeoForge());
         RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventNeoForge());
         RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventNeoForge());
-        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventNeoForge());
         RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventNeoForge());
         SOUND_LOAD.setConnector(new LoadSoundEventNeoForge());
         SOUND_PLAY.setConnector(new PlaySoundEventNeoForge());
@@ -43,7 +45,14 @@ public abstract class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
         SOUND_PLAY_STREAMING.setConnector(new PlayStreamingSoundSourceEventNeoForge());
         SOUND_SETUP.setConnector(new SoundSetupEventNeoForge());
         TICK_RENDER.setConnector(new RenderTickEventNeoForge());
+        defineExtendedEvents();
         super.defineEvents();
+    }
+    
+    protected void defineExtendedEvents() {
+        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventNeoForge());
+        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventNeoForge());
+        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventNeoForge());
     }
     
     @Override public void postCustomTick(CustomTick ticker) {

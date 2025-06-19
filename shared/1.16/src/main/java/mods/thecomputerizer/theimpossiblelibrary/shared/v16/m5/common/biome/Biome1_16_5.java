@@ -9,13 +9,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.Objects;
 
 import static net.minecraft.core.Registry.BIOME_REGISTRY;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Setter
 public class Biome1_16_5 extends BiomeAPI<Biome> {
@@ -56,6 +56,6 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
 }

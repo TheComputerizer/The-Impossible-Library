@@ -4,7 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class BlockSnapshotAPI<S> extends AbstractWrapped<S> {
 
-    protected BlockSnapshotAPI(S snapshot) {
-        super(snapshot);
+    @SuppressWarnings("unchecked")
+    protected BlockSnapshotAPI(Object snapshot) {
+        super((S)snapshot);
     }
 }

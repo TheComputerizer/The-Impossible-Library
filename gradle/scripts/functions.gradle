@@ -1,12 +1,9 @@
-//file:noinspection GroovyAssignabilityCheck
 import org.codehaus.groovy.runtime.MethodClosure
 
 import java.util.function.Consumer
 
-import static org.gradle.api.logging.LogLevel.INFO
-import static org.gradle.api.logging.LogLevel.QUIET
-
 //Setup project extension so builds that apply the script can actually call the functions
+ext.addProjectJars = this.&addProjectJars as MethodClosure
 ext.classpathCompile = this.&classpathCompile as MethodClosure
 ext.classpathRuntime = this.&classpathRuntime as MethodClosure
 ext.combinedProjects = this.&combinedProjects as MethodClosure
@@ -56,7 +53,6 @@ ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
 ext.parchmentVersion = this.&parchmentVersion as MethodClosure
 ext.projectMCVersion = this.&projectMCVersion as MethodClosure
 ext.propertyString = this.&propertyString as MethodClosure
-ext.remapJarDefaults = this.&remapJarDefaults as MethodClosure
 ext.rootFile = this.&rootFile as MethodClosure
 ext.setDev = this.&setDev as MethodClosure
 ext.setLoaderConfigs = this.&setLoaderConfigs as MethodClosure
@@ -72,6 +68,16 @@ ext.uniminedFabric = this.&uniminedFabric as MethodClosure
 ext.uniminedForge = this.&uniminedForge as MethodClosure
 ext.uniminedNeoforge = this.&uniminedNeoforge as MethodClosure
 ext.withMCVersion = this.&withMCVersion as MethodClosure
+
+void addProjectJars(String ... p_names) {
+    jar {
+        p_names.each {p_name ->
+            from(getArchiveTaskFile(project(p_name), 'jar').collect {entry ->
+                zipTree entry
+            })
+        }
+    }
+}
 
 static FileCollection classpathCompile(Project project, String source_name) {
     return sourceSetOf(project,source_name).compileClasspath
@@ -380,18 +386,6 @@ String propertyString(String name) {
     return String.valueOf(property(name))
 }
 
-@SuppressWarnings('GrUnresolvedAccess')
-void remapJarDefaults() {
-    project.tasks.remapJar {
-        doFirst {
-            logging.captureStandardOutput INFO
-        }
-        doLast {
-            logging.captureStandardOutput QUIET
-        }
-    }
-}
-
 static File rootFile(Project project, String path) {
     return project.rootProject.file(path)
 }
@@ -455,6 +449,12 @@ void setJarsRunAfter(boolean finalized_by_shadow, String ... parent_names) {
         getTaskPath(parent_name, 'build')
     }
     jar {
+        manifest {
+            def attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
+            if(isLegacyProject()) attribute_map.putAll(['FMLCorePlugin': legacy_entrypoint,
+                                                        'FMLCorePluginContainsFMLMod': true, 'ForceLoadAsMod': true])
+            attributes(attribute_map)
+        }
         build_tasks.forEach {build_task ->
             mustRunAfter build_task
         }
@@ -497,15 +497,23 @@ void setSharedDependencies(String ... maven_ids) {
     }
 }
 
-void setSharedShadowJar(String ... project_names) {
+void setSharedShadowJar() {
+    def shaded_projects = isLegacyProject() ? [ ':api', ':legacy' ] : [ ':api', ':fabric', ':forge', ':shared' ]
+    if(isLegacyProject()) shaded_projects+=':legacy'
+    else {
+        shaded_projects.addAll([ 'fabric', 'forge', 'shared' ])
+        if(isNeoforgeCompatible()) shaded_projects+=':neoforge'
+        if(isMinorVersion()) shaded_projects+=project.parent.path
+    }
     shadowJar {
-        project_names.each {p_name ->
+        shaded_projects.each {p_name ->
             //noinspection GrUnresolvedAccess
             from(getArchiveTaskFile(project(p_name), 'jar').collect {entry ->
                 zipTree entry
             })
         }
     }
+    tasks.assemble.dependsOn shadowJar
 }
 
 void setRepositories(String ... maven_ids) {

@@ -8,11 +8,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.tag.CompoundTag1_18_2;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Objects;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class BlockEntity1_18_2 extends BlockEntityAPI<BlockEntity,BlockEntityType<?>> {
     
@@ -54,15 +55,15 @@ public class BlockEntity1_18_2 extends BlockEntityAPI<BlockEntity,BlockEntityTyp
     }
     
     @Override public CompoundTagAPI<?> readTagFrom() {
-        return new CompoundTag1_18_2(Objects.nonNull(this.entity) ? this.entity.serializeNBT() : new CompoundTag());
+        return new CompoundTag1_18_2(Objects.nonNull(this.entity) ? this.entity.saveWithFullMetadata() : new CompoundTag());
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {
-        if(Objects.nonNull(this.entity)) this.entity.deserializeNBT(tag.unwrap());
+        if(Objects.nonNull(this.entity)) this.entity.load(tag.unwrap());
     }
 }

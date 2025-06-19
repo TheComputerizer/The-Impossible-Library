@@ -39,6 +39,7 @@ public class BlockEntityBuilder1_16_5 extends BlockEntityBuilderAPI {
         return entity;
     }
     
+    @SuppressWarnings("SameParameterValue")
     protected <T> T[] buildBlockArray(Collection<BlockAPI<?>> blocks, Class<T> blockClass) {
         T[] array = ArrayHelper.create(blockClass,blocks.size());
         int i = 0;

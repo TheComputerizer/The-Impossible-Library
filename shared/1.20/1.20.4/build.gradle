@@ -6,7 +6,10 @@ plugins {
     alias libs.plugins.unimined
 }
 
+extendRunnable()
 extendFrom 'shadow'
+
+setLoaderConfigs true
 
 uniminedCommon()
 uniminedFabric true

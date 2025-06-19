@@ -11,7 +11,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.data.EntityDataAccessor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -30,6 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class Entity1_16_5 extends EntityAPI<Entity,EntityType<?>> {
     
@@ -123,7 +123,7 @@ public class Entity1_16_5 extends EntityAPI<Entity,EntityType<?>> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
     
     @Override public void setPosition(double x, double y, double z) {

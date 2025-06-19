@@ -34,24 +34,3 @@ processTestResources {
 }
 
 setJarsRunAfter false, ':api'
-
-subprojects {sub ->
-    //noinspection GrUnresolvedAccess
-    sub.extendRunnable()
-    jar {
-        sub.afterEvaluate {
-            from(getArchiveTaskFile(project(':legacy'), 'jar').collect {entry ->
-                zipTree entry
-            })
-            manifest {
-                attributes([
-                        'FMLCorePlugin': legacy_entrypoint,
-                        'FMLCorePluginContainsFMLMod': true,
-                        'ForceLoadAsMod': true,
-                        'Implementation-Title': mod_name,
-                        'Implementation-Version': mod_version
-                ])
-            }
-        }
-    }
-}

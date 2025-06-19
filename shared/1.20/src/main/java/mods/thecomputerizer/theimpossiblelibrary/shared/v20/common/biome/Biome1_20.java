@@ -17,7 +17,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.ClimateSettings;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -37,7 +36,8 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
         ClassHelper.checkBurningWaveInit();
     }
     
-    static final String CLIMATE_SETTINGS = NAMED_ENV ? "climateSettings" : "field_26393";
+    static final String CLIMATE_SETTINGS = NAMED_ENV ? "climateSettings" : (SRG_ENV ? "f_47437_" : "field_26393");
+    private static final String DOWNFALL = NAMED_ENV ? "downfall" : (SRG_ENV ? "f_47683_" : "field_9351");
     private static final String GET_TEMPERATURE = NAMED_ENV ? "getTemperature" : (SRG_ENV ? "m_47505_" : "method_21740");
 
     protected RegistryAccess access;
@@ -55,9 +55,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     }
     
     @Override public float getRainfall() {
-        if(FORGE_OR_NEOFORGE) return this.wrapped.getModifiedClimateSettings().downfall();
-        ClimateSettings climate = Fields.getDirect(this.wrapped,CLIMATE_SETTINGS);
-        return climate.downfall();
+        return Fields.getDirect(Fields.getDirect(this.wrapped,CLIMATE_SETTINGS),DOWNFALL);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

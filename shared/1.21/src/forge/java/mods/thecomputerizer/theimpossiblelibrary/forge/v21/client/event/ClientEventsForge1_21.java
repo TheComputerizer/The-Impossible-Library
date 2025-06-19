@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v21.client.event;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
@@ -7,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v21.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.client.event.ClientEvents1_21;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
@@ -55,6 +57,14 @@ public class ClientEventsForge1_21 extends ClientEvents1_21 {
     
     @Override public <R> Result getEventResult(R result) {
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
+    }
+    
+    @Override public <B> OverlayType getOverlayBlockType(B blockType) {
+        return switch((RenderBlockScreenEffectEvent.OverlayType)blockType) {
+            case FIRE -> OverlayType.FIRE;
+            case WATER -> OverlayType.WATER;
+            default -> OverlayType.BLOCK;
+        };
     }
 
     @Override public void postCustomTick(CustomTick ticker) {

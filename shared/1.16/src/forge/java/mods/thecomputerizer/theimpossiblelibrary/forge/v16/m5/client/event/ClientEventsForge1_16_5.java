@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
@@ -8,6 +9,8 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.ForgeEventHe
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.client.event.ClientEvents1_16_5;
+import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
@@ -61,6 +64,41 @@ public class ClientEventsForge1_16_5 extends ClientEvents1_16_5 implements Forge
     
     @Override public <R> Result getEventResult(R result) {
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
+    }
+    
+    @Override public <B> OverlayType getOverlayBlockType(B blockType) {
+        switch((RenderBlockOverlayEvent.OverlayType)blockType) {
+            case FIRE: return OverlayType.FIRE;
+            case WATER: return OverlayType.WATER;
+            default: return OverlayType.BLOCK;
+        }
+    }
+    
+    @Override public <E> OverlayType getOverlayElementType(E elementType) {
+        switch((ElementType)elementType) {
+            case AIR: return OverlayType.AIR;
+            case ARMOR: return OverlayType.ARMOR;
+            case BOSSHEALTH: return OverlayType.BOSSHEALTH;
+            case BOSSINFO: return OverlayType.BOSSINFO;
+            case CHAT: return OverlayType.CHAT;
+            case CROSSHAIRS: return OverlayType.CROSSHAIRS;
+            case DEBUG: return OverlayType.DEBUG;
+            case EXPERIENCE: return OverlayType.EXPERIENCE;
+            case FOOD: return OverlayType.FOOD;
+            case FPS_GRAPH: return OverlayType.FPS_GRAPH;
+            case HEALTH: return OverlayType.HEALTH;
+            case HEALTHMOUNT: return OverlayType.HEALTHMOUNT;
+            case HELMET: return OverlayType.HELMET;
+            case HOTBAR: return OverlayType.HOTBAR;
+            case JUMPBAR: return OverlayType.JUMPBAR;
+            case PLAYER_LIST: return OverlayType.PLAYER_LIST;
+            case PORTAL: return OverlayType.PORTAL;
+            case POTION_ICONS: return OverlayType.POTION_ICONS;
+            case SUBTITLES: return OverlayType.SUBTITLES;
+            case TEXT: return OverlayType.TEXT;
+            case VIGNETTE: return OverlayType.VIGNETTE;
+            default: return OverlayType.ALL;
+        }
     }
     
     @Override @Nullable public IEventBus getModBus(ModContainer container) {

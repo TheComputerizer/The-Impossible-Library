@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.neoforge.client.event.events;
+package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m6.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderOverlayBossEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
@@ -9,9 +9,9 @@ import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent.BossEventPro
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BOSS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
-import static net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay.BOSS_EVENT_PROGRESS;
+import static net.neoforged.neoforge.client.gui.VanillaGuiLayers.BOSS_OVERLAY;
 
-public class RenderOverlayBossEventNeoForge extends RenderOverlayBossEventWrapper<BossEventProgress> {
+public class RenderOverlayBossEventNeoForge1_20_6 extends RenderOverlayBossEventWrapper<BossEventProgress> {
     
     @SubscribeEvent
     public static void onEvent(BossEventProgress event) {
@@ -32,7 +32,7 @@ public class RenderOverlayBossEventNeoForge extends RenderOverlayBossEventWrappe
     }
 
     @Override protected EventFieldWrapper<BossEventProgress,OverlayType> wrapOverlayType() {
-        return wrapGenericGetter(event -> EventHelper.getOverlayElementType(BOSS_EVENT_PROGRESS),ALL);
+        return wrapGenericGetter(event -> EventHelper.getOverlayElementType(BOSS_OVERLAY),ALL);
     }
 
     @Override protected EventFieldWrapper<BossEventProgress,Integer> wrapIncrementField() {

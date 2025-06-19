@@ -14,7 +14,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.ClimateSettings;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -33,7 +32,8 @@ public class Biome1_19_4 extends Biome1_19 {
         ClassHelper.checkBurningWaveInit();
     }
     
-    static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : "field_26393";
+    static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : SRG_ENV ? "f_47437_" : "field_26393";
+    static final String DOWNFALL = DEV ? "downfall" : "f_47683_";
 
     public Biome1_19_4(Object biome) {
         super(biome);
@@ -48,9 +48,7 @@ public class Biome1_19_4 extends Biome1_19 {
     }
     
     @Override public float getRainfall() {
-        if(FORGE_OR_NEOFORGE) return this.wrapped.getModifiedClimateSettings().downfall();
-        ClimateSettings climate = Fields.getDirect(this.wrapped,CLIMATE_SETTINGS);
-        return climate.downfall();
+        return Fields.getDirect(Fields.getDirect(this.wrapped,CLIMATE_SETTINGS),DOWNFALL);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

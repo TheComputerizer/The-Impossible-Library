@@ -19,33 +19,3 @@ jar {
     })
     dependsOn ':api:build'
 }
-
-subprojects {sub ->
-    boolean neoforge_compatible = isProjectNeoforgeCompatible(sub)
-    boolean is_runnable = isProjectRunnable(sub)
-    boolean minor_version = isProjectMinorVersion(sub)
-    //noinspection GrUnresolvedAccess
-    sub.extendRunnable()
-    if(!is_runnable) {
-        sub.extendFrom 'nonshaded-deps'
-        sub.setDev()
-    }
-    sub.setLoaderConfigs neoforge_compatible
-    jar {
-        manifest {
-            attributes([
-                    'Implementation-Title': mod_name,
-                    'Implementation-Version': mod_version
-            ])
-        }
-    }
-    if(is_runnable) {
-        afterEvaluate {
-            def shaded_projects = [ ':api', ':fabric', ':forge', ':shared' ]
-            if(neoforge_compatible) shaded_projects+=':neoforge'
-            if(minor_version) shaded_projects+=sub.parent.path
-            setSharedShadowJar shaded_projects.toArray(new String[0])
-            tasks.assemble.dependsOn 'shadowJar'
-        }
-    }
-}

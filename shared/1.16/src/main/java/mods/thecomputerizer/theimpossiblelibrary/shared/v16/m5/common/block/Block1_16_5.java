@@ -3,8 +3,9 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.block;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class Block1_16_5 extends BlockAPI<Block> {
 
@@ -18,6 +19,6 @@ public class Block1_16_5 extends BlockAPI<Block> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
 }

@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
@@ -8,6 +9,8 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.ForgeEventHe
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.event.ClientEvents1_18_2;
+import net.minecraftforge.client.event.RenderBlockOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
@@ -61,6 +64,26 @@ public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 implements Forge
     
     @Override public <R> Result getEventResult(R result) {
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
+    }
+    
+    @Override public <B> OverlayType getOverlayBlockType(B blockType) {
+        return switch((RenderBlockOverlayEvent.OverlayType)blockType) {
+            case FIRE -> OverlayType.FIRE;
+            case WATER -> OverlayType.WATER;
+            default -> OverlayType.BLOCK;
+        };
+    }
+    
+    @Override public <E> OverlayType getOverlayElementType(E elementType) {
+        return switch(((ElementType)elementType)) {
+            case ALL -> OverlayType.ALL;
+            case CHAT -> OverlayType.CHAT;
+            case TEXT -> OverlayType.TEXT;
+            case DEBUG -> OverlayType.DEBUG;
+            case LAYER -> OverlayType.AIR;
+            case BOSSINFO -> OverlayType.BOSSINFO;
+            case PLAYER_LIST -> OverlayType.PLAYER_LIST;
+        };
     }
     
     @Override @Nullable public IEventBus getModBus(ModContainer container) {

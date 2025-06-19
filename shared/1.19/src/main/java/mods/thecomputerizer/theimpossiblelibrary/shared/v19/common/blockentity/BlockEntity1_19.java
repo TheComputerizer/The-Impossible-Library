@@ -53,7 +53,7 @@ public class BlockEntity1_19 extends BlockEntityAPI<BlockEntity,BlockEntityType<
     }
     
     @Override public CompoundTagAPI<?> readTagFrom() {
-        return new CompoundTag1_19(Objects.nonNull(this.entity) ? this.entity.serializeNBT() : new CompoundTag());
+        return new CompoundTag1_19(Objects.nonNull(this.entity) ? this.entity.saveWithFullMetadata() : new CompoundTag());
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
@@ -61,6 +61,6 @@ public class BlockEntity1_19 extends BlockEntityAPI<BlockEntity,BlockEntityType<
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {
-        if(Objects.nonNull(this.entity)) this.entity.deserializeNBT(tag.unwrap());
+        if(Objects.nonNull(this.entity)) this.entity.load(tag.unwrap());
     }
 }

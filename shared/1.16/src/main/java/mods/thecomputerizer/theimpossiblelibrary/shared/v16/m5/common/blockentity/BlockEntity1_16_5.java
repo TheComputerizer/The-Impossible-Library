@@ -8,11 +8,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_16_5;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Objects;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class BlockEntity1_16_5 extends BlockEntityAPI<BlockEntity,BlockEntityType<?>> {
     
@@ -59,7 +60,7 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<BlockEntity,BlockEntityTyp
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {
