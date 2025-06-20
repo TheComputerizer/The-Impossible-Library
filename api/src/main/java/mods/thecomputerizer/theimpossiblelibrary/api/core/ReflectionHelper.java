@@ -19,6 +19,10 @@ import java.util.function.Function;
 import static java.lang.reflect.Modifier.FINAL;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
+/**
+ * This class is obselete now, but it deals with "normal" non-burningwave reflection.
+ * Once all the source set & runtime issues are fixed this will likely non be needed anymore
+ */
 public class ReflectionHelper {
 
     public static final Lookup LOOKUP = MethodHandles.lookup();
@@ -89,27 +93,28 @@ public class ReflectionHelper {
         });
     }
 
-    public static @Nullable Object getFieldInstance(@Nullable Field field) {
+    public static <T> @Nullable T getFieldInstance(@Nullable Field field) {
         return getFieldInstance(null,field);
     }
-
-    public static @Nullable Object getFieldInstance(@Nullable Class<?> clazz, String fieldName) {
+    
+    public static <T> @Nullable T getFieldInstance(@Nullable Class<?> clazz, String fieldName) {
         return getFieldInstance(null,getField(clazz,fieldName));
     }
-
-    public static @Nullable Object getFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz, String fieldName) {
-        return getFieldInstance(parent,getField(clazz,fieldName));
+    
+    public static <T> @Nullable T getFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz, String fieldName) {
+        return getFieldInstance(parent, getField(clazz, fieldName));
     }
-
-    @SuppressWarnings("DataFlowIssue")
-    public static @Nullable Object getFieldInstance(@Nullable Object parent, @Nullable Field field) {
-        return Misc.applyNullable(field,f -> {
+    
+    @SuppressWarnings({"unchecked", "DataFlowIssue"})
+    public static <T> @Nullable T getFieldInstance(@Nullable Object parent, @Nullable Field field) {
+        return (T)Misc.applyNullable(field,f -> {
             try {
                 if(!f.isAccessible()) f.setAccessible(true);
                 return f.get(parent);
             } catch(IllegalAccessException ex) {
                 TILRef.logError("Failed to retrieve instance of field {} of type {} from parent {} of class {}",
-                        f, Misc.getNullable(f,f.getType(),"null"),parent, Misc.getNullable(parent,parent.getClass(),"null"));
+                        f,Misc.getNullable(f,f.getType(),"null"),parent,
+                                Misc.getNullable(parent,parent.getClass(),"null"));
                 return null;
             }
         });
@@ -135,24 +140,24 @@ public class ReflectionHelper {
         return getField(clazz,CoreAPI.getInstance().mapFieldName(clazz.getName(),fieldName,descName));
     }
     
-    public static @Nullable Object getMappedFieldInstance(@Nullable Class<?> clazz, String named, String intermediary,
+    public static <T> @Nullable T getMappedFieldInstance(@Nullable Class<?> clazz, String named, String intermediary,
             @Nullable Class<?> desc) {
         return getMappedFieldInstance(null,clazz,DEV ? named : intermediary,desc);
     }
     
     @IndirectCallers
-    public static @Nullable Object getMappedFieldInstance(@Nullable Class<?> clazz, String fieldName,
+    public static <T> @Nullable T getMappedFieldInstance(@Nullable Class<?> clazz, String fieldName,
             @Nullable Class<?> desc) {
         return getMappedFieldInstance(null,clazz,fieldName,desc);
     }
     
     @IndirectCallers
-    public static @Nullable Object getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
+    public static <T> @Nullable T getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
             String named, String intermediary, @Nullable Class<?> desc) {
         return getMappedFieldInstance(parent,clazz,DEV ? named : intermediary,desc);
     }
     
-    public static @Nullable Object getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
+    public static <T> @Nullable T getMappedFieldInstance(@Nullable Object parent, @Nullable Class<?> clazz,
             String fieldName, @Nullable Class<?> desc) {
         return getFieldInstance(parent,getMappedField(clazz,fieldName,desc));
     }
@@ -177,9 +182,10 @@ public class ReflectionHelper {
         });
     }
     
-    public static @Nullable Object invokeHandle(@Nullable MethodHandle handle, @Nullable Object invoker, Object ... args) {
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable T invokeHandle(@Nullable MethodHandle handle, @Nullable Object invoker, Object ... args) {
         if(Objects.isNull(handle)) TILDev.logInfo("Trying to invoke null method handle");
-        return Misc.applyNullable(handle,mh -> {
+        return (T)Misc.applyNullable(handle,mh -> {
             try {
                 return mh.invoke(invoker,args);
             } catch(Throwable t) {
@@ -188,10 +194,11 @@ public class ReflectionHelper {
             }
         });
     }
-
-    public static @Nullable Object invokeMethod(@Nullable Method method, @Nullable Object invoker, Object ... args) {
+    
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable T invokeMethod(@Nullable Method method, @Nullable Object invoker, Object ... args) {
         if(Objects.isNull(method)) TILDev.logInfo("Trying to invoke null method");
-        return Misc.applyNullable(method,m -> {
+        return (T)Misc.applyNullable(method,m -> {
             try {
                 if(!m.isAccessible()) m.setAccessible(true);
                 return m.invoke(invoker,args);
@@ -202,12 +209,12 @@ public class ReflectionHelper {
         });
     }
     
-    public static @Nullable Object invokeMethod(@Nullable Class<?> clazz, String name, @Nullable Object invoker,
+    public static <T> @Nullable T invokeMethod(@Nullable Class<?> clazz, String name, @Nullable Object invoker,
             Class<?>[] argTypes, Object ... args) {
         return invokeMethod(getMethod(clazz,name,argTypes),invoker,args);
     }
     
-    public static @Nullable Object invokeMethod(@Nullable String className, String name,
+    public static <T> @Nullable T invokeMethod(@Nullable String className, String name,
             @Nullable Function<Class<?>,Object> invokerFunc, Class<?>[] argTypes, Object ... args) {
         if(TextHelper.isBlank(className)) {
             TILRef.logError("Tried to invoke method {} with null class name",name);
@@ -218,22 +225,22 @@ public class ReflectionHelper {
     }
     
     @IndirectCallers
-    public static @Nullable Object invokeStaticHandle(@Nullable MethodHandle handle, Object ... args) {
+    public static <T> @Nullable T invokeStaticHandle(@Nullable MethodHandle handle, Object ... args) {
         return invokeHandle(handle,null,args);
     }
     
     @IndirectCallers
-    public static @Nullable Object invokeStaticMethod(@Nullable Method method, Object ... args) {
+    public static <T> @Nullable T invokeStaticMethod(@Nullable Method method, Object ... args) {
         return invokeMethod(method,null,args);
     }
     
-    public static <T> @Nullable Object invokeStaticMethod(@Nullable Class<T> clazz, String name, Class<?>[] argTypes,
+    public static <T> @Nullable T invokeStaticMethod(@Nullable Class<T> clazz, String name, Class<?>[] argTypes,
             Object ... args) {
         return invokeMethod(clazz,name,null,argTypes,args);
     }
     
     @IndirectCallers
-    public static @Nullable Object invokeStaticMethod(@Nullable String className, String name, Class<?>[] argTypes,
+    public static <T> @Nullable T invokeStaticMethod(@Nullable String className, String name, Class<?>[] argTypes,
             Object ... args) {
         return invokeMethod(className,name,null,argTypes,args);
     }

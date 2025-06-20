@@ -1,10 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.HoeItem;
@@ -19,27 +16,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TILItemHoe1_20 extends HoeItem implements WithItemProperties {
+public class TILItemHoe1_20 extends HoeItem implements ItemHelpers1_20 {
     
     protected final ItemProperties properties;
     
+    @IndirectCallers
     public TILItemHoe1_20(Tier tier, int damage, float speed, ItemProperties properties) {
         super(tier,damage,speed,new Properties().stacksTo(properties.getStackSize()));
         this.properties = properties;
     }
     
     @Override public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> components, TooltipFlag flag) {
-        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),() -> WrapperHelper.wrapWorld(world))
-                .forEach(text -> components.add(text.getAsComponent()));
+        defaultAppendHoverText(stack,world,components);
     }
     
     @Override public @NotNull InteractionResult useOn(UseOnContext ctx) {
-        return EventHelper.setActionResult(getUseResult(() -> {
-            TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
-                    null,ctx.getHand(),ctx.getClickedFace());
-            tilCtx.setSuperResult(EventHelper.getActionResult(super.useOn(ctx)));
-            return tilCtx;
-        }));
+        return defaultUseOn(ctx,super::useOn);
     }
     
     @Override public ItemProperties getProperties() {

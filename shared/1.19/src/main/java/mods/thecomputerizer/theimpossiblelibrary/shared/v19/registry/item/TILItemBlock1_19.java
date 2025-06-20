@@ -1,9 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,7 @@ import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
 
-public class TILItemBlock1_19 extends BlockItem implements WithItemProperties {
+public class TILItemBlock1_19 extends BlockItem implements ItemHelpers1_19 {
     
     static Properties tab(Properties iProperties, ItemProperties properties) {
         return VERSION==V19_4 ? iProperties : tab19_2(iProperties,properties);
@@ -31,14 +30,14 @@ public class TILItemBlock1_19 extends BlockItem implements WithItemProperties {
     
     protected final ItemProperties properties;
     
+    @IndirectCallers
     public TILItemBlock1_19(Block block, ItemProperties properties) {
         super(block,tab(new Properties().stacksTo(properties.getStackSize()),properties));
         this.properties = properties;
     }
     
     @Override public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> components, TooltipFlag flag) {
-        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),() -> WrapperHelper.wrapWorld(world))
-                .forEach(text -> components.add(text.getAsComponent()));
+        defaultAppendHoverText(stack,world,components);
     }
     
     @Override public ItemProperties getProperties() {

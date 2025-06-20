@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
@@ -186,6 +188,12 @@ public class ClassHelper {
             TILDev.logDebug("Class `{}` does not exist on {}",name,loader);
         }
         return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T findAndInitialize(String className, Object ... args) {
+        Class<?> target = findClass(className);
+        return Objects.nonNull(target) ? (T)initialize(target,args) : null;
     }
 
     /**
@@ -413,6 +421,30 @@ public class ClassHelper {
         Fields.set(c,"classLoader",target);
         ((Collection<Class<?>>)Fields.get(from,"classes")).remove(c);
         ((Collection<Class<?>>)Fields.get(target,"classes")).add(c);
+    }
+    
+    @IndirectCallers
+    public static <T> T newGenericProxy(Class<T> type, String namedMethod, String intermediaryMethod,
+            Function<Object[],Object> handler) {
+        return newGenericProxy(type,Hacks.isNamedEnv() ? namedMethod : intermediaryMethod,handler);
+    }
+    
+    public static <T> T newGenericProxy(Class<T> type, String methodName, Function<Object[],Object> handler) {
+        return newGenericProxy(type,method -> methodName.equals(method.getName()),handler);
+    }
+    
+    public static <T> T newGenericProxy(Class<T> type, Function<Method,Boolean> methodMatcher,
+            Function<Object[],Object> argsHandler) {
+        return newProxy(type,(proxy,method,args) -> {
+            switch(method.getName()) {
+                case "equals": return args.length>0 && proxy==args[0];
+                case "hashCode": return 0;
+                default: {
+                    TILRef.logInfo("Invoking generic proxy method {}",method.getName());
+                    return methodMatcher.apply(method) ? argsHandler.apply(args) : null;
+                }
+            }
+        });
     }
     
     public static <T> T newProxy(Class<T> type, InvocationHandler handler) {

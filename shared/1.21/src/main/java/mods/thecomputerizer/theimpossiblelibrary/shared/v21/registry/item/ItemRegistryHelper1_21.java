@@ -10,7 +10,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 public abstract class ItemRegistryHelper1_21 extends ItemRegistryHelperAPI {
@@ -23,15 +25,20 @@ public abstract class ItemRegistryHelper1_21 extends ItemRegistryHelperAPI {
         return INSTANCE;
     }
     
+    public static void registerItemModelVariants(Item item,
+            Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> propertyMap) {
+        getInstance().registerItemModelVariants(item,propertyMap.entrySet());
+    }
+    
     public ClampedItemPropertyFunction defaultItemPropertyFunc(BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> property) {
         return (stack,world,entity,seed) ->
                 property.apply(wrapStack(stack),wrapWorld(world));
     }
     
     public void registerItemModelVariants(Item item,
-            Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> propertyMap) {
-        propertyMap.forEach((location,property) ->
-                registerItemModelVariant(item,location.unwrap(),defaultItemPropertyFunc(property)));
+            Set<Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>>> propertyMap) {
+        propertyMap.forEach((entry) ->
+                registerItemModelVariant(item,entry.getKey().unwrap(),defaultItemPropertyFunc(entry.getValue())));
     }
     
     protected abstract void registerItemModelVariant(Item item, ResourceLocation location,

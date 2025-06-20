@@ -1,48 +1,22 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBlockBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.function.BiFunction;
-
-public class ItemBlockBuilder1_12_2 extends ItemBlockBuilderAPI {
+public class ItemBlockBuilder1_12_2 extends ItemBlockBuilderAPI implements ItemBuilderHelpers1_12_2 {
     
     public ItemBlockBuilder1_12_2(@Nullable ItemBuilderAPI parent) {
         super(parent);
     }
     
     @Override public ItemAPI<?> build() {
-        ItemProperties properties = buildProperties();
-        ItemBlock item = new TILItemBlock1_12_2(this.block.get().unwrap(),properties);
-        CreativeTabAPI<?> tab = properties.getCreativeTab();
-        if(Objects.nonNull(tab)) tab.addStack(() -> WrapperHelper.wrapItemStack(new ItemStack(item)));
-        if(CoreAPI.isClient()) registerTextureProperties(item);
-        return new Item1_12_2(item);
+        return defaultBuild(buildProperties(),this::makeItem);
     }
     
-    private void registerTextureProperties(Item item) {
-        for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
-            ResourceLocation location = property.getKey().unwrap();
-            IItemPropertyGetter getter = (stack,world,entity) ->
-                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world));
-            item.addPropertyOverride(location,getter);
-        }
+    @Override public ResourceLocationAPI<?> getRegistryNameField() {
+        return getRegistryName();
     }
 }

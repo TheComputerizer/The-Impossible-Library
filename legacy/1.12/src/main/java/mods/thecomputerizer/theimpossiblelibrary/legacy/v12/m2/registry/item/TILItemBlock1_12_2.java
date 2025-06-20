@@ -1,39 +1,34 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 import static net.minecraftforge.fml.relauncher.Side.CLIENT;
 
-public class TILItemBlock1_12_2 extends ItemBlock implements WithItemProperties {
+public class TILItemBlock1_12_2 extends ItemBlock implements ItemHelpers1_12_2 {
     
     protected final ItemProperties properties;
     
+    @IndirectCallers
     public TILItemBlock1_12_2(Block block, ItemProperties properties) {
         super(block);
         this.properties = properties;
-        this.setMaxStackSize(properties.getStackSize());
-        ResourceLocation name = block.getRegistryName();
-        if(Objects.nonNull(name)) setRegistryName(name);
     }
     
     @SideOnly(CLIENT)
-    @Override public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
-        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack), () -> Objects.nonNull(world) ?
-                WrapperHelper.wrapWorld(world) : null).forEach(text -> tooltip.add(text.getApplied()));
+    @Override public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip,
+            ITooltipFlag flag) {
+        defaultAppendHoverText(stack,world,tooltip);
     }
     
     @Override public ItemProperties getProperties() {

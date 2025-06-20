@@ -20,6 +20,6 @@ public class ItemRegistryHelperNeoForge1_21 extends ItemRegistryHelper1_21 {
     
     @Override protected void registerItemModelVariant(Item item, ResourceLocation location,
             ClampedItemPropertyFunction func) {
-        ItemProperties.register(item, location, func);
+        ItemProperties.register(item,location,func);
     }
 }

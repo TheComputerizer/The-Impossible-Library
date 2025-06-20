@@ -1,11 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -17,10 +13,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class TILItemPickaxe1_21 extends PickaxeItem implements WithItemProperties {
+public class TILItemPickaxe1_21 extends PickaxeItem implements ItemHelpers1_21 {
     
     protected final ItemProperties properties;
     
+    @IndirectCallers
     public TILItemPickaxe1_21(Tier tier, ItemProperties properties) {
         super(tier,new Properties().stacksTo(properties.getStackSize()));
         this.properties = properties;
@@ -28,17 +25,11 @@ public class TILItemPickaxe1_21 extends PickaxeItem implements WithItemPropertie
     
     @Override public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> components,
             TooltipFlag flag) {
-        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),ClientHelper::getWorld)
-                .forEach(text -> components.add(text.getAsComponent()));
+        defaultAppendHoverText(stack,components);
     }
     
     @Override public @NotNull InteractionResult useOn(UseOnContext ctx) {
-        return EventHelper.setActionResult(getUseResult(() -> {
-            TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
-                    null,ctx.getHand(),ctx.getClickedFace());
-            tilCtx.setSuperResult(EventHelper.getActionResult(super.useOn(ctx)));
-            return tilCtx;
-        }));
+        return defaultUseOn(ctx,super::useOn);
     }
     
     @Override public ItemProperties getProperties() {

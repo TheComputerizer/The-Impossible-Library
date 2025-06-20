@@ -15,9 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12_2;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI.ItemType.TOOL;
 
 @SuppressWarnings("unused")
@@ -52,6 +55,52 @@ public abstract class ToolBuilderAPI extends ItemBuilderAPI {
     @Override public ToolBuilderAPI addProperty(ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
         this.propertyMap.put(key,propertyGetter);
         return this;
+    }
+    
+    protected <I> I makeItem(ItemProperties properties) {
+        String baseClassName;
+        Object[] args;
+        Object tier = this.toolTier.unwrap();
+        switch(this.toolType) {
+            case AXE: {
+                baseClassName = "TILItemAxe";
+                args = VERSION.isAtLeast(V21_1) ? new Object[]{tier,properties} :
+                        new Object[]{tier,this.damageModifier,this.speedModifier,properties};
+                break;
+            }
+            case HOE: {
+                baseClassName = "TILItemHoe";
+                args = VERSION==V12_2 || VERSION.isAtLeast(V21_1) ? new Object[]{tier,properties} :
+                        new Object[]{tier,(int)this.damageModifier,this.speedModifier,properties};
+                break;
+            }
+            case PICKAXE: {
+                baseClassName = "TILItemPickaxe";
+                args = VERSION==V12_2 || VERSION.isAtLeast(V21_1) ? new Object[]{tier,properties} :
+                        new Object[]{tier,(int)this.damageModifier,this.speedModifier,properties};
+                break;
+            }
+            case SHOVEL: {
+                baseClassName = "TILItemShovel";
+                args = VERSION==V12_2 || VERSION.isAtLeast(V21_1) ? new Object[]{tier,properties} :
+                        new Object[]{tier,this.damageModifier,this.speedModifier,properties};
+                break;
+            }
+            case SWORD: {
+                baseClassName = "TILItemSword";
+                args = VERSION==V12_2 || VERSION.isAtLeast(V21_1) ? new Object[]{tier,properties} :
+                        new Object[]{tier,(int)this.damageModifier,this.speedModifier,properties};
+                break;
+            }
+            default: {
+                baseClassName = "TILCustomTool";
+                Set<?> blocks = new HashSet<>();
+                this.effectiveBlocks.forEach(block -> blocks.add(block.unwrap()));
+                args = new Object[]{tier,(int)this.damageModifier,this.speedModifier,blocks,properties};
+                break;
+            }
+        }
+        return findAndInitializeForVersion(baseClassName,args);
     }
     
     @Override public ToolBuilderAPI setCreativeTab(CreativeTabAPI<?> tab) {

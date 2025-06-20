@@ -1,11 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.item;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemProperties;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +22,7 @@ import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
 
-public class TILCustomTool1_19 extends TieredItem implements WithItemProperties {
+public class TILCustomTool1_19 extends TieredItem implements ItemHelpers1_19 {
     
     static Properties tab(Properties iProperties, ItemProperties properties) {
         return VERSION==V19_4 ? iProperties : tab19_2(iProperties,properties);
@@ -38,23 +35,18 @@ public class TILCustomTool1_19 extends TieredItem implements WithItemProperties 
     
     private final ItemProperties properties;
     
+    @IndirectCallers @SuppressWarnings("unused") //TODO
     public TILCustomTool1_19(Tier tier, float damage, float speed, Set<Block> blocks, ItemProperties properties) {
         super(tier,tab(new Properties().stacksTo(properties.getStackSize()),properties));
         this.properties = properties;
     }
     
     @Override public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> components, TooltipFlag flag) {
-        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),() -> WrapperHelper.wrapWorld(world))
-                .forEach(text -> components.add(text.getAsComponent()));
+        defaultAppendHoverText(stack,world,components);
     }
     
     @Override public @NotNull InteractionResult useOn(UseOnContext ctx) {
-        return EventHelper.setActionResult(getUseResult(() -> {
-            TILItemUseContext tilCtx = TILItemUseContext.wrap(ctx.getPlayer(),ctx.getLevel(),ctx.getClickedPos(),
-                    null,ctx.getHand(),ctx.getClickedFace());
-            tilCtx.setSuperResult(EventHelper.getActionResult(super.useOn(ctx)));
-            return tilCtx;
-        }));
+        return defaultUseOn(ctx,super::useOn);
     }
     
     @Override public ItemProperties getProperties() {

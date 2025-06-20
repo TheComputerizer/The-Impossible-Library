@@ -1,11 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.DiscBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.registry.item.DiscBuilderFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.registry.tab.CreativeTabBuilderFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.Registry1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.registry.RegistryHandler1_18_2;
@@ -21,7 +18,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -56,7 +52,4 @@ public class RegistryHandlerFabric1_18_2 extends RegistryHandler1_18_2 {
         return new CreativeTabBuilderFabric1_18_2();
     }
     
-    @Override public DiscBuilderAPI makeDiscBuilder(@Nullable ItemBuilderAPI parent) {
-        return new DiscBuilderFabric1_18_2(parent);
-    }
 }

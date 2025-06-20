@@ -2,16 +2,17 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v21.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
+import static net.minecraft.world.level.block.Blocks.FIRE;
 import static net.minecraft.world.level.material.Fluids.FLOWING_WATER;
 import static net.minecraft.world.level.material.Fluids.WATER;
 import static net.minecraft.world.level.material.PushReaction.BLOCK;
 import static net.minecraft.world.level.material.PushReaction.DESTROY;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 /**
  * As of 1.20, the Material class no longer exists...
@@ -36,7 +37,7 @@ public class Material1_21 extends MaterialAPI<BlockState> {
     }
 
     @Override public boolean isFlammable(WorldAPI<?> world, BlockPosAPI<?> pos, Facing side) {
-        return this.wrapped.isFlammable(world.unwrap(),pos.unwrap(),EventHelper.setFacing(side));
+        return Methods.invokeDirect(FIRE,"canBurn",this.wrapped);
     }
     
     @SuppressWarnings("deprecation")

@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuild
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationHandler;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -38,27 +37,13 @@ public abstract class BlockEntityBuilderAPI extends RegistryEntryBuilder<BlockEn
     }
     
     @SuppressWarnings("unchecked")
-    private static <BP,BS> InvocationHandler getSupplierHandler(final BiFunction<BP,BS,?> supplier) {
-        return (supplierProxy,method,args) -> {
-            String methodName = method.getName();
-            switch(methodName) {
-                case "equals": return args.length>0 && supplierProxy==args[0];
-                case "hashCode": return 0;
-                default: {
-                    TILRef.logInfo("Invoking BlockEntitySupplier method {}",methodName);
-                    return CREATE.equals(methodName) && args.length>=2 ? supplier.apply((BP)args[0],(BS)args[1]) : null;
-                }
-            }
-        };
-    }
-    
-    private static Object getSupplier(BiFunction<?,?,?> supplier) {
+    private static <P1,P2>Object getSupplier(BiFunction<P1,P2,?> supplier) {
         Class<?> supplierClass = ClassHelper.findClass(SUPPLIER);
         if(Objects.isNull(supplierClass)) {
             TILRef.logError("Unable to get BlockEntitySupplier class! {}", SUPPLIER);
             return null;
         }
-        return ClassHelper.newProxy(supplierClass,getSupplierHandler(supplier));
+        return ClassHelper.newGenericProxy(supplierClass,CREATE,args -> supplier.apply((P1)args[0],(P2)args[1]));
     }
     
     protected Consumer<BlockEntityAPI<?,?>> onTick;

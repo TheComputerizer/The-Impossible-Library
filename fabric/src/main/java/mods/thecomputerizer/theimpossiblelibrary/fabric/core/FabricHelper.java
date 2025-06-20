@@ -72,11 +72,6 @@ public class FabricHelper {
         return getResolver().getCurrentRuntimeNamespace();
     }
     
-    @IndirectCallers
-    public static Field getObfField(String name, Class<?> owner, Object instance) {
-        return getObfField("intermediary",name,owner,instance);
-    }
-    
     public static Field getObfField(String namespace, String name, Class<?> owner, Object instance) {
         return getObfField(namespace,name,owner,instance.getClass());
     }

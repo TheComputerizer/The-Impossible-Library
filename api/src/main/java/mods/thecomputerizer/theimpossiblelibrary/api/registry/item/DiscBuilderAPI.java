@@ -16,7 +16,6 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-
 public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     
     protected Function<ItemStackAPI<?>,TextAPI<?>> nameSupplier;
@@ -41,6 +40,14 @@ public abstract class DiscBuilderAPI extends ItemBuilderAPI {
     @Override public DiscBuilderAPI setCreativeTab(CreativeTabAPI<?> tab) {
         this.creativeTab = tab;
         return this;
+    }
+    
+    protected Object[] makeArgs(ItemProperties properties) {
+        return new Object[]{getSound(),properties};
+    }
+    
+    protected final <I> I makeItem(ItemProperties properties) {
+        return findAndInitializeForVersion("TILDiscItem",makeArgs(properties));
     }
     
     public DiscBuilderAPI setItemType(ItemType type) {

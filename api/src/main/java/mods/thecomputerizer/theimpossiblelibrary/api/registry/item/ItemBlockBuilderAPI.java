@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,6 +31,18 @@ public abstract class ItemBlockBuilderAPI extends ItemBuilderAPI {
             ResourceLocationAPI<?> key, BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float> propertyGetter) {
         this.propertyMap.put(key,propertyGetter);
         return this;
+    }
+    
+    protected ResourceLocationAPI<?> getRegistryName() {
+        return Objects.nonNull(this.registryName) ? this.registryName : this.block.get().getRegistryName();
+    }
+    
+    protected Object[] makeArgs(ItemProperties properties) {
+        return new Object[]{this.block.get().unwrap(),properties};
+    }
+    
+    protected final <I> I makeItem(ItemProperties properties) {
+        return findAndInitializeForVersion("TILItemBlock",makeArgs(properties));
     }
     
     public ItemBlockBuilderAPI setBlock(Supplier<BlockAPI<?>> supplier) {

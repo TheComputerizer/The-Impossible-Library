@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
@@ -19,12 +18,19 @@ public class CreativeTabBuilderFabric1_19_2 extends CreativeTabBuilderAPI<ItemSt
             TILRef.logError("Cannot build creative tab with null registry name!");
             return null;
         }
-        CreativeModeTab tab = FabricItemGroupBuilder.build(this.registryName.unwrap(),this::getBuilderIcon);
-        return WrapperHelper.wrapTab(tab);
+        return WrapperHelper.wrapTab(FabricItemGroupBuilder.build(this.registryName.unwrap(),this::getBuilderIcon));
     }
     
-    ItemStack getBuilderIcon() {
+    /**
+     * Fabric API isn't getting remapped properly atm and I don't feel like fixing it
+     */
+    @SuppressWarnings("unchecked")
+    <T> T castStupidly(Object o) {
+        return (T)o;
+    }
+    
+    <T> T getBuilderIcon() {
         ItemStack icon = Objects.nonNull(this.icon) ? this.icon.get() : EMPTY;
-        return Objects.nonNull(icon) ? icon : EMPTY;
+        return castStupidly(Objects.nonNull(icon) ? icon : EMPTY);
     }
 }
