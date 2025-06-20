@@ -1,20 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.client.event;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.client.event.events.*;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.event.ClientEvents1_20;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
 
 public abstract class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
-    
-    private static final String NEOFORGE_CLASS = "net.neoforged.neoforge.common.NeoForge";
-    private static final String NEOFORGE_BUS = "EVENT_BUS";
-    
-    public ClientEventsNeoForge1_20() {
-    }
 
     @Override public void defineEvents() {
         CAMERA_SETUP.setConnector(new CameraSetupEventNeoForge());
@@ -53,13 +44,5 @@ public abstract class ClientEventsNeoForge1_20 extends ClientEvents1_20 {
         RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventNeoForge());
         RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventNeoForge());
         RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventNeoForge());
-    }
-    
-    @Override public void postCustomTick(CustomTick ticker) {
-        EVENT_BUS.post(new CustomTickNeoForge(ticker));
-    }
-    
-    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
-        EVENT_BUS.register(wrapper.getClass());
     }
 }

@@ -26,6 +26,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Getter
 public abstract class CoreAPI {
@@ -64,6 +65,43 @@ public abstract class CoreAPI {
         return getInstance().getVersion();
     }
     
+    public static ModLoader getInstanceModLoader() {
+        CoreAPI instance = getInstance();
+        return Objects.nonNull(instance) ? instance.getModLoader() : null;
+    }
+    
+    /**
+     * For this to work properly, the extension class must have a public static getInstance method
+     */
+    public static <T> T getModLoaderExtension(String post, boolean minor) {
+        Class<?> extensionClass = getModLoaderClass(post,minor);
+        if(Objects.isNull(extensionClass)) {
+            TILRef.logError("Cannot get mod loader extension from null class!");
+            return null;
+        }
+        return Methods.invokeStatic(extensionClass,"getInstance");
+    }
+    
+    public static Class<?> getModLoaderClass(String post, boolean minor) {
+        String name = injectModLoaderName(BASE_PACKAGE,post);
+        if(Objects.isNull(name)) {
+            TILRef.logError("Cannot get mod loader class from null class name!");
+            return null;
+        }
+        ModLoader loader = getInstanceModLoader();
+        return Objects.nonNull(loader) ?
+                ClassHelper.findClass(gameVersion().withClassExt(name+loader.name,minor)) : null;
+    }
+    
+    public static String getModLoaderName() {
+        CoreAPI instance = getInstance();
+        if(Objects.isNull(instance)) {
+            TILRef.logError("Cannot get mod loader name from null CoreAPI instance!");
+            return null;
+        }
+        return instance.getModLoader().pkg;
+    }
+    
     public static CoreAPI getInstance() {
         return getInstance(CoreAPI.class.getClassLoader());
     }
@@ -77,6 +115,15 @@ public abstract class CoreAPI {
             } else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
         }
         return (CoreAPI)INSTANCE;
+    }
+    
+    public static String injectModLoaderName(String pre, String post) {
+        String loaderName = getModLoaderName();
+        if(Objects.isNull(loaderName)) {
+            TILRef.logError("Cannot inject null mod loader name!");
+            return null;
+        }
+        return pre+"."+loaderName+"."+post;
     }
     
     public static Object invoke(Object instance, String name) {

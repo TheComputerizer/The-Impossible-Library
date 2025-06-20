@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events;
+package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LootingLevelEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_LOOTING_LEVEL;
 
-public class LootingLevelEventNeoForge1_20 extends LootingLevelEventNeoForge<LootingLevelEvent> {
+public class LootingLevelEventNeoForge1_20_4 extends LootingLevelEventNeoForge<LootingLevelEvent> {
     
     @SubscribeEvent
     public static void onEvent(LootingLevelEvent event) {

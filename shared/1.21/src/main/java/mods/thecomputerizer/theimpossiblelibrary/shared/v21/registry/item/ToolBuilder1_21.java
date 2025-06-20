@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tier;
@@ -21,6 +22,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class ToolBuilder1_21 extends ToolBuilderAPI {
     
@@ -57,6 +60,10 @@ public class ToolBuilder1_21 extends ToolBuilderAPI {
     private void registerTextureProperties(Item item) {
         for(Entry<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> property : this.propertyMap.entrySet()) {
             ResourceLocation location = property.getKey().unwrap();
+            ClampedItemPropertyFunction func = (stack,world,entity,seed) ->
+                    property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world));
+            Methods.invokeStaticDirect(net.minecraft.client.renderer.item.ItemProperties.class,"register",
+                                       item,location,func);
             net.minecraft.client.renderer.item.ItemProperties.register(item, location, (stack,world,entity,seed) ->
                     property.getValue().apply(WrapperHelper.wrapItemStack(stack),WrapperHelper.wrapWorld(world)));
         }

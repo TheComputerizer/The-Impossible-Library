@@ -1,10 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.registry.tab.CreativeTabBuilderForge1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v19.registry.RegistryForge1_19;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.blockentity.BlockEntityBuilder1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.Registry1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.RegistryHandler1_19;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.RegistryVanilla1_19;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -57,6 +60,10 @@ public class RegistryHandlerForge1_19_4 extends RegistryHandler1_19 {
         RegistryVanilla1_19<V> registry = new RegistryVanilla1_19<>(vanillaRegistry,key,(Class<V>)type);
         registries.add(registry);
         return registry;
+    }
+    
+    @Override public BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
+        return new BlockEntityBuilder1_19_4(parent);
     }
     
     @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {

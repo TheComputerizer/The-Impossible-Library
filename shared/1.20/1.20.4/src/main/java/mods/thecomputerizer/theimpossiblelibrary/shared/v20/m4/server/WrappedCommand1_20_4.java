@@ -43,7 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.mojang.brigadier.exceptions.CommandSyntaxException.BUILT_IN_EXCEPTIONS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-
+import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class WrappedCommand1_20_4 {
     
@@ -110,7 +110,8 @@ public class WrappedCommand1_20_4 {
     }
     
     public static void registerArgType() {
-        if(CoreAPI.isForge() || CoreAPI.isNeoforge()) ArgumentTypeInfos.registerByClass(CustomSuggester.class,INFO);
+        if(CoreAPI.isForge() || CoreAPI.isNeoforge())
+            Methods.invokeStatic(ArgumentTypeInfos.class,"registerByClass",CustomSuggester.class,INFO);
         else {
             String field = DEV ? "BY_CLASS" : "field_10921";
             Map<Class<?>,Object> byClass = Fields.getStaticDirect(ArgumentTypeInfos.class,field);

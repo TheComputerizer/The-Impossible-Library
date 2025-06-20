@@ -490,6 +490,7 @@ void setSharedDependencies(String ... maven_ids) {
                     "${loader}Implementation" parent
                     "${loader}Implementation" project(path: parent.path, configuration: "$loader")
                 }
+                if(isSharedProject() && project.parent!=null) "${loader}Implementation" libs.bundles.burningwave
                 "${loader}Implementation" modsBundle(loader, 'implementation')
                 "${loader}RuntimeOnly" modsBundle(loader, 'runtime')
             }

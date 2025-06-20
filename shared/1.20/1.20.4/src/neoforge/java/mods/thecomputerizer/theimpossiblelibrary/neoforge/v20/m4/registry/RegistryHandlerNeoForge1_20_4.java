@@ -1,9 +1,9 @@
-package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.registry;
+package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.registry.tab.CreativeTabBuilderNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.registry.tab.CreativeTabBuilderNeoForge1_20_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.Registry1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryHandler1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryVanilla1_20;
@@ -21,18 +21,21 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
 import java.util.Set;
 
 import static net.minecraft.core.registries.BuiltInRegistries.*;
+import static net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT;
+import static net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT;
+import static net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE;
 
-public class RegistryHandlerNeoForge1_20 extends RegistryHandler1_20 {
+public class RegistryHandlerNeoForge1_20_4 extends RegistryHandler1_20 {
     
     @Override protected void collectRegistries(Set<? super Registry1_20<?>> registries) {
-        this.block = getRegistry(registries,BLOCK,"block",Block.class);
-        this.blockEntity = getRegistry(registries,BLOCK_ENTITY_TYPE,"block_entity",BlockEntityType.class);
-        this.effect = getRegistry(registries,POTION,"effect",Potion.class);
-        this.entity = getRegistry(registries,ENTITY_TYPE,"entity",EntityType.class);
-        this.item = getRegistry(registries,ITEM,"item",Item.class);
-        this.potion = getRegistry(registries,MOB_EFFECT,"potion",MobEffect.class);
-        this.sound = getRegistry(registries,SOUND_EVENT,"sound",SoundEvent.class);
-        this.structure = getRegistry(registries,STRUCTURE_TYPE,"structure",StructureType.class);
+        this.block = getRegistry(registries,BLOCK,"block", Block.class);
+        this.blockEntity = getRegistry(registries,BLOCK_ENTITY_TYPE, "block_entity", BlockEntityType.class);
+        this.effect = getRegistry(registries,POTION,"effect", Potion.class);
+        this.entity = getRegistry(registries,ENTITY_TYPE,"entity", EntityType.class);
+        this.item = getRegistry(registries,ITEM,"item", Item.class);
+        this.potion = getRegistry(registries,MOB_EFFECT,"potion", MobEffect.class);
+        this.sound = getRegistry(registries,SOUND_EVENT,"sound", SoundEvent.class);
+        this.structure = getRegistry(registries,STRUCTURE_TYPE,"structure", StructureType.class);
     }
     
     @SuppressWarnings("unchecked")
@@ -45,6 +48,6 @@ public class RegistryHandlerNeoForge1_20 extends RegistryHandler1_20 {
     }
     
     @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
-        return new CreativeTabBuilderNeoForge1_20();
+        return new CreativeTabBuilderNeoForge1_20_4();
     }
 }

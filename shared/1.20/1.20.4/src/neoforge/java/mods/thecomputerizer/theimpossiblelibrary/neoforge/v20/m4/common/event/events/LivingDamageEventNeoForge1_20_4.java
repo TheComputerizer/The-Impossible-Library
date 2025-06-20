@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events;
+package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_DAMAGE;
 
-public class LivingDamageEventNeoForge1_20 extends LivingDamageEventNeoForge<LivingDamageEvent> {
+public class LivingDamageEventNeoForge1_20_4 extends LivingDamageEventNeoForge<LivingDamageEvent> {
     
     @SubscribeEvent
     public static void onEvent(LivingDamageEvent event) {

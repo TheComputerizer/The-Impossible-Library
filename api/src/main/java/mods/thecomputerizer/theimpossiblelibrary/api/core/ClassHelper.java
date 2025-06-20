@@ -10,6 +10,8 @@ import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Def
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
@@ -142,7 +144,7 @@ public class ClassHelper {
     /**
      * Defines and resolves a class from byteCode
      */
-    public static Class<?> defineClass(ClassLoader loader, String className, @Nullable byte[] bytes) {
+    public static Class<?> defineClass(ClassLoader loader, String className, byte[] bytes) {
         return defineClass(loader,className,Objects.nonNull(bytes) ? ByteBuffer.wrap(bytes) : null);
     }
     
@@ -411,6 +413,19 @@ public class ClassHelper {
         Fields.set(c,"classLoader",target);
         ((Collection<Class<?>>)Fields.get(from,"classes")).remove(c);
         ((Collection<Class<?>>)Fields.get(target,"classes")).add(c);
+    }
+    
+    public static <T> T newProxy(Class<T> type, InvocationHandler handler) {
+        return newProxy(type.getClassLoader(),type,handler);
+    }
+    
+    public static <T> T newProxy(ClassLoader loader, Class<T> type, InvocationHandler handler) {
+        return newProxy(loader,handler,new Class<?>[]{type});
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T newProxy(ClassLoader loader, InvocationHandler handler, Class<?> ... types) {
+        return (T)Proxy.newProxyInstance(loader,types,handler);
     }
     
     @IndirectCallers

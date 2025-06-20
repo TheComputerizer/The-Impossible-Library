@@ -31,8 +31,10 @@ public class BlockEntityBuilder1_19 extends BlockEntityBuilderAPI {
     @Override public BlockEntityAPI<?,?> build() { //Stupid backwards reference
         final Block[] blocks = buildBlockArray(this.validBlocks.get());
         final Function<BlockEntityType<?>,BlockEntityCreator> creatorFunc = buildCreatorFunc();
-        final Supplier<BlockEntityType<?>> typeSupplier = () -> getRegistry().get((ResourceLocation)this.registryName.unwrap());
-        BlockEntityAPI<?,?> entity = BlockEntity1_19.get(buildType((pos,state) -> (BlockEntity)creatorFunc.apply(typeSupplier.get())
+        final Supplier<BlockEntityType<?>> typeSupplier = () ->
+                getRegistry().get((ResourceLocation)this.registryName.unwrap());
+        BlockEntityAPI<?,?> entity = BlockEntity1_19.get(buildType((pos,state) ->
+                                  (BlockEntity)creatorFunc.apply(typeSupplier.get())
                 .create(null,WrapperHelper.wrapPosition(pos),WrapperHelper.wrapState(state)).getEntity(),blocks));
         entity.setCreator(creatorFunc.apply(entity.unwrap()));
         entity.setRegistryName(this.registryName);
@@ -49,13 +51,15 @@ public class BlockEntityBuilder1_19 extends BlockEntityBuilderAPI {
         return array;
     }
     
-    @SuppressWarnings("unchecked")
-    <T extends BlockEntity> BlockEntityType<T> buildType(BiFunction<BlockPos,BlockState,BlockEntity> supplier, Block ...blocks) {
-        return Builder.of((pos,state) -> (T)supplier.apply(pos,state),blocks).build(null);
+    <T extends BlockEntity> BlockEntityType<T> buildType(BiFunction<BlockPos,BlockState,BlockEntity> supplier,
+            Block ...blocks) {
+        Builder<T> builder = getBuilder(Builder.class,supplier,blocks);
+        return Objects.nonNull(builder) ? builder.build(null) : null;
     }
     
     Function<BlockEntityType<?>,BlockEntityCreator> buildCreatorFunc() {
-        return type -> (world,pos,state) -> WrapperHelper.wrapBlockEntity((Objects.nonNull(this.onTick) ?
+        return type -> (world,pos,state) ->
+                WrapperHelper.wrapBlockEntity((Objects.nonNull(this.onTick) ?
                 new TILTickableBlockEntity1_19(type,pos.unwrap(),state.unwrap(),this.onTick) :
                 new TILBasicBlockEntity1_19(type,pos.unwrap(),state.unwrap())));
     }

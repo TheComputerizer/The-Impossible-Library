@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m6.registry;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.registry.tab.CreativeTabBuilderNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m6.registry.tab.CreativeTabBuilderNeoForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.Registry1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryHandler1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryVanilla1_20;
@@ -45,6 +45,6 @@ public class RegistryHandlerNeoForge1_20_6 extends RegistryHandler1_20 {
     }
     
     @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
-        return new CreativeTabBuilderNeoForge1_20();
+        return new CreativeTabBuilderNeoForge1_20_6();
     }
 }

@@ -1,7 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.client.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.client.event.ClientEventsNeoForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.client.event.events.ClientTickEventNeoForge1_20_4;
 import net.neoforged.bus.api.Event;
@@ -12,6 +15,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientE
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
+import static net.neoforged.neoforge.common.NeoForge.EVENT_BUS;
 
 public class ClientEventsNeoForge1_20_4 extends ClientEventsNeoForge1_20 {
     
@@ -54,6 +58,14 @@ public class ClientEventsNeoForge1_20_4 extends ClientEventsNeoForge1_20 {
     
     @Override public <R> Result getEventResult(R result) {
         return result==net.neoforged.bus.api.Event.Result.DEFAULT ? DEFAULT : (result==net.neoforged.bus.api.Event.Result.DENY ? DENY : ALLOW);
+    }
+    
+    @Override public void postCustomTick(CustomTick ticker) {
+        EVENT_BUS.post(new CustomTickNeoForge(ticker));
+    }
+    
+    @Override public <E extends EventWrapper<?>> void register(E wrapper) {
+        EVENT_BUS.register(wrapper.getClass());
     }
     
     @SuppressWarnings("unchecked")

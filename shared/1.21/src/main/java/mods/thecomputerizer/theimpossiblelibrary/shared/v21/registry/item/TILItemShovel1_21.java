@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
@@ -27,7 +28,7 @@ public class TILItemShovel1_21 extends ShovelItem implements WithItemProperties 
     
     @Override public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> components,
             TooltipFlag flag) {
-        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack),() -> WrapperHelper.wrapWorld(ctx.level()))
+        getTooltipLines(() -> WrapperHelper.wrapItemStack(stack), ClientHelper::getWorld)
                 .forEach(text -> components.add(text.getAsComponent()));
     }
     

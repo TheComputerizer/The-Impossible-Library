@@ -2,12 +2,12 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.EventType;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import net.fabricmc.fabric.api.event.Event;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -19,8 +19,7 @@ public interface CommonFabricEvent {
         Object invoker = event.invoker();
         Class<T> eventType = (Class<T>)invoker.getClass().getInterfaces()[0];
         TILRef.logInfo("Event invoker class is {}",eventType);
-        event.register((T)Proxy.newProxyInstance(eventType.getClassLoader(),new Class<?>[]{eventType},
-                                                             ((CommonFabricEvent)wrapper).createEventProxy(type)));
+        event.register(ClassHelper.newProxy(eventType,((CommonFabricEvent)wrapper).createEventProxy(type)));
     }
     
     @IndirectCallers
