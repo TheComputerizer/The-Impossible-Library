@@ -24,7 +24,7 @@ public abstract class RegistryEntryBuilder<API> {
     /**
      * Assumes the target class is in the same package as the instance of this class.
      * Finds the version qualified target class and initializes it with the input args
-     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), & 1.18 (1.18.2)
+     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), and 1.18 (1.18.2)
      */
     protected <T> T findAndInitializeForVersion(String baseClassName, Object ... args) {
         return findAndInitializeForVersion(baseClassName,DEFAULT_MINOR_VERSION,args);
@@ -33,7 +33,7 @@ public abstract class RegistryEntryBuilder<API> {
     /**
      * Assumes the target class is in the same package as the instance of this class.
      * Finds the version qualified target class and initializes it with the input args
-     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), & 1.18 (1.18.2)
+     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), and 1.18 (1.18.2)
      */
     @SuppressWarnings("SameParameterValue")
     protected <T> T findAndInitializeForVersion(String baseClassName, boolean minor, Object ... args) {
@@ -43,7 +43,7 @@ public abstract class RegistryEntryBuilder<API> {
     /**
      * Assumes the target class is in the same package as the instance of this class.
      * Returns the version qualified name of the target class.
-     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), & 1.18 (1.18.2)
+     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), and 1.18 (1.18.2)
      */
     @IndirectCallers
     protected String getClassForVersion(String className) {

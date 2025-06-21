@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing;
@@ -14,8 +13,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -66,43 +63,6 @@ public abstract class ClientEvents1_18_2 implements ClientEventsAPI {
     
     @Override public <H> Hand getHand(H hand) {
         return hand==MAIN_HAND ? MAINHAND : OFFHAND;
-    }
-    
-    @Override public <B> OverlayType getOverlayBlockType(B blockType) {
-        return switch((RenderBlockOverlayEvent.OverlayType)blockType) {
-            case FIRE -> OverlayType.FIRE;
-            case WATER -> OverlayType.WATER;
-            default -> OverlayType.BLOCK;
-        };
-    }
-    
-    @Override public <E> OverlayType getOverlayElementType(E elementType) {
-        switch((ElementType)elementType) {
-            case ALL -> {
-                return OverlayType.ALL;
-            }
-            case CHAT -> {
-                return OverlayType.CHAT;
-            }
-            case TEXT -> {
-                return OverlayType.TEXT;
-            }
-            case DEBUG -> {
-                return OverlayType.DEBUG;
-            }
-            case LAYER -> {
-                return OverlayType.AIR;
-            }
-            case BOSSINFO -> {
-                return OverlayType.BOSSINFO;
-            }
-            case PLAYER_LIST -> {
-                return OverlayType.PLAYER_LIST;
-            }
-            default -> {
-                return null;
-            }
-        }
     }
     
     @Override public <V> Vector3 getVec3d(V vector) {

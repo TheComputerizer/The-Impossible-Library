@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public abstract class ServerEvents1_16_5 implements ServerEventsAPI {
     }
     
     @Override public <A> ActionResult getActionResult(A result) {
-        switch((ActionResultType)result) {
+        switch((InteractionResult)result) {
             case CONSUME: return ActionResult.CONSUME;
             case PASS: return ActionResult.PASS;
             case SUCCESS: return ActionResult.SUCCESS;
@@ -77,10 +78,10 @@ public abstract class ServerEvents1_16_5 implements ServerEventsAPI {
     @SuppressWarnings("unchecked")
     @Override public <A> A setActionResult(ActionResult result) {
         switch(result) {
-            case CONSUME: return (A)ActionResultType.CONSUME;
-            case PASS: return (A)ActionResultType.PASS;
-            case SUCCESS: return (A)ActionResultType.SUCCESS;
-            default: return (A)ActionResultType.FAIL;
+            case CONSUME: return (A)InteractionResult.CONSUME;
+            case PASS: return (A)InteractionResult.PASS;
+            case SUCCESS: return (A)InteractionResult.SUCCESS;
+            default: return (A)InteractionResult.FAIL;
         }
     }
     

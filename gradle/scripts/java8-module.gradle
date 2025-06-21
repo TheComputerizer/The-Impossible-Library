@@ -1,9 +1,5 @@
 extendFrom 'shared'
 
-compileJava {
-    options.release = 8
-}
-
 java {
     toolchain.setLanguageVersion JavaLanguageVersion.of(8)
 }
