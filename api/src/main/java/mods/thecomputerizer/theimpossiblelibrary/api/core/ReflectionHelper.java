@@ -21,7 +21,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 /**
  * This class is obselete now, but it deals with "normal" non-burningwave reflection.
- * Once all the source set & runtime issues are fixed this will likely non be needed anymore
+ * Once all the source set and runtime issues are fixed this will likely non be needed anymore
  */
 public class ReflectionHelper {
 

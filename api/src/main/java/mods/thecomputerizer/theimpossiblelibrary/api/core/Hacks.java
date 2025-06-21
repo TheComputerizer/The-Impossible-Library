@@ -7,7 +7,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 /**
- * Burningwave abstraction layer & helper methods
+ * Burningwave abstraction layer and helper methods
  */
 public class Hacks {
     
