@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILBetterModScan;
@@ -14,7 +15,6 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import java.util.Collections;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 
 public class MultiVersionLanguageLoader implements IModLanguageLoader {
     
@@ -50,7 +50,7 @@ public class MultiVersionLanguageLoader implements IModLanguageLoader {
     protected void setCoreAPI(Class<?> implClass) {
         try {
             ClassHelper.checkBurningWaveInit();
-            Constructors.newInstanceOf(implClass);
+            Hacks.construct(implClass);
             loadedNewCore = true;
         } catch(Throwable t) {
             TILRef.logError("Failed to set CoreAPI instance {}",implClass,t);

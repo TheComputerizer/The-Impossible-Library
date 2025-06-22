@@ -5,7 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.R
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.server.event.events.ServerTickEventNeoForge1_20_4;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.server.event.ServerEventsNeoForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.server.event.ServerEvents1_20;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;

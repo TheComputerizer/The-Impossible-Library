@@ -1,9 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ChampionsAPI;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.Entity;
+import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.IChampion.Client;
@@ -20,7 +21,8 @@ import java.util.stream.Collectors;
 public class ChampionsForge1_16_5 extends ChampionsAPI {
 
     public @Nullable IChampion getCapability(EntityAPI<?,?> api) {
-        return ChampionCapability.getCapability((Entity)api.unwrap()).orElse(null);
+        LazyOptional<IChampion> optional = Hacks.invokeStatic(ChampionCapability.class,"getCapability",api.unwrap());
+        return optional.orElse(null);
     }
 
     @Override public @Nullable ChampionData getChampionData(EntityAPI<?,?> entity) {

@@ -1,8 +1,9 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.integration;
+package mods.thecomputerizer.theimpossiblelibrary.fabric.v21.m1.integration;
 
 import dev.corgitaco.enhancedcelestials.EnhancedCelestials;
 import dev.corgitaco.enhancedcelestials.api.lunarevent.LunarEvent;
 import dev.corgitaco.enhancedcelestials.lunarevent.EnhancedCelestialsLunarForecastWorldData;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelestialsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.core.Holder;
@@ -12,10 +13,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class EnhancedCelestialsForge1_20_1 extends EnhancedCelestialsAPI {
+public class EnhancedCelestialsFabric1_21_1 extends EnhancedCelestialsAPI {
 
     public @Nullable EnhancedCelestialsLunarForecastWorldData getContext(WorldAPI<?> api) {
-        return orElseNull(EnhancedCelestials.lunarForecastWorldData(api.unwrap()));
+        return orElseNull(Hacks.invokeStatic(EnhancedCelestials.class,"lunarForecastWorldData",api.unwrap()));
     }
 
     @Override public boolean isBloodMoon(WorldAPI<?> world) {
@@ -29,7 +30,7 @@ public class EnhancedCelestialsForge1_20_1 extends EnhancedCelestialsAPI {
     public boolean isEvent(WorldAPI<?> world, String type) {
         EnhancedCelestialsLunarForecastWorldData context = getContext(world);
         if(Objects.nonNull(context)) {
-            Holder<LunarEvent> event = context.currentLunarEventHolder();
+            Holder<LunarEvent> event = Hacks.invoke(context,"currentLunarEventHolder");
             Optional<ResourceKey<LunarEvent>> optional = event.unwrapKey();
             if(optional.isEmpty()) return false;
             ResourceKey<LunarEvent> key = optional.get();

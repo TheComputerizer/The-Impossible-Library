@@ -16,8 +16,8 @@
         'structuregel-1_19_4' ]
     mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
     mods-1_20_1-implementation = [ 'blueskies-1_20_1', 'bookshelf-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
-        'enhancedcelestials-1_20_1', 'gamestages-1_20_1', 'glitchcore-1_20_1', 'infernalmobs-1_20_1',
-        'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
+        'dataanchor-1_20_1', 'enhancedcelestials-1_20_1', 'gamestages-1_20_1', 'glitchcore-1_20_1',
+        'infernalmobs-1_20_1', 'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
     mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
     mods-1_20_4-implementation = [ 'blueskies-1_20_4', 'bookshelf-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
         'glitchcore-1_20_1', 'infernalmobs-1_20_4', 'sereneseasons-1_20_4', 'structuregel-1_20_4' ]
@@ -25,8 +25,8 @@
     mods-1_20_6-implementation = [ 'configured-1_20_6', 'coroutil-1_20_6', 'glitchcore-1_20_6', 'infernalmobs-1_20_6',
         'sereneseasons-1_20_6' ]
     mods-1_20_6-runtime = [ 'jei-1_20_6' ]
-    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'glitchcore-1_21_1',
-        'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'dataanchor-1_21_1',
+        'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
     mods-1_21_1-runtime = [ 'jei-1_21_1' ]
 
 [libraries]
@@ -75,6 +75,9 @@
     coroutil-1_20_6 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_6' }
     coroutil-1_21_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_21_1' }
 
+    dataanchor-1_20_1 = { group = 'curse.maven', name = 'dataanchor-1203668', version.ref = 'dataanchor-1_20_1' }
+    dataanchor-1_21_1 = { group = 'curse.maven', name = 'dataanchor-1203668', version.ref = 'dataanchor-1_21_1' }
+
     dsurround-1_16_5 = { group = 'curse.maven', name = 'dsurround-238891', version.ref = 'dsurround-1_16_5' }
 
     enhancedcelestials-1_16_5 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_16_5' }
@@ -82,6 +85,7 @@
     enhancedcelestials-1_19_2 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_19_2' }
     enhancedcelestials-1_19_4 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_19_4' }
     enhancedcelestials-1_20_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_20_1' }
+    enhancedcelestials-1_21_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_21_1' }
 
     gamestages-1_16_5 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.16.5', version.ref = 'gamestages-1_16_5' }
     gamestages-1_18_2 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.18.2', version.ref = 'gamestages-1_18_2' }
@@ -176,6 +180,9 @@
     coroutil-1_20_6 = '5600651'
     coroutil-1_21_1 = '5600664'
 
+    dataanchor-1_20_1 = '6507578'
+    dataanchor-1_21_1 = '6507633'
+
     dsurround-1_16_5 = '3502320'
 
     enhancedcelestials-1_16_5 = '3532022'
@@ -183,6 +190,7 @@
     enhancedcelestials-1_19_2 = '4598311'
     enhancedcelestials-1_19_4 = '4598338'
     enhancedcelestials-1_20_1 = '6318263'
+    enhancedcelestials-1_21_1 = '6318196'
 
     gamestages-1_16_5 = '7.3.14'
     gamestages-1_18_2 = '8.1.3'

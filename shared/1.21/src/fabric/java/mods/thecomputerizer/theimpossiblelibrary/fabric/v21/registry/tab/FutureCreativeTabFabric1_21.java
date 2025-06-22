@@ -83,7 +83,8 @@ public class FutureCreativeTabFabric1_21 extends FutureCreativeTab<CreativeModeT
         FabricItemGroupEntries entries = (FabricItemGroupEntries)arg;
         for(Supplier<ItemStackAPI<?>> supplier : stackSuppliers) {
             ItemStack stack = supplier.get().unwrap();
-            Object visibility = visibility(entries.getDisplayStacks(),entries.getSearchTabStacks(),stack);
+            Object visibility = visibility(Hacks.invoke(entries,"getDisplayStacks"),
+                                           Hacks.invoke(entries,"getSearchTabStacks"),stack);
             if(Objects.nonNull(visibility))
                 Hacks.invokeDirect(entries,"accept","method_45417",stack,visibility);
             if(!this.suppliedItems.contains(stack)) this.suppliedItems.add(stack);

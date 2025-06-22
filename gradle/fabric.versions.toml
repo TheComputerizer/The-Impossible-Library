@@ -8,7 +8,7 @@
     mods-1_19_4-implementation = [ 'bookshelf-1_19_4', 'cloth-1_19_4', 'coroutil-1_19_4', 'modmenu-1_19_4' ]
     mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
     mods-1_20_1-implementation = [ 'bookshelf-1_20_1', 'cloth-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
-        'glitchcore-1_20_1', 'modmenu-1_20_1', 'sereneseasons-1_20_1' ]
+        'dataanchor-1_20_1', 'glitchcore-1_20_1', 'modmenu-1_20_1', 'sereneseasons-1_20_1' ]
     mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
     mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'cloth-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
         'glitchcore-1_20_4', 'modmenu-1_20_4', 'sereneseasons-1_20_4' ]
@@ -17,7 +17,8 @@
         'modmenu-1_20_6', 'sereneseasons-1_20_6' ]
     mods-1_20_6-runtime = [ 'architectury-1_20_6', 'jei-1_20_6' ]
     mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'cloth-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1',
-        'glitchcore-1_21_1', 'modmenu-1_21_1', 'sereneseasons-1_21_1' ]
+        'dataanchor-1_21_1', 'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'modmenu-1_21_1',
+        'sereneseasons-1_21_1' ]
     mods-1_21_1-runtime = [ 'architectury-1_21_1', 'jei-1_21_1' ]
 
 [libraries]
@@ -59,6 +60,11 @@
     coroutil-1_20_4 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_4' }
     coroutil-1_20_6 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_20_6' }
     coroutil-1_21_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_21_1' }
+
+    dataanchor-1_20_1 = { group = 'curse.maven', name = 'dataanchor-1203668', version.ref = 'dataanchor-1_20_1' }
+    dataanchor-1_21_1 = { group = 'curse.maven', name = 'dataanchor-1203668', version.ref = 'dataanchor-1_21_1' }
+
+    enhancedcelestials-1_21_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_21_1' }
 
     glitchcore-1_20_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_1' }
     glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
@@ -142,6 +148,11 @@
     coroutil-1_20_4 = '5600648'
     coroutil-1_20_6 = '5600652'
     coroutil-1_21_1 = '5600660'
+
+    dataanchor-1_20_1 = '6507577'
+    dataanchor-1_21_1 = '6507632'
+
+    enhancedcelestials-1_21_1 = '6318194'
 
     glitchcore-1_20_1 = '5787838'
     glitchcore-1_20_4 = '5088443'

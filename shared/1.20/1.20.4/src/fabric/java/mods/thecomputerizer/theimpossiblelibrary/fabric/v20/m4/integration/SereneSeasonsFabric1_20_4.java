@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v20.m4.integration;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.SereneSeasonsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import sereneseasons.api.season.ISeasonState;
@@ -16,7 +17,7 @@ import static sereneseasons.api.season.Season.WINTER;
 public class SereneSeasonsFabric1_20_4 extends SereneSeasonsAPI {
 
     public ISeasonState getSeasonState(WorldAPI<?> world) {
-        return SeasonHelper.getSeasonState(world.unwrap());
+        return Hacks.invokeStatic(SeasonHelper.class,"getSeasonState",world.unwrap());
     }
 
     @Override public boolean isAutumn(WorldAPI<?> world) {

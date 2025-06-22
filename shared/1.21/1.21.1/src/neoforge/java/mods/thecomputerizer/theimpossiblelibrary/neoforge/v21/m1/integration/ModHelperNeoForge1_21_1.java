@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.m1.integration;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.Side;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.EnhancedCelestialsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.InfernalMobsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.SereneSeasonsAPI;
@@ -16,6 +17,7 @@ public class ModHelperNeoForge1_21_1 extends ModHelperNeoForge1_21 {
     }
 
     @Override protected Map<String,ModAPI> addSupportedMods(Map<String,ModAPI> map) {
+        if(isModLoaded(EnhancedCelestialsAPI.MODID)) addMod(map,new EnhancedCelestialsNeoForge1_21_1());
         if(isModLoaded(InfernalMobsAPI.MODID)) addMod(map,new InfernalMobs1_21_1());
         if(isModLoaded(SereneSeasonsAPI.MODID)) addMod(map,new SereneSeasonsForge1_21_1());
         return Collections.unmodifiableMap(map);

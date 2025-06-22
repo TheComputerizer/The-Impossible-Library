@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.integration;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v21.m1.integration;
 
 import dev.corgitaco.enhancedcelestials.EnhancedCelestials;
 import dev.corgitaco.enhancedcelestials.api.lunarevent.LunarEvent;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public class EnhancedCelestialsForge1_20_1 extends EnhancedCelestialsAPI {
+public class EnhancedCelestialsForge1_21_1 extends EnhancedCelestialsAPI {
 
     public @Nullable EnhancedCelestialsLunarForecastWorldData getContext(WorldAPI<?> api) {
         return orElseNull(EnhancedCelestials.lunarForecastWorldData(api.unwrap()));

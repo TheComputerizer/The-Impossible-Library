@@ -1,12 +1,13 @@
 [bundles]
+    mods-1_20_1-implementation = [ 'dataanchor-1_20_1', 'enhancedcelestials-1_20_1' ]
     mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'configured-1_20_4', 'glitchcore-1_20_4', 'infernalmobs-1_20_4',
         'sereneseasons-1_20_4' ]
     mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
     mods-1_20_6-implementation = [ 'configured-1_20_6', 'glitchcore-1_20_6', 'infernalmobs-1_20_6',
         'sereneseasons-1_20_6' ]
     mods-1_20_6-runtime = [ 'architectury-1_20_6', 'jei-1_20_6' ]
-    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'glitchcore-1_21_1',
-        'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'dataanchor-1_21_1',
+        'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
     mods-1_21_1-runtime = [ 'architectury-1_21_1', 'jei-1_21_1' ]
 
 [libraries]
@@ -22,6 +23,12 @@
     configured-1_21_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_21_1' }
 
     coroutil-1_21_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_21_1' }
+
+    dataanchor-1_20_1 = { group = 'curse.maven', name = 'dataanchor-1203668', version.ref = 'dataanchor-1_20_1' }
+    dataanchor-1_21_1 = { group = 'curse.maven', name = 'dataanchor-1203668', version.ref = 'dataanchor-1_21_1' }
+
+    enhancedcelestials-1_20_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_20_1' }
+    enhancedcelestials-1_21_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_21_1' }
 
     glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
     glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
@@ -52,6 +59,12 @@
     configured-1_21_1 = '5873783'
 
     coroutil-1_21_1 = '5622966'
+
+    dataanchor-1_20_1 = '6507578'
+    dataanchor-1_21_1 = '6507634'
+
+    enhancedcelestials-1_20_1 = '6318263'
+    enhancedcelestials-1_21_1 = '6320077'
 
     glitchcore-1_20_4 = '5088442'
     glitchcore-1_20_6 = '5352264'

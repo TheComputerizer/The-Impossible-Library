@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.loader;
 
 import cpw.mods.jarhandling.SecureJar;
-import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -44,7 +44,7 @@ public class TILModFileNeoForge1_21 extends ModFile {
     }
     
     private final MultiVersionModCandidate candidate;
-    @Getter private final Map<MultiVersionModInfo,MultiVersionModData> infos;
+    private final Map<MultiVersionModInfo,MultiVersionModData> infos;
     
     public TILModFileNeoForge1_21(IModFileCandidateLocator locator, MultiVersionModCandidate candidate,
             Collection<?> infos) {
@@ -72,6 +72,11 @@ public class TILModFileNeoForge1_21 extends ModFile {
     @Override public Path findResource(String ... paths) {
         NeoForgeModLoading.queryCoreMods(paths);
         return super.findResource(paths);
+    }
+    
+    @IndirectCallers
+    public Map<MultiVersionModInfo,MultiVersionModData> getInfos() {
+        return this.infos;
     }
     
     @Override public boolean identifyMods() {

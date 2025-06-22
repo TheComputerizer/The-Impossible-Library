@@ -449,6 +449,11 @@ void setJarsRunAfter(boolean finalized_by_shadow, String ... parent_names) {
         getTaskPath(parent_name, 'build')
     }
     jar {
+        if(isSharedProject()) {
+            (isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]).forEach {
+                from(getArchiveTaskFile(project,"${it}Jar"))
+            }
+        }
         manifest {
             def attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
             if(isLegacyProject()) attribute_map.putAll(['FMLCorePlugin': legacy_entrypoint,
@@ -490,7 +495,11 @@ void setSharedDependencies(String ... maven_ids) {
                     "${loader}Implementation" parent
                     "${loader}Implementation" project(path: parent.path, configuration: "$loader")
                 }
-                if(isSharedProject() && project.parent!=null) "${loader}Implementation" libs.bundles.burningwave
+                if(isSharedProject() && project.parent!=null) {
+                    "${loader}Implementation" libs.bundles.burningwave
+                    "${loader}AnnotationProcessor" libs.lombok
+                    "${loader}CompileOnly" libs.lombok
+                }
                 "${loader}Implementation" modsBundle(loader, 'implementation')
                 "${loader}RuntimeOnly" modsBundle(loader, 'runtime')
             }
