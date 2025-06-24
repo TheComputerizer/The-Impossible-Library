@@ -1,37 +1,88 @@
 /**
- * Build workflow guidelines
- * api -> (fabric, forge, legacy, neoforge) -> (1.12, 1.16, 1.18, 1.19, 1.20, 1.21) -> (minor versions) -> main
- * Shading and relocation must happen within each module to properly respect reobfuscation.
- * Any necessary reobfuscations must happen in the version the deobfuscations happened in.
+ * BUILD WORKFLOW
+ *
+ * Main project:
+ *      1: Apply shadow plugin
+ *      2: Apply the functions & shared scripts
+ *      3: Do some preliminary setup for the jar & shadowJar tasks
+ *
+ * Sub Projects:
+ *      [BEFORE EVALUATING]
+ *          1: Apply the functions & shared scripts
+ *
+ *      [AFTER EVALUATING]
+ *          1: Wait until all sub projects finish building before running the main project jar task
+ *          2: Each subproject with loader sources has it's build task run after the relevant source jar tasks
+ *          3: Each jar task must do any necessary remapping in the relevant sub project
+ *          4: Inherit resources from the fabric sub project (which inherits from the api sub project)
+ *          5: Finalize the jar task with shadowJar
+ *          6: Collect the contents of all sub project jars in the shadowJar task
+ *          7: Do any necessary relocations & exclusions for shading before finalizing the jar
+ *          8: Add all relevant sub project classpaths the javadoc task
+ *          9: Include all content from sub project javadoc and source jars in the relevant main project jars
  */
-allprojects {p ->
-    p.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
+plugins {
+    alias libs.plugins.shadow
 }
 
-extendFrom 'shared'
+apply from: rootProject.file('gradle\\scripts\\functions.gradle')
+extendFrom 'shadow'
 
-def base = ':api'
-def cleanroom = ':legacy:cleanroom'
-def fabric = ':fabric'
-def forge = ':forge'
-def legacy = ':legacy'
-def legacy_1_12_2 = ':legacy:1.12'
-def neoforge = ':neoforge'
-def shared_1_16_5 = ':shared:shared_1.16'
-def shared_1_18_2 = ':shared:shared_1.18'
-def shared_1_19 = ':shared:shared_1.19'
-def shared_1_19_2 = ':shared:shared_1.19:shared_1.19.2'
-def shared_1_19_4 = ':shared:shared_1.19:shared_1.19.4'
-def shared_1_20 = ':shared:shared_1.20'
-def shared_1_20_1 = ':shared:shared_1.20:shared_1.20.1'
-def shared_1_20_4 = ':shared:shared_1.20:shared_1.20.4'
-def shared_1_20_6 = ':shared:shared_1.20:shared_1.20.6'
-def shared_1_21 = ':shared:shared_1.21'
-def shared_1_21_1 = ':shared:shared_1.21:shared_1.21.1'
+def main_project = project
 
-def all_projects = [ base, fabric, forge, legacy, neoforge, cleanroom, legacy_1_12_2, shared_1_16_5, shared_1_18_2,
-        shared_1_19, shared_1_19_2, shared_1_19_4, shared_1_20, shared_1_20_1, shared_1_20_4, shared_1_20_6,
-        shared_1_21, shared_1_21_1 ]
+subprojects {sub ->
+    sub.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
+    //noinspection GrUnresolvedAccess
+    sub.extendFrom 'shared'
+    sub.afterEvaluate {sub_final ->
+        //noinspection GroovyAssignabilityCheck
+        main_project.jar.mustRunAfter getTaskPath(sub_final.name, 'build')
+        main_project.shadowJar { //Add loader sources to the final jar
+            def archive_tasks = [ 'jar' ]
+            if(isProjectShared(sub_final)) {
+                archive_tasks = [ 'jar', 'fabricJar', 'forgeJar' ]
+                if(isProjectNeoforgeCompatible(sub_final)) archive_tasks+='neoforgeJar'
+            }
+            archive_tasks.forEach {archive_task ->
+                //noinspection GrUnresolvedAccess
+                from(getArchiveTaskFile(sub_final, archive_task).collect{entry ->
+                    zipTree entry
+                })
+            }
+        }
+        main_project.javadoc {
+            classpath+=classpathCompile(sub_final, 'main')
+            if(isProjectShared(sub_final)) {
+                classpath+=classpathCompile(sub_final, 'fabric')
+                classpath+=classpathCompile(sub_final, 'forge')
+                if(isProjectNeoforgeCompatible(sub_final))
+                    classpath+=classpathCompile(sub_final, 'neoforge')
+            }
+        }
+        main_project.javadocJar {
+            //noinspection GroovyAssignabilityCheck
+            mustRunAfter getTaskPath(sub_final.name, 'javadocJar')
+            from(getArchiveTaskFile(sub_final, 'javadocJar').collect{entry ->
+                zipTree entry
+            })
+        }
+        main_project.sourcesJar {
+            //noinspection GroovyAssignabilityCheck
+            mustRunAfter getTaskPath(sub_final.name, 'sourcesJar')
+            from(getArchiveTaskFile(sub_final, 'sourcesJar').collect{entry ->
+                zipTree entry
+            })
+        }
+        if('fabric'==sub_final.name) {
+            main_project.processResources {
+                from getTaskOutputs(sub_final, 'processResources')
+            }
+            main_project.processTestResources {
+                from getTaskOutputs(sub_final, 'processTestResources')
+            }
+        }
+    }
+}
 
 jar {
     manifest {
@@ -45,51 +96,12 @@ jar {
                 'TILMultiversionMods': common_entrypoint
         ])
     }
+    finalizedBy shadowJar
 }
 
-afterEvaluate {self ->
-    def resolved_projects = all_projects.collect {p_name ->
-        self.project(p_name)
-    }
-    resolved_projects.forEach {sub ->
-        sub.tasks.withType(JavaCompile).forEach {compile ->
-            compile.options.deprecation = false //We don't need to log all of the deprecated stuff when compiling
-        }
-        sub.afterEvaluate {s ->
-            if(isProjectRunnable(s)) {
-                self.jar {
-                    def archive_task = getArchiveTask(s, 'shadowJar')
-                    from(archive_task.archiveFile.collect {entry ->
-                        zipTree entry
-                    })
-                    mustRunAfter archive_task
-                }
-            }
-            self.javadoc {
-                classpath+=classpathCompile(s, 'main')
-            }
-            self.javadocJar {
-                def archive_task = getArchiveTask(s, 'javadocJar')
-                from(archive_task.archiveFile.collect {zip ->
-                    zipTree zip
-                })
-                mustRunAfter archive_task
-            }
-            if('fabric'==s.name) {
-                self.processResources {
-                    from getTaskOutputs(s, 'processResources')
-                }
-                self.processTestResources {
-                    from getTaskOutputs(s, 'processTestResources')
-                }
-            }
-            self.sourcesJar {
-                def archive_task = getArchiveTask(s, 'sourcesJar')
-                from(archive_task.archiveFile.collect {entry ->
-                    zipTree entry
-                })
-                mustRunAfter archive_task
-            }
-        }
-    }
+shadowJar {
+    mergeServiceFiles()
+    //noinspection GrUnresolvedAccess
+    exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA',
+            'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
 }

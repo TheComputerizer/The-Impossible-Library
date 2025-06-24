@@ -1,17 +1,16 @@
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
-apply from: rootProject.file('gradle\\scripts\\shaded-deps.gradle')
-
 configurations {
+    //noinspection GrUnresolvedAccess
     shadow.extendsFrom shaded
 }
 
+extendFrom 'shaded-deps'
+
 shadowJar {
-    duplicatesStrategy = EXCLUDE
+    archiveBaseName = mod_id
+    archiveClassifier = ''
+    //noinspection GroovyAssignabilityCheck
     configurations = [ project.configurations.shadow ]
-    setArchiveBaseName "$mod_id"
-    setArchiveClassifier ''
-    mergeServiceFiles()
-    exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA',
-            'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
+    duplicatesStrategy = EXCLUDE
 }

@@ -6,7 +6,6 @@ plugins {
 }
 
 extendRunnable()
-extendFrom 'nonshaded-deps'
 
 setLoaderConfigs true
 
@@ -21,4 +20,4 @@ setSharedDependencies()
 
 inheritResources ':shared'
 
-setJarsRunAfter false, ':shared'
+setJarsRunAfter ':shared'

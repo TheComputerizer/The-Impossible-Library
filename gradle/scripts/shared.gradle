@@ -7,19 +7,10 @@ plugins.apply 'java-library'
 group = base_package
 version = mod_version
 
-compileJava {
-    options.encoding = 'UTF-8'
-}
-
 idea {
     module {
         downloadJavadoc = true
     }
-}
-
-jar {
-    duplicatesStrategy = EXCLUDE
-    setArchiveBaseName "$mod_id"
 }
 
 java {
@@ -27,16 +18,16 @@ java {
     withJavadocJar()
 }
 
-javadocJar {
-    duplicatesStrategy = EXCLUDE
-    setArchiveBaseName "$mod_id"
+tasks.withType(JavaCompile).forEach {
+    it.options.encoding = 'UTF-8'
+    it.options.deprecation = false
 }
 
-processResources {
-    duplicatesStrategy = EXCLUDE
+tasks.withType(Jar).forEach {
+    it.archiveBaseName = mod_id
+    it.duplicatesStrategy = EXCLUDE
 }
 
-sourcesJar {
-    duplicatesStrategy = EXCLUDE
-    setArchiveBaseName "$mod_id"
+tasks.withType(ProcessResources).forEach {
+    it.duplicatesStrategy = EXCLUDE
 }

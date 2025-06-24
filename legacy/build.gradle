@@ -2,7 +2,7 @@
  * Common base for all legacy builds (pre 1.16)
  */
 
-extendFrom 'shared'
+extendFrom 'common-deps'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8
@@ -33,4 +33,4 @@ processTestResources {
     from getTaskOutputs(project(':api'), 'processTestResources')
 }
 
-setJarsRunAfter false, ':api'
+setJarsRunAfter ':api'

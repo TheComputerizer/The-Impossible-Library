@@ -2,12 +2,10 @@
  * Shared implementations for 1.19.2
  */
 plugins {
-    alias libs.plugins.shadow
     alias libs.plugins.unimined
 }
 
 extendRunnable()
-extendFrom 'shadow'
 
 setLoaderConfigs false
 
@@ -19,4 +17,4 @@ setSharedDependencies 'cf', 'ct', 'jei', 'modrinth', 'modmenu'
 
 inheritResources ':shared'
 
-setJarsRunAfter true, ':shared', ':shared_1.19'
+setJarsRunAfter ':shared', ':shared_1.19'

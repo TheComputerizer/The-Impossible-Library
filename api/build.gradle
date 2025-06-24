@@ -2,9 +2,7 @@
  * Base project for the main API & any version-agnostic code that isn't modloader-specific
  */
 
-extendFrom 'shared'
-extendFrom 'lombok'
-extendFrom 'nonshaded-deps'
+extendFrom 'common-deps'
 
 setDev()
 

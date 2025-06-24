@@ -1,7 +1,5 @@
-extendFrom 'shared'
-
 java {
     toolchain.setLanguageVersion JavaLanguageVersion.of(8)
 }
 
-extendFrom 'lombok'
+extendFrom 'common-deps'

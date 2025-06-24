@@ -2,7 +2,7 @@
  * Pass through parent module for shared version modules
  */
 
-extendFrom 'shared'
+extendFrom 'common-deps'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of 8

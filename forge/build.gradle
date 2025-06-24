@@ -6,7 +6,6 @@ plugins {
 }
 
 extendRunnable()
-extendFrom 'nonshaded-deps'
 
 setDev()
 
@@ -35,4 +34,4 @@ processTestResources {
     from getTaskOutputs(project(':api'), 'processTestResources')
 }
 
-setJarsRunAfter false, ':api'
+setJarsRunAfter ':api'

@@ -4,12 +4,10 @@
  * 1.12.2 forge build
  */
 plugins {
-    alias libs.plugins.shadow
     alias libs.plugins.unimined
 }
 
 extendRunnable()
-extendFrom 'shadow'
 
 uniminedCore 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
 
@@ -34,6 +32,4 @@ inheritResources ':legacy'
 
 addProjectJars ':legacy'
 
-setJarsRunAfter true, ':legacy'
-
-setSharedShadowJar()
+setJarsRunAfter ':legacy'

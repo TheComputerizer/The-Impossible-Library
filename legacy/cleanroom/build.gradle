@@ -4,12 +4,10 @@
  * 1.12.2 cleanroom build
  */
 plugins {
-    alias libs.plugins.shadow
     alias libs.plugins.unimined
 }
 
 extendRunnable()
-extendFrom 'shadow'
 
 uniminedCore 'cleanroom', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
 
@@ -35,6 +33,4 @@ inheritResources ':legacy'
 
 addProjectJars ':legacy'
 
-setJarsRunAfter true, ':legacy'
-
-setSharedShadowJar()
+setJarsRunAfter ':legacy'

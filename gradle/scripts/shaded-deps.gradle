@@ -1,3 +1,5 @@
+extendFrom 'shared'
+
 configurations {
     implementation.extendsFrom shaded
 }
@@ -13,5 +15,6 @@ repositories {
 }
 
 dependencies {
+    //noinspection GrUnresolvedAccess
     shaded(libs.bundles.burningwave) { transitive = false }
 }

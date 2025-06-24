@@ -2,6 +2,8 @@ import org.codehaus.groovy.runtime.MethodClosure
 
 import java.util.function.Consumer
 
+import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+
 //Setup project extension so builds that apply the script can actually call the functions
 ext.addProjectJars = this.&addProjectJars as MethodClosure
 ext.classpathCompile = this.&classpathCompile as MethodClosure
@@ -58,7 +60,6 @@ ext.setDev = this.&setDev as MethodClosure
 ext.setLoaderConfigs = this.&setLoaderConfigs as MethodClosure
 ext.setJarsRunAfter = this.&setJarsRunAfter as MethodClosure
 ext.setSharedDependencies = this.&setSharedDependencies as MethodClosure
-ext.setSharedShadowJar = this.&setSharedShadowJar as MethodClosure
 ext.setRepositories = this.&setRepositories as MethodClosure
 ext.sourceSetOf = this.&sourceSetOf as MethodClosure
 ext.sourceSetOutput = this.&sourceSetOutput as MethodClosure
@@ -145,10 +146,14 @@ private static List<String> commonMavenData(String id) {
 void createJarTasks(boolean neoforge) {
     def loaders = neoforge ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
     loaders.forEach {loader ->
-        tasks.register("${loader}Jar", Jar) {jar_task ->
-            jar_task.archiveClassifier.set "$loader"
+        String task_name = "${loader}Jar"
+        tasks.register(task_name, Jar) {jar_task ->
+            jar_task.archiveBaseName = mod_id
+            jar_task.archiveClassifier = loader
+            jar_task.duplicatesStrategy = EXCLUDE
             jar_task.from sourceSetOutput(project, loader)
         }
+        tasks.build.mustRunAfter task_name
     }
 }
 
@@ -181,11 +186,12 @@ int getJavaVersion() {
 }
 
 static String getParentPath(String p_name) {
+    if(!p_name.startsWith(':')) p_name = ":$p_name"
     int num_parents = p_name.count '.'
     switch(num_parents) {
-        case 1: return "${p_name.split('_')[0]}"
+        case 1: return ':1.12'==p_name ? ':legacy' : "${p_name.split('_')[0]}"
         case 2: return "${p_name.split('_')[0]}${p_name.substring(0,p_name.length()-2)}"
-        default: return 'cleanroom'==p_name ? ':legacy' : null
+        default: return ':cleanroom'==p_name ? ':legacy' : null
     }
 }
 
@@ -208,8 +214,10 @@ static def getProjectProperty(Project project, String property_name) {
 }
 
 static String getTaskPath(String p_name, String task_name) {
+    if(!p_name.startsWith(':')) p_name = ":$p_name"
+    if(!task_name.startsWith(':')) task_name = ":$task_name"
     def parent_path = getParentPath(p_name)
-    return parent_path==null ? "$p_name:$task_name" : "$parent_path:$p_name:$task_name"
+    return parent_path==null ? "$p_name$task_name" : "$parent_path$p_name$task_name"
 }
 
 static def getTaskOutputs(Project project, String task_name) {
@@ -267,7 +275,7 @@ boolean isLegacyProject() {
 }
 
 boolean isLoaderBase() {
-    return [ 'fabric', 'forge', 'legacy', 'neoforge' ].contains(name)
+    return [ 'fabric', 'forge', 'legacy', 'neoforge', 'shared' ].contains(name)
 }
 
 boolean isMinorVersion() {
@@ -325,8 +333,11 @@ boolean isRunnableProject() {
              'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ].contains(name)
 }
 
+/**
+ * Shared insinuates loader source sets are present so the base "shared" sub project is not included here
+ */
 boolean isSharedProject() {
-    return [ 'shared', 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20',
+    return [ 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20',
              'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ].contains(name)
 }
 
@@ -398,10 +409,12 @@ void setDev() {
         }
     }
     artifacts {
+        //noinspection GroovyAssignabilityCheck
         dev jar
     }
 }
 
+@SuppressWarnings('GroovyAssignabilityCheck')
 void setLoaderConfigs(boolean neoforge_compatible) {
     sourceSets {
         def main_output = sourceSetOutput(project, 'main')
@@ -444,26 +457,23 @@ void setLoaderConfigs(boolean neoforge_compatible) {
     }
 }
 
-void setJarsRunAfter(boolean finalized_by_shadow, String ... parent_names) {
+void setJarsRunAfter(String ... parent_names) {
     def build_tasks = parent_names.collect {parent_name ->
         getTaskPath(parent_name, 'build')
     }
     jar {
-        if(isSharedProject()) {
-            (isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]).forEach {
-                from(getArchiveTaskFile(project,"${it}Jar"))
-            }
-        }
         manifest {
-            def attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
-            if(isLegacyProject()) attribute_map.putAll(['FMLCorePlugin': legacy_entrypoint,
-                                                        'FMLCorePluginContainsFMLMod': true, 'ForceLoadAsMod': true])
+            Map<?,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
+            if(isLegacyProject()) {
+                attribute_map.put('FMLCorePlugin', legacy_entrypoint)
+                attribute_map.put('FMLCorePluginContainsFMLMod', true)
+                attribute_map.put('ForceLoadAsMod', true)
+            }
             attributes(attribute_map)
         }
         build_tasks.forEach {build_task ->
             mustRunAfter build_task
         }
-        if(finalized_by_shadow) finalizedBy 'shadowJar'
     }
     sourcesJar {
         build_tasks.forEach {build_task ->
@@ -495,7 +505,7 @@ void setSharedDependencies(String ... maven_ids) {
                     "${loader}Implementation" parent
                     "${loader}Implementation" project(path: parent.path, configuration: "$loader")
                 }
-                if(isSharedProject() && project.parent!=null) {
+                if(isSharedProject()) {
                     "${loader}Implementation" libs.bundles.burningwave
                     "${loader}AnnotationProcessor" libs.lombok
                     "${loader}CompileOnly" libs.lombok
@@ -507,32 +517,16 @@ void setSharedDependencies(String ... maven_ids) {
     }
 }
 
-void setSharedShadowJar() {
-    def shaded_projects = isLegacyProject() ? [ ':api', ':legacy' ] : [ ':api', ':fabric', ':forge', ':shared' ]
-    if(isLegacyProject()) shaded_projects+=':legacy'
-    else {
-        shaded_projects.addAll([ 'fabric', 'forge', 'shared' ])
-        if(isNeoforgeCompatible()) shaded_projects+=':neoforge'
-        if(isMinorVersion()) shaded_projects+=project.parent.path
-    }
-    shadowJar {
-        shaded_projects.each {p_name ->
-            //noinspection GrUnresolvedAccess
-            from(getArchiveTaskFile(project(p_name), 'jar').collect {entry ->
-                zipTree entry
-            })
-        }
-    }
-    tasks.assemble.dependsOn shadowJar
-}
-
 void setRepositories(String ... maven_ids) {
     project.repositories {handler ->
         maven_ids.each {id ->
             if('central'==id) mavenCentral()
             else {
                 def consumer = commonMavenArtifact project, id
-                if(consumer!=null) consumer.accept handler
+                if(consumer!=null) {
+                    //noinspection GroovyAssignabilityCheck
+                    consumer.accept handler
+                }
             }
         }
     }
@@ -546,6 +540,7 @@ static SourceSetOutput sourceSetOutput(Project project, String source_name) {
     return sourceSetOf(project, source_name).output
 }
 
+@SuppressWarnings('GrUnresolvedAccess')
 void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
     logger.lifecycle "Setting up core unimined stuff for $name"
     unimined.useGlobalCache = false
@@ -581,6 +576,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                 break
             }
             case 'fabric': {
+                //noinspection GroovyAssignabilityCheck
                 fabric {
                     loader fabric_loader
                     if(is_runnable) {
@@ -617,7 +613,6 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                 break
             }
         }
-        defaultRemapJar = false
     }
     logger.lifecycle "Finished setting up core unimined stuff for $name"
 }
@@ -631,6 +626,7 @@ void uniminedCommon() {
 void uniminedFabric(boolean is_runnable) {
     unimined.minecraft(sourceSets.fabric) {
         combineWith sourceSets.main
+        //noinspection GroovyAssignabilityCheck
         fabric {
             loader fabric_loader
             if(is_runnable) {

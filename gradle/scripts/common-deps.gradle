@@ -1,0 +1,15 @@
+repositories {
+    mavenCentral() {
+        content {
+            [ burningwave_group, lombok_group, toolfactory_group ].forEach {grp ->
+                includeGroup grp
+            }
+        }
+    }
+}
+
+dependencies {
+    annotationProcessor libs.lombok
+    compileOnly libs.lombok
+    implementation libs.bundles.burningwave
+}

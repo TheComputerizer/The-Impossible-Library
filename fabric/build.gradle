@@ -6,7 +6,6 @@ plugins {
 }
 
 extendRunnable()
-extendFrom 'nonshaded-deps'
 
 setDev()
 
@@ -43,4 +42,4 @@ jar {
     }
 }
 
-setJarsRunAfter false, ':api'
+setJarsRunAfter ':api'
