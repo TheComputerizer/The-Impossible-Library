@@ -2,6 +2,7 @@
  * Shared implementations for 1.19
  */
 plugins {
+    alias libs.plugins.shadow
     alias libs.plugins.unimined
 }
 
@@ -20,3 +21,5 @@ setSharedDependencies()
 inheritResources ':shared'
 
 setJarsRunAfter ':shared'
+
+relocateCommon()

@@ -38,11 +38,18 @@ subprojects {sub ->
         //noinspection GroovyAssignabilityCheck
         main_project.jar.mustRunAfter getTaskPath(sub_final.name, 'build')
         main_project.shadowJar { //Add loader sources to the final jar
-            def archive_tasks = [ 'jar' ]
+            //noinspection GrUnresolvedAccess
+            def archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar' ] : [ 'remapJar' ]
             if(isProjectShared(sub_final)) {
-                archive_tasks = [ 'jar', 'fabricJar', 'forgeJar' ]
-                if(isProjectNeoforgeCompatible(sub_final)) archive_tasks+='neoforgeJar'
-            }
+                //noinspection GrUnresolvedAccess
+                archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar', 'fabricJar', 'forgeJar' ] :
+                        [ 'shadowJar', 'remapForgeJar' ]
+                if(isProjectNeoforgeCompatible(sub_final)) {
+                    //noinspection GrUnresolvedAccess
+                    archive_tasks+=(sub_final.mappingStyleOfficial() || sub_final.name=='shared_1.20.4' ?
+                            'neoforgeJar' : 'remapNeoforgeJar')
+                }
+            } else if(sub_final.name in [ 'api', 'legacy', 'neoforge', 'shared' ]) archive_tasks = [ 'jar' ]
             archive_tasks.forEach {archive_task ->
                 //noinspection GrUnresolvedAccess
                 from(getArchiveTaskFile(sub_final, archive_task).collect{entry ->

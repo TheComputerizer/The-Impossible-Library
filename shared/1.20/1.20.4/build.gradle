@@ -2,6 +2,7 @@
  * Shared implementations for 1.20.4
  */
 plugins {
+    alias libs.plugins.shadow
     alias libs.plugins.unimined
 }
 
@@ -19,3 +20,5 @@ setSharedDependencies 'cf', 'ct', 'jei', 'modrinth', 'modmenu', 'pb4'
 inheritResources ':shared'
 
 setJarsRunAfter ':shared', ':shared_1.20', ':shared_1.20.1'
+
+relocateCommon()

@@ -50,11 +50,13 @@ ext.isRunnableProject = this.&isRunnableProject as MethodClosure
 ext.isSharedProject = this.&isSharedProject as MethodClosure
 ext.javaSources = this.&javaSources as MethodClosure
 ext.minecraftVersion = this.&minecraftVersion as MethodClosure
+ext.mappingStyleOfficial = this.&mappingStyleOfficial as MethodClosure
 ext.modsBundle = this.&modsBundle as MethodClosure
 ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
 ext.parchmentVersion = this.&parchmentVersion as MethodClosure
 ext.projectMCVersion = this.&projectMCVersion as MethodClosure
 ext.propertyString = this.&propertyString as MethodClosure
+ext.relocateCommon = this.&relocateCommon as MethodClosure
 ext.rootFile = this.&rootFile as MethodClosure
 ext.setDev = this.&setDev as MethodClosure
 ext.setLoaderConfigs = this.&setLoaderConfigs as MethodClosure
@@ -401,6 +403,18 @@ static File rootFile(Project project, String path) {
     return project.rootProject.file(path)
 }
 
+@SuppressWarnings('GroovyAssignabilityCheck')
+void relocateCommon() {
+    tasks.remapFabricJar.finalizedBy shadowJar
+    shadowJar {
+        archiveBaseName = mod_id
+        archiveClassifier = 'fabric-remapped'
+        configurations = [ project.configurations.shadow ]
+        duplicatesStrategy = EXCLUDE
+        relocate "${base_package}.shared", "${base_package}.fabric"
+    }
+}
+
 void setDev() {
     configurations {
         dev {
@@ -544,6 +558,8 @@ static SourceSetOutput sourceSetOutput(Project project, String source_name) {
 void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
     logger.lifecycle "Setting up core unimined stuff for $name"
     unimined.useGlobalCache = false
+    boolean official_mappings = mappingStyleOfficial() || loader_name=='neoforge'
+    def production_namespace = 'mojmap'
     unimined.minecraft {
         def mc_version = minecraftVersion()
         logger.lifecycle "Got unimined minecraft version for $name as $mc_version"
@@ -555,13 +571,13 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
         mappings {
             if(isLegacyProject()) mcp 'stable', legacy_mappings_1_12_2
             else {
-                boolean production_official_mappings = mappingStyleOfficial()
-                if(!production_official_mappings) intermediary()
+                if(!official_mappings) intermediary()
                 mojmap()
                 if(isJava8()) parchment mc_version, parchmentVersion()
                 devNamespace 'mojmap'
             }
         }
+        defaultRemapJar = !official_mappings
         switch(loader_name) {
             case 'cleanroom': {
                 cleanroom {
@@ -573,6 +589,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                         }
                     }
                 }
+                production_namespace = 'searge'
                 break
             }
             case 'fabric': {
@@ -586,6 +603,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                         }
                     }
                 }
+                production_namespace = 'intermediary'
                 break
             }
             case 'forge': {
@@ -598,6 +616,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                         }
                     }
                 }
+                production_namespace = 'searge'
                 break
             }
             case 'neoforge': {
@@ -612,6 +631,19 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                 }
                 break
             }
+            default: {
+                defaultRemapJar = false
+                production_namespace = 'mojmap'
+                break
+            }
+        }
+    }
+    //If it's already mojmap we don't need to remap it again
+    if(!official_mappings && production_namespace!='mojmap') {
+        remapJar {
+            archiveBaseName = mod_id
+            archiveClassifier = 'remapped'
+            prodNamespace production_namespace
         }
     }
     logger.lifecycle "Finished setting up core unimined stuff for $name"
@@ -621,12 +653,12 @@ void uniminedCommon() {
     uniminedCore 'none', false, []
 }
 
-//TODO Figure out how to get fabric parents to work without causing version conflicts
 @SuppressWarnings('GrUnresolvedAccess')
 void uniminedFabric(boolean is_runnable) {
+    def official_mappings = mappingStyleOfficial()
     unimined.minecraft(sourceSets.fabric) {
         combineWith sourceSets.main
-        //noinspection GroovyAssignabilityCheck
+        if(!official_mappings) defaultRemapJar = true
         fabric {
             loader fabric_loader
             if(is_runnable) {
@@ -636,13 +668,21 @@ void uniminedFabric(boolean is_runnable) {
             }
         }
     }
+    if(!official_mappings) {
+        remapFabricJar {
+            archiveBaseName = mod_id
+            archiveClassifier = 'fabric-remapped'
+            prodNamespace 'intermediary'
+        }
+    }
 }
 
-//TODO Figure out how to get forge parents to work without causing version conflicts
 @SuppressWarnings('GrUnresolvedAccess')
 void uniminedForge(boolean is_runnable) {
+    def official_mappings = mappingStyleOfficial()
     unimined.minecraft(sourceSets.forge) {
         combineWith sourceSets.main
+        if(!official_mappings) defaultRemapJar = true
         minecraftForge {
             loader forgeVersion()
             if(is_runnable) {
@@ -652,13 +692,21 @@ void uniminedForge(boolean is_runnable) {
             }
         }
     }
+    if(!official_mappings) {
+        remapForgeJar {
+            archiveBaseName = mod_id
+            archiveClassifier = 'forge-remapped'
+            prodNamespace 'searge'
+        }
+    }
 }
 
-//TODO Figure out how to get neoforge parents to work without causing version conflicts
 @SuppressWarnings('GrUnresolvedAccess')
 void uniminedNeoforge(boolean is_runnable) {
+    def official_mappings = mappingStyleOfficial() || project.name=='shared_1.20.4'
     unimined.minecraft(sourceSets.neoforge) {
         combineWith sourceSets.main
+        if(!official_mappings) defaultRemapJar = true
         neoForge {
             loader neoforgeVersion()
             if(is_runnable) {
@@ -666,6 +714,13 @@ void uniminedNeoforge(boolean is_runnable) {
                     systemProperty 'foundation.verbose', 'true'
                 }
             }
+        }
+    }
+    if(!official_mappings) {
+        remapNeoforgeJar {
+            archiveBaseName = mod_id
+            archiveClassifier = 'neoforge-remapped'
+            prodNamespace 'searge'
         }
     }
 }
