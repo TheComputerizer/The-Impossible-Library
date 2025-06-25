@@ -14,11 +14,6 @@ public abstract class ResourceLocationAPI<R> extends AbstractWrapped<R> {
 
     @IndirectCallers public abstract void bind(MinecraftAPI<?> mc);
     
-    @Override public boolean equals(Object other) {
-        return other instanceof ResourceLocationAPI<?> &&
-               String.valueOf(this.wrapped).equals(String.valueOf(((ResourceLocationAPI<?>)other).getWrapped()));
-    }
-    
     /**
      * Returns the number of frames in a sprite sheet if a mcmeta file is detected
      */

@@ -10,11 +10,10 @@ public abstract class AbstractWrapped<W> implements Wrapped<W> {
         this.wrapped = wrapped;
     }
     
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass") @Override public boolean equals(Object other) {
-        if(Objects.isNull(this.wrapped)) return Objects.isNull(other);
-        Object otherWrapped = other;
-        while(otherWrapped instanceof Wrapped<?>) otherWrapped = ((Wrapped<?>)otherWrapped).getWrapped();
-        return Objects.nonNull(otherWrapped) && this.wrapped.equals(otherWrapped);
+    @Override public boolean equals(Object other) {
+        if(Objects.isNull(other)) return Objects.isNull(this.wrapped);
+        while(other instanceof Wrapped<?>) other = ((Wrapped<?>)other).getWrapped();
+        return Objects.isNull(other) ? Objects.isNull(this.wrapped) : this.wrapped.equals(other);
     }
     
     @Override public W getWrapped() {

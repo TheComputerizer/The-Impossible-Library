@@ -165,7 +165,7 @@ public abstract class Player1_18_2<P extends Player> extends PlayerAPI<P,EntityT
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
     }
     
     @Override public void setPosition(double x, double y, double z) {

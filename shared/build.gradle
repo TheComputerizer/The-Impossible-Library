@@ -19,3 +19,5 @@ jar {
     })
     dependsOn ':api:build'
 }
+
+setJarsRunAfter([ ':api' ]) 

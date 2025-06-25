@@ -5,41 +5,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-setDev()
-
-uniminedCore 'fabric', false, []
-
-dependencies {
-    Provider<String> dep_provider = fabric.versions.api.'1'.'16'.'5'
-    modImplementation fabricApi.fabric(dep_provider.get())
-}
-
-processResources {
-    def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
-    inputs.properties replacements
-    from(getTaskOutputs(project(':api'), 'processResources')) {
-        filesMatching('fabric.mod.json') {copy_details ->
-            expand replacements
-        }
-    }
-}
-
-processTestResources {
-    from getTaskOutputs(project(':api'), 'processTestResources')
-}
-
-jar {
-    from(getArchiveTaskFile(project(':api'), 'jar').collect {entry ->
-        zipTree entry
-    })
-    manifest {
-        attributes([
-                'Implementation-Title': mod_name,
-                'Implementation-Version': mod_version
-        ])
-    }
-}
-
-setJarsRunAfter ':api'
+setupLoaderBase 'fabric'

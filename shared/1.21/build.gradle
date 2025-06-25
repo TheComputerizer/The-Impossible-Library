@@ -5,19 +5,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-setLoaderConfigs true
-
-setDev()
-
-uniminedCommon()
-uniminedFabric false
-uniminedForge false
-uniminedNeoforge false
-
-setSharedDependencies()
-
-inheritResources ':shared'
-
-setJarsRunAfter ':shared'
+setupSharedBase()

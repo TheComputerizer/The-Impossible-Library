@@ -6,18 +6,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-setLoaderConfigs false
-
-uniminedCommon()
-uniminedFabric true
-uniminedForge true
-
-setSharedDependencies 'cf', 'ct', 'jei', 'legacy', 'modrinth', 'modmenu'
-
-inheritResources ':shared'
-
-setJarsRunAfter ':shared'
-
-relocateCommon()
+setupSharedRunnable 'legacy'

@@ -7,30 +7,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-uniminedCore 'cleanroom', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
-
-setRepositories 'central', 'cf', 'ct', 'hei'
-
-dependencies {
-    api project(':api')
-    api project(':legacy')
-
-    annotationProcessor libs.bundles.legacy.annotations
-
-    compileOnly legacy.bundles.cleanroom.compile
-    compileOnly modsBundle('legacy', 'compile')
-
-    implementation modsBundle('legacy', 'implementation')
-
-    runtimeOnly modsBundle('legacy', 'runtime')
-}
-
-inheritCompileSources ':api', ':legacy'
-
-inheritResources ':legacy'
-
-addProjectJars ':legacy'
-
-setJarsRunAfter ':legacy'
+setupLegacyRunnable true

@@ -5,33 +5,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-setDev()
-
-uniminedCore 'forge', false, []
-
-dependencies {
-    api project(':api')
-}
-
-jar {
-    manifest {
-        attributes([
-                'Implementation-Title': mod_name,
-                'Implementation-Version': mod_version
-        ])
-    }
-}
-
-processResources {
-    from(getTaskOutputs(project(':api'), 'processResources')) {
-        exclude 'fabric.mod.json'
-    }
-}
-
-processTestResources {
-    from getTaskOutputs(project(':api'), 'processTestResources')
-}
-
-setJarsRunAfter ':api'
+setupLoaderBase 'forge'

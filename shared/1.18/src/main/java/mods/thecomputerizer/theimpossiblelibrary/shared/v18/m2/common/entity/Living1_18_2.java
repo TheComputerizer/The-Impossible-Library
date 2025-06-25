@@ -131,7 +131,7 @@ public class Living1_18_2 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
     }
     
     @Override public void setPosition(double x, double y, double z) {

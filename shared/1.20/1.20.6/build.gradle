@@ -5,17 +5,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-setLoaderConfigs true
-
-uniminedCommon()
-uniminedFabric true
-uniminedForge true
-uniminedNeoforge true
-
-setSharedDependencies 'cf', 'ct', 'jei', 'modrinth', 'modmenu', 'pb4'
-
-inheritResources ':shared'
-
-setJarsRunAfter ':shared', ':shared_1.20', ':shared_1.20.4'
+setupSharedRunnable 'pb4'

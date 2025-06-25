@@ -7,29 +7,4 @@ plugins {
     alias libs.plugins.unimined
 }
 
-extendRunnable()
-
-uniminedCore 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
-
-setRepositories 'cf', 'ct', 'hei'
-
-dependencies {
-    api project(':api')
-    api project(':legacy')
-
-    annotationProcessor libs.bundles.legacy.annotations
-
-    compileOnly modsBundle('legacy', 'compile')
-
-    implementation modsBundle('legacy', 'implementation')
-
-    runtimeOnly modsBundle('legacy', 'runtime')
-}
-
-inheritCompileSources ':api', ':legacy'
-
-inheritResources ':legacy'
-
-addProjectJars ':legacy'
-
-setJarsRunAfter ':legacy'
+setupLegacyRunnable false

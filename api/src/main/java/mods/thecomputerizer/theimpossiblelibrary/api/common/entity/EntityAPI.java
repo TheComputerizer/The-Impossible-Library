@@ -39,8 +39,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         if(super.equals(other) && other instanceof EntityAPI<?,?>) {
             Object entity = getEntity();
             Object otherEntity = ((EntityAPI<?,?>)other).getEntity();
-            if(Objects.isNull(entity)) return Objects.isNull(otherEntity);
-            return Objects.nonNull(otherEntity) && entity.equals(otherEntity);
+            return Objects.isNull(otherEntity) ? Objects.isNull(entity) : entity.equals(otherEntity);
         }
         return false;
     }

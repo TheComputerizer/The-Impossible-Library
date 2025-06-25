@@ -12,7 +12,7 @@ java {
     toolchain.setLanguageVersion JavaLanguageVersion.of(8)
 }
 
-setRepositories 'central', 'fast'
+setRepositories([ 'central', 'fast' ])
 
 dependencies {
     compileOnly(libs.bundles.api.compile) {

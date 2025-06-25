@@ -37,8 +37,7 @@ public abstract class BlockEntityAPI<E,T> extends AbstractWrapped<T> implements 
         if(super.equals(other) && other instanceof BlockEntityAPI<?,?>) {
             Object entity = getEntity();
             Object otherEntity = ((BlockEntityAPI<?,?>)other).getEntity();
-            if(Objects.isNull(entity)) return Objects.isNull(otherEntity);
-            return Objects.nonNull(otherEntity) && entity.equals(otherEntity);
+            return Objects.isNull(otherEntity) ? Objects.isNull(entity) : entity.equals(otherEntity);
         }
         return false;
     }

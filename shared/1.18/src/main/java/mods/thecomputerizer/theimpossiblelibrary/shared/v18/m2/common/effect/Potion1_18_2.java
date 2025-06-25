@@ -15,6 +15,6 @@ public class Potion1_18_2 extends PotionAPI<Potion> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",registryName.unwrap());
+        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
     }
 }
