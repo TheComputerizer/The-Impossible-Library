@@ -55,7 +55,6 @@ ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
 ext.parchmentVersion = this.&parchmentVersion as MethodClosure
 ext.projectMCVersion = this.&projectMCVersion as MethodClosure
 ext.propertyString = this.&propertyString as MethodClosure
-ext.relocateCommon = this.&relocateCommon as MethodClosure
 ext.rootFile = this.&rootFile as MethodClosure
 ext.setupLegacyRunnable = this.&setupLegacyRunnable as MethodClosure
 ext.setupLoaderBase = this.&setupLoaderBase as MethodClosure
@@ -90,6 +89,7 @@ static FileCollection classpathRuntime(Project project, String source_name) {
 
 static List<String> collectRunAfter(Project project) {
     def run_after = [ ':shared' ]
+    //noinspection GrUnresolvedAccess
     if(project.isMinorVersion()) {
         run_after+=":${project.parent.name}"
         switch(project.name) {
@@ -111,6 +111,7 @@ static List<String> collectRunAfter(Project project) {
 }
 
 static List<Project> combinedProjects(Project project) {
+    //noinspection GrUnresolvedAccess
     return project.getProjectList(isProjectLoaderBase(project) ? [ ':api' ] : [ ':api', ':shared' ])
 }
 
@@ -421,20 +422,6 @@ String propertyString(String name) {
 
 static File rootFile(Project project, String path) {
     return project.rootProject.file(path)
-}
-
-/**
- * Only fabric is relocated since forge and neoforge technically both use the same intermediary
- * production namespace in 1.20.1 before neoforge switched to using official mappings
- */
-@SuppressWarnings('GroovyAssignabilityCheck')
-void relocateCommon() {
-    shadowJar {
-        archiveBaseName = mod_id
-        archiveClassifier = 'fabric-remapped-relocated'
-        duplicatesStrategy = EXCLUDE
-        relocate "${base_package}.shared", "${base_package}.fabric"
-    }
 }
 
 void setupFabricBase() {
@@ -789,13 +776,17 @@ void uniminedFabric(boolean is_runnable) {
         remapFabricJar {
             archiveBaseName = mod_id
             archiveClassifier = classifier
-            dependsOn shadowJar
             prodNamespace 'intermediary'
         }
+        // Only fabric is relocated since forge and neoforge technically both use the same intermediary
+        // production namespace in 1.20.1 before neoforge switched to using official mappings
         shadowJar {
             archiveBaseName = mod_id
             archiveClassifier = "$classifier-relocated"
-
+            from(getArchiveTaskFile(project, 'remapFabricJar').collect{entry ->
+                zipTree entry
+            })
+            mustRunAfter remapFabricJar
             //noinspection GroovyAssignabilityCheck
             relocate "${base_package}.shared", "${base_package}.fabric"
         }
