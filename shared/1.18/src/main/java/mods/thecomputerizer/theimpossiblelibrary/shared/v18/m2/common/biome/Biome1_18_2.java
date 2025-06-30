@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.biome;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -33,7 +34,7 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
         ClassHelper.checkBurningWaveInit();
     }
     
-    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (FORGE ? "m_47505_" : "method_21740");
+    private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (SRG_ENV ? "m_47505_" : "method_21740");
     
     protected RegistryAccess access;
     
@@ -85,7 +86,7 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         try {
-            return Methods.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());
+            return Hacks.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());
         } catch(Throwable t) {
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);
             return this.wrapped.getBaseTemperature();

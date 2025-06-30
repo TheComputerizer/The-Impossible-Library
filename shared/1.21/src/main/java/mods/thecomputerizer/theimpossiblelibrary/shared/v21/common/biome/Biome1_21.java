@@ -4,6 +4,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -27,8 +28,6 @@ import static net.minecraft.core.registries.BuiltInRegistries.REGISTRY;
 import static net.minecraft.core.registries.Registries.BIOME;
 import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
 import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Setter public class Biome1_21 extends BiomeAPI<Biome> {
     
@@ -36,9 +35,8 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
         ClassHelper.checkBurningWaveInit();
     }
     
-    
     static final String CLIMATE_SETTINGS = NAMED_ENV ? "climateSettings" : (SRG_ENV ? "f_47437_" : "field_26393");
-    private static final String DOWNFALL = NAMED_ENV ? "downfall" : (SRG_ENV ? "f_47683_" : "field_9351");
+    private static final String DOWNFALL = NAMED_ENV ? "downfall" : (SRG_ENV ? "f_47683_" : "comp_846");
     private static final String GET_TEMPERATURE = NAMED_ENV ? "getTemperature" : (SRG_ENV ? "m_47505_" : "method_21740");
 
     protected RegistryAccess access;
@@ -56,7 +54,10 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     }
     
     @Override public float getRainfall() {
-        return Methods.invokeDirect(Fields.getDirect(this.wrapped,CLIMATE_SETTINGS),DOWNFALL);
+        Object downfall = Hacks.getRecordField(Hacks.getField(this.wrapped, CLIMATE_SETTINGS),DOWNFALL);
+        if(downfall instanceof Number) return ((Number)downfall).floatValue();
+        TILRef.logError("Failed to get rainfall for biome");
+        return 0f;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
@@ -100,7 +101,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         try {
-            return Methods.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());
+            return Hacks.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());
         } catch(Throwable t) {
             TILRef.logError("Failed to get temperature for biome {} at {}",this.wrapped,pos.getWrapped(),t);
             return this.wrapped.getBaseTemperature();

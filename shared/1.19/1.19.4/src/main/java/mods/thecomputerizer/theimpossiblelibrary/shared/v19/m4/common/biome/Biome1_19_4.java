@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.common.biome;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -24,7 +26,6 @@ import static net.minecraft.core.registries.BuiltInRegistries.REGISTRY;
 import static net.minecraft.core.registries.Registries.BIOME;
 import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
 import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public class Biome1_19_4 extends Biome1_19 {
     
@@ -32,8 +33,8 @@ public class Biome1_19_4 extends Biome1_19 {
         ClassHelper.checkBurningWaveInit();
     }
     
-    static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : SRG_ENV ? "f_47437_" : "field_26393";
-    static final String DOWNFALL = DEV ? "downfall" : "f_47683_";
+    static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : (SRG_ENV ? "f_47437_" : "field_26393");
+    static final String DOWNFALL = DEV ? "downfall" : (SRG_ENV ? "f_47683_" : "comp_846");
 
     public Biome1_19_4(Object biome) {
         super(biome);
@@ -48,7 +49,10 @@ public class Biome1_19_4 extends Biome1_19 {
     }
     
     @Override public float getRainfall() {
-        return Fields.getDirect(Fields.getDirect(this.wrapped,CLIMATE_SETTINGS),DOWNFALL);
+        Object downfall = Hacks.getRecordField(Hacks.getField(this.wrapped, CLIMATE_SETTINGS),DOWNFALL);
+        if(downfall instanceof Number) return ((Number)downfall).floatValue();
+        TILRef.logError("Failed to get rainfall for biome");
+        return 0f;
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {

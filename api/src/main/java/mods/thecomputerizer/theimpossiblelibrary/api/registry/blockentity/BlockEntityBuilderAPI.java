@@ -24,7 +24,7 @@ public abstract class BlockEntityBuilderAPI extends RegistryEntryBuilder<BlockEn
      */
     private static final String CREATE = NAMED_ENV ? "create" : (SRG_ENV ? "m_155267_" : "create");
     private static final String OF = NAMED_ENV ? "of" : (SRG_ENV ? "m_155273_" : "method_20528");
-    private static final String SUPPLIER = "net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier";
+    private static final String SUPPLIER = "net.minecraft.world.level.block.entity.BlockEntityType$BlockEntitySupplier";
     
     protected static <B> B getBuilder(Class<?> builderClass, BiFunction<?,?,?> supplier,
             Object[] blocks) {

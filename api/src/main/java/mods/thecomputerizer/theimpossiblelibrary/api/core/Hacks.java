@@ -1,8 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
+import java.util.Objects;
+
+import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
+import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
@@ -157,6 +163,74 @@ public class Hacks {
     @IndirectCallers
     public static int getJavaVersion() {
         return JAVA_VERSION;
+    }
+    
+    /**
+     * Returns a record component with the given name if it exists in the given class.
+     * Returns null if the call is invalid or the record does not exist.
+     */
+    private static Object getRecordComponent(Class<?> target, String field) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Cannot get record field {} from null class target!",field);
+            return null;
+        }
+        if(isJava8()) {
+            TILRef.logError("Cannot get record component in Java 8 environment! Records were introduced in Java"+
+                            " 14! ({}.{})",target.getName(),field);
+            return null;
+        }
+        Object[] components = invoke(target,"getRecordComponents");
+        for(Object component : components)
+            if(field.equals(invoke(component,"getName"))) return component;
+        return null;
+    }
+    
+    /**
+     * Returns the instance of a record field assuming the call is valid and the field exists.
+     * Returns null if there is an issue retrieving the field instance.
+     */
+    public static <T> T getRecordField(Object target, String field) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Cannot get record field {} from null object target!",field);
+            return null;
+        }
+        Class<?> targetClass = target.getClass();
+        return getRecordFieldInstance(targetClass,target,field,getRecordComponent(targetClass,field));
+    }
+    
+    /**
+     * The default Field component for BurningWave utilizes Unsafe in the backend.
+     * Unsafe does not support the retrieval of field offsets for record fields so we need to work around that.
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> T getRecordFieldInstance(Class<?> targetClass, @Nullable Object target, String name,
+            @Nullable Object component) {
+        if(Objects.isNull(component)) {
+            TILRef.logError("Failed to get record component {}.{}",targetClass.getName(),name);
+            return null;
+        }
+        Field field;
+        try {
+            field = Classes.getDeclaredField(targetClass,f -> name.equals(f.getName()));
+            if(Objects.isNull(field)) {
+                TILRef.logError("Found null field {} for class {}",name,targetClass.getName());
+                return null;
+            }
+            Driver.setAccessible(field,true);
+            return (T)field.get(target);
+        } catch(Throwable t) {
+            TILRef.logError("Failed to find field {} for class {}",name,targetClass.getName(),t);
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the instance of a static record field assuming the call is valid and the field exists.
+     * Returns null if there is an issue retrieving the field instance.
+     */
+    @IndirectCallers
+    public static <T> T getRecordFieldStatic(Class<?> target, String field) {
+        return getRecordFieldInstance(target,null,field,getRecordComponent(target,field));
     }
     
     /**
