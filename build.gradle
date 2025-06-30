@@ -28,6 +28,28 @@ plugins {
 apply from: rootProject.file('gradle\\scripts\\functions.gradle')
 extendFrom 'shadow'
 
+tasks.register('fixManifest', Jar) {
+    mustRunAfter shadowJar
+    archiveBaseName = mod_id
+    archiveClassifier = ''
+    from getArchiveTaskTree(project, 'shadowJar')
+    manifest {
+        attributes([
+                'FMLCorePlugin': legacy_entrypoint,
+                'FMLCorePluginContainsFMLMod': true,
+                'ForceLoadAsMod': true,
+                'Implementation-Title': mod_name,
+                'Implementation-Version': mod_version,
+                'TILMultiversionCoreMods': core_entrypoint,
+                'TILMultiversionMods': common_entrypoint
+        ])
+    }
+}
+
+tasks.jar.finalizedBy shadowJar
+tasks.assemble.dependsOn shadowJar
+tasks.assemble.dependsOn 'fixManifest'
+
 def main_project = project
 
 subprojects {sub ->
@@ -37,7 +59,7 @@ subprojects {sub ->
     sub.afterEvaluate {sub_final ->
         //noinspection GroovyAssignabilityCheck
         main_project.jar.mustRunAfter getTaskPath(sub_final.name, 'build')
-        main_project.shadowJar { //Add loader sources to the final jar
+        main_project.shadowJar {
             //noinspection GrUnresolvedAccess
             def archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar' ] : [ 'remapJar' ]
             if(isProjectShared(sub_final)) {
@@ -52,9 +74,7 @@ subprojects {sub ->
             } else if(sub_final.name in [ 'api', 'legacy', 'neoforge', 'shared' ]) archive_tasks = [ 'jar' ]
             archive_tasks.forEach {archive_task ->
                 //noinspection GrUnresolvedAccess
-                from(getArchiveTaskFile(sub_final, archive_task).collect{entry ->
-                    zipTree entry
-                })
+                from getArchiveTaskTree(sub_final, archive_task)
             }
         }
         main_project.javadoc {
@@ -69,16 +89,12 @@ subprojects {sub ->
         main_project.javadocJar {
             //noinspection GroovyAssignabilityCheck
             mustRunAfter getTaskPath(sub_final.name, 'javadocJar')
-            from(getArchiveTaskFile(sub_final, 'javadocJar').collect{entry ->
-                zipTree entry
-            })
+            from getArchiveTaskTree(sub_final, 'javadocJar')
         }
         main_project.sourcesJar {
             //noinspection GroovyAssignabilityCheck
             mustRunAfter getTaskPath(sub_final.name, 'sourcesJar')
-            from(getArchiveTaskFile(sub_final, 'sourcesJar').collect{entry ->
-                zipTree entry
-            })
+            from getArchiveTaskTree(sub_final, 'sourcesJar')
         }
         if('fabric'==sub_final.name) {
             main_project.processResources {
@@ -89,26 +105,4 @@ subprojects {sub ->
             }
         }
     }
-}
-
-jar {
-    manifest {
-        attributes([
-                'FMLCorePlugin': legacy_entrypoint,
-                'FMLCorePluginContainsFMLMod': true,
-                'ForceLoadAsMod': true,
-                'Implementation-Title': mod_name,
-                'Implementation-Version': mod_version,
-                'TILMultiversionCoreMods': core_entrypoint,
-                'TILMultiversionMods': common_entrypoint
-        ])
-    }
-    finalizedBy shadowJar
-}
-
-shadowJar {
-    mergeServiceFiles()
-    //noinspection GrUnresolvedAccess
-    exclude '**/LICENSE', '**/LICENSE.txt', 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA',
-            'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
 }

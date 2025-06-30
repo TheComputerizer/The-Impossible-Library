@@ -15,6 +15,7 @@ ext.extendRunnable = this.&extendRunnable as MethodClosure
 ext.fabricVersion = this.&fabricVersion as MethodClosure
 ext.forgeVersion = this.&forgeVersion as MethodClosure
 ext.getArchiveTaskFile = this.&getArchiveTaskFile as MethodClosure
+ext.getArchiveTaskTree = this.&getArchiveTaskTree as MethodClosure
 ext.getArchiveTask = this.&getArchiveTask as MethodClosure
 ext.getJavaVersion = this.&getJavaVersion as MethodClosure
 ext.getParentPath = this.&getParentPath as MethodClosure
@@ -198,6 +199,12 @@ String forgeVersion() {
 
 static Provider<RegularFile> getArchiveTaskFile(Project project, String task_name) {
     return getArchiveTask(project, task_name).archiveFile
+}
+
+static List<FileTree> getArchiveTaskTree(Project project, String task_name) {
+    return getArchiveTaskFile(project, task_name).collect{entry ->
+        project.zipTree entry
+    }
 }
 
 static AbstractArchiveTask getArchiveTask(Project project, String task_name) {
@@ -783,6 +790,8 @@ void uniminedFabric(boolean is_runnable) {
         shadowJar {
             archiveBaseName = mod_id
             archiveClassifier = "$classifier-relocated"
+            //noinspection GroovyAssignabilityCheck
+            configurations = [ project.configurations.shadow ]
             from(getArchiveTaskFile(project, 'remapFabricJar').collect{entry ->
                 zipTree entry
             })
@@ -790,6 +799,7 @@ void uniminedFabric(boolean is_runnable) {
             //noinspection GroovyAssignabilityCheck
             relocate "${base_package}.shared", "${base_package}.fabric"
         }
+        tasks.build.mustRunAfter shadowJar
     }
 }
 

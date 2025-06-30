@@ -1,16 +1,19 @@
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 configurations {
-    //noinspection GrUnresolvedAccess
-    shadow.extendsFrom shaded
+    shaded
 }
 
 extendFrom 'shaded-deps'
 
 shadowJar {
     archiveBaseName = mod_id
-    archiveClassifier = ''
+    archiveClassifier = 'unfixed'
     //noinspection GroovyAssignabilityCheck
-    configurations = [ project.configurations.shadow ]
+    configurations = [ project.configurations.shaded ]
     duplicatesStrategy = EXCLUDE
+    //noinspection GrUnresolvedAccess
+    exclude '**/LICENSE', '**/LICENSE.txt', '**/MANIFEST.*', 'META-INF/maven/**', 'META-INF/*.RSA',
+            'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
+    mergeServiceFiles()
 }
