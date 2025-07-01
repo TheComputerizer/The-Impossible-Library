@@ -764,10 +764,9 @@ void uniminedCommon(boolean is_runnable) {
 
 @SuppressWarnings('GrUnresolvedAccess')
 void uniminedFabric(boolean is_runnable) {
-    def official_mappings = mappingStyleOfficial()
     unimined.minecraft(sourceSets.fabric) {
         combineWith sourceSets.main
-        if(!official_mappings) defaultRemapJar = true
+        defaultRemapJar = true
         //noinspection GroovyAssignabilityCheck
         fabric {
             loader fabric_loader
@@ -778,29 +777,27 @@ void uniminedFabric(boolean is_runnable) {
             }
         }
     }
-    if(!official_mappings) {
-        def classifier = 'fabric-remapped'
-        remapFabricJar {
-            archiveBaseName = mod_id
-            archiveClassifier = classifier
-            prodNamespace 'intermediary'
-        }
-        // Only fabric is relocated since forge and neoforge technically both use the same intermediary
-        // production namespace in 1.20.1 before neoforge switched to using official mappings
-        shadowJar {
-            archiveBaseName = mod_id
-            archiveClassifier = "$classifier-relocated"
-            //noinspection GroovyAssignabilityCheck
-            configurations = [ project.configurations.shadow ]
-            from(getArchiveTaskFile(project, 'remapFabricJar').collect{entry ->
-                zipTree entry
-            })
-            mustRunAfter remapFabricJar
-            //noinspection GroovyAssignabilityCheck
-            relocate "${base_package}.shared", "${base_package}.fabric"
-        }
-        tasks.build.mustRunAfter shadowJar
+    def classifier = 'fabric-remapped'
+    remapFabricJar {
+        archiveBaseName = mod_id
+        archiveClassifier = classifier
+        prodNamespace 'intermediary'
     }
+    // Only fabric is relocated since forge and neoforge technically both use the same intermediary
+    // production namespace in 1.20.1 before neoforge switched to using official mappings
+    shadowJar {
+        archiveBaseName = mod_id
+        archiveClassifier = "$classifier-relocated"
+        //noinspection GroovyAssignabilityCheck
+        configurations = [ project.configurations.shadow ]
+        from(getArchiveTaskFile(project, 'remapFabricJar').collect{entry ->
+            zipTree entry
+        })
+        mustRunAfter remapFabricJar
+        //noinspection GroovyAssignabilityCheck
+        relocate "${base_package}.shared", "${base_package}.fabric"
+    }
+    tasks.build.mustRunAfter shadowJar
 }
 
 @SuppressWarnings('GrUnresolvedAccess')

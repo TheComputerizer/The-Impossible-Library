@@ -64,7 +64,7 @@ subprojects {sub ->
             def archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar' ] : [ 'remapJar' ]
             if(isProjectShared(sub_final)) {
                 //noinspection GrUnresolvedAccess
-                archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar', 'fabricJar', 'forgeJar' ] :
+                archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar', 'shadowJar', 'forgeJar' ] :
                         [ 'shadowJar', 'remapForgeJar' ]
                 if(isProjectNeoforgeCompatible(sub_final)) {
                     //noinspection GrUnresolvedAccess
