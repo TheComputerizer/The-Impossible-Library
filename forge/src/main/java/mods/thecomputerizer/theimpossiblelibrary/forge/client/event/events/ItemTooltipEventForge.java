@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.ItemToo
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -12,7 +13,8 @@ import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.ITEM_TOOLTIP;
 
-public class ItemTooltipEventForge extends ItemTooltipEventWrapper<ItemTooltipEvent> {
+public class ItemTooltipEventForge extends ItemTooltipEventWrapper<ItemTooltipEvent>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(ItemTooltipEvent event) {
@@ -29,11 +31,11 @@ public class ItemTooltipEventForge extends ItemTooltipEventWrapper<ItemTooltipEv
     }
     
     @Override protected EventFieldWrapper<ItemTooltipEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(ItemTooltipEvent::getPlayer);
+        return wrapPlayerGetter(getter("getPlayer"));
     }
 
     @Override protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(ItemTooltipEvent::getItemStack);
+        return wrapItemStackGetter(stackGetter());
     }
 
     @Override protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() { //TODO Adjust for text components

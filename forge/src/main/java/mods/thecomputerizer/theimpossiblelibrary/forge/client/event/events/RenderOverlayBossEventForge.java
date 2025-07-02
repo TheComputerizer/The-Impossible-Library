@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderO
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -12,7 +13,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_BOSS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
 
-public class RenderOverlayBossEventForge extends RenderOverlayBossEventWrapper<BossInfo> {
+public class RenderOverlayBossEventForge extends RenderOverlayBossEventWrapper<BossInfo>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(BossInfo event) {

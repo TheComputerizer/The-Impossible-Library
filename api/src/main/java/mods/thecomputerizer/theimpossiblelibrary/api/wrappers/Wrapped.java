@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.wrappers;
 
-public interface Wrapped<W> {
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreStateAccessor;
+
+public interface Wrapped<W> extends CoreStateAccessor {
     
     W getWrapped();
     

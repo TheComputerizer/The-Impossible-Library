@@ -4,12 +4,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOv
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v21.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.client.event.ClientEvents1_21;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import org.jetbrains.annotations.Nullable;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
@@ -17,9 +22,10 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-public class ClientEventsForge1_21 extends ClientEvents1_21 {
+public class ClientEventsForge1_21 extends ClientEvents1_21 implements ClientForgeEventHelper {
 
     @Override public void defineEvents() {
+        defaultEventDefinitions();
         CAMERA_SETUP.setConnector(new CameraSetupEventForge1_21());
         CLICK_INPUT.setConnector(new InputClickEventForge());
         CLIENT_CONNECTED.setConnector(new ClientConnectedEventForge1_21());
@@ -35,8 +41,6 @@ public class ClientEventsForge1_21 extends ClientEvents1_21 {
         MOUSE_INPUT.setConnector(new InputMouseEventForge());
         MOUSE_RAW.setConnector(new RawMouseEventForge());
         MOUSE_SCROLL.setConnector(new MouseScrollEventForge());
-        PLAYER_PUNCH_EMPTY.setConnector(new PlayerPunchEmptyEventForge1_21());
-        PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventForge());
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_21());
         RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge1_21());
@@ -66,13 +70,17 @@ public class ClientEventsForge1_21 extends ClientEvents1_21 {
             default -> OverlayType.BLOCK;
         };
     }
-
+    
+    @Override @Nullable public IEventBus getModBus(ModContainer container) {
+        return container instanceof FMLModContainer ? ((FMLModContainer)container).getEventBus() : null;
+    }
+    
     @Override public void postCustomTick(CustomTick ticker) {
         EVENT_BUS.post(new CustomTickForge(ticker));
     }
     
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
-        EVENT_BUS.register(wrapper.getClass());
+        registerForgeOrModBus(wrapper);
     }
     
     @SuppressWarnings("unchecked")

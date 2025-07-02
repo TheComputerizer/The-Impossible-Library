@@ -4,8 +4,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOv
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events.*;
-import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.ForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.client.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.event.ClientEvents1_18_2;
@@ -24,9 +24,10 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 implements ForgeEventHelper {
+public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 implements ClientForgeEventHelper {
 
     @Override public void defineEvents() {
+        defaultEventDefinitions();
         CAMERA_SETUP.setConnector(new CameraSetupEventForge1_18_2());
         CLICK_INPUT.setConnector(new InputClickEventForge());
         CLIENT_CONNECTED.setConnector(new ClientConnectedEventForge());
@@ -42,8 +43,6 @@ public class ClientEventsForge1_18_2 extends ClientEvents1_18_2 implements Forge
         MOUSE_INPUT.setConnector(new InputMouseEventForge());
         MOUSE_RAW.setConnector(new RawMouseEventForge());
         MOUSE_SCROLL.setConnector(new MouseScrollEventForge());
-        PLAYER_PUNCH_EMPTY.setConnector(new PlayerPunchEmptyEventForge1_18_2());
-        PLAYER_PUSH_OUT_OF_BLOCKS.setConnector(new PlayerPushOutOfBlocksEventForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventForge());
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_18_2());
         RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge());

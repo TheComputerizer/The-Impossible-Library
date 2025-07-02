@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractEntityEvent1_12_2 extends PlayerInteractEntityEventWrapper<EntityInteract> {
@@ -31,21 +30,20 @@ public class PlayerInteractEntityEvent1_12_2 extends PlayerInteractEntityEventWr
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(EntityInteract::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(EntityInteract::getWorld);
+        return wrapWorld(getter("getWorld"));
     }
     
     @Override public void setEvent(EntityInteract event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-
+    
     @Override protected EventFieldWrapper<EntityInteract,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                               (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
 
     @Override protected EventFieldWrapper<EntityInteract,Facing> wrapFacingField() {

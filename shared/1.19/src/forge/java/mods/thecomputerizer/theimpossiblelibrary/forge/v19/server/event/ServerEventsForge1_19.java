@@ -3,21 +3,24 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v19.server.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
-import mods.thecomputerizer.theimpossiblelibrary.forge.server.event.events.ServerTickEventForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.server.event.ServerForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.event.ServerEvents1_19;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import org.jetbrains.annotations.Nullable;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.ALLOW;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DENY;
-import static mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventWrapper.ServerType.TICK_SERVER;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-public class ServerEventsForge1_19 extends ServerEvents1_19 {
+public class ServerEventsForge1_19 extends ServerEvents1_19 implements ServerForgeEventHelper {
     
     @Override public void defineEvents() {
-        TICK_SERVER.setConnector(new ServerTickEventForge());
+        defaultEventDefinitions();
         super.defineEvents();
     }
     
@@ -25,12 +28,16 @@ public class ServerEventsForge1_19 extends ServerEvents1_19 {
         return result==Event.Result.DEFAULT ? DEFAULT : (result==Event.Result.DENY ? DENY : ALLOW);
     }
     
+    @Override @Nullable public IEventBus getModBus(ModContainer container) {
+        return container instanceof FMLModContainer ? ((FMLModContainer)container).getEventBus() : null;
+    }
+    
     @Override public void postCustomTick(CustomTick ticker) {
         EVENT_BUS.post(new CustomTickForge(ticker));
     }
     
     @Override public <E extends EventWrapper<?>> void register(E wrapper) {
-        EVENT_BUS.register(wrapper.getClass());
+        registerForgeOrModBus(wrapper);
     }
     
     @SuppressWarnings("unchecked")

@@ -31,11 +31,11 @@ public class PlayerInteractEntityEventNeoForge extends PlayerInteractEntityEvent
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(EntityInteract::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
-
+    
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(EntityInteract::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void setEvent(EntityInteract event) {

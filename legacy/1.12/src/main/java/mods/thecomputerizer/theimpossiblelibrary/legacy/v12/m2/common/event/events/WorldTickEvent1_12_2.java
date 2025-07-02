@@ -23,7 +23,7 @@ public class WorldTickEvent1_12_2 extends WorldTickEventWrapper<WorldTickEvent> 
     }
     
     @Override public WorldAPI<?> getWorld() {
-        return wrapWorld(event -> event.world);
+        return wrapWorld(event -> ((WorldTickEvent)event).world);
     }
     
     @Override public void setEvent(WorldTickEvent event) {

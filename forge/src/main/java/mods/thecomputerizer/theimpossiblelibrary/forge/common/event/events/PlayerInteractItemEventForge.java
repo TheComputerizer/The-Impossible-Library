@@ -9,23 +9,33 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ITEM;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractItemEventForge extends PlayerInteractItemEventWrapper<RightClickItem>
+public class PlayerInteractItemEventForge extends PlayerInteractItemEventWrapper<RightClickItem>
         implements CommonForgeEvent {
     
-    @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
+    @SubscribeEvent
+    public static void onEvent(RightClickItem event) {
+        PLAYER_INTERACT_ITEM.invoke(event);
     }
     
     @Override public void cancel() {
         this.event.setCanceled(true);
+    }
+    
+    @Override protected ItemStackAPI<?> getStackInHand() {
+        return wrapItemStack(stackGetter());
+    }
+    
+    @Override protected WorldAPI<?> getWorld() {
+        return wrapWorld(worldGetter());
     }
     
     @Override public void setEvent(RightClickItem event) {
@@ -34,23 +44,22 @@ public abstract class PlayerInteractItemEventForge extends PlayerInteractItemEve
     }
 
     @Override protected EventFieldWrapper<RightClickItem,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
 
     @Override protected EventFieldWrapper<RightClickItem,Facing> wrapFacingField() {
-        return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),UP);
+        return wrapGenericGetter(getter("getFace",EventHelper::getFacing),UP);
     }
 
     @Override protected EventFieldWrapper<RightClickItem,Hand> wrapHandField() {
-        return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
+        return wrapGenericGetter(getter("getHand",EventHelper::getHand),MAINHAND);
     }
 
     @Override protected EventFieldWrapper<RightClickItem,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(RightClickItem::getEntity);
+        return wrapPlayerGetter(entityGetter());
     }
 
     @Override protected EventFieldWrapper<RightClickItem,BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(RightClickItem::getPos);
+        return wrapPosGetter(getter("getPos"));
     }
 }

@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.PLAYER_PUNCH_EMPTY;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 
 public class PlayerPunchEmptyEvent1_12_2 extends PlayerPunchEmptyEventWrapper<LeftClickEmpty> {
 
@@ -26,23 +25,22 @@ public class PlayerPunchEmptyEvent1_12_2 extends PlayerPunchEmptyEventWrapper<Le
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
+
+    @Override protected ItemStackAPI<?> getStackInHand() {
+        return wrapItemStack(getter("getItemStack"));
+    }
+
+    @Override protected WorldAPI<?> getWorld() {
+        return wrapWorld(getter("getWorld"));
+    }
     
     @Override public void setEvent(LeftClickEmpty event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
 
-    @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(LeftClickEmpty::getItemStack);
-    }
-
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(LeftClickEmpty::getWorld);
-    }
-
     @Override protected EventFieldWrapper<LeftClickEmpty,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                               (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
 
     @Override protected EventFieldWrapper<LeftClickEmpty,Facing> wrapFacingField() {

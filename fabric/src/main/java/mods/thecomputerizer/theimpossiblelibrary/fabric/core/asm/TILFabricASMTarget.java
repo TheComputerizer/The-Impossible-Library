@@ -8,7 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicMutableWrappe
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import org.objectweb.asm.tree.ClassNode;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,7 +58,7 @@ public class TILFabricASMTarget {
      * Runs the specified class editor if it exists
      */
     @IndirectCallers
-    private @Nullable byte[] transformSingleton(String className, byte[] byteCode) {
+    private byte[] transformSingleton(String className, byte[] byteCode) {
         return getInstance().transform(className,byteCode);
     }
     
@@ -85,12 +84,12 @@ public class TILFabricASMTarget {
         this.loadedDefinitions = true;
     }
     
-    private @Nullable byte[] onReturnTransform(String className, @Nullable byte[] transformed) {
+    private byte[] onReturnTransform(String className, byte[] transformed) {
         this.classEditors.remove(className);
         return transformed;
     }
     
-    private @Nullable byte[] transform(String className, byte[] byteCode) {
+    private byte[] transform(String className, byte[] byteCode) {
         final MutableWrapped<ClassNode> nodeWrapper = new BasicMutableWrapped<>();
         transformFunctionally(name -> ASMHelper.toClassNode(byteCode),nodeWrapper::setWrapped);
         return onReturnTransform(className,nodeWrapper.asOptional().map(ASMHelper::toBytes).orElse(null));

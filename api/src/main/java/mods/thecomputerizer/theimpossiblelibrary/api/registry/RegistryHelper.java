@@ -105,7 +105,7 @@ public class RegistryHelper {
     }
     
     @IndirectCallers
-    public static CreativeTabBuilderAPI makeCreativeTabBuilder() {
+    public static CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
         return getHandler().makeCreativeTabBuilder();
     }
     

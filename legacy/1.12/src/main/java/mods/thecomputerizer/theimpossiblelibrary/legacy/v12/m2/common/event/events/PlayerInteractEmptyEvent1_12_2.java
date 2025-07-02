@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_EMPTY;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
 public class PlayerInteractEmptyEvent1_12_2 extends PlayerInteractEmptyEventWrapper<RightClickEmpty> {
@@ -28,23 +27,22 @@ public class PlayerInteractEmptyEvent1_12_2 extends PlayerInteractEmptyEventWrap
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
-
+    
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickEmpty::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
-
+    
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickEmpty::getWorld);
+        return wrapWorld(getter("getWorld"));
     }
     
     @Override public void setEvent(RightClickEmpty event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-
+    
     @Override protected EventFieldWrapper<RightClickEmpty,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                               (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
 
     @Override protected EventFieldWrapper<RightClickEmpty,Facing> wrapFacingField() {

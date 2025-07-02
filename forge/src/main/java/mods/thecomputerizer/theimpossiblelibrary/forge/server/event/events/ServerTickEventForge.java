@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.server.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.event.events.ServerTickEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.server.event.ServerForgeEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,7 +14,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.START;
 import static mods.thecomputerizer.theimpossiblelibrary.api.server.event.ServerEventWrapper.ServerType.TICK_SERVER;
 
-public class ServerTickEventForge extends ServerTickEventWrapper<ServerTickEvent> {
+public class ServerTickEventForge extends ServerTickEventWrapper<ServerTickEvent> implements ServerForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(ServerTickEvent event) {

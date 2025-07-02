@@ -4,8 +4,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlayerP
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 
-public class PlayerPushOutOfBlocksEventForge extends PlayerPushOutOfBlocksEventWrapper<Object> {
+public class PlayerPushOutOfBlocksEventForge extends PlayerPushOutOfBlocksEventWrapper<Object>
+        implements ClientForgeEvent {
 
     @Override protected Box wrapEntityBB() {
         return Box.ZERO;

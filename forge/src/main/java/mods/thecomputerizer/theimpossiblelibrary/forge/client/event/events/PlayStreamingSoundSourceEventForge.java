@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.PlayStr
 import mods.thecomputerizer.theimpossiblelibrary.api.client.sound.SoundAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.SOUND_PLAY_STREAMING;
 
-public class PlayStreamingSoundSourceEventForge extends PlayStreamingSoundSourceEventWrapper<PlayStreamingSourceEvent> {
+public class PlayStreamingSoundSourceEventForge extends PlayStreamingSoundSourceEventWrapper<PlayStreamingSourceEvent>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(PlayStreamingSourceEvent event) {

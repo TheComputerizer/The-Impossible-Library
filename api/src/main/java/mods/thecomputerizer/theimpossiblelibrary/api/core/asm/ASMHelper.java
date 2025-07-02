@@ -427,14 +427,14 @@ public class ASMHelper {
     }
     
     @IndirectCallers
-    public static @Nullable byte[] toBytes(@Nullable ClassNode node) {
+    public static byte[] toBytes(@Nullable ClassNode node) {
         return toBytes(node,0);
     }
     
     /**
      * Input flags should either be ASMRef.COMPUTE_FRAMES, ASMRef.COMPUTE_MAXS, or 0
      */
-    public static @Nullable byte[] toBytes(@Nullable ClassNode node, int flags) {
+    public static byte[] toBytes(@Nullable ClassNode node, int flags) {
         if(Objects.isNull(node)) return null;
         ClassWriter writer = new ClassWriter(flags);
         node.accept(writer);

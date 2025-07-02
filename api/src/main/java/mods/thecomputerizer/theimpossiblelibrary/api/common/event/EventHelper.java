@@ -179,36 +179,36 @@ import java.util.function.Consumer;
         return getEventsAPI(client,server).setAABB(box);
     }
     
-    public static <A> A setActionResult(ActionResult result) {
+    public static <A> A setActionResult(Object result) {
         return setActionResult(false,false,result);
     }
     
-    public static <A> A setActionResult(EventType<?> type, ActionResult result) {
+    public static <A> A setActionResult(EventType<?> type, Object result) {
         return setActionResult(type.isClient(),type.isServer(),result);
     }
     
-    public static <A> A setActionResult(boolean client, ActionResult result) {
+    public static <A> A setActionResult(boolean client, Object result) {
         return setActionResult(client,false,result);
     }
     
-    public static <A> A setActionResult(boolean client, boolean server, ActionResult result) {
-        return getEventsAPI(client,server).setActionResult(result);
+    public static <A> A setActionResult(boolean client, boolean server, Object result) {
+        return getEventsAPI(client,server).setActionResult((ActionResult)result);
     }
     
-    public static <E> E setEventResult(Result result) {
+    public static <E> E setEventResult(Object result) {
         return setEventResult(false,false,result);
     }
     
-    public static <E> E setEventResult(EventType<?> type, Result result) {
+    public static <E> E setEventResult(EventType<?> type, Object result) {
         return setEventResult(type.isClient(),type.isServer(),result);
     }
     
-    public static <E> E setEventResult(boolean client, Result result) {
+    public static <E> E setEventResult(boolean client, Object result) {
         return setEventResult(client,false,result);
     }
     
-    public static <E> E setEventResult(boolean client, boolean server, Result result) {
-        return getEventsAPI(client,server).setEventResult(result);
+    public static <E> E setEventResult(boolean client, boolean server, Object result) {
+        return getEventsAPI(client,server).setEventResult((Result)result);
     }
     
     public static <D> @Nullable D setFacing(@Nullable Facing facing) {

@@ -25,7 +25,7 @@ public class PlayerNameTabFormatEventNeoForge extends PlayerNameTabFormatEventWr
     @Override protected EventFieldWrapper<TabListNameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> Objects.nonNull(event.getDisplayName()) ? event.getDisplayName().getString() : null,
                                (event,name) -> event.setDisplayName(Objects.nonNull(name) ?
-                                               TextHelper.getLiteral(name).getAsComponent() : null),null);
+                                               TextHelper.getLiteral((String)name).getAsComponent() : null),null);
     }
 
     @Override protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?,?>> wrapPlayerField() {

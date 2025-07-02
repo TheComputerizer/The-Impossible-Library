@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderO
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Pre;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -12,7 +13,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_PRE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
 
-public class RenderOverlayPreEventForge extends RenderOverlayPreEventWrapper<Pre> {
+public class RenderOverlayPreEventForge extends RenderOverlayPreEventWrapper<Pre>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(Pre event) {

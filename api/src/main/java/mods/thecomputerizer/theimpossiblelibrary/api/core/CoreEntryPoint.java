@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -190,11 +189,11 @@ public abstract class CoreEntryPoint {
     }
     
     @IndirectCallers
-    public final @Nullable byte[] transform(byte[] byteCode) {
+    public final byte[] transform(byte[] byteCode) {
         return transform(byteCode,0);
     }
     
-    public final @Nullable byte[] transform(byte[] byteCode, int writerFlags) {
+    public final byte[] transform(byte[] byteCode, int writerFlags) {
         ClassNode node = ASMHelper.toClassNode(byteCode);
         editClass(node);
         return ASMHelper.toBytes(node,writerFlags);

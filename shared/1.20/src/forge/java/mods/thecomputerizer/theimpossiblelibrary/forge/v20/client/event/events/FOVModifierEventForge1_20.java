@@ -25,7 +25,7 @@ public class FOVModifierEventForge1_20 extends FOVModifierEventForge<ComputeFovM
     }
     
     @Override protected EventFieldWrapper<ComputeFovModifierEvent,Float> wrapFOVField() {
-        return wrapGenericBoth(ComputeFovModifierEvent::getFovModifier,ComputeFovModifierEvent::setNewFovModifier,0f);
+        return wrapGenericBoth(getter("getFovModifier"),setter("setNewFovModifier"),0f);
     }
     
     @Override protected EventFieldWrapper<ComputeFovModifierEvent,EntityAPI<?,?>> wrapEntityField() {

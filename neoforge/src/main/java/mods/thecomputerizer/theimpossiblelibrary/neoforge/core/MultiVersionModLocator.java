@@ -67,13 +67,12 @@ public class MultiVersionModLocator implements IModLocator {
     
     @Override public void scanFile(IModFile file, Consumer<Path> pathConsumer) {}
     
-    @SuppressWarnings("unchecked")
     @Override public List<ModFileOrException> scanMods() {
         List<ModFileOrException> files = null;
-        if(Objects.nonNull(this.localLocator)) {
-            files = (List<ModFileOrException>)ReflectionHelper.invokeMethod(this.localLocator.getClass(),
-                    "scanMods",this.localLocator,new Class<?>[]{IModLocator.class},this);
-        } else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
+        if(Objects.nonNull(this.localLocator))
+            files = ReflectionHelper.invokeMethod(this.localLocator.getClass(),
+                    "scanMods",this.localLocator, new Class<?>[]{IModLocator.class},this);
+        else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
         return Objects.nonNull(files) ? files : Collections.emptyList();
     }
 }

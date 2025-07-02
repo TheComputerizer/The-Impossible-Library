@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -10,10 +11,29 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ITEM;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-public interface ForgeEventHelper {
+public interface CommonForgeEventHelper {
+    
+    default void defaultEventDefinitions() {
+        ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventForge());
+        PLAYER_INTERACT_BLOCK.setConnector(new PlayerInteractBlockEventForge());
+        PLAYER_INTERACT_EMPTY.setConnector(new PlayerInteractEmptyEventForge());
+        PLAYER_INTERACT_ENTITY.setConnector(new PlayerInteractEntityEventForge());
+        PLAYER_INTERACT_ENTITY_AT.setConnector(new PlayerInteractEntitySpecificEventForge());
+        PLAYER_INTERACT_ITEM.setConnector(new PlayerInteractItemEventForge());
+        PLAYER_LOGGED_IN.setConnector(new PlayerLoggedInEventForge());
+        PLAYER_LOGGED_OUT.setConnector(new PlayerLoggedOutEventForge());
+        PLAYER_NAME_FORMAT.setConnector(new PlayerNameFormatEventForge());
+        PLAYER_PUNCH_BLOCK.setConnector(new PlayerPunchBlockEventForge());
+        PLAYER_PUNCH_ENTITY.setConnector(new PlayerPunchEntityEventForge());
+        PLAYER_PUNCH_ITEM.setConnector(new PlayerPunchItemEventForge());
+        PLAYER_RESPAWN.setConnector(new PlayerRespawnEventForge());
+        PLAYER_TAB_FORMAT.setConnector(new PlayerNameTabFormatEventForge());
+    }
     
     default @Nullable IEventBus getBusFor(@Nullable Object wrapper) {
         if(Objects.isNull(wrapper)) return EVENT_BUS;

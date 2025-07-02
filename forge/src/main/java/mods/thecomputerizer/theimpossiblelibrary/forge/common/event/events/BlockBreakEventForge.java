@@ -7,45 +7,37 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockBr
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_BREAK;
-
-public class BlockBreakEventForge extends BlockBreakEventWrapper<BreakEvent>
+public abstract class BlockBreakEventForge<E extends Event> extends BlockBreakEventWrapper<E>
         implements CommonForgeEvent {
-    
-    @SubscribeEvent
-    public static void onEvent(BreakEvent event) {
-        BLOCK_BREAK.invoke(event);
-    }
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
-    @Override public void setEvent(BreakEvent event) {
+    @Override public void setEvent(E event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
     
-    @Override protected EventFieldWrapper<BreakEvent,Integer> wrapXPField() {
-        return wrapGenericBoth(BreakEvent::getExpToDrop,BreakEvent::setExpToDrop,0);
+    @Override protected EventFieldWrapper<E,Integer> wrapXPField() {
+        return wrapGenericBoth(getter("getExpToDrop"),setter("setExpToDrop"),0);
     }
 
-    @Override protected EventFieldWrapper<BreakEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(BreakEvent::getPlayer);
+    @Override protected EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerField() {
+        return wrapPlayerGetter(getter("getPlayer"));
     }
 
-    @Override protected EventFieldWrapper<BreakEvent,BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(BreakEvent::getPos);
+    @Override protected EventFieldWrapper<E,BlockPosAPI<?>> wrapPosField() {
+        return wrapPosGetter(getter("getPos"));
     }
 
-    @Override protected EventFieldWrapper<BreakEvent,BlockStateAPI<?>> wrapStateField() {
-        return wrapStateGetter(BreakEvent::getState);
+    @Override protected EventFieldWrapper<E,BlockStateAPI<?>> wrapStateField() {
+        return wrapStateGetter(getter("getState"));
     }
 
-    @Override protected EventFieldWrapper<BreakEvent,WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(BreakEvent::getWorld);
+    @Override protected EventFieldWrapper<E,WorldAPI<?>> wrapWorldField() {
+        return wrapWorldGetter(worldGetter());
     }
 }

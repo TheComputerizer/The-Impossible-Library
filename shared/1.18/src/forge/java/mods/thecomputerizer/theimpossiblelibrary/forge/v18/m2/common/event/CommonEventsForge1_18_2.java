@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.common.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
-import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.ForgeEventHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.common.event.events.*;
@@ -19,11 +19,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.*;
 import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
-public class CommonEventsForge1_18_2 extends CommonEvents1_18_2 implements ForgeEventHelper {
+public class CommonEventsForge1_18_2 extends CommonEvents1_18_2 implements CommonForgeEventHelper {
 
     @Override public void defineEvents() {
-        ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventForge());
-        BLOCK_BREAK.setConnector(new BlockBreakEventForge());
+        defaultEventDefinitions();
+        BLOCK_BREAK.setConnector(new BlockBreakEventForge1_18_2());
         BLOCK_CREATE_FLUID.setConnector(new FluidCreateSourceEventForge1_18_2());
         BLOCK_HARVEST.setConnector(new HarvestBlockDropsEventForge());
         BLOCK_INTERACT.setConnector(new BlockInteractEventForge());
@@ -62,27 +62,14 @@ public class CommonEventsForge1_18_2 extends CommonEvents1_18_2 implements Forge
         PLAYER_CHANGED_DIMENSIONS.setConnector(new PlayerChangedDimensionsEventForge());
         PLAYER_CHECK_HARVEST.setConnector(new PlayerCheckHarvestEventForge());
         PLAYER_CLONE.setConnector(new PlayerCloneEventForge());
-        PLAYER_INTERACT_BLOCK.setConnector(new PlayerInteractBlockEventForge1_18_2());
-        PLAYER_INTERACT_EMPTY.setConnector(new PlayerInteractEmptyEventForge1_18_2());
-        PLAYER_INTERACT_ENTITY.setConnector(new PlayerInteractEntityEventForge1_18_2());
-        PLAYER_INTERACT_ENTITY_AT.setConnector(new PlayerInteractEntitySpecificEventForge1_18_2());
-        PLAYER_INTERACT_ITEM.setConnector(new PlayerInteractItemEventForge1_18_2());
         PLAYER_ITEM_CRAFTED.setConnector(new PlayerCraftedItemEventForge());
         PLAYER_ITEM_PICKUP.setConnector(new PlayerPickupItemEventForge());
         PLAYER_ITEM_SMELTED.setConnector(new PlayerSmeltedItemEventForge());
         PLAYER_LOAD_FROM_FILE.setConnector(new PlayerLoadFromFileEventForge());
-        PLAYER_LOGGED_IN.setConnector(new PlayerLoggedInEventForge());
-        PLAYER_LOGGED_OUT.setConnector(new PlayerLoggedOutEventForge());
-        PLAYER_NAME_FORMAT.setConnector(new PlayerNameFormatEventForge());
-        PLAYER_PUNCH_BLOCK.setConnector(new PlayerPunchBlockEventForge1_18_2());
-        PLAYER_PUNCH_ENTITY.setConnector(new PlayerPunchEntityEventForge());
-        PLAYER_PUNCH_ITEM.setConnector(new PlayerPunchItemEventForge());
-        PLAYER_RESPAWN.setConnector(new PlayerRespawnEventForge());
         PLAYER_SAVE_TO_FILE.setConnector(new PlayerSaveToFileEventForge());
         PLAYER_SLEEP_IN_BED.setConnector(new PlayerSleepInBedEventForge());
         PLAYER_START_TRACKING.setConnector(new PlayerStartTrackingEventForge());
         PLAYER_STOP_TRACKING.setConnector(new PlayerStopTrackingEventForge());
-        PLAYER_TAB_FORMAT.setConnector(new PlayerNameTabFormatEventForge());
         PLAYER_VISIBILITY.setConnector(new PlayerVisibilityEventForge1_18_2());
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEventForge());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEventForge());

@@ -21,7 +21,7 @@ public class WorldTickEventForge1_18_2 extends WorldTickEventForge<WorldTickEven
     }
     
     @Override public WorldAPI<?> getWorld() {
-        return wrapWorld(event -> event.world);
+        return wrapWorld(event -> ((WorldTickEvent)event).world);
     }
     
     @Override protected TickPhase wrapTickPhase() {

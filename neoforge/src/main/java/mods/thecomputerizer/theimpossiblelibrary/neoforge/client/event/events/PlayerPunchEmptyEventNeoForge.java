@@ -23,11 +23,11 @@ public class PlayerPunchEmptyEventNeoForge extends PlayerPunchEmptyEventWrapper<
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(LeftClickEmpty::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(LeftClickEmpty::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void setEvent(LeftClickEmpty event) {

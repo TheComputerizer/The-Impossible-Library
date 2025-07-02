@@ -21,7 +21,7 @@ public class WorldTickEventNeoForge1_20_4 extends WorldTickEventNeoForge<LevelTi
     }
     
     @Override public WorldAPI<?> getWorld() {
-        return wrapWorld(event -> event.level);
+        return wrapWorld(event -> ((LevelTickEvent)event).level);
     }
     
     @Override protected TickPhase wrapTickPhase() {

@@ -3,9 +3,11 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.CameraSetupEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-public abstract class CameraSetupEventForge<E extends Event> extends CameraSetupEventWrapper<E> {
+public abstract class CameraSetupEventForge<E extends Event> extends CameraSetupEventWrapper<E>
+        implements ClientForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

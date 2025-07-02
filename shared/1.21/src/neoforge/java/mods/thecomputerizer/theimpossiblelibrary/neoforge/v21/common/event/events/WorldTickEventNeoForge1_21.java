@@ -29,7 +29,7 @@ public class WorldTickEventNeoForge1_21 extends WorldTickEventNeoForge<LevelTick
     TickPhase phase;
     
     @Override public WorldAPI<?> getWorld() {
-        return wrapWorld(LevelTickEvent::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void setEvent(LevelTickEvent event) {

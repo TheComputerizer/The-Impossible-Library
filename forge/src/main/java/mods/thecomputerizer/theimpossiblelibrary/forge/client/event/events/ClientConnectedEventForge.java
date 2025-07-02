@@ -2,12 +2,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.ClientConnectedEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CLIENT_CONNECTED;
 
-public class ClientConnectedEventForge extends ClientConnectedEventWrapper<LoggedInEvent> {
+public class ClientConnectedEventForge extends ClientConnectedEventWrapper<LoggedInEvent>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LoggedInEvent event) {

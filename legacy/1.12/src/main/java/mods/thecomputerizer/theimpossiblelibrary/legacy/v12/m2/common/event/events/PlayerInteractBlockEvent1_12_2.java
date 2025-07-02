@@ -17,7 +17,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_BLOCK;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
@@ -32,27 +31,25 @@ public class PlayerInteractBlockEvent1_12_2 extends PlayerInteractBlockEventWrap
         this.event.setCanceled(true);
     }
     
+    @Override protected ItemStackAPI<?> getStackInHand() {
+        return wrapItemStack(getter("getItemStack"));
+    }
+    
+    @Override protected WorldAPI<?> getWorld() {
+        return wrapWorld(getter("getWorld"));
+    }
+    
     @Override public void setEvent(RightClickBlock event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
 
-    @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickBlock::getItemStack);
-    }
-
-    @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickBlock::getWorld);
-    }
-
     @Override protected EventFieldWrapper<RightClickBlock,Result> wrapBlockResultField() {
-        return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseBlock()),
-                               (event,result) -> event.setUseBlock(EventHelper.setEventResult(result)),DEFAULT);
+        return wrapEventResultBoth("getUseBlock","setUseBlock");
     }
-
+    
     @Override protected EventFieldWrapper<RightClickBlock,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                               (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,Facing> wrapFacingField() {

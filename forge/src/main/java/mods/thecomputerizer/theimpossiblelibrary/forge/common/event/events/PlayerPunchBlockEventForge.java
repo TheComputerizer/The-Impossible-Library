@@ -11,61 +11,69 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_PUNCH_BLOCK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWrapper<LeftClickBlock>
+public class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWrapper<LeftClickBlock>
         implements CommonForgeEvent {
+    
+    @SubscribeEvent
+    public static void onEvent(LeftClickBlock event) {
+        PLAYER_PUNCH_BLOCK.invoke(event);
+    }
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(event -> ((LeftClickBlock)event).getItemStack());
+        return wrapItemStack(stackGetter());
+    }
+    
+    @Override protected WorldAPI<?> getWorld() {
+        return wrapWorld(worldGetter());
     }
     
     @Override public void setEvent(LeftClickBlock event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,Result> wrapBlockResultField() {
-        return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseBlock()),
-                (event,result) -> event.setUseBlock(EventHelper.setEventResult((Result)result)),DEFAULT);
+        return wrapEventResultBoth("getUseBlock","setUseBlock");
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,Facing> wrapFacingField() {
-        return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),Facing.UP);
+        return wrapGenericGetter(getter("getFace",EventHelper::getFacing),UP);
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,Hand> wrapHandField() {
-        return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
+        return wrapGenericGetter(getter("getHand",EventHelper::getHand),MAINHAND);
     }
 
     @Override protected EventFieldWrapper<LeftClickBlock,Vector3> wrapHitVecField() {
         return wrapGenericGetter(event -> VectorHelper.zero3D(),VectorHelper.zero3D());
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,Result> wrapItemResultField() {
-        return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseItem()),
-                (event,result) -> event.setUseItem(EventHelper.setEventResult((Result)result)),DEFAULT);
+        return wrapEventResultBoth("getUseItem","setUseItem");
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(LeftClickBlock::getEntity);
+        return wrapPlayerGetter(entityGetter());
     }
-
+    
     @Override protected EventFieldWrapper<LeftClickBlock,BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(LeftClickBlock::getPos);
+        return wrapPosGetter(getter("getPos"));
     }
 }

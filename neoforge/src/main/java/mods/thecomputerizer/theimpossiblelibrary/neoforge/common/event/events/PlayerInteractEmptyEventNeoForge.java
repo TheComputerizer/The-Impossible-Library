@@ -26,11 +26,11 @@ public class PlayerInteractEmptyEventNeoForge extends PlayerInteractEmptyEventWr
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickEmpty::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
-
+    
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickEmpty::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void setEvent(RightClickEmpty event) {

@@ -32,9 +32,9 @@ public class FOVModifierEvent1_12_2 extends FOVModifierEventWrapper<FOVModifier>
         super.setEvent(event);
         setCanceled(event.isCanceled());
     }
-
+    
     @Override protected EventFieldWrapper<FOVModifier,Float> wrapFOVField() {
-        return wrapGenericBoth(FOVModifier::getFOV,FOVModifier::setFOV,0f);
+        return wrapGenericBoth(getter("getFOV"),setter("setFOV"),0f);
     }
 
     @Override protected EventFieldWrapper<FOVModifier,EntityAPI<?,?>> wrapEntityField() {

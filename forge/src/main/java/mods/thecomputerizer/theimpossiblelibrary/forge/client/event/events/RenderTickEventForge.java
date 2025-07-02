@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.RenderTickEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,7 +15,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.START;
 
-public class RenderTickEventForge extends RenderTickEventWrapper<RenderTickEvent> {
+public class RenderTickEventForge extends RenderTickEventWrapper<RenderTickEvent>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(RenderTickEvent event) {

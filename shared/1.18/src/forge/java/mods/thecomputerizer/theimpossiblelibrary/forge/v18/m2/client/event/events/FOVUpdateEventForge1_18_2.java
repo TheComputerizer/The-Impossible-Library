@@ -18,17 +18,17 @@ public class FOVUpdateEventForge1_18_2 extends FOVUpdateEventForge<FieldOfView> 
     }
     
     @Override protected EventFieldWrapper<FieldOfView,Float> wrapFOVField() {
-        return wrapGenericGetter(event -> (float)event.getFOV(),0f);
+        return wrapGenericGetter(getter("getFOV"),0f);
     }
     
     @Override protected EventFieldWrapper<FieldOfView,Float> wrapNewFOVField() {
-        return wrapGenericBoth(event -> (float)event.getFOV(),(event,value) -> event.setFOV(value),0f);
+        return wrapGenericBoth(getter("getFOV"),setter("setFOV"),0f);
     }
     
     @Override protected EventFieldWrapper<FieldOfView,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> {
             Entity entity = event.getCamera().getEntity();
-            return entity instanceof Player ? (Player)entity : null;
+            return entity instanceof Player ? entity : null;
         });
     }
 }

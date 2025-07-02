@@ -22,7 +22,7 @@ public class PlayerNameFormatEventNeoForge extends PlayerNameFormatEventWrapper<
     
     @Override protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> event.getDisplayname().getString(),
-                (event,name) -> event.setDisplayname(TextHelper.getLiteral(name).getAsComponent()),"");
+                (event,name) -> event.setDisplayname(TextHelper.getLiteral((String)name).getAsComponent()),"");
     }
 
     @Override protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {

@@ -1,12 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.client.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.events.ClientDisconnectedEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggedOutEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.CLIENT_DISCONNECTED;
 
-public class ClientDisconnectedEventForge extends ClientDisconnectedEventWrapper<LoggedOutEvent> {
+public class ClientDisconnectedEventForge extends ClientDisconnectedEventWrapper<LoggedOutEvent>
+        implements ClientForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LoggedOutEvent event) {

@@ -33,11 +33,11 @@ public class PlayerInteractBlockEventNeoForge extends PlayerInteractBlockEventWr
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickBlock::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickBlock::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void setEvent(RightClickBlock event) {

@@ -6,8 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrap
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
-
-
+import org.jetbrains.annotations.NotNull;
 
 public class MessageWrapperForge1_21 extends MessageWrapperAPI<ServerPlayer,Context> implements CustomPacketPayload {
     
@@ -29,7 +28,7 @@ public class MessageWrapperForge1_21 extends MessageWrapperAPI<ServerPlayer,Cont
         super(buf);
     }
     
-    @Override public Type<MessageWrapperForge1_21> type() {
+    @Override public @NotNull Type<MessageWrapperForge1_21> type() {
         return TYPE;
     }
 }

@@ -26,11 +26,11 @@ public class PlayerInteractItemEventNeoForge extends PlayerInteractItemEventWrap
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickItem::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(RightClickItem::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void cancel() {

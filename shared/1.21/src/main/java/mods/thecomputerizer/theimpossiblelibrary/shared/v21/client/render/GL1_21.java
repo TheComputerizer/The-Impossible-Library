@@ -168,13 +168,16 @@ public class GL1_21 implements GLAPI {
     }
     
     @Override public void setWorkingMatrix(Object matrix) {
-        if(matrix instanceof GuiGraphics) this.workingPose = ((GuiGraphics)matrix).pose().last();
-        else if(matrix instanceof PoseStack) this.workingPose = ((PoseStack)matrix).last();
-        else if(matrix instanceof Pose) this.workingPose = (Pose)matrix;
-        else {
-            if(Objects.nonNull(matrix))
-                TILRef.logError("Tried to set working Pose for GL1_21 to a non GuiGraphics, PoseStack, or Pose {}",matrix);
-            this.workingPose = null;
+        switch(matrix) {
+            case GuiGraphics guiGraphics -> this.workingPose = guiGraphics.pose().last();
+            case PoseStack poseStack -> this.workingPose = poseStack.last();
+            case Pose pose -> this.workingPose = pose;
+            case null, default -> {
+                if(Objects.nonNull(matrix))
+                    TILRef.logError("Tried to set working Pose for GL1_21 to a non GuiGraphics, PoseStack, or Pose {}",
+                                    matrix);
+                this.workingPose = null;
+            }
         }
     }
     

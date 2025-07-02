@@ -32,11 +32,11 @@ public class PlayerPunchBlockEventNeoForge extends PlayerPunchBlockEventWrapper<
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(LeftClickBlock::getItemStack);
+        return wrapItemStack(getter("getItemStack"));
     }
-
+    
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(LeftClickBlock::getLevel);
+        return wrapWorld(getter("getLevel"));
     }
     
     @Override public void setEvent(LeftClickBlock event) {

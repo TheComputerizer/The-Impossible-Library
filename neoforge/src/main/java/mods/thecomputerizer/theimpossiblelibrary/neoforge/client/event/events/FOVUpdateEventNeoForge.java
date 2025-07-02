@@ -22,17 +22,17 @@ public class FOVUpdateEventNeoForge extends FOVUpdateEventWrapper<ComputeFov> {
     }
     
     @Override protected EventFieldWrapper<ComputeFov,Float> wrapFOVField() {
-        return wrapGenericGetter(event -> (float)event.getFOV(),0f);
+        return wrapGenericGetter(getter("getFOV"),0f);
     }
     
     @Override protected EventFieldWrapper<ComputeFov,Float> wrapNewFOVField() {
-        return wrapGenericBoth(event -> (float)event.getFOV(),(event,value) -> event.setFOV(value),0f);
+        return wrapGenericBoth(getter("getFOV"),setter("setFOV"),0f);
     }
     
     @Override protected EventFieldWrapper<ComputeFov,PlayerAPI<?,?>> wrapPlayerField() {
         return wrapPlayerGetter(event -> {
             Entity entity = event.getCamera().getEntity();
-            return entity instanceof Player ? (Player)entity : null;
+            return entity instanceof Player ? entity : null;
         });
     }
 }

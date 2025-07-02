@@ -16,11 +16,11 @@ public class FOVUpdateEventForge1_16_5 extends FOVUpdateEventForge<FOVUpdateEven
     }
     
     @Override protected EventFieldWrapper<FOVUpdateEvent,Float> wrapFOVField() {
-        return wrapGenericGetter(FOVUpdateEvent::getFov,0f);
+        return wrapGenericGetter(getter("getFov"),0f);
     }
     
     @Override protected EventFieldWrapper<FOVUpdateEvent,Float> wrapNewFOVField() {
-        return wrapGenericBoth(FOVUpdateEvent::getNewfov,FOVUpdateEvent::setNewfov,0f);
+        return wrapGenericBoth(getter("getNewfov"),setter("setNewfov"),0f);
     }
     
     @Override protected EventFieldWrapper<FOVUpdateEvent,PlayerAPI<?,?>> wrapPlayerField() {

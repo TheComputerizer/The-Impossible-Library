@@ -45,6 +45,7 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
         ClassHelper.addSource(sources,TILCoreForge1_16_5.class);
     }
     
+    @SuppressWarnings("ConstantValue")
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
         if(loader instanceof TransformingClassLoader) {

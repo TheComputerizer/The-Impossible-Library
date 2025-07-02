@@ -12,23 +12,33 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
-import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_INTERACT_ENTITY_AT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific>
+public class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific>
         implements CommonForgeEvent {
+    
+    @SubscribeEvent
+    public static void onEvent(EntityInteractSpecific event) {
+        PLAYER_INTERACT_ENTITY_AT.invoke(event);
+    }
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
+        return wrapItemStack(stackGetter());
+    }
+    
+    @Override protected WorldAPI<?> getWorld() {
+        return wrapWorld(worldGetter());
     }
     
     @Override public void setEvent(EntityInteractSpecific event) {
@@ -37,31 +47,30 @@ public abstract class PlayerInteractEntitySpecificEventForge extends PlayerInter
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,ActionResult> wrapCancelResultField() {
-        return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
+        return wrapActionResultBoth("getCancellationResult","setCancellationResult");
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,Facing> wrapFacingField() {
-        return wrapGenericGetter(event -> EventHelper.getFacing(event.getFace()),UP);
+        return wrapGenericGetter(getter("getFace",EventHelper::getFacing),UP);
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,Hand> wrapHandField() {
-        return wrapGenericGetter(event -> EventHelper.getHand(event.getHand()),MAINHAND);
+        return wrapGenericGetter(getter("getHand",EventHelper::getHand),MAINHAND);
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,Vector3> wrapLocalPosField() {
-        return wrapGenericGetter(event -> EventHelper.getVec3d(event.getLocalPos()),VectorHelper.zero3D());
+        return wrapGenericGetter(getter("getLocalPos",EventHelper::getVec3d),VectorHelper.zero3D());
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(EntityInteractSpecific::getEntity);
+        return wrapPlayerGetter(entityGetter());
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,BlockPosAPI<?>> wrapPosField() {
-        return wrapPosGetter(EntityInteractSpecific::getPos);
+        return wrapPosGetter(getter("getPos"));
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,EntityAPI<?,?>> wrapTargetField() {
-        return wrapEntityGetter(EntityInteractSpecific::getTarget);
+        return wrapEntityGetter(getter("getTarget"));
     }
 }
