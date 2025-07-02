@@ -3,12 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingHealEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_HEAL;
 
-public class LivingHealEventForge extends LivingHealEventWrapper<LivingHealEvent> {
+public class LivingHealEventForge extends LivingHealEventWrapper<LivingHealEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LivingHealEvent event) {

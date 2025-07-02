@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterBlockEntitiesEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-public abstract class RegisterBlockEntitiesEventForge<E extends Event> extends RegisterBlockEntitiesEventWrapper<E> {
+public abstract class RegisterBlockEntitiesEventForge<E extends Event> extends RegisterBlockEntitiesEventWrapper<E>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

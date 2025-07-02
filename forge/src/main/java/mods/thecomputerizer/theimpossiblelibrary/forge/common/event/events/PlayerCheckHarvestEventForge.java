@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerCheckHarvestEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.HarvestCheck;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_CHECK_HARVEST;
 
-public class PlayerCheckHarvestEventForge extends PlayerCheckHarvestEventWrapper<HarvestCheck> {
+public class PlayerCheckHarvestEventForge extends PlayerCheckHarvestEventWrapper<HarvestCheck>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(HarvestCheck event) {

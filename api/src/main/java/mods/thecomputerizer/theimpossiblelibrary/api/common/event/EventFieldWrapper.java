@@ -1,4 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;

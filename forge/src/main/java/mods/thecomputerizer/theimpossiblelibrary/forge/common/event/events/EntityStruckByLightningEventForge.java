@@ -3,12 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.EntityStruckByLightningEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.ENTITY_SMITTEN;
 
-public class EntityStruckByLightningEventForge extends EntityStruckByLightningEventWrapper<EntityStruckByLightningEvent> {
+public class EntityStruckByLightningEventForge extends EntityStruckByLightningEventWrapper<EntityStruckByLightningEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(EntityStruckByLightningEvent event) {

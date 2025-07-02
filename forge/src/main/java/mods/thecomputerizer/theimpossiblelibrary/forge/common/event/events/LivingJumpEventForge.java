@@ -3,12 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingJumpEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_JUMP;
 
-public class LivingJumpEventForge extends LivingJumpEventWrapper<LivingJumpEvent> {
+public class LivingJumpEventForge extends LivingJumpEventWrapper<LivingJumpEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LivingJumpEvent event) {

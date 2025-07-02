@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
@@ -18,14 +19,15 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWr
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapper<RightClickBlock> {
+public abstract class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapper<RightClickBlock>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickBlock::getItemStack);
+        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
     }
     
     @Override public void setEvent(RightClickBlock event) {
@@ -35,12 +37,12 @@ public abstract class PlayerInteractBlockEventForge extends PlayerInteractBlockE
 
     @Override protected EventFieldWrapper<RightClickBlock,Result> wrapBlockResultField() {
         return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseBlock()),
-                (event,result) -> event.setUseBlock(EventHelper.setEventResult(result)),DEFAULT);
+                (event,result) -> event.setUseBlock(EventHelper.setEventResult((Result)result)),DEFAULT);
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,Facing> wrapFacingField() {
@@ -57,7 +59,7 @@ public abstract class PlayerInteractBlockEventForge extends PlayerInteractBlockE
 
     @Override protected EventFieldWrapper<RightClickBlock,Result> wrapItemResultField() {
         return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseItem()),
-                (event,result) -> event.setUseItem(EventHelper.setEventResult(result)),DEFAULT);
+                (event,result) -> event.setUseItem(EventHelper.setEventResult((Result)result)),DEFAULT);
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,PlayerAPI<?,?>> wrapPlayerField() {

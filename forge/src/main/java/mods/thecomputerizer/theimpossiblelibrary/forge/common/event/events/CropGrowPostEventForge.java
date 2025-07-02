@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.CropGrowPostEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-public abstract class CropGrowPostEventForge<E extends Event> extends CropGrowPostEventWrapper<E> {
+public abstract class CropGrowPostEventForge<E extends Event> extends CropGrowPostEventWrapper<E>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

@@ -20,7 +20,7 @@ public class PlayerStopTrackingEventNeoForge extends PlayerStopTrackingEventWrap
         super.setEvent(event);
     }
     
-    @Override protected EventFieldWrapper<StopTracking,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<StopTracking,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(StopTracking::getTarget);
     }
 

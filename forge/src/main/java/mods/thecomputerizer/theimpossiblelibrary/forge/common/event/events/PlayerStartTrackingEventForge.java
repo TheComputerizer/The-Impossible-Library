@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerStartTrackingEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.StartTracking;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_START_TRACKING;
 
-public class PlayerStartTrackingEventForge extends PlayerStartTrackingEventWrapper<StartTracking> {
+public class PlayerStartTrackingEventForge extends PlayerStartTrackingEventWrapper<StartTracking>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(StartTracking event) {
@@ -25,7 +27,7 @@ public class PlayerStartTrackingEventForge extends PlayerStartTrackingEventWrapp
         setCanceled(event.isCanceled());
     }
     
-    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(StartTracking::getTarget);
     }
 

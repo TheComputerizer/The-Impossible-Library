@@ -3,6 +3,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
 import lombok.Getter;
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
@@ -70,194 +72,193 @@ public abstract class EventWrapper<E> {
         this.event = event;
         populate();
     }
-
-    protected <V> @Nullable AdvancementAPI<V> wrapAdvancement(@Nullable Function<E,V> advancementFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(advancementFunc) ?
-                WrapperHelper.wrapAdvancement(advancementFunc.apply(this.event)) : null;
+    
+    private <T> T unwrap(Object obj) {
+        return BasicWrapped.cast(obj);
+    }
+    
+    private <V> BiConsumer<E,V> wrappedSetter(BiConsumer<?,?> generic) {
+        final Function<Object,V> unwrapper = wrapped -> {
+            if(wrapped instanceof BlockEntityAPI<?,?>) return unwrap(((BlockEntityAPI<?,?>)wrapped).getEntity());
+            if(wrapped instanceof EntityAPI<?,?>) return unwrap(((EntityAPI<?,?>)wrapped).getEntity());
+            return ((Wrapped<?>)wrapped).unwrap();
+        };
+        return (event,api) -> generic.accept(unwrap(event),unwrap(unwrapper.apply(api)));
     }
 
-    protected <V> EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapAdvancement(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected @Nullable AdvancementAPI<?> wrapAdvancement(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapAdvancement(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementGetter(Function<E,V> getter) {
+    protected <V,T> EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapAdvancement(getter),wrappedSetter(setter),null);
+    }
+
+    protected <V> EventFieldWrapper<E,AdvancementAPI<?>> wrapAdvancementGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapAdvancement(getter),null);
     }
 
-    protected <V> @Nullable BlockAPI<V> wrapBlock(@Nullable Function<E,V> blockFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(blockFunc) ?
-                WrapperHelper.wrapBlock(blockFunc.apply(this.event)) : null;
+    protected @Nullable BlockAPI<?> wrapBlock(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapBlock(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,BlockAPI<?>> wrapBlockBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapBlock(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,BlockAPI<?>> wrapBlockBoth(Function<E,?> getter, 
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapBlock(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,BlockAPI<?>> wrapBlockGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,BlockAPI<?>> wrapBlockGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapBlock(getter),null);
     }
 
-    protected <V> @Nullable BlockEntityAPI<V,?> wrapBlockEntity(@Nullable Function<E,V> blockEntityFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(blockEntityFunc) ?
-                WrapperHelper.wrapBlockEntity(blockEntityFunc.apply(this.event)) : null;
+    protected @Nullable BlockEntityAPI<?,?> wrapBlockEntity(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapBlockEntity(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapBlockEntity(getter),
-                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
+    protected <V,T> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityBoth(Function<E,?> getter, 
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapBlockEntity(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,BlockEntityAPI<?,?>> wrapBlockEntityGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapBlockEntity(getter),null);
     }
 
-    protected <V> @Nullable EntityAPI<V,?> wrapEntity(@Nullable Function<E,V> entityFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(entityFunc) ?
-                WrapperHelper.wrapEntity(entityFunc.apply(this.event)) : null;
+    protected @Nullable EntityAPI<?,?> wrapEntity(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapEntity(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapEntity(getter),
-                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
+    protected <V,T> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapEntity(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapEntity(getter),null);
     }
 
-    protected <V> @Nullable ExplosionAPI<V> wrapExplosion(@Nullable Function<E,V> explosionFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(explosionFunc) ?
-                WrapperHelper.wrapExplosion(explosionFunc.apply(this.event)) : null;
+    protected @Nullable ExplosionAPI<?> wrapExplosion(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapExplosion(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,ExplosionAPI<?>> wrapExplosionBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapExplosion(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,ExplosionAPI<?>> wrapExplosionBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapExplosion(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,ExplosionAPI<?>> wrapExplosionGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,ExplosionAPI<?>> wrapExplosionGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapExplosion(getter),null);
     }
 
-    protected <V> @Nullable ItemAPI<V> wrapItem(@Nullable Function<E,V> itemFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(itemFunc) ?
-                WrapperHelper.wrapItem(itemFunc.apply(this.event)) : null;
+    protected @Nullable ItemAPI<?> wrapItem(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapItem(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,ItemAPI<?>> wrapItemBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapItem(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,ItemAPI<?>> wrapItemBoth(Function<E,?> getter, BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapItem(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,ItemAPI<?>> wrapItemGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,ItemAPI<?>> wrapItemGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapItem(getter),null);
     }
 
-    protected <V> @Nullable ItemStackAPI<V> wrapItemStack(@Nullable Function<E,V> itemStackFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(itemStackFunc) ?
-                WrapperHelper.wrapItemStack(itemStackFunc.apply(this.event)) : null;
+    protected @Nullable ItemStackAPI<?> wrapItemStack(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapItemStack(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,ItemStackAPI<?>> wrapItemStackBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapItemStack(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,ItemStackAPI<?>> wrapItemStackBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapItemStack(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,ItemStackAPI<?>> wrapItemStackGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,ItemStackAPI<?>> wrapItemStackGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapItemStack(getter),null);
     }
 
-    protected <V> @Nullable LivingEntityAPI<V,?> wrapLiving(@Nullable Function<E,V> livingFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(livingFunc) ?
-                WrapperHelper.wrapLivingEntity(livingFunc.apply(this.event)) : null;
+    protected @Nullable LivingEntityAPI<?,?> wrapLiving(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapLivingEntity(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapLiving(getter),
-                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
+    protected <V,T> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapLiving(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,LivingEntityAPI<?,?>> wrapLivingGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapLiving(getter),null);
     }
 
-    protected <V> @Nullable PlayerAPI<V,?> wrapPlayer(@Nullable Function<E,V> playerFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(playerFunc) ?
-                WrapperHelper.wrapPlayer(playerFunc.apply(this.event)) : null;
+    protected @Nullable PlayerAPI<?,?> wrapPlayer(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapPlayer(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapPlayer(getter),
-                (event,api) -> setter.accept(event,BasicWrapped.cast(api.getEntity())),null);
+    protected <V,T> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapPlayer(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,PlayerAPI<?,?>> wrapPlayerGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapPlayer(getter),null);
     }
 
-    protected <V> BlockPosAPI<?> wrapPos(@Nullable Function<E,V> posFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(posFunc) ?
-                WrapperHelper.wrapPosition(posFunc.apply(this.event)) : null;
+    protected @Nullable BlockPosAPI<?> wrapPos(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapPosition(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapPos(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapPos(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,BlockPosAPI<?>> wrapPosGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapPos(getter),null);
     }
 
-    protected <V> EventFieldWrapper<E,V> wrapGenericBoth(Function<E,V> getter, BiConsumer<E,V> setter, V defVal) {
-        return new EventFieldWrapper<>(getter,setter,defVal);
+    protected <V,T> EventFieldWrapper<E,V> wrapGenericBoth(Function<E,?> getter, BiConsumer<E,T> setter, V defVal) {
+        return new EventFieldWrapper<>(GenericUtils.castFunction(getter),GenericUtils.castBiConsumer(setter),defVal);
     }
 
-    protected <V> EventFieldWrapper<E,V> wrapGenericGetter(Function<E,V> getter, V defVal) {
-        return new EventFieldWrapper<>(getter,defVal);
+    protected <V> EventFieldWrapper<E,V> wrapGenericGetter(Function<E,?> getter, V defVal) {
+        return new EventFieldWrapper<>(GenericUtils.castFunction(getter),defVal);
     }
 
-    protected <V> @Nullable BlockSnapshotAPI<V> wrapSnapshot(@Nullable Function<E,V> snapshotFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(snapshotFunc) ?
-                WrapperHelper.wrapSnapshot(snapshotFunc.apply(this.event)) : null;
+    protected @Nullable BlockSnapshotAPI<?> wrapSnapshot(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapSnapshot(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,BlockSnapshotAPI<?>> wrapSnapshotBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapSnapshot(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,BlockSnapshotAPI<?>> wrapSnapshotBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapSnapshot(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,BlockSnapshotAPI<?>> wrapSnapshotGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,BlockSnapshotAPI<?>> wrapSnapshotGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapSnapshot(getter),null);
     }
 
-    protected <V> @Nullable BlockStateAPI<V> wrapState(@Nullable Function<E,V> stateFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(stateFunc) ?
-                WrapperHelper.wrapState(stateFunc.apply(this.event)) : null;
+    protected @Nullable BlockStateAPI<?> wrapState(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapState(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,BlockStateAPI<?>> wrapStateBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapState(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,BlockStateAPI<?>> wrapStateBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapState(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,BlockStateAPI<?>> wrapStateGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,BlockStateAPI<?>> wrapStateGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapState(getter),null);
     }
 
-    protected <V> @Nullable WorldAPI<V> wrapWorld(@Nullable Function<E,V> worldFunc) {
-        return Objects.nonNull(this.event) && Objects.nonNull(worldFunc) ?
-                WrapperHelper.wrapWorld(worldFunc.apply(this.event)) : null;
+    protected @Nullable WorldAPI<?> wrapWorld(@Nullable Function<?,?> getter) {
+        return WrapperHelper.wrapWorld(this.event,getter);
     }
 
-    protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldBoth(Function<E,V> getter, BiConsumer<E,V> setter) {
-        return new EventFieldWrapper<>(event -> wrapWorld(getter),
-                (event,api) -> setter.accept(event,api.unwrap()),null);
+    protected <V,T> EventFieldWrapper<E,WorldAPI<?>> wrapWorldBoth(Function<E,?> getter,
+            BiConsumer<E,T> setter) {
+        return new EventFieldWrapper<>(event -> wrapWorld(getter),wrappedSetter(setter),null);
     }
 
-    protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldGetter(Function<E,V> getter) {
+    protected <V> EventFieldWrapper<E,WorldAPI<?>> wrapWorldGetter(Function<E,?> getter) {
         return new EventFieldWrapper<>(event -> wrapWorld(getter),null);
     }
     

@@ -3,12 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerChangedDimensionsEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_CHANGED_DIMENSIONS;
 
-public class PlayerChangedDimensionsEventForge extends PlayerChangedDimensionsEventWrapper<PlayerChangedDimensionEvent> {
+public class PlayerChangedDimensionsEventForge extends PlayerChangedDimensionsEventWrapper<PlayerChangedDimensionEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(PlayerChangedDimensionEvent event) {

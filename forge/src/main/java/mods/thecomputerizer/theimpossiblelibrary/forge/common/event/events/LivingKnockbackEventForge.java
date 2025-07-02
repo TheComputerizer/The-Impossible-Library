@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingKnockbackEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_KNOCKBACK;
 
-public class LivingKnockbackEventForge extends LivingKnockbackEventWrapper<LivingKnockBackEvent> {
+public class LivingKnockbackEventForge extends LivingKnockbackEventWrapper<LivingKnockBackEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LivingKnockBackEvent event) {

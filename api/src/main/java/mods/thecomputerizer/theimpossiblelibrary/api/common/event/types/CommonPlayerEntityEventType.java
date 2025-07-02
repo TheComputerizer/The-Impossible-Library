@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 
 public abstract class CommonPlayerEntityEventType<E> extends CommonPlayerEventType<E> {
 
-    protected EventFieldWrapper<E,EntityAPI<?,?>> entity;
+    protected EventFieldWrapper<E,EntityAPI<?,?>> otherEntity;
 
     protected CommonPlayerEntityEventType(CommonType<?> type) {
         super(type);
@@ -13,8 +13,8 @@ public abstract class CommonPlayerEntityEventType<E> extends CommonPlayerEventTy
 
     public void populate() {
         super.populate();
-        this.entity = wrapEntityField();
+        this.entity = wrapOtherEntityField();
     }
 
-    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityField();
+    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapOtherEntityField();
 }

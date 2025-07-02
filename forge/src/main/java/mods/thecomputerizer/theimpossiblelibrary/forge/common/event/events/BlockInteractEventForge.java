@@ -6,12 +6,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.BlockInteractEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.BLOCK_INTERACT;
 
-public class BlockInteractEventForge extends BlockInteractEventWrapper<BlockToolInteractEvent> { //TODO Finish implementing this
+public class BlockInteractEventForge extends BlockInteractEventWrapper<BlockToolInteractEvent>
+        implements CommonForgeEvent { //TODO Finish implementing this
     
     @SubscribeEvent
     public static void onEvent(BlockToolInteractEvent event) {

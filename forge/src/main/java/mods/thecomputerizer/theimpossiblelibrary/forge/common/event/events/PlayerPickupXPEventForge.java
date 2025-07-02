@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerPickupXPEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_XP_PICKUP;
 
-public class PlayerPickupXPEventForge extends PlayerPickupXPEventWrapper<PickupXp> {
+public class PlayerPickupXPEventForge extends PlayerPickupXPEventWrapper<PickupXp>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(PickupXp event) {
@@ -29,7 +31,7 @@ public class PlayerPickupXPEventForge extends PlayerPickupXPEventWrapper<PickupX
         return wrapPlayerGetter(PickupXp::getEntity);
     }
 
-    @Override protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(PickupXp::getOrb);
     }
 }

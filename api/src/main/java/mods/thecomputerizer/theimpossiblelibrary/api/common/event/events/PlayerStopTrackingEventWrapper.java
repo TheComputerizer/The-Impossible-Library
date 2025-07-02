@@ -12,6 +12,6 @@ public abstract class PlayerStopTrackingEventWrapper<E> extends CommonPlayerEnti
     }
 
     public EntityAPI<?,?> getTarget() {
-        return this.entity.get(this.event);
+        return this.otherEntity.get(this.event);
     }
 }

@@ -4,9 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerBreakSpeedEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 
-public abstract class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<BreakSpeed> {
+public abstract class PlayerBreakSpeedEventForge extends PlayerBreakSpeedEventWrapper<BreakSpeed>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

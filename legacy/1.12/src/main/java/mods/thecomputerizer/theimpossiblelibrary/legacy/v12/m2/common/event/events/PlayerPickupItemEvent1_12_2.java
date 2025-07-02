@@ -26,7 +26,7 @@ public class PlayerPickupItemEvent1_12_2 extends PlayerPickupItemEventWrapper<It
         setCanceled(event.isCanceled());
     }
 
-    @Override protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapItemEntityField() {
         return wrapEntityGetter(ItemPickupEvent::getOriginalEntity);
     }
 

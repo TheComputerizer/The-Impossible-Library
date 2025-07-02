@@ -3,12 +3,15 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerLoggedInEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_LOGGED_IN;
 
-public class PlayerLoggedInEventForge extends PlayerLoggedInEventWrapper<PlayerLoggedInEvent> {
+public class PlayerLoggedInEventForge extends PlayerLoggedInEventWrapper<PlayerLoggedInEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(PlayerLoggedInEvent event) {
@@ -25,6 +28,6 @@ public class PlayerLoggedInEventForge extends PlayerLoggedInEventWrapper<PlayerL
     }
     
     @Override protected EventFieldWrapper<PlayerLoggedInEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(PlayerLoggedInEvent::getEntity);
+        return wrapPlayerGetter(GenericUtils.castFunction(playerGetter()));
     }
 }

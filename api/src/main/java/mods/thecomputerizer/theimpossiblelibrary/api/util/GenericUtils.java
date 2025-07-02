@@ -16,8 +16,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
@@ -26,15 +29,45 @@ public class GenericUtils {
     static {
         ClassHelper.checkBurningWaveInit();
     }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable T cast(@Nullable Object obj) {
+        return Objects.nonNull(obj) ? (T)obj : null;
+    }
+    
+    @IndirectCallers
+    public static <I1,I2> @Nullable BiConsumer<I1,I2> castBiConsumer(@Nullable BiConsumer<?,?> consumer) {
+        return Objects.nonNull(consumer) ? (input1,input2) -> consumer.accept(cast(input1),cast(input2)) : null;
+    }
+    
+    @IndirectCallers
+    public static <I1,I2,O> @Nullable BiFunction<I1,I2,O> castBiFunction(@Nullable BiFunction<?,?,?> function) {
+        return Objects.nonNull(function) ? (input1,input2) -> cast(function.apply(cast(input1),cast(input2))) : null;
+    }
+    
+    @IndirectCallers
+    public static <I> @Nullable Consumer<I> castConsumer(@Nullable Consumer<?> consumer) {
+        return Objects.nonNull(consumer) ? input -> consumer.accept(cast(input)) : null;
+    }
+    
+    @IndirectCallers
+    public static <I,O> @Nullable Function<I,O> castFunction(@Nullable Function<?,?> function) {
+        return Objects.nonNull(function) ? input -> cast(function.apply(cast(input))) : null;
+    }
 
     /**
      * This attempts to cast a value stored as an object to a generic type.
      * If the object is a primitive type, a stronger cast is performed by getting the string value and reparsing it
      */
-    @SuppressWarnings("unchecked")
+    @IndirectCallers
     public static <T> T castGenericType(@Nullable Object obj, Class<T> valType) {
         if(Objects.isNull(obj)) return null;
-        return isPrimitiveInstance(obj) ? (T)parseGenericType(obj.toString(),valType) : valType.cast(obj);
+        return isPrimitiveInstance(obj) ? cast(parseGenericType(obj.toString(),valType)) : valType.cast(obj);
+    }
+    
+    @IndirectCallers
+    public static <O> @Nullable Supplier<O> castSupplier(@Nullable Supplier<?> supplier) {
+        return Objects.nonNull(supplier) ? () -> cast(supplier.get()) : null;
     }
 
     /**
@@ -216,14 +249,13 @@ public class GenericUtils {
         return defaultValue;
     }
     
-    @SuppressWarnings("unchecked")
     public static <V> V parsePrimitive(String unparsed, Class<V> valType) {
         Object ret = null;
         if(valType!=void.class && valType!=Void.class)
             ret = valType==boolean.class || valType==Boolean.class ? Boolean.parseBoolean(unparsed) :
                     parseNumber(unparsed,valType);
         //Every other primitive type is a number
-        return (V)ret;
+        return cast(ret);
     }
 
     private static List<?> readFromList(ListTagAPI<?> list) {

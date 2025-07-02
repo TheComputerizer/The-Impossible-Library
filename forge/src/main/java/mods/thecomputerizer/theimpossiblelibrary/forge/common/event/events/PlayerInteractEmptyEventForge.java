@@ -9,20 +9,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickEmpty;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractEmptyEventForge extends PlayerInteractEmptyEventWrapper<RightClickEmpty> {
+public abstract class PlayerInteractEmptyEventForge extends PlayerInteractEmptyEventWrapper<RightClickEmpty>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickEmpty::getItemStack);
+        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
     }
     
     @Override public void setEvent(RightClickEmpty event) {
@@ -32,7 +35,7 @@ public abstract class PlayerInteractEmptyEventForge extends PlayerInteractEmptyE
 
     @Override protected EventFieldWrapper<RightClickEmpty,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
     }
 
     @Override protected EventFieldWrapper<RightClickEmpty,Facing> wrapFacingField() {

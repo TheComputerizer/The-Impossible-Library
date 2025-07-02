@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerLoadFromFileEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.LoadFromFile;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -10,7 +11,8 @@ import java.io.File;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_LOAD_FROM_FILE;
 
-public class PlayerLoadFromFileEventForge extends PlayerLoadFromFileEventWrapper<LoadFromFile> {
+public class PlayerLoadFromFileEventForge extends PlayerLoadFromFileEventWrapper<LoadFromFile>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LoadFromFile event) {

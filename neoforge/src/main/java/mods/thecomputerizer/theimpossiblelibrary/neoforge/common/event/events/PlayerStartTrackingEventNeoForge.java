@@ -20,7 +20,7 @@ public class PlayerStartTrackingEventNeoForge extends PlayerStartTrackingEventWr
         super.setEvent(event);
     }
     
-    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(StartTracking::getTarget);
     }
 

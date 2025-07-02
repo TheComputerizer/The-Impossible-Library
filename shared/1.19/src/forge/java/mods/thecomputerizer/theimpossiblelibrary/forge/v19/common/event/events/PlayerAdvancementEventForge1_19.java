@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v19.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.PlayerAdvancementEventForge;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
@@ -18,9 +17,5 @@ public class PlayerAdvancementEventForge1_19 extends PlayerAdvancementEventForge
     
     @Override protected EventFieldWrapper<AdvancementEarnEvent,AdvancementAPI<?>> wrapAdvancementField() {
         return wrapAdvancementGetter(AdvancementEarnEvent::getAdvancement);
-    }
-    
-    @Override protected EventFieldWrapper<AdvancementEarnEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(AdvancementEarnEvent::getEntity);
     }
 }

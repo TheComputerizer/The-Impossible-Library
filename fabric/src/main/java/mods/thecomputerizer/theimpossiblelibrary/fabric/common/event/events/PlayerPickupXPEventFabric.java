@@ -17,7 +17,7 @@ public class PlayerPickupXPEventFabric extends PlayerPickupXPEventWrapper<Object
         return wrapPlayerGetter(wrapArrayGetter(0));
     }
 
-    @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<Object[],EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(wrapArrayGetter(0));
     }
 }

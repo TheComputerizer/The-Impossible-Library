@@ -12,6 +12,6 @@ public abstract class PlayerPickupXPEventWrapper<E> extends CommonPlayerEntityEv
     }
 
     public EntityAPI<?,?> getXPEntity() {
-        return this.entity.get(this.event);
+        return this.otherEntity.get(this.event);
     }
 }

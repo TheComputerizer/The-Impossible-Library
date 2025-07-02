@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerNameTabFormatEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -11,7 +12,8 @@ import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_TAB_FORMAT;
 
-public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapper<TabListNameFormat> {
+public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapper<TabListNameFormat>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(TabListNameFormat event) {
@@ -30,7 +32,7 @@ public class PlayerNameTabFormatEventForge extends PlayerNameTabFormatEventWrapp
     @Override protected EventFieldWrapper<TabListNameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> Objects.nonNull(event.getDisplayName()) ? event.getDisplayName().getString() : null,
                                (event,name) -> event.setDisplayName(Objects.nonNull(name) ?
-                                               TextHelper.getLiteral(name).getAsComponent() : null),null);
+                                               TextHelper.getLiteral((String)name).getAsComponent() : null),null);
     }
 
     @Override protected EventFieldWrapper<TabListNameFormat,PlayerAPI<?,?>> wrapPlayerField() {

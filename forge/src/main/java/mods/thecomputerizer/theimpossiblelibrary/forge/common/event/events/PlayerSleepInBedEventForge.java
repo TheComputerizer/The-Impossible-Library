@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerSleepInBedEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_SLEEP_IN_BED;
 
-public class PlayerSleepInBedEventForge extends PlayerSleepInBedEventWrapper<PlayerSleepInBedEvent> {
+public class PlayerSleepInBedEventForge extends PlayerSleepInBedEventWrapper<PlayerSleepInBedEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(PlayerSleepInBedEvent event) {

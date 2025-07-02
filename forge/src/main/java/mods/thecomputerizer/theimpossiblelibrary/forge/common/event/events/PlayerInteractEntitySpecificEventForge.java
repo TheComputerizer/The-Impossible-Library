@@ -12,20 +12,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific> {
+public abstract class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntitySpecificEventWrapper<EntityInteractSpecific>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(EntityInteractSpecific::getItemStack);
+        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
     }
     
     @Override public void setEvent(EntityInteractSpecific event) {
@@ -35,7 +38,7 @@ public abstract class PlayerInteractEntitySpecificEventForge extends PlayerInter
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,Facing> wrapFacingField() {

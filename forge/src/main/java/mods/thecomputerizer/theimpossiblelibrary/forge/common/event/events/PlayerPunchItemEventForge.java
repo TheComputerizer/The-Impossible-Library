@@ -9,8 +9,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 
-public class PlayerPunchItemEventForge extends PlayerPunchItemEventWrapper<Object> {
+public class PlayerPunchItemEventForge extends PlayerPunchItemEventWrapper<Object>
+        implements CommonForgeEvent {
     
     //public static void onEvent(Object event) {
     //    PLAYER_PUNCH_ITEM.invoke(event);

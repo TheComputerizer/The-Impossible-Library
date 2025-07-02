@@ -10,20 +10,23 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractEntityEventForge extends PlayerInteractEntityEventWrapper<EntityInteract> {
+public abstract class PlayerInteractEntityEventForge extends PlayerInteractEntityEventWrapper<EntityInteract>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(EntityInteract::getItemStack);
+        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
     }
     
     @Override public void setEvent(EntityInteract event) {
@@ -33,7 +36,7 @@ public abstract class PlayerInteractEntityEventForge extends PlayerInteractEntit
 
     @Override protected EventFieldWrapper<EntityInteract,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
     }
 
     @Override protected EventFieldWrapper<EntityInteract,Facing> wrapFacingField() {

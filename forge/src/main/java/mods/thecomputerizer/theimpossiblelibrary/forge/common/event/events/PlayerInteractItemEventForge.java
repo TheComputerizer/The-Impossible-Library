@@ -9,16 +9,19 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.UP;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerInteractItemEventForge extends PlayerInteractItemEventWrapper<RightClickItem> {
+public abstract class PlayerInteractItemEventForge extends PlayerInteractItemEventWrapper<RightClickItem>
+        implements CommonForgeEvent {
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(RightClickItem::getItemStack);
+        return wrapItemStack(event -> ((RightClickBlock)event).getItemStack());
     }
     
     @Override public void cancel() {
@@ -32,7 +35,7 @@ public abstract class PlayerInteractItemEventForge extends PlayerInteractItemEve
 
     @Override protected EventFieldWrapper<RightClickItem,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
     }
 
     @Override protected EventFieldWrapper<RightClickItem,Facing> wrapFacingField() {

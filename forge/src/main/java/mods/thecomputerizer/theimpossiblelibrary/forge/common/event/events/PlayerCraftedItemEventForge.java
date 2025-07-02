@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerCraftedItemEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_ITEM_CRAFTED;
 
-public class PlayerCraftedItemEventForge extends PlayerCraftedItemEventWrapper<ItemCraftedEvent> {
+public class PlayerCraftedItemEventForge extends PlayerCraftedItemEventWrapper<ItemCraftedEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(ItemCraftedEvent event) {

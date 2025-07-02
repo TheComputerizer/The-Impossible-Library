@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.RegisterCommandsEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 
-public abstract class RegisterCommandsEventForge extends RegisterCommandsEventWrapper<RegisterCommandsEvent> {
+public abstract class RegisterCommandsEventForge extends RegisterCommandsEventWrapper<RegisterCommandsEvent>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

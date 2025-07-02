@@ -3,12 +3,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingFallEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_FALL;
 
-public class LivingFallEventForge extends LivingFallEventWrapper<LivingFallEvent> {
+public class LivingFallEventForge extends LivingFallEventWrapper<LivingFallEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(LivingFallEvent event) {

@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.WorldUnloadEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-public abstract class WorldUnloadEventForge<E extends Event> extends WorldUnloadEventWrapper<E> {
+public abstract class WorldUnloadEventForge<E extends Event> extends WorldUnloadEventWrapper<E>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

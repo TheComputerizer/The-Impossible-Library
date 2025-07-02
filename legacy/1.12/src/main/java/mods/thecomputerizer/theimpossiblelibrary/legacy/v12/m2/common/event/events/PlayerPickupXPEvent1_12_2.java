@@ -29,7 +29,7 @@ public class PlayerPickupXPEvent1_12_2 extends PlayerPickupXPEventWrapper<Player
         return wrapPlayerGetter(PlayerPickupXpEvent::getEntityPlayer);
     }
 
-    @Override protected EventFieldWrapper<PlayerPickupXpEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<PlayerPickupXpEvent,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(PlayerPickupXpEvent::getOrb);
     }
 }

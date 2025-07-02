@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerTickEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -12,7 +13,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.C
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.END;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.types.CommonTickableEventType.TickPhase.START;
 
-public class PlayerTickEventForge extends PlayerTickEventWrapper<PlayerTickEvent> {
+public class PlayerTickEventForge extends PlayerTickEventWrapper<PlayerTickEvent>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(PlayerTickEvent event) {

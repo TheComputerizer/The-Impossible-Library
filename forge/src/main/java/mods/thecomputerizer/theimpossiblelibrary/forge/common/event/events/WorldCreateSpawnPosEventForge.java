@@ -1,9 +1,11 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.WorldCreateSpawnPosEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-public abstract class WorldCreateSpawnPosEventForge<E extends Event> extends WorldCreateSpawnPosEventWrapper<E> {
+public abstract class WorldCreateSpawnPosEventForge<E extends Event> extends WorldCreateSpawnPosEventWrapper<E>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);

@@ -15,7 +15,7 @@ public abstract class PlayerPickupItemEventWrapper<E> extends CommonPlayerStackE
         super(PLAYER_ITEM_PICKUP);
     }
 
-    public EntityAPI<?,?> getEntity() {
+    public EntityAPI<?,?> getItemEntity() {
         return this.entity.get(this.event);
     }
 
@@ -25,8 +25,8 @@ public abstract class PlayerPickupItemEventWrapper<E> extends CommonPlayerStackE
 
     public void populate() {
         super.populate();
-        this.entity = wrapEntityField();
+        this.entity = wrapItemEntityField();
     }
 
-    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapEntityField();
+    protected abstract EventFieldWrapper<E,EntityAPI<?,?>> wrapItemEntityField();
 }

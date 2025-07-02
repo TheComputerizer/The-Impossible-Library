@@ -25,7 +25,7 @@ public class PlayerStopTrackingEvent1_12_2 extends PlayerStopTrackingEventWrappe
         setCanceled(event.isCanceled());
     }
 
-    @Override protected EventFieldWrapper<StopTracking,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<StopTracking,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(StopTracking::getTarget);
     }
 

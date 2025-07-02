@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingItemUseStartEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent.Start;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_ITEM_USE_START;
 
-public class LivingItemUseStartEventForge extends LivingItemUseStartEventWrapper<Start> {
+public class LivingItemUseStartEventForge extends LivingItemUseStartEventWrapper<Start>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(Start event) {

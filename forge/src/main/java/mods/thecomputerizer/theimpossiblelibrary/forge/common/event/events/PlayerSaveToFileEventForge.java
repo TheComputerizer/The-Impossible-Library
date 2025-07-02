@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerSaveToFileEventWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.SaveToFile;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -10,7 +11,8 @@ import java.io.File;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_SAVE_TO_FILE;
 
-public class PlayerSaveToFileEventForge extends PlayerSaveToFileEventWrapper<SaveToFile> {
+public class PlayerSaveToFileEventForge extends PlayerSaveToFileEventWrapper<SaveToFile>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(SaveToFile event) {

@@ -29,7 +29,7 @@ public class PlayerPickupXPEventNeoForge extends PlayerPickupXPEventWrapper<Pick
         return wrapPlayerGetter(PickupXp::getEntity);
     }
 
-    @Override protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<PickupXp,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(PickupXp::getOrb);
     }
 }

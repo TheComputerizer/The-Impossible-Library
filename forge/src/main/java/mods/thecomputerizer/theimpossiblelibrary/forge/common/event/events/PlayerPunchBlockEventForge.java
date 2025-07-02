@@ -11,20 +11,22 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result.DEFAULT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult.PASS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
-public abstract class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWrapper<LeftClickBlock> {
+public abstract class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWrapper<LeftClickBlock>
+        implements CommonForgeEvent {
     
     @Override public void cancel() {
         this.event.setCanceled(true);
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(LeftClickBlock::getItemStack);
+        return wrapItemStack(event -> ((LeftClickBlock)event).getItemStack());
     }
     
     @Override public void setEvent(LeftClickBlock event) {
@@ -34,12 +36,12 @@ public abstract class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWr
 
     @Override protected EventFieldWrapper<LeftClickBlock,Result> wrapBlockResultField() {
         return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseBlock()),
-                (event,result) -> event.setUseBlock(EventHelper.setEventResult(result)),DEFAULT);
+                (event,result) -> event.setUseBlock(EventHelper.setEventResult((Result)result)),DEFAULT);
     }
 
     @Override protected EventFieldWrapper<LeftClickBlock,ActionResult> wrapCancelResultField() {
         return wrapGenericBoth(event -> EventHelper.getActionResult(event.getCancellationResult()),
-                (event,result) -> event.setCancellationResult(EventHelper.setActionResult(result)),PASS);
+                (event,result) -> event.setCancellationResult(EventHelper.setActionResult((ActionResult)result)),PASS);
     }
 
     @Override protected EventFieldWrapper<LeftClickBlock,Facing> wrapFacingField() {
@@ -56,7 +58,7 @@ public abstract class PlayerPunchBlockEventForge extends PlayerPunchBlockEventWr
 
     @Override protected EventFieldWrapper<LeftClickBlock,Result> wrapItemResultField() {
         return wrapGenericBoth(event -> EventHelper.getEventResult(event.getUseItem()),
-                (event,result) -> event.setUseItem(EventHelper.setEventResult(result)),DEFAULT);
+                (event,result) -> event.setUseItem(EventHelper.setEventResult((Result)result)),DEFAULT);
     }
 
     @Override protected EventFieldWrapper<LeftClickBlock,PlayerAPI<?,?>> wrapPlayerField() {

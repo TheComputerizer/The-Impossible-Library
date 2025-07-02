@@ -25,7 +25,7 @@ public class PlayerStartTrackingEvent1_12_2 extends PlayerStartTrackingEventWrap
         setCanceled(event.isCanceled());
     }
 
-    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<StartTracking,EntityAPI<?,?>> wrapOtherEntityField() {
         return wrapEntityGetter(StartTracking::getTarget);
     }
 

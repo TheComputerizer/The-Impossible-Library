@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.CustomTickEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -9,7 +10,8 @@ import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.CUSTOM_TICK;
 
-public class CustomTickEventForge extends CustomTickEventWrapper<CustomTickForge> {
+public class CustomTickEventForge extends CustomTickEventWrapper<CustomTickForge>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(CustomTickForge event) {

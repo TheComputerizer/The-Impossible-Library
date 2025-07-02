@@ -4,12 +4,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.PlayerNameFormatEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.PLAYER_NAME_FORMAT;
 
-public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<NameFormat> {
+public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<NameFormat>
+        implements CommonForgeEvent {
     
     @SubscribeEvent
     public static void onEvent(NameFormat event) {
@@ -27,7 +29,8 @@ public class PlayerNameFormatEventForge extends PlayerNameFormatEventWrapper<Nam
     
     @Override protected EventFieldWrapper<NameFormat,String> wrapDisplayNameField() {
         return wrapGenericBoth(event -> event.getDisplayname().getString(),
-                (event,name) -> event.setDisplayname(TextHelper.getLiteral(name).getAsComponent()),"");
+                (event,name) ->
+                        event.setDisplayname(TextHelper.getLiteral((String)name).getAsComponent()),"");
     }
 
     @Override protected EventFieldWrapper<NameFormat,PlayerAPI<?,?>> wrapPlayerField() {

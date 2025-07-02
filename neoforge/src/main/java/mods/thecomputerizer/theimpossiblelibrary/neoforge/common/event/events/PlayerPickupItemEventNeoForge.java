@@ -21,7 +21,7 @@ public class PlayerPickupItemEventNeoForge extends PlayerPickupItemEventWrapper<
         super.setEvent(event);
     }
     
-    @Override protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapEntityField() {
+    @Override protected EventFieldWrapper<ItemPickupEvent,EntityAPI<?,?>> wrapItemEntityField() {
         return wrapEntityGetter(ItemPickupEvent::getOriginalEntity);
     }
 
