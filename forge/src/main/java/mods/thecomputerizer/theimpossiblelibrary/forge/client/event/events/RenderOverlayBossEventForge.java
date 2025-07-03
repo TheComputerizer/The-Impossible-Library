@@ -26,7 +26,8 @@ public class RenderOverlayBossEventForge extends RenderOverlayBossEventWrapper<B
     }
     
     @Override protected RenderContext initRenderer(BossInfo event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
+        Object matrix = getter(MATRIX_GETTER).apply(event);
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(matrix));
     }
     
     @Override public void setEvent(BossInfo event) {

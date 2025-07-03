@@ -26,7 +26,8 @@ public class RenderOverlayPostEventForge extends RenderOverlayPostEventWrapper<P
     }
     
     @Override protected RenderContext initRenderer(Post event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
+        Object matrix = getter(MATRIX_GETTER).apply(event);
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(matrix));
     }
     
     @Override public void setEvent(Post event) {

@@ -28,7 +28,8 @@ public class RenderOverlayTextEventForge extends RenderOverlayTextEventWrapper<T
     }
     
     @Override protected RenderContext initRenderer(Text event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
+        Object matrix = getter(MATRIX_GETTER).apply(event);
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(matrix));
     }
     
     @Override public void setEvent(Text event) {

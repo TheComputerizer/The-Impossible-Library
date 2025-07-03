@@ -26,7 +26,8 @@ public class RenderOverlayChatEventForge extends RenderOverlayChatEventWrapper<C
     }
     
     @Override protected RenderContext initRenderer(Chat event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
+        Object matrix = getter(MATRIX_GETTER).apply(event);
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(matrix));
     }
     
     @Override public void setEvent(Chat event) {

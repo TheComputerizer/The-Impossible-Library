@@ -8,8 +8,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.client.event.ClientForgeE
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Pre;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-
-
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventWrapper.ClientType.RENDER_OVERLAY_PRE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.event.types.ClientOverlayEventType.OverlayType.ALL;
 
@@ -26,7 +24,8 @@ public class RenderOverlayPreEventForge extends RenderOverlayPreEventWrapper<Pre
     }
     
     @Override protected RenderContext initRenderer(Pre event) {
-        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(event.getMatrixStack()));
+        Object matrix = getter(MATRIX_GETTER).apply(event);
+        return EventHelper.initRenderer(ctx -> ctx.getRenderer().setMatrix(matrix));
     }
     
     @Override public void setEvent(Pre event) {
