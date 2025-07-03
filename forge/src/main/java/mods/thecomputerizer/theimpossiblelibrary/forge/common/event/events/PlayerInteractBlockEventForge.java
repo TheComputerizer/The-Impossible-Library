@@ -33,11 +33,11 @@ public class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapp
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(stackGetter());
+        return wrapItemStack(getter(STACK_GETTER));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(worldGetter());
+        return wrapWorld(getter(WORLD_GETTER));
     }
     
     @Override public void setEvent(RightClickBlock event) {
@@ -71,7 +71,7 @@ public class PlayerInteractBlockEventForge extends PlayerInteractBlockEventWrapp
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(entityGetter());
+        return wrapPlayerGetter(getter(ENTITY_GETTER));
     }
 
     @Override protected EventFieldWrapper<RightClickBlock,BlockPosAPI<?>> wrapPosField() {

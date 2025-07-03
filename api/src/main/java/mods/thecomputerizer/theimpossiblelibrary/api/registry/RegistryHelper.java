@@ -14,7 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 public class RegistryHelper {
     
     static <R> RegistryAPI<R> get(Function<RegistryHandlerAPI,RegistryAPI<?>> getter) {
-        return BasicWrapped.cast(getter.apply(getHandler()));
+        return GenericUtils.cast(getter.apply(getHandler()));
     }
 
     @IndirectCallers

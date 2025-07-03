@@ -26,6 +26,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
@@ -38,15 +39,11 @@ import java.util.function.Function;
 public class WrapperHelper {
     
     private static @Nullable Object fixGenericGetter(@Nullable Object source, @Nullable Function<?,?> getter) {
-        return Objects.nonNull(source) && Objects.nonNull(getter) ? getter.apply(unwrap(source)) : null;
+        return Objects.nonNull(source) && Objects.nonNull(getter) ? getter.apply(GenericUtils.cast(source)) : null;
     }
 
     public static WrapperAPI getAPI() {
         return TILRef.getCommonSubAPI(CommonAPI::getWrapper);
-    }
-    
-    public static <T> @Nullable T unwrap(@Nullable Object obj) {
-        return BasicWrapped.cast(obj);
     }
     
     public static <A> AdvancementAPI<A> wrapAdvancement(@Nullable Object source, @Nullable Function<?,?> getter) {

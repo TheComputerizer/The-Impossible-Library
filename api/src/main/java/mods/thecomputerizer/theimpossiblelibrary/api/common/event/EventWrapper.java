@@ -12,7 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
@@ -159,7 +158,7 @@ public abstract class EventWrapper<E> implements CoreStateAccessor {
     }
     
     private <T> T unwrap(Object obj) {
-        return BasicWrapped.cast(obj);
+        return GenericUtils.cast(obj);
     }
     
     private <V> BiConsumer<E,V> wrappedSetter(BiConsumer<?,?> generic) {
@@ -304,7 +303,7 @@ public abstract class EventWrapper<E> implements CoreStateAccessor {
         return new EventFieldWrapper<>(event -> wrapLiving(getter),null);
     }
 
-    protected @Nullable PlayerAPI<?,?> wrapPlayer(@Nullable Function<?,?> getter) {
+    protected @Nullable PlayerAPI<?,?> wrapPlayer(@Nullable Function<E,?> getter) {
         return WrapperHelper.wrapPlayer(this.event,getter);
     }
 

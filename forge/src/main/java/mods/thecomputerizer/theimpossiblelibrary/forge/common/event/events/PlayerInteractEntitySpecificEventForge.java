@@ -34,11 +34,11 @@ public class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntity
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(stackGetter());
+        return wrapItemStack(getter(STACK_GETTER));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(worldGetter());
+        return wrapWorld(getter(WORLD_GETTER));
     }
     
     @Override public void setEvent(EntityInteractSpecific event) {
@@ -63,7 +63,7 @@ public class PlayerInteractEntitySpecificEventForge extends PlayerInteractEntity
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(entityGetter());
+        return wrapPlayerGetter(getter(ENTITY_GETTER));
     }
 
     @Override protected EventFieldWrapper<EntityInteractSpecific,BlockPosAPI<?>> wrapPosField() {

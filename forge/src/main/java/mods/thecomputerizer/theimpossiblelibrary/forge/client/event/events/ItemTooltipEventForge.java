@@ -35,7 +35,7 @@ public class ItemTooltipEventForge extends ItemTooltipEventWrapper<ItemTooltipEv
     }
 
     @Override protected EventFieldWrapper<ItemTooltipEvent,ItemStackAPI<?>> wrapStackField() {
-        return wrapItemStackGetter(stackGetter());
+        return wrapItemStackGetter(getter(STACK_GETTER));
     }
 
     @Override protected EventFieldWrapper<ItemTooltipEvent,List<String>> wrapTooltipField() { //TODO Adjust for text components

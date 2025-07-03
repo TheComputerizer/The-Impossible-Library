@@ -12,7 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ItemBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.block.BlockBuilder1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.blockentity.BlockEntityBuilder1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.entity.EntityBuilder1_21;
@@ -70,7 +70,7 @@ public abstract class RegistryHandler1_21 implements RegistryHandlerAPI {
     
     @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
         RegistryAPI<?> reg = getRegistry(registryKey);
-        return reg.hasKey(entryKey) ? BasicWrapped.cast(reg.getValue(entryKey)) : null;
+        return reg.hasKey(entryKey) ? GenericUtils.cast(reg.getValue(entryKey)) : null;
     }
     
     @Override public RegistryAPI<?> getItemRegistry() {

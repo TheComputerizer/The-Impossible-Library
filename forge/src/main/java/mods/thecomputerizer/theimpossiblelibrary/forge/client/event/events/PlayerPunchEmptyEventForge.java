@@ -28,11 +28,11 @@ public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<Lef
     }
     
     @Override protected ItemStackAPI<?> getStackInHand() {
-        return wrapItemStack(stackGetter());
+        return wrapItemStack(getter(STACK_GETTER));
     }
     
     @Override protected WorldAPI<?> getWorld() {
-        return wrapWorld(worldGetter());
+        return wrapWorld(getter(WORLD_GETTER));
     }
     
     @Override public void setEvent(LeftClickEmpty event) {
@@ -49,7 +49,7 @@ public class PlayerPunchEmptyEventForge extends PlayerPunchEmptyEventWrapper<Lef
     }
 
     @Override protected EventFieldWrapper<LeftClickEmpty,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(playerGetter());
+        return wrapPlayerGetter(getter(PLAYER_GETTER));
     }
 
     @Override protected EventFieldWrapper<LeftClickEmpty,BlockPosAPI<?>> wrapPosField() {

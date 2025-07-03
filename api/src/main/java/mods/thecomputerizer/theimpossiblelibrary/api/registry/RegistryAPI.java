@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ public abstract class RegistryAPI<V> {
     }
     
     public <B> B getBackend() {
-        return BasicWrapped.cast(this.backend);
+        return GenericUtils.cast(this.backend);
     }
 
     public abstract ResourceLocationAPI<?> getKey(V value);

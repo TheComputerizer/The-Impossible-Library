@@ -27,6 +27,6 @@ public class PlayerLoggedOutEventForge extends PlayerLoggedOutEventWrapper<Playe
     }
     
     @Override protected EventFieldWrapper<PlayerLoggedOutEvent,PlayerAPI<?,?>> wrapPlayerField() {
-        return wrapPlayerGetter(playerGetter());
+        return wrapPlayerGetter(getter(PLAYER_GETTER));
     }
 }

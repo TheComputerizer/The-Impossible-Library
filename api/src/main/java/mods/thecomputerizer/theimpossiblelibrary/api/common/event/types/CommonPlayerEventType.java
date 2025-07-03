@@ -16,6 +16,10 @@ public abstract class CommonPlayerEventType<E> extends CommonLivingEventType<E> 
     public EntityAPI<?,?> getEntity() {
         return getPlayer();
     }
+    
+    public final LivingEntityAPI<?,?> getLivingEntity() {
+        return getPlayer();
+    }
 
     public PlayerAPI<?,?> getPlayer() {
         return this.player.get(this.event);

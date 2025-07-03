@@ -12,8 +12,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.TILItemUseContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +63,7 @@ public abstract class BlockBuilderAPI extends RegistryEntryBuilder<BlockAPI<?>> 
     
     public <V extends Comparable<V>> BlockStateAPI<?> buildDefaultProperty(
             BlockStateAPI<?> state, BlockPropertyAPI<?,V> property, Comparable<?> value) {
-        return state.withProperty(property,BasicWrapped.cast(value));
+        return state.withProperty(property,GenericUtils.cast(value));
     }
     
     public BlockProperties buildProperties() {

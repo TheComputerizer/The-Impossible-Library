@@ -38,6 +38,6 @@ public abstract class BlockBreakEventForge<E extends Event> extends BlockBreakEv
     }
 
     @Override protected EventFieldWrapper<E,WorldAPI<?>> wrapWorldField() {
-        return wrapWorldGetter(worldGetter());
+        return wrapWorldGetter(getter(WORLD_GETTER));
     }
 }
