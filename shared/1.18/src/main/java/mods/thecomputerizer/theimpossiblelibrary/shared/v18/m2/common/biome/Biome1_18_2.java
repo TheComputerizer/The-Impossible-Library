@@ -70,7 +70,9 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     private ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
         Registry<Biome> registry = access.registry(BIOME_REGISTRY).orElse(null);
-        return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
+        if(Objects.isNull(registry)) return null;
+        ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
+        return Objects.nonNull(key) ? WrapperHelper.wrapResourceLocation(key.location()) : null;
     }
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {

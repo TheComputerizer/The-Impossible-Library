@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.dimension.DimensionType;
 
@@ -41,8 +41,10 @@ public class Dimension1_20 extends DimensionAPI<DimensionType> {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
+        if(Objects.isNull(this.registries) || Objects.isNull(this.wrapped)) return null;
         Registry<DimensionType> registry = this.registries.registry(DIMENSION_TYPE).orElse(null);
-        ResourceLocation name = Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null;
-        return WrapperHelper.wrapResourceLocation(name);
+        if(Objects.isNull(registry)) return null;
+        ResourceKey<DimensionType> key = registry.getResourceKey(this.wrapped).orElse(null);
+        return Objects.nonNull(key) ? WrapperHelper.wrapResourceLocation(key.location()) : null;
     }
 }

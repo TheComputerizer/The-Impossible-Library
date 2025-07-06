@@ -50,10 +50,6 @@ public class TILCoreFabric1_18_2 extends TILCore1_18_2 implements TILCoreFabric 
         return true;
     }
     
-    @Override public CommonEntryPoint getClientVersionHandler() {
-        return null;
-    }
-    
     @Override public CommonEntryPoint getCommonVersionHandler() {
         return TILCommonEntryPointFabric1_18_2.getInstance();
     }

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.fabric.common.TILCommonEntryPointFabric;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.server.WrappedCommand1_18_2;
 import net.minecraft.core.Registry;
 
 import java.util.Objects;
@@ -17,6 +18,11 @@ public class TILCommonEntryPointFabric1_18_2 extends TILCommonEntryPointFabric {
     
     private TILCommonEntryPointFabric1_18_2() {
         INSTANCE = this;
+    }
+    
+    @Override public void onCommonSetup() {
+        WrappedCommand1_18_2.registerArgType();
+        super.onCommonSetup();
     }
     
     @Override protected Registry<?> registryBlock() {

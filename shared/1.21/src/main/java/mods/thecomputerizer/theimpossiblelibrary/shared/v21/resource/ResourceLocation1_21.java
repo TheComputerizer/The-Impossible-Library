@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Objects;
+
 public class ResourceLocation1_21 extends ResourceLocationAPI<ResourceLocation> {
     
     public ResourceLocation1_21(Object instance) {
@@ -16,11 +18,11 @@ public class ResourceLocation1_21 extends ResourceLocationAPI<ResourceLocation> 
     }
     
     @Override public String getNamespace() {
-        return this.wrapped.getNamespace();
+        return Objects.nonNull(this.wrapped) ? this.wrapped.getNamespace() : null;
     }
     
     @Override public String getPath() {
-        return this.wrapped.getPath();
+        return Objects.nonNull(this.wrapped) ? this.wrapped.getPath() : null;
     }
 
     @Override public int getSpriteFrames() {

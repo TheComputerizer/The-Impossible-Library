@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 
@@ -47,7 +48,9 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     
     private ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
         Registry<Biome> registry = access.registry(BIOME_REGISTRY).orElse(null);
-        return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
+        if(Objects.isNull(registry)) return null;
+        ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
+        return Objects.nonNull(key) ? WrapperHelper.wrapResourceLocation(key.location()) : null;
     }
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {

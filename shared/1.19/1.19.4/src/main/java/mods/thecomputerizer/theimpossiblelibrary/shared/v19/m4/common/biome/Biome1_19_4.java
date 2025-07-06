@@ -77,7 +77,9 @@ public class Biome1_19_4 extends Biome1_19 {
     
     @Override protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
         Registry<Biome> registry = access.registry(BIOME).orElse(null);
-        return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
+        if(Objects.isNull(registry)) return null;
+        ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
+        return Objects.nonNull(key) ? WrapperHelper.wrapResourceLocation(key.location()) : null;
     }
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {
@@ -85,7 +87,6 @@ public class Biome1_19_4 extends Biome1_19 {
         Registry<Biome> registry = access.registryAccess().registry(BIOME).orElse(null);
         if(Objects.isNull(registry)) return Collections.emptySet();
         ResourceKey<Biome> key = registry.getResourceKey(this.wrapped).orElse(null);
-        if(Objects.isNull(key)) return Collections.emptySet();
-        return getTagNames(registry.getHolder(key).orElse(null));
+        return Objects.nonNull(key) ? getTagNames(registry.getHolder(key).orElse(null)) : Collections.emptySet();
     }
 }

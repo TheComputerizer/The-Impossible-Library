@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v18.m2.core;
 import cpw.mods.modlauncher.Environment;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -53,14 +52,6 @@ public class TILCoreForge1_18_2 extends TILCore1_18_2 implements TILCoreForge {
         super.addSources(sources);
         ClassHelper.addSource(sources,TILCoreForge.class);
         ClassHelper.addSource(sources,TILCoreForge1_18_2.class);
-    }
-    
-    @Override public CommonEntryPoint getClientVersionHandler() {
-        return null;
-    }
-    
-    @Override public CommonEntryPoint getCommonVersionHandler() {
-        return null;
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {

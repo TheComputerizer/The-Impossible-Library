@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
 
 import cpw.mods.modlauncher.TransformingClassLoader;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
@@ -61,14 +60,6 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
             } else TILRef.logError("Unable to find delegatedClassLoader field??");
         }
         return false;
-    }
-    
-    @Override public CommonEntryPoint getClientVersionHandler() {
-        return null;
-    }
-    
-    @Override public CommonEntryPoint getCommonVersionHandler() {
-        return null;
     }
     
     @Override public CoreEntryPoint getCoreVersionHandler() {
