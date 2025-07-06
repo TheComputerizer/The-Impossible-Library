@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.Mappable;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +16,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_O
 @SuppressWarnings("unused")
 public class NetworkHandler {
 
+    private static final boolean BOTH_SIDES = CoreAPI.isLegacy();
     private static final Mappable<?,MessageDirectionInfo<?>> DIRECTION_INFO = Mappable.makeSynchronized(HashMap::new);
 
     @SuppressWarnings("unchecked")
@@ -28,9 +30,14 @@ public class NetworkHandler {
         map.putIfAbsent(dir,new MessageDirectionInfo<>(dir));
         return map.get(dir);
     }
+    
+    public static <DIR> boolean isRegistered(Class<?> msgClass, DIR dir) {
+        MessageDirectionInfo<?> info = DIRECTION_INFO.get(dir);
+        return Objects.nonNull(info) && info.contains(msgClass);
+    }
 
     /**
-     * Registers instantiates the network if necessary and registers queued packets.
+     * Registers and instantiates the network if necessary and registers queued packets.
      * Ignored if TILRef#CLIENT_ONLY is enabled
      */
     public static void load() {
@@ -39,7 +46,7 @@ public class NetworkHandler {
         if(DIRECTION_INFO.isNotEmpty()) NetworkHelper.getNetwork();
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
-            id++;
+            if(!CoreAPI.isLegacy()) id++; //TODO Is the id even necessary? The message wrapper class doesn't change...
         }
     }
 
@@ -105,9 +112,7 @@ public class NetworkHandler {
      * The direction may be null in the case of a client receiver trying to register on the server side
      */
     private static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, Function<ByteBuf,M> decoder, DIR dir) {
-        if(Objects.isNull(dir)) return;
-        MessageDirectionInfo<?> dirInfo = getOrInitDirectionInfo(dir);
-        dirInfo.getInfoSet().add(new MessageInfo<>(clazz,dirInfo,decoder));
+        registerMsg(dir,dirInfo -> new MessageInfo<>(clazz,dirInfo,decoder));
     }
 
     /**
@@ -115,9 +120,19 @@ public class NetworkHandler {
      * The direction may be null in the case of a client receiver trying to register on the server side
      */
     public static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, MessageHandlerAPI handler, DIR dir) {
-        if(Objects.isNull(dir)) return;
-        MessageDirectionInfo<?> dirInfo = getOrInitDirectionInfo(dir);
-        dirInfo.getInfoSet().add(new MessageInfo<>(clazz,dirInfo,handler));
+        registerMsg(dir,dirInfo -> new MessageInfo<>(clazz,dirInfo,handler));
+    }
+    
+    /**
+     * Message registration must happen before load is called
+     * Register a message on the designated side.
+     * If the 'both' flag is enabled, register an identical message on the opposite side
+     */
+    private static <DIR> void registerMsg(DIR dir, Function<MessageDirectionInfo<?>,MessageInfo<?>> infoSupplier) {
+        if(Objects.nonNull(dir)) {
+            getOrInitDirectionInfo(dir).supply(infoSupplier);
+            if(BOTH_SIDES) getOrInitDirectionInfo(NetworkHelper.getOppositeDir(dir)).supply(infoSupplier);
+        }
     }
 
     /**

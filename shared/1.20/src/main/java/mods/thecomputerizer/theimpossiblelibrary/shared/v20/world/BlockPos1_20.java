@@ -28,7 +28,7 @@ public class BlockPos1_20 extends BlockPosAPI<BlockPos> {
     }
     
     public BlockPos1_20(double x, double y, double z) {
-        this((int)x,(int)y,(int)z);
+        this(Mth.floor(x),Mth.floor(y),Mth.floor(z));
     }
     
     public BlockPos1_20(int x, int y, int z) {

@@ -67,6 +67,10 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
     public <DIR> void decode(ByteBuf buf) {
         this.messages = NetworkHelper.readCollection(buf,() -> {
             String name = NetworkHelper.readString(buf);
+            if(Objects.isNull(this.info)) {
+                TILRef.logError("Tried to decode class {} but direction info for {} is null!",name,getClass());
+                return null;
+            }
             Class<?> clazz = ReflectionHelper.findExtensibleClass(name,MessageAPI.class);
             return Objects.nonNull(clazz) ? this.info.decode(clazz,buf) : null;
         });
@@ -76,8 +80,11 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         if(Objects.isNull(this.messages)) this.messages = Collections.emptyList();
         NetworkHelper.writeDir(buf,this.info.getDirection());
         NetworkHelper.writeCollection(buf,this.messages,message -> {
-            NetworkHelper.writeString(buf,message.getClass().getName());
-            this.info.encode(message,buf);
+            String className = message.getClass().getName();
+            NetworkHelper.writeString(buf,className);
+            if(Objects.isNull(this.info))
+                TILRef.logError("Tried to encode class {} but direction info for {} is null!",className,getClass());
+            else this.info.encode(message,buf);
         });
     }
 

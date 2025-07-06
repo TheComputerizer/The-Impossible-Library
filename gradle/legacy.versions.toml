@@ -1,9 +1,8 @@
 [bundles]
     cleanroom-compile = [ 'cleanroom-lwjglx', 'cleanroom-mixin' ]
-    mods-1_12_2-compile = [ 'dsurround-1_12_2', 'orelib-1_12_2' ]
-    mods-1_12_2-implementation = [ 'bloodmoon-1_12_2', 'blueskies-1_12_2', 'bookshelf-1_12_2', 'champions-1_12_2',
-        'coroutil-1_12_2', 'gamestages-1_12_2', 'infernalmobs-1_12_2', 'nyx-1_12_2', 'sereneseasons-1_12_2',
-        'weather2-1_12_2' ]
+    mods-1_12_2-compile = [ 'bloodmoon-1_12_2', 'dsurround-1_12_2', 'orelib-1_12_2' ]
+    mods-1_12_2-implementation = [ 'blueskies-1_12_2', 'bookshelf-1_12_2', 'champions-1_12_2', 'coroutil-1_12_2',
+        'gamestages-1_12_2', 'infernalmobs-1_12_2', 'nyx-1_12_2', 'sereneseasons-1_12_2', 'weather2-1_12_2' ]
     mods-1_12_2-runtime = [ 'hei-1_12_2' ]
 
 [libraries]

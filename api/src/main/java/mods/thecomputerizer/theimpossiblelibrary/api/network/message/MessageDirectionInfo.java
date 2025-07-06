@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 @SuppressWarnings("unused")
 @Getter
@@ -22,6 +23,16 @@ public class MessageDirectionInfo<DIR> {
     public MessageDirectionInfo(DIR direction) {
         this.direction = direction;
         this.infoSet = new HashSet<>();
+    }
+    
+    public void add(MessageInfo<?> info) {
+        this.infoSet.add(info);
+    }
+    
+    public boolean contains(Class<?> msgClass) {
+        for(MessageInfo<?> info : this.infoSet)
+            if(info.getMsgClass()==msgClass) return true;
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -45,17 +56,6 @@ public class MessageDirectionInfo<DIR> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <CTX,M extends MessageAPI<CTX>> @Nullable MessageAPI<CTX> handle(M message, CTX context) {
-        try {
-            MessageInfo<M> info = (MessageInfo<M>)getMessageInfo(message);
-            return Objects.nonNull(info) ? info.handle(message,context) : null;
-        } catch(ClassCastException ex) {
-            TILRef.logError("Unable to handle message of class `{}`", ClassHelper.className(message));
-            return null;
-        }
-    }
-
     public <M extends MessageAPI<?>> @Nullable MessageInfo<?> getMessageInfo(M message) {
         return getMessageInfo(message.getClass());
     }
@@ -65,6 +65,17 @@ public class MessageDirectionInfo<DIR> {
             if(msgClass==info.getMsgClass()) return info;
         TILDev.logInfo("Unable to find registered message for {}!",msgClass);
         return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public <CTX,M extends MessageAPI<CTX>> @Nullable MessageAPI<CTX> handle(M message, CTX context) {
+        try {
+            MessageInfo<M> info = (MessageInfo<M>)getMessageInfo(message);
+            return Objects.nonNull(info) ? info.handle(message,context) : null;
+        } catch(ClassCastException ex) {
+            TILRef.logError("Unable to handle message of class `{}`", ClassHelper.className(message));
+            return null;
+        }
     }
 
     public boolean isLogin() {
@@ -85,5 +96,9 @@ public class MessageDirectionInfo<DIR> {
 
     public boolean isLoginToServer() {
         return isLogin() && isToServer();
+    }
+    
+    public void supply(Function<MessageDirectionInfo<?>,MessageInfo<?>> supplier) {
+        add(supplier.apply(this));
     }
 }

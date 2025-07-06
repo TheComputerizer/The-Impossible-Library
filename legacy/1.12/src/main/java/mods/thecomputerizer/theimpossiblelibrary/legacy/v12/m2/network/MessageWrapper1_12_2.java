@@ -14,7 +14,7 @@ public class MessageWrapper1_12_2 extends MessageWrapperAPI<EntityPlayerMP,Messa
     public MessageWrapper1_12_2() {}
 
     @Override public void fromBytes(ByteBuf buf) {
-        this.info = NetworkHandler.getDirectionInfo(NetworkHelper.readDir(buf));
+        this.info = NetworkHandler.getDirectionInfo(NetworkHelper.getOppositeDir(NetworkHelper.readDir(buf)));
         decode(buf);
     }
 
