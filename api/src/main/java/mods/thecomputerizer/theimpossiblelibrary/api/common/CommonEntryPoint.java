@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreStateAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +15,7 @@ import java.util.function.Consumer;
  * Handle run order: this, client, server, custom
  * It is highly recommended to define delegate handlers statically to avoid any duplicates in the entrypoint chain.
  */
-public abstract class CommonEntryPoint {
+public abstract class CommonEntryPoint implements CoreStateAccessor {
     
     protected final ClientEntryPoint delegatedClientHandle;
     protected final CommonEntryPoint delegatedCustomHandle;

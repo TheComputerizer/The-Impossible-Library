@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -26,13 +27,25 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T construct(String targetClass, Object ... args) {
-        return construct(ClassHelper.findClass(targetClass),args);
+        return construct(findClass(targetClass),args);
+    }
+    
+    /**
+     * Finds the target class via the reference class and instantiates it using the given args
+     */
+    @IndirectCallers
+    public static <T> T construct(Class<?> reference, String targetClass, Object ... args) {
+        return construct(findClass(reference,targetClass),args);
     }
     
     /**
      * Instantiates the target class using the given args
      */
     public static <T> T construct(Class<?> target, Object ... args) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call construct on null target class! (args = {})",args);
+            return null;
+        }
         return Constructors.newInstanceOf(target,args);
     }
     
@@ -42,7 +55,16 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T constructDirect(String targetClass, Object ... args) {
-        return constructDirect(ClassHelper.findClass(targetClass),args);
+        return constructDirect(findClass(targetClass),args);
+    }
+    
+    /**
+     * Finds the target class via the reference class and instantiates it using the given args
+     * Constructing a class directly will bypass any package-private, private, or protected access restrictions.
+     */
+    @IndirectCallers
+    public static <T> T constructDirect(Class<?> reference, String targetClass, Object ... args) {
+        return constructDirect(findClass(reference,targetClass),args);
     }
     
     /**
@@ -50,7 +72,119 @@ public class Hacks {
      * Constructing a class directly will bypass any package-private, private, or protected access restrictions.
      */
     public static <T> T constructDirect(Class<?> target, Object ... args) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call constructDirect on null target class! (args = {})",args);
+            return null;
+        }
         return Constructors.newInstanceOf(target,args);
+    }
+    
+    public static ClassLoader contextClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+    
+    public static Class<?> defaultCaller() {
+        return Classes.getClass();
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given ClassLoader and the given caller class.
+     * The initialize flag determines whether the target class will be initialized.
+     */
+    public static @Nullable Class<?> findClass(String target, ClassLoader loader, Class<?> caller, boolean initialize) {
+        if(Misc.anyNull(target,loader,caller)) {
+            TILRef.logError("Cannot find target class {} on {} with caller {}!",target,loader,caller);
+            return null;
+        }
+        try {
+            return Driver.getClassByName(target,initialize,loader,caller);
+        } catch(Throwable t) {
+            TILRef.logError("Failed to find class {} on loader {} with caller {}! (initialize={})",target,loader,
+                            caller,initialize,t);
+        }
+        return null;
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given caller class.
+     * The initialize flag determines whether the target class will be initialized.
+     */
+    public static @Nullable Class<?> findClass(String target, Class<?> caller, boolean initialize) {
+        return Objects.nonNull(caller) ? findClass(target,contextClassLoader(),caller,initialize) :
+                findClass(target,initialize);
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given caller class.
+     * Does not attempt to initialize the target class.
+     */
+    public static @Nullable Class<?> findClass(String target, Class<?> caller) {
+        return findClass(target,caller,false);
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given ClassLoader and the given caller class.
+     * Does not attempt to initialize the target class.
+     */
+    public static @Nullable Class<?> findClass(String target, ClassLoader loader, Class<?> caller) {
+        return findClass(target,loader,caller,false);
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given ClassLoader.
+     * The initialize flag determines whether the target class will be initialized.
+     */
+    public static @Nullable Class<?> findClass(String target, ClassLoader loader, boolean initialize) {
+        return Objects.nonNull(loader) ? findClass(target,loader,defaultCaller(),initialize) :
+                findClass(target,initialize);
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given ClassLoader.
+     * Does not attempt to initialize the target class.
+     */
+    public static @Nullable Class<?> findClass(String target, ClassLoader loader) {
+        return findClass(target,loader,false);
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name using the given ClassLoader.
+     * The initialize flag determines whether the target class will be initialized.
+     */
+    public static @Nullable Class<?> findClass(String target, boolean initialize) {
+        return findClass(target,contextClassLoader(),defaultCaller(),initialize);
+    }
+    
+    /**
+     * Finds and returns a Class object with the target name.
+     * Does not attempt to initialize the target class.
+     */
+    public static @Nullable Class<?> findClass(String target) {
+        return findClass(target,false);
+    }
+    
+    /**
+     * Uses a reference class to find and return the target class in the same package as the reference class.
+     * The ClassLoader of the reference class will be used to find the target class.
+     */
+    public static @Nullable Class<?> findClass(@Nullable Class<?> reference, String target) {
+        if(Objects.isNull(reference)) return findClass(target);
+        return findClass(reference.getPackage().getName()+"."+target,reference.getClassLoader());
+    }
+    
+    /**
+     * Find and return the target class in given package
+     */
+    public static @Nullable Class<?> findClass(@Nullable Package pkg, String target) {
+        return Objects.nonNull(pkg) ? findClass(pkg.getName(),target) : findClass(target);
+    }
+    
+    
+    /**
+     * Find and return the target class in given package name
+     */
+    public static @Nullable Class<?> findClass(@Nullable String pkg, String target) {
+        return Objects.nonNull(pkg) ? findClass(pkg+"."+target) : findClass(target);
     }
     
     /**
@@ -59,13 +193,21 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getField(Object target, String named, String intermediary) {
-        return getField(target, isNamedEnv() ? named : intermediary);
+        return getField(target,isNamedEnv() ? named : intermediary);
     }
     
     /**
      * Returns a non-static field instance of the given name on the given object.
      */
     public static <T> T getField(Object target, String field) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call getField on null target object! (field = {})",field);
+            return null;
+        }
+        if(Objects.isNull(field)) {
+            TILRef.logError("Tried to call getField with null field name! (target = {})",target);
+            return null;
+        }
         return Fields.get(target,field);
     }
     
@@ -76,7 +218,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getFieldDirect(Object target, String named, String intermediary) {
-        return Fields.getDirect(target, isNamedEnv() ? named : intermediary);
+        return getFieldDirect(target,isNamedEnv() ? named : intermediary);
     }
     
     /**
@@ -85,6 +227,14 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getFieldDirect(Object target, String field) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call getFieldDirect on null target object! (field = {})",field);
+            return null;
+        }
+        if(Objects.isNull(field)) {
+            TILRef.logError("Tried to call getFieldDirect with null field name! (target = {})",target);
+            return null;
+        }
         return Fields.getDirect(target,field);
     }
     
@@ -94,7 +244,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getFieldStatic(String targetClass, String named, String intermediary) {
-        return getFieldStatic(ClassHelper.findClass(targetClass),named,intermediary);
+        return getFieldStatic(findClass(targetClass),named,intermediary);
     }
     
     /**
@@ -102,7 +252,7 @@ public class Hacks {
      * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
      */
     public static <T> T getFieldStatic(Class<?> target, String named, String intermediary) {
-        return getFieldStatic(target, isNamedEnv() ? named : intermediary);
+        return getFieldStatic(target,isNamedEnv() ? named : intermediary);
     }
     
     /**
@@ -110,13 +260,21 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getFieldStatic(String targetClass, String field) {
-        return getFieldStatic(ClassHelper.findClass(targetClass),field);
+        return getFieldStatic(findClass(targetClass),field);
     }
     
     /**
      * Returns a static field instance of the given name in the target class.
      */
     public static <T> T getFieldStatic(Class<?> target, String field) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call getFieldStatic on null target class! (field = {})",field);
+            return null;
+        }
+        if(Objects.isNull(field)) {
+            TILRef.logError("Tried to call getFieldStatic with null field name! (target = {})",target);
+            return null;
+        }
         return Fields.getStatic(target,field);
     }
     
@@ -127,7 +285,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getFieldStaticDirect(String targetClass, String named, String intermediary) {
-        return getFieldStaticDirect(ClassHelper.findClass(targetClass),named,intermediary);
+        return getFieldStaticDirect(findClass(targetClass),named,intermediary);
     }
     
     /**
@@ -136,7 +294,7 @@ public class Hacks {
      * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
      */
     public static <T> T getFieldStaticDirect(Class<?> target, String named, String intermediary) {
-        return getFieldStaticDirect(target, isNamedEnv() ? named : intermediary);
+        return getFieldStaticDirect(target,isNamedEnv() ? named : intermediary);
     }
     
     /**
@@ -145,7 +303,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getFieldStaticDirect(String targetClass, String field) {
-        return getFieldStaticDirect(ClassHelper.findClass(targetClass),field);
+        return getFieldStaticDirect(findClass(targetClass),field);
     }
     
     /**
@@ -153,6 +311,14 @@ public class Hacks {
      * Getting a field directly will bypass any package-private, private, or protected access restrictions.
      */
     public static <T> T getFieldStaticDirect(Class<?> target, String field) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call getFieldStaticDirect on null target class! (field = {})",field);
+            return null;
+        }
+        if(Objects.isNull(field)) {
+            TILRef.logError("Tried to call getFieldStaticDirect with null field name! (target = {})",target);
+            return null;
+        }
         return Fields.getStaticDirect(target,field);
     }
     
@@ -171,7 +337,11 @@ public class Hacks {
      */
     private static Object getRecordComponent(Class<?> target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Cannot get record field {} from null class target!",field);
+            TILRef.logError("Tried to get record component of null class target! (field = {})",field);
+            return null;
+        }
+        if(Objects.isNull(field)) {
+            TILRef.logError("Tried to get record component for null field name! (target = {})",target);
             return null;
         }
         if(isJava8()) {
@@ -180,8 +350,13 @@ public class Hacks {
             return null;
         }
         Object[] components = invoke(target,"getRecordComponents");
+        if(Objects.isNull(components)) {
+            TILRef.logError("No record components found in target {}!",target);
+            return null;
+        }
         for(Object component : components)
             if(field.equals(invoke(component,"getName"))) return component;
+        TILRef.logError("No record components matching '{}' found in target {}!",field,target);
         return null;
     }
     
@@ -206,7 +381,7 @@ public class Hacks {
     private static <T> T getRecordFieldInstance(Class<?> targetClass, @Nullable Object target, String name,
             @Nullable Object component) {
         if(Objects.isNull(component)) {
-            TILRef.logError("Failed to get record component {}.{}",targetClass.getName(),name);
+            TILRef.logError("Failed to get record component for target {}! (field = {})",targetClass,name);
             return null;
         }
         Field field;
@@ -219,7 +394,7 @@ public class Hacks {
             Driver.setAccessible(field,true);
             return (T)field.get(target);
         } catch(Throwable t) {
-            TILRef.logError("Failed to find field {} for class {}",name,targetClass.getName(),t);
+            TILRef.logError("Failed to find field {} in target {}!",name,targetClass,t);
         }
         return null;
     }
@@ -239,13 +414,21 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T invoke(Object target, String named, String intermediary, Object ... args) {
-        return invoke(target, isNamedEnv() ? named : intermediary, args);
+        return invoke(target,isNamedEnv() ? named : intermediary, args);
     }
     
     /**
      * Invoke a non-static method of the given name on the given object with the given args.
      */
     public static <T> T invoke(Object target, String method, Object ... args) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call invoke on null target object! (method = {} | args = {})",method,args);
+            return null;
+        }
+        if(Objects.isNull(method)) {
+            TILRef.logError("Tried to call invoke with null method name! (target = {} | args = {})",target,args);
+            return null;
+        }
         return Methods.invoke(target,method,args);
     }
     
@@ -264,6 +447,16 @@ public class Hacks {
      * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
      */
     public static <T> T invokeDirect(Object target, String method, Object ... args) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call invokeDirect on null target object! (method = {} | args = {})",
+                            method,args);
+            return null;
+        }
+        if(Objects.isNull(method)) {
+            TILRef.logError("Tried to call invokeDirect with null method name! (target = {} | args = {})",
+                            target,args);
+            return null;
+        }
         return Methods.invoke(target,method,args);
     }
     
@@ -273,7 +466,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T invokeStatic(String targetClass, String named, String intermediary, Object ... args) {
-        return invokeStatic(ClassHelper.findClass(targetClass),named,intermediary,args);
+        return invokeStatic(findClass(targetClass),named,intermediary,args);
     }
     
     /**
@@ -289,13 +482,23 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T invokeStatic(String targetClass, String method, Object ... args) {
-        return invokeStatic(ClassHelper.findClass(targetClass),method,args);
+        return invokeStatic(findClass(targetClass),method,args);
     }
     
     /**
      * Invoke a static method of the given name in the target class with the given args.
      */
     public static <T> T invokeStatic(Class<?> target, String method, Object ... args) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call invokeStatic on null target object! (method = {} | args = {})",
+                            method,args);
+            return null;
+        }
+        if(Objects.isNull(method)) {
+            TILRef.logError("Tried to call invokeStatic with null method name! (target = {} | args = {})",
+                            target,args);
+            return null;
+        }
         return Methods.invokeStatic(target,method,args);
     }
     
@@ -306,7 +509,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T invokeStaticDirect(String targetClass, String named, String intermediary, Object ... args) {
-        return invokeStaticDirect(ClassHelper.findClass(targetClass),named,intermediary,args);
+        return invokeStaticDirect(findClass(targetClass),named,intermediary,args);
     }
     
     /**
@@ -315,7 +518,7 @@ public class Hacks {
      * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
      */
     public static <T> T invokeStaticDirect(Class<?> target, String named, String intermediary, Object ... args) {
-        return invokeStaticDirect(target, isNamedEnv() ? named : intermediary, args);
+        return invokeStaticDirect(target,isNamedEnv() ? named : intermediary, args);
     }
     
     /**
@@ -325,7 +528,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T invokeStaticDirect(String targetClass, String method, Object ... args) {
-        return invokeStaticDirect(ClassHelper.findClass(targetClass),method,args);
+        return invokeStaticDirect(findClass(targetClass),method,args);
     }
     
     /**
@@ -333,6 +536,16 @@ public class Hacks {
      * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
      */
     public static <T> T invokeStaticDirect(Class<?> target, String method, Object ... args) {
+        if(Objects.isNull(target)) {
+            TILRef.logError("Tried to call invokeStaticDirect on null target object! (method = {} | args = {})",
+                            method,args);
+            return null;
+        }
+        if(Objects.isNull(method)) {
+            TILRef.logError("Tried to call invokeStaticDirect with null method name! (target = {} | args = {})",
+                            target,args);
+            return null;
+        }
         return Methods.invokeStaticDirect(target,method,args);
     }
     

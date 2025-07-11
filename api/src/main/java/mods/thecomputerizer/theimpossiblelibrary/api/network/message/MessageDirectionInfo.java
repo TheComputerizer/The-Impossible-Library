@@ -101,4 +101,10 @@ public class MessageDirectionInfo<DIR> {
     public void supply(Function<MessageDirectionInfo<?>,MessageInfo<?>> supplier) {
         add(supplier.apply(this));
     }
+    
+    @Override public String toString() {
+        String dirName = this.direction instanceof Enum<?> ? ((Enum<?>)this.direction).name() :
+                (Objects.nonNull(this.direction) ? this.direction.toString() : "NULL_DIRECTION");
+        return "[MESSAGE DIRECTION INFO]=>[direction="+dirName+"|message_count="+this.infoSet.size()+"]";
+    }
 }

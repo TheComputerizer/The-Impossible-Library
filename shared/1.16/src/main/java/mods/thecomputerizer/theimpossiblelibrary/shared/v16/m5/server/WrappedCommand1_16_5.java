@@ -39,12 +39,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 public class WrappedCommand1_16_5 implements CoreStateAccessor {
     
-    private static final String ARGUMENT_TYPE_ENTRY = "net.minecraft.commands.synchronization.ArgumentTypes$Entry";
+    private static final Supplier<String> ARGUMENT_TYPE_ENTRY = () -> ArgumentTypes.class.getSimpleName()+"$Entry";
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();
     private static final String FIELD_BY_CLASS = NAMED_ENV ? "BY_CLASS" : (SRG_ENV ? "field_197489_b" : "field_10921");
     private static final String FIELD_BY_NAME = NAMED_ENV ? "BY_NAME" : (SRG_ENV ? "field_197490_c" : "field_10922");
@@ -116,7 +117,18 @@ public class WrappedCommand1_16_5 implements CoreStateAccessor {
     private static <E> void registerArgType(ResourceLocation name) {
         Map<Class<?>,E> byClass = Hacks.getFieldStaticDirect(ArgumentTypes.class,FIELD_BY_CLASS);
         Map<ResourceLocation,E> byName = Hacks.getFieldStaticDirect(ArgumentTypes.class,FIELD_BY_NAME);
-        E entry = Hacks.construct(ARGUMENT_TYPE_ENTRY,SERIALIZER,name);
+        if(Objects.isNull(byClass) || Objects.isNull(byName)) {
+            TILRef.logError("Failed to retrieve ArgumentTypes fields! (BY_CLASS = {} | BY_NAME = {})",
+                            FIELD_BY_CLASS,FIELD_BY_NAME);
+            return;
+        }
+        String entryClassName = ARGUMENT_TYPE_ENTRY.get();
+        E entry = Hacks.construct(ArgumentTypes.class,entryClassName,CustomSuggester.class,SERIALIZER,name);
+        if(Objects.isNull(entry)) {
+            TILRef.logError("Failed to contruct {} with args {}",entryClassName,new Object[]{
+                    CustomSuggester.class,SERIALIZER,name});
+            return;
+        }
         byClass.put(CustomSuggester.class,entry);
         byName.put(name,entry);
     }

@@ -1,10 +1,13 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.network.Network1_16_5;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
@@ -14,7 +17,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static net.minecraftforge.fml.network.NetworkDirection.*;
 import static net.minecraftforge.fml.network.PacketDistributor.PLAYER;
@@ -80,18 +85,22 @@ public class NetworkForge1_16_5 extends Network1_16_5<SimpleChannel,NetworkDirec
         return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
     }
 
-    //TODO I'm pretty sure the login directions need an extra flag to be set
-    @SuppressWarnings("unchecked") @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
-        getNetwork().registerMessage(id,(Class<MessageWrapperForge1_16_5>)MessageWrapperForge1_16_5.getClass(dir.getDirection()),
-                MessageWrapperAPI::encode, buf -> MessageWrapperForge1_16_5.getInstance(dir.getDirection(), buf),
-                (message,supplier) -> { //Response handler
-                    Context context = supplier.get();
-                    MessageWrapperForge1_16_5 wrapper = (MessageWrapperForge1_16_5)message.handle(context);
-                    if(Objects.nonNull(wrapper)) {
-                        if(!dir.isToClient()) wrapper.setPlayer(context.getSender());
-                        wrapper.send();
-                    }
-                },Optional.of(dir.getDirection()));
+    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
+        NetworkDirection direction = dir.getDirection();
+        Class<MessageWrapperForge1_16_5> msgClass = GenericUtils.cast(MessageWrapperForge1_16_5.getClass(direction));
+        BiConsumer<MessageWrapperForge1_16_5,FriendlyByteBuf> encoder = MessageWrapperAPI::encode;
+        Function<FriendlyByteBuf,MessageWrapperForge1_16_5> decoder =
+                buf -> MessageWrapperForge1_16_5.getInstance(NetworkHelper.getOppositeDir(direction),buf);
+        BiConsumer<MessageWrapperForge1_16_5,Supplier<Context>> handler =
+                (message,supplier) -> {
+            Context context = supplier.get();
+            MessageWrapperAPI<?,Context> response = message.handle(context);
+            if(Objects.nonNull(response)) {
+                if(!dir.isToClient()) ((MessageWrapperForge1_16_5)response).setPlayer(context.getSender());
+                response.send();
+            }
+        };
+        getNetwork().messageBuilder(msgClass,id,direction).encoder(encoder).decoder(decoder).consumer(handler).add();
     }
     
     //TODO Does not support login direction

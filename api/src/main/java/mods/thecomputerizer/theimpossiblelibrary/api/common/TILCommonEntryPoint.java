@@ -62,6 +62,7 @@ public final class TILCommonEntryPoint extends DelegatingCommonEntryPoint {
     @Override public void onCommonSetup() {
         devTrace("onCommonSetup");
         super.onCommonSetup();
+        NetworkHandler.load();
     }
 
     @Override public void onDedicatedServerSetup() {
@@ -81,7 +82,6 @@ public final class TILCommonEntryPoint extends DelegatingCommonEntryPoint {
     @Override public void onLoadComplete() {
         devTrace("onLoadComplete");
         super.onLoadComplete();
-        NetworkHandler.load();
     }
 
     @Override public void onServerAboutToStart() {

@@ -16,12 +16,27 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static org.apache.logging.log4j.Level.*;
 
 public class TILDev {
-
-    public static final boolean DEV = Boolean.parseBoolean(System.getProperty("til.dev")); //`-Dtil.dev=true`
-    private static final String LOADER_FILE = System.getProperty("til.classpath.file",MODID+"-"+VERSION+".jar");
+    
+    public static final boolean DEBUG_NETWORK = getBooleanProperty("debug.network"); //`-Dtil.debug.network=true`
+    public static final boolean DEV = getBooleanProperty("dev"); //`-Dtil.dev=true`
+    public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(true); //`-Dtil.classpath.coremods=...`
+    public static final Set<String> CLASSPATH_MODS = parseClasspathMods(false); //`-Dtil.classpath.mods=...`
+    private static final String JAR_NAME = MODID+"-"+VERSION+".jar";
+    private static final String LOADER_FILE = getProperty("classpath.file",JAR_NAME); //`-Dtil.classpath.file=...`
     private static final Logger LOGGER = DEV ? LogManager.getLogger("TIL DEV") : null;
-    public static final Set<String> CLASSPATH_COREMODS = parseClasspathMods(System.getProperty("til.classpath.coremods"));
-    public static final Set<String> CLASSPATH_MODS = parseClasspathMods(System.getProperty("til.classpath.mods"));
+    
+    private static boolean getBooleanProperty(String propertyName) {
+        return Boolean.parseBoolean(getProperty(propertyName));
+    }
+    
+    private static String getProperty(String propertyName) {
+        return System.getProperty("til."+propertyName);
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    private static String getProperty(String propertyName, String defaultValue) {
+        return System.getProperty("til."+propertyName,defaultValue);
+    }
     
     @IndirectCallers
     public static <I> void devConsume(I input, Consumer<I> consumer) {
@@ -79,8 +94,9 @@ public class TILDev {
         log(WARN,msg,args);
     }
     
-    private static Set<String> parseClasspathMods(String mods) {
-        String[] split = Objects.nonNull(mods) ? mods.split(";") : null;
-        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(Objects.nonNull(split) ? split : new String[0])));
+    private static Set<String> parseClasspathMods(boolean coremods) {
+        String mods = getProperty("classpath."+(coremods ? "coremods" : "mods"));
+        if(Objects.isNull(mods)) return Collections.emptySet();
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(mods.split(";"))));
     }
 }

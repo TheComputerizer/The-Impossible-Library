@@ -2,8 +2,10 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.Mappable;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -11,22 +13,26 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NETWORK;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_ONLY;
 
 @SuppressWarnings("unused")
 public class NetworkHandler {
 
     private static final boolean BOTH_SIDES = CoreAPI.isLegacy();
+    private static final boolean DEBUG = DEBUG_NETWORK;
     private static final Mappable<?,MessageDirectionInfo<?>> DIRECTION_INFO = Mappable.makeSynchronized(HashMap::new);
 
-    @SuppressWarnings("unchecked")
     public static <DIR> @Nullable MessageDirectionInfo<DIR> getDirectionInfo(DIR dir) {
-        return (MessageDirectionInfo<DIR>)DIRECTION_INFO.get(dir);
+        return GenericUtils.cast(DIRECTION_INFO.get(dir));
     }
 
-    @SuppressWarnings("unchecked")
     private static <DIR> MessageDirectionInfo<?> getOrInitDirectionInfo(DIR dir) {
-        Mappable<DIR,MessageDirectionInfo<?>> map = (Mappable<DIR,MessageDirectionInfo<?>>)DIRECTION_INFO;
+        Mappable<DIR,MessageDirectionInfo<?>> map = GenericUtils.cast(DIRECTION_INFO);
+        if(Objects.isNull(map)) {
+            TILRef.logError("Failed to get or initialize direction info for {}",dir);
+            return null;
+        }
         map.putIfAbsent(dir,new MessageDirectionInfo<>(dir));
         return map.get(dir);
     }
@@ -41,13 +47,24 @@ public class NetworkHandler {
      * Ignored if TILRef#CLIENT_ONLY is enabled
      */
     public static void load() {
-        if(CLIENT_ONLY) return;
+        if(CLIENT_ONLY) {
+            if(DEBUG) TILRef.logInfo("Skipping network registration since CLIENT_ONLY is enabled");
+            return;
+        }
         int id = 0;
-        if(DIRECTION_INFO.isNotEmpty()) NetworkHelper.getNetwork();
+        if(DIRECTION_INFO.isNotEmpty()) {
+            NetworkHelper.getNetwork();
+            if(DEBUG) TILRef.logInfo("Loading network messages for {} directions",DIRECTION_INFO.size());
+        } else if(DEBUG) TILRef.logInfo("There are no network messages to register");
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
-            if(!CoreAPI.isLegacy()) id++; //TODO Is the id even necessary? The message wrapper class doesn't change...
+            if(!CoreAPI.isLegacy()) id++;
+            if(DEBUG) TILRef.logInfo("Registered network direction info: {}",info);
         }
+    }
+    
+    public static <DIR> @Nullable MessageDirectionInfo<DIR> readDirectionInfo(ByteBuf buf) {
+        return getDirectionInfo(NetworkHelper.readDir(buf));
     }
 
     /**
@@ -112,7 +129,9 @@ public class NetworkHandler {
      * The direction may be null in the case of a client receiver trying to register on the server side
      */
     private static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, Function<ByteBuf,M> decoder, DIR dir) {
+        if(DEBUG) TILRef.logInfo("Registering message {} to direction {} with function {}",clazz,dir,decoder);
         registerMsg(dir,dirInfo -> new MessageInfo<>(clazz,dirInfo,decoder));
+        if(DEBUG) TILRef.logInfo("Successfully registered {} function handler for message {}",dir,clazz);
     }
 
     /**
@@ -120,7 +139,11 @@ public class NetworkHandler {
      * The direction may be null in the case of a client receiver trying to register on the server side
      */
     public static <DIR,M extends MessageAPI<?>> void registerMsg(Class<M> clazz, MessageHandlerAPI handler, DIR dir) {
+        if(DEBUG)
+            TILRef.logInfo("Registering message {} to direction {} with handler type {}",clazz,dir,
+                           Objects.nonNull(handler) ? handler.getClass() : null);
         registerMsg(dir,dirInfo -> new MessageInfo<>(clazz,dirInfo,handler));
+        if(DEBUG) TILRef.logInfo("Successfully registered {} handler for message {}",dir,clazz);
     }
     
     /**
@@ -130,8 +153,17 @@ public class NetworkHandler {
      */
     private static <DIR> void registerMsg(DIR dir, Function<MessageDirectionInfo<?>,MessageInfo<?>> infoSupplier) {
         if(Objects.nonNull(dir)) {
-            getOrInitDirectionInfo(dir).supply(infoSupplier);
-            if(BOTH_SIDES) getOrInitDirectionInfo(NetworkHelper.getOppositeDir(dir)).supply(infoSupplier);
+            MessageDirectionInfo<?> info = getOrInitDirectionInfo(dir);
+            if(Objects.nonNull(info)) info.supply(infoSupplier);
+            else TILRef.logError("Failed to register message for direction {}",dir);
+            if(BOTH_SIDES) {
+                DIR oppositeDir = NetworkHelper.getOppositeDir(dir);
+                if(DEBUG)
+                    TILRef.logInfo("Registering message to opposite direction {} (direction={})",oppositeDir,dir);
+                MessageDirectionInfo<?> oppositeInfo = getOrInitDirectionInfo(oppositeDir);
+                if(Objects.nonNull(oppositeInfo)) oppositeInfo.supply(infoSupplier);
+                else TILRef.logError("Failed to register message for opposite direction {}",oppositeDir);
+            }
         }
     }
 
