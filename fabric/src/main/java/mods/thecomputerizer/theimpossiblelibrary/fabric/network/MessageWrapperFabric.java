@@ -7,10 +7,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 @Getter
-public class MessageWrapperFabric extends MessageWrapperAPI<ServerPlayer,PacketSender> {
+public class MessageWrapperFabric extends MessageWrapperAPI<Player,PacketSender> {
     
     protected static final String ID_PATH = "message_wrapper_fabric";
     public static final ResourceLocation ID = TILRef.res(ID_PATH).unwrap();

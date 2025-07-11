@@ -3,13 +3,16 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NETWORK;
 
@@ -18,11 +21,100 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NE
  * Extend MessageAPI to send a packet through the API
  * Any class that extends this is required to have a constructor with a single ByteBuf as an input
  */
-@SuppressWarnings("unused")
 public abstract class MessageWrapperAPI<PLAYER,CTX> {
     
-    protected static <M extends MessageWrapperAPI<?,?>,B extends ByteBuf> BiConsumer<M,B> encode() {
+    public static <DIR,P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder(
+            final MessageDirectionInfo<DIR> dir) {
+        return Objects.nonNull(dir) ? decoder(dir.getDirection()) : buf -> null;
+    }
+    
+    public static <DIR,P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder(final DIR dir) {
+        if(Objects.isNull(dir)) return buf -> null;
+        return buf -> GenericUtils.cast(getInstance(NetworkHelper.getOppositeDir(dir),buf));
+    }
+    
+    public static <P,C,B extends ByteBuf> @NotNull BiConsumer<MessageWrapperAPI<P,C>,B> encoder() {
         return MessageWrapperAPI::encode;
+    }
+    
+    public static <DIR,P,C,S> @NotNull BiConsumer<MessageWrapperAPI<P,C>,S> handler(final MessageDirectionInfo<DIR> dir,
+            final Function<S,C> contextGetter, final Function<C,P> playerGetter) {
+        return handler(Objects.nonNull(dir) ? dir.getDirection() : null,contextGetter,playerGetter);
+    }
+    
+    public static <DIR,P,C,S> @NotNull BiConsumer<MessageWrapperAPI<P,C>,S> handler(final DIR dir,
+            final Function<S,C> contextGetter, final Function<C,P> playerGetter) {
+        return (message,contextHolder) -> {
+            C context = contextGetter.apply(contextHolder);
+            MessageWrapperAPI<P,C> response = message.handle(context);
+            if(Objects.nonNull(response) && Objects.nonNull(dir)) {
+                if(!NetworkHelper.isDirToClient(dir)) response.setPlayer(playerGetter.apply(context));
+                response.send();
+            }
+        };
+    }
+    
+    public static <DIR,P,C> MessageWrapperAPI<P,C> getInstance(final MessageDirectionInfo<DIR> dir) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK)
+                TILRef.logWarn("Tried to call MessageWrapperAPI#getInstance(dir) with null direction info!");
+            return null;
+        }
+        return getInstance(dir.getDirection());
+    }
+    
+    public static <DIR,P,C> MessageWrapperAPI<P,C> getInstance(DIR dir) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK)
+                TILRef.logWarn("Tried to call MessageWrapperAPI#getInstance(dir) with null direction!");
+            return null;
+        }
+        boolean client = NetworkHelper.isDirToClient(dir);
+        boolean login = NetworkHelper.isDirLogin(dir);
+        return login ? (client ? new ClientLogin<>() : new ServerLogin<>()) :
+                (client ? new Client<>() : new Server<>());
+    }
+    
+    public static <DIR,P,C,B extends ByteBuf> MessageWrapperAPI<P,C> getInstance(MessageDirectionInfo<DIR> dir,
+            B buf) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK)
+                TILRef.logWarn("Tried to call MessageWrapperAPI#getInstance(dir,buf) with null direction info!");
+            return null;
+        }
+        return getInstance(dir.getDirection(),buf);
+    }
+    
+    public static <DIR,P,C,B extends ByteBuf> MessageWrapperAPI<P,C> getInstance(DIR dir, B buf) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK)
+                TILRef.logWarn("Tried to call MessageWrapperAPI#getInstance(dir,buf) with null direction!");
+            return null;
+        }
+        boolean client = NetworkHelper.isDirToClient(dir);
+        boolean login = NetworkHelper.isDirLogin(dir);
+        return login ? (client ? new ClientLogin<>(buf) : new ServerLogin<>(buf)) :
+                (client ? new Client<>(buf) : new Server<>(buf));
+    }
+    
+    public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(MessageDirectionInfo<DIR> dir) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK) TILRef.logWarn("Tried to call MessageWrapperAPI#getClass with null direction info!");
+            return null;
+        }
+        return getClass(dir.getDirection());
+    }
+    
+    public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(DIR dir) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK) TILRef.logWarn("Tried to call MessageWrapperAPI#getClass with null direction!");
+            return null;
+        }
+        boolean client = NetworkHelper.isDirToClient(dir);
+        boolean login = NetworkHelper.isDirLogin(dir);
+        Class<?> cls =  login ? (client ? ClientLogin.class : ServerLogin.class) :
+                (client ? Client.class : Server.class);
+        return GenericUtils.cast(cls);
     }
     
     private boolean debug = DEBUG_NETWORK;
@@ -37,7 +129,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         decode(buf);
     }
     
-    public <DIR> void decode(ByteBuf buf) {
+    public void decode(ByteBuf buf) {
         this.debug = buf.readBoolean();
         if(this.debug) TILRef.logInfo("[Direction={}]: Decoding messages for type: {}",dirName(),getClass());
         this.messages = NetworkHelper.readCollection(buf,() -> {
@@ -71,11 +163,13 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         return direction instanceof Enum<?> ? ((Enum<?>)direction).name() : direction.toString();
     }
     
-    protected void disableDebug() {
+    @IndirectCallers
+    public void disableDebug() {
         this.debug = false;
     }
     
-    protected void enableDebug() {
+    @IndirectCallers
+    public void enableDebug() {
         this.debug = true;
     }
     
@@ -188,14 +282,59 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         return this;
     }
 
-    @SafeVarargs
+    @SafeVarargs @IndirectCallers
     public final MessageWrapperAPI<PLAYER,CTX> setPlayers(PLAYER ... players) {
         this.players = Arrays.asList(players);
         return this;
     }
-
+    
+    @IndirectCallers
     public MessageWrapperAPI<PLAYER,CTX> setPlayers(Collection<PLAYER> players) {
         this.players = Collections.unmodifiableCollection(players);
         return this;
+    }
+    
+    public static final class Client<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
+        
+        Client() {
+            super();
+        }
+        
+        Client(ByteBuf buf) {
+            super(buf);
+        }
+    }
+    
+    public static final class ClientLogin<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
+        
+        ClientLogin() {
+            super();
+        }
+        
+        ClientLogin(ByteBuf buf) {
+            super(buf);
+        }
+    }
+    
+    public static final class Server<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
+        
+        Server() {
+            super();
+        }
+        
+        Server(ByteBuf buf) {
+            super(buf);
+        }
+    }
+    
+    public static final class ServerLogin<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
+        
+        ServerLogin() {
+            super();
+        }
+        
+        ServerLogin(ByteBuf buf) {
+            super(buf);
+        }
     }
 }

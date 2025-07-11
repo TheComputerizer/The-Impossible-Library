@@ -1,14 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.network;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.network.Network1_16_5;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.NetworkRegistry.ChannelBuilder;
@@ -17,8 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static net.minecraftforge.fml.network.NetworkDirection.*;
@@ -86,50 +82,38 @@ public class NetworkForge1_16_5 extends Network1_16_5<SimpleChannel,NetworkDirec
     }
 
     @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
-        NetworkDirection direction = dir.getDirection();
-        Class<MessageWrapperForge1_16_5> msgClass = GenericUtils.cast(MessageWrapperForge1_16_5.getClass(direction));
-        BiConsumer<MessageWrapperForge1_16_5,FriendlyByteBuf> encoder = MessageWrapperAPI::encode;
-        Function<FriendlyByteBuf,MessageWrapperForge1_16_5> decoder =
-                buf -> MessageWrapperForge1_16_5.getInstance(NetworkHelper.getOppositeDir(direction),buf);
-        BiConsumer<MessageWrapperForge1_16_5,Supplier<Context>> handler =
-                (message,supplier) -> {
-            Context context = supplier.get();
-            MessageWrapperAPI<?,Context> response = message.handle(context);
-            if(Objects.nonNull(response)) {
-                if(!dir.isToClient()) ((MessageWrapperForge1_16_5)response).setPlayer(context.getSender());
-                response.send();
-            }
-        };
-        getNetwork().messageBuilder(msgClass,id,direction).encoder(encoder).decoder(decoder).consumer(handler).add();
+        final Class<MessageWrapperAPI<Player,Context>> msgClass = MessageWrapperAPI.getClass(dir);
+        getNetwork().messageBuilder(msgClass,id,dir.getDirection())
+                .encoder(MessageWrapperAPI.encoder()).decoder(MessageWrapperAPI.decoder(dir))
+                .consumer(MessageWrapperAPI.handler(dir,Supplier::get,Context::getSender))
+                .add();
     }
     
-    //TODO Does not support login direction
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        getNetwork().send(PLAYER.with(() -> (ServerPlayer)player), (MessageWrapperForge1_16_5)message);
+        getNetwork().send(PLAYER.with(() -> (ServerPlayer)player),message);
     }
     
-    //TODO Does not support login direction
     @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
-        getNetwork().sendToServer((MessageWrapperForge1_16_5)message);
+        getNetwork().sendToServer(message);
     }
     
-    @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_16_5.getInstance(dir);
+        MessageWrapperAPI<?,CTX> wrapper = MessageWrapperAPI.getInstance(dir);
         wrapper.setMessage(dir,message);
         return wrapper;
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_16_5.getInstance(dir);
+    @SafeVarargs
+    @Override public final <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir,
+            MessageAPI<CTX>... messages) {
+        MessageWrapperAPI<?,CTX> wrapper = MessageWrapperAPI.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_16_5.getInstance(dir);
+    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir,
+            Collection<MessageAPI<CTX>> messages) {
+        MessageWrapperAPI<?,CTX> wrapper = MessageWrapperAPI.getInstance(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;
     }
