@@ -11,24 +11,41 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.dimension.DimensionType;
 
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 public class Dimension1_16_5 extends DimensionAPI<DimensionType> {
     
-    private final RegistryAccess registries;
+    private final ResourceLocationAPI<?> cachedRegistryName;
     private final String name;
     
     public Dimension1_16_5(WorldAPI<?> world, Object dimension) {
         super(world,(DimensionType)dimension);
-        this.registries = ((LevelAccessor)world.getWrapped()).registryAccess();
+        RegistryAccess access = ((LevelAccessor)world.getWrapped()).registryAccess();
+        this.cachedRegistryName = cacheRegistryName(Objects.nonNull(access) ? access : RegistryAccess.builtin());
         this.name = calculateName();
     }
     
+    private ResourceLocationAPI<?> cacheRegistryName(RegistryAccess access) {
+        if(Objects.isNull(access) || Objects.isNull(this.wrapped)) return null;
+        Registry<DimensionType> registry = access.dimensionTypes();
+        if(Objects.isNull(registry)) return null;
+        ResourceKey<DimensionType> key = registry.getResourceKey(this.wrapped).orElse(null);
+        if(Objects.isNull(key)) {
+            for(Entry<ResourceKey<DimensionType>,DimensionType> entry : registry.entrySet()) {
+                if(entry.getValue().equalTo(this.wrapped)) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+        }
+        return Objects.nonNull(key) ? WrapperHelper.wrapResourceLocation(key.location()) : null;
+    }
+    
     private String calculateName() {
-        ResourceLocationAPI<?> registryName = getRegistryName();
-        if(Objects.isNull(registryName)) return null;
-        String[] words = registryName.getPath().split("_");
+        if(Objects.isNull(this.cachedRegistryName)) return null;
+        String[] words = this.cachedRegistryName.getPath().split("_");
         StringJoiner joiner = new StringJoiner(" ");
         for(String word : words) joiner.add(TextHelper.capitalize(word));
         return joiner.toString();
@@ -39,10 +56,6 @@ public class Dimension1_16_5 extends DimensionAPI<DimensionType> {
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        if(Objects.isNull(this.registries) || Objects.isNull(this.wrapped)) return null;
-        Registry<DimensionType> registry = this.registries.dimensionTypes();
-        if(Objects.isNull(registry)) return null;
-        ResourceKey<DimensionType> key = registry.getResourceKey(this.wrapped).orElse(null);
-        return Objects.nonNull(key) ? WrapperHelper.wrapResourceLocation(key.location()) : null;
+        return this.cachedRegistryName;
     }
 }
