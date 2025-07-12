@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.world.DimensionType;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 public class Dimension1_12_2 extends DimensionAPI<DimensionType> {
 
@@ -23,5 +24,12 @@ public class Dimension1_12_2 extends DimensionAPI<DimensionType> {
 
     @Override public ResourceLocationAPI<Integer> getRegistryName() {
         return this.res;
+    }
+    
+    /**
+     * Unused in 1.12.2
+     */
+    @Override protected Function<Object,Object> levelLocator() {
+        return o -> null;
     }
 }

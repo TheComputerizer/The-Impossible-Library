@@ -37,21 +37,24 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
         return MessageWrapperAPI::encode;
     }
     
-    public static <DIR,P,C,S> @NotNull BiConsumer<MessageWrapperAPI<P,C>,S> handler(final MessageDirectionInfo<DIR> dir,
-            final Function<S,C> contextGetter, final Function<C,P> playerGetter) {
-        return handler(Objects.nonNull(dir) ? dir.getDirection() : null,contextGetter,playerGetter);
+    public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(MessageDirectionInfo<DIR> dir) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK) TILRef.logWarn("Tried to call MessageWrapperAPI#getClass with null direction info!");
+            return null;
+        }
+        return getClass(dir.getDirection());
     }
     
-    public static <DIR,P,C,S> @NotNull BiConsumer<MessageWrapperAPI<P,C>,S> handler(final DIR dir,
-            final Function<S,C> contextGetter, final Function<C,P> playerGetter) {
-        return (message,contextHolder) -> {
-            C context = contextGetter.apply(contextHolder);
-            MessageWrapperAPI<P,C> response = message.handle(context);
-            if(Objects.nonNull(response) && Objects.nonNull(dir)) {
-                if(!NetworkHelper.isDirToClient(dir)) response.setPlayer(playerGetter.apply(context));
-                response.send();
-            }
-        };
+    public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(DIR dir) {
+        if(Objects.isNull(dir)) {
+            if(DEBUG_NETWORK) TILRef.logWarn("Tried to call MessageWrapperAPI#getClass with null direction!");
+            return null;
+        }
+        boolean client = NetworkHelper.isDirToClient(dir);
+        boolean login = NetworkHelper.isDirLogin(dir);
+        Class<?> cls = login ? (client ? ClientLogin.class : ServerLogin.class) :
+                (client ? Client.class : Server.class);
+        return GenericUtils.cast(cls);
     }
     
     public static <DIR,P,C> MessageWrapperAPI<P,C> getInstance(final MessageDirectionInfo<DIR> dir) {
@@ -97,24 +100,21 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
                 (client ? new Client<>(buf) : new Server<>(buf));
     }
     
-    public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(MessageDirectionInfo<DIR> dir) {
-        if(Objects.isNull(dir)) {
-            if(DEBUG_NETWORK) TILRef.logWarn("Tried to call MessageWrapperAPI#getClass with null direction info!");
-            return null;
-        }
-        return getClass(dir.getDirection());
+    public static <DIR,P,C,S> @NotNull BiConsumer<MessageWrapperAPI<P,C>,S> handler(final MessageDirectionInfo<DIR> dir,
+            final Function<S,C> contextGetter, final Function<C,P> playerGetter) {
+        return handler(Objects.nonNull(dir) ? dir.getDirection() : null,contextGetter,playerGetter);
     }
     
-    public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(DIR dir) {
-        if(Objects.isNull(dir)) {
-            if(DEBUG_NETWORK) TILRef.logWarn("Tried to call MessageWrapperAPI#getClass with null direction!");
-            return null;
-        }
-        boolean client = NetworkHelper.isDirToClient(dir);
-        boolean login = NetworkHelper.isDirLogin(dir);
-        Class<?> cls =  login ? (client ? ClientLogin.class : ServerLogin.class) :
-                (client ? Client.class : Server.class);
-        return GenericUtils.cast(cls);
+    public static <DIR,P,C,S> @NotNull BiConsumer<MessageWrapperAPI<P,C>,S> handler(final DIR dir,
+            final Function<S,C> contextGetter, final Function<C,P> playerGetter) {
+        return (message,contextHolder) -> {
+            C context = contextGetter.apply(contextHolder);
+            MessageWrapperAPI<P,C> response = message.handle(context);
+            if(Objects.nonNull(response) && Objects.nonNull(dir)) {
+                if(!NetworkHelper.isDirToClient(dir)) response.setPlayer(playerGetter.apply(context));
+                response.send();
+            }
+        };
     }
     
     private boolean debug = DEBUG_NETWORK;
@@ -205,11 +205,17 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> {
     }
     
     public @Nullable MessageWrapperAPI<PLAYER,CTX> handle(CTX context) {
+        if(Objects.isNull(this.messages)) this.messages = Collections.emptyList();
         if(this.debug)
             TILRef.logInfo("[Direction={}]: Handling {} messages for type: {}",dirName(),this.messages.size(),getClass());
         List<MessageAPI<CTX>> replies = new ArrayList<>();
         for(MessageAPI<CTX> message : this.messages) {
-            if(this.debug) TILRef.logInfo("[Direction={}]: Handling message: {}",dirName(),message.getClass());
+            if(Objects.isNull(message)) {
+                if(this.debug) TILRef.logInfo("[Direction={}]: Skipping handle for null message",dirName());
+                continue;
+            }
+            if(this.debug)
+                TILRef.logInfo("[Direction={}]: Handling message: {}",dirName(),message.getClass());
             MessageAPI<CTX> reply = this.info.handle(message,context);
             if(Objects.nonNull(reply)) {
                 if(this.debug)

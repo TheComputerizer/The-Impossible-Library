@@ -19,8 +19,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_O
 @SuppressWarnings("unused")
 public class NetworkHandler {
 
-    private static final boolean BOTH_SIDES = CoreAPI.isLegacy();
+    private static final boolean BOTH_SIDES = CoreAPI.legacyPacketEnv();
     private static final boolean DEBUG = DEBUG_NETWORK;
+    private static final boolean ENABLE_LOGIN = !CoreAPI.isForge() && !CoreAPI.isLegacy(); //TODO There should be a better way to handle login packet registration
     private static final Mappable<?,MessageDirectionInfo<?>> DIRECTION_INFO = Mappable.makeSynchronized(HashMap::new);
 
     public static <DIR> @Nullable MessageDirectionInfo<DIR> getDirectionInfo(DIR dir) {
@@ -58,8 +59,16 @@ public class NetworkHandler {
         } else if(DEBUG) TILRef.logInfo("There are no network messages to register");
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
-            if(!CoreAPI.isLegacy()) id++;
+            //if(!CoreAPI.isLegacy()) id++;
             if(DEBUG) TILRef.logInfo("Registered network direction info: {}",info);
+        }
+    }
+    
+    private static void logDirectionRegistrationDebug(Class<?> msgClass, boolean client) {
+        if(DEBUG) {
+            String dir = client ? "client" : "server";
+            TILRef.logInfo("Tried to register {} as a {} login message, but the login direction is disabled!"+
+                           "Registering as a {} message instead",msgClass,dir,dir);
         }
     }
     
@@ -86,14 +95,22 @@ public class NetworkHandler {
      * Message registration must happen before load is called
      */
     public static <M extends MessageAPI<?>> void registerMsgToClientLogin(Class<M> clazz, Function<ByteBuf,M> decoder) {
-        registerMsg(clazz,decoder,NetworkHelper.getDirToClientLogin());
+        if(ENABLE_LOGIN) registerMsg(clazz,decoder,NetworkHelper.getDirToClientLogin());
+        else {
+            logDirectionRegistrationDebug(clazz,true);
+            registerMsgToClient(clazz,decoder);
+        }
     }
 
     /**
      * Message registration must happen before load is called
      */
     public static <M extends MessageAPI<?>> void registerMsgToClientLogin(Class<M> clazz, MessageHandlerAPI handler) {
-        registerMsg(clazz,handler,NetworkHelper.getDirToClientLogin());
+        if(ENABLE_LOGIN) registerMsg(clazz,handler,NetworkHelper.getDirToClientLogin());
+        else {
+            logDirectionRegistrationDebug(clazz,true);
+            registerMsgToClient(clazz,handler);
+        }
     }
 
     /**
@@ -114,14 +131,22 @@ public class NetworkHandler {
      * Message registration must happen before load is called
      */
     public static <M extends MessageAPI<?>> void registerMsgToServerLogin(Class<M> clazz, Function<ByteBuf,M> decoder) {
-        registerMsg(clazz,decoder,NetworkHelper.getDirToServerLogin());
+        if(ENABLE_LOGIN) registerMsg(clazz,decoder,NetworkHelper.getDirToServerLogin());
+        else {
+            logDirectionRegistrationDebug(clazz,false);
+            registerMsgToServer(clazz,decoder);
+        }
     }
 
     /**
      * Message registration must happen before load is called
      */
     public static <M extends MessageAPI<?>> void registerMsgToServerLogin(Class<M> clazz, MessageHandlerAPI handler) {
-        registerMsg(clazz,handler,NetworkHelper.getDirToServerLogin());
+        if(ENABLE_LOGIN) registerMsg(clazz,handler,NetworkHelper.getDirToServerLogin());
+        else {
+            logDirectionRegistrationDebug(clazz,false);
+            registerMsgToServer(clazz,handler);
+        }
     }
 
     /**

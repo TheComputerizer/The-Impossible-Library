@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -297,19 +298,31 @@ public abstract class CoreAPI {
     
     /**
      * Should return 8, 17, 21, etc.
+     * Java versions before 9 use 1.x numbering, but since nobody is going to use Java 7 or below it is assumed to be 8.
+     * If the Java version fails to parse for whatever reason, 17 will be returned.
      */
     public static int javaVersion() {
         if(javaVersionCache>0) return javaVersionCache;
-        TILRef.logInfo("Parsing java version from {}",JAVA_VERSION);
-        if(JAVA_VERSION.startsWith("1.")) return 8;
-        String majorVersion = JAVA_VERSION.split("\\.")[0].split("_")[0];
-        try {
-            javaVersionCache = Integer.parseInt(majorVersion);
-        } catch(Exception ex) {
-            TILRef.logError("Failed to parse java version from {} (split from {})",majorVersion,JAVA_VERSION,ex);
-            javaVersionCache = 17; //Next best guess after Java 8
+        javaVersionCache = 17;
+        TILRef.logInfo("Parsing Java version from {}",JAVA_VERSION);
+        if(JAVA_VERSION.startsWith("1.")) javaVersionCache = 8;
+        else {
+            String majorVersion = JAVA_VERSION.split("\\.")[0].split("_")[0];
+            try {
+                javaVersionCache = Integer.parseInt(majorVersion);
+            } catch(Exception ex) {
+                TILRef.logError("Failed to parse Java version from {} (split={})",majorVersion,JAVA_VERSION,ex);
+            }
         }
         return javaVersionCache;
+    }
+    
+    /**
+     * A bit of a confusing name since this isn't directly tied to the ModLoader$LEGACY enum.
+     * Refers to the packet systems used by forge prior to swiching to the (mod-facing) vanilla payload system.
+     */
+    public static boolean legacyPacketEnv() {
+        return CoreAPI.isLegacy() || (CoreAPI.isForge() && isVersionAtMost(V20_1));
     }
     
     @IndirectCallers
@@ -351,7 +364,8 @@ public abstract class CoreAPI {
     }
     
     public static void syncInstanceClassLoader(ClassLoader loader) {
-        TILRef.logInfo("Trying to sync CoreAPI instance to {} in the context of {}",loader,Thread.currentThread().getContextClassLoader());
+        TILRef.logInfo("Trying to sync CoreAPI instance to {} in the context of {}",loader,
+                       Thread.currentThread().getContextClassLoader());
         try {
             ClassLoaders.loadOrDefine(CoreAPI.class,loader);
         } catch(Exception ex) {
@@ -401,11 +415,15 @@ public abstract class CoreAPI {
     public abstract CommonEntryPoint getCommonVersionHandler();
     public abstract CoreEntryPoint getCoreVersionHandler();
     
-    @SuppressWarnings("unchecked")
     @IndirectCallers
     public <T> T getLaunguageProvider() {
-        String name = "TILLanguageProvider"+this.version.name.replace(".","_");
-        return ClassHelper.initialize((Class<T>)ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name));
+        String name = ".core.TILLanguageProvider"+this.version.name.replace(".","_");
+        Class<T> foundClass = GenericUtils.cast(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+name));
+        if(Objects.isNull(foundClass)) {
+            TILRef.logError("Failed to find language provider class! {}",getPackageName(BASE_PACKAGE)+name);
+            return null;
+        }
+        return ClassHelper.initialize(foundClass);
     }
     
     public abstract MultiVersionLoaderAPI getLoader();
@@ -423,11 +441,15 @@ public abstract class CoreAPI {
         return new MultiVersionModData(root,candidate,getModWriter(info));
     }
     
-    @SuppressWarnings("unchecked")
     @IndirectCallers
     public <T> T getModLocator(ClassLoader loader) {
-        String name = "MultiVersionModLocator"+this.version.name.replace(".","_");
-        return (T)ClassHelper.initialize(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+".core."+name,loader),this);
+        String name = ".core.MultiVersionModLocator"+this.version.name.replace(".","_");
+        Class<T> foundClass = GenericUtils.cast(ClassHelper.findClass(getPackageName(BASE_PACKAGE+name),loader));
+        if(Objects.isNull(foundClass)) {
+            TILRef.logError("Failed to find mod locator class! {}",getPackageName(BASE_PACKAGE)+name);
+            return null;
+        }
+        return ClassHelper.initialize(foundClass,this);
     }
     
     protected abstract ModWriter getModWriter(MultiVersionModInfo info);
