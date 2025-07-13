@@ -162,7 +162,8 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
 
     @Override public boolean isPaused() {
-        return Objects.nonNull(this.wrapped) && (this.wrapped.isGamePaused() || isPauseScreen(getCurrentScreen()));
+        return Objects.nonNull(this.wrapped) && (this.wrapped.isGamePaused() ||
+                (Objects.nonNull(this.wrapped.world) && isPauseScreen(getCurrentScreen())));
     }
     
     private boolean isPauseScreen(@Nullable Object screen) {
