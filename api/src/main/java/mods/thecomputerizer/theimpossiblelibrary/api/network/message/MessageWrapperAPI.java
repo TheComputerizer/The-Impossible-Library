@@ -127,8 +127,9 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
             C context = contextGetter.apply(contextHolder);
             MessageWrapperAPI<P,C> response = message.handle(context);
             if(Objects.nonNull(response) && Objects.nonNull(dir)) {
-                if(NetworkHelper.isDirToClient(dir)) response.setPlayer(playerGetter.apply(context));
-                response.send();
+                if(NetworkHelper.isDirToClient(response.getDir()))
+                    response.setPlayer(playerGetter.apply(context)).send();
+                else response.send();
             }
             if(CoreAPI.legacyPacketEnv()) Hacks.invoke(context,"setPacketHandled",true);
         };
@@ -375,7 +376,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
     }
     
     public void send() {
-        if(Objects.isNull(this.info) || Objects.isNull(this.info.getDirection())) {
+        if(Objects.isNull(this.info) || Objects.isNull(getDir())) {
             TILRef.logError("Cannot send packet of class `{}` with null info or direction!",getClass());
             return;
         }
@@ -383,7 +384,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
             TILRef.logError("Cannot send packet of class `{}` with no messages set!",getClass());
             return;
         }
-        if(NetworkHelper.isDirToClient(this.info.getDirection())) {
+        if(NetworkHelper.isDirToClient(getDir())) {
             if(Objects.isNull(this.players)) {
                 TILRef.logError("Cannot send packet of class `{}` to client with no players set!",getClass());
                 return;
