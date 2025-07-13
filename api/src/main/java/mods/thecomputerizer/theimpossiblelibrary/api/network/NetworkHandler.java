@@ -19,7 +19,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_O
 @SuppressWarnings("unused")
 public class NetworkHandler {
 
-    private static final boolean BOTH_SIDES = CoreAPI.legacyPacketEnv();
+    private static final boolean BOTH_SIDES = CoreAPI.isLegacy();
     private static final boolean DEBUG = DEBUG_NETWORK;
     private static final boolean ENABLE_LOGIN = !CoreAPI.isForge() && !CoreAPI.isLegacy(); //TODO There should be a better way to handle login packet registration
     private static final Mappable<?,MessageDirectionInfo<?>> DIRECTION_INFO = Mappable.makeSynchronized(HashMap::new);
@@ -59,7 +59,6 @@ public class NetworkHandler {
         } else if(DEBUG) TILRef.logInfo("There are no network messages to register");
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
-            //if(!CoreAPI.isLegacy()) id++;
             if(DEBUG) TILRef.logInfo("Registered network direction info: {}",info);
         }
     }

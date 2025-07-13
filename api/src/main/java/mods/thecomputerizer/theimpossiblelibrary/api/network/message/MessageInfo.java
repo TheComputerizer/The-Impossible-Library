@@ -10,11 +10,13 @@ public final class MessageInfo<M extends MessageAPI<?>> {
     @Getter private final MessageDirectionInfo<?> directionInfo;
     @Getter private final Class<M> msgClass;
     private final MessageHandlerAPI handler;
+    
+    public MessageInfo(Class<M> clazz, MessageDirectionInfo<?> directionInfo) {
+        this(clazz,directionInfo,MessageHandlerAPI.getDefault(clazz));
+    }
 
     public MessageInfo(Class<M> clazz, MessageDirectionInfo<?> directionInfo, Function<ByteBuf,M> decoder) {
-        this.msgClass = clazz;
-        this.directionInfo = directionInfo;
-        this.handler = MessageHandlerAPI.getDefault(decoder);
+        this(clazz,directionInfo,MessageHandlerAPI.getDefault(decoder));
     }
 
     public MessageInfo(Class<M> clazz, MessageDirectionInfo<?> directionInfo, MessageHandlerAPI handler) {

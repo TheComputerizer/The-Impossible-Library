@@ -66,7 +66,7 @@ public class TILRef {
     }
     
     public static String getNetworkVersion() {
-        return MODID+VERSION.replace('.','_');
+        return VERSION;
     }
     
     public static SharedHandlesClient getClientHandles() {

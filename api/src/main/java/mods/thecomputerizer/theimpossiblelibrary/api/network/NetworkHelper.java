@@ -77,7 +77,7 @@ public class NetworkHelper {
 
     public static <DIR> boolean isDirLogin(DIR d) {
         NetworkAPI<?,DIR> api = getNetworkAPI();
-        return Objects.nonNull(api) && api.isDirToClient(d);
+        return Objects.nonNull(api) && api.isDirLogin(d);
     }
 
     /**

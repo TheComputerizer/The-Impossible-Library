@@ -1,10 +1,15 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 
 import java.util.function.Function;
 
 public interface MessageHandlerAPI {
+    
+    static <M extends MessageAPI<?>> MessageHandlerAPI getDefault(Class<M> msgClass) {
+        return getDefault(buf -> Hacks.construct(msgClass,buf));
+    }
 
     static <M extends MessageAPI<?>> MessageHandlerAPI getDefault(Function<ByteBuf,M> decoder) {
         return new MessageHandlerDefault(decoder);

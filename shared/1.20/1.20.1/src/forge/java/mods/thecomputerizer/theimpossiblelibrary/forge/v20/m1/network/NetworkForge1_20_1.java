@@ -85,7 +85,7 @@ public class NetworkForge1_20_1 extends Network1_20<SimpleChannel,NetworkDirecti
 
     @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
         final Class<MessageWrapperAPI<Player,Context>> msgClass = MessageWrapperAPI.getClass(dir);
-        getNetwork().messageBuilder(msgClass,id,dir.getDirection())
+        getNetwork().messageBuilder(msgClass,id)
                 .encoder(MessageWrapperAPI.encoder()).decoder(MessageWrapperAPI.decoder(dir))
                 .consumerMainThread(MessageWrapperAPI.handler(dir,Supplier::get,Context::getSender))
                 .add();

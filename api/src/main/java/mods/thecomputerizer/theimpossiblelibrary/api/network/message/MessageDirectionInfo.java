@@ -25,6 +25,10 @@ public class MessageDirectionInfo<DIR> {
         this.infoSet = new HashSet<>();
     }
     
+    public <M extends MessageAPI<?>> void add(Class<M> msgClass) {
+        add(new MessageInfo<>(msgClass,this));
+    }
+    
     public void add(MessageInfo<?> info) {
         this.infoSet.add(info);
     }
