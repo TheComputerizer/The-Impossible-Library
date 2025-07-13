@@ -16,6 +16,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.font.Font1
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.client.render.Render1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.world.World1_12_2;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraft.client.resources.IResourcePack;
@@ -161,7 +162,11 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
 
     @Override public boolean isPaused() {
-        return Objects.nonNull(this.wrapped) && this.wrapped.isGamePaused();
+        return Objects.nonNull(this.wrapped) && (this.wrapped.isGamePaused() || isPauseScreen(getCurrentScreen()));
+    }
+    
+    private boolean isPauseScreen(@Nullable Object screen) {
+        return screen instanceof GuiScreen && ((GuiScreen)screen).doesGuiPauseGame();
     }
     
     @Override public <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {

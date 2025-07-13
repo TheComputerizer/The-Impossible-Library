@@ -12,6 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.font.Font1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.render.Render1_18_2;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -115,9 +116,13 @@ public class Minecraft1_18_2 extends MinecraftAPI<Minecraft> {
     @Override public boolean isFullScreen() {
         return Objects.nonNull(this.wrapped) && this.wrapped.getWindow().isFullscreen();
     }
-
+    
     @Override public boolean isPaused() {
-        return Objects.nonNull(this.wrapped) && this.wrapped.isPaused();
+        return Objects.nonNull(this.wrapped) && (this.wrapped.isPaused() || isPauseScreen(getCurrentScreen()));
+    }
+    
+    private boolean isPauseScreen(@Nullable Object screenObj) {
+        return screenObj instanceof Screen screen && screen.isPauseScreen();
     }
     
     @Override public <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {
