@@ -80,6 +80,7 @@ public class ClassHelper {
         Map<Object,Object> properties = new HashMap<>();
         properties.put("banner.hide","true");
         properties.put("managed-logger.repository.enabled","false");
+        properties.put("resource-releaser.enabled","false");
         return properties;
     }
     

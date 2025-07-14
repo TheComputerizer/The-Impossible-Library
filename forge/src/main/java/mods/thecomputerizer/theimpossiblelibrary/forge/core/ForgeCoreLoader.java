@@ -183,6 +183,7 @@ public class ForgeCoreLoader {
         Map<Object,Object> properties = new HashMap<>();
         properties.put("banner.hide","true");
         properties.put("managed-logger.repository.enabled","false");
+        properties.put("resource-releaser.enabled","false");
         return properties;
     }
     
@@ -445,7 +446,17 @@ public class ForgeCoreLoader {
             return getVersionFromForgeVersion(rawArgs[versionIndex]);
         }
         LOGGER.error("Failed to find fml.mcVersion or version flags from args {}",Arrays.toString(rawArgs));
-        return null;
+        int javaVersion = 17;
+        String mcVersion = "1.20.1";
+        if(isJava8()) {
+            javaVersion = 8;
+            mcVersion = "1.16.5";
+        } else if(isJava21()) {
+            javaVersion = 21;
+            mcVersion = "1.21.1";
+        }
+        LOGGER.warn("Guessing the current Minecraft version is {} since this is Java {}",mcVersion,javaVersion);
+        return mcVersion;
     }
     
     /**
@@ -474,6 +485,10 @@ public class ForgeCoreLoader {
     
     public static boolean isJava8() {
         return System.getProperty("java.version").startsWith("1.");
+    }
+    
+    public static boolean isJava21() {
+        return System.getProperty("java.version").startsWith("21");
     }
     
     /**
