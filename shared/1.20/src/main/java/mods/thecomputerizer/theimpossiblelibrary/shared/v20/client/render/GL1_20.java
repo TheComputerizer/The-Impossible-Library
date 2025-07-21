@@ -125,9 +125,11 @@ public class GL1_20 implements GLAPI {
     }
     
     @Override public void normalizedVertex(double x, double y, double z, float r, float g, float b, float a,
-            double nextX, double nextY, double nextZ) { //Direct GL calls don't work in 1.18.2+ so we need this instead
-        if(Objects.isNull(this.workingBuffer))
+            double nextX, double nextY, double nextZ) {
+        if(Objects.isNull(this.workingBuffer)) {
             TILRef.logError("Cannot add normalized vertex to buffer before calling directBegin!");
+            return;
+        }
         boolean same = x==nextX && y==nextY && z==nextZ;
         x*=this.scaleX;
         y*=this.scaleY;

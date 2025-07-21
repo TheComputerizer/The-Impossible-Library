@@ -181,14 +181,6 @@ public class NeoForgeCoreLoader {
         return desc;
     }
     
-    static Map<?,?> burningWaveProperties() {
-        Map<Object,Object> properties = new HashMap<>();
-        properties.put("banner.hide","true");
-        properties.put("managed-logger.repository.enabled","false");
-        properties.put("resource-releaser.enabled","false");
-        return properties;
-    }
-    
     /**
      * Export the given module to all packages loaded to a module in the GAME layer
      */

@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,7 @@ import org.lwjgl.input.Mouse;
 import java.util.Collection;
 
 import static net.minecraft.client.renderer.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA;
+import static net.minecraft.client.renderer.GlStateManager.DestFactor.ZERO;
 import static net.minecraft.client.renderer.GlStateManager.SourceFactor.ONE;
 import static net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA;
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
@@ -26,6 +28,8 @@ import static org.lwjgl.opengl.GL11.GL_LESS;
 
 public class Render1_12_2 extends RenderAPI {
 
+    final boolean nothiriumCompat = ModHelper.isModLoaded("nothirium");
+    
     public Render1_12_2() {
         super(new GL1_12_2());
     }
@@ -52,12 +56,11 @@ public class Render1_12_2 extends RenderAPI {
     }
     
     @Override public void blendTranslucent() {
-        GlStateManager.blendFunc(SRC_ALPHA,ONE_MINUS_SRC_ALPHA);
-        GlStateManager.alphaFunc(ONE.factor,ONE_MINUS_SRC_ALPHA.factor);
+        GlStateManager.tryBlendFuncSeparate(SRC_ALPHA,ONE_MINUS_SRC_ALPHA,ONE,ONE_MINUS_SRC_ALPHA);
     }
 
     @Override public void defaultBlendFunc() {
-        GlStateManager.blendFunc(SRC_ALPHA,ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(SRC_ALPHA,ONE_MINUS_SRC_ALPHA,ONE,ZERO);
     }
 
     @Override public void depthMask(boolean mask) {
@@ -81,7 +84,7 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void disableTexture() {
-        GlStateManager.disableTexture2D();
+        if(!this.nothiriumCompat) GlStateManager.disableTexture2D();
     }
 
     @Override public void drawCenteredString(FontAPI<?> font, String str, Number x, Number y, int color) {
@@ -98,7 +101,7 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void enableAlpha() {
-        GlStateManager.enableAlpha();
+        if(!this.nothiriumCompat) GlStateManager.enableAlpha();
     }
 
     @Override public void enableBlend() {
@@ -114,7 +117,7 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void enableTexture() {
-        GlStateManager.enableTexture2D();
+        if(!this.nothiriumCompat) GlStateManager.enableTexture2D();
     }
     
     @Override public void endBuffer() {
@@ -154,7 +157,7 @@ public class Render1_12_2 extends RenderAPI {
         return this;
     }
     
-    @Override public void modelView() {} //I don't think this is applicable in 1.16.5?
+    @Override public void modelView() {}
 
     @Override public void popMatrix() {
         GlStateManager.popMatrix();

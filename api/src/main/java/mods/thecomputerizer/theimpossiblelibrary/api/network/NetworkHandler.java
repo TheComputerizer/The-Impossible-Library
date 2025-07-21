@@ -59,7 +59,8 @@ public class NetworkHandler {
         } else if(DEBUG) TILRef.logInfo("There are no network messages to register");
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
-            if(DEBUG) TILRef.logInfo("Registered network direction info: {}",info);
+            if(DEBUG) TILRef.logInfo("Registered network direction info: {} (id={})",info,id);
+            if(CoreAPI.isJava17OrLater()) id++;
         }
     }
     

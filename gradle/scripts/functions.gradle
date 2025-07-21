@@ -150,7 +150,7 @@ private static List<String> commonMavenData(String id) {
         case 'cf': case 'curse': case 'curseforge': case 'cursemaven':
             return [ 'CurseMaven', 'curse.cleanroommc.com/', 'curse.maven' ]
         case 'cleanroom': case 'hei':
-            return [ 'CleanroomMC', 'maven.cleanroommc.com', 'mezz' ]
+            return [ 'CleanroomMC', 'maven.cleanroommc.com', 'mezz', 'zone.rong' ]
         case 'fast': case 'fastutil': case 'sonatype':
             return [ 'SonaType', 'oss.sonatype.org/content/repositories/public/', 'it.unimi.dsi' ]
         case 'jei': case 'modmaven':
@@ -454,6 +454,12 @@ void setupFabricBase() {
 
 void setupLegacyRunnable(boolean cleanroom) {
     extendRunnable()
+    configurations {
+        modCompileOnly
+        modRuntimeOnly
+        compileOnly.extendsFrom modCompileOnly
+        runtimeOnly.extendsFrom modRuntimeOnly
+    }
     uniminedCore cleanroom ? 'cleanroom' : 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
     setRepositories(cleanroom ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
     dependencies {
@@ -461,9 +467,11 @@ void setupLegacyRunnable(boolean cleanroom) {
         api project(':legacy')
         annotationProcessor libs.bundles.legacy.annotations
         if(cleanroom) compileOnly legacy.bundles.cleanroom.compile
-        compileOnly modsBundle('legacy', 'compile')
-        implementation modsBundle('legacy', 'implementation')
-        runtimeOnly modsBundle('legacy', 'runtime')
+        else modRuntimeOnly legacy.bundles.forge.runtime
+        modCompileOnly modsBundle('legacy', 'compile')
+        modImplementation modsBundle('legacy', 'implementation')
+        modRuntimeOnly modsBundle('legacy', 'runtime')
+        //runtimeOnly legacy.bundles.nothirium
     }
     inheritCompileSources ':api', ':legacy'
     inheritResources ':legacy'
@@ -505,6 +513,30 @@ void setupShared(boolean dev, List<String> run_after, List<String> repos, String
     extendRunnable()
     setLoaderConfigs()
     if(dev) setDev()
+    else if(isRunnableProject) {
+        configurations {
+            fabricModCompileOnly
+            forgeModCompileOnly
+            fabricModImplementation
+            forgeModImplementation
+            fabricModRuntimeOnly
+            forgeModRuntimeOnly
+            fabricCompileOnly.extendsFrom fabricModCompileOnly
+            forgeCompileOnly.extendsFrom forgeModCompileOnly
+            fabricImplementation.extendsFrom fabricModImplementation
+            forgeImplementation.extendsFrom forgeModImplementation
+            fabricRuntimeOnly.extendsFrom fabricModRuntimeOnly
+            forgeRuntimeOnly.extendsFrom forgeModRuntimeOnly
+            if(isNeoforgeCompatible) {
+                neoforgeModCompileOnly
+                neoforgeModImplementation
+                neoforgeModRuntimeOnly
+                neoforgeCompileOnly.extendsFrom neoforgeModCompileOnly
+                neoforgeImplementation.extendsFrom neoforgeModImplementation
+                neoforgeRuntimeOnly.extendsFrom neoforgeModRuntimeOnly
+            }
+        }
+    }
     uniminedCommon !dev
     setSharedDependencies repos, extra_repos
     inheritResources ':shared'
@@ -665,7 +697,9 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
     logger.lifecycle "Setting up core unimined stuff for $name"
     unimined.useGlobalCache = false
     boolean official_mappings = mappingStyleOfficial() || loader_name=='neoforge'
-    def production_namespace = 'mojmap'
+    def production_namespace = 'cleanroom'==loader_name || 'forge'==loader_name ? 'searge' :
+            ('fabric'==loader_name ? 'intermediary' : 'mojmap')
+    boolean should_remap_for_production = !official_mappings && production_namespace!='mojmap'
     unimined.minecraft {
         def mc_version = minecraftVersion()
         logger.lifecycle "Got unimined minecraft version for $name as $mc_version"
@@ -695,7 +729,6 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                         }
                     }
                 }
-                production_namespace = 'searge'
                 break
             }
             case 'fabric': {
@@ -709,7 +742,6 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                         }
                     }
                 }
-                production_namespace = 'intermediary'
                 break
             }
             case 'forge': {
@@ -722,7 +754,6 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                         }
                     }
                 }
-                production_namespace = 'searge'
                 break
             }
             case 'neoforge': {
@@ -739,13 +770,33 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
             }
             default: {
                 defaultRemapJar = false
-                production_namespace = 'mojmap'
                 break
+            }
+        }
+        if(isRunnableProject()) {
+            def loader_configs = [ ]
+            if(isLegacyProject()) loader_configs = [ 'modCompileOnly', 'modRuntimeOnly' ]
+            //else {
+            //    def loaders = official_mappings ? [ 'fabric' ] :
+            //            (isNeoforgeCompatible ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ])
+            //    loaders.forEach {loader ->
+            //        loader_configs+=[ "${loader}ModCompileOnly", "${loader}ModRuntimeOnly" ]
+            //    }
+            //}
+            if(!loader_configs.isEmpty()) {
+                logger.lifecycle "Enabling remapping for loader configs: $loader_configs"
+                mods {
+                    loader_configs.forEach {loader_config ->
+                        remap(configurations."$loader_config") {
+                            catchAWNamespaceAssertion()
+                        }
+                    }
+                }
             }
         }
     }
     //If it's already mojmap we don't need to remap it again
-    if(!official_mappings && production_namespace!='mojmap') {
+    if(should_remap_for_production) {
         remapJar {
             archiveBaseName = mod_id
             archiveClassifier = 'remapped'

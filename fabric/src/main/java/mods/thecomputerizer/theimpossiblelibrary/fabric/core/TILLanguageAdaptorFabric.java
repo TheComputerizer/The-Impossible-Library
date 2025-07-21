@@ -74,7 +74,9 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     static void burningWaveProperties() {
         Map<Object,Object> properties = new HashMap<>();
         properties.put("banner.hide","true");
+        properties.put("jvm.driver.type","org.burningwave.jvm.NativeDriver");
         properties.put("managed-logger.repository.enabled","false");
+        properties.put("priority-of-this-configuration","1000");
         properties.put("resource-releaser.enabled","false");
         try {
             Default.add(properties);
