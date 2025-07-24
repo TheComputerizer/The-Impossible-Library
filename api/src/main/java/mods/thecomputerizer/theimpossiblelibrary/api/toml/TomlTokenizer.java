@@ -553,8 +553,9 @@ public class TomlTokenizer {
                 }
                 case '-':
                 case '+': {
-                    if(c=='+' && this.last=='\0') return; //Ignore leading + since positive is implied
-                    else if(this.last!='E' && this.last!='e')
+                    if(this.last=='\0') {
+                        if(c=='+') return; //Ignore leading + since positive is implied
+                    } else if(this.last!='E' && this.last!='e')
                         TomlParser.doThrow("The `"+c+"` character is only allowed to be first, after `e`, or "+
                                            "after `E`",getLine(),getLineNumber(),index);
                     break;
