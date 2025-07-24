@@ -3,7 +3,7 @@ compileJava {
 }
 
 java {
-    toolchain.setLanguageVersion JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of 17
 }
 
 extendFrom 'common-deps'

@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class TomlToken {
+public class TomlTokenizer {
     
     final TomlReader reader;
     final Comment comment;
@@ -19,7 +19,7 @@ public class TomlToken {
     StringBuilder lineBuilder;
     int lineNumber = 1;
     
-    public TomlToken(TomlReader reader) {
+    public TomlTokenizer(TomlReader reader) {
         this.reader = reader;
         this.comment = new Comment();
         this.entry = new Entry();
@@ -27,7 +27,10 @@ public class TomlToken {
         this.lineBuilder = new StringBuilder();
     }
     
-    public void finish() throws TomlParsingException { //Build any trailing value and throw if necessary
+    /**
+     * Build any trailing values and throw if necessary
+     */
+    public void finish() throws TomlParsingException {
         if(this.comment.building) this.comment.end(this.lineBuilder.toString(),this.lineNumber,-1);
         if(this.table.building) this.table.end(this.lineBuilder.toString(),this.lineNumber,-1);
         if(this.entry.building) this.entry.end(this.lineBuilder.toString(),this.lineNumber,-1);
@@ -102,15 +105,15 @@ public class TomlToken {
         }
         
         String getLine() {
-            return TomlToken.this.lineBuilder.toString();
+            return TomlTokenizer.this.lineBuilder.toString();
         }
         
         int getLineNumber() {
-            return TomlToken.this.lineNumber;
+            return TomlTokenizer.this.lineNumber;
         }
         
         TomlReader getReader() {
-            return TomlToken.this.reader;
+            return TomlTokenizer.this.reader;
         }
         
         boolean isQuoting() {
@@ -550,7 +553,7 @@ public class TomlToken {
                 }
                 case '-':
                 case '+': {
-                    if(this.last=='\0') return; //Ignore first + since positive is implied
+                    if(c=='+' && this.last=='\0') return; //Ignore leading + since positive is implied
                     else if(this.last!='E' && this.last!='e')
                         TomlParser.doThrow("The `"+c+"` character is only allowed to be first, after `e`, or "+
                                            "after `E`",getLine(),getLineNumber(),index);

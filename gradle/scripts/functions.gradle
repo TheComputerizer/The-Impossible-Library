@@ -2,6 +2,9 @@ import org.codehaus.groovy.runtime.MethodClosure
 
 import java.util.function.Consumer
 
+import static org.gradle.api.JavaVersion.VERSION_1_8
+import static org.gradle.api.JavaVersion.VERSION_17
+import static org.gradle.api.JavaVersion.VERSION_21
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 //Setup project extension so builds that apply the script can actually call the functions
@@ -112,8 +115,11 @@ static List<String> collectRunAfter(Project project) {
 }
 
 static List<Project> combinedProjects(Project project) {
+    def project_names = [ ':api' ]
+    if(isProjectLegacy(project)) project_names+=':legacy'
+    else if(!isProjectLoaderBase(project)) project_names+=':shared'
     //noinspection GrUnresolvedAccess
-    return project.getProjectList(isProjectLoaderBase(project) ? [ ':api' ] : [ ':api', ':shared' ])
+    return project.getProjectList(project_names)
 }
 
 static Consumer<RepositoryHandler> commonMavenArtifact(Project project, String id) {
@@ -463,18 +469,14 @@ void setupLegacyRunnable(boolean cleanroom) {
     uniminedCore cleanroom ? 'cleanroom' : 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
     setRepositories(cleanroom ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
     dependencies {
-        api project(':api')
-        api project(':legacy')
         annotationProcessor libs.bundles.legacy.annotations
         if(cleanroom) compileOnly legacy.bundles.cleanroom.compile
         else modRuntimeOnly legacy.bundles.forge.runtime
         modCompileOnly modsBundle('legacy', 'compile')
         modImplementation modsBundle('legacy', 'implementation')
         modRuntimeOnly modsBundle('legacy', 'runtime')
-        //runtimeOnly legacy.bundles.nothirium
+        modRuntimeOnly legacy.bundles.nothirium
     }
-    inheritCompileSources ':api', ':legacy'
-    inheritResources ':legacy'
     addProjectJars ':legacy'
     setJarsRunAfter([ ':legacy' ])
 }
@@ -693,7 +695,7 @@ static SourceSetOutput sourceSetOutput(Project project, String source_name) {
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
-void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
+void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_args) {
     logger.lifecycle "Setting up core unimined stuff for $name"
     unimined.useGlobalCache = false
     boolean official_mappings = mappingStyleOfficial() || loader_name=='neoforge'
@@ -717,17 +719,19 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                 devNamespace 'mojmap'
             }
         }
+        runs {
+            if(is_runnable) {
+                config('client') {
+                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    if(!extra_args.isEmpty()) args+=extra_args
+                }
+            } else off = true
+        }
         defaultRemapJar = !official_mappings
         switch(loader_name) {
             case 'cleanroom': {
                 cleanroom {
                     loader cleanroom_loader_version
-                    if(is_runnable) {
-                        runs.all {
-                            systemProperty 'foundation.verbose', 'true'
-                            if(!args.isEmpty()) jvmArgs args
-                        }
-                    }
                 }
                 break
             }
@@ -735,36 +739,18 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
                 //noinspection GroovyAssignabilityCheck
                 fabric {
                     loader fabric_loader
-                    if(is_runnable) {
-                        runs.all {
-                            systemProperty 'foundation.verbose', 'true'
-                            if(!args.isEmpty()) jvmArgs args
-                        }
-                    }
                 }
                 break
             }
             case 'forge': {
                 minecraftForge {
                     loader forgeVersion()
-                    if(is_runnable) {
-                        runs.all {
-                            systemProperty 'foundation.verbose', 'true'
-                            if(!args.isEmpty()) jvmArgs args
-                        }
-                    }
                 }
                 break
             }
             case 'neoforge': {
                 neoForge {
                     loader neoforgeVersion()
-                    if(is_runnable) {
-                        runs.all {
-                            systemProperty 'foundation.verbose', 'true'
-                            if(!args.isEmpty()) jvmArgs args
-                        }
-                    }
                 }
                 break
             }
@@ -808,24 +794,27 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> args) {
 
 void uniminedCommon(boolean is_runnable) {
     uniminedCore 'none', false, []
-    uniminedFabric is_runnable
-    uniminedForge is_runnable
-    if(isNeoforgeCompatible()) uniminedNeoforge is_runnable
+    uniminedFabric is_runnable, []
+    uniminedForge is_runnable, []
+    if(isNeoforgeCompatible()) uniminedNeoforge is_runnable, []
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
-void uniminedFabric(boolean is_runnable) {
+void uniminedFabric(boolean is_runnable, List<String> extra_args) {
     unimined.minecraft(sourceSets.fabric) {
         combineWith sourceSets.main
         defaultRemapJar = true
         //noinspection GroovyAssignabilityCheck
         fabric {
             loader fabric_loader
+        }
+        runs {
             if(is_runnable) {
-                runs.all {
-                    systemProperty 'foundation.verbose', 'true'
+                config('client') {
+                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    if(!extra_args.isEmpty()) args+=extra_args
                 }
-            }
+            } else off = true
         }
     }
     def classifier = 'fabric-remapped'
@@ -852,18 +841,21 @@ void uniminedFabric(boolean is_runnable) {
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
-void uniminedForge(boolean is_runnable) {
+void uniminedForge(boolean is_runnable, List<String> extra_args) {
     def official_mappings = mappingStyleOfficial()
     unimined.minecraft(sourceSets.forge) {
         combineWith sourceSets.main
         if(!official_mappings) defaultRemapJar = true
         minecraftForge {
             loader forgeVersion()
+        }
+        runs {
             if(is_runnable) {
-                runs.all {
-                    systemProperty 'foundation.verbose', 'true'
+                config('client') {
+                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    if(!extra_args.isEmpty()) args+=extra_args
                 }
-            }
+            } else off = true
         }
     }
     if(!official_mappings) {
@@ -876,18 +868,21 @@ void uniminedForge(boolean is_runnable) {
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
-void uniminedNeoforge(boolean is_runnable) {
+void uniminedNeoforge(boolean is_runnable, List<String> extra_args) {
     def official_mappings = mappingStyleOfficial() || project.name=='shared_1.20.4'
     unimined.minecraft(sourceSets.neoforge) {
         combineWith sourceSets.main
         if(!official_mappings) defaultRemapJar = true
         neoForge {
             loader neoforgeVersion()
+        }
+        runs {
             if(is_runnable) {
-                runs.all {
-                    systemProperty 'foundation.verbose', 'true'
+                config('client') {
+                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    if(!extra_args.isEmpty()) args+=extra_args
                 }
-            }
+            } else off = true
         }
     }
     if(!official_mappings) {

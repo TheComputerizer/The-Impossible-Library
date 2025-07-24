@@ -1,5 +1,5 @@
 java {
-    toolchain.setLanguageVersion JavaLanguageVersion.of(8)
+    toolchain.languageVersion = JavaLanguageVersion.of 8
 }
 
 extendFrom 'common-deps'

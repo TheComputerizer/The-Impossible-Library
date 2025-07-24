@@ -13,11 +13,11 @@ import java.util.Objects;
 
 public class TomlReader {
     
-    final TomlToken tokenizer;
+    final TomlTokenizer tokenizer;
     final TableBuilder rootBuilder;
     
     public TomlReader() {
-        this.tokenizer = new TomlToken(this);
+        this.tokenizer = new TomlTokenizer(this);
         this.rootBuilder = new TableBuilder("root",false);
     }
     
