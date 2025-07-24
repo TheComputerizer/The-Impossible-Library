@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.client.entity;
 
 import com.mojang.authlib.GameProfile;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.entity.Player1_18_2;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -16,6 +18,13 @@ public class ClientPlayer1_18_2 extends Player1_18_2<LocalPlayer> {
     
     public ClientPlayer1_18_2(Object player) {
         super(player);
+    }
+    
+    /**
+     * Not available on the client side by default in 1.16+
+     */
+    @Override public BlockPosAPI<?> getBedPos(DimensionAPI<?> dimension) {
+        return null;
     }
     
     private GameType getGamemode(@Nullable ClientPacketListener handler, GameProfile profile) {

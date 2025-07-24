@@ -52,10 +52,6 @@ public abstract class Player1_21<P extends Player> extends PlayerAPI<P,EntityTyp
         return null;
     }
     
-    @Override public BlockPosAPI<?> getBedPos(DimensionAPI<?> dimension) { //TODO 1.16.5 dimension specific respawn pos
-        return null;
-    }
-    
     @Override public Box getBoundingBox() {
         return Objects.nonNull(this.entity) ? getBoundingBox(this.entity.getBoundingBox()) : null;
     }
