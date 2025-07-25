@@ -2,6 +2,8 @@
  * Common base for all legacy builds (pre 1.16)
  */
 
+evaluationDependsOn ':api'
+
 extendFrom 'common-deps'
 
 java {

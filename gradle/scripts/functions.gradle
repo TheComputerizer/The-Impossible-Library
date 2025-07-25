@@ -459,6 +459,7 @@ void setupFabricBase() {
 }
 
 void setupLegacyRunnable(boolean cleanroom) {
+    evaluationDependsOn ':legacy'
     extendRunnable()
     configurations {
         modCompileOnly
@@ -546,10 +547,14 @@ void setupShared(boolean dev, List<String> run_after, List<String> repos, String
 }
 
 void setupSharedBase() {
+    evaluationDependsOn ':shared'
     setupShared true, [ ':shared' ], []
 }
 
 void setupSharedRunnable(String ... extra_repos) {
+    if(isMinorVersion()) evaluationDependsOn ":shared:${parent.name}"
+    else evaluationDependsOn ':shared'
+    if(isNeoforgeCompatible()) evaluationDependsOn ':neoforge'
     setupShared false, collectRunAfter(project), [ 'cf', 'ct', 'jei', 'modrinth', 'modmenu' ], extra_repos
 }
 
@@ -719,15 +724,17 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
                 devNamespace 'mojmap'
             }
         }
-        runs {
-            if(is_runnable) {
-                config('client') {
-                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
-                    if(!extra_args.isEmpty()) args+=extra_args
-                }
-            } else off = true
-        }
         defaultRemapJar = !official_mappings
+        if('none'!=loader_name) {
+            runs {
+                if(is_runnable) {
+                    config('client') {
+                        javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                        if(!extra_args.isEmpty()) args+=extra_args
+                    }
+                } else off = true
+            }
+        }
         switch(loader_name) {
             case 'cleanroom': {
                 cleanroom {

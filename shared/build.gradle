@@ -2,6 +2,10 @@
  * Pass through parent module for shared version modules
  */
 
+evaluationDependsOn ':api'
+evaluationDependsOn ':fabric'
+evaluationDependsOn ':forge'
+
 extendFrom 'common-deps'
 
 java {

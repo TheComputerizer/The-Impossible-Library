@@ -1,7 +1,7 @@
 [bundles]
-    mods-1_16_5-implementation = [ 'betterweather-1_16_5', 'blueskies-1_16_5', 'champions-1_16_5', 'configured-1_16_5',
-        'coroutil-1_16_5', 'dsurround-1_16_5', 'enhancedcelestials-1_16_5', 'gamestages-1_16_5', 'sereneseasons-1_16_5',
-        'structuregel-1_16_5' ]
+    mods-1_16_5-implementation = [ 'betterweather-1_16_5', 'blueskies-1_16_5', 'bookshelf-1_16_5', 'champions-1_16_5',
+        'configured-1_16_5', 'coroutil-1_16_5', 'dsurround-1_16_5', 'enhancedcelestials-1_16_5', 'gamestages-1_16_5',
+        'sereneseasons-1_16_5', 'structuregel-1_16_5' ]
     mods-1_16_5-runtime = [ 'architectury-1_16_5', 'jei-1_16_5' ]
     mods-1_18_2-implementation = [ 'blueskies-1_18_2', 'bookshelf-1_18_2', 'champions-1_18_2', 'configured-1_18_2',
         'coroutil-1_18_2', 'enhancedcelestials-1_18_2', 'gamestages-1_18_2', 'infernalmobs-1_18_2',
