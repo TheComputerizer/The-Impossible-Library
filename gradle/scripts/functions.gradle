@@ -276,7 +276,9 @@ void inheritCompileSources(String ... parent_names) {
 void inheritResources(String ... parent_names) {
     processResources {
         parent_names.each {parent_name ->
-            from getTaskOutputs(project(parent_name), 'processResources')
+            from(getTaskOutputs(project(parent_name), 'processResources')) {
+                exclude 'mcmod.info'
+            }
         }
     }
     processTestResources {
@@ -729,7 +731,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
             runs {
                 if(is_runnable) {
                     config('client') {
-                        javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                        javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
                         if(!extra_args.isEmpty()) args+=extra_args
                     }
                 } else off = true
@@ -818,7 +820,7 @@ void uniminedFabric(boolean is_runnable, List<String> extra_args) {
         runs {
             if(is_runnable) {
                 config('client') {
-                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
@@ -859,7 +861,7 @@ void uniminedForge(boolean is_runnable, List<String> extra_args) {
         runs {
             if(is_runnable) {
                 config('client') {
-                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
@@ -886,7 +888,7 @@ void uniminedNeoforge(boolean is_runnable, List<String> extra_args) {
         runs {
             if(is_runnable) {
                 config('client') {
-                    javaVersion = isJava8 ? VERSION_1_8 : (isJava17 ? VERSION_17 : VERSION_21)
+                    javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true

@@ -10,15 +10,15 @@
     mods-1_19_2-implementation = [ 'blueskies-1_19_2', 'bookshelf-1_19_2', 'configured-1_19_2', 'coroutil-1_19_2',
         'enhancedcelestials-1_19_2', 'gamestages-1_19_2', 'infernalmobs-1_19_2', 'sereneseasons-1_19_2',
         'structuregel-1_19_2' ]
-    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'jei-1_19_2' ]
+    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'corgilib-1_19_2', 'jei-1_19_2' ]
     mods-1_19_4-implementation = [ 'blueskies-1_19_4', 'bookshelf-1_19_4', 'coroutil-1_19_4', 'coroutil-1_19_4',
         'enhancedcelestials-1_19_4', 'gamestages-1_19_4', 'infernalmobs-1_19_4', 'sereneseasons-1_19_4',
         'structuregel-1_19_4' ]
-    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
+    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'corgilib-1_19_4', 'jei-1_19_4' ]
     mods-1_20_1-implementation = [ 'blueskies-1_20_1', 'bookshelf-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
         'dataanchor-1_20_1', 'enhancedcelestials-1_20_1', 'gamestages-1_20_1', 'glitchcore-1_20_1',
         'infernalmobs-1_20_1', 'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
-    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
+    mods-1_20_1-runtime = [ 'corgilib-1_20_1', 'architectury-1_20_1', 'jei-1_20_1' ]
     mods-1_20_4-implementation = [ 'blueskies-1_20_4', 'bookshelf-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
         'glitchcore-1_20_1', 'infernalmobs-1_20_4', 'sereneseasons-1_20_4', 'structuregel-1_20_4' ]
     mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
@@ -27,7 +27,7 @@
     mods-1_20_6-runtime = [ 'jei-1_20_6' ]
     mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'dataanchor-1_21_1',
         'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
-    mods-1_21_1-runtime = [ 'jei-1_21_1' ]
+    mods-1_21_1-runtime = [ 'corgilib-1_21_1', 'jei-1_21_1' ]
 
 [libraries]
     architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }
@@ -65,6 +65,12 @@
     configured-1_20_4 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_4' }
     configured-1_20_6 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_6' }
     configured-1_21_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_21_1' }
+
+
+    corgilib-1_19_2 = { group = 'curse.maven', name = 'corgilib-693313', version.ref = 'corgilib-1_19_2' }
+    corgilib-1_19_4 = { group = 'curse.maven', name = 'corgilib-693313', version.ref = 'corgilib-1_19_4' }
+    corgilib-1_20_1 = { group = 'curse.maven', name = 'corgilib-693313', version.ref = 'corgilib-1_20_1' }
+    corgilib-1_21_1 = { group = 'curse.maven', name = 'corgilib-693313', version.ref = 'corgilib-1_21_1' }
 
     coroutil-1_16_5 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_16_5' }
     coroutil-1_18_2 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_18_2' }
@@ -170,6 +176,11 @@
     configured-1_20_4 = '5105022'
     configured-1_20_6 = '5340193'
     configured-1_21_1 = '5873784'
+
+    corgilib-1_19_2 = '4554111'
+    corgilib-1_19_4 = '4583678'
+    corgilib-1_20_1 = '6616784'
+    corgilib-1_21_1 = '6808262'
 
     coroutil-1_16_5 = '5008360'
     coroutil-1_18_2 = '5008370'
