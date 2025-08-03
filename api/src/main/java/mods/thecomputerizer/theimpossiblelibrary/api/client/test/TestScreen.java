@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.BasicTypeableWidget;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.BasicWidgetGroup;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.Button;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.ShapeWidget;
@@ -11,16 +10,20 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.Widget;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.WidgetGroup;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.WidgetList;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Plane;
+import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Shape;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.ShapeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.RandomHelper;
+
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorHelper.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.Axis.Y;
@@ -29,16 +32,26 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.block.Facing.
 public class TestScreen extends ScreenAPI {
     
     private final TextWidget clicked;
+    private Shape testShape;
+    private ColorCache testShapeColor;
     private boolean coloredFuzz;
     
     public TestScreen(int guiScale) {
         super(TextHelper.getLiteral("test"),ClientHelper.getWindow(),guiScale);
         addFuzz(5,10,6f,10f);
-        addRadialMenu(RenderHelper.getCurrentHeightRatio(),5);
+        addRadialMenu(RenderHelper.getCurrentHeightRatio(), 5);
         this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
         //addScrollableMenu(100,1.8d,1.8d);
         //addWidget(this.clicked);
-        addWidget(BasicTypeableWidget.literal("Text Box!",RED,0d,0.95d));
+        //addWidget(BasicTypeableWidget.literal("Text Box!",RED,0d,0.95d));
+        //addBox(1.5d,DARK_PURPLE);
+    }
+    
+    private void addBox(double scale, ColorCache color) {
+        this.testShape = ShapeHelper.plane(Y,scale);
+        this.testShapeColor = color;
+        //ShapeWidget box = ShapeWidget.from(this.testShape,this.testShapeColor);
+        //addWidget(box);
     }
     
     private void addFuzz(int minCount, int maxCount, float minWidth, float maxWidth) {
@@ -90,5 +103,13 @@ public class TestScreen extends ScreenAPI {
         addWidget(ShapeWidget.from(ShapeHelper.square(Y,1.8d,1d),LIGHT_PURPLE.withAlpha(0.5f)));
         addWidget(list);
         addWidget(ShapeWidget.outlineFrom(ShapeHelper.square(Y,1.8d,1d),WHITE,4f));
+    }
+    
+    @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
+        if(Objects.nonNull(this.testShape)) {
+            ColorCache color = Objects.nonNull(this.testShapeColor) ? this.testShapeColor : WHITE;
+            if(this.testShape instanceof Plane) ctx.drawColoredPlaneTest(center,(Plane)this.testShape,color);
+        }
+        super.draw(ctx,center,mouseX,mouseY);
     }
 }

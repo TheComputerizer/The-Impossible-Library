@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyStateCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.VectorHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.Wrapped;
 import net.minecraft.SharedConstants;
@@ -133,7 +132,7 @@ public class ScreenWrapper1_18_2 extends Screen implements Wrapped<ScreenAPI> {
             ctx.getRenderer().setMatrix(matrix);
             double x = -1d+((double)mouseX)*ctx.getScale().getScreenScaleX();
             double y = 1d-((double)mouseY)*ctx.getScale().getScreenScaleY();
-            this.wrapped.draw(ctx,VectorHelper.zero3D(),x,y);
+            this.wrapped.draw(ctx,x,y);
         }
     }
     

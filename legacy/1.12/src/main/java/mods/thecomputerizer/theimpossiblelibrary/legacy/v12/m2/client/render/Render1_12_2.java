@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.GLAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
-import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import net.minecraft.client.Minecraft;
@@ -22,13 +21,9 @@ import static net.minecraft.client.renderer.GlStateManager.SourceFactor.ONE;
 import static net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA;
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_COLOR;
 import static net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX_COLOR;
-import static org.lwjgl.opengl.GL11.GL_EQUAL;
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-import static org.lwjgl.opengl.GL11.GL_LESS;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Render1_12_2 extends RenderAPI {
-
-    final boolean nothiriumCompat = ModHelper.isModLoaded("nothirium");
     
     public Render1_12_2() {
         super(new GL1_12_2());
@@ -84,7 +79,7 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void disableTexture() {
-        if(!this.nothiriumCompat) GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture2D();
     }
 
     @Override public void drawCenteredString(FontAPI<?> font, String str, Number x, Number y, int color) {
@@ -101,7 +96,7 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void enableAlpha() {
-        if(!this.nothiriumCompat) GlStateManager.enableAlpha();
+        GlStateManager.enableAlpha();
     }
 
     @Override public void enableBlend() {
@@ -117,7 +112,7 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void enableTexture() {
-        if(!this.nothiriumCompat) GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture2D();
     }
     
     @Override public void endBuffer() {
@@ -186,6 +181,15 @@ public class Render1_12_2 extends RenderAPI {
     }
 
     @Override public void setPosColorShader() {}
+    
+    
+    @Override public void shadeFlat() {
+        GlStateManager.shadeModel(GL_FLAT);
+    }
+    
+    @Override public void shadeSmooth() {
+        GlStateManager.shadeModel(GL_SMOOTH);
+    }
 
     @Override public void translate(double x, double y, double z) {
         GlStateManager.translate(x,y,z);

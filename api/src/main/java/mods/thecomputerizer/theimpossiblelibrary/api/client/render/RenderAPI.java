@@ -109,6 +109,17 @@ public abstract class RenderAPI {
     public abstract void setColor(float r, float g, float b, float a);
     
     @IndirectCallers public abstract void setPosColorShader();
+    
+    /**
+     * 1.12.2 only
+     */
+    @IndirectCallers public void shadeFlat() {}
+    
+    /**
+     * 1.12.2 only
+     */
+    @IndirectCallers public void shadeSmooth() {}
+    
     public abstract void translate(double x, double y, double z);
     public abstract void translate(float x, float y, float z);
     

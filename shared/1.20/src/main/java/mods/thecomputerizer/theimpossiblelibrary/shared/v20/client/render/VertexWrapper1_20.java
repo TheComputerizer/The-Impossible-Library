@@ -7,11 +7,15 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.blaze3d.vertex.VertexFormatElement.Type;
+import com.mojang.blaze3d.vertex.VertexFormatElement.Usage;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.VertexWrapper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 
-import static com.mojang.blaze3d.vertex.DefaultVertexFormat.*;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.LINES;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.LINE_STRIP;
+import static com.mojang.blaze3d.vertex.VertexFormatElement.Type.FLOAT;
+import static com.mojang.blaze3d.vertex.VertexFormatElement.Usage.COLOR;
 
 public class VertexWrapper1_20 extends VertexWrapper {
     
@@ -44,11 +48,44 @@ public class VertexWrapper1_20 extends VertexWrapper {
     }
     
     protected void pushBuffer(VertexFormatElement element, Number[] numbers) {
-        if(element==ELEMENT_POSITION)
-            this.buffer.vertex(numbers[0].doubleValue(),numbers[1].doubleValue(),numbers[2].doubleValue());
-        else if(element==ELEMENT_COLOR)
-            this.buffer.color(numbers[0].floatValue(),numbers[1].floatValue(),numbers[2].floatValue(),numbers[3].floatValue());
-        else if(element==ELEMENT_UV0 || element==ELEMENT_UV1 || element==ELEMENT_UV2)
-            this.buffer.uv(numbers[0].floatValue(),numbers[1].floatValue());
+        int count = element.getCount();
+        Type type = element.getType();
+        Usage usage = element.getUsage();
+        if(numbers.length!=count && !(numbers.length==1 && usage==COLOR)) {
+            TILRef.logError("Incorrect buffer size {} for VertextFormatElement! (Count={}|Type={}|Usage={}!",
+                            numbers.length, count, type, usage);
+            return;
+        }
+        switch(usage) {
+            case COLOR: {
+                if(numbers.length==1) this.buffer.color(numbers[0].intValue());
+                else {
+                    Number r = numbers[0];
+                    Number g = numbers[1];
+                    Number b = numbers[2];
+                    Number a = numbers[3];
+                    if(r instanceof Integer || r instanceof Long || r instanceof Short)
+                        this.buffer.color(r.intValue(),g.intValue(),b.intValue(),a.intValue());
+                    else this.buffer.color(r.floatValue(),g.floatValue(),b.floatValue(),a.floatValue());
+                }
+                return;
+            }
+            case NORMAL: {
+                this.buffer.normal(numbers[0].floatValue(),numbers[1].floatValue(),numbers[2].floatValue());
+                return;
+            }
+            case POSITION: {
+                this.buffer.vertex(numbers[0].doubleValue(),numbers[1].doubleValue(),numbers[2].doubleValue());
+                return;
+            }
+            case UV: {
+                Number u = numbers[0];
+                Number v = numbers[1];
+                if(type==FLOAT) this.buffer.uv(u.floatValue(),v.floatValue());
+                else this.buffer.uv2(u.intValue(),v.intValue());
+                return;
+            }
+            default: TILRef.logError("Unsupported VertextFormatElement (Count={}|Type={}|Usage={}!",count,type,usage);
+        }
     }
 }

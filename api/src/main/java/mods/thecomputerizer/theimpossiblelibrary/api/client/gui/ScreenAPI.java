@@ -88,6 +88,10 @@ public class ScreenAPI extends WidgetGroup {
         draw(ctx,VectorHelper.zero3D(),mouseX,mouseY);
     }
     
+    public void draw(RenderContext ctx, double mouseX, double mouseY, double z) {
+        draw(ctx,VectorHelper.zero3D().add(0d,0d,z),mouseX,mouseY);
+    }
+    
     @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
         if(Objects.nonNull(this.background)) this.background.draw(ctx,center,mouseX,mouseY);
         super.draw(ctx,center,mouseX,mouseY);

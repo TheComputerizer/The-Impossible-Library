@@ -114,6 +114,22 @@ public final class RenderContext {
         finishGradient(buffer);
     }
     
+    public void drawColoredPlaneTest(Vector3 center, Plane plane, ColorCache color) {
+        Vector2 min = plane.getRelativeMin();
+        Vector2 max = plane.getRelativeMax();
+        this.renderer.enableBlend();
+        this.renderer.disableTexture();
+        this.renderer.defaultBlendFunc();
+        VertexWrapper buffer = initQuads(false);
+        withScaledPos(buffer,center,min).color(color).endVertex();
+        withScaledPos(buffer,center,max.dX(),min.dY()).color(color).endVertex();
+        withScaledPos(buffer,center,max).color(color).endVertex();
+        withScaledPos(buffer,center,min.dX(),max.dY()).color(color).endVertex();
+        buffer.finish();
+        this.renderer.enableTexture();
+        this.renderer.disableBlend();
+    }
+    
     public void drawLine(Vector3 start, Vector3 end, float width) {
         drawLine(start.dX(),start.dY(),start.dZ(),end.dX(),end.dY(),end.dZ(),width);
     }
