@@ -199,6 +199,20 @@ String fabricVersion() {
     return withMCVersion('fabric')
 }
 
+List<String> fixLegacyRuntimePaths() {
+    List<String> removed_paths = []
+    if(!isLegacyProject()) return removed_paths
+    [ project(':api'), project(':legacy'), project ].forEach {p ->
+        logger.lifecycle "Removing '${p.name}' directory classpaths (dir=${p.projectDir.absolutePath})"
+        [ 'classes\\java', 'resources' ].forEach {p_path ->
+            String full_path = "${p.projectDir.absolutePath}\\build\\${p_path}\\main"
+            removed_paths+=full_path
+            logger.lifecycle "Removing '$full_path' from runtime classpath"
+        }
+    }
+    return removed_paths
+}
+
 String forgeVersion() {
     return withMCVersion('forge')
 }
@@ -219,6 +233,16 @@ static AbstractArchiveTask getArchiveTask(Project project, String task_name) {
 
 int getJavaVersion() {
     return isJava8() ? 8 : (isJava21() ? 21 : 17)
+}
+
+Map<?,Object> getManifestEntries() {
+    Map<?,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
+    if(isLegacyProject()) {
+        attribute_map.put('FMLCorePlugin', legacy_entrypoint)
+        attribute_map.put('FMLCorePluginContainsFMLMod', true)
+        attribute_map.put('ForceLoadAsMod', true)
+    }
+    return attribute_map
 }
 
 static String getParentPath(String p_name) {
@@ -273,17 +297,23 @@ void inheritCompileSources(String ... parent_names) {
     }
 }
 
-void inheritResources(String ... parent_names) {
+void inheritResources(List<String> parent_names, String ... exlude_these) {
     processResources {
-        parent_names.each {parent_name ->
+        parent_names.forEach {parent_name ->
             from(getTaskOutputs(project(parent_name), 'processResources')) {
-                exclude 'mcmod.info'
+                exlude_these.each {exclude_this ->
+                    exclude exclude_this
+                }
             }
         }
     }
     processTestResources {
-        parent_names.each {parent_name ->
-            from getTaskOutputs(project(parent_name), 'processTestResources')
+        parent_names.forEach {parent_name ->
+            from(getTaskOutputs(project(parent_name), 'processTestResources')) {
+                exlude_these.each {exclude_this ->
+                    exclude exclude_this
+                }
+            }
         }
     }
 }
@@ -469,7 +499,20 @@ void setupLegacyRunnable(boolean cleanroom) {
         compileOnly.extendsFrom modCompileOnly
         runtimeOnly.extendsFrom modRuntimeOnly
     }
-    uniminedCore cleanroom ? 'cleanroom' : 'forge', true, [ dev_arg, common_entrypoint_arg, core_entrypoint_arg ]
+    tasks.register('devRunJar',Jar) {
+        archiveBaseName.set "$mod_id-dev_run"
+        duplicatesStrategy = EXCLUDE
+        from sourceSets.main.output
+        from sourceSetOutput(project(':api'), 'main')
+        from sourceSetOutput(project(':legacy'), 'main')
+        manifest {
+            Map<?,Object> entries = getManifestEntries()
+            entries.put 'TILMultiversionCoreMods', core_entrypoint
+            entries.put 'TILMultiversionMods', common_entrypoint
+            attributes entries
+        }
+    }
+    uniminedCore cleanroom ? 'cleanroom' : 'forge', true, []
     setRepositories(cleanroom ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
     dependencies {
         annotationProcessor libs.bundles.legacy.annotations
@@ -480,8 +523,10 @@ void setupLegacyRunnable(boolean cleanroom) {
         modRuntimeOnly modsBundle('legacy', 'runtime')
         modRuntimeOnly legacy.bundles.nothirium
     }
+    inheritResources([ ':legacy' ])
     addProjectJars ':legacy'
     setJarsRunAfter([ ':legacy' ])
+    tasks.preRunClient.mustRunAfter 'devRunJar'
 }
 
 void setupLoaderBase(String loader) {
@@ -544,7 +589,7 @@ void setupShared(boolean dev, List<String> run_after, List<String> repos, String
     }
     uniminedCommon !dev
     setSharedDependencies repos, extra_repos
-    inheritResources ':shared'
+    inheritResources([ ':shared' ], 'mcmod.info')
     setJarsRunAfter run_after
 }
 
@@ -623,13 +668,7 @@ void setJarsRunAfter(List<String> parent_names) {
     }
     jar {
         manifest {
-            Map<?,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
-            if(isLegacyProject()) {
-                attribute_map.put('FMLCorePlugin', legacy_entrypoint)
-                attribute_map.put('FMLCorePluginContainsFMLMod', true)
-                attribute_map.put('ForceLoadAsMod', true)
-            }
-            attributes(attribute_map)
+            attributes(getManifestEntries())
         }
         build_tasks.forEach {build_task ->
             mustRunAfter build_task
@@ -718,11 +757,12 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
             combineWith combined_project, sourceSetOf(combined_project, 'main')
         }
         mappings {
-            if(isLegacyProject()) mcp 'stable', legacy_mappings_1_12_2
-            else {
+            if(isLegacyProject()) {
+                if('forge'==loader_name) searge()
+                mcp 'stable', legacy_mappings_1_12_2
+            } else {
                 if(!official_mappings) intermediary()
                 mojmap()
-                if(isJava8()) parchment mc_version, parchmentVersion()
                 devNamespace 'mojmap'
             }
         }
@@ -732,6 +772,19 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
                 if(is_runnable) {
                     config('client') {
                         javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
+                        classpath-=files(fixLegacyRuntimePaths())
+                        classpath+=files(devRunJar.archiveFile)
+                        var map = getSystemProperties()
+                        map.put 'til.dev', 'true'
+                        map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                        map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
+                        if('cleanroom'==loader_name) {
+                            map.put 'foundation.dump', 'true'
+                            map.put 'foundation.verbose', 'true'
+                        } else {
+                            map.put 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+                            map.put 'forge.logging.console.level', 'debug'
+                        }
                         if(!extra_args.isEmpty()) args+=extra_args
                     }
                 } else off = true
@@ -821,6 +874,10 @@ void uniminedFabric(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 config('client') {
                     javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
+                    var map = getSystemProperties()
+                    map.put 'til.dev', 'true'
+                    map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                    map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
@@ -862,6 +919,10 @@ void uniminedForge(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 config('client') {
                     javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
+                    var map = getSystemProperties()
+                    map.put 'til.dev', 'true'
+                    map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                    map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
@@ -889,6 +950,10 @@ void uniminedNeoforge(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 config('client') {
                     javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
+                    var map = getSystemProperties()
+                    map.put 'til.dev', 'true'
+                    map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
+                    map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true

@@ -14,7 +14,7 @@ java {
 
 setDev()
 
-inheritResources ':api'
+inheritResources([ ':api' ])
 
 jar {
     from(getArchiveTaskFile(project(':api'), 'jar').collect {entry ->

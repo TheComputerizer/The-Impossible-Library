@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.jar.Attributes;
 import java.util.Map.Entry;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+
 public abstract class MultiVersionLoaderAPI {
 
     protected final CoreAPI parent;
@@ -162,6 +164,7 @@ public abstract class MultiVersionLoaderAPI {
     }
 
     public void loadMods(Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> infoMap, ClassLoader loader) {
+        TILRef.logDebug("Is dev enabled? {}",DEV);
         File root = findModRoot();
         TILDev.logInfo("Finding multiversion mods from root `{}`",root);
         Map<MultiVersionModCandidate,Collection<Class<? extends CommonEntryPoint>>> classes = new HashMap<>();

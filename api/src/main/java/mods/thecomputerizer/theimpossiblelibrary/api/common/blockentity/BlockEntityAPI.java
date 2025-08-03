@@ -25,7 +25,9 @@ public abstract class BlockEntityAPI<E,T> extends AbstractWrapped<T> implements 
     protected BlockEntityAPI(E entity, T type) {
         super(type);
         this.entity = entity;
-        if(Objects.nonNull(this.entity)) this.creator = (world,pos,state) -> this;
+        if(Objects.nonNull(this.entity)) {
+            this.creator = (world,pos,state) -> this;
+        }
     }
     
     @IndirectCallers
