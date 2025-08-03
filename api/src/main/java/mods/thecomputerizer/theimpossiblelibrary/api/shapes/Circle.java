@@ -62,16 +62,22 @@ public class Circle extends Shape2D {
         return false;
     }
     
+    public double getAngleClamped(double angle) {
+        while(angle<0) angle+=RADIANS_360;
+        while(angle>=RADIANS_360) angle-=RADIANS_360;
+        return angle;
+    }
+    
     public double getAngleDif() {
         return Math.abs(getAngleEnd()-getAngleStart());
     }
     
-    public double getAngleStart() {
-        return -RADIANS_180;
-    }
-    
     public double getAngleEnd() {
         return RADIANS_180;
+    }
+    
+    public double getAngleStart() {
+        return -RADIANS_180;
     }
     
     @Override public double getBoundedX(double x, double y, double z) {
@@ -161,14 +167,15 @@ public class Circle extends Shape2D {
     }
     
     @Override public boolean isInsideRelative(Vector2 pos) {
-        pos = VectorHelper.toPolar(pos.dX()/Math.min(this.heightRatio,1d),pos.dY()/Math.min(1d/this.heightRatio,1d));
-        if(pos.dX()>=this.innerRadius && pos.dX()<this.radius) {
-            while(pos.dY()<0d) pos.setY(pos.dY()+RADIANS_360);
-            double start = getAngleStart();
-            while(start<0d) start+=RADIANS_360;
-            double end = getAngleEnd();
-            while(end<start) end+=RADIANS_360;
-            return pos.dY()>=start && pos.dY()<end;
+        Vector2 polar = VectorHelper.toPolar(pos.dX()/Math.min(this.heightRatio,1d),pos.dY()/Math.min(1d/this.heightRatio,1d));
+        double radius = polar.dX();
+        double dif = getAngleDif();
+        if(radius>=this.innerRadius && radius<this.radius && dif>0d) {
+            if(dif>=RADIANS_360) return true;
+            double angle = getAngleClamped(polar.dY());
+            double start = getAngleClamped(getAngleStart());
+            double end = getAngleClamped(getAngleEnd());
+            return start<end ? (angle>=start && angle<end) : (angle>=start || angle<end);
         }
         return false;
     }
