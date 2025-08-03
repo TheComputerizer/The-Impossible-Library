@@ -242,10 +242,15 @@ public abstract class WidgetGroup extends Widget implements Clickable, Hoverable
     }
     
     @Override public Collection<TextAPI<?>> getHoverLines(double mouseX, double mouseY) {
-        if(canDraw())
-            for(Widget widget : this.widgets)
-                if(widget.canDraw() && widget instanceof Hoverable && ((Hoverable)widget).isHovering(mouseX,mouseY))
-                    return ((Hoverable)widget).getHoverLines(mouseX,mouseY);
+        if(canDraw()) {
+            for(Widget widget : this.widgets) {
+                if(widget.canDraw() && widget instanceof Hoverable) {
+                    Collection<TextAPI<?>> lines = ((Hoverable)widget).getHoverLines(mouseX,mouseY);
+                    if(lines.isEmpty()) continue;
+                    return lines;
+                }
+            }
+        }
         return Collections.emptyList();
     }
     

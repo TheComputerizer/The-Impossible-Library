@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.client.test;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.ClientHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.BasicTypeableWidget;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.BasicWidgetGroup;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.Button;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.ShapeWidget;
@@ -11,7 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.WidgetGro
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.widget.WidgetList;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.ColorCache;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderContext;
-import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderShape;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Circle;
@@ -38,12 +38,12 @@ public class TestScreen extends ScreenAPI {
     
     public TestScreen(int guiScale) {
         super(TextHelper.getLiteral("test"),ClientHelper.getWindow(),guiScale);
-        addFuzz(5,10,6f,10f);
-        addRadialMenu(RenderHelper.getCurrentHeightRatio(), 5);
+        addFuzz(5,100,6f,10f);
+        //addRadialMenu(RenderHelper.getCurrentHeightRatio(), 5);
         this.clicked = TextWidget.literal("0",-0.75d,0.75d).setColor(BLUE);
-        //addScrollableMenu(100,1.8d,1.8d);
-        //addWidget(this.clicked);
-        //addWidget(BasicTypeableWidget.literal("Text Box!",RED,0d,0.95d));
+        addScrollableMenu(100,1.8d,1.8d);
+        addWidget(this.clicked);
+        addWidget(BasicTypeableWidget.literal("Text Box!",RED,0d,0.95d));
         //addBox(1.5d,DARK_PURPLE);
     }
     

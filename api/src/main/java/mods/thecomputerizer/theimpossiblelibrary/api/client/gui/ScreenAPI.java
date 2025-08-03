@@ -93,7 +93,7 @@ public class ScreenAPI extends WidgetGroup {
     }
     
     @Override public void draw(RenderContext ctx, Vector3 center, double mouseX, double mouseY) {
-        if(Objects.nonNull(this.background)) this.background.draw(ctx,center,mouseX,mouseY);
+        if(Objects.nonNull(this.background)) this.background.draw(ctx,center.copy(),mouseX,mouseY);
         super.draw(ctx,center,mouseX,mouseY);
         Collection<TextAPI<?>> text = getHoverLines(mouseX,mouseY);
         if(!text.isEmpty()) ctx.drawTooltip(text,mouseX,mouseY);
