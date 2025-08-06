@@ -26,18 +26,59 @@
     unimined = { id = 'xyz.wagyourtail.unimined', version.ref = 'unimined' }
 
 [versions]
+    # API Dependency Versions
     asm = '9.7'
-    burningwave-core = '12.+'
-    burningwave-driver = '8.+'
     fastutil = '7.1.0'
-    gson = '2.8.9'
-    guava = '32.1.3-jre'
     jetbrains-annotations = '+'
     jsr = '3.0.+'
     log4j = '2.+'
-    lombok = '1.+'
     netty-all = '4.1.114.Final'
-    shadow = '9.+'
+
+    # Common Dependency Versions
+    burningwave-core = '12.+'
+    burningwave-driver = '8.+'
+    lombok = '1.+'
     spotbugs = '4.8.6'
     toolfactory = '9.+'
+
+    # Legacy Annotation Versions
+    gson = '2.8.9'
+    guava = '32.1.3-jre'
+
+    # Minecraft Versions
+    minecraft_1_12_2 = '1.12.2'
+    minecraft_1_16_5 = '1.16.5'
+    minecraft_1_18_2 = '1.18.2'
+    minecraft_1_19_2 = '1.19.2'
+    minecraft_1_19_4 = '1.19.4'
+    minecraft_1_20_1 = '1.20.1'
+    minecraft_1_20_4 = '1.20.4'
+    minecraft_1_20_6 = '1.20.6'
+    minecraft_1_21_1 = '1.21.1'
+    minecraft_1_21_3 = '1.21.3'
+    minecraft_1_21_4 = '1.21.4'
+    minecraft_1_21_5 = '1.21.5'
+    minecraft_1_21_6 = '1.21.6'
+    minecraft_1_21_7 = '1.21.7'
+    minecraft_1_21_8 = '1.21.8'
+    minecraft_1_21_9 = '1.21.9'
+
+    # Parchment Versions
+    parchment_1_16_5 = '2022.03.06'
+    parchment_1_18_2 = '2022.11.06'
+    parchment_1_19_2 = '2022.11.27'
+    parchment_1_19_4 = '2023.06.26'
+    parchment_1_20_1 = '2023.09.03'
+    parchment_1_20_4 = '2024.04.14'
+    parchment_1_20_6 = '2024.06.16'
+    parchment_1_21_1 = '2024.11.17'
+    parchment_1_21_3 = '2024.12.07'
+    parchment_1_21_4 = '2025.03.23'
+    parchment_1_21_5 = '2025.06.15'
+    parchment_1_21_6 = '2025.06.29'
+    parchment_1_21_7 = '2025.07.18'
+    parchment_1_21_8 = '2025.07.20'
+
+    # Plugin Versions
+    shadow = '9.+'
     unimined = '1.+'

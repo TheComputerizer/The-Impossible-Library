@@ -49,13 +49,19 @@
     sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
 
 [versions]
-    architectury-1_20_4 = '11.1.17+neoforge'
-    architectury-1_20_6 = '12.1.4+neoforge'
-    architectury-1_21_1 = '13.0.8+neoforge'
+    # Core & Loader Versions
+    neoforge_1_20_1 = '47.1.106'
+    neoforge_1_20_4 = '249'
+    neoforge_1_20_6 = '138'
+    neoforge_1_21_1 = '197'
+    neoforge_1_21_3 = '87'
+    neoforge_1_21_4 = '149'
+    neoforge_1_21_5 = '90'
+    neoforge_1_21_6 = '20-beta'
+    neoforge_1_21_7 = '25-beta'
+    neoforge_1_21_8 = '27'
 
-    bookshelf-1_20_4 = '23.1.11'
-    bookshelf-1_21_1 = '21.1.10'
-
+    # Curseforge Dependency Versions
     configured-1_20_4 = '5105024'
     configured-1_20_6 = '5340194'
     configured-1_21_1 = '5873783'
@@ -78,10 +84,18 @@
     infernalmobs-1_20_6 = '5329764'
     infernalmobs-1_21_1 = '5798525'
 
-    jei-1_20_4 = '17.3.1.5'
-    jei-1_20_6 = '18.0.0.66'
-    jei-1_21_1 = '19.21.2.313'
-
     sereneseasons-1_20_4 = '5206533'
     sereneseasons-1_20_6 = '5420644'
     sereneseasons-1_21_1 = '5753503'
+
+    # Non Curseforge Dependency Versions
+    architectury-1_20_4 = '11.1.17+neoforge'
+    architectury-1_20_6 = '12.1.4+neoforge'
+    architectury-1_21_1 = '13.0.8+neoforge'
+
+    bookshelf-1_20_4 = '23.1.11'
+    bookshelf-1_21_1 = '21.1.10'
+
+    jei-1_20_4 = '17.3.1.5'
+    jei-1_20_6 = '18.0.0.66'
+    jei-1_21_1 = '19.22.1.316'

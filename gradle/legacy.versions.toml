@@ -29,21 +29,29 @@
     weather2-1_12_2 = { group = 'curse.maven', name = 'weather2-695602', version.ref = 'weather2-1_12_2' }
 
 [versions]
-    bloodmoon-1_12_2 = '2537917'        # Bloodmoon (requires mcp folder to run in dev)
-    blueskies-1_12_2 = '2827455'        # Blue Skies
-    bookshelf-1_12_2 = '2.3.590'        # Bookshelf (Game Stages lib)
+    # Core & Loader Versions
+    cleanroom-loader = '0.3.13-alpha'   # Cleanroom Loader version
     cleanroom-mixin = '0.+'             # Mixin (Cleanroom)
     cleanroom-lwjglx = '1.+'            # LWJGLX (Cleanroom)
+    forge_1_12_2 = '14.23.5.2860'       # Forge version
+    mappings = '39-1.12'                # 1.12.2 Mappings
+
+    # Curseforge Dependency Versions
+    bloodmoon-1_12_2 = '2537917'        # Bloodmoon (requires mcp folder to run in dev)
+    blueskies-1_12_2 = '2827455'        # Blue Skies
     champions-1_12_2 = '3177947'        # Champions
     coroutil-1_12_2 = '2902920'         # CoroUtil (Weather 2 lib)
     dsurround-1_12_2 = '3497269'        # Dynamic Surroundings
-    gamestages-1_12_2 = '2.0.123'       # Game Stages
-    hei-1_12_2 = '4.28.0'               # Had Enough Items (Just Enough Items)
     infernalmobs-1_12_2 = '3431758'     # AtomicStryker's Infernal Mobs
-    mixinbooter = '10.6'                # MixinBooter (Forge)
     nothirium-1_12_2 = '6461211'        # Nothirium (Modern GL)
     nyx-1_12_2 = '3161738'              # Nyx
     orelib-1_12_2 = '2820815'           # OreLib (Dynamic Surroundings lib)
     renderlib-1_12_2 = '6461209'        # RenderLib (Nothirium lib)
     sereneseasons-1_12_2 = '2799213'    # Serene Seasons
     weather2-1_12_2 = '5705205'         # Weather 2 - Remastered
+
+    # Non Curseforge Dependency Versions
+    bookshelf-1_12_2 = '2.3.590'        # Bookshelf (Game Stages lib)
+    gamestages-1_12_2 = '2.0.123'       # Game Stages
+    hei-1_12_2 = '4.29.1'               # Had Enough Items (Just Enough Items)
+    mixinbooter = '10.6'                # MixinBooter (Forge)

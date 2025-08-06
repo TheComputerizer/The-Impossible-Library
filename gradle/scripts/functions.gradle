@@ -15,7 +15,7 @@ ext.combinedProjects = this.&combinedProjects as MethodClosure
 ext.commonMavenArtifact = this.&commonMavenArtifact as MethodClosure
 ext.extendFrom = this.&extendFrom as MethodClosure
 ext.extendRunnable = this.&extendRunnable as MethodClosure
-ext.fabricVersion = this.&fabricVersion as MethodClosure
+ext.fabricAPIVersion = this.&fabricAPIVersion as MethodClosure
 ext.forgeVersion = this.&forgeVersion as MethodClosure
 ext.getArchiveTaskFile = this.&getArchiveTaskFile as MethodClosure
 ext.getArchiveTaskTree = this.&getArchiveTaskTree as MethodClosure
@@ -72,6 +72,12 @@ ext.sourceSetOutput = this.&sourceSetOutput as MethodClosure
 ext.uniminedCore = this.&uniminedCore as MethodClosure
 ext.uniminedCommon = this.&uniminedCommon as MethodClosure
 ext.withMCVersion = this.&withMCVersion as MethodClosure
+
+void addCustomRunProperties(Map<?,?> map) {
+    map.put dev_arg, 'true'
+    map.put common_entrypoint_arg, common_entrypoint
+    map.put core_entrypoint_arg, core_entrypoint
+}
 
 void addProjectJars(String ... p_names) {
     jar {
@@ -195,8 +201,8 @@ void extendRunnable() {
     extendFrom "java${getJavaVersion()}-module"
 }
 
-String fabricVersion() {
-    return withMCVersion('fabric')
+String fabricAPIVersion() {
+    return withMCVersion('fabric', 'api')
 }
 
 List<String> fixLegacyRuntimePaths() {
@@ -213,8 +219,8 @@ List<String> fixLegacyRuntimePaths() {
     return removed_paths
 }
 
-String forgeVersion() {
-    return withMCVersion('forge')
+String forgeVersion(boolean is_legacy) {
+    return withMCVersion(is_legacy ? 'legacy' : 'forge', 'forge')
 }
 
 static Provider<RegularFile> getArchiveTaskFile(Project project, String task_name) {
@@ -421,7 +427,7 @@ boolean mappingStyleOfficial() {
 }
 
 String minecraftVersion() {
-    return withMCVersion('minecraft')
+    return withMCVersion('libs', 'minecraft')
 }
 
 Provider<ExternalModuleDependencyBundle> modsBundle(String loader, String type) {
@@ -431,11 +437,11 @@ Provider<ExternalModuleDependencyBundle> modsBundle(String loader, String type) 
 }
 
 String neoforgeVersion() {
-    return withMCVersion('neoforge')
+    return withMCVersion('neoforge', 'neoforge')
 }
 
 String parchmentVersion() {
-    return withMCVersion('parchment')
+    return withMCVersion('libs', 'parchment')
 }
 
 @SuppressWarnings('GroovyFallthrough')
@@ -710,8 +716,8 @@ void setSharedDependencies(List<String> maven_ids, String ... extra_maven_ids) {
                     "${loader}AnnotationProcessor" libs.lombok
                     "${loader}CompileOnly" libs.lombok
                 }
-                "${loader}Implementation" modsBundle(loader, 'implementation')
-                "${loader}RuntimeOnly" modsBundle(loader, 'runtime')
+                "${loader}ModImplementation" modsBundle(loader, 'implementation')
+                "${loader}ModRuntimeOnly" modsBundle(loader, 'runtime')
             }
         }
     }
@@ -744,6 +750,7 @@ static SourceSetOutput sourceSetOutput(Project project, String source_name) {
 void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_args) {
     logger.lifecycle "Setting up core unimined stuff for $name"
     unimined.useGlobalCache = false
+    boolean is_legacy = isLegacyProject()
     boolean official_mappings = mappingStyleOfficial() || loader_name=='neoforge'
     def production_namespace = 'cleanroom'==loader_name || 'forge'==loader_name ? 'searge' :
             ('fabric'==loader_name ? 'intermediary' : 'mojmap')
@@ -757,12 +764,13 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
             combineWith combined_project, sourceSetOf(combined_project, 'main')
         }
         mappings {
-            if(isLegacyProject()) {
+            if(is_legacy) {
                 if('forge'==loader_name) searge()
-                mcp 'stable', legacy_mappings_1_12_2
+                mcp 'stable', legacy.versions.mappings.get()
             } else {
                 if(!official_mappings) intermediary()
                 mojmap()
+                parchment(mc_version, parchmentVersion())
                 devNamespace 'mojmap'
             }
         }
@@ -774,16 +782,14 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
                         javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
                         classpath-=files(fixLegacyRuntimePaths())
                         classpath+=files(devRunJar.archiveFile)
-                        var map = getSystemProperties()
-                        map.put 'til.dev', 'true'
-                        map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
-                        map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
+                        Map<?,?> map = getSystemProperties()
+                        addCustomRunProperties(map)
                         if('cleanroom'==loader_name) {
-                            map.put 'foundation.dump', 'true'
-                            map.put 'foundation.verbose', 'true'
+                            map.put cleanroom_dump, 'true'
+                            map.put cleanroom_verbose, 'true'
                         } else {
-                            map.put 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-                            map.put 'forge.logging.console.level', 'debug'
+                            map.put forge_log_markers_arg, forge_log_markers_values
+                            map.put forge_log_level, 'debug'
                         }
                         if(!extra_args.isEmpty()) args+=extra_args
                     }
@@ -793,20 +799,20 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
         switch(loader_name) {
             case 'cleanroom': {
                 cleanroom {
-                    loader cleanroom_loader_version
+                    loader legacy.versions.cleanroom.loader.get()
                 }
                 break
             }
             case 'fabric': {
                 //noinspection GroovyAssignabilityCheck
                 fabric {
-                    loader fabric_loader
+                    loader project.fabric.versions.loader.get()
                 }
                 break
             }
             case 'forge': {
                 minecraftForge {
-                    loader forgeVersion()
+                    loader forgeVersion(is_legacy)
                 }
                 break
             }
@@ -822,23 +828,16 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
             }
         }
         if(isRunnableProject()) {
-            def loader_configs = [ ]
-            if(isLegacyProject()) loader_configs = [ 'modCompileOnly', 'modRuntimeOnly' ]
-            //else {
-            //    def loaders = official_mappings ? [ 'fabric' ] :
-            //            (isNeoforgeCompatible ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ])
-            //    loaders.forEach {loader ->
-            //        loader_configs+=[ "${loader}ModCompileOnly", "${loader}ModRuntimeOnly" ]
-            //    }
-            //}
-            if(!loader_configs.isEmpty()) {
-                logger.lifecycle "Enabling remapping for loader configs: $loader_configs"
-                mods {
-                    loader_configs.forEach {loader_config ->
+            mods {
+                if(isLegacyProject()) {
+                    [ 'modCompileOnly', 'modRuntimeOnly' ].forEach {loader_config ->
                         remap(configurations."$loader_config") {
                             catchAWNamespaceAssertion()
                         }
                     }
+                }
+                modImplementation {
+                    catchAWNamespaceAssertion()
                 }
             }
         }
@@ -868,19 +867,24 @@ void uniminedFabric(boolean is_runnable, List<String> extra_args) {
         defaultRemapJar = true
         //noinspection GroovyAssignabilityCheck
         fabric {
-            loader fabric_loader
+            loader project.fabric.versions.loader.get()
         }
         runs {
             if(is_runnable) {
                 config('client') {
                     javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
-                    var map = getSystemProperties()
-                    map.put 'til.dev', 'true'
-                    map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
-                    map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
+                    Map<?,?> map = getSystemProperties()
+                    addCustomRunProperties(map)
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
+        }
+        mods {
+            if(is_runnable) {
+                remap(configurations.fabricModRuntimeOnly) {
+                    catchAWNamespaceAssertion()
+                }
+            }
         }
     }
     def classifier = 'fabric-remapped'
@@ -913,19 +917,24 @@ void uniminedForge(boolean is_runnable, List<String> extra_args) {
         combineWith sourceSets.main
         if(!official_mappings) defaultRemapJar = true
         minecraftForge {
-            loader forgeVersion()
+            loader forgeVersion(false)
         }
         runs {
             if(is_runnable) {
                 config('client') {
                     javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
-                    var map = getSystemProperties()
-                    map.put 'til.dev', 'true'
-                    map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
-                    map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
+                    Map<?,?> map = getSystemProperties()
+                    addCustomRunProperties(map)
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
+        }
+        mods {
+            if(is_runnable) {
+                remap(configurations.forgeModRuntimeOnly) {
+                    catchAWNamespaceAssertion()
+                }
+            }
         }
     }
     if(!official_mappings) {
@@ -950,13 +959,18 @@ void uniminedNeoforge(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 config('client') {
                     javaVersion = isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17)
-                    var map = getSystemProperties()
-                    map.put 'til.dev', 'true'
-                    map.put 'til.classpath.mods', 'mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint'
-                    map.put 'til.classpath.coremods', 'mods.thecomputerizer.theimpossiblelibrary.api.core.TILCoreEntryPoint'
+                    Map<?,?> map = getSystemProperties()
+                    addCustomRunProperties(map)
                     if(!extra_args.isEmpty()) args+=extra_args
                 }
             } else off = true
+        }
+        mods {
+            if(is_runnable) {
+                remap(configurations.neoforgeModRuntimeOnly) {
+                    catchAWNamespaceAssertion()
+                }
+            }
         }
     }
     if(!official_mappings) {
@@ -968,6 +982,7 @@ void uniminedNeoforge(boolean is_runnable, List<String> extra_args) {
     }
 }
 
-String withMCVersion(String type) {
-    return propertyString("${type}_${projectMCVersion()}")
+String withMCVersion(String catalog, String type) {
+    String[] mc_version_split = "${projectMCVersion()}".split '_'
+    return project."$catalog".versions."$type".'1'."${mc_version_split[1]}"."${mc_version_split[2]}".get()
 }

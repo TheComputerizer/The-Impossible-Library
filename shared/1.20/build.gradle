@@ -7,3 +7,29 @@ plugins {
 }
 
 setupSharedBase()
+
+tasks.register('genAllSources') {
+    dependsOn 'genSources'
+    dependsOn 'fabricGenSources'
+    dependsOn 'neoforgeGenSources'
+    dependsOn ':fabric:genSources'
+    dependsOn ':forge:genSources'
+    dependsOn ':neoforge:genSources'
+}
+
+afterEvaluate {
+    it.tasks.genSources {
+        mustRunAfter ':fabric:genSources'
+        mustRunAfter ':forge:genSources'
+        mustRunAfter ':neoforge:genSources'
+    }
+    it.tasks.fabricGenSources {
+        mustRunAfter 'genSources'
+    }
+    it.tasks.forgeGenSources {
+        mustRunAfter 'genSources'
+    }
+    it.tasks.neoforgeGenSources {
+        mustRunAfter 'genSources'
+    }
+}

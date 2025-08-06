@@ -106,3 +106,16 @@ subprojects {sub ->
         }
     }
 }
+
+afterEvaluate {
+    tasks.register('genAllSources') {
+        dependsOn ':legacy:1.12:genSources'
+        dependsOn ':legacy:cleanroom:genSources'
+        dependsOn ':shared:shared_1.19:shared_1.19.2:genAllSources'
+        dependsOn ':shared:shared_1.19:shared_1.19.4:genAllSources'
+        dependsOn ':shared:shared_1.20:shared_1.20.1:genAllSources'
+        dependsOn ':shared:shared_1.20:shared_1.20.4:genAllSources'
+        dependsOn ':shared:shared_1.20:shared_1.20.6:genAllSources'
+        dependsOn ':shared:shared_1.21:shared_1.21.1:genAllSources'
+    }
+}

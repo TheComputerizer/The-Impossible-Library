@@ -98,6 +98,9 @@
     sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
 
 [versions]
+    # Core & Loader Versions
+    loader = '0.17.0'
+
     api-1_16 = '0.42.0+1.16'
     api-1_16_5 = '0.42.0+1.16'
     api-1_18 = '0.77.0+1.18.2'
@@ -109,34 +112,17 @@
     api-1_20_1 = '0.92.6+1.20.1'
     api-1_20_4 = '0.97.2+1.20.4'
     api-1_20_6 = '0.100.8+1.20.6'
-    api-1_21 = '0.116.1+1.21.1'
-    api-1_21_1 = '0.116.1+1.21.1'
+    api-1_21 = '0.116.4+1.21.1'
+    api-1_21_1 = '0.116.4+1.21.1'
+    api-1_21_3 = '0.114.1+1.21.3'
+    api-1_21_4 = '0.119.3+1.21.4'
+    api-1_21_5 = '0.128.1+1.21.5'
+    api-1_21_6 = '0.128.2+1.21.6'
+    api-1_21_7 = '0.129.0+1.21.7'
+    api-1_21_8 = '0.131.0+1.21.8'
+    api-1_21_9 = '0.131.0+1.21.9'
 
-    architectury-1_16_5 = '1.32.68+fabric'
-    architectury-1_18_2 = '4.12.94+fabric'
-    architectury-1_19_2 = '6.6.92+fabric'
-    architectury-1_19_4 = '8.2.91+fabric'
-    architectury-1_20_1 = '9.2.14+fabric'
-    architectury-1_20_4 = '11.1.17+fabric'
-    architectury-1_20_6 = '12.1.4+fabric'
-    architectury-1_21_1 = '13.0.8+fabric'
-
-    bookshelf-1_18_2 = '13.3.56'
-    bookshelf-1_19_2 = '16.3.20'
-    bookshelf-1_19_4 = '18.0.6'
-    bookshelf-1_20_1 = '20.2.13'
-    bookshelf-1_20_4 = '23.1.11'
-    bookshelf-1_21_1 = '21.1.10'
-
-    cloth-1_16_5 = '4.17.101'
-    cloth-1_18_2 = '6.5.102'
-    cloth-1_19_2 = '8.3.134+fabric'
-    cloth-1_19_4 = '10.1.135+fabric'
-    cloth-1_20_1 = '11.1.136+fabric'
-    cloth-1_20_4 = '13.0.138+fabric'
-    cloth-1_20_6 = '14.0.139+fabric'
-    cloth-1_21_1 = '15.0.140+fabric'
-
+    # Curseforge Dependency Versions
     configured-1_20_1 = '5180902'
     configured-1_20_4 = '5105023'
     configured-1_20_6 = '5340195'
@@ -163,13 +149,44 @@
     glitchcore-1_20_6 = '5352265'
     glitchcore-1_21_1 = '5660741'
 
+    sereneseasons-1_20_1 = '5790654'
+    sereneseasons-1_20_4 = '5206535'
+    sereneseasons-1_20_6 = '5420643'
+    sereneseasons-1_21_1 = '5753502'
+
+    # Non Curseforge Dependency Versions
+    architectury-1_16_5 = '1.32.68+fabric'
+    architectury-1_18_2 = '4.12.94+fabric'
+    architectury-1_19_2 = '6.6.92+fabric'
+    architectury-1_19_4 = '8.2.91+fabric'
+    architectury-1_20_1 = '9.2.14+fabric'
+    architectury-1_20_4 = '11.1.17+fabric'
+    architectury-1_20_6 = '12.1.4+fabric'
+    architectury-1_21_1 = '13.0.8+fabric'
+
+    bookshelf-1_18_2 = '13.3.56'
+    bookshelf-1_19_2 = '16.3.20'
+    bookshelf-1_19_4 = '18.0.6'
+    bookshelf-1_20_1 = '20.2.13'
+    bookshelf-1_20_4 = '23.1.11'
+    bookshelf-1_21_1 = '21.1.10'
+
+    cloth-1_16_5 = '4.17.101'
+    cloth-1_18_2 = '6.5.102'
+    cloth-1_19_2 = '8.3.134+fabric'
+    cloth-1_19_4 = '10.1.135+fabric'
+    cloth-1_20_1 = '11.1.136+fabric'
+    cloth-1_20_4 = '13.0.138+fabric'
+    cloth-1_20_6 = '14.0.139+fabric'
+    cloth-1_21_1 = '15.0.140+fabric'
+
     jei-1_18_2 = '10.2.1.1009'
     jei-1_19_2 = '11.8.1.1034'
     jei-1_19_4 = '13.1.0.19'
     jei-1_20_1 = '15.20.0.112'
     jei-1_20_4 = '17.3.1.5'
     jei-1_20_6 = '18.0.0.66'
-    jei-1_21_1 = '19.21.2.313'
+    jei-1_21_1 = '19.22.1.316'
 
     modmenu-1_16_5 = '1.16.23'
     modmenu-1_18_2 = '3.2.5'
@@ -181,8 +198,3 @@
     modmenu-1_21_1 = '11.0.3'
 
     rei-1_16_5 = '5.10.177+fabric'
-
-    sereneseasons-1_20_1 = '5790654'
-    sereneseasons-1_20_4 = '5206535'
-    sereneseasons-1_20_6 = '5420643'
-    sereneseasons-1_21_1 = '5753502'

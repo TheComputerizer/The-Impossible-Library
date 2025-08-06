@@ -8,3 +8,7 @@ plugins {
 }
 
 setupLegacyRunnable true
+
+afterEvaluate {
+    it.tasks.genSources.mustRunAfter ':legacy:1.12:genSources'
+}

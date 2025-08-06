@@ -17,7 +17,7 @@ dependencies {
 }
 
 processResources {
-    def replacements = [ 'minecraft_version': minecraft_1_12_2, 'mod_author': mod_authors,
+    def replacements = [ 'minecraft_version': libs.versions.minecraft.'1'.'12'.'2'.get(), 'mod_author': mod_authors,
                          'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
                          'mod_name': mod_name, 'mod_version': version ]
     inputs.properties replacements
