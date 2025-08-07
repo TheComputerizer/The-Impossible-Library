@@ -99,7 +99,7 @@ public class FabricHelper {
     
     @IndirectCallers
     public static String getTargetNamespace() {
-        return FabricLauncherBase.getLauncher().getTargetNamespace();
+        return FabricLauncherBase.getLauncher().getDefaultRuntimeNamespace();
     }
     
     public static boolean isJava8() {
