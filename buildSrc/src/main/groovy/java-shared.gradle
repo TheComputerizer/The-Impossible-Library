@@ -1,0 +1,54 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+
+/**
+ * Setup shared Java plugin logic
+ */
+plugins {
+    id 'idea'
+    id 'java'
+    id 'java-library'
+}
+
+group = base_package
+version = mod_version
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.withType(JavaCompile).forEach {
+    it.options.encoding = 'UTF-8'
+    it.options.deprecation = false
+}
+
+tasks.withType(Jar).forEach {
+    it.archiveBaseName = mod_id
+    it.duplicatesStrategy = EXCLUDE
+}
+
+tasks.withType(ProcessResources).forEach {
+    it.duplicatesStrategy = EXCLUDE
+}
+
+ext.setJavaVersion = this.&setJavaVersion as MethodClosure
+
+void setJavaVersion(int java_version) {
+    if(java_version>=9) {
+        compileJava {
+            options.release = java_version
+        }
+    }
+    java {
+        toolchain.languageVersion = JavaLanguageVersion.of java_version
+    }
+}

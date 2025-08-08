@@ -1,0 +1,77 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+import java.util.function.Consumer
+
+/**
+ * Initialize common dependencies
+ */
+plugins {
+    id 'common-deps'
+}
+
+ext.setCommonRepositories = this.&setCommonRepositories as MethodClosure
+
+/**
+ * Returns a RepositoryHandler consumer that uses the id to retrieve and add common maven data
+ */
+Consumer<RepositoryHandler> commonMavenArtifact(String id) {
+    Consumer<RepositoryHandler> consumer = handler -> {
+        def maven_data = commonMavenData id
+        int size = maven_data.size()
+        if(size>1) {
+            handler.maven {
+                name = maven_data.get(0)
+                url = uri "https://${maven_data.get(1)}"
+                if(size>2) {
+                    def included_groups = maven_data.subList(2,maven_data.size())
+                    //noinspection GrUnresolvedAccess
+                    content {
+                        included_groups.forEach {grp ->
+                            //noinspection GrUnresolvedAccess
+                            includeGroup grp
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return consumer
+}
+
+/**
+ * Returns common maven data as a list from the given id
+ * The list is formatted as name, uri, included groups
+ */
+private static List<String> commonMavenData(String id) {
+    return switch(id) {
+        case 'blamejared', 'bookshelf', 'crafttweaker', 'ct', 'darkhax','gamestages', 'jared', 'zen', 'zencode' ->
+            [ 'BlameJared', 'maven.blamejared.com', 'com.blamejared.crafttweaker', 'net.darkhax.bookshelf',
+              'net.darkhax.gamestages', 'org.openzen.zencode' ]
+        case 'cf', 'curse', 'curseforge', 'cursemaven' -> [ 'CurseMaven', 'curse.cleanroommc.com/', 'curse.maven' ]
+        case 'cleanroom', 'hei' -> [ 'CleanroomMC', 'maven.cleanroommc.com', 'mezz', 'zone.rong' ]
+        case 'fast', 'fastutil', 'sonatype' ->
+            [ 'SonaType', 'oss.sonatype.org/content/repositories/public/', 'it.unimi.dsi' ]
+        case 'jei', 'modmaven' -> [ 'ModMaven', 'modmaven.dev', 'mezz.jei' ]
+        case 'legacy', 'moddinglegacy' -> [ 'Modding Legacy', 'maven.moddinglegacy.com/maven', 'com.legacy' ]
+        case 'modmenu', 'terraformers', 'terraformersmc' ->
+            [ 'Terraformers', 'maven.terraformersmc.com/', 'com.terraformersmc' ]
+        case 'modrinth' -> [ 'Modrinth', 'api.modrinth.com/maven', 'maven.modrinth' ]
+        case 'nucleoid', 'pb4', 'placeholder' -> [ 'Nucleoid', 'maven.nucleoid.xyz/', 'eu.pb4']
+        default -> []
+    }
+}
+
+void setCommonRepositories(List<String> maven_ids) {
+    repositories {handler ->
+        maven_ids.forEach {id ->
+            if('central'==id) mavenCentral()
+            else {
+                def consumer = commonMavenArtifact id
+                if(consumer!=null) {
+                    //noinspection GroovyAssignabilityCheck
+                    consumer.accept handler
+                }
+            }
+        }
+    }
+}

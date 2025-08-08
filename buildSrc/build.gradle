@@ -1,0 +1,31 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+    maven {
+        name = 'WagYourMaven Releases'
+        url = uri 'https://maven.wagyourtail.xyz/releases'
+        content {
+            [ 'net.fabricmc', 'net.minecraftforge', 'net.neoforged', 'xyz.wagyourtail.commons',
+              'xyz.wagyourtail.unimined.mapping' ].forEach {grp ->
+                includeGroup grp
+            }
+        }
+    }
+    maven {
+        name = 'WagYourMaven Snapshots'
+        url = uri 'https://maven.wagyourtail.xyz/snapshots'
+        content {
+            [ 'xyz.wagyourtail.commons', 'xyz.wagyourtail.unimined',
+              'xyz.wagyourtail.unimined.mapping' ].forEach {grp ->
+                includeGroup grp
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation libs.unimined
+}

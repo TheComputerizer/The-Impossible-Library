@@ -4,7 +4,5 @@
  * 1.12.2 forge build
  */
 plugins {
-    alias libs.plugins.unimined
+    id 'project-setup-legacy'
 }
-
-setupLegacyRunnable false

@@ -1,0 +1,71 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+import static org.gradle.api.JavaVersion.VERSION_17
+import static org.gradle.api.JavaVersion.VERSION_1_8
+import static org.gradle.api.JavaVersion.VERSION_21
+
+plugins {
+    id 'project-versions'
+    id 'xyz.wagyourtail.unimined'
+}
+
+unimined.useGlobalCache = false
+
+ext.addCustomRunProperties = this.&addCustomRunProperties as MethodClosure
+ext.mappingStyleOfficial = this.&mappingStyleOfficial as MethodClosure
+ext.productionNamespace = this.&productionNamespace as MethodClosure
+ext.remapForProduction = this.&remapForProduction as MethodClosure
+ext.shouldRemapForProduction = this.&shouldRemapForProduction as MethodClosure
+
+void addCustomRunProperties(Map<?,?> map) {
+    map.put dev_arg, 'true'
+    map.put common_entrypoint_arg, common_entrypoint
+    map.put core_entrypoint_arg, core_entrypoint
+}
+
+boolean mappingStyleOfficial() {
+    return [ 'neoforge', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ].contains(name)
+}
+
+static String productionNamespace(String loader) {
+    return 'cleanroom'==loader || 'forge'==loader ? 'searge' : ('fabric'==loader ? 'intermediary' : 'mojmap')
+}
+
+void remapForProduction(String loader) {
+    if(shouldRemapForProduction(loader)) {
+        remapJar {
+            doFirst {
+                archiveBaseName = mod_id
+                archiveClassifier = 'remapped'
+                prodNamespace productionNamespace(loader)
+            }
+        }
+    }
+}
+
+boolean shouldRemapForProduction(String loader) {
+    return !mappingStyleOfficial() && productionNamespace(loader)!='mojmap'
+}
+
+unimined.minecraft(sourceSets.main, true) {
+    version minecraftVersion()
+    def api = project ':api'
+    combineWith api, api.sourceSets.main
+    mappings {
+        if(isLegacyProject()) {
+            if('cleanroom'!=name) searge()
+            mcp 'stable', legacy.versions.mappings.get()
+        } else {
+            if(!mappingStyleOfficial) intermediary()
+            mojmap()
+            parchment(minecraftVersion(), parchmentVersion())
+            devNamespace 'mojmap'
+        }
+    }
+    if(!isRunnableVersion()) {
+        runs {
+            off = true
+        }
+    }
+    defaultRemapJar = !mappingStyleOfficial()
+}

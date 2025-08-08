@@ -1,0 +1,18 @@
+repositories {
+    mavenCentral() {
+        content {
+            [ burningwave_group, lombok_group, toolfactory_group ].forEach {grp ->
+                includeGroup grp
+            }
+        }
+    }
+}
+
+dependencies {
+    //noinspection DependencyNotationArgument,GrUnresolvedAccess
+    annotationProcessor libs.lombok
+    //noinspection DependencyNotationArgument,GrUnresolvedAccess
+    compileOnly libs.lombok
+    //noinspection DependencyNotationArgument,GrUnresolvedAccess
+    implementation libs.bundles.burningwave
+}

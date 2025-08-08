@@ -1,0 +1,12 @@
+/**
+ * Experimental changes/additions that either need further testing or might have better alternatives
+ */
+
+if(parent!=null && 'api'!=name) {
+    evaluationDependsOn ':api'
+    if(name.contains('shared')) {
+        evaluationDependsOn ':fabric'
+        evaluationDependsOn ':forge'
+        if(isNeoforgeCompatible()) evaluationDependsOn ':neoforge'
+    }
+}

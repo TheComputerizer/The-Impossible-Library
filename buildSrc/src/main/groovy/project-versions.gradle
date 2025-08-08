@@ -1,0 +1,67 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+ext.fabricAPIVersion = this.&fabricAPIVersion as MethodClosure
+ext.fabricLoaderVersion = this.&fabricLoaderVersion as MethodClosure
+ext.forgeVersion = this.&forgeVersion as MethodClosure
+ext.legacyForgeVersion = this.&legacyForgeVersion as MethodClosure
+ext.minecraftVersion = this.&minecraftVersion as MethodClosure
+ext.modernForgeVersion = this.&modernForgeVersion as MethodClosure
+ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
+ext.parchmentVersion = this.&parchmentVersion as MethodClosure
+
+String fabricAPIVersion() {
+    return withMCVersion('fabric', 'api')
+}
+
+String fabricLoaderVersion() {
+    return project.fabric.versions.loader.get()
+}
+
+String forgeVersion(boolean is_legacy) {
+    return withMCVersion(is_legacy ? 'legacy' : 'forge', 'forge')
+}
+
+String legacyForgeVersion() {
+    return forgeVersion(true)
+}
+
+String minecraftVersion() {
+    return withMCVersion('libs', 'minecraft')
+}
+
+String modernForgeVersion() {
+    return forgeVersion(false)
+}
+
+String neoforgeVersion() {
+    return withMCVersion('neoforge', 'neoforge')
+}
+
+String parchmentVersion() {
+    return withMCVersion('libs', 'parchment')
+}
+
+String projectMCVersion() {
+    return switch(name) {
+        case 'cleanroom', 'legacy' -> '1_12_2'
+        case 'fabric', 'forge' -> '1_16_5'
+        case 'neoforge' -> '1_20_4'
+        default -> {
+            String mc_version = name.split('_').last().replace('.','_')
+            yield switch(mc_version) {
+                case '1_12' -> '1_12_2'
+                case '1_16' -> '1_16_5'
+                case '1_18' -> '1_18_2'
+                case '1_19' -> '1_19_2'
+                case '1_20' -> '1_20_1'
+                case '1_21' -> '1_21_1'
+                default -> mc_version
+            }
+        }
+    }
+}
+
+String withMCVersion(String catalog, String type) {
+    String[] mc_version_split = "${projectMCVersion()}".split '_'
+    return project."$catalog".versions."$type".'1'."${mc_version_split[1]}"."${mc_version_split[2]}".get()
+}

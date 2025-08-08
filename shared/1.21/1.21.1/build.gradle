@@ -3,10 +3,10 @@
  */
 plugins {
     alias libs.plugins.shadow
-    alias libs.plugins.unimined
+    id 'project-setup-shared'
 }
 
-setupSharedRunnable 'pb4'
+setupShared([ 'pb4' ])
 
 tasks.register('genAllSources') {
     dependsOn 'genSources'

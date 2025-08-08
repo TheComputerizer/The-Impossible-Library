@@ -1,0 +1,76 @@
+plugins {
+    id 'project-setup-common'
+}
+
+initJavaPlugin()
+plugins.apply 'common-deps'
+
+if(usesUnimined) {
+    initUnimined()
+    finishUniminedSetup()
+    if('fabric'==name) {
+        dependencies {
+            fabricApi.fabric(fabricAPIVersion())
+        }
+    }
+}
+
+setDev()
+
+dependencies {
+    api project(':api')
+}
+
+jar {
+    manifest {
+        attributes([
+                'Implementation-Title': mod_name,
+                'Implementation-Version': mod_version
+        ])
+    }
+}
+
+tasks.processResources.dependsOn ':api:processResources'
+tasks.processTestResources.dependsOn ':api:processTestResources'
+
+if('fabric'==name) setupFabricBase()
+else {
+    setJarsRunAfter([ ':api' ])
+    processResources {
+        exclude 'fabric.mod.json'
+    }
+}
+
+private void finishUniminedSetup() {
+    unimined.minecraft {
+        switch(name) {
+            case 'fabric' -> {
+                fabric {
+                    loader fabricLoaderVersion()
+                }
+            }
+            case 'forge' -> {
+                minecraftForge {
+                    loader modernForgeVersion()
+                }
+            }
+            case 'neoforge' -> {
+                neoForge {
+                    loader neoforgeVersion()
+                }
+            }
+        }
+    }
+    remapForProduction(name)
+}
+
+void setupFabricBase() {
+    tasks.jar.dependsOn ':api:jar'
+    processResources {
+        def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
+        inputs.properties replacements
+        filesMatching('fabric.mod.json') {copy_details ->
+            expand replacements
+        }
+    }
+}

@@ -2,7 +2,5 @@
  * Common builds and sources relevant to all NeoForge modules. Based in 1.20.4
  */
 plugins {
-    alias libs.plugins.unimined
+    id 'project-setup-loader'
 }
-
-setupLoaderBase 'neoforge'

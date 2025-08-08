@@ -2,7 +2,5 @@
  * Common builds and sources relevant to all Forge modules. Based in 1.16.5
  */
 plugins {
-    alias libs.plugins.unimined
+    id 'project-setup-loader'
 }
-
-setupLoaderBase 'forge'

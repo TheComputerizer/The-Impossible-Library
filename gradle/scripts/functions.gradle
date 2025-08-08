@@ -80,12 +80,8 @@ void addCustomRunProperties(Map<?,?> map) {
 }
 
 void addProjectJars(String ... p_names) {
-    jar {
-        p_names.each {p_name ->
-            from(getArchiveTaskFile(project(p_name), 'jar').collect {entry ->
-                zipTree entry
-            })
-        }
+    p_names.each {p_name ->
+        tasks.jar.dependsOn ":$p_name:jar"
     }
 }
 
@@ -305,21 +301,19 @@ void inheritCompileSources(String ... parent_names) {
 
 void inheritResources(List<String> parent_names, String ... exlude_these) {
     processResources {
-        parent_names.forEach {parent_name ->
-            from(getTaskOutputs(project(parent_name), 'processResources')) {
-                exlude_these.each {exclude_this ->
-                    exclude exclude_this
-                }
-            }
+        parent_names.forEach { parent_name ->
+            dependsOn ":$parent_name:processResources"
+        }
+        exlude_these.each {exclude_this ->
+            exclude exclude_this
         }
     }
     processTestResources {
-        parent_names.forEach {parent_name ->
-            from(getTaskOutputs(project(parent_name), 'processTestResources')) {
-                exlude_these.each {exclude_this ->
-                    exclude exclude_this
-                }
-            }
+        parent_names.forEach { parent_name ->
+            dependsOn ":$parent_name:processTestResources"
+        }
+        exlude_these.each {exclude_this ->
+            exclude exclude_this
         }
     }
 }
@@ -419,9 +413,6 @@ static SourceDirectorySet javaSources(Project project, String source_name) {
     return sourceSetOf(project, source_name).allJava
 }
 
-/**
- * Assumed the input project has a version association
- */
 boolean mappingStyleOfficial() {
     return [ 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ].contains(name)
 }
@@ -699,7 +690,7 @@ void setSharedDependencies(List<String> maven_ids, String ... extra_maven_ids) {
             if(versions.length==3) dep_provider = dep_provider."${versions[2]}"
             else dep_provider = dep_provider.asProvider()
             //noinspection GrUnresolvedAccess
-            fabricImplementation fabricApi.fabric(dep_provider.get())
+            fabricModImplementation fabricApi.fabric(dep_provider.get())
         }
         def types = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
         boolean is_runnable = isRunnableProject()
@@ -838,6 +829,7 @@ void uniminedCore(String loader_name, boolean is_runnable, List<String> extra_ar
                 }
                 modImplementation {
                     catchAWNamespaceAssertion()
+                    if(!isLegacyProject()) namespace 'mojmap'
                 }
             }
         }
@@ -883,6 +875,7 @@ void uniminedFabric(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 remap(configurations.fabricModRuntimeOnly) {
                     catchAWNamespaceAssertion()
+                    namespace 'mojmap'
                 }
             }
         }
@@ -900,14 +893,11 @@ void uniminedFabric(boolean is_runnable, List<String> extra_args) {
         archiveClassifier = "$classifier-relocated"
         //noinspection GroovyAssignabilityCheck
         configurations = [ project.configurations.shadow ]
-        from(getArchiveTaskFile(project, 'remapFabricJar').collect{entry ->
-            zipTree entry
-        })
-        mustRunAfter remapFabricJar
+        dependsOn 'remapFabricJar'
         //noinspection GroovyAssignabilityCheck
         relocate "${base_package}.shared", "${base_package}.fabric"
     }
-    tasks.build.mustRunAfter shadowJar
+    tasks.assemble.dependsOn shadowJar
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
@@ -933,6 +923,7 @@ void uniminedForge(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 remap(configurations.forgeModRuntimeOnly) {
                     catchAWNamespaceAssertion()
+                    namespace 'mojmap'
                 }
             }
         }
@@ -969,6 +960,7 @@ void uniminedNeoforge(boolean is_runnable, List<String> extra_args) {
             if(is_runnable) {
                 remap(configurations.neoforgeModRuntimeOnly) {
                     catchAWNamespaceAssertion()
+                    namespace 'mojmap'
                 }
             }
         }

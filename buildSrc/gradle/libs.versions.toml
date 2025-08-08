@@ -1,0 +1,5 @@
+[libraries]
+    unimined = { group = 'xyz.wagyourtail.unimined', name = 'xyz.wagyourtail.unimined.gradle.plugin', version.ref = 'unimined' }
+
+[versions]
+    unimined = '1.+'

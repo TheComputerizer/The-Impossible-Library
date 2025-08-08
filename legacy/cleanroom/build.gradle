@@ -4,10 +4,8 @@
  * 1.12.2 cleanroom build
  */
 plugins {
-    alias libs.plugins.unimined
+    id 'project-setup-legacy'
 }
-
-setupLegacyRunnable true
 
 afterEvaluate {
     it.tasks.genSources.mustRunAfter ':legacy:1.12:genSources'

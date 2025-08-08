@@ -1,0 +1,113 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+import static org.gradle.api.JavaVersion.VERSION_1_8
+import static org.gradle.api.JavaVersion.VERSION_17
+import static org.gradle.api.JavaVersion.VERSION_21
+import static org.gradle.api.JavaVersion.VERSION_24
+
+ext.getJavaVersion = this.&getJavaVersion as MethodClosure
+ext.getJavaVersionEnum = this.&getJavaVersionEnum as MethodClosure
+ext.isCleanroomProject = this.&isCleanroomProject as MethodClosure
+ext.isJava8 = this.&isJava8 as MethodClosure
+ext.isJava17 = this.&isJava17 as MethodClosure
+ext.isJava21 = this.&isJava21 as MethodClosure
+ext.isJava24 = this.&isJava24 as MethodClosure
+ext.isLegacyProject = this.&isLegacyProject as MethodClosure
+ext.isLoaderBase = this.&isLoaderBase as MethodClosure
+ext.isMinorVersion = this.&isMinorVersion as MethodClosure
+ext.isNeoforgeCompatible = this.&isNeoforgeCompatible as MethodClosure
+ext.isRunnableVersion = this.&isRunnableVersion as MethodClosure
+ext.usesUnimined = this.&usesUnimined as MethodClosure
+
+/**
+ * Return the Java toolchain that should be used by the currect project as an integer
+ */
+int getJavaVersion() {
+    return isJava24() ? 24 : (isJava8() ? 8 : (isJava21() ? 21 : 17))
+}
+
+/**
+ * Return the Java toolchain that should be used by the currect project as an enum
+ */
+JavaVersion getJavaVersionEnum() {
+    return isJava24() ? VERSION_24 : (isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17))
+}
+
+/**
+ * Is this a Cleanroom project (there should only be 1)
+ */
+boolean isCleanroomProject() {
+    return 'cleanroom'==name
+}
+
+/**
+ * 1.12.2 (Forge) & 1.16.5 use Java 8
+ */
+boolean isJava8() {
+    return [ '1.12', 'api', 'fabric', 'forge', 'legacy', 'shared_1.16' ].contains(name)
+}
+
+/**
+ * 1.18.2-1.20.4 use Java 17
+ */
+boolean isJava17() {
+    return !isJava8() && !isJava21()
+}
+
+/**
+ * 1.12.2 (Cleanroom) & 1.20.6+ use Java 21
+ */
+boolean isJava21() {
+    return [ 'cleanroom', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ].contains(name)
+}
+
+/**
+ * If this is the root project use Java 24
+ */
+boolean isJava24() {
+    return parent==null
+}
+
+/**
+ * Anything prior to 1.13 will be considered "legacy"
+ */
+boolean isLegacyProject() {
+    return [ '1.12', 'cleanroom' ].contains(name)
+}
+
+/**
+ * Any non-runnable project that is not dependent on a specific Minecraft version and not the root or api projects
+ */
+boolean isLoaderBase() {
+    return [ 'fabric', 'forge', 'legacy', 'neoforge', 'shared' ].contains(name)
+}
+
+/**
+ * Is this project pertaining to a specific minor (1.19+) Minecraft version
+ */
+boolean isMinorVersion() {
+    return [ 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6',
+             'shared_1.21.1' ].contains(name)
+}
+
+/**
+ * 1.20.1 Neoforge is essentially just Forge so any 1.20.4+ Minecraft version
+ */
+boolean isNeoforgeCompatible() {
+    return [ 'neoforge', 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21',
+             'shared_1.21.1' ].contains(name)
+}
+
+/**
+ * Any version that should have functioning run configurations
+ */
+boolean isRunnableVersion() {
+    return isLegacyProject() || isMinorVersion() || [ 'shared_1.16', 'shared_1.18' ].contains(name)
+}
+
+/**
+ * Should this project be depending on unimined at all
+ */
+boolean usesUnimined() {
+    return parent!=null && ![ 'api', 'legacy', 'shared' ].contains(name)
+}
