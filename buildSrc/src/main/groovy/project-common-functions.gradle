@@ -1,0 +1,109 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+/**
+ * Initialize shared Java Plugin stuff
+ */
+plugins {
+    id 'java-shared'
+}
+
+ext.getFullPath = this.&getFullPath as MethodClosure
+ext.getManifestEntries = this.&getManifestEntries as MethodClosure
+ext.getParentFromName = this.&getParentFromName as MethodClosure
+ext.getSubProjectLevel = this.&getSubProjectLevel as MethodClosure
+ext.initCommonDeps = this.&initCommonDeps as MethodClosure
+ext.setDefaultManifestAttributes = this.&setDefaultManifestAttributes as MethodClosure
+ext.setDev = this.&setDev as MethodClosure
+ext.setJarsRunAfter = this.&setJarsRunAfter as MethodClosure
+
+/**
+ * Returns the full project path in the format ':p_name', or ':parent_path:p_name' depending on whether a parent exists
+ */
+static String getFullPath(String p_name) {
+    String p_path = ":$p_name"
+    String parent_name = getParentFromName p_name
+    while(parent_name!=null) {
+        p_path = ":$parent_name:$p_path"
+        parent_name = getParentFromName parent_name
+    }
+    return p_path
+}
+
+Map<?,Object> getManifestEntries() {
+    Map<?,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
+    //noinspection GrUnresolvedAccess
+    if(isLegacyProject()) {
+        attribute_map.put('FMLCorePlugin', legacy_entrypoint)
+        attribute_map.put('FMLCorePluginContainsFMLMod', true)
+        attribute_map.put('ForceLoadAsMod', true)
+    }
+    return attribute_map
+}
+
+static int getSubProjectLevel(String p_name) {
+    return switch(p_name) {
+        case 'api', 'fabric', 'forge', 'legacy', 'neoforge', 'shared' -> 1
+        case '1.12', 'cleanroom', 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> 2
+        case 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' -> 3
+        default -> 0
+    }
+}
+
+static String getParentFromName(String p_name) {
+    if(p_name==null) return null
+    return switch(p_name) {
+        case '1.12', 'cleanroom' -> 'legacy'
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> 'shared'
+        case 'shared_1.19.2', 'shared_1.19.4' -> 'shared_1.19'
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> 'shared_1.20'
+        case 'shared_1.21.1' -> 'shared_1.21'
+        default -> null
+    }
+}
+
+/**
+ * Initialize the common-deps plugin
+ */
+void initCommonDeps() {
+    plugins.apply 'common-deps'
+}
+
+void setDefaultManifestAttributes() {
+    jar {
+        manifest {
+            Map<?,Object> manifest_attributes = getManifestEntries()
+            attributes(manifest_attributes)
+        }
+    }
+}
+
+void setDev() {
+    configurations {
+        dev {
+            canBeResolved = false
+            canBeConsumed = true
+        }
+    }
+    artifacts {
+        //noinspection GroovyAssignabilityCheck
+        dev jar
+    }
+}
+
+@SuppressWarnings('GrUnresolvedAccess')
+void setJarsRunAfter(List<String> p_names) {
+    setDefaultManifestAttributes()
+    def build_tasks = p_names.collect {p_name ->
+        "${getFullPath(p_name)}:build"
+    }
+    jar {
+        build_tasks.forEach {build_task ->
+            mustRunAfter build_task
+        }
+    }
+    sourcesJar {
+        build_tasks.forEach {build_task ->
+            mustRunAfter build_task
+        }
+    }
+}

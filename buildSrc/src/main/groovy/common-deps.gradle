@@ -8,11 +8,13 @@ repositories {
     }
 }
 
-dependencies {
-    //noinspection DependencyNotationArgument,GrUnresolvedAccess
-    annotationProcessor libs.lombok
-    //noinspection DependencyNotationArgument,GrUnresolvedAccess
-    compileOnly libs.lombok
-    //noinspection DependencyNotationArgument,GrUnresolvedAccess
-    implementation libs.bundles.burningwave
+@SuppressWarnings(['DependencyNotationArgument','GrUnresolvedAccess'])
+private void addBundledDependencies() {
+    dependencies {
+        annotationProcessor libs.lombok
+        compileOnly libs.lombok
+        implementation libs.bundles.burningwave
+    }
 }
+
+addBundledDependencies()

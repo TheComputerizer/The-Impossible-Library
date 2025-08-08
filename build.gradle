@@ -22,17 +22,15 @@
  *          9: Include all content from sub project javadoc and source jars in the relevant main project jars
  */
 plugins {
-    alias libs.plugins.shadow
+    id 'shaded-deps'
 }
 
-apply from: rootProject.file('gradle\\scripts\\functions.gradle')
-extendFrom 'shadow'
+logger.lifecycle 'Setting up main build script'
 
 tasks.register('fixManifest', Jar) {
-    mustRunAfter shadowJar
+    dependsOn shadowJar
     archiveBaseName = mod_id
     archiveClassifier = ''
-    from getArchiveTaskTree(project, 'shadowJar')
     manifest {
         attributes([
                 'FMLCorePlugin': legacy_entrypoint,
@@ -46,16 +44,22 @@ tasks.register('fixManifest', Jar) {
     }
 }
 
-tasks.jar.finalizedBy shadowJar
-tasks.assemble.dependsOn shadowJar
-tasks.assemble.dependsOn 'fixManifest'
+logger.lifecycle 'Successfully registered fixManifest task'
 
+tasks.assemble.dependsOn fixManifest
+tasks.fixManifest.dependsOn shadowJar
+tasks.jar.finalizedBy shadowJar
+tasks.shadowJar.finalizedBy fixManifest
+
+logger.lifecycle 'Successfully applied build task ordering'
+
+//noinspection GrUnresolvedAccess
+applySourceHelpers()
+
+/* TODO Refactor that V with proper Gradle task API & parallelization stuff
 def main_project = project
 
 subprojects {sub ->
-    sub.apply from: rootProject.file('gradle\\scripts\\functions.gradle')
-    //noinspection GrUnresolvedAccess
-    sub.extendFrom 'shared'
     sub.afterEvaluate {sub_final ->
         //noinspection GroovyAssignabilityCheck
         main_project.jar.mustRunAfter getTaskPath(sub_final.name, 'build')
@@ -106,16 +110,4 @@ subprojects {sub ->
         }
     }
 }
-
-afterEvaluate {
-    tasks.register('genAllSources') {
-        dependsOn ':legacy:1.12:genSources'
-        dependsOn ':legacy:cleanroom:genSources'
-        dependsOn ':shared:shared_1.19:shared_1.19.2:genAllSources'
-        dependsOn ':shared:shared_1.19:shared_1.19.4:genAllSources'
-        dependsOn ':shared:shared_1.20:shared_1.20.1:genAllSources'
-        dependsOn ':shared:shared_1.20:shared_1.20.4:genAllSources'
-        dependsOn ':shared:shared_1.20:shared_1.20.6:genAllSources'
-        dependsOn ':shared:shared_1.21:shared_1.21.1:genAllSources'
-    }
-}
+*/

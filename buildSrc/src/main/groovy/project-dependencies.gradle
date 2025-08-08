@@ -2,13 +2,10 @@ import org.codehaus.groovy.runtime.MethodClosure
 
 import java.util.function.Consumer
 
-/**
- * Initialize common dependencies
- */
-plugins {
-    id 'common-deps'
-}
+//noinspection GrUnresolvedAccess
+initCommonDeps()
 
+ext.modsBundle = this.&modsBundle as MethodClosure
 ext.setCommonRepositories = this.&setCommonRepositories as MethodClosure
 
 /**
@@ -59,6 +56,12 @@ private static List<String> commonMavenData(String id) {
         case 'nucleoid', 'pb4', 'placeholder' -> [ 'Nucleoid', 'maven.nucleoid.xyz/', 'eu.pb4']
         default -> []
     }
+}
+
+Provider<ExternalModuleDependencyBundle> modsBundle(String loader, String type) {
+    if(isLegacyProject()) return project.legacy.bundles.mods.'1'.'12'.'2'."$type"
+    String[] mc = projectMCVersion().split '_'
+    return project."$loader".bundles.mods.'1'."${mc[1]}"."${mc[2]}"."$type"
 }
 
 void setCommonRepositories(List<String> maven_ids) {

@@ -1,0 +1,119 @@
+import org.codehaus.groovy.runtime.MethodClosure
+
+ext.setupSourceGenGraph = this.&setupSourceGenGraph as MethodClosure
+
+logger.lifecycle 'Applying source helpers plugin'
+
+@SuppressWarnings('GrUnresolvedAccess')
+String getFullTaskPath(String p_name, String t_name) {
+    return "${getFullPath(p_name)}:$t_name"
+}
+
+List<String> getPreviousGenSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'cleanroom' -> [ '1.12' ]
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19' ->
+            exclude_problematic_versions ? [ 'fabric' ] : [ 'fabric', 'forge' ]
+        case 'shared_1.20', 'shared_1.21' ->
+            exclude_problematic_versions ? [ 'fabric', 'neoforge' ] : [ 'fabric', 'forge', 'neoforge' ]
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? [ 'cleanroom', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4',
+                                    'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
+    }
+}
+
+List<String> getPreviousGenSourcesByType(String type, boolean exclude_problematic_versions) {
+    if(type==null) return getPreviousGenSources(exclude_problematic_versions)
+    switch(type) {
+        case 'fabricGenSources' -> getPreviousGenFabricSources(exclude_problematic_versions)
+        case 'forgeGenSources' -> getPreviousGenForgeSources(exclude_problematic_versions)
+        case 'neoforgeGenSources' -> getPreviousGenNeoforgeSources(exclude_problematic_versions)
+        default -> getPreviousGenSources(exclude_problematic_versions)
+    }
+}
+
+@SuppressWarnings('unused')
+List<String> getPreviousGenFabricSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? [ 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1',
+                                    'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
+    }
+}
+
+List<String> getPreviousGenForgeSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? (exclude_problematic_versions ? [ 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4',
+                'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : [ 'shared_1.16', 'shared_1.18',
+                  'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6',
+                  'shared_1.21.1' ]) : []
+    }
+}
+
+@SuppressWarnings('unused')
+List<String> getPreviousGenNeoforgeSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? [ 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
+    }
+}
+
+List<String> getSourceGenTypes(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case '1.12', 'cleanroom', 'fabric', 'neoforge' -> [ 'genSources' ]
+        case 'forge' -> exclude_problematic_versions ? [] : [ 'genSources' ]
+        case 'shared_1.16' -> exclude_problematic_versions ? [ 'genSources', 'fabricGenSources' ] :
+                [ 'genSources', 'fabricGenSources', 'forgeGenSources' ]
+        case 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
+            [ 'genSources', 'fabricGenSources', 'forgeGenSources' ]
+        case 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
+            [ 'genSources', 'fabricGenSources', 'forgeGenSources', 'neoforgeGenSources' ]
+        default -> parent==null ? [ 'genAllSources' ] : []
+    }
+}
+
+/**
+ * Setup dependency ordering for genSources, fabricGenSources, forgeGenSources, and neoforgeGenSources.
+ * Use exclude_problematic_versions to exclude tasks from the graph that are known to cause problematic.
+ * Register the genAllSources task if necessary.
+ */
+void setupSourceGenGraph() {
+    logger.lifecycle "Setting up source gen graph for $name"
+    boolean exclude_problematic_versions = Boolean.parseBoolean filter_problematic_auto_source_gen
+    getSourceGenTypes(exclude_problematic_versions).forEach {gen_type ->
+        boolean gen_all = 'genAllSources'==gen_type
+        tasks."${gen_all ? 'register' : 'named'}"(gen_type) {Task gen_task ->
+            (gen_all ? [ 'fabricGenSources', 'forgeGenSources', 'genSources', 'neoforgeGenSources' ] : [ gen_type ]).forEach {sub_gen ->
+                getPreviousGenSourcesByType(sub_gen, exclude_problematic_versions).forEach {p_name ->
+                    gen_task.dependsOn getFullTaskPath(p_name, sub_gen)
+                }
+            }
+        }
+    }
+    logger.lifecycle "Finished setting up main source gen graph for $name"
+    if(name==null && exclude_problematic_versions) setupProblematicSourceGenGraph()
+}
+
+void setupProblematicSourceGenGraph() {
+    logger.lifecycle "Setting up problematic source gen graph"
+    def problematic_source_gens = [ ':forge': 'genSources', ':shared:shared_1.16': 'forgeGenSources' ]
+    tasks.register('genProblematicSources') {
+        it.dependsOn 'genAllSources'
+    }
+    logger.lifecycle "Setting up problematic source gen graph mid"
+    problematic_source_gens.forEach {p_name,t_name ->
+        tasks.genProblematicSources.dependsOn "$p_name:$t_name"
+        project(p_name).tasks.named(t_name) {
+            it.mustRunAfter project.tasks.genAllSources
+        }
+    }
+    logger.lifecycle "Finished setting up problematic source gen graph"
+}

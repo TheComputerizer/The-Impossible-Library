@@ -1,14 +1,11 @@
 import org.codehaus.groovy.runtime.MethodClosure
 
-import static org.gradle.api.JavaVersion.VERSION_17
-import static org.gradle.api.JavaVersion.VERSION_1_8
-import static org.gradle.api.JavaVersion.VERSION_21
-
 plugins {
     id 'project-versions'
     id 'xyz.wagyourtail.unimined'
 }
 
+//noinspection GrUnresolvedAccess
 unimined.useGlobalCache = false
 
 ext.addCustomRunProperties = this.&addCustomRunProperties as MethodClosure
@@ -31,6 +28,7 @@ static String productionNamespace(String loader) {
     return 'cleanroom'==loader || 'forge'==loader ? 'searge' : ('fabric'==loader ? 'intermediary' : 'mojmap')
 }
 
+@SuppressWarnings('GrUnresolvedAccess')
 void remapForProduction(String loader) {
     if(shouldRemapForProduction(loader)) {
         remapJar {
@@ -47,25 +45,38 @@ boolean shouldRemapForProduction(String loader) {
     return !mappingStyleOfficial() && productionNamespace(loader)!='mojmap'
 }
 
-unimined.minecraft(sourceSets.main, true) {
-    version minecraftVersion()
-    def api = project ':api'
-    combineWith api, api.sourceSets.main
-    mappings {
-        if(isLegacyProject()) {
-            if('cleanroom'!=name) searge()
-            mcp 'stable', legacy.versions.mappings.get()
-        } else {
-            if(!mappingStyleOfficial) intermediary()
-            mojmap()
-            parchment(minecraftVersion(), parchmentVersion())
-            devNamespace 'mojmap'
+@SuppressWarnings('GrUnresolvedAccess')
+void initUniminedSetup() {
+    unimined.minecraft(sourceSets.main, true) {
+        version minecraftVersion()
+        def api = project ':api'
+        combineWith api, api.sourceSets.main
+        mappings {
+            if(isLegacyProject()) {
+                if('cleanroom'!=name) searge()
+                mcp 'stable', legacy.versions.mappings.get()
+            } else {
+                if(!mappingStyleOfficial) intermediary()
+                mojmap()
+                parchment(minecraftVersion(), parchmentVersion())
+                devNamespace 'mojmap'
+            }
+        }
+        if(!isRunnableVersion() || (isSharedProject() && sourceSet==sourceSets.main)) {
+            runs {
+                off = true
+            }
+        }
+        defaultRemapJar = !mappingStyleOfficial()
+        if(isRunnableVersion() && isSharedProject() && sourceSet!=sourceSets.main) {
+            mods {
+                modImplementation {
+                    catchAWNamespaceAssertion()
+                    namespace 'mojmap'
+                }
+            }
         }
     }
-    if(!isRunnableVersion()) {
-        runs {
-            off = true
-        }
-    }
-    defaultRemapJar = !mappingStyleOfficial()
 }
+
+initUniminedSetup()

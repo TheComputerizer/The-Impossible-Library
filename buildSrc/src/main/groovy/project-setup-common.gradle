@@ -1,54 +1,24 @@
 import org.codehaus.groovy.runtime.MethodClosure
 
 /**
- * Initialize shared Java plugin stuff
+ * Initialize common functions
  */
 plugins {
-    id 'java-shared'
+    id 'project-common-functions'
 }
 
-ext.addProjectJars = this.&addProjectJars as MethodClosure
-ext.getManifestEntries = this.&getManifestEntries as MethodClosure
-ext.inheritResources = this.&inheritResources as MethodClosure
+ext.applySourceHelpers = this.&applySourceHelpers as MethodClosure
 ext.initDependencies = this.&initDependencies as MethodClosure
 ext.initJavaPlugin = this.&initJavaPlugin as MethodClosure
+ext.initShadow = this.&initShadow as MethodClosure
 ext.initUnimined = this.&initUnimined as MethodClosure
-ext.setDev = this.&setDev as MethodClosure
-ext.setJarsRunAfter = this.&setJarsRunAfter as MethodClosure
 
-void addProjectJars(List<String> p_names) {
-    p_names.forEach {p_name ->
-        tasks.jar.dependsOn ":$p_name:jar"
-    }
-}
-
-Map<?,Object> getManifestEntries() {
-    Map<?,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
-    if(isLegacyProject()) {
-        attribute_map.put('FMLCorePlugin', legacy_entrypoint)
-        attribute_map.put('FMLCorePluginContainsFMLMod', true)
-        attribute_map.put('ForceLoadAsMod', true)
-    }
-    return attribute_map
-}
-
-void inheritResources(List<String> parent_names, String ... exlude_these) {
-    processResources {
-        parent_names.forEach { parent_name ->
-            dependsOn ":$parent_name:processResources"
-        }
-        exlude_these.each {exclude_this ->
-            exclude exclude_this
-        }
-    }
-    processTestResources {
-        parent_names.forEach { parent_name ->
-            dependsOn ":$parent_name:processTestResources"
-        }
-        exlude_these.each {exclude_this ->
-            exclude exclude_this
-        }
-    }
+void applySourceHelpers() {
+    logger.lifecycle 'applySourceHelpers'
+    plugins.apply 'source-helpers'
+    logger.lifecycle 'Finished applying source-helpers plugin'
+    //noinspection GrUnresolvedAccess
+    setupSourceGenGraph()
 }
 
 /**
@@ -64,7 +34,12 @@ void initDependencies() {
  */
 void initJavaPlugin() {
     initProjectStatus()
+    //noinspection GrUnresolvedAccess
     setJavaVersion getJavaVersion()
+}
+
+void initShadow() {
+    plugins.apply 'com.gradleup.shadow'
 }
 
 void initProjectStatus() {
@@ -74,36 +49,4 @@ void initProjectStatus() {
 
 void initUnimined() {
     plugins.apply 'unimined-common'
-}
-
-void setDev() {
-    configurations {
-        dev {
-            canBeResolved = false
-            canBeConsumed = true
-        }
-    }
-    artifacts {
-        //noinspection GroovyAssignabilityCheck
-        dev jar
-    }
-}
-
-void setJarsRunAfter(List<String> parent_names) {
-    def build_tasks = parent_names.collect {parent_name ->
-        getTaskPath(parent_name, 'build')
-    }
-    jar {
-        manifest {
-            attributes(getManifestEntries())
-        }
-        build_tasks.forEach {build_task ->
-            mustRunAfter build_task
-        }
-    }
-    sourcesJar {
-        build_tasks.forEach {build_task ->
-            mustRunAfter build_task
-        }
-    }
 }

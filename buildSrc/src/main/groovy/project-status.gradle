@@ -17,6 +17,7 @@ ext.isLoaderBase = this.&isLoaderBase as MethodClosure
 ext.isMinorVersion = this.&isMinorVersion as MethodClosure
 ext.isNeoforgeCompatible = this.&isNeoforgeCompatible as MethodClosure
 ext.isRunnableVersion = this.&isRunnableVersion as MethodClosure
+ext.isSharedProject = this.&isSharedProject as MethodClosure
 ext.usesUnimined = this.&usesUnimined as MethodClosure
 
 /**
@@ -27,7 +28,7 @@ int getJavaVersion() {
 }
 
 /**
- * Return the Java toolchain that should be used by the currect project as an enum
+ * Return the Java toolchain that should be used by the currect project as a JavaVersion enum
  */
 JavaVersion getJavaVersionEnum() {
     return isJava24() ? VERSION_24 : (isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17))
@@ -103,6 +104,13 @@ boolean isNeoforgeCompatible() {
  */
 boolean isRunnableVersion() {
     return isLegacyProject() || isMinorVersion() || [ 'shared_1.16', 'shared_1.18' ].contains(name)
+}
+
+/**
+ * The shared project and any projects under it
+ */
+boolean isSharedProject() {
+    return name.contains('shared')
 }
 
 /**

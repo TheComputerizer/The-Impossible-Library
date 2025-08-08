@@ -2,37 +2,29 @@
  * Common base for all legacy builds (pre 1.16)
  */
 
-evaluationDependsOn ':api'
-
-extendFrom 'common-deps'
-
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of 8
+plugins {
+    id 'project-common-functions'
 }
 
-setDev()
+/**
+ * Only bundled for consolidated warning suppression
+ */
+@SuppressWarnings(['GrUnresolvedAccess','GrMethodMayBeStatic'])
+private void initSetup() {
+    setDev()
+    setJavaVersion 8
+    setJarAndResourceDependency 'api', 'fabric.mod.json', 'META-INF/mods.toml'
+    initCommonDeps()
+}
+
+initSetup()
 
 dependencies {
-    compileOnlyApi project(':api')
+    compileOnly project(':api')
 }
 
-processResources {
-    def replacements = [ 'minecraft_version': libs.versions.minecraft.'1'.'12'.'2'.get(), 'mod_author': mod_authors,
-                         'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
-                         'mod_name': mod_name, 'mod_version': version ]
-    inputs.properties replacements
-    def parentResources =  getTaskOutputs(project(':api'), 'processResources')
-    from(parentResources) {
-        exclude 'fabric.mod.json', 'mcmod.info', 'META-INF/mods.toml'
-    }
-    from(parentResources) {
-        include 'mcmod.info'
-        expand replacements
-    }
-}
-
-processTestResources {
-    from getTaskOutputs(project(':api'), 'processTestResources')
-}
-
-setJarsRunAfter([ ':api' ]) 
+def replacements = [ 'minecraft_version': libs.versions.minecraft.'1'.'12'.'2'.get(), 'mod_author': mod_authors,
+                     'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
+                     'mod_name': mod_name, 'mod_version': version ]
+//noinspection GrUnresolvedAccess
+setResourceReplacements 'mcmod.info', replacements

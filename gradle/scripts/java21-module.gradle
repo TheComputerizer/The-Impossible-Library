@@ -1,9 +1,0 @@
-compileJava {
-    options.release = 21
-}
-
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of 21
-}
-
-extendFrom 'common-deps'

@@ -71,7 +71,7 @@ unimined.minecraft {
 
 remapForProduction isCleanroomProject() ? 'cleanroom' : 'forge'
 
-setRepositories(isCleanroomProject() ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
+setCommonRepositories(isCleanroomProject() ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
 
 dependencies {
     //noinspection DependencyNotationArgument,GrUnresolvedAccess
@@ -87,10 +87,11 @@ dependencies {
     modRuntimeOnly legacy.bundles.nothirium
 }
 
-inheritResources([ ':legacy' ])
-addProjectJars([ ':legacy' ])
-setJarsRunAfter([ ':legacy' ])
+setJarAndResourceDependency 'legacy'
 tasks.preRunClient.mustRunAfter 'devRunJar'
+
+//noinspection GrUnresolvedAccess
+applySourceHelpers()
 
 List<String> fixLegacyRuntimePaths() {
     List<String> removed_paths = []

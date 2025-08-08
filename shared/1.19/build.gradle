@@ -2,29 +2,7 @@
  * Shared implementations for 1.19
  */
 plugins {
-    alias libs.plugins.shadow
     id 'project-setup-shared'
 }
 
 setupShared([])
-
-tasks.register('genAllSources') {
-    dependsOn 'genSources'
-    dependsOn 'fabricGenSources'
-    dependsOn 'forgeGenSources'
-    dependsOn ':fabric:genSources'
-    dependsOn ':forge:genSources'
-}
-
-afterEvaluate {
-    it.tasks.genSources {
-        mustRunAfter ':fabric:genSources'
-        mustRunAfter ':forge:genSources'
-    }
-    it.tasks.fabricGenSources {
-        mustRunAfter 'genSources'
-    }
-    it.tasks.forgeGenSources {
-        mustRunAfter 'genSources'
-    }
-}

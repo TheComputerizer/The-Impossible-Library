@@ -1,12 +1,6 @@
-//file:noinspection DependencyNotationArgument
-
 /**
  * 1.12.2 cleanroom build
  */
 plugins {
     id 'project-setup-legacy'
-}
-
-afterEvaluate {
-    it.tasks.genSources.mustRunAfter ':legacy:1.12:genSources'
 }

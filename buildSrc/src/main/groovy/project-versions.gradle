@@ -8,12 +8,14 @@ ext.minecraftVersion = this.&minecraftVersion as MethodClosure
 ext.modernForgeVersion = this.&modernForgeVersion as MethodClosure
 ext.neoforgeVersion = this.&neoforgeVersion as MethodClosure
 ext.parchmentVersion = this.&parchmentVersion as MethodClosure
+ext.projectMCVersion = this.&projectMCVersion as MethodClosure
 
 String fabricAPIVersion() {
     return withMCVersion('fabric', 'api')
 }
 
 String fabricLoaderVersion() {
+    //noinspection GrUnresolvedAccess
     return project.fabric.versions.loader.get()
 }
 

@@ -1,0 +1,54 @@
+import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+
+plugins {
+    id 'project-setup-common'
+}
+
+logger.lifecycle 'Initializing shaded deps plugin'
+
+initJavaPlugin()
+initShadow()
+
+logger.lifecycle 'Finished setting up plugins for shaded deps'
+
+configurations {
+    shaded
+    implementation.extendsFrom shaded
+}
+
+logger.lifecycle 'Finished setting up configurations for shaded deps'
+
+repositories {
+    mavenCentral() {
+        content {
+            [ toolfactory_group, burningwave_group ].forEach {
+                includeGroup it
+            }
+        }
+    }
+}
+
+logger.lifecycle 'Finished setting up repositories for shaded deps'
+
+dependencies {
+    //noinspection GrUnresolvedAccess
+    shaded(libs.bundles.burningwave) { transitive = false }
+}
+
+logger.lifecycle 'Finished setting up dependencies for shaded deps'
+
+//noinspection GrUnresolvedAccess
+shadowJar {
+    archiveBaseName = mod_id
+    archiveClassifier = 'unfixed'
+    //noinspection GroovyAssignabilityCheck
+    configurations = [ project.configurations.shaded ]
+    duplicatesStrategy = EXCLUDE
+    //noinspection GrUnresolvedAccess
+    exclude '**/LICENSE', '**/LICENSE.txt', '**/MANIFEST.*', 'META-INF/maven/**', 'META-INF/*.RSA',
+            'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
+    //noinspection GrUnresolvedAccess
+    mergeServiceFiles()
+}
+
+logger.lifecycle 'Finished initializing shaded deps plugin'

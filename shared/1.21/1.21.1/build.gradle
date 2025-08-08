@@ -2,34 +2,7 @@
  * Shared implementations for 1.21.1
  */
 plugins {
-    alias libs.plugins.shadow
     id 'project-setup-shared'
 }
 
 setupShared([ 'pb4' ])
-
-tasks.register('genAllSources') {
-    dependsOn 'genSources'
-    dependsOn 'fabricGenSources'
-    dependsOn 'forgeGenSources'
-    dependsOn 'neoforgeGenSources'
-}
-
-afterEvaluate {
-    it.tasks.genSources {
-        dependsOn ':shared:shared_1.16:genAllSources'
-        dependsOn ':shared:shared_1.18:genAllSources'
-        dependsOn ':shared:shared_1.19:genAllSources'
-        dependsOn ':shared:shared_1.20:genAllSources'
-        dependsOn ':shared:shared_1.21:genAllSources'
-    }
-    it.tasks.fabricGenSources {
-        mustRunAfter 'genSources'
-    }
-    it.tasks.forgeGenSources {
-        mustRunAfter 'genSources'
-    }
-    it.tasks.neoforgeGenSources {
-        mustRunAfter 'genSources'
-    }
-}

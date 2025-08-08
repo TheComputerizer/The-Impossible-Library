@@ -2,19 +2,24 @@ plugins {
     id 'project-setup-common'
 }
 
+//noinspection GrUnresolvedAccess
 initJavaPlugin()
 plugins.apply 'common-deps'
 
+//noinspection GrUnresolvedAccess
 if(usesUnimined) {
+//noinspection GrUnresolvedAccess
     initUnimined()
     finishUniminedSetup()
     if('fabric'==name) {
         dependencies {
+            //noinspection GrUnresolvedAccess
             fabricApi.fabric(fabricAPIVersion())
         }
     }
 }
 
+//noinspection GrUnresolvedAccess
 setDev()
 
 dependencies {
@@ -30,17 +35,20 @@ jar {
     }
 }
 
-tasks.processResources.dependsOn ':api:processResources'
-tasks.processTestResources.dependsOn ':api:processTestResources'
+//noinspection GrUnresolvedAccess
+setJarAndResourceDependency 'api'
 
 if('fabric'==name) setupFabricBase()
 else {
-    setJarsRunAfter([ ':api' ])
     processResources {
         exclude 'fabric.mod.json'
     }
 }
 
+//noinspection GrUnresolvedAccess
+applySourceHelpers()
+
+@SuppressWarnings('GrUnresolvedAccess')
 private void finishUniminedSetup() {
     unimined.minecraft {
         switch(name) {
@@ -65,12 +73,7 @@ private void finishUniminedSetup() {
 }
 
 void setupFabricBase() {
-    tasks.jar.dependsOn ':api:jar'
-    processResources {
-        def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
-        inputs.properties replacements
-        filesMatching('fabric.mod.json') {copy_details ->
-            expand replacements
-        }
-    }
+    def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
+    //noinspection GrUnresolvedAccess
+    setResourceReplacements 'fabric.mod.json', replacements
 }

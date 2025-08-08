@@ -2,22 +2,26 @@
  * Base project for the main API & any version-agnostic code that isn't modloader-specific
  */
 
-extendFrom 'common-deps'
+plugins {
+    id 'project-setup-common'
+}
+
+initJavaPlugin()
 
 setDev()
 
 injectConstants()
 
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of 8
-}
+initDependencies()
 
-setRepositories([ 'central', 'fast' ])
+setCommonRepositories([ 'central', 'fast' ])
 
 dependencies {
+    //noinspection DependencyNotationArgument
     compileOnly(libs.bundles.api.compile) {
         exclude group: 'com.github.spotbugs'
     }
+    //noinspection DependencyNotationArgument
     compileOnly libs.spotbugs.annotations
 }
 

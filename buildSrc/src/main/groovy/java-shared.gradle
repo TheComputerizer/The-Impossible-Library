@@ -26,29 +26,91 @@ java {
     withJavadocJar()
 }
 
-tasks.withType(JavaCompile).forEach {
+tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
     it.options.deprecation = false
 }
 
-tasks.withType(Jar).forEach {
+tasks.withType(Jar).configureEach {
     it.archiveBaseName = mod_id
     it.duplicatesStrategy = EXCLUDE
 }
 
-tasks.withType(ProcessResources).forEach {
+tasks.withType(ProcessResources).configureEach {
     it.duplicatesStrategy = EXCLUDE
 }
 
+ext.excludeResources = this.&excludeResources as MethodClosure
+ext.setJarAndResourceDependencies = this.&setJarAndResourceDependencies as MethodClosure
+ext.setJarAndResourceDependency = this.&setJarAndResourceDependency as MethodClosure
+ext.setJarDependencies = this.&setJarDependencies as MethodClosure
+ext.setJarDependency = this.&setJarDependency as MethodClosure
 ext.setJavaVersion = this.&setJavaVersion as MethodClosure
+ext.setResourceDependencies = this.&setResourceDependencies as MethodClosure
+ext.setResourceDependency = this.&setResourceDependency as MethodClosure
+ext.setResourceReplacements = this.&setResourceReplacements as MethodClosure
 
-void setJavaVersion(int java_version) {
-    if(java_version>=9) {
-        compileJava {
-            options.release = java_version
+void excludeResources(String ... exclude_these) {
+    if(exclude_these==null || exclude_these.length==0) return
+    tasks.withType(ProcessResources).configureEach {it ->
+        exclude_these.each {exclude_this ->
+            it.exclude exclude_this
         }
     }
+}
+
+void setJarAndResourceDependencies(List<String> p_names, String ... exclude_these) {
+    p_names.forEach {p_name ->
+        setJarDependency p_name
+        setResourceDependency p_name, exclude_these
+    }
+}
+
+void setJarAndResourceDependency(String p_name, String ... exclude_these) {
+    setJarDependency p_name
+    setResourceDependency p_name, exclude_these
+}
+
+void setJarDependencies(List<String> p_names) {
+    p_names.forEach {p_name ->
+        setJarDependency p_name
+    }
+}
+
+void setJarDependency(String p_name) {
+    tasks.jar.dependsOn ":$p_name:jar"
+    tasks.javadocJar.dependsOn ":$p_name:javadocJar"
+    tasks.sourcesJar.dependsOn ":$p_name:sourcesJar"
+
+}
+
+void setJavaVersion(int java_version) {
     java {
         toolchain.languageVersion = JavaLanguageVersion.of java_version
+    }
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = java_version
+    }
+}
+
+void setResourceDependencies(List<String> p_names, String ... exlude_these) {
+    p_names.forEach {p_name ->
+        setResourceDependency p_name, exlude_these
+    }
+}
+
+void setResourceDependency(String p_name, String ... exclude_these) {
+    tasks.withType(ProcessResources).configureEach {it ->
+        it.dependsOn ":$p_name:processResources"
+    }
+    excludeResources exclude_these
+}
+
+void setResourceReplacements(String replacement_file, Map<String,?> replacements) {
+    processResources {
+        inputs.properties replacements
+        from(inputs).filesMatching(replacement_file) {copy_details -> //TODO This is wrong
+            expand replacements
+        }
     }
 }

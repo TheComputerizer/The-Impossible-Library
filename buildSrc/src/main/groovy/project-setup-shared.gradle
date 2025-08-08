@@ -7,6 +7,7 @@ plugins {
 }
 
 initJavaPlugin()
+initShadow()
 initDependencies()
 initConfigs()
 initUnimined()
@@ -29,7 +30,7 @@ unimined.minecraft(sourceSets.fabric) {
         runs.all {
             javaVersion = getJavaVersionEnum()
             Map<?,?> map = getSystemProperties()
-            addCustomRunProperties(map)
+            addCustomRunProperties map
         }
     } else runs.off = true
     mods {
@@ -71,11 +72,11 @@ unimined.minecraft(sourceSets.forge) {
         runs.all {
             javaVersion = getJavaVersionEnum()
             Map<?,?> map = getSystemProperties()
-            addCustomRunProperties(map)
+            addCustomRunProperties map
         }
     } else runs.off = true
-    mods {
-        if(isRunnableVersion()) {
+    if(isRunnableVersion()) {
+        mods {
             remap(configurations.forgeModRuntimeOnly) {
                 catchAWNamespaceAssertion()
                 namespace 'mojmap'
@@ -102,7 +103,7 @@ if(isNeoforgeCompatible()) {
             runs.all {
                 javaVersion = getJavaVersionEnum()
                 Map<?,?> map = getSystemProperties()
-                addCustomRunProperties(map)
+                addCustomRunProperties map
             }
         } else runs.off = true
         mods {
@@ -239,13 +240,14 @@ void setLoaderConfigs() {
 
 void setupShared(List<String> extra_maven_ids) {
     setSharedDependencies extra_maven_ids
-    inheritResources([ ':shared' ], 'mcmod.info')
+    setResourceDependency 'shared', 'mcmod.info'
     setJarsRunAfter collectRunAfter()
+    applySourceHelpers()
 }
 
 void setSharedDependencies(List<String> extra_maven_ids) {
     List<String> maven_ids = []
-    if(isRunnableProject()) {
+    if(isRunnableVersion()) {
         maven_ids = [ 'cf', 'ct', 'jei', 'modrinth', 'modmenu' ]
         maven_ids.addAll extra_maven_ids
     }
@@ -253,23 +255,23 @@ void setSharedDependencies(List<String> extra_maven_ids) {
 }
 
 void setSharedDependenciesInner(List<String> maven_ids) {
-    if(isLoaderBase) return
-    setRepositories maven_ids
+    if(isLoaderBase()) return
+    setCommonRepositories maven_ids
     dependencies {
-        if(isMinorVersion) compileOnlyApi parent
+        if(isMinorVersion()) compileOnlyApi parent
         fabricModImplementation fabricApi.fabric(fabricAPIVersion())
         def types = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
         types.forEach {loader ->
             logger.lifecycle "Applying $loader-specific dependencies for $name"
-            "${loader}CompileOnly" project(path: ":$loader", configuration: 'dev')
-            "${loader}Implementation" libs.bundles.burningwave
             "${loader}AnnotationProcessor" libs.lombok
+            "${loader}CompileOnly" project(path: ":$loader", configuration: 'dev')
             "${loader}CompileOnly" libs.lombok
-            if(isRunnableProject) {
-                if(isMinorVersion) {
-                    "${loader}Implementation" parent
-                    "${loader}Implementation" project(path: parent.path, configuration: "$loader")
-                }
+            "${loader}Implementation" libs.bundles.burningwave
+            if(isMinorVersion()) {
+                "${loader}Implementation" parent
+                "${loader}Implementation" project(path: parent.path, configuration: "$loader")
+            }
+            if(isRunnableVersion()) {
                 "${loader}ModImplementation" modsBundle(loader, 'implementation')
                 "${loader}ModRuntimeOnly" modsBundle(loader, 'runtime')
             }

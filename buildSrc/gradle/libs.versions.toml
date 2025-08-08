@@ -1,5 +1,7 @@
 [libraries]
+    shadow = { group = 'com.gradleup.shadow', name = 'com.gradleup.shadow.gradle.plugin', version.ref = 'shadow' }
     unimined = { group = 'xyz.wagyourtail.unimined', name = 'xyz.wagyourtail.unimined.gradle.plugin', version.ref = 'unimined' }
 
 [versions]
+    shadow = '9.+'
     unimined = '1.+'

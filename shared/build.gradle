@@ -2,26 +2,18 @@
  * Pass through parent module for shared version modules
  */
 
+plugins {
+    id 'project-setup-common'
+}
+
 evaluationDependsOn ':api'
 evaluationDependsOn ':fabric'
 evaluationDependsOn ':forge'
 
-extendFrom 'common-deps'
-
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of 8
-}
+//noinspection GrUnresolvedAccess
+initJavaPlugin()
 
 setDev()
 
-inheritResources([ ':api' ])
-
-jar {
-    from(getArchiveTaskFile(project(':api'), 'jar').collect {entry ->
-        include 'mods/**'
-        zipTree entry
-    })
-    dependsOn ':api:build'
-}
-
-setJarsRunAfter([ ':api' ]) 
+//noinspection GrUnresolvedAccess
+setJarAndResourceDependency 'api'
