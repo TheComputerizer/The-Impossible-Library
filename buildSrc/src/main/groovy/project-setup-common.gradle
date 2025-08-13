@@ -13,11 +13,10 @@ ext.initJavaPlugin = this.&initJavaPlugin as MethodClosure
 ext.initShadow = this.&initShadow as MethodClosure
 ext.initUnimined = this.&initUnimined as MethodClosure
 
+@SuppressWarnings('GrUnresolvedAccess')
 void applySourceHelpers() {
-    logger.lifecycle 'applySourceHelpers'
     plugins.apply 'source-helpers'
-    logger.lifecycle 'Finished applying source-helpers plugin'
-    //noinspection GrUnresolvedAccess
+    setupIntelliJGenGraph()
     setupSourceGenGraph()
 }
 

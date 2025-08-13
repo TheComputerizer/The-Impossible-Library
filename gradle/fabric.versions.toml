@@ -1,21 +1,29 @@
 [bundles]
+    mods-1_16_5-compile = []
     mods-1_16_5-implementation = [ 'cloth-1_16_5', 'coroutil-1_16_5', 'modmenu-1_16_5' ]
     mods-1_16_5-runtime = [ 'architectury-1_16_5', 'rei-1_16_5' ]
+    mods-1_18_2-compile = []
     mods-1_18_2-implementation = [ 'bookshelf-1_18_2', 'cloth-1_18_2', 'coroutil-1_18_2', 'modmenu-1_18_2' ]
     mods-1_18_2-runtime = [ 'architectury-1_18_2', 'jei-1_18_2' ]
+    mods-1_19_2-compile = []
     mods-1_19_2-implementation = [ 'bookshelf-1_19_2', 'cloth-1_19_2', 'coroutil-1_19_2', 'modmenu-1_19_2' ]
     mods-1_19_2-runtime = [ 'architectury-1_19_2', 'jei-1_19_2' ]
+    mods-1_19_4-compile = []
     mods-1_19_4-implementation = [ 'bookshelf-1_19_4', 'cloth-1_19_4', 'coroutil-1_19_4', 'modmenu-1_19_4' ]
     mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
+    mods-1_20_1-compile = []
     mods-1_20_1-implementation = [ 'bookshelf-1_20_1', 'cloth-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
         'dataanchor-1_20_1', 'glitchcore-1_20_1', 'modmenu-1_20_1', 'sereneseasons-1_20_1' ]
     mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
+    mods-1_20_4-compile = []
     mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'cloth-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
         'glitchcore-1_20_4', 'modmenu-1_20_4', 'sereneseasons-1_20_4' ]
     mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
+    mods-1_20_6-compile = []
     mods-1_20_6-implementation = [ 'cloth-1_20_6', 'configured-1_20_6', 'coroutil-1_20_6', 'glitchcore-1_20_6',
         'modmenu-1_20_6', 'sereneseasons-1_20_6' ]
     mods-1_20_6-runtime = [ 'architectury-1_20_6', 'jei-1_20_6' ]
+    mods-1_21_1-compile = []
     mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'cloth-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1',
         'dataanchor-1_21_1', 'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'modmenu-1_21_1',
         'sereneseasons-1_21_1' ]

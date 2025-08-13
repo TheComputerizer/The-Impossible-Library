@@ -27,6 +27,5 @@ repositories {
 }
 
 dependencies {
-    implementation libs.unimined
-    implementation libs.shadow
+    implementation libs.bundles.plugins
 }

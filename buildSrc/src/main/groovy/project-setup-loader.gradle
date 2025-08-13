@@ -4,6 +4,7 @@ plugins {
 
 //noinspection GrUnresolvedAccess
 initJavaPlugin()
+createResourceArtifact()
 plugins.apply 'common-deps'
 
 //noinspection GrUnresolvedAccess
@@ -11,19 +12,12 @@ if(usesUnimined) {
 //noinspection GrUnresolvedAccess
     initUnimined()
     finishUniminedSetup()
-    if('fabric'==name) {
-        dependencies {
-            //noinspection GrUnresolvedAccess
-            fabricApi.fabric(fabricAPIVersion())
-        }
-    }
 }
 
-//noinspection GrUnresolvedAccess
-setDev()
+createClassConfigs false, true
 
 dependencies {
-    api project(':api')
+    compileOnly project(':api')
 }
 
 jar {
@@ -35,15 +29,11 @@ jar {
     }
 }
 
-//noinspection GrUnresolvedAccess
-setJarAndResourceDependency 'api'
+addParentProcessedResources()
 
 if('fabric'==name) setupFabricBase()
-else {
-    processResources {
-        exclude 'fabric.mod.json'
-    }
-}
+
+tasks.compileJava.mustRunAfter ':api:classes'
 
 //noinspection GrUnresolvedAccess
 applySourceHelpers()
@@ -73,7 +63,8 @@ private void finishUniminedSetup() {
 }
 
 void setupFabricBase() {
-    def replacements = [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
-    //noinspection GrUnresolvedAccess
-    setResourceReplacements 'fabric.mod.json', replacements
+    dependencies {
+        //noinspection GrUnresolvedAccess
+        modImplementation fabricApi.fabric(fabricAPIVersion())
+    }
 }

@@ -7,8 +7,9 @@ plugins {
 }
 
 initJavaPlugin()
+createResourceArtifact()
 
-setDev()
+createClassConfigs false, true
 
 injectConstants()
 

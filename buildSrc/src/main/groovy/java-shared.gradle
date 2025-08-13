@@ -40,6 +40,9 @@ tasks.withType(ProcessResources).configureEach {
     it.duplicatesStrategy = EXCLUDE
 }
 
+ext.addParentProcessedResources = this.&addParentProcessedResources as MethodClosure
+ext.createConfiguration = this.&createConfiguration as MethodClosure
+ext.createResourceArtifact = this.&createResourceArtifact as MethodClosure
 ext.excludeResources = this.&excludeResources as MethodClosure
 ext.setJarAndResourceDependencies = this.&setJarAndResourceDependencies as MethodClosure
 ext.setJarAndResourceDependency = this.&setJarAndResourceDependency as MethodClosure
@@ -50,12 +53,133 @@ ext.setResourceDependencies = this.&setResourceDependencies as MethodClosure
 ext.setResourceDependency = this.&setResourceDependency as MethodClosure
 ext.setResourceReplacements = this.&setResourceReplacements as MethodClosure
 
+/**
+ * Add the result of the processResources tasks from parent projects as dependencies.
+ */
+void addParentProcessedResources() {
+    if('shared'!=name && isSharedProject()) {
+        boolean minor_version = isMinorVersion()
+        (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
+            String p_path = minor_version ? getFullPath(parent.name) : ":${loader.toLowerCase()}"
+            String t_name = "process${loader}Resources"
+            String c_name = "parent${loader}Resources"
+            createConfiguration "parent${loader}Resources", false, true
+            addResourceConfigurations t_name, [ c_name ]
+            addParentResourceDependency c_name, p_path, "processed${minor_version ? loader : ''}Resources"
+            tasks.named(t_name).configure {process_resources ->
+                process_resources.mustRunAfter "$p_path:process${minor_version ? loader : ''}Resources"
+            }
+        }
+    } else {
+        String p_path = isLegacyProject() ? ':legacy' : ':api'
+        createConfiguration 'parentResources', false, true
+        addResourceConfigurations 'processResources', [ 'parentResources' ]
+        addParentResourceDependency 'parentResources', p_path, 'processedResources'
+        tasks.processResources.mustRunAfter "$p_path:processResources"
+    }
+}
+
+private void addParentResourceDependency(String c_name, String p_path, String p_config) {
+    dependencies {
+        "$c_name"(project(path: p_path, configuration: p_config))
+    }
+}
+
+private void addResourceConfigurations(String t_name, List<String> config_names) {
+    def loader = 'processResources'==t_name ? null : t_name.substring(7).replace('Resources', '').toLowerCase()
+    def exclude_these = loader==null ? getDefaultExclusions() : getDefaultExclusionsForLoader(loader)
+    def file_replacement = getDefaultFileReplacement()
+    def replacements = getDefaultReplacements()
+    tasks.named(t_name, Copy) {process_resources ->
+        config_names.forEach {config_name ->
+            from(configurations.named(config_name)) {
+                process_resources.exclude exclude_these
+                if(file_replacement!=null) {
+                    filesMatching(file_replacement) {copy_details ->
+                        copy_details.expand replacements
+                    }
+                }
+            }
+        }
+    }
+}
+
+void createConfiguration(String config_name, boolean consumable, boolean resolvable) {
+    configurations.create(config_name) {
+        canBeConsumed = consumable
+        canBeResolved = resolvable
+    }
+}
+
+/**
+ * Create an artifact for the processResources task that can be consumed as a dependency.
+ */
+void createResourceArtifact() {
+    def config_map = [ processedResources: 'processResources' ]
+    if('shared'!=name && isSharedProject()) {
+        (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
+            config_map.put "processed${loader}Resources".toString(), "process${loader}Resources".toString()
+        }
+    }
+    config_map.forEach {config_name,task_name ->
+        createConfiguration config_name, true, false
+        artifacts.add(config_name, tasks.named(task_name, ProcessResources).map {process_resources ->
+            process_resources.destinationDir
+        })
+    }
+}
+
 void excludeResources(String ... exclude_these) {
     if(exclude_these==null || exclude_these.length==0) return
     tasks.withType(ProcessResources).configureEach {it ->
         exclude_these.each {exclude_this ->
             it.exclude exclude_this
         }
+    }
+}
+
+private List<String> getDefaultExclusions() {
+    return switch(name) {
+        case '1.12', 'cleanroom', 'legacy' -> [ "assets/$mod_id/lang/en_us.json", 'META-INF/coremods.json',
+                                                'fabric.mod.json', 'multiversion_forge_core.js' ]
+        case 'fabric' -> [ "assets/$mod_id/lang/en_us.lang", 'META-INF/coremods.json', 'mcmod.info',
+                           'multiversion_forge_core.js' ]
+        case 'forge', 'neoforge' -> [ "assets/$mod_id/lang/en_us.lang", 'fabric.mod.json', 'mcmod.info' ]
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20',
+                'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
+            [ "assets/$mod_id/lang/en_us.lang", 'mcmod.info' ]
+        default -> []
+    }
+}
+
+private List<String> getDefaultExclusionsForLoader(String loader) {
+    return switch(loader) {
+        case 'legacy' -> [ "assets/$mod_id/lang/en_us.json", 'META-INF/coremods.json', 'fabric.mod.json',
+                           'multiversion_forge_core.js' ]
+        case 'fabric' -> [ "assets/$mod_id/lang/en_us.lang", 'META-INF/coremods.json', 'mcmod.info',
+                           'multiversion_forge_core.js' ]
+        case 'forge', 'neoforge' -> [ "assets/$mod_id/lang/en_us.lang", 'fabric.mod.json', 'mcmod.info' ]
+        default -> []
+    }
+}
+
+@SuppressWarnings('GrUnresolvedAccess')
+private String getDefaultFileReplacement() {
+    return switch(isLegacyProject() ? 'legacy' : name) {
+        case 'fabric' -> 'fabric.mod.json'
+        case 'legacy' -> 'mcmod.info'
+        default -> null
+    }
+}
+
+@SuppressWarnings(['GroovyAssignabilityCheck','GrUnresolvedAccess'])
+private Map<String,?> getDefaultReplacements() {
+    return switch(isLegacyProject() ? 'legacy' : name) {
+        case 'fabric' -> [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
+        case 'legacy' -> [ 'minecraft_version': libs.versions.minecraft.'1'.'12'.'2'.get(), 'mod_author': mod_authors,
+                           'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
+                           'mod_name': mod_name, 'mod_version': version ]
+        default -> Collections.emptyMap()
     }
 }
 
@@ -88,8 +212,10 @@ void setJavaVersion(int java_version) {
     java {
         toolchain.languageVersion = JavaLanguageVersion.of java_version
     }
-    tasks.withType(JavaCompile).configureEach {
-        it.options.release = java_version
+    if(java_version>=9) {
+        tasks.withType(JavaCompile).configureEach {
+            it.options.release = java_version
+        }
     }
 }
 
@@ -108,9 +234,8 @@ void setResourceDependency(String p_name, String ... exclude_these) {
 
 void setResourceReplacements(String replacement_file, Map<String,?> replacements) {
     processResources {
-        inputs.properties replacements
-        from(inputs).filesMatching(replacement_file) {copy_details -> //TODO This is wrong
-            expand replacements
+        filesMatching(replacement_file) {copy_details ->
+            copy_details.expand replacements
         }
     }
 }

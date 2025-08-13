@@ -1,12 +1,101 @@
 import org.codehaus.groovy.runtime.MethodClosure
 
+ext.setupIntelliJGenGraph = this.&setupIntelliJGenGraph as MethodClosure
 ext.setupSourceGenGraph = this.&setupSourceGenGraph as MethodClosure
-
-logger.lifecycle 'Applying source helpers plugin'
 
 @SuppressWarnings('GrUnresolvedAccess')
 String getFullTaskPath(String p_name, String t_name) {
     return "${getFullPath(p_name)}:$t_name"
+}
+
+List<String> getIntelliJGenTypes() {
+    return switch(name) {
+        case '1.12', 'cleanroom', 'fabric', 'forge', 'neoforge' -> [ 'genIntellijRuns' ]
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
+            [ 'genIntellijRuns', 'fabricGenIntellijRuns', 'forgeGenIntellijRuns' ]
+        case 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
+            [ 'genIntellijRuns', 'fabricGenIntellijRuns', 'forgeGenIntellijRuns', 'neoforgeGenIntellijRuns' ]
+        default -> []
+    }
+}
+
+List<String> getPreviousGenFabricIntelliJRuns() {
+    return switch(name) {
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.21' ]
+        default -> []
+    }
+}
+
+@SuppressWarnings('unused')
+List<String> getPreviousGenFabricSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? [ 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1',
+                                    'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
+    }
+}
+
+List<String> getPreviousGenForgeIntelliJRuns() {
+    return switch(name) {
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.21' ]
+        default -> []
+    }
+}
+
+List<String> getPreviousGenForgeSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? (exclude_problematic_versions ? [ 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4',
+                  'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : [ 'shared_1.16', 'shared_1.18',
+                  'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6',
+                  'shared_1.21.1' ]) : []
+    }
+}
+
+List<String> getPreviousGenIntelliJRuns() {
+    return switch(name) {
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' ->
+            [ '1.12', 'cleanroom', 'fabric', 'forge', 'neoforge' ]
+        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.19' ]
+        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.21' ]
+        default -> []
+    }
+}
+
+List<String> getPreviousGenIntelliJRunsByType(String type) {
+    if(type==null) return getPreviousGenIntelliJRuns()
+    switch(type) {
+        case 'fabricGenIntellijRuns' -> getPreviousGenFabricIntelliJRuns()
+        case 'forgeGenIntellijRuns' -> getPreviousGenForgeIntelliJRuns()
+        case 'neoforgeGenIntellijRuns' -> getPreviousGenNeoforgeIntelliJRuns()
+        default -> getPreviousGenIntelliJRuns()
+    }
+}
+
+List<String> getPreviousGenNeoforgeIntelliJRuns() {
+    return switch(name) {
+        case 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> []
+    }
+}
+
+@SuppressWarnings('unused')
+List<String> getPreviousGenNeoforgeSources(boolean exclude_problematic_versions) {
+    return switch(name) {
+        case 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? [ 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
+    }
 }
 
 List<String> getPreviousGenSources(boolean exclude_problematic_versions) {
@@ -34,38 +123,6 @@ List<String> getPreviousGenSourcesByType(String type, boolean exclude_problemati
     }
 }
 
-@SuppressWarnings('unused')
-List<String> getPreviousGenFabricSources(boolean exclude_problematic_versions) {
-    return switch(name) {
-        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
-        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
-        case 'shared_1.21.1' -> [ 'shared_1.21' ]
-        default -> parent==null ? [ 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1',
-                                    'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
-    }
-}
-
-List<String> getPreviousGenForgeSources(boolean exclude_problematic_versions) {
-    return switch(name) {
-        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.19' ]
-        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
-        case 'shared_1.21.1' -> [ 'shared_1.21' ]
-        default -> parent==null ? (exclude_problematic_versions ? [ 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4',
-                'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : [ 'shared_1.16', 'shared_1.18',
-                  'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6',
-                  'shared_1.21.1' ]) : []
-    }
-}
-
-@SuppressWarnings('unused')
-List<String> getPreviousGenNeoforgeSources(boolean exclude_problematic_versions) {
-    return switch(name) {
-        case 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.20' ]
-        case 'shared_1.21.1' -> [ 'shared_1.21' ]
-        default -> parent==null ? [ 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
-    }
-}
-
 List<String> getSourceGenTypes(boolean exclude_problematic_versions) {
     return switch(name) {
         case '1.12', 'cleanroom', 'fabric', 'neoforge' -> [ 'genSources' ]
@@ -78,6 +135,18 @@ List<String> getSourceGenTypes(boolean exclude_problematic_versions) {
             [ 'genSources', 'fabricGenSources', 'forgeGenSources', 'neoforgeGenSources' ]
         default -> parent==null ? [ 'genAllSources' ] : []
     }
+}
+
+void setupIntelliJGenGraph() {
+    logger.lifecycle "Setting up IntelliJ gen graph for $name"
+    getIntelliJGenTypes().forEach {gen_type ->
+        tasks.named(gen_type) {gen_task ->
+            getPreviousGenIntelliJRunsByType(gen_type).forEach {p_name ->
+                gen_task.mustRunAfter getFullTaskPath(p_name, gen_type)
+            }
+        }
+    }
+    logger.lifecycle "Finished setting up IntelliJ gen graph for $name"
 }
 
 /**
@@ -98,8 +167,8 @@ void setupSourceGenGraph() {
             }
         }
     }
-    logger.lifecycle "Finished setting up main source gen graph for $name"
     if(name==null && exclude_problematic_versions) setupProblematicSourceGenGraph()
+    logger.lifecycle "Finished setting up source gen graph for $name"
 }
 
 void setupProblematicSourceGenGraph() {
@@ -108,12 +177,10 @@ void setupProblematicSourceGenGraph() {
     tasks.register('genProblematicSources') {
         it.dependsOn 'genAllSources'
     }
-    logger.lifecycle "Setting up problematic source gen graph mid"
     problematic_source_gens.forEach {p_name,t_name ->
         tasks.genProblematicSources.dependsOn "$p_name:$t_name"
         project(p_name).tasks.named(t_name) {
             it.mustRunAfter project.tasks.genAllSources
         }
     }
-    logger.lifecycle "Finished setting up problematic source gen graph"
 }

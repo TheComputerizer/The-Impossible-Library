@@ -49,8 +49,6 @@ boolean shouldRemapForProduction(String loader) {
 void initUniminedSetup() {
     unimined.minecraft(sourceSets.main, true) {
         version minecraftVersion()
-        def api = project ':api'
-        combineWith api, api.sourceSets.main
         mappings {
             if(isLegacyProject()) {
                 if('cleanroom'!=name) searge()
@@ -68,14 +66,6 @@ void initUniminedSetup() {
             }
         }
         defaultRemapJar = !mappingStyleOfficial()
-        if(isRunnableVersion() && isSharedProject() && sourceSet!=sourceSets.main) {
-            mods {
-                modImplementation {
-                    catchAWNamespaceAssertion()
-                    namespace 'mojmap'
-                }
-            }
-        }
     }
 }
 

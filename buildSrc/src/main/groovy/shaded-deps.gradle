@@ -4,19 +4,15 @@ plugins {
     id 'project-setup-common'
 }
 
-logger.lifecycle 'Initializing shaded deps plugin'
-
 initJavaPlugin()
 initShadow()
 
-logger.lifecycle 'Finished setting up plugins for shaded deps'
+JavaVersion
 
 configurations {
     shaded
     implementation.extendsFrom shaded
 }
-
-logger.lifecycle 'Finished setting up configurations for shaded deps'
 
 repositories {
     mavenCentral() {
@@ -28,14 +24,10 @@ repositories {
     }
 }
 
-logger.lifecycle 'Finished setting up repositories for shaded deps'
-
 dependencies {
     //noinspection GrUnresolvedAccess
     shaded(libs.bundles.burningwave) { transitive = false }
 }
-
-logger.lifecycle 'Finished setting up dependencies for shaded deps'
 
 //noinspection GrUnresolvedAccess
 shadowJar {
@@ -50,5 +42,3 @@ shadowJar {
     //noinspection GrUnresolvedAccess
     mergeServiceFiles()
 }
-
-logger.lifecycle 'Finished initializing shaded deps plugin'

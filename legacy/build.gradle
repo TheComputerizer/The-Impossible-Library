@@ -9,22 +9,21 @@ plugins {
 /**
  * Only bundled for consolidated warning suppression
  */
-@SuppressWarnings(['GrUnresolvedAccess','GrMethodMayBeStatic'])
+@SuppressWarnings('GrMethodMayBeStatic')
 private void initSetup() {
-    setDev()
     setJavaVersion 8
-    setJarAndResourceDependency 'api', 'fabric.mod.json', 'META-INF/mods.toml'
+    createResourceArtifact()
     initCommonDeps()
 }
 
 initSetup()
 
+createClassConfigs false, true
+
 dependencies {
     compileOnly project(':api')
 }
 
-def replacements = [ 'minecraft_version': libs.versions.minecraft.'1'.'12'.'2'.get(), 'mod_author': mod_authors,
-                     'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
-                     'mod_name': mod_name, 'mod_version': version ]
-//noinspection GrUnresolvedAccess
-setResourceReplacements 'mcmod.info', replacements
+addParentProcessedResources()
+
+tasks.compileJava.mustRunAfter ':api:classes'

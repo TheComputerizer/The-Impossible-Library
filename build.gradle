@@ -21,11 +21,30 @@
  *          8: Add all relevant sub project classpaths the javadoc task
  *          9: Include all content from sub project javadoc and source jars in the relevant main project jars
  */
+
+
+/*
+ * External Plugin List
+ *
+ * - Gradle Doctor
+ *      + [id] com.osacky.doctor
+ *      + [docs] https://runningcode.github.io/gradle-doctor/
+ *      + [desc] Helps to diagnose build performance issues & can only be applied in the root project
+ *
+ * - Shadow
+ *      + [id] com.gradleup.shadow
+ *      + [docs] https://gradleup.com/shadow/
+ *      + [desc] FatJar builder & package relocator
+ *
+ * - Unimined
+ *      + [id] unimined
+ *      + [docs] https://github.com/unimined/Unimined/blob/main/Writerside/topics/starter-topic.md
+ *      + [desc] Minecraft provider & remapper
+ */
 plugins {
+    alias libs.plugins.doctor
     id 'shaded-deps'
 }
-
-logger.lifecycle 'Setting up main build script'
 
 tasks.register('fixManifest', Jar) {
     dependsOn shadowJar
@@ -44,14 +63,33 @@ tasks.register('fixManifest', Jar) {
     }
 }
 
-logger.lifecycle 'Successfully registered fixManifest task'
-
 tasks.assemble.dependsOn fixManifest
 tasks.fixManifest.dependsOn shadowJar
 tasks.jar.finalizedBy shadowJar
 tasks.shadowJar.finalizedBy fixManifest
 
-logger.lifecycle 'Successfully applied build task ordering'
+createClassesImport 'allClasses', 'gatherAllClasses', 'classes', null
+
+private static List<String> getLoaders(String p_name) {
+    return switch(p_name) {
+        case '1.12' -> [ '' ]
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
+            [ '', 'Fabric', 'Forge' ]
+        case 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' -> [ '', 'Fabric', 'Forge', 'Neoforge' ]
+        default -> []
+    }
+}
+
+[ '1.12', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4',
+  'shared_1.20.6', 'shared_1.21.1' ].forEach {included_project ->
+    String p_path = getFullPath(included_project)
+    getLoaders(included_project).forEach {loader ->
+        tasks.compileJava.mustRunAfter "$p_path:inheritParent${loader}Classes"
+        dependencies {
+            allClasses project(path: p_path, configuration: "export${loader}Classes")
+        }
+    }
+}
 
 //noinspection GrUnresolvedAccess
 applySourceHelpers()

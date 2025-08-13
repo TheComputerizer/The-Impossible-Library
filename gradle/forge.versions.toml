@@ -1,33 +1,42 @@
 [bundles]
-    mods-1_16_5-implementation = [ 'betterweather-1_16_5', 'blueskies-1_16_5', 'bookshelf-1_16_5', 'champions-1_16_5',
-        'configured-1_16_5', 'coroutil-1_16_5', 'dsurround-1_16_5', 'enhancedcelestials-1_16_5', 'gamestages-1_16_5',
+    mods-1_16_5-compile = [ 'blueskies-1_16_5', 'bookshelf-1_16_5', 'enhancedcelestials-1_16_5', 'gamestages-1_16_5',
         'sereneseasons-1_16_5', 'structuregel-1_16_5' ]
-    mods-1_16_5-runtime = [ 'architectury-1_16_5', 'jei-1_16_5' ]
-    mods-1_18_2-implementation = [ 'blueskies-1_18_2', 'bookshelf-1_18_2', 'champions-1_18_2', 'configured-1_18_2',
-        'coroutil-1_18_2', 'enhancedcelestials-1_18_2', 'gamestages-1_18_2', 'infernalmobs-1_18_2',
+    mods-1_16_5-implementation = [ 'betterweather-1_16_5', 'champions-1_16_5', 'configured-1_16_5',
+        'coroutil-1_16_5', 'dsurround-1_16_5' ]
+    mods-1_16_5-runtime = [ 'architectury-1_16_5', 'blueskies-1_16_5', 'bookshelf-1_16_5', 'enhancedcelestials-1_16_5',
+        'gamestages-1_16_5', 'jei-1_16_5', 'sereneseasons-1_16_5', 'structuregel-1_16_5' ]
+    mods-1_18_2-compile = [ 'blueskies-1_18_2', 'bookshelf-1_18_2', 'enhancedcelestials-1_18_2', 'gamestages-1_18_2',
         'sereneseasons-1_18_2', 'structuregel-1_18_2', 'weather2-1_18_2' ]
-    mods-1_18_2-runtime = [ 'architectury-1_18_2', 'jei-1_18_2' ]
-    mods-1_19_2-implementation = [ 'blueskies-1_19_2', 'bookshelf-1_19_2', 'configured-1_19_2', 'coroutil-1_19_2',
-        'enhancedcelestials-1_19_2', 'gamestages-1_19_2', 'infernalmobs-1_19_2', 'sereneseasons-1_19_2',
-        'structuregel-1_19_2' ]
-    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'corgilib-1_19_2', 'jei-1_19_2' ]
-    mods-1_19_4-implementation = [ 'blueskies-1_19_4', 'bookshelf-1_19_4', 'coroutil-1_19_4', 'coroutil-1_19_4',
-        'enhancedcelestials-1_19_4', 'gamestages-1_19_4', 'infernalmobs-1_19_4', 'sereneseasons-1_19_4',
-        'structuregel-1_19_4' ]
-    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'corgilib-1_19_4', 'jei-1_19_4' ]
-    mods-1_20_1-implementation = [ 'blueskies-1_20_1', 'bookshelf-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
-        'dataanchor-1_20_1', 'enhancedcelestials-1_20_1', 'gamestages-1_20_1', 'glitchcore-1_20_1',
-        'infernalmobs-1_20_1', 'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
-    mods-1_20_1-runtime = [ 'corgilib-1_20_1', 'architectury-1_20_1', 'jei-1_20_1' ]
-    mods-1_20_4-implementation = [ 'blueskies-1_20_4', 'bookshelf-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
-        'glitchcore-1_20_1', 'infernalmobs-1_20_4', 'sereneseasons-1_20_4', 'structuregel-1_20_4' ]
-    mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
-    mods-1_20_6-implementation = [ 'configured-1_20_6', 'coroutil-1_20_6', 'glitchcore-1_20_6', 'infernalmobs-1_20_6',
-        'sereneseasons-1_20_6' ]
-    mods-1_20_6-runtime = [ 'jei-1_20_6' ]
+    mods-1_18_2-implementation = [ 'champions-1_18_2', 'configured-1_18_2', 'coroutil-1_18_2', 'infernalmobs-1_18_2' ]
+    mods-1_18_2-runtime = [ 'architectury-1_18_2', 'blueskies-1_18_2', 'bookshelf-1_18_2', 'enhancedcelestials-1_18_2',
+        'gamestages-1_18_2', 'jei-1_18_2', 'sereneseasons-1_18_2', 'structuregel-1_18_2', 'weather2-1_18_2' ]
+    mods-1_19_2-compile = [ 'blueskies-1_19_2', 'bookshelf-1_19_2', 'enhancedcelestials-1_19_2', 'gamestages-1_19_2',
+        'sereneseasons-1_19_2', 'structuregel-1_19_2' ]
+    mods-1_19_2-implementation = [ 'configured-1_19_2', 'coroutil-1_19_2', 'infernalmobs-1_19_2' ]
+    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'blueskies-1_19_2', 'bookshelf-1_19_2', 'corgilib-1_19_2',
+        'enhancedcelestials-1_19_2', 'gamestages-1_19_2', 'jei-1_19_2', 'sereneseasons-1_19_2', 'structuregel-1_19_2' ]
+    mods-1_19_4-compile = [ 'blueskies-1_19_4', 'bookshelf-1_19_4', 'enhancedcelestials-1_19_4', 'gamestages-1_19_4',
+        'sereneseasons-1_19_4', 'structuregel-1_19_4' ]
+    mods-1_19_4-implementation = [ 'coroutil-1_19_4', 'coroutil-1_19_4', 'infernalmobs-1_19_4' ]
+    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'blueskies-1_19_4', 'bookshelf-1_19_4', 'corgilib-1_19_4',
+        'enhancedcelestials-1_19_4', 'gamestages-1_19_4', 'jei-1_19_4', 'sereneseasons-1_19_4', 'structuregel-1_19_4' ]
+    mods-1_20_1-compile = [ 'blueskies-1_20_1', 'bookshelf-1_20_1', 'enhancedcelestials-1_20_1', 'gamestages-1_20_1',
+        'glitchcore-1_20_1', 'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
+    mods-1_20_1-implementation = [ 'configured-1_20_1', 'coroutil-1_20_1', 'dataanchor-1_20_1', 'infernalmobs-1_20_1' ]
+    mods-1_20_1-runtime = [ 'blueskies-1_20_1', 'corgilib-1_20_1', 'architectury-1_20_1', 'enhancedcelestials-1_20_1',
+        'glitchcore-1_20_1', 'jei-1_20_1', 'sereneseasons-1_20_1', 'structuregel-1_20_1', 'weather2-1_20_1' ]
+    mods-1_20_4-compile = [ 'blueskies-1_20_4', 'bookshelf-1_20_4', 'glitchcore-1_20_4', 'sereneseasons-1_20_4',
+        'structuregel-1_20_4' ]
+    mods-1_20_4-implementation = [ 'configured-1_20_4', 'coroutil-1_20_4', 'infernalmobs-1_20_4' ]
+    mods-1_20_4-runtime = [ 'architectury-1_20_4', 'blueskies-1_20_4', 'bookshelf-1_20_4', 'glitchcore-1_20_4',
+        'jei-1_20_4', 'sereneseasons-1_20_4', 'structuregel-1_20_4' ]
+    mods-1_20_6-compile = [ 'glitchcore-1_20_6', 'sereneseasons-1_20_6' ]
+    mods-1_20_6-implementation = [ 'configured-1_20_6', 'coroutil-1_20_6', 'infernalmobs-1_20_6' ]
+    mods-1_20_6-runtime = [ 'glitchcore-1_20_6', 'jei-1_20_6', 'sereneseasons-1_20_6' ]
+    mods-1_21_1-compile = [ 'enhancedcelestials-1_21_1' ]
     mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'dataanchor-1_21_1',
-        'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
-    mods-1_21_1-runtime = [ 'corgilib-1_21_1', 'jei-1_21_1' ]
+        'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_1-runtime = [ 'corgilib-1_21_1', 'enhancedcelestials-1_21_1', 'jei-1_21_1' ]
 
 [libraries]
     architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }

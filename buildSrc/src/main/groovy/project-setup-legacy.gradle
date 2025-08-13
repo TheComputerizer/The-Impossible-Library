@@ -5,7 +5,10 @@ plugins {
 }
 
 initJavaPlugin()
+createResourceArtifact()
 initDependencies()
+
+createClassConfigs true, true
 
 configurations {
     modCompileOnly
@@ -14,25 +17,30 @@ configurations {
     runtimeOnly.extendsFrom modRuntimeOnly
 }
 
-tasks.register('devRunJar',Jar) {
-    archiveBaseName.set "$mod_id-dev_run"
-    duplicatesStrategy = EXCLUDE
-    from sourceSets.main.output
-    from project(':api').sourceSets.main.output
-    from project(':legacy').sourceSets.main.output
-    manifest {
-        Map<?,Object> entries = getManifestEntries()
-        entries.put 'TILMultiversionCoreMods', core_entrypoint
-        entries.put 'TILMultiversionMods', common_entrypoint
-        attributes entries
+//Enables using a jar for dev runs to bundle all the required subprojects into a single path
+boolean use_dev_run_jar = true
+
+if(use_dev_run_jar) {
+    tasks.register('devRunJar',Jar) {
+        [ 'classes', 'processResources' ].forEach {t_name ->
+            it.mustRunAfter t_name
+        }
+        archiveBaseName.set "$mod_id-dev_run"
+        duplicatesStrategy = EXCLUDE
+        from sourceSets.main.output
+        manifest {
+            Map<?,Object> entries = getManifestEntries()
+            entries.put 'TILMultiversionCoreMods', core_entrypoint
+            entries.put 'TILMultiversionMods', common_entrypoint
+            attributes entries
+        }
     }
 }
+
 
 initUnimined()
 
 unimined.minecraft {
-    def legacy = project ':legacy'
-    combineWith legacy, legacy.sourceSets.main
     if(isCleanroomProject()) {
         cleanroom {
             loader project.legacy.versions.cleanroom.loader.get()
@@ -44,8 +52,10 @@ unimined.minecraft {
     }
     runs.all {
         javaVersion = getJavaVersionEnum()
-        classpath-=files(fixLegacyRuntimePaths())
-        classpath+=files(devRunJar.archiveFile)
+        if(use_dev_run_jar) {
+            classpath-=files(fixLegacyRuntimePaths())
+            classpath+=files(devRunJar.archiveFile)
+        }
         Map<?,?> map = getSystemProperties()
         addCustomRunProperties map
         if(isCleanroomProject()) {
@@ -74,35 +84,36 @@ remapForProduction isCleanroomProject() ? 'cleanroom' : 'forge'
 setCommonRepositories(isCleanroomProject() ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
 
 dependencies {
-    //noinspection DependencyNotationArgument,GrUnresolvedAccess
-    annotationProcessor libs.bundles.legacy.annotations
+    [ ':api', ':legacy' ].forEach {p_path ->
+        compileOnly project(p_path)
+        parentClasses project(path: p_path, configuration: 'exportClasses')
+    }
     if(isCleanroomProject()) {
         //noinspection DependencyNotationArgument,GrUnresolvedAccess
         compileOnly legacy.bundles.cleanroom.compile
-    }
-    else modRuntimeOnly legacy.bundles.forge.runtime
+        parentClasses project(path: ':legacy:1.12', configuration: 'exportClasses')
+    } else modRuntimeOnly legacy.bundles.forge.runtime
+    //noinspection DependencyNotationArgument,GrUnresolvedAccess
+    annotationProcessor libs.bundles.legacy.annotations
     modCompileOnly modsBundle('legacy', 'compile')
     modImplementation modsBundle('legacy', 'implementation')
     modRuntimeOnly modsBundle('legacy', 'runtime')
     modRuntimeOnly legacy.bundles.nothirium
 }
 
-setJarAndResourceDependency 'legacy'
-tasks.preRunClient.mustRunAfter 'devRunJar'
+addParentProcessedResources()
+
+tasks.compileJava.mustRunAfter ':api:classes'
+tasks.compileJava.mustRunAfter ':legacy:classes'
+if(use_dev_run_jar) tasks.preRunClient.mustRunAfter 'devRunJar'
 
 //noinspection GrUnresolvedAccess
 applySourceHelpers()
 
 List<String> fixLegacyRuntimePaths() {
-    List<String> removed_paths = []
-    if(!isLegacyProject()) return removed_paths
-    [ project(':api'), project(':legacy'), project ].forEach {p ->
-        logger.lifecycle "Removing '${p.name}' directory classpaths (dir=${p.projectDir.absolutePath})"
-        [ 'classes\\java', 'resources' ].forEach {p_path ->
-            String full_path = "${p.projectDir.absolutePath}\\build\\${p_path}\\main"
-            removed_paths+=full_path
-            logger.lifecycle "Removing '$full_path' from runtime classpath"
-        }
+    return [ 'classes\\java', 'resources' ].collect {p_path ->
+        String full_path = "${projectDir.absolutePath}\\build\\${p_path}\\main"
+        logger.lifecycle "Removing '$full_path' from runtime classpath"
+        return full_path
     }
-    return removed_paths
 }

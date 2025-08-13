@@ -21,6 +21,9 @@
     spotbugs-annotations = { group = 'com.github.spotbugs', name = 'spotbugs-annotations', version.ref = 'spotbugs' }
     toolfactory-driver = { group = 'io.github.toolfactory', name = 'jvm-driver', version.ref = 'toolfactory' }
 
+[plugins]
+    doctor = { id = 'com.osacky.doctor', version.ref = 'doctor' }
+
 [versions]
     # API Dependency Versions
     asm = '9.7'
@@ -74,3 +77,6 @@
     parchment_1_21_6 = '2025.06.29'
     parchment_1_21_7 = '2025.07.18'
     parchment_1_21_8 = '2025.07.20'
+
+    # Plugin Versions
+    doctor = '0.11.+'

@@ -12,8 +12,14 @@ evaluationDependsOn ':forge'
 
 //noinspection GrUnresolvedAccess
 initJavaPlugin()
-
-setDev()
+createResourceArtifact()
+createClassConfigs false, true
 
 //noinspection GrUnresolvedAccess
-setJarAndResourceDependency 'api'
+addParentProcessedResources()
+
+dependencies {
+    compileOnly project(':api')
+}
+
+tasks.compileJava.mustRunAfter ':api:classes'
