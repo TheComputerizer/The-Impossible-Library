@@ -14,10 +14,15 @@ ext.productionNamespace = this.&productionNamespace as MethodClosure
 ext.remapForProduction = this.&remapForProduction as MethodClosure
 ext.shouldRemapForProduction = this.&shouldRemapForProduction as MethodClosure
 
-void addCustomRunProperties(Map<?,?> map) {
+void addCustomRunProperties(Map<?,?> map, String primary_source) {
     map.put dev_arg, 'true'
     map.put common_entrypoint_arg, common_entrypoint
     map.put core_entrypoint_arg, core_entrypoint
+    //noinspection GrUnresolvedAccess
+    if(isSharedProject()) {
+        //noinspection GroovyAssignabilityCheck,GrUnresolvedAccess
+        map.put classpath_arg, sourceClassesDir(primary_source).absolutePath
+    }
 }
 
 boolean mappingStyleOfficial() {

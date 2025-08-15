@@ -57,7 +57,7 @@ unimined.minecraft {
             classpath+=files(devRunJar.archiveFile)
         }
         Map<?,?> map = getSystemProperties()
-        addCustomRunProperties map
+        addCustomRunProperties map, 'main'
         if(isCleanroomProject()) {
             map.put cleanroom_dump, 'true'
             map.put cleanroom_verbose, 'true'

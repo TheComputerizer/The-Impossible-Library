@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,8 +48,14 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import static java.util.jar.Attributes.Name.IMPLEMENTATION_TITLE;
+import static java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
@@ -106,12 +113,10 @@ public class ForgeModLoading {
     
     static void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {
         String loaderName = loader.getName();
-        if(Files.isDirectory(path)) return;
-        String fileName = path.getFileName().toString();
-        LOGGER.debug("[{}]: Checking if file {} is the loader", loaderName, fileName);
-        if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
+        LOGGER.debug("[{}]: Checking if {} is the loader",loaderName,path);
+        if(Objects.isNull(MultiVersionModCandidate.getLoaderFile()) && TILDev.isLoaderPath(path)) {
             LOGGER.debug("[{}]: File is the loader",loaderName);
-            MultiVersionModCandidate.loaderFile = path.toFile();
+            MultiVersionModCandidate.setLoaderPath(path);
         }
         if(filter.test(path)) {
             LOGGER.info("[{}]: Found mod candidate at {}",loaderName,path);
@@ -122,6 +127,18 @@ public class ForgeModLoading {
     static void checkURL(MultiVersionLoaderAPI loader, URL url, Predicate<Path> filter) {
         LOGGER.debug("[{}]: Checking URL {} for MANIFEST {}",loader.getName(),url,MANIFEST);
         checkPath(loader,urlToPath.apply(url,MANIFEST),filter);
+    }
+    
+    public static Supplier<Manifest> createLoaderManfiest(Path sourcePath) {
+        if(!DEV || Objects.isNull(sourcePath) || !TILDev.isLoaderPath(sourcePath)) return null;
+        return () -> {
+            LOGGER.info("Creating loader manifest for {}",sourcePath);
+            Manifest manifest = new Manifest();
+            Attributes attributes = manifest.getMainAttributes();
+            attributes.put(IMPLEMENTATION_TITLE,NAME);
+            attributes.put(IMPLEMENTATION_VERSION,VERSION);
+            return manifest;
+        };
     }
     
     static ModFile createModFile(Path path, Object locator, ModFileInfoParser parser, String type) {
@@ -168,6 +185,33 @@ public class ForgeModLoading {
             LOGGER.debug("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
             checkPath(loader,mod.toPath(),filter);
         }
+    }
+    
+    public static Optional<Manifest> findManifest(Path path) {
+        return findManifest(path,createLoaderManfiest(path));
+    }
+    
+    public static Optional<Manifest> findManifest(Path path, @Nullable Supplier<Manifest> fallback) {
+        Optional<Manifest> optionalManifest = Optional.empty();
+        try {
+            File file = path.toFile();
+            if(!file.exists()) LOGGER.warn("Tried to find manifest of nonexistant path {}",path);
+            else if(file.isDirectory()) {
+                File manifest = new File(file,MANIFEST);
+                if(manifest.exists()) optionalManifest = Optional.ofNullable(parseManifest(manifest));
+                else LOGGER.warn("Manifest not found at {}",manifest);
+            } else {
+                //The nested try is just for autoclosing the JarFile
+                try(JarFile jar = new JarFile(path.toFile())) {
+                    Manifest manifest = jar.getManifest();
+                    if(Objects.nonNull(manifest)) optionalManifest = Optional.of(manifest);
+                }
+            }
+        } catch(Throwable t) {
+            LOGGER.error("Failed to find manifest for {}",path,t);
+        }
+        return optionalManifest.isPresent() || Objects.isNull(fallback) ?
+                optionalManifest : Optional.ofNullable(fallback.get());
     }
     
     public static void findPaths(ClassLoader classLoader, MultiVersionLoaderAPI loader, Object locator) {
@@ -277,6 +321,16 @@ public class ForgeModLoading {
         if(file instanceof ModFile) return modFileInfoCreator.apply((ModFile)file,infos);
         LOGGER.error("Cannot get IModFileInfo for IModFile that is not an instance of ModFile! {}",file);
         return null;
+    }
+    
+    static @Nullable Manifest parseManifest(File file) {
+        Manifest manifest = null;
+        try(InputStream stream = Files.newInputStream(file.toPath())) {
+            manifest = new Manifest(stream);
+        } catch(IOException ex) {
+            LOGGER.error("Failed to parse manifest from {}",file,ex);
+        }
+        return manifest;
     }
     
     public static Type getModFileType(String name) {

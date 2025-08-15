@@ -69,9 +69,9 @@ public class MultiVersionModReader implements IModFileReader {
         }
         alreadyHandled.add(fileName);
         LOGGER.info("[{}]: Checking if file {} is the loader",loaderName,fileName);
-        if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
+        if(Objects.isNull(MultiVersionModCandidate.getLoaderFile()) && TILDev.isLoaderName(fileName)) {
             TILDev.logInfo("[{}]: File is the loader",loaderName);
-            MultiVersionModCandidate.loaderFile = file;
+            MultiVersionModCandidate.setLoaderFile(file);
         }
         return false;
     }

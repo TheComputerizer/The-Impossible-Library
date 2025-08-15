@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
@@ -15,15 +16,17 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
 @Getter
 public class MultiVersionModCandidate {
     
-    public static File loaderFile;
+    @Getter private static File loaderFile;
     
     static File fromClassName(String className) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -34,6 +37,16 @@ public class MultiVersionModCandidate {
             TILRef.logError("Can't find file for {}",className,ex);
         }
         return null;
+    }
+    
+    public static void setLoaderFile(File file) {
+        loaderFile = file;
+        if(DEV) TILDev.setDevPaths(file.toPath());
+    }
+    
+    public static void setLoaderPath(Path path) {
+        loaderFile = path.toFile();
+        if(DEV) TILDev.setDevPaths(path);
     }
 
     private final CoreAPI core;

@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
@@ -93,12 +92,10 @@ public class NeoForgeModLoading {
     
     static void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {
         String loaderName = loader.getName();
-        if(Files.isDirectory(path)) return;
-        String fileName = path.getFileName().toString();
-        LOGGER.debug("[{}]: Checking if file {} is the loader", loaderName, fileName);
-        if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
+        LOGGER.debug("[{}]: Checking if {} is the loader",loaderName,path);
+        if(Objects.isNull(MultiVersionModCandidate.getLoaderFile()) && TILDev.isLoaderPath(path)) {
             LOGGER.debug("[{}]: File is the loader",loaderName);
-            MultiVersionModCandidate.loaderFile = path.toFile();
+            MultiVersionModCandidate.setLoaderPath(path);
         }
         if(filter.test(path)) {
             LOGGER.info("[{}]: Found mod candidate at {}",loaderName,path);

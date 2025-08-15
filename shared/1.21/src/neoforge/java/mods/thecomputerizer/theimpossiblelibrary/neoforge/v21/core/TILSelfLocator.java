@@ -118,11 +118,10 @@ public class TILSelfLocator implements IModFileCandidateLocator {
     }
     
     boolean queryFile(String loaderName, File file) {
-        String fileName = file.getName();
-        TILDev.logInfo("[{}]: Checking if file {} is the loader", loaderName, fileName);
-        if(Objects.isNull(MultiVersionModCandidate.loaderFile) && TILDev.isLoader(fileName)) {
+        TILDev.logInfo("[{}]: Checking if {} is the loader",loaderName,file);
+        if(Objects.isNull(MultiVersionModCandidate.getLoaderFile()) && TILDev.isLoaderFile(file)) {
             TILDev.logInfo("[{}]: File is the loader",loaderName);
-            MultiVersionModCandidate.loaderFile = file;
+            MultiVersionModCandidate.setLoaderFile(file);
         }
         return false;
     }

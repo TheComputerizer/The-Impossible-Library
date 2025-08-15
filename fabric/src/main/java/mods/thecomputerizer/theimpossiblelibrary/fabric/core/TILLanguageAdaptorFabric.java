@@ -113,7 +113,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     String addMoreSources(FabricLauncher launcher) {
         String version = INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0];
         String className = CoreAPI.findLoadingClass(FABRIC,version);
-        ClassLoader loader = DEV ? ClassLoader.getSystemClassLoader() : launcher.getTargetClassLoader();
+        ClassLoader loader = launcher.getTargetClassLoader();
         Class<?> clazz = ClassHelper.findClass(className,loader);
         while(Objects.nonNull(clazz) && clazz!=Object.class) {
             addSource(launcher,ClassHelper.getSourceURL(className,loader));

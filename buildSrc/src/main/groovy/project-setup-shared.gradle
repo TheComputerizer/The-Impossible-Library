@@ -28,7 +28,7 @@ unimined.minecraft(sourceSets.fabric) {
         runs.all {
             javaVersion = getJavaVersionEnum()
             Map<?,?> map = getSystemProperties()
-            addCustomRunProperties map
+            addCustomRunProperties map, 'fabric'
         }
     } else runs.off = true
     if(isRunnableVersion()) {
@@ -83,7 +83,9 @@ unimined.minecraft(sourceSets.forge) {
         runs.all {
             javaVersion = getJavaVersionEnum()
             Map<?,?> map = getSystemProperties()
-            addCustomRunProperties map
+            addCustomRunProperties map, 'forge'
+            map.put forge_log_markers_arg, forge_log_markers_values
+            map.put forge_log_level, 'debug'
         }
     } else runs.off = true
     if(isRunnableVersion()) {
@@ -93,7 +95,6 @@ unimined.minecraft(sourceSets.forge) {
                     reset()
                     enableMixinExtra()
                     enableBaseMixin()
-                    disableRefmap()
                 }
             }
             remap(configurations.forgeModRuntimeOnly) {
@@ -102,7 +103,6 @@ unimined.minecraft(sourceSets.forge) {
                     reset()
                     enableMixinExtra()
                     enableBaseMixin()
-                    disableRefmap()
                 }
             }
         }
@@ -127,7 +127,7 @@ if(isNeoforgeCompatible()) {
             runs.all {
                 javaVersion = getJavaVersionEnum()
                 Map<?,?> map = getSystemProperties()
-                addCustomRunProperties map
+                addCustomRunProperties map, 'neoforge'
             }
         } else runs.off = true
         if(isRunnableVersion()) {

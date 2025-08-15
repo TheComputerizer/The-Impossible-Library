@@ -19,6 +19,7 @@ ext.getSubProjectLevel = this.&getSubProjectLevel as MethodClosure
 ext.initCommonDeps = this.&initCommonDeps as MethodClosure
 ext.setDefaultManifestAttributes = this.&setDefaultManifestAttributes as MethodClosure
 ext.setJarsRunAfter = this.&setJarsRunAfter as MethodClosure
+ext.sourceClassesDir = this.&sourceClassesDir as MethodClosure
 
 void createClassConfigs(boolean add_import, boolean add_export) {
     if(add_import) createClassesImport 'parentClasses', 'inheritParentClasses', 'classes', 'main'
@@ -35,8 +36,8 @@ void createClassesImport(String c_name, String t_name, String c_t_name, String s
     tasks.register(t_name, Copy) {copy_task ->
         duplicatesStrategy = EXCLUDE
         mustRunAfter compileJava
-        from(configurations.named(c_name))
-        destinationDir = sourceSets.named(s_name).get().java.destinationDirectory.asFile.get()
+        from configurations.named(c_name)
+        destinationDir = sourceClassesDir s_name
     }
     tasks.named(c_t_name).configure {
         dependsOn t_name
@@ -80,15 +81,6 @@ Map<?,Object> getManifestEntries() {
     return attribute_map
 }
 
-static int getSubProjectLevel(String p_name) {
-    return switch(p_name) {
-        case 'api', 'fabric', 'forge', 'legacy', 'neoforge', 'shared' -> 1
-        case '1.12', 'cleanroom', 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> 2
-        case 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' -> 3
-        default -> 0
-    }
-}
-
 static String getParentFromName(String p_name) {
     if(p_name==null) return null
     return switch(p_name) {
@@ -98,6 +90,15 @@ static String getParentFromName(String p_name) {
         case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> 'shared_1.20'
         case 'shared_1.21.1' -> 'shared_1.21'
         default -> null
+    }
+}
+
+static int getSubProjectLevel(String p_name) {
+    return switch(p_name) {
+        case 'api', 'fabric', 'forge', 'legacy', 'neoforge', 'shared' -> 1
+        case '1.12', 'cleanroom', 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> 2
+        case 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' -> 3
+        default -> 0
     }
 }
 
@@ -133,4 +134,9 @@ void setJarsRunAfter(List<String> p_names) {
             mustRunAfter build_task
         }
     }
+}
+
+@SuppressWarnings('GrMethodMayBeStatic')
+File sourceClassesDir(String source_name) {
+    return sourceSets.named(source_name).get().java.destinationDirectory.asFile.get()
 }
