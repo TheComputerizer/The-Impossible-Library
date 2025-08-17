@@ -52,7 +52,11 @@ public class ClassHelper {
         }
         String urlStr = url.toString().replace("%20"," ");
         String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
-        return urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length());
+        String ret = urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length());
+        if(ret.contains(".jar")) return ret;
+        //Assume the location is a directory since it isn't a jar
+        int index = ret.lastIndexOf("/");
+        return index==-1 ? ret : ret.substring(0,index);
     }
     
     public static void addSource(Set<String> sources, Class<?> clazz) {

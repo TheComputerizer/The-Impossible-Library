@@ -12,6 +12,10 @@ plugins {
 ext.createClassConfigs = this.&createClassConfigs as MethodClosure
 ext.createClassesImport = this.&createClassesImport as MethodClosure
 ext.createLoaderClassConfigs = this.&createLoaderClassConfigs as MethodClosure
+ext.getSourceBuildFile = this.&getSourceBuildFile as MethodClosure
+ext.getBuildFiles = this.&getBuildFiles as MethodClosure
+ext.getBuildPath = this.&getBuildPath as MethodClosure
+ext.getBuildPaths = this.&getBuildPaths as MethodClosure
 ext.getFullPath = this.&getFullPath as MethodClosure
 ext.getManifestEntries = this.&getManifestEntries as MethodClosure
 ext.getParentFromName = this.&getParentFromName as MethodClosure
@@ -27,11 +31,13 @@ void createClassConfigs(boolean add_import, boolean add_export) {
 }
 
 private void createClassesExport(String c_name, String s_name) {
+    //noinspection GrUnresolvedAccess
     createConfiguration c_name, true, false
     artifacts.add c_name, sourceSets.named(s_name).get().java.destinationDirectory
 }
 
 void createClassesImport(String c_name, String t_name, String c_t_name, String s_name) {
+    //noinspection GrUnresolvedAccess
     createConfiguration c_name, false, true
     tasks.register(t_name, Copy) {copy_task ->
         duplicatesStrategy = EXCLUDE
@@ -45,6 +51,7 @@ void createClassesImport(String c_name, String t_name, String c_t_name, String s
 }
 
 void createLoaderClassConfigs() {
+    //noinspection GrUnresolvedAccess
     (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
         String l_loader = loader.toLowerCase()
         String c_name = "parent${loader}Classes"
@@ -55,6 +62,26 @@ void createLoaderClassConfigs() {
             it.mustRunAfter "compile${loader}Java"
         }
     }
+}
+
+ConfigurableFileCollection getBuildFiles(List<String> relative_paths, List<String> source_names) {
+    return files(getBuildPaths(relative_paths, source_names))
+}
+
+String getBuildPath(String relative_path, String source_name) {
+    return "${projectDir.absolutePath}\\build\\$relative_path\\$source_name"
+}
+
+List<String> getBuildPaths(List<String> relative_paths, List<String> source_names) {
+    logger.lifecycle "Relative paths = $relative_paths | Source names = $source_names"
+    List<String> paths = []
+    source_names.forEach {source_name ->
+        relative_paths.forEach {relative_path ->
+            paths.add getBuildPath(relative_path, source_name)
+        }
+    }
+    logger.lifecycle "Returning full paths $paths"
+    return paths
 }
 
 /**
@@ -91,6 +118,10 @@ static String getParentFromName(String p_name) {
         case 'shared_1.21.1' -> 'shared_1.21'
         default -> null
     }
+}
+
+ConfigurableFileCollection getSourceBuildFile(String relative_path, String source_name) {
+    return files(getBuildPath(relative_path, source_name))
 }
 
 static int getSubProjectLevel(String p_name) {

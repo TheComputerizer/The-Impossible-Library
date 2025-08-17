@@ -74,16 +74,25 @@ shadowJar {
     //noinspection GroovyAssignabilityCheck
     relocate "${base_package}.shared", "${base_package}.fabric"
 }
+
+//noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
 tasks.assemble.dependsOn shadowJar
 
 unimined.minecraft(sourceSets.forge) {
     combineWith sourceSets.main
     if(!mappingStyleOfficial()) defaultRemapJar = true
     if(isRunnableVersion()) {
+        if(!isJava8()) {
+            def build_files = getBuildFiles([ 'classes\\java', 'resources' ], [ 'main', 'forge' ])
+            logger.lifecycle "Adding build files to minecraftLibraries $build_files"
+            minecraftLibraries.dependencies.add dependencies.create(build_files)
+            tasks.compileForgeJava.mustRunAfter 'processForgeResources'
+        }
         runs.all {
             javaVersion = getJavaVersionEnum()
-            Map<?,?> map = getSystemProperties()
+            Map<?, ?> map = getSystemProperties()
             addCustomRunProperties map, 'forge'
+            map.put module_layer_movement, 'false'
             map.put forge_log_markers_arg, forge_log_markers_values
             map.put forge_log_level, 'debug'
         }
@@ -205,26 +214,18 @@ void createJarTasks() {
 void initConfigs() {
     setLoaderConfigs()
     if(isRunnableVersion()) {
+        def loaders = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
         configurations {
-            fabricModCompileOnly
-            forgeModCompileOnly
-            fabricModImplementation
-            forgeModImplementation
-            fabricModRuntimeOnly
-            forgeModRuntimeOnly
-            fabricCompileOnly.extendsFrom fabricModCompileOnly
-            forgeCompileOnly.extendsFrom forgeModCompileOnly
-            fabricImplementation.extendsFrom fabricModImplementation
-            forgeImplementation.extendsFrom forgeModImplementation
-            fabricRuntimeOnly.extendsFrom fabricModRuntimeOnly
-            forgeRuntimeOnly.extendsFrom forgeModRuntimeOnly
-            if(isNeoforgeCompatible) {
-                neoforgeModCompileOnly
-                neoforgeModImplementation
-                neoforgeModRuntimeOnly
-                neoforgeCompileOnly.extendsFrom neoforgeModCompileOnly
-                neoforgeImplementation.extendsFrom neoforgeModImplementation
-                neoforgeRuntimeOnly.extendsFrom neoforgeModRuntimeOnly
+            loaders.forEach {loader ->
+                logger.lifecycle "Adding runnable $loader configs"
+                [ 'CompileOnly', 'Implementation', 'RuntimeOnly' ].forEach {config_name ->
+                    named("$loader$config_name").get().extendsFrom create("${loader}Mod$config_name")
+                }
+            }
+            if(!isJava8()) { //Add shaded dependencies to the legacy_classpath for dev runs
+                forgeLegacyClasspathImplementation
+                forgeImplementation.extendsFrom forgeLegacyClasspathImplementation
+                forgeMinecraftLibraries.extendsFrom forgeLegacyClasspathImplementation
             }
         }
     }
@@ -306,7 +307,10 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     boolean runnable_version = isRunnableVersion()
     dependencies {
         compileOnly project(':api')
-        if(runnable_version) parentClasses project(path: ':api', configuration: 'exportClasses')
+        if(runnable_version) {
+            parentClasses project(path: ':api', configuration: 'exportClasses')
+            if(!isJava8()) forgeLegacyClasspathImplementation libs.bundles.burningwave
+        }
         if(minor_version) {
             compileOnly parent
             parentClasses project(path: parent.path, configuration: 'exportClasses')
@@ -314,12 +318,10 @@ void setSharedDependenciesInner(List<String> maven_ids) {
         fabricModImplementation fabricApi.fabric(fabricAPIVersion())
         loaders.forEach {loader ->
             String l_loader = loader.toLowerCase()
-            logger.lifecycle "Applying $l_loader-specific dependencies for $name"
             "${l_loader}AnnotationProcessor" libs.lombok
             "${l_loader}CompileOnly" project(':api')
             "${l_loader}CompileOnly" project(":$l_loader")
             "${l_loader}CompileOnly" libs.lombok
-            "${l_loader}Implementation" libs.bundles.burningwave
             if(minor_version) {
                 "parent${loader}Classes"(project(path: parent.path, configuration: "export${loader}Classes"))
                 "${l_loader}CompileOnly" parent
@@ -338,7 +340,8 @@ void setSharedDependenciesInner(List<String> maven_ids) {
                         exclude group: 'net.fabricmc'
                     }
                 }
-            }
+                if(isJava8()) "${l_loader}Implementation" libs.bundles.burningwave
+            } else if(isJava8() || 'forge'!=l_loader) "${l_loader}Implementation" libs.bundles.burningwave
         }
     }
     tasks.compileJava.mustRunAfter "${parent.path}:classes"

@@ -369,6 +369,7 @@ public class ForgeModLoading {
         LOGGER.debug("Identifying mods");
         if(result) queryCoreMods(file);
         LOGGER.debug("Finished identifying mods");
+        ForgeCoreLoader.removeDevModules();
         return result;
     }
     

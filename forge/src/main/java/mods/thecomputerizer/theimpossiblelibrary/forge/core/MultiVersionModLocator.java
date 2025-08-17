@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 import cpw.mods.modlauncher.Launcher;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.MODULE_LAYERS;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Getter
@@ -31,12 +33,25 @@ public class MultiVersionModLocator implements IModLocator {
         Object instance = ForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
         if(Objects.isNull(instance))
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
+        if(!MODULE_LAYERS) removeModClassesProperty();
     }
     
     static ClassLoader modFileClassLoader(IModFile file) {
         if(Objects.isNull(file)) return IModFile.class.getClassLoader();
         Class<?> cls = file.getClass();
         return ("TILForgeModFile".equals(cls.getSimpleName()) ? ForgeModLoading.class : cls).getClassLoader();
+    }
+    
+    /**
+     * Mod classes are passed in earlier as a minecraft library for the dev environment.
+     * The MOD_CLASSES system environment needs to be removed to prevent module duplicates.
+     */
+    static void removeModClassesProperty() {
+        TILDev.logInfo("Attempting to remove MOD_CLASSES property");
+        String cls = "java.lang.ProcessEnvironment";
+        Map<String,String> caseInsensitiveEnv = Hacks.getFieldStaticDirect(cls,"theCaseInsensitiveEnvironment");
+        caseInsensitiveEnv.remove("MOD_CLASSES");
+        TILDev.logInfo("Successfully removed MOD_CLASSES property");
     }
     
     private Map<IModFile,FileSystem> fileSystems;
@@ -144,6 +159,6 @@ public class MultiVersionModLocator implements IModLocator {
         String version = String.valueOf((Object)Methods.invoke(coreInstance,"gameVersion"));
         String checkedVersion = version.substring(2).replace('.','_');
         ForgeModLoading.setFileVersion(getClass(),checkedVersion,version);
-        TILRef.logInfo("Successfully set Forge mod loading version ({},{})",checkedVersion,version);
+        TILRef.logInfo("Successfully set Forge mod loading version ({}->{})",checkedVersion,version);
     }
 }

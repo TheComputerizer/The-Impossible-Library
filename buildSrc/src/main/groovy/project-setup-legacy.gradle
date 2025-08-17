@@ -53,7 +53,7 @@ unimined.minecraft {
     runs.all {
         javaVersion = getJavaVersionEnum()
         if(use_dev_run_jar) {
-            classpath-=files(fixLegacyRuntimePaths())
+            classpath-=getBuildFiles([ 'classes\\java', 'resources' ], [ 'main' ])
             classpath+=files(devRunJar.archiveFile)
         }
         Map<?,?> map = getSystemProperties()
@@ -111,9 +111,6 @@ if(use_dev_run_jar) tasks.preRunClient.mustRunAfter 'devRunJar'
 applySourceHelpers()
 
 List<String> fixLegacyRuntimePaths() {
-    return [ 'classes\\java', 'resources' ].collect {p_path ->
-        String full_path = "${projectDir.absolutePath}\\build\\${p_path}\\main"
-        logger.lifecycle "Removing '$full_path' from runtime classpath"
-        return full_path
-    }
+//noinspection GrUnresolvedAccess
+    return getBuildPaths([ 'classes\\java', 'resources' ], [ 'main' ])
 }

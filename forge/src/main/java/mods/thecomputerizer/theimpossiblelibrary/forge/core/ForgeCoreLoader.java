@@ -34,6 +34,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 @SuppressWarnings({"unused","LoggingSimilarMessage"})
 public class ForgeCoreLoader {
     
+    public static final boolean MODULE_LAYERS = Boolean.parseBoolean(System.getProperty("til.debug.forge.modules.layers","true"));
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
     private static final String FORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.forge";
     private static final String APICORE = API_PKG+".core.CoreAPI";
@@ -302,9 +303,38 @@ public class ForgeCoreLoader {
         }
         Object module = packageLookup.get(pkg);
         if(Objects.nonNull(module)) {
-            addResolvedModule(module,thisLoader,newFormat);
-            packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
+            if(MODULE_LAYERS) {
+                packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
+                addResolvedModule(module,thisLoader,newFormat);
+            } else {
+                LOGGER.debug("Skipping module layer movement hacks (-Dtil.debug.forge.modules.layers=false)");
+                logModuleNames("BOOT","SERVICE");
+            }
         } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
+    }
+    
+    static Map<String,Collection<String>> getAllModuleNames(String ... layerNames) {
+        Map<String,Collection<String>> map = new HashMap<>();
+        Map<Object,String> layerToName = new HashMap<>();
+        Set<Object> layers = new HashSet<>();
+        for(String layerName : layerNames) {
+            Object layer = getModuleLayer(layerName);
+            layers.add(layer);
+            layerToName.put(layer,layerName);
+            List<Object> parents = Methods.invokeDirect(layer,"parents");
+            layers.addAll(parents);
+        }
+        int unknownParentCounter = 0;
+        for(Object layer : layers) {
+            String moduleName;
+            if(layerToName.containsKey(layer)) moduleName = layerToName.get(layer);
+            else {
+                moduleName = "UNKNOWN-PARENT-"+unknownParentCounter;
+                unknownParentCounter++;
+            }
+            map.put(moduleName,getModuleNames(layer));
+        }
+        return map;
     }
     
     /**
@@ -354,9 +384,17 @@ public class ForgeCoreLoader {
         return ((Optional<?>)Methods.invoke(env,"findModuleLayerManager")).orElse(null);
     }
     
-    @SuppressWarnings({"unchecked","SameParameterValue"})
+    static Map<String,Object> getModulesForLayer(String layerName) {
+        return getModulesForLayer(getModuleLayer(layerName));
+    }
+    
+    static Map<String,Object> getModulesForLayer(Object layer) {
+        return Fields.getDirect(layer,"nameToModule");
+    }
+    
+    @SuppressWarnings("SameParameterValue")
     static Object getModuleFromLayer(String layerName, String name) {
-        return ((Map<String,Object>)Fields.getDirect(getModuleLayer(layerName),"nameToModule")).get(name);
+        return getModulesForLayer(layerName).get(name);
     }
     
     public static Object getModuleFromPackage(String pkg, String layerName, boolean newFormat) {
@@ -387,6 +425,15 @@ public class ForgeCoreLoader {
             return null;
         }
         return ((Optional<?>)Methods.invoke(layerManager,"getLayer",layerEnum)).orElse(null);
+    }
+    
+    static List<String> getModuleNames(String layerName) {
+        return getModuleNames(getModuleLayer(layerName));
+    }
+    
+    static List<String> getModuleNames(Object layer) {
+        Map<String,Object> nameToModule = Fields.getDirect(layer,"nameToModule");
+        return new ArrayList<>(nameToModule.keySet());
     }
     
     static Object getServicesCatalog(Object moduleLayer) {
@@ -540,7 +587,7 @@ public class ForgeCoreLoader {
             String existingName = Methods.invokeDirect(secureJar,"name");
             String name = mod.getModId(); //Usually the same as existingName, but there are some edge cases...
             Object layer = getModuleLayer(targetLayerName);
-            Map<String,Object> nameToModule = Fields.getDirect(layer,"nameToModule");
+            Map<String,Object> nameToModule = getModulesForLayer(layer);
             Object module = nameToModule.get(existingName);
             if(Objects.isNull(module)) module = nameToModule.get(name);
             boolean existed = false;
@@ -597,6 +644,15 @@ public class ForgeCoreLoader {
         } catch(Throwable t) {
             LOGGER.error("Failed to load new module!",t);
         }
+    }
+    
+    public static void logModuleNames(String ... layerNames) {
+        LOGGER.debug("Printing all module names for the following layers: {}",(Object)layerNames);
+        for(Entry<String,Collection<String>> entry : getAllModuleNames(layerNames).entrySet()) {
+            LOGGER.debug("\t{}",entry.getKey());
+            for(String moduleName : entry.getValue()) LOGGER.debug("\t\t{}",moduleName);
+        }
+        LOGGER.debug("Finished printing all requested module names");
     }
     
     public static String moduleName(Object module) {
@@ -777,6 +833,14 @@ public class ForgeCoreLoader {
         Fields.setDirect(object,name,Collections.unmodifiableSet(set));
     }
     
+    public static void removeDevModules() {
+        if(MODULE_LAYERS) {
+            Map<String,Object> modules = getModulesForLayer("BOOT");
+            modules.remove("main");
+            modules.remove("forge"); //This is the forge source set not actual forge
+        }
+    }
+    
     public static void removeServiceFrom(String service, String impl, String layer) {
         ClassHelper.checkBurningWaveInit();
         LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
@@ -815,6 +879,11 @@ public class ForgeCoreLoader {
      */
     public static void resyncModules(ClassLoader loaderTo, String layerTo, ClassLoader loaderFrom) {
         if(isJava8()) return; //Not needed on Java 8
+        if(!MODULE_LAYERS) {
+            LOGGER.debug("Skipping PLUGIN layer module resyncing (-Dtil.debug.forge.modules.layers=false)");
+            logModuleNames("BOOT","SERVICE","PLUGIN");
+            return;
+        }
         LOGGER.info("Resyncing module to {}",layerTo);
         final String pkg = "mods.thecomputerizer.theimpossiblelibrary.forge.core";
         boolean newFormat = false;
