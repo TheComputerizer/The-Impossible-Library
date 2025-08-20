@@ -1,26 +1,23 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
-import cpw.mods.modlauncher.ArgumentHandler;
-import cpw.mods.modlauncher.Environment;
 import cpw.mods.modlauncher.Launcher;
 import io.github.toolfactory.jvm.function.catalog.ConsulterSupplyFunction;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import net.minecraftforge.forgespi.language.IModFileInfo;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.modules.*;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.burningwave.core.classes.Fields.NoSuchFieldException;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
-import static cpw.mods.modlauncher.Launcher.INSTANCE;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
@@ -30,15 +27,29 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 /**
  * Figures out which version to load on and how to load stuff on it
+ *
  */
 @SuppressWarnings({"unused","LoggingSimilarMessage"})
-public class ForgeCoreLoader {
+public class ForgeCoreLoader { //TODO Refactor common accessors & setters for the module system out
     
     public static final boolean MODULE_LAYERS = Boolean.parseBoolean(System.getProperty("til.debug.forge.modules.layers","true"));
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
     private static final String FORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.forge";
     private static final String APICORE = API_PKG+".core.CoreAPI";
     private static final Logger LOGGER = LogManager.getLogger("TIL ForgeCoreLoader");
+    public static final boolean SECURE_CLASSLOADER_FORMAT = newModuleClassLoaderFormat();
+    
+    private static boolean newModuleClassLoaderFormat() {
+        if(isJava21()) return true;
+        final String newFormatClassName = "net.minecraftforge.securemodules.SecureModuleClassLoader";
+        try {
+            Class<?> newFormatClass = Class.forName(newFormatClassName);
+            return true;
+        } catch(Throwable ignored) {
+            LOGGER.debug("Assuming 1.18.2-1.20.1 ModuleClassLoader format (missing {})",newFormatClassName);
+        }
+        return false;
+    }
     
     //The module system forced me to find a very powerful alternative, but at least I don't need to do Unsafe hacking
     static {
@@ -49,73 +60,21 @@ public class ForgeCoreLoader {
     }
     
     /**
-     * Fix Configuration instance for both the BOOT and SERVICE layers
-     */
-    private static void addConfigurationModule(Object configuration, String name, Object resolvedModule,
-            ClassLoader thisLoader) {
-        
-        Map<String,Object> nameToModule = new HashMap<>(Fields.getDirect(configuration,"nameToModule"));
-        nameToModule.putIfAbsent(name,resolvedModule);
-        Fields.setDirect(configuration,"nameToModule",Collections.unmodifiableMap(nameToModule));
-        
-        //Prevent reading duplicate modules
-        Object thisConfig = Fields.getDirect(thisLoader,"configuration");
-        removeFromUnmodifiableSetField(thisConfig,"modules",resolvedModule);
-        removeFromUnmodifiableMapField(thisConfig,"nameToModule",name);
-        
-        //Update the configuration field for the module
-        Fields.setDirect(resolvedModule,"cf",thisConfig);
-        
-        //Deal with the module graph ._.
-        Map<?,Set<?>> thisGraph = new HashMap<>(Fields.getDirect(thisConfig,"graph"));
-        thisGraph.entrySet().removeIf(entry -> resolvedName(entry.getKey()).equals(name));
-        thisGraph.forEach((key,values) -> values.remove(resolvedModule));
-        Fields.setDirect(thisConfig,"graph",thisGraph);
-    }
-    
-    /**
      * Adds given module and related info to all the relevant objects.
      */
-    static void addModuleThouroughly(Object module, Object resolvedModule, Object moduleLayer, String name,
-            Set<String> packages, Object moduleRef, ClassLoader target, boolean newFormat) {
-        Fields.setDirect(module,"name",name);
-        Object configuration = Fields.getDirect(target,"configuration");
-        Map<String,Object> resolvedRoots = Fields.getDirect(target,newFormat ? "ourModules" : "resolvedRoots");
-        Map<String,Object> packageLookup = Fields.getDirect(target,newFormat ? "packageToOurModules" : "packageLookup");
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(target,newFormat ? "packageToParentLoader" : "parentLoaders");
-        resolvedRoots.put(name,moduleRef);
-        for(String pkg : packages) packageLookup.put(pkg,resolvedModule);
-        parentLoaders.entrySet().removeIf(entry -> packages.contains(entry.getKey()));
-        Set<Object> configModules = new HashSet<>(Fields.getDirect(configuration,"modules"));
-        Map<String,Object> configNameToModule = new HashMap<>(Fields.getDirect(configuration,"nameToModule"));
-        configModules.removeIf(rm -> name.equals(resolvedName(rm)));
-        configModules.add(resolvedModule);
-        configNameToModule.put(name,resolvedModule);
-        Fields.setDirect(configuration,"modules",Collections.unmodifiableSet(configModules));
-        Fields.setDirect(configuration,"nameToModule",Collections.unmodifiableMap(configNameToModule));
-        Set<Object> layerModules = Fields.getDirect(moduleLayer,"modules");
-        boolean found = false;
-        if(Objects.nonNull(layerModules)) {
-            layerModules = new HashSet<>(layerModules);
-            for(Object lModule : layerModules) {
-                String lName = moduleName(lModule);
-                if(Objects.nonNull(lName) && lName.equals(moduleName(module))) {
-                    found = true;
-                }
-            }
-        }
-        if(!found) {
-            if(Objects.nonNull(layerModules)) {
-                layerModules.add(module);
-                Fields.setDirect(moduleLayer,"modules",layerModules);
-            }
-            Map<String,Object> layerNameToModule = new HashMap<>(Fields.getDirect(moduleLayer,"nameToModule"));
-            layerNameToModule.put(name,module);
-            Fields.setDirect(moduleLayer,"nameToModule", Collections.unmodifiableMap(layerNameToModule));
-        }
-        Fields.setDirect(module,"layer",moduleLayer);
-        Fields.setDirect(module,"loader",target);
-        Fields.setDirect(resolvedModule,"cf",configuration);
+    static void addModuleThouroughly(ModuleAccess module, ResolvedModuleAccess resolvedModule,
+            ModuleLayerAccess moduleLayer, String name, Set<String> packages,
+            ModuleReferenceAccess moduleRef, ModuleClassLoaderAccess target) {
+        module.setName(name);
+        target.addRoot(name,moduleRef);
+        target.addPackages(packages,resolvedModule);
+        target.parentLoaders().entrySet().removeIf(entry -> packages.contains(entry.getKey()));
+        ConfigurationAccess configuration = target.configuration();
+        configuration.removeModule(name);
+        configuration.addModuleIfAbsent(name,resolvedModule);
+        if(!moduleLayer.hasMatchingModuleInSet(module.getName())) moduleLayer.addModule(module);
+        module.setLayer(moduleLayer);
+        module.setLoader(target);
     }
     
     /**
@@ -123,30 +82,24 @@ public class ForgeCoreLoader {
      * package in the right ResolvedModule. Luckily we already have those in the current (SERVICE) layer, so
      * all we need to do is transfer some stuff over and then handle the duplicates
      */
-    private static void addResolvedModule(Object module, ClassLoader thisLoader, boolean newFormat) {
-        ClassLoader loader = bootLoader();
-        Map<String,Object> roots = Fields.getDirect(loader,newFormat ? "ourModules" : "resolvedRoots");
-        Map<String,Object> packageLookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
-        Object reference = Methods.invokeDirect(module,"reference");
-        Object descriptor = Methods.invokeDirect(reference,"descriptor");
-        String name = Methods.invokeDirect(descriptor,"name");
-        roots.put(name,reference);
-        Set<String> packages = Methods.invokeDirect(descriptor,"packages");
-        for(String pkg : packages) {
-            packageLookup.put(pkg,module);
-        }
+    private static void addResolvedModule(ResolvedModuleAccess resolvedModule, ModuleClassLoaderAccess thisLoader) {
+        ModuleClassLoaderAccess loader = bootLoaderAccess();
+        
+        loader.addRoot(resolvedModule);
+        loader.addPackages(resolvedModule);
+        
+        Set<String> pkgs = resolvedModule.packages();
         
         //Finalize by moving the original Module from SERVICE to the BOOT layer & fixing parent loaders
-        moveModuleToLayer(loader,"BOOT","SERVICE",name);
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(thisLoader,newFormat ? "packageToParentLoader" : "parentLoaders");
-        for(String pkg : packages) parentLoaders.put(pkg,loader);
+        ModuleSystemAccessor.getModuleLayer("SERVICE",LOGGER).moveModule("BOOT",resolvedModule);
+        thisLoader.addParentLoaders(pkgs,loader);
         
         //Fix configurations & prevent reading duplicate modules
-        addConfigurationModule(Fields.getDirect(loader,"configuration"),name,module,thisLoader);
-        Map<String,Object> theseRoots = Fields.getDirect(thisLoader,newFormat ? "ourModules" : "resolvedRoots");
-        theseRoots.remove(name);
+        loader.configuration().addModuleIfAbsent(resolvedModule);
+        thisLoader.configuration().removeModule(resolvedModule);
+        thisLoader.removeRoot(resolvedModule.name());
         
-        LOGGER.debug("Finished migrating module {} from the SERVICE layer to the BOOT layer",name);
+        LOGGER.debug("Finished migrating module {} from the SERVICE layer to the BOOT layer",resolvedModule.name());
     }
     
     /**
@@ -157,47 +110,18 @@ public class ForgeCoreLoader {
         return Objects.nonNull(loader) ? loader : ClassLoader.getSystemClassLoader();
     }
     
-    static Object buildNewModuleDescriptor(String name, Object secureJar, List<String> usesServices) throws Throwable {
-        LOGGER.info("Building new module descriptor for {}",name);
-        Set<String> packages = new HashSet<>(Methods.invokeDirect(secureJar,"getPackages"));
-        Collection<Object> providers = Methods.invokeDirect(secureJar,"getProviders");
-        Class<?> cDesc = Class.forName("java.lang.module.ModuleDescriptor");
-        Object metadata = Fields.getDirect(secureJar,"metadata");
-        String version = Methods.invokeDirect(metadata,"version");
-        Object builder = Methods.invokeStaticDirect(cDesc,"newAutomaticModule",name);
-        builder = Methods.invokeDirect(builder,"version",version);
-        builder = Methods.invokeDirect(builder,"packages",packages);
-        for(Object provider : providers) {
-            Collection<String> actualProviders = Methods.invokeDirect(provider,"providers");
-            if(!actualProviders.isEmpty()) {
-                String service = Methods.invokeDirect(provider,"serviceName");
-                Methods.invokeDirect(builder,"provides",service,new ArrayList<>(actualProviders));
-            }
-        }
-        for(String service : usesServices) Methods.invokeDirect(builder,"uses",service);
-        Object desc = Methods.invokeDirect(builder,"build");
-        LOGGER.info("Finished building descriptor {}",desc);
-        return desc;
+    static ModuleClassLoaderAccess bootLoaderAccess() {
+        ModuleClassLoaderAccess bootLoader = ModuleSystemAccessor.getModuleClassLoader(bootLoader(),LOGGER);
+        bootLoader.setLayerName("BOOT");
+        return bootLoader;
     }
     
     /**
      * Export the given module to all packages loaded to a module in the GAME layer
      */
-    public static void exportAllModules() throws Throwable {
+    public static void exportAllModules() {
         LOGGER.info("Exporting all modules");
-        Class<?> mClass = Class.forName("java.lang.Module");
-        for(String layerName : new String[]{"BOOT","SERVICE","PLUGIN","GAME"}) {
-            Object layer = getModuleLayer(layerName);
-            Map<String,Object> nameToModule = Fields.getDirect(layer,"nameToModule");
-            for(Object module : nameToModule.values()) {
-                Object descriptor = Fields.getDirect(module,"descriptor");
-                Set<String> pkgs = Fields.getDirect(descriptor,"packages");
-                for(String pkg : pkgs) {
-                    Methods.invokeStaticDirect(mClass,"addExportsToAll0",module,pkg);
-                    Methods.invokeStaticDirect(mClass,"addExportsToAllUnnamed0",module,pkg);
-                }
-            }
-        }
+        ModuleSystemAccessor.exportAllPackages(LOGGER,"BOOT","SERVICE","PLUGIN","GAME");
     }
     
     /**
@@ -206,39 +130,32 @@ public class ForgeCoreLoader {
      * Any classes loaded to the BOOT, SERVICE, or PLUGIN layer that is a part of the given module will have their
      * classLoader field reassigned to the ClassLoader of the GAME layer
      */
-    static void finalizeModule(String oldName, String newName, Object module, ClassLoader target,
-            ClassLoader ... loaders) {
-        String moduleName = moduleName(module);
+    static void finalizeModule(String oldName, String newName, ModuleAccess module, ModuleClassLoaderAccess targetLoader,
+            ModuleClassLoaderAccess ... loaders) {
+        String moduleName = module.getName();
         Set<Class<?>> allMoved = new HashSet<>();
-        Map<ClassLoader,Collection<Class<?>>> removals = new HashMap<>();
-        for(ClassLoader loader : loaders) {
-            Collection<Class<?>> classes = Fields.getDirect(loader,"classes");
+        Map<ModuleClassLoaderAccess,Collection<Class<?>>> removals = new HashMap<>();
+        for(ModuleClassLoaderAccess loader : loaders) {
+            Collection<Class<?>> classes = loader.classes();
             if(Objects.isNull(classes)) continue;
             classes = new HashSet<>(classes);
             for(Class<?> c : classes) {
-                String name = moduleName(Fields.getDirect(c,"module"));
-                if(Objects.isNull(name)) continue;
-                if(name.equals(oldName) || name.equals(newName)) {
-                    Fields.setDirect(c,"classLoader",target);
+                if(loader.accessClass(c).moveIfInModule(loader,module,oldName,newName)) {
                     allMoved.add(c);
                     removals.putIfAbsent(loader,new HashSet<>());
                     removals.get(loader).add(c);
-                    Fields.setDirect(c,"module",module);
                 }
             }
         }
         //Handle the ClassLoader side & make sure classes on the target loader aren't in a nonexistant module
-        Collection<Class<?>> targetClasses = Fields.getDirect(target,"classes");
-        for(Class<?> targetClass : targetClasses) {
-            String name = moduleName(Fields.getDirect(targetClass,"module"));
-            if(Objects.nonNull(moduleName) && moduleName.equals(name))
-                Fields.setDirect(targetClass,"module",module);
+        if(Objects.nonNull(moduleName)) {
+            Collection<Class<?>> targetClasses = targetLoader.classes();
+            for(Class<?> targetClass : targetClasses)
+                targetLoader.accessClass(targetClass).setModuleIfIn(module,moduleName);
+            targetClasses.addAll(allMoved);
         }
-        targetClasses.addAll(allMoved);
-        for(Entry<ClassLoader,Collection<Class<?>>> removalEntry : removals.entrySet()) {
-            Collection<Class<?>> classes = Fields.getDirect(removalEntry.getKey(),"classes");
-            classes.removeAll(removalEntry.getValue());
-        }
+        for(Entry<ModuleClassLoaderAccess,Collection<Class<?>>> removalEntry : removals.entrySet())
+            removalEntry.getKey().removeClasses(removalEntry.getValue());
     }
     
     static Class<?> findClassInHeirarchy(ClassLoader loader, String className) {
@@ -264,12 +181,11 @@ public class ForgeCoreLoader {
      * Returns an array where the elements are the ClassLoader, resolved module, and the name of the layer.
      * Assumes the given loaders array will always be in the order of BOOT, SERVICE, PLUGIN, GAME
      */
-    public static Object[] findModuleLoaderForPackage(String pkg, ClassLoader[] loaders, boolean newFormat) {
+    public static Object[] findModuleLoaderForPackage(String pkg, ModuleClassLoaderAccess ... loaders) {
         for(int i=0;i<loaders.length;i++) {
-            ClassLoader loader = loaders[i];
+            ModuleClassLoaderAccess loader = loaders[i];
             String name = i==0 ? "BOOT" : (i==1 ? "SERVICE" : "PLUGIN");
-            Map<String,Object> lookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
-            Object resolvedModule = lookup.get(pkg);
+            ResolvedModuleAccess resolvedModule = loader.getResolvedModule(pkg);
             if(Objects.nonNull(resolvedModule)) return new Object[]{loader,resolvedModule,name};
         }
         return null;
@@ -293,19 +209,12 @@ public class ForgeCoreLoader {
         ClassHelper.checkBurningWaveInit();
         String pkg = ConsulterSupplyFunction.class.getPackage().getName();
         ClassLoader thisLoader = ForgeCoreLoader.class.getClassLoader();
-        boolean newFormat = false;
-        Map<String,Object> packageLookup;
-        try {
-            packageLookup = Fields.getDirect(thisLoader,"packageLookup");
-        } catch(NoSuchFieldException ex) {
-            packageLookup = Fields.getDirect(thisLoader,"packageToOurModules");
-            newFormat = true;
-        }
-        Object module = packageLookup.get(pkg);
-        if(Objects.nonNull(module)) {
+        ModuleClassLoaderAccess loaderAccess = ModuleSystemAccessor.getModuleClassLoader(thisLoader,LOGGER);
+        ResolvedModuleAccess resolvedModule = loaderAccess.getResolvedModule(pkg);
+        if(Objects.nonNull(resolvedModule)) {
             if(MODULE_LAYERS) {
-                packageLookup.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
-                addResolvedModule(module,thisLoader,newFormat);
+                loaderAccess.removePackagesForModule(resolvedModule);
+                addResolvedModule(resolvedModule,loaderAccess);
             } else {
                 LOGGER.debug("Skipping module layer movement hacks (-Dtil.debug.forge.modules.layers=false)");
                 logModuleNames("BOOT","SERVICE");
@@ -313,35 +222,35 @@ public class ForgeCoreLoader {
         } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
     }
     
-    static Map<String,Collection<String>> getAllModuleNames(String ... layerNames) {
-        Map<String,Collection<String>> map = new HashMap<>();
-        Map<Object,String> layerToName = new HashMap<>();
-        Set<Object> layers = new HashSet<>();
+    static Map<String,Collection<String>> getAllLayerPaths(String ... layerNames) {
+        Map<String,Collection<String>> pathMap = new HashMap<>();
+        Object layerManager = isJava21() ? null : ModuleSystemAccessor.getModuleLayerHandler(LOGGER);
         for(String layerName : layerNames) {
-            Object layer = getModuleLayer(layerName);
-            layers.add(layer);
-            layerToName.put(layer,layerName);
-            List<Object> parents = Methods.invokeDirect(layer,"parents");
-            layers.addAll(parents);
-        }
-        int unknownParentCounter = 0;
-        for(Object layer : layers) {
-            String moduleName;
-            if(layerToName.containsKey(layer)) moduleName = layerToName.get(layer);
+            List<Object> paths = getLayerPaths(layerName);
+            if(paths.isEmpty()) continue;
+            if(isJava21()) pathMap.put(layerName,paths.stream()
+                    .map(secureJar -> {
+                        String name = Methods.invoke(secureJar,"name");
+                        URI uri = Methods.invoke(secureJar,"uri");
+                        return "name = "+name+" | location = "+uri;
+                    }).collect(Collectors.toSet()));
             else {
-                moduleName = "UNKNOWN-PARENT-"+unknownParentCounter;
-                unknownParentCounter++;
+                Set<String> pathStrs = new HashSet<>();
+                for(Object path : paths) {
+                    try {
+                        Object namedPath = getRecordFieldInstance(layerManager,"path");
+                        Object name = getRecordFieldInstance(namedPath,"name");
+                        Object pathsObj = getRecordFieldInstance(namedPath,"paths");
+                        pathStrs.add("name = "+name+" | paths = "+pathsObj);
+                    } catch(Throwable t) {
+                        LOGGER.error("Failed to extract path string from {}",path,t);
+                    }
+                }
+                if(!pathStrs.isEmpty()) pathMap.put(layerName,Collections.unmodifiableSet(pathStrs));
             }
-            map.put(moduleName,getModuleNames(layer));
         }
-        return map;
-    }
-    
-    /**
-     * Get the command line argument handler in case we need to check stuff very early in the loading process
-     */
-    static ArgumentHandler getArgumentHandler() {
-        return Fields.getDirect(INSTANCE,"argumentHandler");
+        if(pathMap.isEmpty()) LOGGER.warn("Returning empty path map for layers {}",(Object)layerNames);
+        return pathMap;
     }
     
     public static @Nullable Object getBootLoadedCoreAPI() {
@@ -357,7 +266,7 @@ public class ForgeCoreLoader {
         return null;
     }
     
-    static <E extends Enum<E>> E getEnum(ClassLoader loader, String className, String name) {
+    public static <E extends Enum<E>> E getEnum(ClassLoader loader, String className, String name) {
         Class<?> foundClass = findClassInHeirarchy(loader,className);
         return Objects.nonNull(foundClass) ? getEnum(foundClass,name) : null;
     }
@@ -367,78 +276,65 @@ public class ForgeCoreLoader {
         return Enum.valueOf((Class<E>)enumClass,name);
     }
     
-    /**
-     * Get a Layer enum by name
-     */
-    static Object getLayer(String name) {
-        ClassLoader loader = bootLoader();
-        String className = "cpw.mods.modlauncher.api.IModuleLayerManager$Layer";
-        return getEnum(loader,className,name);
-    }
-    
-    /**
-     * Get IModuleLayerManager based on current environment
-     */
-    static Object getLayerManager() {
-        Environment env = INSTANCE.environment();
-        return ((Optional<?>)Methods.invoke(env,"findModuleLayerManager")).orElse(null);
-    }
-    
-    static Map<String,Object> getModulesForLayer(String layerName) {
-        return getModulesForLayer(getModuleLayer(layerName));
-    }
-    
-    static Map<String,Object> getModulesForLayer(Object layer) {
-        return Fields.getDirect(layer,"nameToModule");
-    }
-    
-    @SuppressWarnings("SameParameterValue")
-    static Object getModuleFromLayer(String layerName, String name) {
-        return getModulesForLayer(layerName).get(name);
-    }
-    
-    public static Object getModuleFromPackage(String pkg, String layerName, boolean newFormat) {
-        Object layer = getModuleLayer(layerName);
-        Map<String,Object> packageLookup = Fields.get(layerClassLoader(layerName),newFormat ? "packageToOurModules" : "packageLookup");
-        Object resolved = packageLookup.get(pkg);
-        if(Objects.isNull(resolved)) {
-            LOGGER.error("Cannot get module for pacakge {} since it does not exist in input layer {}!",pkg,layerName);
-            return null;
-        }
-        Map<String,Object> nameToModule = Fields.getDirect(layer,"nameToModule");
-        return nameToModule.get(resolvedName(resolved));
-    }
-    
-    /**
-     * Get a ModuleLayer instance by name (BOOT/SERVICE/PLUGIN/GAME) for module manipulation
-     * 1.18.2+ only
-     */
-    static Object getModuleLayer(String name) {
-        Object layerEnum = getLayer(name);
+    static List<Object> getLayerPaths(String layerName) {
+        ModuleLayerHandlerAccess handler = ModuleSystemAccessor.getModuleLayerHandler(LOGGER);
+        Map<Object,List<Object>> map = handler.layerPathMap();
+        Enum<?> layerEnum = ModuleSystemAccessor.getLayerEnum(layerName);
         if(Objects.isNull(layerEnum)) {
-            LOGGER.error("Layer not found for name {}!",name);
+            LOGGER.error("Failed to get Layer {}! Cannot return paths",layerName);
+            return Collections.emptyList();
+        }
+        if(!map.containsKey(layerEnum)) {
+            LOGGER.warn("Layer path map does not contain paths for {}",layerName);
+            return Collections.emptyList();
+        }
+        return map.get(layerEnum);
+    }
+    
+    static Object getRecordFieldInstance(Object target, String name) {
+        if(Objects.isNull(target)) {
+            LOGGER.error("Cannot get record field {} for null target!",name);
             return null;
         }
-        Object layerManager = getLayerManager();
-        if(Objects.isNull(layerManager)) {
-            LOGGER.error("IModuleLayerManager instance not found in environment!");
+        return getRecordFieldInstance(target,target.getClass(),name);
+    }
+    
+    static Object getRecordFieldInstance(Object target, Class<?> targetClass, String name) {
+        if(isJava8()) {
+            LOGGER.error("Records do not exist in Java 8!");
             return null;
         }
-        return ((Optional<?>)Methods.invoke(layerManager,"getLayer",layerEnum)).orElse(null);
+        if(Objects.isNull(targetClass) || Objects.isNull(name)) {
+            LOGGER.error("Target class and record name cannot be null! class = {} | name = {}",targetClass,name);
+            return null;
+        }
+        Object[] components = Methods.invoke(targetClass,"getRecordComponents");
+        if(Objects.isNull(components)) {
+            LOGGER.error("No record components found in class {}! name = {})",targetClass,name);
+            return null;
+        }
+        Object foundComponent = null;
+        for(Object component : components) {
+            String componentName = Methods.invoke(component,"getName");
+            if(Objects.nonNull(componentName) && name.equals(componentName)) {
+                foundComponent = component;
+                break;
+            }
+        }
+        return getRecordFieldInstance(target,foundComponent);
     }
     
-    static List<String> getModuleNames(String layerName) {
-        return getModuleNames(getModuleLayer(layerName));
-    }
-    
-    static List<String> getModuleNames(Object layer) {
-        Map<String,Object> nameToModule = Fields.getDirect(layer,"nameToModule");
-        return new ArrayList<>(nameToModule.keySet());
-    }
-    
-    static Object getServicesCatalog(Object moduleLayer) {
-        Object langAccess = Fields.getStaticDirect(ServiceLoader.class,"LANG_ACCESS");
-        return Methods.invokeDirect(langAccess,"getServicesCatalog",moduleLayer);
+    static Object getRecordFieldInstance(Object target, Object component) {
+        if(Objects.isNull(component)) {
+            LOGGER.error("Cannot access null record component! target = {}",target);
+            return null;
+        }
+        Method accessor = Methods.invoke(component,"getAccessor");
+        if(Objects.isNull(accessor)) {
+            LOGGER.error("Accessor for record component is null! target = {} | component = {}",target,component);
+            return null;
+        }
+        return Methods.invoke(target,accessor);
     }
     
     static String getVersionFromForgeVersion(String forgeVersion) {
@@ -452,11 +348,11 @@ public class ForgeCoreLoader {
     }
     
     static String getVersionStr() {
-        ArgumentHandler handler = getArgumentHandler();
+        ArgumentHandlerAccess handler = ModuleSystemAccessor.getLauncher(LOGGER).argumentHandler();
         if(Objects.isNull(handler)) return null;
-        String[] rawArgs = Fields.getDirect(handler,"args");
+        String[] rawArgs = handler.getArgs();
         if(Objects.isNull(rawArgs)) {
-            LOGGER.error("Failed to find version using handler {}",handler);
+            LOGGER.error("Failed to find version using handler {}",handler.access());
             return null;
         }
         int versionIndex = -1;
@@ -533,17 +429,8 @@ public class ForgeCoreLoader {
     /**
      * Tries to get the ClassLoader instance associated with the given layer name
      */
-    public static ClassLoader layerClassLoader(String name) {
-        Object layer = getLayer(name);
-        Object layerManager = getLayerManager();
-        if(Objects.isNull(layer) || Objects.isNull(layerManager)) {
-            LOGGER.error("Layer manager or layer with name {} is null! Boot loader will be returned",name);
-            return bootLoader();
-        }
-        Map<?,?> completedLayers = Fields.getDirect(layerManager,"completedLayers");
-        ClassLoader loader = Fields.get(completedLayers.get(layer),"cl");
-        LOGGER.debug("Returning ClassLoader for layer {} as {}",name,loader);
-        return loader;
+    public static ClassLoader layerClassLoader(String layerName) {
+        return ModuleSystemAccessor.getModuleClassLoader(layerName,LOGGER).unwrap();
     }
     
     /**
@@ -573,70 +460,51 @@ public class ForgeCoreLoader {
     }
     
     @SuppressWarnings("SameParameterValue")
-    static void loadNewModuleTo(@Nullable IModInfo mod, String targetLayerName, Set<String> finalizedPkgs,
-            boolean newFormat) {
+    static void loadNewModuleTo(@Nullable IModInfo mod, String targetLayerName, Set<String> finalizedPkgs) {
         if(Objects.isNull(mod)) {
             LOGGER.error("Cannot load module from nonexistent file!");
             return;
         }
         try {
-            Object fileInfo = mod.getOwningFile();
-            Object file = Methods.invokeDirect(fileInfo,"getFile");
-            Object secureJar = Methods.invokeDirect(file,"getSecureJar");
-            ClassLoader targetLoader = layerClassLoader("GAME");
-            String existingName = Methods.invokeDirect(secureJar,"name");
             String name = mod.getModId(); //Usually the same as existingName, but there are some edge cases...
-            Object layer = getModuleLayer(targetLayerName);
-            Map<String,Object> nameToModule = getModulesForLayer(layer);
-            Object module = nameToModule.get(existingName);
-            if(Objects.isNull(module)) module = nameToModule.get(name);
+            ModFileInfoAccess fileInfo = ModuleSystemAccessor.getModFileInfo(mod.getOwningFile(),LOGGER);
+            SecureJarAccess secureJar = fileInfo.secureJar();
+            ModuleClassLoaderAccess targetLoader = ModuleSystemAccessor.getModuleClassLoader("GAME",LOGGER);
+            String existingName = secureJar.name();
+            ModuleLayerAccess layer = ModuleSystemAccessor.getModuleLayer(targetLayerName,LOGGER);
+            ModuleAccess module = layer.getAnyModule(existingName,name);
+            ModuleDescriptorAccess descriptor;
             boolean existed = false;
             if(Objects.nonNull(module)) {
                 LOGGER.info("Found existing module to set up for {}",name);
+                descriptor = module.getDescriptor();
+                descriptor.setName(name);
                 existed = true;
-            } else LOGGER.info("Setting up new module with name {}",name);
-            Object descriptor;
-            if(Objects.nonNull(module)) {
-                descriptor = Fields.getDirect(module,"descriptor");
-                Fields.setDirect(descriptor,"name",name);
+            } else {
+                LOGGER.info("Setting up new module with name {}",name);
+                descriptor = fileInfo.newModuleDescriptor(name,secureJar);
             }
-            else {
-                List<String> usesServices = Methods.invokeDirect(fileInfo,"usesServices");
-                descriptor = buildNewModuleDescriptor(name,secureJar,usesServices);
-            }
-            String finderName = newFormat ? "net.minecraftforge.securemodules.SecureModuleFinder" :
-                    "cpw.mods.cl.JarModuleFinder";
-            Class<?> fClass = Class.forName(finderName);
-            Object finder = Constructors.newInstanceOf(fClass,newFormat ? Collections.singletonList(secureJar) : secureJar);
-            Map<String,Object> refMap = Fields.getDirect(finder,newFormat ? "references" : "moduleReferenceMap");
-            Object reference = refMap.get(existingName);
-            URI uri = Fields.getDirect(reference,"location");
-            Object config = Fields.getDirect(targetLoader,"configuration");
-            Class<?> refClass = reference.getClass().getSuperclass();
-            Class<?> cResolved = Class.forName("java.lang.module.ResolvedModule");
-            Fields.setDirect(reference,"descriptor",descriptor);
-            Object resolvedModule = Constructors.newInstanceOf(cResolved,config,reference);
-            Set<String> packages = new HashSet<>(resolvedPackages(resolvedModule));
+            ModuleReferenceAccess reference = secureJar.newModuleFinder().getModuleReference(existingName);
+            reference.setDescriptor(descriptor);
+            URI uri = reference.location();
+            ResolvedModuleAccess resolvedModule = targetLoader.configuration().newResolvedModule(reference);
+            
+            //This looks stupid but packages and finalizedPkgs need to stay unique.
+            //Any packages that were already finalized are skipped
+            Set<String> packages = resolvedModule.packages(true);
             packages.removeAll(finalizedPkgs);
-            packages = Collections.unmodifiableSet(packages);
             finalizedPkgs.addAll(packages);
             Class<?> cModule = Class.forName("java.lang.Module");
             if(Objects.isNull(module)) module = Constructors.newInstanceOf(cModule,layer,targetLoader,descriptor,uri);
-            addModuleThouroughly(module,resolvedModule,layer,name,packages,reference,targetLoader,newFormat);
+            addModuleThouroughly(module,resolvedModule,layer,name,packages,reference,targetLoader);
             LOGGER.info("Finished setting up {}",module);
             
             //nuke & finalize
-            ClassLoader boot = bootLoader();
-            ClassLoader service = layerClassLoader("SERVICE");
-            ClassLoader plugin = layerClassLoader("PLUGIN");
-            nukeConfig(name,boot,service,plugin);
-            nukeLoaderFields(name,newFormat,boot,service,plugin);
-            nukeModuleLayer(name,"BOOT","SERVICE","PLUGIN");
-            if(!existingName.equals(name) && existed) {
-                nukeConfig(existingName,boot,service,plugin,targetLoader);
-                nukeLoaderFields(existingName,newFormat,boot,service,plugin,targetLoader);
-                nukeModuleLayer(existingName,"BOOT","SERVICE","PLUGIN","GAME");
-            }
+            ModuleClassLoaderAccess boot = bootLoaderAccess();
+            ModuleClassLoaderAccess service = ModuleSystemAccessor.getModuleClassLoader("SERVICE",LOGGER);
+            ModuleClassLoaderAccess plugin = ModuleSystemAccessor.getModuleClassLoader("PLUGIN",LOGGER);
+            nukeLoaderFields(name,boot,service,plugin);
+            if(!existingName.equals(name) && existed) nukeLoaderFields(existingName,boot,service,plugin,targetLoader);
             finalizeModule(existingName,name,module,targetLoader,boot,service,plugin);
             LOGGER.warn("------------------------------------------------------------------------------------------------");
             LOGGER.warn("SUCCESSFULLY LOADED {} TO THE GAME LAYER HAVE A NICE DAY", name);
@@ -648,82 +516,57 @@ public class ForgeCoreLoader {
     
     public static void logModuleNames(String ... layerNames) {
         LOGGER.debug("Printing all module names for the following layers: {}",(Object)layerNames);
-        for(Entry<String,Collection<String>> entry : getAllModuleNames(layerNames).entrySet()) {
+        for(Entry<String,Collection<String>> entry : ModuleSystemAccessor.getAllModuleNames(LOGGER,layerNames).entrySet()) {
             LOGGER.debug("\t{}",entry.getKey());
             for(String moduleName : entry.getValue()) LOGGER.debug("\t\t{}",moduleName);
         }
         LOGGER.debug("Finished printing all requested module names");
     }
     
-    public static String moduleName(Object module) {
-        return Objects.nonNull(module) ? Methods.invokeDirect(module,"getName") : null;
-    }
-    
-    @SuppressWarnings("SameParameterValue")
-    public static void moveModuleToLayer(ClassLoader targetLoader, String layerTo, String layerFrom, String moduleName) {
-        Object to = getModuleLayer(layerTo);
-        if(Objects.isNull(to)) {
-            LOGGER.error("Unable to move module {}! Cannot find target layer {}",moduleName,layerTo);
-            return;
+    public static void logLayerPaths(String ... layerNames) {
+        LOGGER.debug("Printing all paths for the following layers: {}",(Object)layerNames);
+        for(Entry<String,Collection<String>> entry : getAllLayerPaths(layerNames).entrySet()) {
+            LOGGER.debug("\t{}",entry.getKey());
+            for(String path : entry.getValue()) LOGGER.debug("\t\t{}",path);
         }
-        Object from = getModuleLayer(layerFrom);
-        if(Objects.isNull(from)) {
-            LOGGER.error("Unable to move module {}! Cannot find supplier layer {}",moduleName,layerFrom);
-            return;
-        }
-        String fieldName = "nameToModule";
-        Map<String,Object> moduleMapFrom = new HashMap<>(Fields.getDirect(from,fieldName));
-        Object module = moduleMapFrom.get(moduleName);
-        if(Objects.isNull(module)) {
-            LOGGER.error("Unable to move module {}! Cannot find module in supplier layer {}",moduleName,layerFrom);
-            return;
-        }
-        Fields.setDirect(module,"loader",targetLoader);
-        Fields.setDirect(module,"layer",to);
-        Map<String,Object> moduleMapTo = new HashMap<>(Fields.getDirect(to,fieldName));
-        moduleMapTo.putIfAbsent(moduleName,module);
-        Fields.setDirect(to,fieldName,Collections.unmodifiableMap(moduleMapTo));
-        moduleMapFrom.remove(moduleName);
-        Fields.setDirect(from,fieldName,Collections.unmodifiableMap(moduleMapFrom));
+        LOGGER.debug("Finished printing all requested paths");
     }
     
     /**
      * Add the module for the given package to the GAME layer and nuke all references to it from other layers
      */
-    public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs, boolean newFormat) {
+    public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs) {
         LOGGER.info("Finalizing package {}",pkg);
-        ClassLoader boot = bootLoader();
-        ClassLoader service = layerClassLoader("SERVICE");
-        ClassLoader plugin = layerClassLoader("PLUGIN");
-        Object[] found = findModuleLoaderForPackage(pkg,new ClassLoader[]{boot,service,plugin},newFormat);
+        ModuleClassLoaderAccess boot = ModuleSystemAccessor.getModuleClassLoader(bootLoader(),LOGGER);
+        ModuleClassLoaderAccess service = ModuleSystemAccessor.getLayerModuleClassLoader("SERVICE",LOGGER);
+        ModuleClassLoaderAccess plugin = ModuleSystemAccessor.getLayerModuleClassLoader("PLUGIN",LOGGER);
+        Object[] found = findModuleLoaderForPackage(pkg,boot,service,plugin);
         if(Objects.isNull(found)) {
-            loadNewModuleTo(mod,"GAME",finalizedPkgs,newFormat);
+            loadNewModuleTo(mod,"GAME",finalizedPkgs);
             return;
         }
-        ClassLoader foundLoader = (ClassLoader)found[0];
-        Object resolvedModule = found[1];
+        ModuleClassLoaderAccess foundLoader = (ModuleClassLoaderAccess)found[0];
+        ResolvedModuleAccess resolvedModule = (ResolvedModuleAccess)found[1];
         LOGGER.info("Got resolved module as {}",resolvedModule);
-        String name = resolvedName(resolvedModule);
+        String name = resolvedModule.name();
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("NUKING ALL REFERENCES OF MODULE {} FROM THE BOOT, SERVICE, & PLUGIN LAYERS",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
-        Map<String,Object> bootRoots = Fields.getDirect(foundLoader,newFormat ? "ourModules" : "resolvedRoots");
-        Object ref = bootRoots.get(name);
-        Object foundLayer = getModuleLayer((String)found[2]);
-        Map<String,Object> layerModules = Fields.getDirect(foundLayer,"nameToModule");
-        Object module = layerModules.get(name);
-        ClassLoader target = layerClassLoader("GAME");
-        Object moduleLayer = getModuleLayer("GAME");
-        Set<String> packages = new HashSet<>(resolvedPackages(resolvedModule));
+        Map<String,Object> bootRoots = foundLoader.resolvedRoots();
+        ModuleReferenceAccess ref = foundLoader.getRoot(name);
+        ModuleLayerAccess foundLayer = ModuleSystemAccessor.getModuleLayer((String)found[2],LOGGER);
+        Map<String,Object> layerModules = foundLayer.nameToModule();
+        ModuleAccess module = foundLayer.getModule(name);
+        ModuleClassLoaderAccess target = ModuleSystemAccessor.getLayerModuleClassLoader("GAME",LOGGER);
+        ModuleLayerAccess gameLayer = ModuleSystemAccessor.getModuleLayer("GAME",LOGGER);
+        Set<String> packages = resolvedModule.packages(true);
         packages.removeAll(finalizedPkgs);
         packages = Collections.unmodifiableSet(packages);
         finalizedPkgs.addAll(packages);
-        addModuleThouroughly(module,resolvedModule,moduleLayer,name,packages,ref,target,newFormat);
+        addModuleThouroughly(module,resolvedModule,gameLayer,name,packages,ref,target);
         
         //nuke & finalize
-        nukeConfig(name,boot,service,plugin);
-        nukeLoaderFields(name,newFormat,boot,service,plugin);
-        nukeModuleLayer(name,"BOOT","SERVICE","PLUGIN");
+        nukeLoaderFields(name,boot,service,plugin);
         finalizeModule(name,name,module,target,boot,service,plugin);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("MODULE {} HAS BEEN SUCCESSFULLY MOVED TO THE GAME LAYER HAVE A NICE DAY",name);
@@ -751,64 +594,18 @@ public class ForgeCoreLoader {
         });
     }
     
-    static void nukeConfig(String name, ClassLoader ... loaders) {
-        for(ClassLoader loader : loaders) {
-            Object configuration = Fields.getDirect(loader,"configuration");
-            Map<String,Object> nameToModule = new HashMap<>(Fields.getDirect(configuration,"nameToModule"));
-            Object module = nameToModule.get(name);
-            if(Objects.nonNull(module)) {
-                nameToModule.remove(name);
-                Fields.setDirect(configuration,"nameToModule",Collections.unmodifiableMap(nameToModule));
-                Set<Object> modules = new HashSet<>(Fields.getDirect(configuration,"modules"));
-                modules.remove(module);
-                Fields.setDirect(configuration,"modules",modules);
-            }
-        }
-    }
-    
-    static void nukeLoaderFields(String moduleName, boolean newFormat, ClassLoader ... loaders) {
-        for(ClassLoader loader : loaders) {
-            Map<String,Object> resolvedRoots = Fields.getDirect(loader,newFormat ? "ourModules" : "resolvedRoots");
-            Map<String,Object> packageLookup = Fields.getDirect(loader,newFormat ? "packageToOurModules" : "packageLookup");
-            Map<String,Object> parentLoaders = Fields.getDirect(loader,newFormat ? "packageToParentLoader" : "parentLoaders");
-            resolvedRoots.remove(moduleName);
-            if(newFormat) {
-                Map<String,Object> ourModulesSecure = Fields.getDirect(loader,"ourModulesSecure");
-                ourModulesSecure.remove(moduleName);
-            }
-            Object module = null;
-            for(Entry<String,Object> pkgEntry : packageLookup.entrySet()) {
-                Object value = pkgEntry.getValue();
-                if(moduleName.equals(resolvedName(value))) {
-                    module = value;
-                    break;
-                }
-            }
-            if(Objects.isNull(module)) continue;
-            Set<String> packages = resolvedPackages(module);
-            if(Objects.isNull(packages)) continue;
-            Map<String,Object> packageToCodeSource = newFormat ?
-                    Fields.getDirect(loader,"packageToCodeSource") : null;
-            for(String pkg : packages) {
-                packageLookup.remove(pkg);
-                parentLoaders.remove(pkg);
-                if(newFormat) packageToCodeSource.remove(pkg);
-            }
-        }
-    }
-    
-    static void nukeModuleLayer(String name, String ... layers) {
-        for(String layer : layers) {
-            Object moduleLayer = getModuleLayer(layer);
-            Map<String,Object> nameToModule = new HashMap<>(Fields.getDirect(moduleLayer,"nameToModule"));
-            nameToModule.remove(name);
-            Fields.setDirect(moduleLayer,"nameToModule",Collections.unmodifiableMap(nameToModule));
-            Set<Object> modules = Fields.getDirect(moduleLayer,"modules");
-            if(Objects.nonNull(modules)) {
-                modules = new HashSet<>(modules);
-                modules.removeIf(m -> name.equals(moduleName(m)));
-                Fields.setDirect(moduleLayer,"modules",Collections.unmodifiableSet(modules));
-            }
+    /**
+     * Remove references to the input module from the associated ModuleClassLoader instances.
+     * Config
+     */
+    static void nukeLoaderFields(String moduleName, ModuleClassLoaderAccess ... loaders) {
+        for(ModuleClassLoaderAccess loader : loaders) {
+            loader.configuration().removeModule(moduleName);
+            loader.removeRoot(moduleName);
+            loader.removeSecureModule(moduleName);
+            ResolvedModuleAccess module = loader.lookupResolvedModule(moduleName);
+            if(Objects.nonNull(module)) loader.removePackages(module.packages());
+            loader.getModuleLayer().removeModule(moduleName);
         }
     }
     
@@ -819,37 +616,32 @@ public class ForgeCoreLoader {
         return Methods.invokeStaticDirect(ClassLoader.class,"getPlatformClassLoader");
     }
     
-    @SuppressWarnings("SameParameterValue")
-    static void removeFromUnmodifiableMapField(Object object, String name, Object toRemove) {
-        Map<?,?> map = new HashMap<>(Fields.getDirect(object,name));
-        map.remove(toRemove);
-        Fields.setDirect(object,name,Collections.unmodifiableMap(map));
-    }
-    
-    @SuppressWarnings("SameParameterValue")
-    static void removeFromUnmodifiableSetField(Object object, String name, Object toRemove) {
-        Set<?> set = new HashSet<>(Fields.getDirect(object,name));
-        set.remove(toRemove);
-        Fields.setDirect(object,name,Collections.unmodifiableSet(set));
-    }
-    
-    public static void removeDevModules() {
-        if(MODULE_LAYERS) {
-            Map<String,Object> modules = getModulesForLayer("BOOT");
-            modules.remove("main");
-            modules.remove("forge"); //This is the forge source set not actual forge
+    public static void removeDevModules(String ... layers) {
+        if(!MODULE_LAYERS) {
+            LOGGER.debug("Removing dev modules");
+            removeResolvedModules(Arrays.asList("BOOT","SERVICE","main"));
+            removeResolvedModules("SERVICE","forge");
         }
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    static void removeResolvedModules(Collection<String> layerNames, String ... moduleNames) {
+        for(String layerName : layerNames) removeResolvedModules(layerName,moduleNames);
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    static void removeResolvedModules(String layerName, String ... moduleNames) {
+        for(String moduleName : moduleNames) removeResolvedModule(layerName,moduleName);
+    }
+    
+    static void removeResolvedModule(String layerName, String moduleName) {
+        ModuleSystemAccessor.getModuleClassLoader(layerName,LOGGER).removeModuleFully(moduleName);
     }
     
     public static void removeServiceFrom(String service, String impl, String layer) {
         ClassHelper.checkBurningWaveInit();
         LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
-        String moduleName = "theimpossiblelibrary";
-        Object servicesCatalog = getServicesCatalog(getModuleLayer(layer));
-        Class<?> pClass = serviceProviderClass(servicesCatalog);
-        Map<String,List<?>> map = new HashMap<>(Fields.getDirect(servicesCatalog,"map"));
-        if(map.containsKey(service)) map.get(service).removeIf(provider ->
-                        impl.equals(Methods.invokeDirect(provider,"providerName")));
+        ModuleSystemAccessor.getModuleLayer(layer,LOGGER).getServicesCatalog().removeImplementations(service,impl);
         LOGGER.info("Sucessfully removed all service providers from {} layer for {}",layer,impl);
     }
     
@@ -857,18 +649,9 @@ public class ForgeCoreLoader {
      * Get name of resolved module via reflection since this is a Java 8 context
      */
     static Object resolvedDescriptor(Object resolvedModule) {
-        return Methods.invokeDirect(resolvedModule,"descriptor");
-    }
-    
-    /**
-     * Get name of resolved module via reflection since this is a Java 8 context
-     */
-    static String resolvedName(Object resolvedModule) {
-        return Methods.invokeDirect(resolvedDescriptor(resolvedModule),"name");
-    }
-    
-    static Set<String> resolvedPackages(Object resolvedModule) {
-        return Fields.getDirect(resolvedDescriptor(resolvedModule),"packages");
+        if(Objects.nonNull(resolvedModule)) return Methods.invokeDirect(resolvedModule,"descriptor");
+        LOGGER.error("Cannot get ModuleDescriptor for null ResolvedModule!");
+        return Collections.emptySet();
     }
     
     /**
@@ -879,118 +662,66 @@ public class ForgeCoreLoader {
      */
     public static void resyncModules(ClassLoader loaderTo, String layerTo, ClassLoader loaderFrom) {
         if(isJava8()) return; //Not needed on Java 8
-        if(!MODULE_LAYERS) {
+        if(!MODULE_LAYERS) { //Resolve differently in dev since the modules are initially loaded in the BOOT layer
             LOGGER.debug("Skipping PLUGIN layer module resyncing (-Dtil.debug.forge.modules.layers=false)");
+            bootLoaderAccess().moveModulesTo("PLUGIN","forge","main");
             logModuleNames("BOOT","SERVICE","PLUGIN");
             return;
         }
+        resyncModules(ModuleSystemAccessor.getModuleClassLoader(loaderTo,LOGGER),layerTo,
+                      ModuleSystemAccessor.getModuleClassLoader(loaderFrom,LOGGER));
+    }
+    
+    private static void resyncModules(ModuleClassLoaderAccess loaderTo, String layerTo,
+            ModuleClassLoaderAccess loaderFrom) {
         LOGGER.info("Resyncing module to {}",layerTo);
         final String pkg = "mods.thecomputerizer.theimpossiblelibrary.forge.core";
-        boolean newFormat = false;
-        Map<String,Object> fromPkg; //Fix BOOT modules first
-        try {
-            ClassHelper.checkBurningWaveInit();
-            fromPkg = Fields.getDirect(loaderFrom,"packageLookup");
-        } catch(NoSuchFieldException ex) {
-            fromPkg = Fields.getDirect(loaderFrom,"packageToOurModules");
-            newFormat = true;
-        }
-        Object fromModule = fromPkg.get(pkg);
-        Object fromCfg = Fields.getDirect(loaderFrom,"configuration");
-        if(!"PLUGIN".equals(layerTo)) {
-            Set<Object> modules = new HashSet<>(Fields.getDirect(fromCfg,"modules"));
-            modules.add(fromModule);
-            Fields.setDirect(fromCfg,"modules",modules);
-        }
+        if(!"PLUGIN".equals(layerTo)) loaderFrom.configuration().addModule(loaderFrom.getResolvedModule(pkg));
+        
         //Remove module from PLUGIN layer
-        Map<String,Object> pkgs = Fields.getDirect(loaderTo,newFormat ? "packageToOurModules" : "packageLookup");
-        Object module = pkgs.get(pkg);
-        String name = resolvedName(module);
-        Map<String,Object> roots = Fields.getDirect(loaderTo,newFormat ? "ourModules" : "resolvedRoots");
-        Object config = Fields.getDirect(loaderTo,"configuration");
-        removeFromUnmodifiableSetField(config,"modules",module);
-        removeFromUnmodifiableMapField(config,"nameToModule",name);
-        Object reference = Methods.invokeDirect(module,"reference");
-        Object descriptor = Methods.invokeDirect(reference,"descriptor");
-        Set<String> packages = Methods.invokeDirect(descriptor,"packages");
+        ResolvedModuleAccess resolvedModule = loaderTo.getResolvedModule(pkg);
+        String name = resolvedModule.name();
+        ConfigurationAccess configuration = loaderTo.configuration();
+        configuration.removeModule(resolvedModule);
+        Set<String> packages = resolvedModule.packages();
         
         //Finalize by dealing with the module layers & fixing parent loaders
-        Object layer = getModuleLayer(layerTo);
-        Map<String,Object> map = new HashMap<>(Fields.getDirect(layer,"nameToModule"));
-        map.remove(name);
-        Fields.setDirect(layer,"nameToModule",map);
-        Map<String,ClassLoader> parentLoaders = Fields.getDirect(loaderTo,newFormat ? "packageToParentLoader" : "parentLoaders");
-        for(String p : packages) parentLoaders.put(p,loaderFrom);
-        roots.remove(name);
+        ModuleSystemAccessor.getModuleLayer(layerTo,LOGGER).removeModule(name);
+        loaderTo.addParentLoaders(resolvedModule.packages(),loaderFrom);
+        loaderTo.removeRoot(name);
         
-        //Deal with the module graph again ._.
-        Map<?,Set<?>> graph = new HashMap<>(Fields.getDirect(config,"graph"));
-        graph.remove(module); //Don't cross-check the name since we have 2 different module this time
-        graph.forEach((key,values) -> values.remove(module));
-        Fields.setDirect(config,"graph",graph);
-        
-        pkgs.entrySet().removeIf(entry -> module.equals(entry.getValue())); //Prevent reading duplicate modules
+        loaderTo.removePackagesForModule(resolvedModule); //Prevent reading duplicate modules
     }
     
     public static void sanityCheckModule(Class<?> c, String name) {
-        Object module = Methods.invokeDirect(c,"getModule");
-        String actualName = moduleName(module);
-        if(!name.equals(actualName)) {
+        ClassAccess access = ModuleSystemAccessor.getClassAccess(c,LOGGER);
+        if(Objects.isNull(access)) {
+            LOGGER.error("Failed to get ClassAccess for {}! Cannot run sanity check",c);
+            return;
+        }
+        String moduleName = access.getModuleName();
+        if(!name.equals(moduleName)) {
             //By this point the class is definitely in the GAME layer regardless of whether the module is correct
-            Fields.setDirect(c,"module",getModuleFromLayer("GAME",name));
-            LOGGER.info("Moved {} from module {} to module {}",c,actualName,name);
+            access.setModule("GAME",name);
+            LOGGER.info("Moved {} from module {} to module {}",c,moduleName,name);
         }
     }
     
-    public static @Nullable Class<?> serviceProviderClass(Object servicesCatalog) {
-        if(Objects.isNull(servicesCatalog)) return null;
-        Class<?> sClass = servicesCatalog.getClass();
-        String providerClassName = sClass.getName()+"$ServiceProvider";
-        Class<?> pClass;
-        try {
-            return Class.forName(providerClassName);
-        } catch(ClassNotFoundException ex) {
-            LOGGER.error("Failed to find class {}",providerClassName,ex);
-            return null;
-        }
-    }
-    
-    public static void verifyModule(String className, IModInfo info, Object moduleLayer) throws Exception {
+    public static void verifyModule(String className, IModInfo info, Object moduleLayer) {
         LOGGER.info("Verifying that {} is valid for {} and can be found in {}",className,info,moduleLayer);
-        IModFileInfo fileInfo = info.getOwningFile();
         String modid = info.getModId();
-        String moduleName = Methods.invokeDirect(fileInfo,"moduleName");
-        IModFile file = Methods.invokeDirect(fileInfo,"getFile");
+        ModFileInfoAccess fileInfo = ModuleSystemAccessor.getModFileInfo(info.getOwningFile(),LOGGER);
+        String moduleName = fileInfo.moduleName();
         if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
-        Optional<Object> optionalModule = Methods.invokeDirect(moduleLayer,"findModule",moduleName);
+        ModuleLayerAccess layerAccess = ModuleSystemAccessor.getModuleLayer(moduleLayer,LOGGER);
+        Optional<Object> optionalModule = layerAccess.findModule(moduleName);
         if(!optionalModule.isPresent()) {
-            Set<Object> modules = Methods.invokeDirect(moduleLayer,"modules");
-            for(Object module : modules) {
-                String name = moduleName(module);
-                if(Objects.isNull(name)) continue;
-                if(name.equals(moduleName) || name.equals(modid)) {
-                    Object layer = Methods.invokeDirect(module,"getLayer");
-                    boolean sameLayer = layer==moduleLayer;
-                    LOGGER.info("Found module {} in {} layer that wasn't present in the nameToModule map",
-                                moduleName,sameLayer ? "the same" : "a different");
-                    Map<String,Object> nameToModule = new HashMap<>(Fields.getDirect(layer,"nameToModule"));
-                    nameToModule.put(moduleName,module);
-                    Fields.setDirect(layer,"nameToModule",Collections.unmodifiableMap(nameToModule));
-                    break;
-                }
-            }
+            layerAccess.findAndAddModule(moduleLayer,moduleName,modid);
+            optionalModule = layerAccess.findModule(moduleName);
         }
-        if(optionalModule.isPresent()) {
-            Object module = optionalModule.get();
-            String name = moduleName(module);
-            ClassLoader loader = Methods.invokeDirect(moduleLayer,"findLoader",name);
-            Class<?> c = Class.forName(className,false,loader);
-            Object cModule = Methods.invokeDirect(c,"getModule");
-            if(module!=cModule) {
-                LOGGER.debug("Attempting to fix modules that are not equal");
-                Fields.setDirect(c,"module",module);
-            } else LOGGER.debug("Modules are equal");
-        } else LOGGER.error("Module {} is not present in the target layer!",moduleName);
+        if(optionalModule.isPresent())
+            ModuleSystemAccessor.getModule(optionalModule.get(),LOGGER).addClassIfMissing(className,layerAccess);
+        else LOGGER.error("Module {} is not present in the target layer!",moduleName);
         LOGGER.info("Finished verifying {}",className);
     }
     

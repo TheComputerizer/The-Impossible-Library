@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Objects;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
@@ -370,33 +370,20 @@ public class Hacks {
             return null;
         }
         Class<?> targetClass = target.getClass();
-        return getRecordFieldInstance(targetClass,target,field,getRecordComponent(targetClass,field));
+        return getRecordFieldInstance(getRecordComponent(targetClass,field),target,field);
     }
     
     /**
      * The default Field component for BurningWave utilizes Unsafe in the backend.
      * Unsafe does not support the retrieval of field offsets for record fields so we need to work around that.
      */
-    @SuppressWarnings("unchecked")
-    private static <T> T getRecordFieldInstance(Class<?> targetClass, @Nullable Object target, String name,
-            @Nullable Object component) {
+    private static <T> T getRecordFieldInstance(@Nullable Object component, @Nullable Object target,
+            String name) {
         if(Objects.isNull(component)) {
-            TILRef.logError("Failed to get record component for target {}! (field = {})",targetClass,name);
+            TILRef.logError("Failed to get record field instance! (field = {})",name);
             return null;
         }
-        Field field;
-        try {
-            field = Classes.getDeclaredField(targetClass,f -> name.equals(f.getName()));
-            if(Objects.isNull(field)) {
-                TILRef.logError("Found null field {} for class {}",name,targetClass.getName());
-                return null;
-            }
-            Driver.setAccessible(field,true);
-            return (T)field.get(target);
-        } catch(Throwable t) {
-            TILRef.logError("Failed to find field {} in target {}!",name,targetClass,t);
-        }
-        return null;
+        return invokeMethodObj(target,invoke(component,"getAccessor"));
     }
     
     /**
@@ -405,7 +392,7 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T getRecordFieldStatic(Class<?> target, String field) {
-        return getRecordFieldInstance(target,null,field,getRecordComponent(target,field));
+        return getRecordFieldInstance(getRecordComponent(target,field),null,field);
     }
     
     /**
@@ -456,6 +443,13 @@ public class Hacks {
             TILRef.logError("Tried to call invokeDirect with null method name! (target = {} | args = {})",
                             target,args);
             return null;
+        }
+        return Methods.invoke(target,method,args);
+    }
+    
+    public static <T> T invokeMethodObj(@Nullable Object target, Method method, Object ... args) {
+        if(Objects.isNull(method)) {
+            TILRef.logError("Cannot invoke null method object! (args={})",(Object)args);
         }
         return Methods.invoke(target,method,args);
     }
@@ -547,6 +541,11 @@ public class Hacks {
             return null;
         }
         return Methods.invokeStaticDirect(target,method,args);
+    }
+    
+    @IndirectCallers
+    public static <T> T invokeStaticMethodObj(Method method, Object ... args) {
+        return invokeMethodObj(null,method,args);
     }
     
     /**

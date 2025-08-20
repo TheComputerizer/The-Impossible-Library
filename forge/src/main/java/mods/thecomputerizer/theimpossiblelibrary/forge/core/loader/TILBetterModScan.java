@@ -181,16 +181,7 @@ public class TILBetterModScan extends ModFileScanData {
             TILRef.logInfo("Skipping already handled sources for {}",pkg);
             return;
         }
-        ForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs,isNewFormat());
-    }
-    
-    private boolean isNewFormat() {
-        switch(CoreAPI.getInstance().getVersion()) {
-            case V20_4:
-            case V20_6:
-            case V21_1: return true;
-            default: return false;
-        }
+        ForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs);
     }
     
     /**
