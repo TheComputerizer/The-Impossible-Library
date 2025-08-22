@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.font.FontAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
@@ -15,9 +14,7 @@ import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.FormattedText;
 import org.lwjgl.opengl.GL11;
-import org.objectweb.asm.Type;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,27 +67,6 @@ public class FabricHelper {
     @IndirectCallers
     public static String getCurrentNamespace() {
         return getResolver().getCurrentRuntimeNamespace();
-    }
-    
-    public static Field getObfField(String namespace, String name, Class<?> owner, Object instance) {
-        return getObfField(namespace,name,owner,instance.getClass());
-    }
-    
-    public static Field getObfField(String namespace, String srgName, Class<?> owner, Class<?> instanceClass) {
-        return ReflectionHelper.getField(owner,getObfFieldName(namespace,srgName,owner,instanceClass));
-    }
-    
-    @IndirectCallers
-    public static String getObfFieldName(String namespace, String srgName, Class<?> owner, Object instance) {
-        return getObfFieldName(namespace,srgName,owner,instance.getClass());
-    }
-    
-    public static String getObfFieldName(String namespace, String name, Class<?> owner, Class<?> instanceClass) {
-        return getObfFieldName(namespace,name,owner.getName(),Type.getDescriptor(instanceClass));
-    }
-    
-    public static String getObfFieldName(String namespace, String name, String owner, String desc) {
-        return getResolver().mapFieldName(namespace,owner,name,desc);
     }
     
     public static MappingResolver getResolver() {

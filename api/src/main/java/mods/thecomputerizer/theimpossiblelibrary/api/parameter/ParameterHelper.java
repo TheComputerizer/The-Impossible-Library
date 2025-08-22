@@ -1,14 +1,14 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.parameter;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.parameter.primitive.*;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,14 +34,12 @@ public class ParameterHelper {
         }
     }
 
-    @SuppressWarnings("DataFlowIssue")
     public static @Nullable Parameter<?> parse(ByteBuf buf) {
-        Class<?> clazz = ReflectionHelper.findExtensibleClass(NetworkHelper.readString(buf),Parameter.class);
-        Constructor<?> constructor = ReflectionHelper.findConstructor(clazz,ByteBuf.class);
+        Class<Parameter<?>> c = ClassHelper.findExtensibleClass(NetworkHelper.readString(buf),Parameter.class);
         try {
-            return (Parameter<?>)constructor.newInstance(buf);
-        } catch(ReflectiveOperationException ex) {
-            TILRef.logError("Unable to invoke constructor `{}` for paremter!",constructor,ex);
+            return Hacks.construct(c,buf);
+        } catch(Throwable t) {
+            TILRef.logError("Unable to invoke constructor {}(ByteBuff) for paremter!",c,t);
             return null;
         }
     }

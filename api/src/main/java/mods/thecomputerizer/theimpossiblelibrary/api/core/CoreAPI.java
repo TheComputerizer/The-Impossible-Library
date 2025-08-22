@@ -26,8 +26,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
-import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Getter
 public abstract class CoreAPI {
@@ -38,12 +36,7 @@ public abstract class CoreAPI {
     static int javaVersionCache;
     
     public static @Nullable Object findInstance(ClassLoader loader) {
-        Class<?> coreClass = ClassHelper.findClass(BINARY,loader);
-        if(Objects.isNull(coreClass)) {
-            TILRef.logError("Unable to get CoreAPI class from {}",loader);
-            return null;
-        }
-        return ReflectionHelper.invokeStaticMethod(coreClass,"getInstance",new Class<?>[]{});
+        return Hacks.invokeStatic(ClassHelper.findClass(BINARY,loader),"getInstance");
     }
     
     @IndirectCallers
@@ -80,7 +73,7 @@ public abstract class CoreAPI {
             TILRef.logError("Cannot get mod loader extension from null class!");
             return null;
         }
-        return Methods.invokeStatic(extensionClass,"getInstance");
+        return Hacks.invokeStatic(getModLoaderClass(post,minor),"getInstance");
     }
     
     public static Class<?> getModLoaderClass(String post, boolean minor) {
@@ -111,7 +104,7 @@ public abstract class CoreAPI {
         if(Objects.isNull(INSTANCE)) {
             TILRef.logDebug("Attempting to get CoreAPI instance that does not exist yet on loader {}",loader);
             if(Objects.nonNull(loader)) {
-                ClassHelper.checkBurningWaveInit();
+                Hacks.checkBurningWaveInit();
                 syncInstanceClassLoader(loader);
             } else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
         }
@@ -125,17 +118,6 @@ public abstract class CoreAPI {
             return null;
         }
         return pre+"."+loaderName+"."+post;
-    }
-    
-    public static Object invoke(Object instance, String name) {
-        return invoke(instance,name,new Class<?>[]{});
-    }
-    
-    @SuppressWarnings("DataFlowIssue")
-    public static Object invoke(Object instance, String name, Class<?>[] argClasses, Object ... args) {
-        Class<?> clazz = Objects.nonNull(instance) ? instance.getClass() :
-                findInstance(Thread.currentThread().getContextClassLoader()).getClass();
-        return ReflectionHelper.invokeMethod(clazz,name,instance,argClasses,args);
     }
     
     public static boolean isClient() {
@@ -366,11 +348,7 @@ public abstract class CoreAPI {
     public static void syncInstanceClassLoader(ClassLoader loader) {
         TILRef.logInfo("Trying to sync CoreAPI instance to {} in the context of {}",loader,
                        Thread.currentThread().getContextClassLoader());
-        try {
-            ClassLoaders.loadOrDefine(CoreAPI.class,loader);
-        } catch(Exception ex) {
-            TILRef.logFatal("Failed to sync CoreAPI to loader {}",loader);
-        }
+        Hacks.loadOrDefineClass(CoreAPI.class,loader);
     }
 
     protected final GameVersion version;

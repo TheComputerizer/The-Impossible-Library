@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.MinecraftWindow;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
@@ -25,7 +26,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import org.lwjgl.opengl.Display;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +45,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     private static final List<String> MCMETA_LINES = Arrays.asList(
             "{","\t\"pack\": {","\t\t\"pack_format\": 3,",
             "\t\t\"description\": \"Relocated The Impossible Library resources\"", "\t}", "}");
+    private static final String DEFAULT_RESOURCE_PACKS_FIELD = NAMED_ENV ? "defaultResourcePacks" : "field_110449_ao";
 
     public static Minecraft1_12_2 getInstance() {
         return new Minecraft1_12_2(Minecraft.getMinecraft());
@@ -66,7 +67,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public @Nullable Object getCurrentScreen() {
-        return Objects.nonNull(this.wrapped) ? this.wrapped.currentScreen : null;
+        return getIfNotNull(w -> w.currentScreen);
     }
     
     @Override public int getDisplayHeight() {
@@ -78,16 +79,15 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public int getGUIScale() {
-        int scale = Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.gameSettings) ? this.wrapped.gameSettings.guiScale : 0;
-        return scale==0 ? 4 : scale;
+        return wrapIfNotNullOrDefault(w -> w.gameSettings,s -> s.guiScale,4);
     }
     
     @Override public @Nullable PlayerAPI<? extends EntityPlayer,EntityEntry> getPlayer() {
-        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.player) ? new ClientPlayer1_12_2(this.wrapped.player) : null;
+        return wrapIfNotNull(w -> w.player,ClientPlayer1_12_2::new);
     }
     
     private @Nullable RayTraceResult getTarget() {
-        return Objects.nonNull(this.wrapped) ? this.wrapped.objectMouseOver : null;
+        return getIfNotNull(w -> w.objectMouseOver);
     }
     
     @Override public @Nullable BlockEntityAPI<?,?> getTargetBlockEntity() {
@@ -104,7 +104,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     
     private @Nullable List<IResourcePack> getResourcePacks(Minecraft mc) {
         try {
-            return ObfuscationReflectionHelper.getPrivateValue(Minecraft.class, mc, "field_110449_ao");
+            return Hacks.getFieldDirect(mc,DEFAULT_RESOURCE_PACKS_FIELD);
         } catch(Exception ex) {
             TILRef.logError("Unable to get resource pack list",ex);
             return null;
@@ -115,7 +115,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
      * TODO Cache this?
      */
     @Override public MinecraftWindow getWindow() {
-        ScaledResolution res = Objects.nonNull(this.wrapped) ? new ScaledResolution(this.wrapped) : null;
+        ScaledResolution res = getIfNotNull(ScaledResolution::new);
         if(Objects.isNull(res)) {
             TILRef.logFatal("Unable to get MinecraftWindow since the Minecraft is null?");
             return new MinecraftWindow(1d,1d,0);
@@ -124,11 +124,14 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
 
     @Override public @Nullable WorldAPI<World> getWorld() {
-        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.world) ? new World1_12_2(this.wrapped.world) : null;
+        return wrapIfNotNull(w -> w.world,World1_12_2::new);
     }
-
+    
+    /**
+     * Will return true if the current and input screen are both null
+     */
     @Override public <S> boolean isCurrentScreen(S screen) {
-        return Objects.nonNull(this.wrapped) && this.wrapped.currentScreen==screen;
+        return getIfNotNull(w -> w.currentScreen)==screen;
     }
 
     @Override public boolean isCurrentScreenAPI() {
@@ -149,12 +152,11 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
 
     @Override public boolean isFinishedLoading() {
-        return !FMLClientHandler.instance().isLoading() && Objects.nonNull(this.wrapped) &&
-                Objects.nonNull(this.wrapped.currentScreen);
+        return !FMLClientHandler.instance().isLoading() && notNullGetter(w -> w.currentScreen);
     }
 
     @Override public boolean isFullScreen() {
-        return Objects.nonNull(this.wrapped) && this.wrapped.isFullScreen();
+        return getIfNotNullOrDefault(Minecraft::isFullScreen,false);
     }
 
     @Override public boolean isLoading() {
@@ -162,8 +164,12 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
 
     @Override public boolean isPaused() {
-        return Objects.nonNull(this.wrapped) && (this.wrapped.isGamePaused() ||
-                (Objects.nonNull(this.wrapped.world) && isPauseScreen(getCurrentScreen())));
+        return getIfNotNullOrDefault(Minecraft::isFullScreen,false) ||
+               (notNullGetter(w -> w.world) && isPauseScreen());
+    }
+    
+    private boolean isPauseScreen() {
+        return isPauseScreen(getCurrentScreen());
     }
     
     private boolean isPauseScreen(@Nullable Object screen) {

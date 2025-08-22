@@ -39,6 +39,56 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         setModules(modules);
     }
     
+    @Override public void cloneModule(String moduleName, String newModuleName) {
+        ModuleClassLoaderAccess loader = getModuleClassLoader(this.layerName);
+        Map<String,Object> nameToModule = nameToModule();
+        Set<Object> modules = modules(true);
+        ModuleAccess module = null;
+        if(nameToModule.containsKey(moduleName)) {
+            Object existing = nameToModule.get(newModuleName);
+            module = getModule(moduleName);
+            if(Objects.nonNull(existing)) getModule(existing).inheritFrom(module);
+            else {
+                module.setName(newModuleName);
+                nameToModule.put(newModuleName,nameToModule.get(moduleName));
+            }
+            setNameToModule(nameToModule);
+        }
+        if(Objects.nonNull(module)) {
+            modules.removeIf(m -> {
+                String name = getModuleName(m);
+                return name.equals(moduleName) || name.equals(newModuleName);
+            });
+            modules.add(module.access);
+            loader.moveModuleClasses(module,moduleName,newModuleName);
+        } else {
+            module = getModuleFromSet(newModuleName);
+            Set<Object> removals = new HashSet<>();
+            boolean existed = Objects.nonNull(module);
+            boolean changed = false;
+            for(Object m : modules) {
+                ModuleAccess mAccess = getModule(m);
+                if(mAccess.getName().equals(moduleName)) {
+                    changed = true;
+                    if(Objects.nonNull(module)) {
+                        module.inheritFrom(mAccess);
+                        removals.add(mAccess.access);
+                    }
+                    else {
+                        module = mAccess;
+                        module.setName(newModuleName);
+                    }
+                }
+            }
+            if(Objects.nonNull(module)) loader.moveModuleClasses(module,moduleName,newModuleName);
+            if(changed) {
+                modules.removeAll(removals);
+                if(!existed) modules.add(module.access);
+                setModules(modules);
+            }
+        }
+    }
+    
     @IndirectCallers
     public ConfigurationAccess configuration() {
         return getDirect("cf");
@@ -79,10 +129,12 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return false;
     }
     
+    @IndirectCallers
     public ClassAccess findClassForModule(String moduleName, String className, boolean initialize) {
         return getClassAccess(className,initialize,findLoader(moduleName));
     }
     
+    @IndirectCallers
     public ClassLoader findLoader(ModuleAccess module) {
         return findLoader(module.getName());
     }
@@ -99,6 +151,7 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
      * Gets all modules from both the modules set and nameToModule map values to account for accidental stragglers
      * Maps each module to its packages and flattens the final result into a set
      */
+    @IndirectCallers
     public Map<ModuleAccess,Collection<String>> getAllModulePackages() {
         Set<Object> modules = modules(true);
         modules.addAll(nameToModule(false).values());
@@ -109,7 +162,6 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return this.referents;
     }
     
-    @IndirectCallers
     public ModuleAccess getAnyModule(String ... names) {
         for(String name : names) {
             ModuleAccess module = getModule(name,false);
@@ -140,10 +192,19 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return null;
     }
     
+    private ModuleAccess getModuleFromSet(String name) {
+        for(Object module : modules()) {
+            ModuleAccess mAccess = getModule(module);
+            if(name.equals(mAccess.getName())) return mAccess;
+        }
+        return null;
+    }
+    
     String getModuleName(Object module) {
         return getModule(module).getName();
     }
     
+    @IndirectCallers
     Collection<String> getModulePackages(Object module) {
         return getModulePackages(getModule(module));
     }
@@ -205,9 +266,14 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return modifiable ? new HashMap<>(nameToModule) : nameToModule;
     }
     
+    public ModuleAccess newModule(ClassLoaderAccess loader, ModuleDescriptorAccess moduleDescriptor,
+            URI uri) {
+        return newModule(this.access,loader.unwrap(),moduleDescriptor.access,uri);
+    }
+    
     @IndirectCallers
-    public ModuleAccess newModule(ClassLoader loader, Object descriptor, URI uri) {
-        return newModule(this.access,loader,descriptor,uri);
+    public ModuleAccess newModule(ClassLoader loader, Object moduleDescriptor, URI uri) {
+        return newModule(this.access,loader,moduleDescriptor,uri);
     }
     
     @IndirectCallers
@@ -240,6 +306,17 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         modules.remove(module);
         setModules(modules);
         return getModule(module);
+    }
+    
+    @IndirectCallers
+    void removeModuleFromSet(String moduleName) {
+        Set<Object> modules = modules(true);
+        modules.removeIf(module -> getModuleName(module).equals(moduleName));
+        setModules(modules);
+    }
+    
+    public void removeServiceImplementations(String serviceName, String impl) {
+        getServicesCatalog().removeImplementations(serviceName,impl);
     }
     
     public void setModules(Set<Object> modules) {

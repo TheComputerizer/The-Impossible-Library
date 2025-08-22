@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.biome;
 
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -31,7 +30,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     static {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
     
     private static final String GET_TEMPERATURE = DEV ? "getTemperature" : (SRG_ENV ? "m_47505_" : "method_21740");
@@ -86,6 +85,7 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
         return holder.tags().map(tagKey -> tagKey.location().toString()).collect(Collectors.toSet());
     }
     
+    @SuppressWarnings("DataFlowIssue") //Caught by the generic Throwable
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         try {
             return Hacks.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());

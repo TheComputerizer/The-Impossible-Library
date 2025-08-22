@@ -2,11 +2,21 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
+import org.apache.logging.log4j.Logger;
+import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
+import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
@@ -18,9 +28,86 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
  */
 public class Hacks {
     
+    static final Logger LOGGER = TILRef.createLogger("TIL Hacks (BurningWave)");
     static final boolean NAMED_ENV = CoreAPI.isNamedEnv();
     static final boolean SRG_ENV = CoreAPI.isSrgEnv();
     static final int JAVA_VERSION = CoreAPI.javaVersion();
+    
+    static boolean burningWaveInit;
+    
+    /**
+     * Returns true if the value was added.
+     * Assumes the collection field is modifiable.
+     */
+    @IndirectCallers
+    public static <V> boolean addToCollectionField(String field, V value,
+            Function<String,Collection<V>> collectionGetter) {
+        return addToCollectionField(field,value,collectionGetter,null);
+    }
+    
+    /**
+     * Returns true if the value was added.
+     */
+    public static <V> boolean addToCollectionField(String field, V value,
+            Function<String,Collection<V>> collectionGetter,
+            @Nullable BiConsumer<String,Collection<V>> afterAdd) {
+        Collection<V> collection = collectionGetter.apply(field);
+        boolean added = collection.add(value);
+        if(Objects.nonNull(afterAdd)) afterAdd.accept(field,collection);
+        return added;
+    }
+    
+    /**
+     * Returns the previous value associated with the key or null if the map did not contain the key.
+     * Assumes the map field is modifiable.
+     */
+    @IndirectCallers
+    public static <K,V> V addToMapField(String field, K key, V value, Function<String,Map<K,V>> mapGetter) {
+        return addToMapField(field,key,value,mapGetter,null);
+    }
+    
+    /**
+     * Returns the previous value associated with the key or null if the map did not contain the key.
+     */
+    public static <K,V> V addToMapField(String field, K key, V value, Function<String,Map<K,V>> mapGetter,
+            @Nullable BiConsumer<String,Map<K,V>> afterAdd) {
+        Map<K,V> map = mapGetter.apply(field);
+        V replacedValue = map.put(key,value);
+        if(Objects.nonNull(afterAdd)) afterAdd.accept(field,map);
+        return replacedValue;
+    }
+    
+    /**
+     * Set some default BurningWave properties
+     */
+    static Map<?,?> burningWaveProperties() {
+        Map<Object,Object> properties = new HashMap<>();
+        //Hide the large BurningWave banner that gets logged during intialization (which could happen multiple times)
+        properties.put("banner.hide","true");
+        //Tell BurningWave to use the native driver for the greatest reach instead of the default driver
+        properties.put("jvm.driver.type","org.burningwave.jvm.NativeDriver");
+        //Disable some log spam that happens during BurningWave initialization (which could happen multiple times)
+        properties.put("managed-logger.repository.enabled","false");
+        //Increase the priority of these properties to ensure they are checked first
+        properties.put("priority-of-this-configuration","1000");
+        //Disable the resource releaser to prevent a shutdown hook crash
+        properties.put("resource-releaser.enabled","false");
+        return properties;
+    }
+    
+    /**
+     * Check if BurningWave has been initialized and set the default properties if not
+     */
+    public static void checkBurningWaveInit() {
+        if(!burningWaveInit) {
+            try {
+                Default.add(burningWaveProperties());
+            } catch(Throwable t) {
+                LOGGER.warn("Tried to set default BurningWave properties twice");
+            }
+            burningWaveInit = true;
+        }
+    }
     
     /**
      * Finds and instantiates the target class using the given args
@@ -43,7 +130,7 @@ public class Hacks {
      */
     public static <T> T construct(Class<?> target, Object ... args) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call construct on null target class! (args = {})",args);
+            LOGGER.error("Tried to call construct on null target class! (args = {})",args);
             return null;
         }
         return Constructors.newInstanceOf(target,args);
@@ -73,7 +160,7 @@ public class Hacks {
      */
     public static <T> T constructDirect(Class<?> target, Object ... args) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call constructDirect on null target class! (args = {})",args);
+            LOGGER.error("Tried to call constructDirect on null target class! (args = {})",args);
             return null;
         }
         return Constructors.newInstanceOf(target,args);
@@ -88,18 +175,33 @@ public class Hacks {
     }
     
     /**
+     * Defines and resolves a class from byteCode
+     */
+    public static Class<?> defineClass(ClassLoader loader, String name, @Nullable ByteBuffer buffer) {
+        if(java.util.Objects.isNull(buffer))
+            throw new NullPointerException("Tried to define class with null ByteBuffer: "+name);
+        try {
+            checkBurningWaveInit();
+            return ClassLoaders.loadOrDefineByByteCode(buffer,loader);
+        } catch(Throwable t) {
+            TILRef.logError("Failed to define class {} on {}",name,loader,t);
+        }
+        return null;
+    }
+    
+    /**
      * Finds and returns a Class object with the target name using the given ClassLoader and the given caller class.
      * The initialize flag determines whether the target class will be initialized.
      */
     public static @Nullable Class<?> findClass(String target, ClassLoader loader, Class<?> caller, boolean initialize) {
         if(Misc.anyNull(target,loader,caller)) {
-            TILRef.logError("Cannot find target class {} on {} with caller {}!",target,loader,caller);
+            LOGGER.error("Cannot find target class {} on {} with caller {}!",target,loader,caller);
             return null;
         }
         try {
             return Driver.getClassByName(target,initialize,loader,caller);
         } catch(Throwable t) {
-            TILRef.logError("Failed to find class {} on loader {} with caller {}! (initialize={})",target,loader,
+            LOGGER.error("Failed to find class {} on loader {} with caller {}! (initialize={})",target,loader,
                             caller,initialize,t);
         }
         return null;
@@ -201,11 +303,11 @@ public class Hacks {
      */
     public static <T> T getField(Object target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call getField on null target object! (field = {})",field);
+            LOGGER.error("Tried to call getField on null target object! (field = {})",field);
             return null;
         }
         if(Objects.isNull(field)) {
-            TILRef.logError("Tried to call getField with null field name! (target = {})",target);
+            LOGGER.error("Tried to call getField with null field name! (target = {})",target);
             return null;
         }
         return Fields.get(target,field);
@@ -228,11 +330,11 @@ public class Hacks {
     @IndirectCallers
     public static <T> T getFieldDirect(Object target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call getFieldDirect on null target object! (field = {})",field);
+            LOGGER.error("Tried to call getFieldDirect on null target object! (field = {})",field);
             return null;
         }
         if(Objects.isNull(field)) {
-            TILRef.logError("Tried to call getFieldDirect with null field name! (target = {})",target);
+            LOGGER.error("Tried to call getFieldDirect with null field name! (target = {})",target);
             return null;
         }
         return Fields.getDirect(target,field);
@@ -268,11 +370,11 @@ public class Hacks {
      */
     public static <T> T getFieldStatic(Class<?> target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call getFieldStatic on null target class! (field = {})",field);
+            LOGGER.error("Tried to call getFieldStatic on null target class! (field = {})",field);
             return null;
         }
         if(Objects.isNull(field)) {
-            TILRef.logError("Tried to call getFieldStatic with null field name! (target = {})",target);
+            LOGGER.error("Tried to call getFieldStatic with null field name! (target = {})",target);
             return null;
         }
         return Fields.getStatic(target,field);
@@ -312,11 +414,11 @@ public class Hacks {
      */
     public static <T> T getFieldStaticDirect(Class<?> target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call getFieldStaticDirect on null target class! (field = {})",field);
+            LOGGER.error("Tried to call getFieldStaticDirect on null target class! (field = {})",field);
             return null;
         }
         if(Objects.isNull(field)) {
-            TILRef.logError("Tried to call getFieldStaticDirect with null field name! (target = {})",target);
+            LOGGER.error("Tried to call getFieldStaticDirect with null field name! (target = {})",target);
             return null;
         }
         return Fields.getStaticDirect(target,field);
@@ -337,26 +439,26 @@ public class Hacks {
      */
     private static Object getRecordComponent(Class<?> target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to get record component of null class target! (field = {})",field);
+            LOGGER.error("Tried to get record component of null class target! (field = {})",field);
             return null;
         }
         if(Objects.isNull(field)) {
-            TILRef.logError("Tried to get record component for null field name! (target = {})",target);
+            LOGGER.error("Tried to get record component for null field name! (target = {})",target);
             return null;
         }
         if(isJava8()) {
-            TILRef.logError("Cannot get record component in Java 8 environment! Records were introduced in Java"+
+            LOGGER.error("Cannot get record component in Java 8 environment! Records were introduced in Java"+
                             " 14! ({}.{})",target.getName(),field);
             return null;
         }
         Object[] components = invoke(target,"getRecordComponents");
         if(Objects.isNull(components)) {
-            TILRef.logError("No record components found in target {}!",target);
+            LOGGER.error("No record components found in target {}!",target);
             return null;
         }
         for(Object component : components)
             if(field.equals(invoke(component,"getName"))) return component;
-        TILRef.logError("No record components matching '{}' found in target {}!",field,target);
+        LOGGER.error("No record components matching '{}' found in target {}!",field,target);
         return null;
     }
     
@@ -366,7 +468,7 @@ public class Hacks {
      */
     public static <T> T getRecordField(Object target, String field) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Cannot get record field {} from null object target!",field);
+            LOGGER.error("Cannot get record field {} from null object target!",field);
             return null;
         }
         Class<?> targetClass = target.getClass();
@@ -380,7 +482,7 @@ public class Hacks {
     private static <T> T getRecordFieldInstance(@Nullable Object component, @Nullable Object target,
             String name) {
         if(Objects.isNull(component)) {
-            TILRef.logError("Failed to get record field instance! (field = {})",name);
+            LOGGER.error("Failed to get record field instance! (field = {})",name);
             return null;
         }
         return invokeMethodObj(target,invoke(component,"getAccessor"));
@@ -409,11 +511,11 @@ public class Hacks {
      */
     public static <T> T invoke(Object target, String method, Object ... args) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call invoke on null target object! (method = {} | args = {})",method,args);
+            LOGGER.error("Tried to call invoke on null target object! (method = {} | args = {})",method,args);
             return null;
         }
         if(Objects.isNull(method)) {
-            TILRef.logError("Tried to call invoke with null method name! (target = {} | args = {})",target,args);
+            LOGGER.error("Tried to call invoke with null method name! (target = {} | args = {})",target,args);
             return null;
         }
         return Methods.invoke(target,method,args);
@@ -435,12 +537,12 @@ public class Hacks {
      */
     public static <T> T invokeDirect(Object target, String method, Object ... args) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call invokeDirect on null target object! (method = {} | args = {})",
+            LOGGER.error("Tried to call invokeDirect on null target object! (method = {} | args = {})",
                             method,args);
             return null;
         }
         if(Objects.isNull(method)) {
-            TILRef.logError("Tried to call invokeDirect with null method name! (target = {} | args = {})",
+            LOGGER.error("Tried to call invokeDirect with null method name! (target = {} | args = {})",
                             target,args);
             return null;
         }
@@ -449,7 +551,7 @@ public class Hacks {
     
     public static <T> T invokeMethodObj(@Nullable Object target, Method method, Object ... args) {
         if(Objects.isNull(method)) {
-            TILRef.logError("Cannot invoke null method object! (args={})",(Object)args);
+            LOGGER.error("Cannot invoke null method object! (args={})",(Object)args);
         }
         return Methods.invoke(target,method,args);
     }
@@ -484,12 +586,12 @@ public class Hacks {
      */
     public static <T> T invokeStatic(Class<?> target, String method, Object ... args) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call invokeStatic on null target object! (method = {} | args = {})",
+            LOGGER.error("Tried to call invokeStatic on null target object! (method = {} | args = {})",
                             method,args);
             return null;
         }
         if(Objects.isNull(method)) {
-            TILRef.logError("Tried to call invokeStatic with null method name! (target = {} | args = {})",
+            LOGGER.error("Tried to call invokeStatic with null method name! (target = {} | args = {})",
                             target,args);
             return null;
         }
@@ -531,12 +633,12 @@ public class Hacks {
      */
     public static <T> T invokeStaticDirect(Class<?> target, String method, Object ... args) {
         if(Objects.isNull(target)) {
-            TILRef.logError("Tried to call invokeStaticDirect on null target object! (method = {} | args = {})",
+            LOGGER.error("Tried to call invokeStaticDirect on null target object! (method = {} | args = {})",
                             method,args);
             return null;
         }
         if(Objects.isNull(method)) {
-            TILRef.logError("Tried to call invokeStaticDirect with null method name! (target = {} | args = {})",
+            LOGGER.error("Tried to call invokeStaticDirect with null method name! (target = {} | args = {})",
                             target,args);
             return null;
         }
@@ -589,5 +691,139 @@ public class Hacks {
     @IndirectCallers
     public static boolean isSrgEnv() {
         return SRG_ENV;
+    }
+    
+    @SuppressWarnings("UnusedReturnValue")
+    public static <T> Class<T> loadOrDefineClass(Class<T> c, ClassLoader loader) {
+        try {
+            return ClassLoaders.loadOrDefine(c,loader);
+        } catch(Exception ex) {
+            LOGGER.fatal("Failed to load or define {} on loader {}",c,loader,ex);
+        }
+        return c;
+    }
+    
+    /**
+     * Returns true if the value was removed
+     */
+    @IndirectCallers
+    public static <V> boolean removeCollectionFieldValue(String field, V value,
+            Function<String,Collection<V>> collectionGetter) {
+        return removeCollectionFieldValue(field,value,collectionGetter,null);
+    }
+    
+    /**
+     * Returns true if the value was removed
+     */
+    public static <V> boolean removeCollectionFieldValue(String field, V value,
+            Function<String,Collection<V>> collectionGetter,
+            @Nullable BiConsumer<String,Collection<V>> afterRemove) {
+        Collection<V> collection = collectionGetter.apply(field);
+        boolean removed = collection.remove(value);
+        if(Objects.nonNull(afterRemove)) afterRemove.accept(field,collection);
+        return removed;
+    }
+    
+    public static void removeEnvironmentProperty(String property) {
+        removeEnvironmentProperty(property,true);
+    }
+    
+    public static void removeEnvironmentProperty(String property, boolean removeFromAll) {
+        LOGGER.debug("Attempting to remove {} property",removeFromAll);
+        final String all = removeFromAll ? "all environment property maps" : "the default environment property map";
+        final String cName = "java.lang.ProcessEnvironment";
+        final Class<?> c = findClass(cName);
+        if(Objects.isNull(c)) {
+            LOGGER.error("Failed to find class {}! Cannot remove environment property {}",cName,property);
+            return;
+        }
+        removeMapFieldKey("theEnvironment",property,s -> getFieldStaticDirect(c,s));
+        if(removeFromAll) {
+            removeMapFieldKey("theCaseInsensitiveEnvironment",property,s -> getFieldStaticDirect(c,s));
+            removeMapFieldKey("theUnmodifiableEnvironment",property,s -> {
+                Map<String,String> map = getFieldStaticDirect(c,s);
+                return new HashMap<>(Objects.nonNull(map) ? map : Collections.emptyMap());
+            },(s,map) -> setFieldStaticDirect(c,s,Collections.unmodifiableMap(map)));
+        }
+        LOGGER.info("Removed property {} from {}",property,all);
+    }
+    
+    /**
+     * Assumes the map field is modifiable
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public static <K,V> V removeMapFieldKey(String field, K key, Function<String,Map<K,V>> mapGetter) {
+        return removeMapFieldKey(field,key,mapGetter,null);
+    }
+    
+    /**
+     * Returns null if the map did not contain the key
+     */
+    public static <K,V> V removeMapFieldKey(String field, K key, Function<String,Map<K,V>> mapGetter,
+            @Nullable BiConsumer<String,Map<K,V>> afterRemove) {
+        Map<K,V> map = mapGetter.apply(field);
+        V removedValue = map.remove(key);
+        if(Objects.nonNull(afterRemove)) afterRemove.accept(field,map);
+        return removedValue;
+    }
+    
+    @IndirectCallers
+    public static void setField(Object target, String field, Object value) {
+        if(Objects.isNull(target)) {
+            LOGGER.error("Tried to call setField on null target object! (field = {})",field);
+            return;
+        }
+        if(Objects.isNull(field)) {
+            LOGGER.error("Tried to call setField with null field name! (target = {})",target);
+            return;
+        }
+        Fields.set(target,field,value);
+    }
+    
+    @IndirectCallers
+    public static void setFieldDirect(Object target, String field, Object value) {
+        if(Objects.isNull(target)) {
+            LOGGER.error("Tried to call setFieldDirect on null target object! (field = {})",field);
+            return;
+        }
+        if(Objects.isNull(field)) {
+            LOGGER.error("Tried to call setFieldDirect with null field name! (target = {})",target);
+            return;
+        }
+        Fields.setDirect(target,field,value);
+    }
+    
+    @IndirectCallers
+    public static void setFieldStatic(String targetName, String field, Object value) {
+        setFieldStatic(findClass(targetName),field,value);
+    }
+    
+    public static void setFieldStatic(Class<?> target, String field, Object value) {
+        if(Objects.isNull(target)) {
+            LOGGER.error("Tried to call setFieldStatic on null target class! (field = {})",field);
+            return;
+        }
+        if(Objects.isNull(field)) {
+            LOGGER.error("Tried to call setFieldStatic with null field name! (target = {})",target);
+            return;
+        }
+        Fields.setStatic(target,field,value);
+    }
+    
+    @IndirectCallers
+    public static void setFieldStaticDirect(String targetName, String field, Object value) {
+        setFieldStaticDirect(findClass(targetName),field,value);
+    }
+    
+    public static void setFieldStaticDirect(Class<?> target, String field, Object value) {
+        if(Objects.isNull(target)) {
+            LOGGER.error("Tried to call setFieldStaticDirect on null target class! (field = {})",field);
+            return;
+        }
+        if(Objects.isNull(field)) {
+            LOGGER.error("Tried to call setFieldStaticDirect with null field name! (target = {})",target);
+            return;
+        }
+        Fields.setStaticDirect(target,field,value);
     }
 }

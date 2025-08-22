@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.biome;
 
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.biome.BiomeAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -32,7 +31,7 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
 @Setter public class Biome1_20 extends BiomeAPI<Biome> {
     
     static {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
     
     static final String CLIMATE_SETTINGS = NAMED_ENV ? "climateSettings" : (SRG_ENV ? "f_47437_" : "field_26393");
@@ -100,6 +99,7 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
         return holder.tags().map(tagKey -> tagKey.location().toString()).collect(Collectors.toSet());
     }
     
+    @SuppressWarnings("DataFlowIssue") //Caught by the generic Throwable
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
         try {
             return Hacks.invokeDirect(this.wrapped,GET_TEMPERATURE,pos.getWrapped());

@@ -53,6 +53,10 @@ public class ModuleAccess extends AbstractModuleSystemAccessor {
         return getDescriptor().packages();
     }
     
+    public void inheritFrom(ModuleAccess module) {
+        getDescriptor().inheritFrom(module.getDescriptor());
+    }
+    
     public void moveToLayer(String targetLayerName) {
         moveToLayer(getLayerInfo(targetLayerName));
     }
@@ -85,5 +89,6 @@ public class ModuleAccess extends AbstractModuleSystemAccessor {
     
     public void setName(String name) {
         setDirect("name",name);
+        getDescriptor().setName(name);
     }
 }

@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.*;
@@ -47,7 +46,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
 
     private static Map<String,MultiVersionModData> getModData() {
         if(Objects.nonNull(DATA_MAP)) return DATA_MAP;
-        File root = ReflectionHelper.getFieldInstance(null, Loader.class, "minecraftDir");
+        File root = Hacks.getFieldStaticDirect(Loader.class,"minecraftDir");
         DATA_MAP = CoreAPI.getInstance().getModData(root);
         return DATA_MAP;
     }
@@ -111,18 +110,10 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
         this.containerMap = new HashMap<>();
     }
 
-    @SuppressWarnings("unchecked")
     private void addContainer(ModContainer container) {
-        Field field = ReflectionHelper.getField(ModCandidate.class,"mods");
-        if(Objects.isNull(field)) return;
-        Object mods = ReflectionHelper.getFieldInstance(this,field);
-        if(Objects.nonNull(mods)) {
-            if(mods instanceof List<?>) ((List<ModContainer>) mods).add(container);
-        } else {
-            List<ModContainer> list = new ArrayList<>();
-            list.add(container);
-            ReflectionHelper.setFieldValue(this,field,list);
-        }
+        List<ModContainer> mods = Hacks.getFieldDirect(this,"mods");
+        if(Objects.nonNull(mods)) mods.add(container);
+        else Hacks.setFieldDirect(this,"mods",new ArrayList<>(Collections.singletonList(container)));
     }
 
     private boolean appendToTable(ModContainer container, String pkgName, ASMDataTable table) {
@@ -135,9 +126,9 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
                 data.parser.sendToTable(table,this);
                 table.addContainer(container);
                 table.registerPackage(this,pkgName);
-                Field dataField = ReflectionHelper.getField(ASMDataTable.class,"containerAnnotationData");
-                if(Objects.nonNull(ReflectionHelper.getFieldInstance(table,dataField)))
-                    ReflectionHelper.setFieldValue(table,dataField,null); // Fixes @SidedProxy check breaking
+                //Fixes @SidedProxy check breaking
+                if(Objects.nonNull(Hacks.getFieldDirect(table,"containerAnnotationData")))
+                    Hacks.setFieldDirect(table,"containerAnnotationData",null);
                 return true;
             }
         }

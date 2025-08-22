@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILBetterModScan;
@@ -48,7 +48,7 @@ public class MultiVersionLanguageLoader implements IModLanguageLoader {
     
     protected void setCoreAPI(Class<?> implClass) {
         try {
-            ClassHelper.checkBurningWaveInit();
+            Hacks.checkBurningWaveInit();
             implClass.getConstructor().newInstance();
             loadedNewCore = true;
         } catch(Throwable t) {

@@ -1,6 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.component;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
@@ -56,7 +56,7 @@ public class ListComponent1_20_6 extends ListTagAPI<DataComponentMap> implements
             case Tag tag -> {
                 if(tag instanceof CompoundTag compound) {
                     if(hasCustomData) yield compound;
-                    ClassHelper.checkBurningWaveInit();
+                    Hacks.checkBurningWaveInit();
                     //Why did TypedDataComponent#createUnchecked start out as package-private??
                     addComponent(builder,Methods.invokeStaticDirect(TypedDataComponent.class,
                             "createUnchecked",CUSTOM_DATA,CustomData.of(compound)));

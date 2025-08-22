@@ -6,6 +6,10 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class MinecraftServerNeoForge1_20_4 extends MinecraftServerNeoForge1_20 {
     
+    public MinecraftServerNeoForge1_20_4() {
+        super();
+    }
+    
     @Override public MinecraftServer getServer() {
         return ServerLifecycleHooks.getCurrentServer();
     }

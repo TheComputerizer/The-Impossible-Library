@@ -24,7 +24,7 @@ import static org.apache.logging.log4j.Level.*;
 public class TILRef {
     
     public static final String DATA_DIRECTORY = "impossible_data";
-    public static final Logger LOGGER = LogManager.getLogger("The Impossible Library");
+    public static final Logger LOGGER = createLogger("The Impossible Library");
     public static final String BASE_PACKAGE = "mods.thecomputerizer.theimpossiblelibrary";
     public static final String DESCRIPTION = "Multiversion API & mod loader with helpers to do things deemed impossible";
     public static final String MODID = "theimpossiblelibrary";
@@ -118,6 +118,15 @@ public class TILRef {
     
     public static void logWarn(String msg, Object ... args) {
         logNullable(WARN,msg,args);
+    }
+    
+    @IndirectCallers
+    public static Logger createLogger(Class<?> c) {
+        return LogManager.getLogger(c);
+    }
+    
+    public static Logger createLogger(String loggerName) {
+        return LogManager.getLogger(loggerName);
     }
     
     public static ResourceLocationAPI<?> res(String path) {

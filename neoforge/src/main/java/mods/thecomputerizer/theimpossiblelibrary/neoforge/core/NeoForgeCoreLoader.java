@@ -10,7 +10,7 @@ import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.IModuleLayerManager.Layer;
 import io.github.toolfactory.jvm.function.catalog.ConsulterSupplyFunction;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import net.neoforged.neoforgespi.language.IModFileInfo;
 import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.locating.IModFile;
@@ -50,7 +50,7 @@ public class NeoForgeCoreLoader {
     static {
         if(NeoForgeCoreLoader.class.getClassLoader()!=bootLoader())
             LOGGER.info("I see you are running Java 9+ so I'll be using burningwave to break its strong encapsulation");
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
     
     /**

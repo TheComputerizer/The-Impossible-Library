@@ -3,7 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
@@ -19,7 +19,6 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.MultiV
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.core.TILCore1_16_5;
 import net.minecraftforge.fml.loading.FMLLoader;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Objects;
@@ -44,21 +43,18 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
         ClassHelper.addSource(sources,TILCoreForge1_16_5.class);
     }
     
-    @SuppressWarnings("ConstantValue")
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader,url);
         if(loader instanceof TransformingClassLoader) {
-            Field field = ReflectionHelper.getField(TransformingClassLoader.class,"delegatedClassLoader");
-            if(Objects.nonNull(field)) {
-                Object instance = ReflectionHelper.getFieldInstance(loader,field);
-                if(instance instanceof URLClassLoader) {
-                    if(ClassHelper.loadURL((URLClassLoader)instance,url)) {
-                        TILRef.logDebug("Successfully loaded URL to mod class loader {}",url);
-                        return true;
-                    } else TILRef.logError("Failed to load URL to mod class loader {}",url);
-                } else TILRef.logError("delegatedClassLoader is not an instance of URLClassLoader??");
-            } else TILRef.logError("Unable to find delegatedClassLoader field??");
+            URLClassLoader urlLoader = Hacks.getField(loader,"delegatedClassLoader");
+            if(Objects.nonNull(urlLoader)) {
+                if(ClassHelper.loadURL(urlLoader,url)) {
+                    TILRef.logDebug("Successfully loaded URL to mod class loader {}",url);
+                    return true;
+                } else TILRef.logError("Failed to load URL to mod class loader {}",url);
+            } else TILRef.logError("Failed to get delegatedClassLoader field as instance of URLClassLoader");
         }
+        TILRef.logError("Cannot add URL to unknown ClassLoader type {} (URL = {})",loader,url);
         return false;
     }
     

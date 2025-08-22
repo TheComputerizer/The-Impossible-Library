@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import net.neoforged.neoforgespi.language.IModInfo;
@@ -67,7 +67,7 @@ public abstract class TILLanguageLoader {
     
     protected void setCoreAPI(Class<?> implClass) {
         try {
-            ClassHelper.checkBurningWaveInit();
+            Hacks.checkBurningWaveInit();
             Constructors.newInstanceOf(implClass);
             loadedNewCore = true;
         } catch(Throwable t) {

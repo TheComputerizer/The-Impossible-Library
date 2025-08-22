@@ -5,6 +5,7 @@ import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.jarhandling.SecureJar.ModuleDataProvider;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
@@ -13,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import net.neoforged.fml.loading.ClasspathLocatorUtils;
 import net.neoforged.fml.loading.moddiscovery.ModFile;
 import net.neoforged.fml.loading.moddiscovery.ModFileInfo;
@@ -59,7 +61,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class NeoForgeModLoading {
     
     static {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
     
     static final Logger LOGGER = LoggerFactory.getLogger("NeoForge Mod Loading");
@@ -180,7 +182,7 @@ public class NeoForgeModLoading {
         Object core = CoreAPI.getInstance(loader);
         if(Objects.isNull(core))
             throw new RuntimeException("Failed to initialize multiversion mod loader! Cannot find CoreAPI on "+loader);
-        findPaths(loader,(MultiVersionLoaderAPI)CoreAPI.invoke(core,"getLoader"));
+        findPaths(loader,Hacks.invoke(core,"getLoader"));
         loadMods(loader,locator,core,candidateMap);
     }
     
@@ -245,11 +247,10 @@ public class NeoForgeModLoading {
     private static <F> void loadMods(ClassLoader loader, Object locator, Object core,
             Map<MultiVersionModCandidate,F> candidateMap) {
         Class<?>[] withLoader = new Class<?>[]{ClassLoader.class};
-        CoreAPI.invoke(core,"loadCoreModInfo",withLoader,loader);
-        CoreAPI.invoke(core,"instantiateCoreMods");
-        CoreAPI.invoke(core,"writeModContainers",withLoader,loader);
-        Object infoMap = CoreAPI.invoke(core,"getModInfo");
-        loadCandidateInfos(locator,(Map<?,?>)infoMap,candidateMap);
+        Hacks.invoke(core,"loadCoreModInfo",withLoader,loader);
+        Hacks.invoke(core,"instantiateCoreMods");
+        Hacks.invoke(core,"writeModContainers",withLoader,loader);
+        loadCandidateInfos(locator,Hacks.invoke(core,"getModInfo"),candidateMap);
     }
     
     private static TILBetterModScan onFinishedWritingMods(TILBetterModScan scan, IModFile file) {
@@ -263,14 +264,13 @@ public class NeoForgeModLoading {
         return scan;
     }
     
-    @SuppressWarnings("unchecked")
-    public static void populateMultiversionData(Object infoMapObj, Object dataMap) {
-        if(Objects.isNull(infoMapObj)) {
-            LOGGER.error("Cannot populate multiversion data with null info map! Was the getter set up correctly?");
+    public static void populateMultiversionData(Object infoMapObj, Map<String,MultiVersionModData> dataMap) {
+        Map<MultiVersionModInfo,MultiVersionModData> infoMap = GenericUtils.cast(infoMapObj);
+        if(Objects.isNull(infoMap) || Objects.isNull(dataMap)) {
+            LOGGER.error("Cannot populate multiversion data with null maps! Were the getters set up correctly?");
             return;
         }
-        Map<MultiVersionModInfo,MultiVersionModData> infoMap = (Map<MultiVersionModInfo,MultiVersionModData>)infoMapObj;
-        for(MultiVersionModData data : ((Map<String,MultiVersionModData>)dataMap).values()) {
+        for(MultiVersionModData data : dataMap.values()) {
             MultiVersionModInfo info = data.getInfo();
             if(infoMap.containsKey(info)) {
                 LOGGER.debug("Populated data for {}",info);
@@ -320,7 +320,7 @@ public class NeoForgeModLoading {
         LOGGER.debug("Getting CoreAPI instance");
         CoreAPI instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) LOGGER.error("Failed to get CoreAPI instance :(");
-        Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
+        Map<String,MultiVersionModData> data = Hacks.invoke(instance,"getModData",new File("."));
         for(Object candidate : candidates) {
             populateMultiversionData(INFO_GETTER.apply(candidate),data);
             if(MODID.equals(MODULE_NAME_GETTER.apply(candidate)))

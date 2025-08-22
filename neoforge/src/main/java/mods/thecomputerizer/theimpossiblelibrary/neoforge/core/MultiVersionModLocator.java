@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core;
 
 import cpw.mods.modlauncher.Launcher;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.neoforged.neoforgespi.locating.IModFile;
@@ -41,9 +41,9 @@ public class MultiVersionModLocator implements IModLocator {
             TILRef.logInfo("That's the wrong ClassLoader... Retrieving locator instance from the right "+
                            "ClassLoader {}",bootLoader);
         Object instance = NeoForgeCoreLoader.initCoreAPI(bootLoader);
-        this.localLocator = Objects.nonNull(instance) ? ReflectionHelper.invokeMethod(instance.getClass(),
-                "getModLocator",instance,new Class<?>[]{ClassLoader.class},instance.getClass().getClassLoader()) :
-                null;
+        
+        this.localLocator = Objects.nonNull(instance) ?
+                Hacks.invoke(instance,"getModLocator",instance.getClass().getClassLoader()) : null;
         if(Objects.nonNull(this.localLocator)) TILRef.logInfo("Found mod locator {}",this.localLocator.getClass());
         else TILRef.logFatal("Failed to find mod locator! Unable to load multiversion mods");
     }
@@ -52,8 +52,7 @@ public class MultiVersionModLocator implements IModLocator {
         if(Objects.nonNull(this.localLocator)) {
             ClassLoader loader = getClass().getClassLoader();
             TILDev.logInfo("Initializing mod locator with {}",loader);
-            ReflectionHelper.invokeMethod(this.localLocator.getClass(),"initFor",this.localLocator,
-                    new Class<?>[]{ClassLoader.class,IModLocator.class},loader,this);
+            Hacks.invoke(this.localLocator,"initFor",loader,this);
         } else TILRef.logFatal("Locator is null and cannot load multiversion mods! Did it fail to initialize?");
     }
     
@@ -70,8 +69,7 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public List<ModFileOrException> scanMods() {
         List<ModFileOrException> files = null;
         if(Objects.nonNull(this.localLocator))
-            files = ReflectionHelper.invokeMethod(this.localLocator.getClass(),
-                    "scanMods",this.localLocator, new Class<?>[]{IModLocator.class},this);
+            files = Hacks.invoke(this.localLocator,"scanMods",this.localLocator,this);
         else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
         return Objects.nonNull(files) ? files : Collections.emptyList();
     }

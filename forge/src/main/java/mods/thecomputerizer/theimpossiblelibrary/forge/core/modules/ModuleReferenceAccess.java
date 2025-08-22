@@ -19,6 +19,11 @@ public class ModuleReferenceAccess extends AbstractModuleSystemAccessor {
     }
     
     @IndirectCallers
+    public void inheritFrom(ModuleReferenceAccess moduleReference) {
+        descriptor().inheritFrom(moduleReference.descriptor());
+    }
+    
+    @IndirectCallers
     public URI location() {
         return getDirect("location");
     }
@@ -38,5 +43,9 @@ public class ModuleReferenceAccess extends AbstractModuleSystemAccessor {
     
     public void setDescriptor(Object moduleDescriptor) {
         set("descriptor",moduleDescriptor);
+    }
+    
+    public void setName(String moduleName) {
+        descriptor().setName(moduleName);
     }
 }

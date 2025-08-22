@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import cpw.mods.modlauncher.Launcher;
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -33,25 +32,13 @@ public class MultiVersionModLocator implements IModLocator {
         Object instance = ForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
         if(Objects.isNull(instance))
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
-        if(!MODULE_LAYERS) removeModClassesProperty();
+        if(!MODULE_LAYERS) Hacks.removeEnvironmentProperty("MOD_CLASSES");
     }
     
     static ClassLoader modFileClassLoader(IModFile file) {
         if(Objects.isNull(file)) return IModFile.class.getClassLoader();
         Class<?> cls = file.getClass();
         return ("TILForgeModFile".equals(cls.getSimpleName()) ? ForgeModLoading.class : cls).getClassLoader();
-    }
-    
-    /**
-     * Mod classes are passed in earlier as a minecraft library for the dev environment.
-     * The MOD_CLASSES system environment needs to be removed to prevent module duplicates.
-     */
-    static void removeModClassesProperty() {
-        TILDev.logInfo("Attempting to remove MOD_CLASSES property");
-        String cls = "java.lang.ProcessEnvironment";
-        Map<String,String> caseInsensitiveEnv = Hacks.getFieldStaticDirect(cls,"theCaseInsensitiveEnvironment");
-        caseInsensitiveEnv.remove("MOD_CLASSES");
-        TILDev.logInfo("Successfully removed MOD_CLASSES property");
     }
     
     private Map<IModFile,FileSystem> fileSystems;
@@ -155,7 +142,7 @@ public class MultiVersionModLocator implements IModLocator {
             this.failed = true;
             return;
         }
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         String version = String.valueOf((Object)Methods.invoke(coreInstance,"gameVersion"));
         String checkedVersion = version.substring(2).replace('.','_');
         ForgeModLoading.setFileVersion(getClass(),checkedVersion,version);

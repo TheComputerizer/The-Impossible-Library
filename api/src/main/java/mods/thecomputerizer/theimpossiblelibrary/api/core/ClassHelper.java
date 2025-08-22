@@ -5,8 +5,9 @@ import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
-import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -18,9 +19,6 @@ import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -29,12 +27,11 @@ import java.util.function.Function;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 public class ClassHelper {
     
-    private static boolean burningWaveInit;
+    static final Logger LOGGER = TILRef.createLogger("TIL ClassHelper");
     
     /**
      * Uses the URL of a class resources and its name to try and extract the original class path.
@@ -47,7 +44,7 @@ public class ClassHelper {
     
     public static @Nullable String absoluteLocationStr(@Nullable URL url, String className) {
         if(Objects.isNull(url)) {
-            TILRef.logError("Cannot extract class path of null URL for {}!",className);
+            LOGGER.error("Cannot extract class path of null URL for {}!",className);
             return null;
         }
         String urlStr = url.toString().replace("%20"," ");
@@ -62,13 +59,13 @@ public class ClassHelper {
     public static void addSource(Set<String> sources, Class<?> clazz) {
         URL url = getSourceURL(clazz);
         if(Objects.nonNull(url)) sources.add(url.toString());
-        else TILRef.logError("Failed to add source for {}",clazz);
+        else LOGGER.error("Failed to add source for {}",clazz);
     }
     
     @IndirectCallers
     public static boolean addSourceTo(Class<?> c, ClassLoader to) {
         if(c.getClassLoader()==to) {
-            TILRef.logError("Source for {} already exists on {}!",c,to);
+            LOGGER.error("Source for {} already exists on {}!",c,to);
             return false;
         }
         boolean added = false;
@@ -76,31 +73,10 @@ public class ClassHelper {
         CoreAPI core = CoreAPI.getInstance();
         if(Objects.nonNull(core)) added = core.addURLToClassLoader(to,source);
         else if(to instanceof URLClassLoader) added = loadURL((URLClassLoader)to,source);
-        else TILRef.logError("Failed to add source for {} to {}!",c,to);
+        else LOGGER.error("Failed to add source for {} to {}!",c,to);
         return added;
     }
     
-    public static Map<?,?> burningWaveProperties() {
-        Map<Object,Object> properties = new HashMap<>();
-        properties.put("banner.hide","true");
-        properties.put("jvm.driver.type","org.burningwave.jvm.NativeDriver");
-        properties.put("managed-logger.repository.enabled","false");
-        properties.put("priority-of-this-configuration","1000");
-        properties.put("resource-releaser.enabled","false");
-        return properties;
-    }
-    
-    public static void checkBurningWaveInit() {
-        if(!burningWaveInit) {
-            try {
-                Default.add(burningWaveProperties());
-            } catch(Throwable t) {
-                TILRef.logWarn("Tried to set default BurningWave properties twice");
-            }
-            burningWaveInit = true;
-        }
-    }
-
     /**
      * Returns the full name of the class of the object or an empty string if the object is null.
      */
@@ -141,12 +117,12 @@ public class ClassHelper {
         if(Objects.nonNull(url)) {
             TILDev.logInfo("Attempting to define class {} from URL {} on loader {}",name,url,loader);
             try {
-                checkBurningWaveInit();
-                return defineClass(loader,name,Streams.toByteBuffer(url.openStream()));
+                Hacks.checkBurningWaveInit();
+                return Hacks.defineClass(loader, name, Streams.toByteBuffer(url.openStream()));
             } catch(IOException ex) {
-                TILRef.logError("Failed to open stream from URL {}",url,ex);
+                LOGGER.error("Failed to open stream from URL {}",url,ex);
             }
-        } else TILRef.logError("Cannot define class at null URL on {}",loader);
+        } else LOGGER.error("Cannot define class at null URL on {}",loader);
         return null;
     }
     
@@ -154,24 +130,9 @@ public class ClassHelper {
      * Defines and resolves a class from byteCode
      */
     public static Class<?> defineClass(ClassLoader loader, String className, byte[] bytes) {
-        return defineClass(loader,className,Objects.nonNull(bytes) ? ByteBuffer.wrap(bytes) : null);
+        return Hacks.defineClass(loader, className, Objects.nonNull(bytes) ? ByteBuffer.wrap(bytes) : null);
     }
     
-    /**
-     * Defines and resolves a class from byteCode
-     */
-    public static Class<?> defineClass(ClassLoader loader, String name, @Nullable ByteBuffer buffer) {
-        if(Objects.isNull(buffer))
-            throw new NullPointerException("Tried to define class with null ByteBuffer: "+name);
-        try {
-            checkBurningWaveInit();
-            return ClassLoaders.loadOrDefineByByteCode(buffer,loader);
-        } catch(Throwable t) {
-            TILRef.logError("Failed to define class {} on {}",name,loader,t);
-        }
-        return null;
-    }
-
     public static String descriptor(Class<?> clazz) {
         return Objects.nonNull(clazz) ? descriptor(clazz.getName()) : "";
     }
@@ -186,7 +147,7 @@ public class ClassHelper {
      */
     public static Class<?> existsOn(String name, ClassLoader loader) {
         if(Objects.isNull(name) || name.isEmpty()) {
-            TILRef.logWarn("Tried to check if class with null or empty name exists on {}",loader);
+            LOGGER.warn("Tried to check if class with null or empty name exists on {}",loader);
             return null;
         }
         try {
@@ -242,7 +203,7 @@ public class ClassHelper {
     public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader,
             boolean forceLoader) {
         if(Objects.isNull(name) || name.isEmpty()) {
-            TILRef.logError("Cannot find class from null or blank name!");
+            LOGGER.error("Cannot find class from null or blank name!");
             return null;
         }
         try {
@@ -250,7 +211,7 @@ public class ClassHelper {
             if(forceLoader && c.getClassLoader()!=classLoader) moveClassTo(c,classLoader);
             return c;
         } catch(ClassNotFoundException ex) {
-            TILRef.logError("Unable to find class with name `{}` using ClassLoader of type `{}`",name,
+            LOGGER.error("Unable to find class with name `{}` using ClassLoader of type `{}`",name,
                     classLoader.getClass().getName(),ex);
             return null;
         }
@@ -314,8 +275,13 @@ public class ClassHelper {
         return findClass(withPkgName(pkg,simpleName),initialize,classLoader,false);
     }
     
+    public static @Nullable <T> Class<T> findExtensibleClass(String name, Class<?> superClass) {
+        Class<T> clazz = GenericUtils.cast(findClass(name));
+        return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
+    }
+    
     public static byte[] getClassBytes(Class<?> clazz) {
-        checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         return BufferHandler.toByteArray(Classes.getByteCode(clazz));
     }
     
@@ -324,7 +290,7 @@ public class ClassHelper {
             String prefix = path.startsWith("/") ? "jar:file:" : "jar:file:/";
             return new URL(prefix+path+"!/"+relativePath);
         } catch(Exception ex) {
-            TILRef.logError("Failed to get entry {} from presumed jar file {}",relativePath,path,ex);
+            LOGGER.error("Failed to get entry {} from presumed jar file {}",relativePath,path,ex);
         }
         return null;
     }
@@ -333,15 +299,16 @@ public class ClassHelper {
         return className.replace('.','/')+".class";
     }
     
+    @SuppressWarnings("LoggingSimilarMessage")
     public static @Nullable URL getSourceURL(@Nullable String className, ClassLoader loader) {
         if(Objects.nonNull(className) && !className.isEmpty()) {
             try {
                 String relativePath = getResourcePath(className);
                 return absoluteLocation(loader.getResource(relativePath),relativePath);
             } catch(Exception ex) {
-                TILRef.logError("Caught exception trying to get source URL for {} on {}",className,loader,ex);
+                LOGGER.error("Caught exception trying to get source URL for {} on {}",className,loader,ex);
             }
-        } else TILRef.logError("Cannot get source URL for null or empty class name!");
+        } else LOGGER.error("Cannot get source URL for null or empty class name!");
         return null;
     }
     
@@ -351,9 +318,9 @@ public class ClassHelper {
             if(Objects.nonNull(pd)) {
                 CodeSource source = pd.getCodeSource();
                 if(Objects.nonNull(source)) return source.getLocation();
-                else TILRef.logError("Cannot get source URL for class with null CodeSource! {}",clazz);
-            } else TILRef.logError("Cannot get source URL for class with null ProtectionDomain! {}",clazz);
-        } else TILRef.logError("Cannot get source URL for null class!");
+                else LOGGER.error("Cannot get source URL for class with null CodeSource! {}",clazz);
+            } else LOGGER.error("Cannot get source URL for class with null ProtectionDomain! {}",clazz);
+        } else LOGGER.error("Cannot get source URL for null class!");
         return null;
     }
     
@@ -364,21 +331,21 @@ public class ClassHelper {
                 String relativePath = getResourcePath(className);
                 return absoluteLocationStr(loader.getResource(relativePath),relativePath);
             } catch(Exception ex) {
-                TILRef.logError("Caught exception trying to get source URL for {} on {}",className,loader,ex);
+                LOGGER.error("Caught exception trying to get source URL for {} on {}",className,loader,ex);
             }
-        } else TILRef.logError("Cannot get source URL for null or empty class name!");
+        } else LOGGER.error("Cannot get source URL for null or empty class name!");
         return null;
     }
     
     public static <T> @Nullable T initialize(@Nullable Class<T> clazz, Object ... args) {
         if(Objects.nonNull(clazz)) {
             try {
-                checkBurningWaveInit();
+                Hacks.checkBurningWaveInit();
                 return Constructors.newInstanceOf(clazz,args);
             } catch(Exception ex) {
-                TILRef.logError("Failed to initialize {}",clazz,ex);
+                LOGGER.error("Failed to initialize {}",clazz,ex);
             }
-        } else TILRef.logError("Cannot initialize null class");
+        } else LOGGER.error("Cannot initialize null class");
         return null;
     }
     
@@ -408,26 +375,25 @@ public class ClassHelper {
     @SneakyThrows
     public static void loadClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
         if(Objects.nonNull(clazz)) classLoader.loadClass(clazz.getName());
-        else TILRef.logError("Tried to load null class to {}",classLoader);
+        else LOGGER.error("Tried to load null class to {}",classLoader);
     }
 
     @SneakyThrows
     public static boolean loadURL(URLClassLoader classLoader, URL url) {
         TILDev.logDebug("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
-        ReflectionHelper.invokeMethod(URLClassLoader.class,"addURL",classLoader,new Class<?>[]{URL.class},url);
+        Hacks.invokeDirect(classLoader,"addURL",url);
         return true;
     }
     
-    @SuppressWarnings("unchecked")
     public static void moveClassTo(Class<?> c, ClassLoader target) {
         ClassLoader from = c.getClassLoader();
         if(from==target) {
             TILDev.logDebug("Not moving {} since it was already from {}",c,target);
             return;
         }
-        Fields.set(c,"classLoader",target);
-        ((Collection<Class<?>>)Fields.get(from,"classes")).remove(c);
-        ((Collection<Class<?>>)Fields.get(target,"classes")).add(c);
+        Hacks.setFieldDirect(c,"classLoader",target);
+        Hacks.removeCollectionFieldValue("classes",c,s -> Hacks.getFieldDirect(from,s));
+        Hacks.addToCollectionField("classes",c,s -> Hacks.getFieldDirect(target,s));
     }
     
     @IndirectCallers
@@ -447,7 +413,7 @@ public class ClassHelper {
                 case "equals": return args.length>0 && proxy==args[0];
                 case "hashCode": return 0;
                 default: {
-                    TILRef.logInfo("Invoking generic proxy method {}",method.getName());
+                    LOGGER.info("Invoking generic proxy method {}",method.getName());
                     return methodMatcher.apply(method) ? argsHandler.apply(args) : null;
                 }
             }
@@ -479,10 +445,10 @@ public class ClassHelper {
     @SneakyThrows
     public static Class<?> resolveClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
         if(Objects.isNull(clazz)) {
-            TILRef.logFatal("Cannot resolve null defined class! {}");
+            LOGGER.fatal("Cannot resolve null defined class! (ClassLoader = {})",classLoader);
             return null;
         }
-        checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         return ClassLoaders.loadOrDefine(clazz,classLoader);
     }
 
@@ -532,7 +498,7 @@ public class ClassHelper {
     public static Class<?> syncDirect(ClassLoader loader, Class<?> clazz) {
         TILDev.logInfo("Attempting direct sync of {} to {}",clazz,loader);
         if(loader==clazz.getClassLoader()) {
-            TILRef.logError("Tried to sync {} to its own loader",clazz);
+            LOGGER.error("Tried to sync {} to its own loader",clazz);
             return clazz;
         }
         return resolveClass(loader,defineClass(loader,clazz.getName(),getClassBytes(clazz)));
@@ -541,19 +507,19 @@ public class ClassHelper {
     public static void syncSourcesForClass(ClassLoader syncFrom, ClassLoader syncTo, String className,
             BiFunction<ClassLoader,URL,Boolean> urlLoader, @Nullable String ... classesToLoad) {
         try {
-            TILRef.logDebug("Attempting to sync class loaders for {} ({} -> {})",className,syncFrom,syncTo);
+            LOGGER.debug("Attempting to sync class loaders for {} ({} -> {})",className,syncFrom,syncTo);
             URL url = getSourceURL(syncFrom.loadClass(className));
             if(Objects.nonNull(url)) {
-                TILRef.logDebug("Syncing URL {}",url);
+                LOGGER.debug("Syncing URL {}",url);
                 if(!urlLoader.apply(syncTo,url))
-                    TILRef.logError("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo);
+                    LOGGER.error("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo);
                 else if(Objects.nonNull(classesToLoad))
                     for(String classToLoad : classesToLoad) findClass(classToLoad,syncTo);
-            } else TILRef.logDebug("Not syncing null URL");
+            } else LOGGER.debug("Not syncing null URL");
         } catch(ClassNotFoundException ex) {
             ClassLoader systemLoader = ClassLoader.getSystemClassLoader();
             if(Misc.equalsAny(systemLoader,syncFrom,syncTo))
-                TILRef.logError("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo,ex);
+                LOGGER.error("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo,ex);
             else syncSourcesForClass(systemLoader,syncTo,className,urlLoader,classesToLoad);
         }
     }

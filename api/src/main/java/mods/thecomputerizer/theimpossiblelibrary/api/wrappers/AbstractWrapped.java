@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.wrappers;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+
 import java.util.Objects;
 
 public abstract class AbstractWrapped<W> implements Wrapped<W> {
@@ -20,9 +22,8 @@ public abstract class AbstractWrapped<W> implements Wrapped<W> {
         return this.wrapped;
     }
     
-    @SuppressWarnings("unchecked")
-    public Class<? extends W> getWrappedClass() {
-        return (Class<? extends W>)this.wrapped.getClass();
+    public Class<W> getWrappedClass() {
+        return GenericUtils.cast(this.wrapped.getClass());
     }
     
     @Override public String toString() {

@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network.message;
 
 import io.netty.buffer.ByteBuf;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreStateAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHandler;
@@ -192,7 +192,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
         }
         if(this.debug)
             TILRef.logInfo("[Direction={}]: Decoding message type name: {}",dirName(),name);
-        return decodeMessage(buf,ReflectionHelper.findExtensibleClass(name,MessageAPI.class),failure);
+        return decodeMessage(buf,ClassHelper.findExtensibleClass(name,MessageAPI.class), failure);
     }
     
     protected @Nullable MessageAPI<CTX> decodeMessage(ByteBuf buf, Class<?> msgClass, AtomicBoolean failure) {

@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.loader;
 
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
@@ -11,7 +11,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Constructo
 public class MultiVersionCoreModInfo {
     
     static {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
 
     public static MultiVersionCoreModInfo get(Class<? extends CoreEntryPoint> clazz, MultiVersionCoreMod mod) {

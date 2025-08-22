@@ -2,7 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ReflectionHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
@@ -11,6 +11,7 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -18,26 +19,24 @@ import org.objectweb.asm.Type;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
-import java.util.Map;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class ModContainerWriter1_12_2 {
 
+    private static final Logger LOGGER = TILRef.createLogger("TIL ModContainer Writer (1.12.2)");
     private static final String INJECTED_MOD_CONTAINER = "net/minecraftforge/fml/common/InjectedModContainer";
     private static final String MOD_CONTAINER = "net/minecraftforge/fml/common/ModContainer";
     private static final Type TIL_CORE = Type.getType(TILCore1_12_2.class);
 
-    @SuppressWarnings({"unchecked", "DataFlowIssue"})
     public static void cacheClass(LaunchClassLoader launchLoader, String name, Class<?> clazz) {
-        ((Map<String,Class<?>>)ReflectionHelper.getFieldInstance(launchLoader,LaunchClassLoader.class,"cachedClasses")).put(name,clazz);
+        Hacks.addToMapField("cachedClasses",name,clazz,s -> Hacks.getFieldDirect(launchLoader,s));
     }
 
     public static ASMDataTable findASMTable(Loader loader) {
-        Object discoverer = ReflectionHelper.getFieldInstance(loader,Loader.class,"discoverer");
-        return discoverer instanceof ModDiscoverer ? ((ModDiscoverer)discoverer).getASMTable() : null;
+        ModDiscoverer discoverer = Hacks.getFieldDirect(loader,"discoverer");
+        return Objects.nonNull(discoverer) ? discoverer.getASMTable() : null;
     }
 
     private static void writeClinit(ClassVisitor visitor, String modid) {
@@ -68,15 +67,15 @@ public class ModContainerWriter1_12_2 {
         writeClinit(writer,modid);
         writeConstructor(writer,internalName);
         byte[] bytes = ASMHelper.finishWriting(writer,internalName,true);
-        TILRef.logInfo("Successfully wrote bytecode for `{}`",className);
-        TILRef.logInfo("Attempting to add class to loader {}",launchLoader.getClass().getName());
+        LOGGER.info("Successfully wrote bytecode for `{}`",className);
+        LOGGER.info("Attempting to add class to loader {}",launchLoader.getClass().getName());
         Class<?> clazz;
         //The ClassLoader cleanroom uses has a built-in method to define a class
         if(CoreAPI.isJava8()) clazz = ClassHelper.defineClass(launchLoader,className,bytes);
         else {
             ProtectionDomain pd = ModContainerWriter1_12_2.class.getProtectionDomain();
             CodeSource source = Objects.nonNull(pd) ? pd.getCodeSource() : null;
-            clazz = Methods.invoke(launchLoader,"defineClass",className,bytes,source);
+            clazz = Hacks.invokeDirect(launchLoader,"defineClass",className,bytes,source);
         }
         cacheClass(launchLoader,clazz.getName(),clazz);
         return clazz.getName();

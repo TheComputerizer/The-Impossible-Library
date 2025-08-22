@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,6 +11,18 @@ import java.util.Set;
  * Interface for abstracting module modification calls and a few common helpers
  */
 public interface ModuleHolder {
+    
+    void cloneModule(String moduleName, String newModuleName);
+    
+    @IndirectCallers
+    default void cloneModuleFully(String moduleName, String newModuleName) {
+        cloneModuleFully(moduleName,newModuleName,true);
+    }
+    
+    default void cloneModuleFully(String moduleName, String newModuleName, boolean includeThis) {
+        for(ModuleHolder holder : getAllReferents())
+            if(this!=holder || includeThis) holder.cloneModule(moduleName, newModuleName);
+    }
     
     default void collectLayeredReferents(Collection<ModuleHolder> referents, ModuleHolder referent) {
         for(ModuleHolder childReferent : referent.getAllReferents()) {
@@ -37,6 +51,7 @@ public interface ModuleHolder {
     /**
      * Shortcut for getAllReferents(true)
      */
+    @IndirectCallers
     default Collection<ModuleHolder> getLayeredReferents() {
         return getAllReferents(true);
     }

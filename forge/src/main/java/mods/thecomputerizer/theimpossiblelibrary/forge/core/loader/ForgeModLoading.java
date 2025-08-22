@@ -5,6 +5,7 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
@@ -155,7 +156,7 @@ public class ForgeModLoading {
     }
     
     static @Nullable Class<?> dynamicModFileCreator() {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         String pkgName = ForgeModLoading.class.getPackage().getName();
         String className = pkgName+".TILForgeModFile";
         byte[] byteCode = generateModFileExtension(className);
@@ -427,8 +428,8 @@ public class ForgeModLoading {
         Object core = CoreAPI.getInstance(loader);
         if(Objects.isNull(core))
             throw new RuntimeException("Failed to initialize Forge mod loading! Cannot find CoreAPI on "+loader);
-        ClassHelper.checkBurningWaveInit();
-        findPaths(loader,(MultiVersionLoaderAPI)CoreAPI.invoke(core,"getLoader"),locator);
+        Hacks.checkBurningWaveInit();
+        findPaths(loader,Hacks.invoke(core,"getLoader"),locator);
         loadMods(loader,locator,core);
     }
     
@@ -474,6 +475,10 @@ public class ForgeModLoading {
     }
     
     private static void loadCandidateInfos(Object locator, Map<?,?> infoMap) {
+        if(Objects.isNull(infoMap)) {
+            LOGGER.error("Tried to load mod candidate info with null info map! locator = {}",locator);
+            return;
+        }
         for(Entry<?,?> entry : infoMap.entrySet()) {
             MultiVersionModCandidate candidate = (MultiVersionModCandidate)entry.getKey();
             Collection<?> infos = (Collection<?>)entry.getValue();
@@ -485,12 +490,10 @@ public class ForgeModLoading {
     }
     
     private static void loadMods(ClassLoader loader, Object locator, Object core) {
-        Class<?>[] withLoader = new Class<?>[]{ClassLoader.class};
-        CoreAPI.invoke(core,"loadCoreModInfo",withLoader,loader);
-        CoreAPI.invoke(core,"instantiateCoreMods");
-        CoreAPI.invoke(core,"writeModContainers",withLoader,loader);
-        Object infoMap = CoreAPI.invoke(core,"getModInfo");
-        loadCandidateInfos(locator,(Map<?,?>)infoMap);
+        Hacks.invoke(core,"loadCoreModInfo",loader);
+        Hacks.invoke(core,"instantiateCoreMods");
+        Hacks.invoke(core,"writeModContainers",loader);
+        loadCandidateInfos(locator,Hacks.invoke(core,"getModInfo"));
     }
     
     private static TILBetterModScan onFinishedWritingMods(TILBetterModScan scan, IModFile file) {
@@ -506,9 +509,13 @@ public class ForgeModLoading {
         return scan;
     }
     
-    @SuppressWarnings("unchecked")
-    public static void populateMultiversionData(Map<MultiVersionModInfo,MultiVersionModData> infoMap, Object dataMap) {
-        for(MultiVersionModData data : ((Map<String,MultiVersionModData>)dataMap).values()) {
+    public static void populateMultiversionData(Map<MultiVersionModInfo,MultiVersionModData> infoMap,
+            Map<String,MultiVersionModData> dataMap) {
+        if(Objects.isNull(dataMap)) {
+            LOGGER.error("Tried to populate multiversion mod data with null data map! infoMap = {}",infoMap);
+            return;
+        }
+        for(MultiVersionModData data : dataMap.values()) {
             MultiVersionModInfo info = data.getInfo();
             if(infoMap.containsKey(info)) {
                 LOGGER.debug("Populated data for {}",info);
@@ -543,7 +550,7 @@ public class ForgeModLoading {
         LOGGER.debug("Getting CoreAPI instance");
         CoreAPI instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) LOGGER.error("Failed to get CoreAPI instance :(");
-        Object data = CoreAPI.invoke(instance,"getModData",new Class<?>[]{File.class},new File("."));
+        Map<String,MultiVersionModData> data = Hacks.invoke(instance,"getModData",new File("."));
         for(Entry<MultiVersionModCandidate,ModFile> candidateEntry : CANDIDATE_MAP.entrySet()) {
             ModFile candidateFile = candidateEntry.getValue();
             Map<MultiVersionModInfo,MultiVersionModData> map = FILE_INFO_MAP.get(candidateFile);

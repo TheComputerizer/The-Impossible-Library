@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.common.biome;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -30,7 +29,7 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
 public class Biome1_19_4 extends Biome1_19 {
     
     static {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
     
     static final String CLIMATE_SETTINGS = DEV ? "climateSettings" : (SRG_ENV ? "f_47437_" : "field_26393");

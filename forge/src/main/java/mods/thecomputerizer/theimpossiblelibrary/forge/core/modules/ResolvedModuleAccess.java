@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +28,17 @@ public class ResolvedModuleAccess extends AbstractModuleSystemAccessor {
         return getModuleDescriptor(invokeDirect("descriptor"));
     }
     
+    public Set<String> filteredPackages(Collection<String> allPackages) {
+        Set<String> packages = packages(true);
+        packages.removeAll(allPackages);
+        allPackages.addAll(packages);
+        return packages;
+    }
+    
+    public void inheritFrom(ResolvedModuleAccess resolvedModule) {
+        descriptor().inheritFrom(resolvedModule.descriptor());
+    }
+    
     public Set<String> packages() {
         return packages(false);
     }
@@ -42,6 +54,7 @@ public class ResolvedModuleAccess extends AbstractModuleSystemAccessor {
         return getModuleReference(invokeDirect("reference"));
     }
     
+    @IndirectCallers
     public void setConfiguration(ModuleClassLoaderAccess moduleClassLoader) {
         setConfiguration(moduleClassLoader.configuration());
     }
@@ -52,5 +65,9 @@ public class ResolvedModuleAccess extends AbstractModuleSystemAccessor {
     
     public void setConfiguration(Object configuration) {
         setDirect("cf",configuration);
+    }
+    
+    public void setName(String name) {
+        descriptor().setName(name);
     }
 }

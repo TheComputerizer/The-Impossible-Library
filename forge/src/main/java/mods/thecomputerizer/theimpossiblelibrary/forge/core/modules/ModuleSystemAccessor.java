@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 
 import static java.lang.System.err;
@@ -56,16 +55,16 @@ public interface ModuleSystemAccessor {
         return constructDirect(accessorOrLogger,getClassForName(targetName,accessorOrLogger),args);
     }
     
-    static void exportAllPackages(Object accessorOrLogger, String ... layerNames) {
-        for(String layer : layerNames) getModuleLayer(layer,accessorOrLogger).exportPackagesToAll();
+    static Object defaultLogger() {
+        return ForgeCoreLoader.getLogger();
     }
     
-    static Map<String,Collection<String>> getAllModuleNames(Object accessorOrLogger, String ... layerNames) {
-        Map<String,Collection<String>> map = new HashMap<>();
-        ModuleLayerHandlerAccess handler = getModuleLayerHandler(accessorOrLogger);
-        for(Entry<ModuleLayerAccess,String> layerEntry : handler.getAllNamedModuleLayers(layerNames).entrySet())
-            map.put(layerEntry.getValue(),layerEntry.getKey().moduleNames());
-        return map;
+    static void exportAllPackages(String ... layerNames) {
+        exportAllPackages(defaultLogger(),layerNames);
+    }
+    
+    static void exportAllPackages(Object accessorOrLogger, String ... layerNames) {
+        for(String layer : layerNames) getModuleLayer(layer,accessorOrLogger).exportPackagesToAll();
     }
     
     static Logger getAsLogger(Object accessorOrLogger) {
@@ -77,6 +76,13 @@ public interface ModuleSystemAccessor {
     static ClassAccess getClassAccess(String className, boolean intialize, ClassLoader loader,
             Object accessorOrLogger) {
         return getClassAccess(getClassForName(className,intialize,loader,accessorOrLogger),accessorOrLogger);
+    }
+    
+    /**
+     * We don't want to accidentally override or throw any errors related to getClass
+     */
+    static ClassAccess getClassAccess(Class<?> clazz) {
+        return Objects.nonNull(clazz) ? new ClassAccess(clazz,defaultLogger()) : null;
     }
     
     /**
@@ -125,6 +131,10 @@ public interface ModuleSystemAccessor {
         return new ConfigurationAccess(configuration,accessorOrLogger);
     }
     
+    static EnvironmentAccess getEnvironment() {
+        return getLauncher().environment();
+    }
+    
     static EnvironmentAccess getEnvironment(Object accessorOrLogger) {
         return getLauncher(accessorOrLogger).environment();
     }
@@ -146,6 +156,10 @@ public interface ModuleSystemAccessor {
         return new JavaLangAccess(langAccess,accessorOrLogger);
     }
     
+    static LauncherAccess getLauncher() {
+        return getLauncher(defaultLogger());
+    }
+    
     static LauncherAccess getLauncher(Object accessorOrLogger) {
         return new LauncherAccess(accessorOrLogger);
     }
@@ -156,6 +170,11 @@ public interface ModuleSystemAccessor {
     
     static Enum<?> getLayerEnum(String layerName) {
         return ForgeCoreLoader.getEnum(ForgeCoreLoader.bootLoader(),LAYER_ENUM_CLASS,layerName);
+    }
+    
+    @IndirectCallers
+    static LayerInfoAccess getLayerInfo(String layerName) {
+        return getLayerInfo(layerName,defaultLogger());
     }
     
     static LayerInfoAccess getLayerInfo(String layerName, Object accessorOrLogger) {
@@ -172,24 +191,51 @@ public interface ModuleSystemAccessor {
         return new LayerInfoAccess(layerInfo,accessorOrLogger);
     }
     
-    static ModuleClassLoaderAccess getLayerModuleClassLoader(String layerName, Object accessorOrLogger) {
-        return getLayerInfo(layerName,accessorOrLogger).getModuleClassLoader();
-    }
-    
     static ModFileAccess getModFile(Object modFile, Object accessorOrLogger) {
         return new ModFileAccess(modFile,accessorOrLogger);
+    }
+    
+    static ModFileInfoAccess getModFileInfo(Object modFileInfo) {
+        return getModFileInfo(modFileInfo,defaultLogger());
     }
     
     static ModFileInfoAccess getModFileInfo(Object modFileInfo, Object accessorOrLogger) {
         return new ModFileInfoAccess(modFileInfo,accessorOrLogger);
     }
     
+    static ModuleAccess getModule(Object module) {
+        return new ModuleAccess(module,defaultLogger());
+    }
+    
     static ModuleAccess getModule(Object module, Object accessorOrLogger) {
         return new ModuleAccess(module,accessorOrLogger);
     }
     
+    static ModuleClassLoaderAccess[] getModuleClassLoaders(String ... layerNames) {
+        ModuleClassLoaderAccess[] loaders = new ModuleClassLoaderAccess[layerNames.length];
+        for(int i=0;i<layerNames.length;i++) loaders[i] = getModuleClassLoader(layerNames[i]);
+        return loaders;
+    }
+    
+    static ModuleClassLoaderAccess getModuleClassLoader(String layerName) {
+        return getLayerInfo(layerName,defaultLogger()).getModuleClassLoader();
+    }
+    
     static ModuleClassLoaderAccess getModuleClassLoader(String layerName, Object accessorOrLogger) {
         return getLayerInfo(layerName,accessorOrLogger).getModuleClassLoader();
+    }
+    
+    static ModuleClassLoaderAccess getModuleClassLoader(ClassLoader loader) {
+        return new ModuleClassLoaderAccess(loader,defaultLogger());
+    }
+    
+    /**
+     * Get a ModuleClassLoaderAccess with the input layer name already set
+     */
+    static ModuleClassLoaderAccess getModuleClassLoader(ClassLoader loader, String layerName) {
+        ModuleClassLoaderAccess moduleClassLoader = getModuleClassLoader(loader);
+        moduleClassLoader.setLayerName(layerName);
+        return moduleClassLoader;
     }
     
     static ModuleClassLoaderAccess getModuleClassLoader(ClassLoader loader, Object accessorOrLogger) {
@@ -212,12 +258,24 @@ public interface ModuleSystemAccessor {
         return new ModuleFinderAccess(moduleFinder,accessorOrLogger);
     }
     
+    static ModuleLayerAccess getModuleLayer(String layerName) {
+        return getModuleLayer(layerName,defaultLogger());
+    }
+    
     static ModuleLayerAccess getModuleLayer(String layerName, Object accessorOrLogger) {
         return getModuleLayerHandler(accessorOrLogger).getModuleLayer(layerName);
     }
     
+    static ModuleLayerAccess getModuleLayer(Object moduleLayer) {
+        return new ModuleLayerAccess(moduleLayer,defaultLogger());
+    }
+    
     static ModuleLayerAccess getModuleLayer(Object moduleLayer, Object accessorOrLogger) {
         return new ModuleLayerAccess(moduleLayer,accessorOrLogger);
+    }
+    
+    static ModuleLayerHandlerAccess getModuleLayerHandler() {
+        return getEnvironment().getModuleLayerHandler();
     }
     
     static ModuleLayerHandlerAccess getModuleLayerHandler(Object accessorOrLogger) {
@@ -317,7 +375,21 @@ public interface ModuleSystemAccessor {
     
     static ResolvedModuleAccess newResolvedModule(Object accessorOrLogger, Object configuration,
             Object moduleReference) {
-        return getResolvedModule(construct(accessorOrLogger,RESOLVED_MODULE_CLASS,configuration,moduleReference),accessorOrLogger);
+        Object resolvedModule = construct(accessorOrLogger,RESOLVED_MODULE_CLASS,configuration,moduleReference);
+        return getResolvedModule(resolvedModule,accessorOrLogger);
+    }
+    
+    @IndirectCallers
+    static void removeResolvedModules(Collection<String> layerNames, String ... moduleNames) {
+        for(String layerName : layerNames) removeResolvedModules(layerName,moduleNames);
+    }
+    
+    static void removeResolvedModules(String layerName, String ... moduleNames) {
+        for(String moduleName : moduleNames) removeResolvedModule(layerName,moduleName);
+    }
+    
+    static void removeResolvedModule(String layerName, String moduleName) {
+        getModuleClassLoader(layerName).removeModuleFully(moduleName);
     }
     
     Object access();
@@ -403,30 +475,44 @@ public interface ModuleSystemAccessor {
         return null;
     }
     
-    @IndirectCallers
     default <T> T invokeDirect(String name, Object ... args) {
         return invoke(name,true,args);
     }
     
-    @IndirectCallers
     default void logOrPrint(String msg, BiConsumer<Logger,String> log) {
         logOrPrint(msg,false,log);
     }
     
     default void logOrPrint(String msg, boolean isError, BiConsumer<Logger,String> log) {
+        logOrPrint(msg,isError,log,null);
+    }
+    
+    default void logOrPrint(String msg, boolean isError, BiConsumer<Logger,String> log, Throwable t) {
         Logger logger = logger();
         if(Objects.nonNull(logger)) {
             if(Objects.nonNull(log)) log.accept(logger,msg);
-            else logger.info("[MISSING LOG FUNCTION] {}",msg);
+            else {
+                msg = "[MISSING LOG FUNCTION] "+msg;
+                if(Objects.nonNull(t)) logger.info(msg,t);
+                else logger.info(msg);
+            }
         } else {
-            if(isError) err.println(msg);
-            else out.println(msg);
+            if(isError) {
+                err.println(msg);
+                if(Objects.nonNull(t)) t.printStackTrace(err);
+            } else {
+                out.println(msg);
+                if(Objects.nonNull(t)) t.printStackTrace(out);
+            }
         }
     }
     
-    @IndirectCallers
     default void logOrPrintError(String msg) {
         logOrPrint(msg,true,Logger::error);
+    }
+    
+    default void logOrPrintError(String msg, Throwable t) {
+        logOrPrint(msg,true,(logger,s) -> logger.error(s,t),t);
     }
     
     Logger logger();

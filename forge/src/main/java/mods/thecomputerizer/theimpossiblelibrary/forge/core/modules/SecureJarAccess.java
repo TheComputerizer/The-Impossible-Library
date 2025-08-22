@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
-
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -19,22 +18,12 @@ public class SecureJarAccess extends AbstractModuleSystemAccessor {
         super(access,accessorOrLogger);
     }
     
-    @IndirectCallers
     public JarMetadataAccess metadata() {
         return getJarMetadata(get("metadata"));
     }
     
     public String name() {
         return invoke("name");
-    }
-    
-    public Set<String> packages() {
-        return invoke("getPackages");
-    }
-    
-    @IndirectCallers
-    public List<Object> providers() {
-        return invoke("getProviders");
     }
     
     public ModuleDescriptorAccess newModuleDescriptor(String moduleName, List<String> usesServices) {
@@ -47,5 +36,24 @@ public class SecureJarAccess extends AbstractModuleSystemAccessor {
     public ModuleFinderAccess newModuleFinder() {
         Object arg = SECURE_CLASSLOADER_FORMAT ? Collections.singletonList(this.access) : this.access;
         return construct(MODULE_FINDER_EXTENSION_CLASS,arg);
+    }
+    
+    public Set<String> packages() {
+        return invoke("getPackages");
+    }
+    
+    /**
+     * Returns a string consisting of the name and URI for logging
+     */
+    public String print() {
+        return "name = '"+name()+"' | location = '"+uri()+"'";
+    }
+    
+    public List<Object> providers() {
+        return invoke("getProviders");
+    }
+    
+    public URI uri() {
+        return invoke("uri");
     }
 }

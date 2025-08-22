@@ -24,7 +24,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     static final String parentLoadersField = changing("packageToParentLoader","parentLoaders");
     static final String resolvedRootsField = changing("ourModules","resolvedRoots");
     
-    @Setter private String layerName;
+    @Setter String layerName;
     
     ModuleClassLoaderAccess(ClassLoader loader, Object accessorOrLogger) {
         super(loader,accessorOrLogger);
@@ -56,6 +56,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         packageLookup().put(pkg,resolvedModule);
     }
     
+    @IndirectCallers
     public void addParentLoaders(ResolvedModuleAccess resolvedModule, ModuleClassLoaderAccess loader) {
         addParentLoaders(resolvedModule.reference().descriptor(),loader);
     }
@@ -98,6 +99,40 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         resolvedRoots().put(name,moduleReference);
     }
     
+    @Override public void cloneModule(String moduleName, String newModuleName) {
+        clonePackages(moduleName,newModuleName);
+        cloneModuleMap(resolvedRoots(),moduleName,newModuleName);
+        if(SECURE_CLASSLOADER_FORMAT)
+            cloneModuleMap(ourModulesSecure(),moduleName,newModuleName);
+    }
+    
+    void cloneModuleMap(Map<String,Object> map, String moduleName, String newModuleName) {
+        if(map.containsKey(moduleName)) {
+            Object o = map.get(moduleName);
+            map.remove(moduleName);
+            if(!map.containsKey(newModuleName)) {
+                getModuleReference(o).setName(newModuleName);
+                map.put(newModuleName,o);
+            }
+        }
+    }
+    
+    void clonePackages(String moduleName, String newModuleName) {
+        ResolvedModuleAccess existingModule = lookupResolvedModule(newModuleName);
+        boolean existed = Objects.nonNull(existingModule);
+        Set<String> packages = existed ? new HashSet<>() : null;
+        Map<String,Object> packageLookup = packageLookup();
+        for(Entry<String,Object> packageEntry : packageLookup.entrySet()) {
+            ResolvedModuleAccess moduleAccess = getAsResolvedModule(packageEntry.getValue());
+            if(moduleName.equals(moduleAccess.name())) {
+                if(existed) packages.add(packageEntry.getKey());
+                else moduleAccess.setName(newModuleName);
+            }
+        }
+        if(existed)
+            for(String pkg : packages) packageLookup.put(pkg,existingModule.access);
+    }
+    
     public ConfigurationAccess configuration() {
         Object configuration = getDirect("configuration");
         if(Objects.nonNull(configuration)) return getConfiguration(configuration);
@@ -110,6 +145,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     ResolvedModuleAccess getAsResolvedModule(Object resolvedModule) {
+        if(Objects.isNull(resolvedModule)) return null;
         if(resolvedModule instanceof ResolvedModuleAccess) return (ResolvedModuleAccess)resolvedModule;
         return new ResolvedModuleAccess(resolvedModule,this);
     }
@@ -126,12 +162,19 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return getAsResolvedModule(packageLookup().get(pkg));
     }
     
+    @IndirectCallers
     public String getResolvedModuleName(Object resolvedModule) {
         return getAsResolvedModule(resolvedModule).name();
     }
     
     public ModuleReferenceAccess getRoot(String name) {
-        return getModuleReference(resolvedRoots().get(name));
+        Object moduleReference = resolvedRoots().get(name);
+        return Objects.nonNull(moduleReference) ? getModuleReference(moduleReference) : null;
+    }
+    
+    @IndirectCallers
+    public ModuleLayerHandlerAccess handler() {
+        return getModuleLayerHandler();
     }
     
     /**
@@ -153,11 +196,13 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return null;
     }
     
+    @IndirectCallers
     public void moveModulesTo(String targetLayerName, String ... moduleNames) {
         ModuleClassLoaderAccess targetLoader = getModuleClassLoader(targetLayerName);
         for(String moduleName : moduleNames) moveModuleTo(targetLoader,moduleName);
     }
     
+    @IndirectCallers
     public void moveModuleTo(String targetLayerName, String moduleName) {
         moveModuleTo(getModuleClassLoader(targetLayerName),moduleName);
     }
@@ -288,10 +333,6 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     public void removeParentLoaders(Collection<String> pkgs) {
         Map<String,Object> parentLoaders = parentLoaders();
         for(String pkg : pkgs) parentLoaders.remove(pkg);
-    }
-    
-    public void moveParentsForModule(ModuleClassLoaderAccess targetLoader, String moduleName) {
-        ResolvedModuleAccess resolvedModule = lookupResolvedModule(moduleName);
     }
     
     public void removeParentLoader(String pkg) {

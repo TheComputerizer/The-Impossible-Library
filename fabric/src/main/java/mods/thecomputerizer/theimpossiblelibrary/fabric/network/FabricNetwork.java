@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
@@ -91,7 +92,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     
     static @Nullable Object getStaticField(@Nullable Class<?> c, String fieldName) {
         try {
-            ClassHelper.checkBurningWaveInit();
+            Hacks.checkBurningWaveInit();
             return Objects.nonNull(c) ? Fields.getStatic(c, fieldName) : null;
         } catch(Throwable t) {
             TILRef.logError("Failed to get static field {} for {}",fieldName,c,t);

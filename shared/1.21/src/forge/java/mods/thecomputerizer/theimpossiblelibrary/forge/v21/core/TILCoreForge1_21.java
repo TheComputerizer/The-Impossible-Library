@@ -42,7 +42,6 @@ public abstract class TILCoreForge1_21 extends TILCore1_21 implements TILCoreFor
 
     public TILCoreForge1_21(GameVersion version) {
         super(version,FORGE,FORGE_REF.isClient());
-        
         this.loader = new MultiVersionLoaderForge1_21(this);
     }
     

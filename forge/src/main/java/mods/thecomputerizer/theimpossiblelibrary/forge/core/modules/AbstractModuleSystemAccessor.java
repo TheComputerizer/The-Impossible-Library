@@ -4,6 +4,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 public abstract class AbstractModuleSystemAccessor implements ModuleSystemAccessor {
     
@@ -52,6 +56,18 @@ public abstract class AbstractModuleSystemAccessor implements ModuleSystemAccess
     @IndirectCallers
     protected <T> T constructDirect(String targetName, Object ... args) {
         return ModuleSystemAccessor.construct(this,targetName,args);
+    }
+    
+    protected Consumer<Map<?,?>> defaultMapPrinter() {
+        return map -> {
+            for(Entry<?,?> entry : map.entrySet()) {
+                logOrPrint("\t"+entry.getKey(),Logger::debug);
+                Object valueObj = entry.getValue();
+                if(valueObj instanceof Collection<?>) {
+                    for(Object value : (Collection<?>)valueObj) logOrPrint("\t\t"+value,Logger::debug);
+                } else logOrPrint("\t\t"+valueObj,Logger::debug);
+            }
+        };
     }
     
     /**
@@ -135,11 +151,6 @@ public abstract class AbstractModuleSystemAccessor implements ModuleSystemAccess
     @IndirectCallers
     protected LayerInfoAccess getLayerInfo(Object layerInfo) {
         return ModuleSystemAccessor.getLayerInfo(layerInfo,this);
-    }
-    
-    @IndirectCallers
-    protected ModuleClassLoaderAccess getLayerModuleClassLoader(String layerName) {
-        return ModuleSystemAccessor.getLayerModuleClassLoader(layerName,this);
     }
     
     @IndirectCallers
@@ -256,16 +267,6 @@ public abstract class AbstractModuleSystemAccessor implements ModuleSystemAccess
     @IndirectCallers
     protected <T> T invokeStaticDirect(String targetClass, String methodName, Object ... args) {
         return ModuleSystemAccessor.invokeStaticDirect(this,targetClass,methodName,args);
-    }
-    
-    protected ModuleAccess newModule(ModuleLayerAccess moduleLayer, ClassLoaderAccess loaderAccess,
-            ModuleDescriptorAccess moduleDescriptor, URI uri) {
-        return newModule(moduleLayer,loaderAccess.unwrap(),moduleDescriptor,uri);
-    }
-    
-    protected ModuleAccess newModule(ModuleLayerAccess moduleLayer, ClassLoader loader,
-            ModuleDescriptorAccess moduleDescriptor, URI uri) {
-        return newModule(moduleLayer.access,loader,moduleDescriptor.access,uri);
     }
     
     @IndirectCallers

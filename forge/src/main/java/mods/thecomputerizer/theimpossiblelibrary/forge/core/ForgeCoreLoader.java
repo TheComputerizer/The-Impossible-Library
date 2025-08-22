@@ -4,6 +4,7 @@ import cpw.mods.modlauncher.Launcher;
 import io.github.toolfactory.jvm.function.catalog.ConsulterSupplyFunction;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.modules.*;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
@@ -11,16 +12,13 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
 import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
@@ -35,7 +33,8 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     public static final boolean MODULE_LAYERS = Boolean.parseBoolean(System.getProperty("til.debug.forge.modules.layers","true"));
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
     private static final String FORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.forge";
-    private static final String APICORE = API_PKG+".core.CoreAPI";
+    private static final String FORGE_CORE_PKG = FORGE_PKG+".core";
+    private static final String COREAPI_CLASS = API_PKG+".core.CoreAPI";
     private static final Logger LOGGER = LogManager.getLogger("TIL ForgeCoreLoader");
     public static final boolean SECURE_CLASSLOADER_FORMAT = newModuleClassLoaderFormat();
     
@@ -57,6 +56,41 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
             if(isJava8()) LOGGER.info("I see you are running Java 8. Good choice, but I'll be using burningwave anyways");
             else LOGGER.info("I see you are running Java 9+ so I'll be using burningwave to break its strong encapsulation");
         }
+    }
+    
+    /**
+     * Adds given module and related info to all the relevant objects.
+     */
+    static void addModuleThouroughly(ModuleAccess module, ResolvedModuleAccess resolvedModule, String name,
+            Set<String> packages, ModuleReferenceAccess moduleRef, ModuleClassLoaderAccess target) {
+        addModuleThouroughly(module,resolvedModule,target.getModuleLayer(),name,packages,moduleRef,target);
+    }
+    
+    /**
+     * Adds given module and related info to all the relevant objects.
+     */
+    static void addModuleThouroughly(ModuleReferenceHolder ref, String name, ModuleClassLoaderAccess target,
+            Set<String> finalizedPkgs) {
+        addModuleThouroughly(ref.getModule(),target.getModuleLayer(),name,ref.getReference(),target,finalizedPkgs);
+    }
+    
+    /**
+     * Adds given module and related info to all the relevant objects.
+     */
+    static void addModuleThouroughly(ModuleAccess module, ModuleLayerAccess moduleLayer, String name,
+            ModuleReferenceAccess moduleRef, ModuleClassLoaderAccess target, Set<String> finalizedPkgs) {
+        ResolvedModuleAccess resolvedModule = target.configuration().newResolvedModule(moduleRef);
+        addModuleThouroughly(module,resolvedModule,moduleLayer,name,moduleRef,target,finalizedPkgs);
+    }
+    
+    /**
+     * Adds given module and related info to all the relevant objects.
+     */
+    static void addModuleThouroughly(ModuleAccess module, ResolvedModuleAccess resolvedModule,
+            ModuleLayerAccess moduleLayer, String name, ModuleReferenceAccess moduleRef,
+            ModuleClassLoaderAccess target, Set<String> finalizedPkgs) {
+        Set<String> packages = resolvedModule.filteredPackages(finalizedPkgs);
+        addModuleThouroughly(module,resolvedModule,moduleLayer,name,packages,moduleRef,target);
     }
     
     /**
@@ -91,7 +125,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
         Set<String> pkgs = resolvedModule.packages();
         
         //Finalize by moving the original Module from SERVICE to the BOOT layer & fixing parent loaders
-        ModuleSystemAccessor.getModuleLayer("SERVICE",LOGGER).moveModule("BOOT",resolvedModule);
+        ModuleSystemAccessor.getModuleLayer("SERVICE").moveModule("BOOT",resolvedModule);
         thisLoader.addParentLoaders(pkgs,loader);
         
         //Fix configurations & prevent reading duplicate modules
@@ -111,51 +145,15 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     }
     
     static ModuleClassLoaderAccess bootLoaderAccess() {
-        ModuleClassLoaderAccess bootLoader = ModuleSystemAccessor.getModuleClassLoader(bootLoader(),LOGGER);
-        bootLoader.setLayerName("BOOT");
-        return bootLoader;
+        return ModuleSystemAccessor.getModuleClassLoader(bootLoader(),"BOOT");
     }
     
     /**
      * Export the given module to all packages loaded to a module in the GAME layer
      */
     public static void exportAllModules() {
-        LOGGER.info("Exporting all modules");
-        ModuleSystemAccessor.exportAllPackages(LOGGER,"BOOT","SERVICE","PLUGIN","GAME");
-    }
-    
-    /**
-     * After the hacking the module system to get everything to load properly, we need to make sure all the clases
-     * are moved to the game layer so the other game modules are accessible.
-     * Any classes loaded to the BOOT, SERVICE, or PLUGIN layer that is a part of the given module will have their
-     * classLoader field reassigned to the ClassLoader of the GAME layer
-     */
-    static void finalizeModule(String oldName, String newName, ModuleAccess module, ModuleClassLoaderAccess targetLoader,
-            ModuleClassLoaderAccess ... loaders) {
-        String moduleName = module.getName();
-        Set<Class<?>> allMoved = new HashSet<>();
-        Map<ModuleClassLoaderAccess,Collection<Class<?>>> removals = new HashMap<>();
-        for(ModuleClassLoaderAccess loader : loaders) {
-            Collection<Class<?>> classes = loader.classes();
-            if(Objects.isNull(classes)) continue;
-            classes = new HashSet<>(classes);
-            for(Class<?> c : classes) {
-                if(loader.accessClass(c).moveIfInModule(loader,module,oldName,newName)) {
-                    allMoved.add(c);
-                    removals.putIfAbsent(loader,new HashSet<>());
-                    removals.get(loader).add(c);
-                }
-            }
-        }
-        //Handle the ClassLoader side & make sure classes on the target loader aren't in a nonexistant module
-        if(Objects.nonNull(moduleName)) {
-            Collection<Class<?>> targetClasses = targetLoader.classes();
-            for(Class<?> targetClass : targetClasses)
-                targetLoader.accessClass(targetClass).setModuleIfIn(module,moduleName);
-            targetClasses.addAll(allMoved);
-        }
-        for(Entry<ModuleClassLoaderAccess,Collection<Class<?>>> removalEntry : removals.entrySet())
-            removalEntry.getKey().removeClasses(removalEntry.getValue());
+        LOGGER.info("Exporting all packages from all modules");
+        ModuleSystemAccessor.exportAllPackages("BOOT","SERVICE","PLUGIN","GAME");
     }
     
     static Class<?> findClassInHeirarchy(ClassLoader loader, String className) {
@@ -206,51 +204,17 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     }
     
     private static void fixForModuleSystem() {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         String pkg = ConsulterSupplyFunction.class.getPackage().getName();
         ClassLoader thisLoader = ForgeCoreLoader.class.getClassLoader();
-        ModuleClassLoaderAccess loaderAccess = ModuleSystemAccessor.getModuleClassLoader(thisLoader,LOGGER);
+        ModuleClassLoaderAccess loaderAccess = ModuleSystemAccessor.getModuleClassLoader(thisLoader);
         ResolvedModuleAccess resolvedModule = loaderAccess.getResolvedModule(pkg);
         if(Objects.nonNull(resolvedModule)) {
             if(MODULE_LAYERS) {
                 loaderAccess.removePackagesForModule(resolvedModule);
                 addResolvedModule(resolvedModule,loaderAccess);
-            } else {
-                LOGGER.debug("Skipping module layer movement hacks (-Dtil.debug.forge.modules.layers=false)");
-                logModuleNames("BOOT","SERVICE");
-            }
+            } else handleDevLoading(1);
         } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
-    }
-    
-    static Map<String,Collection<String>> getAllLayerPaths(String ... layerNames) {
-        Map<String,Collection<String>> pathMap = new HashMap<>();
-        Object layerManager = isJava21() ? null : ModuleSystemAccessor.getModuleLayerHandler(LOGGER);
-        for(String layerName : layerNames) {
-            List<Object> paths = getLayerPaths(layerName);
-            if(paths.isEmpty()) continue;
-            if(isJava21()) pathMap.put(layerName,paths.stream()
-                    .map(secureJar -> {
-                        String name = Methods.invoke(secureJar,"name");
-                        URI uri = Methods.invoke(secureJar,"uri");
-                        return "name = "+name+" | location = "+uri;
-                    }).collect(Collectors.toSet()));
-            else {
-                Set<String> pathStrs = new HashSet<>();
-                for(Object path : paths) {
-                    try {
-                        Object namedPath = getRecordFieldInstance(layerManager,"path");
-                        Object name = getRecordFieldInstance(namedPath,"name");
-                        Object pathsObj = getRecordFieldInstance(namedPath,"paths");
-                        pathStrs.add("name = "+name+" | paths = "+pathsObj);
-                    } catch(Throwable t) {
-                        LOGGER.error("Failed to extract path string from {}",path,t);
-                    }
-                }
-                if(!pathStrs.isEmpty()) pathMap.put(layerName,Collections.unmodifiableSet(pathStrs));
-            }
-        }
-        if(pathMap.isEmpty()) LOGGER.warn("Returning empty path map for layers {}",(Object)layerNames);
-        return pathMap;
     }
     
     public static @Nullable Object getBootLoadedCoreAPI() {
@@ -259,7 +223,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     
     static Object getCoreAPIReflectively(ClassLoader loader) {
         try {
-            return Fields.getStaticDirect(Class.forName(APICORE,false,loader),"INSTANCE");
+            return Fields.getStaticDirect(Class.forName(COREAPI_CLASS,false,loader),"INSTANCE");
         } catch(ClassNotFoundException ex) {
             LOGGER.debug("CoreAPI not found on {}",loader);
         }
@@ -276,19 +240,18 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
         return Enum.valueOf((Class<E>)enumClass,name);
     }
     
-    static List<Object> getLayerPaths(String layerName) {
-        ModuleLayerHandlerAccess handler = ModuleSystemAccessor.getModuleLayerHandler(LOGGER);
-        Map<Object,List<Object>> map = handler.layerPathMap();
-        Enum<?> layerEnum = ModuleSystemAccessor.getLayerEnum(layerName);
-        if(Objects.isNull(layerEnum)) {
-            LOGGER.error("Failed to get Layer {}! Cannot return paths",layerName);
-            return Collections.emptyList();
-        }
-        if(!map.containsKey(layerEnum)) {
-            LOGGER.warn("Layer path map does not contain paths for {}",layerName);
-            return Collections.emptyList();
-        }
-        return map.get(layerEnum);
+    public static Object getLogger() {
+        return LOGGER;
+    }
+    
+    /**
+     * Returns the index of the first matching element in the array or -1 if nothing matches
+     */
+    static <T> int getMatchingArrayIndex(T[] array, T value) {
+        if(Objects.isNull(array) || array.length==0) return -1;
+        for(int i=0;i<array.length;i++)
+            if(value.equals(array[i])) return i;
+        return -1;
     }
     
     static Object getRecordFieldInstance(Object target, String name) {
@@ -348,35 +311,22 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     }
     
     static String getVersionStr() {
-        ArgumentHandlerAccess handler = ModuleSystemAccessor.getLauncher(LOGGER).argumentHandler();
+        ArgumentHandlerAccess handler = ModuleSystemAccessor.getLauncher().argumentHandler();
         if(Objects.isNull(handler)) return null;
         String[] rawArgs = handler.getArgs();
         if(Objects.isNull(rawArgs)) {
             LOGGER.error("Failed to find version using handler {}",handler.access());
             return null;
         }
-        int versionIndex = -1;
-        boolean found = false;
-        for(int i=0;i<rawArgs.length;i++) {
-            if(rawArgs[i].equals("--fml.mcVersion")) {
-                versionIndex = i+1;
-                found = true;
-                break;
-            }
-        }
-        if(found) {
+        //0 isntead of -1 if nothing matches
+        int versionIndex = getMatchingArrayIndex(rawArgs,"--fml.mcVersion")+1;
+        if(versionIndex>0) {
             LOGGER.debug("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
             return rawArgs[versionIndex];
         }
         LOGGER.debug("--fml.mcVersion was not found so the mc version will be guessed from --version instead");
-        for(int i=0;i<rawArgs.length;i++) {
-            if(rawArgs[i].equals("--version")) {
-                versionIndex = i+1;
-                found = true;
-                break;
-            }
-        }
-        if(found) {
+        versionIndex = getMatchingArrayIndex(rawArgs,"--version")+1;
+        if(versionIndex>0) {
             LOGGER.debug("Found forge version arg at index {}",versionIndex);
             return getVersionFromForgeVersion(rawArgs[versionIndex]);
         }
@@ -394,11 +344,47 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
         return mcVersion;
     }
     
+    static void handleDevLoading(int stage) {
+        final String appendArg = "(-Dtil.debug.forge.modules.layers=false)";
+        Set<Enum<?>> completedLayers = ModuleSystemAccessor.getModuleLayerHandler().completedLayers().keySet();
+        switch(stage) {
+            case 1: {
+                LOGGER.debug("Skipping module layer movement hacks {}",appendArg);
+                boolean bootLoaded = ForgeCoreLoader.class.getClassLoader()==bootLoader();
+                LOGGER.debug("ForgeCoreLoader is boot loaded: {}",bootLoaded);
+                LOGGER.debug("Attempting to merge forge module into main module");
+                logModuleNames("BOOT","SERVICE");
+                LOGGER.debug("Completed layers: {}",completedLayers);
+                return;
+            }
+            case 2: {
+                LOGGER.debug("Merging dev modules {}",appendArg);
+                //ModuleSystemAccessor.getModuleClassLoader("SERVICE").configuration().printGraph();
+                final String languageProviderService = "net.minecraftforge.forgespi.language.IModLanguageProvider";
+                ModuleClassLoaderAccess loader = bootLoaderAccess();
+                loader.getModuleLayer().cloneModule("forge","main");
+                loader.configuration().cloneModule("forge","main");
+                loader.cloneModule("forge","main");
+                LOGGER.debug("Completed layers: {}",completedLayers);
+                return;
+            }
+            case 3: {
+                LOGGER.debug("Skipping PLUGIN layer module resyncing {}",appendArg);
+                //bootLoaderAccess().moveModulesTo("PLUGIN","forge","main");
+                logModuleNames("BOOT","SERVICE","PLUGIN");
+                LOGGER.debug("Completed layers: {}",completedLayers);
+            }
+            default: {
+                LOGGER.error("Unknown dev loading stage {} {}",stage,appendArg);
+            }
+        }
+    }
+    
     /**
      * Returns a CoreAPI instance on the input ClassLoader. Initializes the source if necessary
      */
     static @Nullable Object initCoreAPI(ClassLoader loader) {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         LOGGER.info("Starting CoreAPI init");
         Object bootInstance = getBootLoadedCoreAPI();
         if(Objects.nonNull(bootInstance)) {
@@ -430,7 +416,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
      * Tries to get the ClassLoader instance associated with the given layer name
      */
     public static ClassLoader layerClassLoader(String layerName) {
-        return ModuleSystemAccessor.getModuleClassLoader(layerName,LOGGER).unwrap();
+        return ModuleSystemAccessor.getModuleClassLoader(layerName).unwrap();
     }
     
     /**
@@ -448,7 +434,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
         }
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Forge-"+version+"]");
         else if(isJava8()) {
-            String forgeModLoading = "mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading";
+            String forgeModLoading = FORGE_CORE_PKG+".loader.ForgeModLoading";
             try {
                 Class.forName(forgeModLoading,true,loader);
             } catch(Exception ex) {
@@ -466,48 +452,20 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
             return;
         }
         try {
-            String name = mod.getModId(); //Usually the same as existingName, but there are some edge cases...
-            ModFileInfoAccess fileInfo = ModuleSystemAccessor.getModFileInfo(mod.getOwningFile(),LOGGER);
-            SecureJarAccess secureJar = fileInfo.secureJar();
-            ModuleClassLoaderAccess targetLoader = ModuleSystemAccessor.getModuleClassLoader("GAME",LOGGER);
-            String existingName = secureJar.name();
-            ModuleLayerAccess layer = ModuleSystemAccessor.getModuleLayer(targetLayerName,LOGGER);
-            ModuleAccess module = layer.getAnyModule(existingName,name);
-            ModuleDescriptorAccess descriptor;
-            boolean existed = false;
-            if(Objects.nonNull(module)) {
-                LOGGER.info("Found existing module to set up for {}",name);
-                descriptor = module.getDescriptor();
-                descriptor.setName(name);
-                existed = true;
-            } else {
-                LOGGER.info("Setting up new module with name {}",name);
-                descriptor = fileInfo.newModuleDescriptor(name,secureJar);
-            }
-            ModuleReferenceAccess reference = secureJar.newModuleFinder().getModuleReference(existingName);
-            reference.setDescriptor(descriptor);
-            URI uri = reference.location();
-            ResolvedModuleAccess resolvedModule = targetLoader.configuration().newResolvedModule(reference);
-            
-            //This looks stupid but packages and finalizedPkgs need to stay unique.
-            //Any packages that were already finalized are skipped
-            Set<String> packages = resolvedModule.packages(true);
-            packages.removeAll(finalizedPkgs);
-            finalizedPkgs.addAll(packages);
-            Class<?> cModule = Class.forName("java.lang.Module");
-            if(Objects.isNull(module)) module = Constructors.newInstanceOf(cModule,layer,targetLoader,descriptor,uri);
-            addModuleThouroughly(module,resolvedModule,layer,name,packages,reference,targetLoader);
-            LOGGER.info("Finished setting up {}",module);
+            String modid = mod.getModId(); //Usually the same as the jar name, but there are some edge cases...
+            ModFileInfoAccess fileInfo = ModuleSystemAccessor.getModFileInfo(mod.getOwningFile());
+            ModuleClassLoaderAccess[] loaders = ModuleSystemAccessor.getModuleClassLoaders("BOOT","SERVICE","PLUGIN");
+            ModuleClassLoaderAccess targetLoader = ModuleSystemAccessor.getModuleClassLoader("GAME");
+            Consumer<String> jarNameMismatchHandler = jarName -> nukeLoaderFields(jarName,loaders,targetLoader);
+            ModuleReferenceHolder referenceHolder = fileInfo.getJarModule(targetLoader,modid,jarNameMismatchHandler);
+            addModuleThouroughly(referenceHolder,modid,targetLoader,finalizedPkgs);
+            LOGGER.info("Finished setting up {}",referenceHolder.getModule());
             
             //nuke & finalize
-            ModuleClassLoaderAccess boot = bootLoaderAccess();
-            ModuleClassLoaderAccess service = ModuleSystemAccessor.getModuleClassLoader("SERVICE",LOGGER);
-            ModuleClassLoaderAccess plugin = ModuleSystemAccessor.getModuleClassLoader("PLUGIN",LOGGER);
-            nukeLoaderFields(name,boot,service,plugin);
-            if(!existingName.equals(name) && existed) nukeLoaderFields(existingName,boot,service,plugin,targetLoader);
-            finalizeModule(existingName,name,module,targetLoader,boot,service,plugin);
+            nukeLoaderFields(modid,loaders);
+            targetLoader.inheritClasses(referenceHolder,new String[]{fileInfo.jarName(),modid},loaders);
             LOGGER.warn("------------------------------------------------------------------------------------------------");
-            LOGGER.warn("SUCCESSFULLY LOADED {} TO THE GAME LAYER HAVE A NICE DAY", name);
+            LOGGER.warn("SUCCESSFULLY LOADED {} TO THE GAME LAYER HAVE A NICE DAY", modid);
             LOGGER.warn("------------------------------------------------------------------------------------------------");
         } catch(Throwable t) {
             LOGGER.error("Failed to load new module!",t);
@@ -516,19 +474,13 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     
     public static void logModuleNames(String ... layerNames) {
         LOGGER.debug("Printing all module names for the following layers: {}",(Object)layerNames);
-        for(Entry<String,Collection<String>> entry : ModuleSystemAccessor.getAllModuleNames(LOGGER,layerNames).entrySet()) {
-            LOGGER.debug("\t{}",entry.getKey());
-            for(String moduleName : entry.getValue()) LOGGER.debug("\t\t{}",moduleName);
-        }
+        ModuleSystemAccessor.getModuleLayerHandler().printAllModuleNames(layerNames);
         LOGGER.debug("Finished printing all requested module names");
     }
     
     public static void logLayerPaths(String ... layerNames) {
         LOGGER.debug("Printing all paths for the following layers: {}",(Object)layerNames);
-        for(Entry<String,Collection<String>> entry : getAllLayerPaths(layerNames).entrySet()) {
-            LOGGER.debug("\t{}",entry.getKey());
-            for(String path : entry.getValue()) LOGGER.debug("\t\t{}",path);
-        }
+        ModuleSystemAccessor.getModuleLayerHandler().printLayerPaths(layerNames);
         LOGGER.debug("Finished printing all requested paths");
     }
     
@@ -537,37 +489,29 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
      */
     public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs) {
         LOGGER.info("Finalizing package {}",pkg);
-        ModuleClassLoaderAccess boot = ModuleSystemAccessor.getModuleClassLoader(bootLoader(),LOGGER);
-        ModuleClassLoaderAccess service = ModuleSystemAccessor.getLayerModuleClassLoader("SERVICE",LOGGER);
-        ModuleClassLoaderAccess plugin = ModuleSystemAccessor.getLayerModuleClassLoader("PLUGIN",LOGGER);
-        Object[] found = findModuleLoaderForPackage(pkg,boot,service,plugin);
-        if(Objects.isNull(found)) {
+        ModuleClassLoaderAccess[] loaders = ModuleSystemAccessor.getModuleClassLoaders("BOOT","SERVICE","PLUGIN");
+        ResolvedModuleHolder holder = ResolvedModuleHolder.findPackage(pkg,loaders);
+        if(Objects.isNull(holder)) {
             loadNewModuleTo(mod,"GAME",finalizedPkgs);
             return;
         }
-        ModuleClassLoaderAccess foundLoader = (ModuleClassLoaderAccess)found[0];
-        ResolvedModuleAccess resolvedModule = (ResolvedModuleAccess)found[1];
-        LOGGER.info("Got resolved module as {}",resolvedModule);
+        ResolvedModuleAccess resolvedModule = holder.getModule();
         String name = resolvedModule.name();
+        LOGGER.info("Got resolved module as {}({})",resolvedModule,name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("NUKING ALL REFERENCES OF MODULE {} FROM THE BOOT, SERVICE, & PLUGIN LAYERS",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
-        Map<String,Object> bootRoots = foundLoader.resolvedRoots();
-        ModuleReferenceAccess ref = foundLoader.getRoot(name);
-        ModuleLayerAccess foundLayer = ModuleSystemAccessor.getModuleLayer((String)found[2],LOGGER);
-        Map<String,Object> layerModules = foundLayer.nameToModule();
-        ModuleAccess module = foundLayer.getModule(name);
-        ModuleClassLoaderAccess target = ModuleSystemAccessor.getLayerModuleClassLoader("GAME",LOGGER);
-        ModuleLayerAccess gameLayer = ModuleSystemAccessor.getModuleLayer("GAME",LOGGER);
+        ModuleClassLoaderAccess foundLoader = holder.getLoader();
+        ModuleAccess module = foundLoader.getModuleLayer().getModule(name);
+        ModuleClassLoaderAccess target = ModuleSystemAccessor.getModuleClassLoader("GAME");
         Set<String> packages = resolvedModule.packages(true);
         packages.removeAll(finalizedPkgs);
-        packages = Collections.unmodifiableSet(packages);
         finalizedPkgs.addAll(packages);
-        addModuleThouroughly(module,resolvedModule,gameLayer,name,packages,ref,target);
+        addModuleThouroughly(module,resolvedModule,name,packages,foundLoader.getRoot(name),target);
         
         //nuke & finalize
-        nukeLoaderFields(name,boot,service,plugin);
-        finalizeModule(name,name,module,target,boot,service,plugin);
+        nukeLoaderFields(name,loaders);
+        target.inheritClasses(module,name,loaders);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
         LOGGER.warn("MODULE {} HAS BEEN SUCCESSFULLY MOVED TO THE GAME LAYER HAVE A NICE DAY",name);
         LOGGER.warn("------------------------------------------------------------------------------------------------");
@@ -594,19 +538,17 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
         });
     }
     
+    static void nukeLoaderFields(String moduleName, ModuleClassLoaderAccess[] loaders,
+            ModuleClassLoaderAccess ... otherLoaders) {
+        nukeLoaderFields(moduleName,loaders);
+        nukeLoaderFields(moduleName,otherLoaders);
+    }
+    
     /**
      * Remove references to the input module from the associated ModuleClassLoader instances.
-     * Config
      */
     static void nukeLoaderFields(String moduleName, ModuleClassLoaderAccess ... loaders) {
-        for(ModuleClassLoaderAccess loader : loaders) {
-            loader.configuration().removeModule(moduleName);
-            loader.removeRoot(moduleName);
-            loader.removeSecureModule(moduleName);
-            ResolvedModuleAccess module = loader.lookupResolvedModule(moduleName);
-            if(Objects.nonNull(module)) loader.removePackages(module.packages());
-            loader.getModuleLayer().removeModule(moduleName);
-        }
+        for(ModuleClassLoaderAccess loader : loaders) loader.removeModuleFully(moduleName);
     }
     
     /**
@@ -617,41 +559,14 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     }
     
     public static void removeDevModules(String ... layers) {
-        if(!MODULE_LAYERS) {
-            LOGGER.debug("Removing dev modules");
-            removeResolvedModules(Arrays.asList("BOOT","SERVICE","main"));
-            removeResolvedModules("SERVICE","forge");
-        }
-    }
-    
-    @SuppressWarnings("SameParameterValue")
-    static void removeResolvedModules(Collection<String> layerNames, String ... moduleNames) {
-        for(String layerName : layerNames) removeResolvedModules(layerName,moduleNames);
-    }
-    
-    @SuppressWarnings("SameParameterValue")
-    static void removeResolvedModules(String layerName, String ... moduleNames) {
-        for(String moduleName : moduleNames) removeResolvedModule(layerName,moduleName);
-    }
-    
-    static void removeResolvedModule(String layerName, String moduleName) {
-        ModuleSystemAccessor.getModuleClassLoader(layerName,LOGGER).removeModuleFully(moduleName);
+        if(!MODULE_LAYERS) handleDevLoading(2);
     }
     
     public static void removeServiceFrom(String service, String impl, String layer) {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
         LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
-        ModuleSystemAccessor.getModuleLayer(layer,LOGGER).getServicesCatalog().removeImplementations(service,impl);
+        ModuleSystemAccessor.getModuleLayer(layer).removeServiceImplementations(service,impl);
         LOGGER.info("Sucessfully removed all service providers from {} layer for {}",layer,impl);
-    }
-    
-    /**
-     * Get name of resolved module via reflection since this is a Java 8 context
-     */
-    static Object resolvedDescriptor(Object resolvedModule) {
-        if(Objects.nonNull(resolvedModule)) return Methods.invokeDirect(resolvedModule,"descriptor");
-        LOGGER.error("Cannot get ModuleDescriptor for null ResolvedModule!");
-        return Collections.emptySet();
     }
     
     /**
@@ -663,30 +578,27 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     public static void resyncModules(ClassLoader loaderTo, String layerTo, ClassLoader loaderFrom) {
         if(isJava8()) return; //Not needed on Java 8
         if(!MODULE_LAYERS) { //Resolve differently in dev since the modules are initially loaded in the BOOT layer
-            LOGGER.debug("Skipping PLUGIN layer module resyncing (-Dtil.debug.forge.modules.layers=false)");
-            bootLoaderAccess().moveModulesTo("PLUGIN","forge","main");
-            logModuleNames("BOOT","SERVICE","PLUGIN");
+            handleDevLoading(3);
             return;
         }
-        resyncModules(ModuleSystemAccessor.getModuleClassLoader(loaderTo,LOGGER),layerTo,
-                      ModuleSystemAccessor.getModuleClassLoader(loaderFrom,LOGGER));
+        resyncModules(ModuleSystemAccessor.getModuleClassLoader(loaderTo),layerTo,
+                      ModuleSystemAccessor.getModuleClassLoader(loaderFrom));
     }
     
     private static void resyncModules(ModuleClassLoaderAccess loaderTo, String layerTo,
             ModuleClassLoaderAccess loaderFrom) {
         LOGGER.info("Resyncing module to {}",layerTo);
-        final String pkg = "mods.thecomputerizer.theimpossiblelibrary.forge.core";
-        if(!"PLUGIN".equals(layerTo)) loaderFrom.configuration().addModule(loaderFrom.getResolvedModule(pkg));
+        if(!"PLUGIN".equals(layerTo)) loaderFrom.configuration().addModule(loaderFrom.getResolvedModule(FORGE_CORE_PKG));
         
         //Remove module from PLUGIN layer
-        ResolvedModuleAccess resolvedModule = loaderTo.getResolvedModule(pkg);
+        ResolvedModuleAccess resolvedModule = loaderTo.getResolvedModule(FORGE_CORE_PKG);
         String name = resolvedModule.name();
         ConfigurationAccess configuration = loaderTo.configuration();
         configuration.removeModule(resolvedModule);
         Set<String> packages = resolvedModule.packages();
         
         //Finalize by dealing with the module layers & fixing parent loaders
-        ModuleSystemAccessor.getModuleLayer(layerTo,LOGGER).removeModule(name);
+        ModuleSystemAccessor.getModuleLayer(layerTo).removeModule(name);
         loaderTo.addParentLoaders(resolvedModule.packages(),loaderFrom);
         loaderTo.removeRoot(name);
         
@@ -694,7 +606,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     }
     
     public static void sanityCheckModule(Class<?> c, String name) {
-        ClassAccess access = ModuleSystemAccessor.getClassAccess(c,LOGGER);
+        ClassAccess access = ModuleSystemAccessor.getClassAccess(c);
         if(Objects.isNull(access)) {
             LOGGER.error("Failed to get ClassAccess for {}! Cannot run sanity check",c);
             return;
@@ -710,17 +622,17 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     public static void verifyModule(String className, IModInfo info, Object moduleLayer) {
         LOGGER.info("Verifying that {} is valid for {} and can be found in {}",className,info,moduleLayer);
         String modid = info.getModId();
-        ModFileInfoAccess fileInfo = ModuleSystemAccessor.getModFileInfo(info.getOwningFile(),LOGGER);
+        ModFileInfoAccess fileInfo = ModuleSystemAccessor.getModFileInfo(info.getOwningFile());
         String moduleName = fileInfo.moduleName();
         if(!modid.equals(moduleName)) LOGGER.error("Mod id {} does not equal module name {}!",modid,moduleName);
-        ModuleLayerAccess layerAccess = ModuleSystemAccessor.getModuleLayer(moduleLayer,LOGGER);
+        ModuleLayerAccess layerAccess = ModuleSystemAccessor.getModuleLayer(moduleLayer);
         Optional<Object> optionalModule = layerAccess.findModule(moduleName);
         if(!optionalModule.isPresent()) {
             layerAccess.findAndAddModule(moduleLayer,moduleName,modid);
             optionalModule = layerAccess.findModule(moduleName);
         }
         if(optionalModule.isPresent())
-            ModuleSystemAccessor.getModule(optionalModule.get(),LOGGER).addClassIfMissing(className,layerAccess);
+            ModuleSystemAccessor.getModule(optionalModule.get()).addClassIfMissing(className,layerAccess);
         else LOGGER.error("Module {} is not present in the target layer!",moduleName);
         LOGGER.info("Finished verifying {}",className);
     }

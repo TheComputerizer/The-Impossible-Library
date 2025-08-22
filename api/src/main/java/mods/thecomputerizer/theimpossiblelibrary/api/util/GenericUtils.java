@@ -1,7 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ArrayHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
@@ -27,7 +27,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class GenericUtils {
     
     static {
-        ClassHelper.checkBurningWaveInit();
+        Hacks.checkBurningWaveInit();
     }
     
     @SuppressWarnings("unchecked")
