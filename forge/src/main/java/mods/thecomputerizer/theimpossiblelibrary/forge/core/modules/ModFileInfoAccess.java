@@ -1,5 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
@@ -16,13 +21,13 @@ public class ModFileInfoAccess extends AbstractModuleSystemAccessor {
     }
     
     public ModFileAccess file() {
-        return getModFile(invoke("getFile"));
+        return ForgeModuleAccess.getModFile(invoke("getFile"),this);
     }
     
     public ModuleReferenceHolder getJarModule(ModuleClassLoaderAccess loader, String modid,
             Consumer<String> jarNameMismatchHandler) {
         ModuleLayerAccess moduleLayer = loader.getModuleLayer();
-        ModuleAccess module = moduleLayer.getAnyModule(modid,jarName());
+        ModuleAccess module = moduleLayer.getAnyModule(modid, jarName());
         ModuleDescriptorAccess descriptor;
         if(Objects.nonNull(module)) {
             logOrPrint("Found existing module to set up for "+modid, Logger::info);

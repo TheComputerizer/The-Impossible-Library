@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 
 import java.util.Objects;
 
@@ -20,7 +22,7 @@ public class LayerInfoAccess extends AbstractModuleSystemAccessor {
     }
     
     public ModuleClassLoaderAccess getModuleClassLoader() {
-        ModuleClassLoaderAccess moduleClassLoader = getModuleClassLoader(getClassLoader());
+        ModuleClassLoaderAccess moduleClassLoader = ForgeModuleAccess.getModuleClassLoader(getClassLoader());
         if(Objects.nonNull(this.layerName)) moduleClassLoader.setLayerName(this.layerName);
         return moduleClassLoader;
     }

@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
+
 import java.util.List;
 
 /**

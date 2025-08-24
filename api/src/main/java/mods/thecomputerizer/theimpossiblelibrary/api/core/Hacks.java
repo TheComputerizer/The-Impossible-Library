@@ -29,9 +29,14 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Hacks {
     
     static final Logger LOGGER = TILRef.createLogger("TIL Hacks (BurningWave)");
-    static final boolean NAMED_ENV = CoreAPI.isNamedEnv();
-    static final boolean SRG_ENV = CoreAPI.isSrgEnv();
     static final int JAVA_VERSION = CoreAPI.javaVersion();
+    
+    /**
+     * This class might be initialized before the CoreAPI instance so we need to defer any environment-dependent checks
+     */
+    static boolean initializedEnvironment;
+    static boolean namedEnv;
+    static boolean srgEnv;
     
     static boolean burningWaveInit;
     
@@ -106,6 +111,18 @@ public class Hacks {
                 LOGGER.warn("Tried to set default BurningWave properties twice");
             }
             burningWaveInit = true;
+        }
+    }
+    
+    private static void checkEnvironmentInit() {
+        if(!initializedEnvironment) {
+            try {
+                namedEnv = CoreAPI.isNamedEnv();
+                srgEnv = CoreAPI.isSrgEnv();
+                initializedEnvironment = true; //Only mark initialized if nothing is thrown
+            } catch(Throwable t) {
+                LOGGER.fatal("Failed to initialize environment-dependent checks!",t);
+            }
         }
     }
     
@@ -311,6 +328,18 @@ public class Hacks {
             return null;
         }
         return Fields.get(target,field);
+    }
+    
+    @IndirectCallers
+    public static <E,C extends Collection<E>> C getFieldCollection(String field, Function<String,C> getter) {
+        return getFieldCollection(field,getter,null);
+    }
+    
+    public static <E,C extends Collection<E>> C getFieldCollection(String field,
+            Function<String,C> getter, Function<C,C> ifNotNull) {
+        C collection = getter.apply(field);
+        return Objects.isNull(ifNotNull) ? collection :
+                (Objects.nonNull(collection) ? ifNotNull.apply(collection) : null);
     }
     
     /**
@@ -558,23 +587,6 @@ public class Hacks {
     
     /**
      * Finds the target class and invokes a static method of the given name in it with the given args.
-     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
-     */
-    @IndirectCallers
-    public static <T> T invokeStatic(String targetClass, String named, String intermediary, Object ... args) {
-        return invokeStatic(findClass(targetClass),named,intermediary,args);
-    }
-    
-    /**
-     * Invoke a static method of the given name in the target class with the given args.
-     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
-     */
-    public static <T> T invokeStatic(Class<?> target, String named, String intermediary, Object ... args) {
-        return invokeStatic(target,isNamedEnv() ? named : intermediary,args);
-    }
-    
-    /**
-     * Finds the target class and invokes a static method of the given name in it with the given args.
      */
     @IndirectCallers
     public static <T> T invokeStatic(String targetClass, String method, Object ... args) {
@@ -596,25 +608,6 @@ public class Hacks {
             return null;
         }
         return Methods.invokeStatic(target,method,args);
-    }
-    
-    /**
-     * Finds the target class and invokes a static method of the given name in it with the given args.
-     * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
-     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
-     */
-    @IndirectCallers
-    public static <T> T invokeStaticDirect(String targetClass, String named, String intermediary, Object ... args) {
-        return invokeStaticDirect(findClass(targetClass),named,intermediary,args);
-    }
-    
-    /**
-     * Invoke a static method of the given name in the target class with the given args.
-     * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
-     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
-     */
-    public static <T> T invokeStaticDirect(Class<?> target, String named, String intermediary, Object ... args) {
-        return invokeStaticDirect(target,isNamedEnv() ? named : intermediary, args);
     }
     
     /**
@@ -645,9 +638,46 @@ public class Hacks {
         return Methods.invokeStaticDirect(target,method,args);
     }
     
+    /**
+     * Finds the target class and invokes a static method of the given name in it with the given args.
+     * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
+     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
+     */
+    @IndirectCallers
+    public static <T> T invokeStaticDirectNamed(String targetClass, String named, String intermediary, Object ... args) {
+        return invokeStaticDirect(findClass(targetClass),named,intermediary,args);
+    }
+    
+    /**
+     * Invoke a static method of the given name in the target class with the given args.
+     * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
+     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public static <T> T invokeStaticDirectNamed(Class<?> target, String named, String intermediary, Object ... args) {
+        return invokeStaticDirect(target,isNamedEnv() ? named : intermediary, args);
+    }
+    
     @IndirectCallers
     public static <T> T invokeStaticMethodObj(Method method, Object ... args) {
         return invokeMethodObj(null,method,args);
+    }
+    
+    /**
+     * Finds the target class and invokes a static method of the given name in it with the given args.
+     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
+     */
+    @IndirectCallers
+    public static <T> T invokeStaticNamed(String targetClass, String named, String intermediary, Object ... args) {
+        return invokeStatic(findClass(targetClass),named,intermediary,args);
+    }
+    
+    /**
+     * Invoke a static method of the given name in the target class with the given args.
+     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
+     */
+    public static <T> T invokeStaticNamed(Class<?> target, String named, String intermediary, Object ... args) {
+        return invokeStatic(target,isNamedEnv() ? named : intermediary,args);
     }
     
     /**
@@ -681,7 +711,8 @@ public class Hacks {
      * Named environments include dev environments, Neoforge 1.20.4, and any version on any modloader past 1.20.4.
      */
     public static boolean isNamedEnv() {
-        return NAMED_ENV;
+        checkEnvironmentInit();
+        return namedEnv;
     }
     
     /**
@@ -690,7 +721,8 @@ public class Hacks {
      */
     @IndirectCallers
     public static boolean isSrgEnv() {
-        return SRG_ENV;
+        checkEnvironmentInit();
+        return srgEnv;
     }
     
     @SuppressWarnings("UnusedReturnValue")
@@ -729,7 +761,7 @@ public class Hacks {
     }
     
     public static void removeEnvironmentProperty(String property, boolean removeFromAll) {
-        LOGGER.debug("Attempting to remove {} property",removeFromAll);
+        LOGGER.debug("Attempting to remove {} property",property);
         final String all = removeFromAll ? "all environment property maps" : "the default environment property map";
         final String cName = "java.lang.ProcessEnvironment";
         final Class<?> c = findClass(cName);

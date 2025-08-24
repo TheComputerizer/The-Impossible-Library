@@ -2,6 +2,14 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ClassLoaderAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleHolder;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,9 +28,9 @@ import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoad
  */
 public class ModuleClassLoaderAccess extends ClassLoaderAccess implements ModuleHolder {
     
-    static final String packageLookupField = changing("packageToOurModules","packageLookup");
-    static final String parentLoadersField = changing("packageToParentLoader","parentLoaders");
-    static final String resolvedRootsField = changing("ourModules","resolvedRoots");
+    static final String packageLookupField = ForgeModuleAccess.changing("packageToOurModules","packageLookup");
+    static final String parentLoadersField = ForgeModuleAccess.changing("packageToParentLoader","parentLoaders");
+    static final String resolvedRootsField = ForgeModuleAccess.changing("ourModules","resolvedRoots");
     
     @Setter String layerName;
     
@@ -39,7 +47,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     public void addPackages(Collection<String> pkgs, ResolvedModuleAccess resolvedModule) {
-        addPackages(pkgs,resolvedModule.access);
+        addPackages(pkgs,resolvedModule.access());
     }
     
     void addPackages(Collection<String> pkgs, Object resolvedModule) {
@@ -49,7 +57,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     
     @IndirectCallers
     public void addPackage(String pkg, ResolvedModuleAccess resolvedModule) {
-        addPackage(pkg,resolvedModule.access);
+        addPackage(pkg,resolvedModule.access());
     }
     
     void addPackage(String pkg, Object resolvedModule) {
@@ -66,7 +74,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     public void addParentLoaders(Collection<String> pkgs, ModuleClassLoaderAccess loader) {
-        addParentLoaders(pkgs,loader.access);
+        addParentLoaders(pkgs,loader.access());
     }
     
     void addParentLoaders(Collection<String> pkgs, Object loader) {
@@ -76,7 +84,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     
     @IndirectCallers
     public void addParentLoader(String pkg, ModuleClassLoaderAccess loader) {
-        addParentLoader(pkg,loader.access);
+        addParentLoader(pkg,loader.access());
     }
     
     void addParentLoader(String pkg, Object loader) {
@@ -88,11 +96,11 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     public void addRoot(ModuleReferenceAccess moduleReference) {
-        addRoot(moduleReference.name(),moduleReference.access);
+        addRoot(moduleReference.name(),moduleReference.access());
     }
     
     public void addRoot(String name, ModuleReferenceAccess moduleReference) {
-        addRoot(name,moduleReference.access);
+        addRoot(name,moduleReference.access());
     }
     
     public void addRoot(String name, Object moduleReference) {
@@ -130,13 +138,13 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
             }
         }
         if(existed)
-            for(String pkg : packages) packageLookup.put(pkg,existingModule.access);
+            for(String pkg : packages) packageLookup.put(pkg,existingModule.access());
     }
     
     public ConfigurationAccess configuration() {
         Object configuration = getDirect("configuration");
         if(Objects.nonNull(configuration)) return getConfiguration(configuration);
-        logOrPrintError("Configuration field not found in ModuleClassLoader "+this.access);
+        logOrPrintError("Configuration field not found in ModuleClassLoader "+this.access());
         return null;
     }
     
@@ -147,7 +155,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     ResolvedModuleAccess getAsResolvedModule(Object resolvedModule) {
         if(Objects.isNull(resolvedModule)) return null;
         if(resolvedModule instanceof ResolvedModuleAccess) return (ResolvedModuleAccess)resolvedModule;
-        return new ResolvedModuleAccess(resolvedModule,this);
+        return ModuleSystemAccessor.getResolvedModule(resolvedModule,this);
     }
     
     public ModuleLayerAccess getModuleLayer() {
@@ -155,7 +163,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
             logOrPrintError("Cannot get ModuleLayer! (ModuleClassLoaderAccess#layerName is null)");
             return null;
         }
-        return getModuleLayer(this.layerName);
+        return ForgeModuleAccess.getModuleLayer(this.layerName,this);
     }
     
     public ResolvedModuleAccess getResolvedModule(String pkg) {
@@ -172,9 +180,13 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return Objects.nonNull(moduleReference) ? getModuleReference(moduleReference) : null;
     }
     
+    public Object getRootDirect(String name) {
+        return resolvedRoots().get(name);
+    }
+    
     @IndirectCallers
     public ModuleLayerHandlerAccess handler() {
-        return getModuleLayerHandler();
+        return ForgeModuleAccess.getModuleLayerHandler(this);
     }
     
     /**
@@ -198,13 +210,13 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     
     @IndirectCallers
     public void moveModulesTo(String targetLayerName, String ... moduleNames) {
-        ModuleClassLoaderAccess targetLoader = getModuleClassLoader(targetLayerName);
+        ModuleClassLoaderAccess targetLoader = ForgeModuleAccess.getModuleClassLoader(targetLayerName,this);
         for(String moduleName : moduleNames) moveModuleTo(targetLoader,moduleName);
     }
     
     @IndirectCallers
     public void moveModuleTo(String targetLayerName, String moduleName) {
-        moveModuleTo(getModuleClassLoader(targetLayerName),moduleName);
+        moveModuleTo(ForgeModuleAccess.getModuleClassLoader(targetLayerName,this),moduleName);
     }
     
     /**
@@ -215,14 +227,14 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         resolvedModule.configuration().moveModuleTo(targetLoader.configuration(),resolvedModule);
         movePackageLookup(targetLoader,resolvedModule);
         moveRoots(targetLoader,moduleName);
-        getModuleLayer().moveModule(targetLoader.layerName,moduleName);
+        ForgeModuleAccess.moveModule(getModuleLayer(),targetLoader.layerName,moduleName);
     }
     
     private void movePackageLookup(ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess resolvedModule) {
         Set<String> packages = new HashSet<>();
         Map<String,Object> packageLookup = packageLookup();
         for(Entry<String,Object> packageEntry : packageLookup.entrySet())
-            if(packageEntry.getValue()==resolvedModule.access) packages.add(packageEntry.getKey());
+            if(packageEntry.getValue()==resolvedModule.access()) packages.add(packageEntry.getKey());
         Map<String,Object> targetPackageLookup = targetLoader.packageLookup();
         for(String pkg : packages) {
             packageLookup.remove(pkg);
@@ -247,12 +259,12 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     
     @IndirectCallers
     public ResolvedModuleAccess newResolvedModule(ModuleReferenceAccess moduleReference) {
-        return newResolvedModule(Objects.nonNull(moduleReference) ? moduleReference.access : null);
+        return newResolvedModule(Objects.nonNull(moduleReference) ? moduleReference.access() : null);
     }
     
     public ResolvedModuleAccess newResolvedModule(Object moduleReference) {
         ConfigurationAccess configuration = configuration();
-        return newResolvedModule(Objects.nonNull(configuration) ? configuration.access : null,moduleReference);
+        return newResolvedModule(Objects.nonNull(configuration) ? configuration.access() : null,moduleReference);
     }
     
     public ResolvedModuleAccess newResolvedModule(Object configuration, Object moduleReference) {
@@ -323,7 +335,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     public void removePackagesForModule(ResolvedModuleAccess resolvedModule) {
-        removePackagesForModule(resolvedModule.access);
+        removePackagesForModule(resolvedModule.access());
     }
     
     public void removePackagesForModule(Object resolvedModule) {

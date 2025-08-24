@@ -296,6 +296,10 @@ public abstract class CoreAPI {
                 TILRef.logError("Failed to parse Java version from {} (split={})",majorVersion,JAVA_VERSION,ex);
             }
         }
+        if(javaVersionCache>24) {
+            throw new RuntimeException("The Impossible Library is not yet compatible with Java "+javaVersionCache+"! "+
+                                       "Please ensure that you are using Java 24 or earlier.");
+        }
         return javaVersionCache;
     }
     

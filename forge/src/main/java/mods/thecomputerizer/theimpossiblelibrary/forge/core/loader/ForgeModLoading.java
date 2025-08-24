@@ -17,10 +17,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionMod
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -51,20 +53,20 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.jar.Attributes;
+import java.util.jar.Attributes.Name;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import static java.util.jar.Attributes.Name.IMPLEMENTATION_TITLE;
 import static java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION;
+import static java.util.jar.JarFile.MANIFEST_NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
+import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.MODULE_LAYERS;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LIBRARY;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.MOD;
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 
 /**
@@ -77,17 +79,32 @@ public class ForgeModLoading {
     
     static final BiConsumer<TILBetterModScan,Object> AFTER_WRITING_MODS = (scan,language) -> {
         LOGGER.debug("Injecting scan data into the language loader");
-        Consumer<ModFileScanData> visitor = Methods.invokeDirect(language,"getFileVisitor");
-        visitor.accept(scan);
+        Consumer<ModFileScanData> visitor = Hacks.invokeDirect(language,"getFileVisitor");
+        if(Objects.nonNull(visitor)) visitor.accept(scan);
     };
+    
+    //maps
     static final Map<MultiVersionModCandidate,ModFile> CANDIDATE_MAP = new HashMap<>();
     static final Map<Object,Map<MultiVersionModInfo,MultiVersionModData>> FILE_INFO_MAP = new HashMap<>();
-    static final String MANIFEST = "META-INF/MANIFEST.MF";
+    static final Map<String,Manifest> MANIFEST_MAP = new HashMap<>(); //Module name -> Manifest
+    static final Map<String,Object> PATH_OR_JAR_MAP = new HashMap<>(); //Module name -> Path (1.16.5) || SecureJar (1.18.2+)
+    
+    //collections
+    static final Collection<Object> IDENTIFIED_FILES = new HashSet<>();
+    
+    //class names
+    static final String JAR_METADATA = "cpw.mods.jarhandling.JarMetadata";
     static final String MOD_CLASS_VISITOR = "net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor";
+    static final String MOD_FILE_OR_EXCEPTION = "net.minecraftforge.forgespi.locating.IModLocator$ModFileOrException";
+    static final String MOD_PROVIDER = "net.minecraftforge.forgespi.locating.IModProvider";
     static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";
     static final String SCANNER = "net.minecraftforge.fml.loading.moddiscovery.Scanner";
+    static final String SECURE_JAR = "cpw.mods.jarhandling.SecureJar";
     static final String SELF_ENTRYPOINT = "mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint";
+    static final String SIMPLE_JAR_METADATA = "cpw.mods.jarhandling.impl.SimpleJarMetadata";
     
+    //modifiable
+    static Name automaticModuleName;
     static Function<ModFile,IModFileInfo> langProviderFileInfo;
     static BiFunction<URL,String,Path> urlToPath;
     static BiFunction<Path,Object,Manifest> pathToManifest;
@@ -100,16 +117,11 @@ public class ForgeModLoading {
     @Getter static boolean locatorBased;
     @Getter static String workingVersion;
     
-    @SuppressWarnings("unchecked")
     private static <F> void addScannedMod(Object file, List<F> mods, String type) {
         if(locatorBased) {
-            Fields.setDirect(file,"modFileType",getModFileType(type));
-            mods.add((F)file);
-        } else {
-            final String fileClassName = "net.minecraftforge.forgespi.locating.IModLocator$ModFileOrException";
-            final Class<?> fileClass = ClassHelper.findClass(fileClassName);
-            mods.add(Constructors.newInstanceOf(fileClass,file,null));
-        }
+            Hacks.setFieldDirect(file,"modFileType",getModFileType(type));
+            mods.add(GenericUtils.cast(file));
+        } else mods.add(Hacks.construct(MOD_FILE_OR_EXCEPTION,file,null));
     }
     
     static void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {
@@ -126,33 +138,58 @@ public class ForgeModLoading {
     }
     
     static void checkURL(MultiVersionLoaderAPI loader, URL url, Predicate<Path> filter) {
-        LOGGER.debug("[{}]: Checking URL {} for MANIFEST {}",loader.getName(),url,MANIFEST);
-        checkPath(loader,urlToPath.apply(url,MANIFEST),filter);
+        LOGGER.debug("[{}]: Checking URL {} for MANIFEST {}",loader.getName(),url,MANIFEST_NAME);
+        checkPath(loader,urlToPath.apply(url,MANIFEST_NAME),filter);
     }
     
     public static Supplier<Manifest> createLoaderManfiest(Path sourcePath) {
         if(!DEV || Objects.isNull(sourcePath) || !TILDev.isLoaderPath(sourcePath)) return null;
         return () -> {
             LOGGER.info("Creating loader manifest for {}",sourcePath);
-            Manifest manifest = new Manifest();
-            Attributes attributes = manifest.getMainAttributes();
-            attributes.put(IMPLEMENTATION_TITLE,NAME);
-            attributes.put(IMPLEMENTATION_VERSION,VERSION);
-            return manifest;
+            return getDefaultManifest(MODID).get();
         };
     }
     
-    static ModFile createModFile(Path path, Object locator, ModFileInfoParser parser, String type) {
+    @SuppressWarnings("SameParameterValue")
+    static ModFile createModFile(ModFile reference, ModFileInfoParser parser, String type,
+            final String moduleName) {
+        return createModFile(reference.getFilePath(),modFileLocator(reference),parser,type,moduleName);
+    }
+    
+    static ModFile createModFile(Path path, Object locator, ModFileInfoParser parser, String type,
+            final String moduleName) {
         if(Objects.isNull(dynamicModFileClass)) {
             LOGGER.error("Cannot create ModFile with null dynamicModFileClass! Did it fail to initialize?");
             return null;
         }
-        Object pathOrJar = path;
-        if(!pathBased) {
-            final Class<?> jarClass = ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
-            pathOrJar = Methods.invokeStatic(jarClass,"from",path);
+        LOGGER.debug("Creating mod file of type {} with module name {} at path {}",type,moduleName,path);
+        String pathType = pathBased ? "Path" : "SecureJar";
+        Object pathOrJar = null;
+        boolean updatePathMap = false;
+        if(Objects.nonNull(moduleName)) {
+            if(PATH_OR_JAR_MAP.containsKey(moduleName)) {
+                LOGGER.debug("Found existing {} for module {}",pathType,moduleName);
+                pathOrJar = PATH_OR_JAR_MAP.get(moduleName);
+                
+            } else updatePathMap = true;
         }
-        return Constructors.newInstanceOf(dynamicModFileClass,pathOrJar,locator,parser,type);
+        if(Objects.isNull(pathOrJar)) {
+            if(pathBased) pathOrJar = path;
+            else {
+                Supplier<Manifest> defaultManifest = getDefaultManifest(moduleName);
+                Function<Object,Object> jarMetadataSupplier = getJarMetadataSupplier(path);
+                pathOrJar = Hacks.invokeStatic(SECURE_JAR,"from",defaultManifest,jarMetadataSupplier,path);
+                Hacks.setFieldDirect(pathOrJar,"packages",Collections.emptySet());
+                Hacks.setFieldDirect(pathOrJar,"providers",Collections.emptyList());
+            }
+        }
+        ModFile file = Hacks.construct(dynamicModFileClass,pathOrJar,locator,parser,type);
+        //Construct the file first to ensure there aren't any errors before the PATH_OR_JAR_MAP is updated
+        if(updatePathMap) {
+            LOGGER.debug("Adding {} instance for module {} to the cache",pathType,moduleName);
+            PATH_OR_JAR_MAP.put(moduleName,pathOrJar);
+        }
+        return file;
     }
     
     static @Nullable Class<?> dynamicModFileCreator() {
@@ -169,15 +206,20 @@ public class ForgeModLoading {
         try {
             Class<?> defined = ClassHelper.defineAndResolveClass(ModFile.class.getClassLoader(),className,byteCode);
             LOGGER.info("Successfully generated ModFile extension {}",defined);
-            if(!ForgeCoreLoader.isJava8()) {
-                Object module = Methods.invoke(ForgeModLoading.class,"getModule");
-                Fields.setDirect(defined,"module",module);
-            }
+            if(!ForgeCoreLoader.isJava8())
+                Hacks.setFieldDirect(defined,"module",Hacks.invoke(ForgeModLoading.class,"getModule"));
             return defined;
         } catch(Throwable t) {
             LOGGER.error("Failed to generate ModFile extension {}",className,t);
         }
         return null;
+    }
+    
+    static Path findFilePath(Object modFile, String ... paths) {
+        Object target = pathBased ? modFileLocator(modFile) : modFile;
+        String method = pathBased ? "findPath" : "findResource";
+        Object[] args = pathBased ? new Object[]{modFile,paths} : paths;
+        return Hacks.invoke(target,method,args);
     }
     
     static void findFiles(MultiVersionLoaderAPI loader, Predicate<Path> filter, File... files) {
@@ -198,7 +240,7 @@ public class ForgeModLoading {
             File file = path.toFile();
             if(!file.exists()) LOGGER.warn("Tried to find manifest of nonexistant path {}",path);
             else if(file.isDirectory()) {
-                File manifest = new File(file,MANIFEST);
+                File manifest = new File(file,MANIFEST_NAME);
                 if(manifest.exists()) optionalManifest = Optional.ofNullable(parseManifest(manifest));
                 else LOGGER.warn("Manifest not found at {}",manifest);
             } else {
@@ -228,10 +270,11 @@ public class ForgeModLoading {
     
     static void findURLs(MultiVersionLoaderAPI loader, ClassLoader classLoader, Predicate<Path> filter) {
         try {
-            final Enumeration<URL> manifests = ClassLoader.getSystemClassLoader().getResources(MANIFEST);
+            final Enumeration<URL> manifests = ClassLoader.getSystemClassLoader().getResources(MANIFEST_NAME);
             while(manifests.hasMoreElements()) checkURL(loader,manifests.nextElement(),filter);
         } catch(IOException ex) {
-            LOGGER.error("[{}]: Failed to calculate URLs for paths with {} using {}",loader.getName(),MANIFEST,classLoader,ex);
+            LOGGER.error("[{}]: Failed to calculate URLs for paths with {} using {}",loader.getName(),
+                         MANIFEST_NAME,classLoader,ex);
         }
     }
     
@@ -241,19 +284,22 @@ public class ForgeModLoading {
     public static void fixCoreModPackages() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Class<?> engineClass = ClassHelper.findClass(coreModEngineClass,loader);
-        Set<String> allowed = new HashSet<>(Fields.getStatic(engineClass,"ALLOWED_PACKAGES"));
+        Set<String> allowed = Hacks.getFieldStaticDirect(engineClass,"ALLOWED_PACKAGES");
+        if(Objects.isNull(allowed)) {
+            LOGGER.error("Failed to get ALLOWED_PACKAGES for {}! Cannot expand package whitelist",engineClass);
+            return;
+        }
+        allowed = new HashSet<>(allowed);
         allowed.add(BASE_PACKAGE+".api.core");
         allowed.add(BASE_PACKAGE+".forge.core");
         for(String extension : coreModExtensions) allowed.add(BASE_PACKAGE+".forge."+extension+".core");
         LOGGER.debug("Expanded coremod package whitelist to {}", allowed);
-        Fields.setStaticDirect(engineClass,"ALLOWED_PACKAGES",allowed);
+        Hacks.setFieldStaticDirect(engineClass,"ALLOWED_PACKAGES",Collections.unmodifiableSet(allowed));
     }
     
     private static byte[] generateModFileExtension(String className) {
-        Class<?> pathOrJarClass = pathBased ? Path.class :
-                ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
-        Class<?> locatorClass = locatorBased ? IModLocator.class :
-                ClassHelper.findClass("net.minecraftforge.forgespi.locating.IModProvider");
+        Class<?> pathOrJarClass = pathBased ? Path.class : ClassHelper.findClass(SECURE_JAR);
+        Class<?> locatorClass = locatorBased ? IModLocator.class : ClassHelper.findClass(MOD_PROVIDER);
         ClassWriter writer = ASMHelper.getWriter(JAVA8,ASMRef.PUBLIC,TypeHelper.fromBinary(className),
                                                  TypeHelper.get(ModFile.class));
         if(Objects.isNull(pathOrJarClass) || Objects.isNull(locatorClass)) {
@@ -268,7 +314,7 @@ public class ForgeModLoading {
         String modFile = TypeHelper.get(ModFile.class).getInternalName();
         String modLoading = TypeHelper.get(ForgeModLoading.class).getInternalName();
         String writeModsDesc = TypeHelper.methodDesc(ModFileScanData.class,ModFile.class);
-        String identifyModsDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,BOOLEAN_TYPE,OBJECT_TYPE);
+        String identifyModsDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,OBJECT_TYPE);
         
         MethodVisitor constructor = writer.visitMethod(PUBLIC,"<init>",constructorDesc,null,null);
         constructor.visitCode();
@@ -287,8 +333,6 @@ public class ForgeModLoading {
         
         MethodVisitor identifyMods = writer.visitMethod(PUBLIC,"identifyMods","()Z",null,null);
         identifyMods.visitCode();
-        identifyMods.visitVarInsn(ALOAD,0);
-        identifyMods.visitMethodInsn(INVOKESPECIAL,modFile,"identifyMods","()Z",false);
         identifyMods.visitVarInsn(ALOAD,0);
         identifyMods.visitMethodInsn(INVOKESTATIC,modLoading,"identifyMods",identifyModsDesc,false);
         identifyMods.visitInsn(RETURN_INT_OR_BOOL);
@@ -311,8 +355,19 @@ public class ForgeModLoading {
         return writer.toByteArray();
     }
     
-    private static Object getCoreMods(Object file) {
-        return Methods.invoke(file,"getCoreMods");
+    private static Supplier<Manifest> getDefaultManifest(final String automaticModuleName) {
+        return () -> {
+            if(Objects.isNull(automaticModuleName)) return new Manifest();
+            if(MANIFEST_MAP.containsKey(automaticModuleName)) return MANIFEST_MAP.get(automaticModuleName);
+            Manifest manifest = new Manifest();
+            Attributes attributes = manifest.getMainAttributes();
+            attributes.put(IMPLEMENTATION_TITLE,NAME);
+            attributes.put(IMPLEMENTATION_VERSION,VERSION);
+            LOGGER.debug("Setting Automatic-Module-Name for Manifest to {}",automaticModuleName);
+            setAutomaticModuleName(manifest.getMainAttributes(),automaticModuleName);
+            MANIFEST_MAP.put(automaticModuleName,manifest);
+            return manifest;
+        };
     }
     
     /**
@@ -324,14 +379,26 @@ public class ForgeModLoading {
         return null;
     }
     
-    static @Nullable Manifest parseManifest(File file) {
-        Manifest manifest = null;
-        try(InputStream stream = Files.newInputStream(file.toPath())) {
-            manifest = new Manifest(stream);
-        } catch(IOException ex) {
-            LOGGER.error("Failed to parse manifest from {}",file,ex);
-        }
-        return manifest;
+    private static Function<Object,Object> getJarMetadataSupplier(Path ... paths) {
+        return secureJar -> {
+            if(MODULE_LAYERS) return Hacks.invokeStatic(JAR_METADATA,"from",secureJar,paths);
+            Set<String> packages = new HashSet<>();
+            List<?> providers = new ArrayList<>();
+            Manifest manifest = Hacks.invoke(Hacks.invoke(secureJar,"moduleDataProvider"),"getManifest");
+            Object candidate = Hacks.invokeStatic(JAR_METADATA,"fromFileName",paths[0],packages,providers);
+            if(Objects.isNull(manifest) || Objects.isNull(candidate)) {
+                LOGGER.error("Something is null that should not be null");
+                return Hacks.invokeStatic(JAR_METADATA,"from",secureJar,paths);
+            }
+            String name = manifest.getMainAttributes().getValue(automaticModuleName);
+            if(Objects.isNull(name)) {
+                LOGGER.error("Tried initializing custom JarMetadata for paths '{}' but no {} attribute was"+
+                             " found!", paths,automaticModuleName);
+                return Hacks.invokeStatic(JAR_METADATA,"from",secureJar,paths);
+            }
+            LOGGER.debug("Returning customized JarMetadata for module {}",name);
+            return Hacks.construct(SIMPLE_JAR_METADATA,name,Hacks.invoke(candidate,"version"),packages,providers);
+        };
     }
     
     public static Type getModFileType(String name) {
@@ -341,7 +408,7 @@ public class ForgeModLoading {
         }
         switch(name) {
             case "GAMELIBRARY": {
-                LOGGER.warn("The GAMELIBRARY mod file type is unable to be supported in all Forge versions! " +
+                LOGGER.warn("The GAMELIBRARY mod file type is unable to be supported in all Forge versions! "+
                                "Please use LANGPROVIDER, LIBRARY, or MOD");
                 LOGGER.warn("MOD will be assumed for now, but things could break soon");
                 return MOD;
@@ -356,6 +423,24 @@ public class ForgeModLoading {
         }
     }
     
+    @IndirectCallers
+    private static String getFirstModId(Collection<MultiVersionModInfo> infos) {
+        return getFirstModId(null,infos);
+    }
+    
+    private static String getFirstModId(MultiVersionModCandidate candidate, Collection<MultiVersionModInfo> infos) {
+        for(MultiVersionModInfo info : infos) {
+            String modid = info.getModID();
+            if(Objects.nonNull(modid) && !modid.isEmpty()) return modid;
+        }
+        if(Objects.nonNull(candidate)) {
+            LOGGER.debug("Returning file name for MultiVersionModCandidate as first modid");
+            return candidate.getFile().getName();
+        }
+        LOGGER.debug("First modid not found! Returning null");
+        return null;
+    }
+    
     private static boolean hasCoreModPath(String ... paths) {
         for(String path : paths)
             if(path.contains("coremods.json")) return true;
@@ -366,12 +451,32 @@ public class ForgeModLoading {
      * Called via the dynamically generated ModFile extension class
      */
     @IndirectCallers
-    public static boolean identifyMods(boolean result, Object file) {
-        LOGGER.debug("Identifying mods");
-        if(result) queryCoreMods(file);
-        LOGGER.debug("Finished identifying mods");
-        ForgeCoreLoader.removeDevModules();
-        return result;
+    public static boolean identifyMods(Object file) {
+        ModFile modFile = (ModFile)file;
+        String fileName = modFile.getFileName();
+        Path absolutePath = modFile.getFilePath().toAbsolutePath();
+        LOGGER.debug("Finalizing mod identification for {} (path={})",fileName,absolutePath);
+        if(!CANDIDATE_MAP.containsValue(modFile)) {
+            LOGGER.warn("There are no mods to identify for {}",fileName);
+            return false;
+        }
+        if(IDENTIFIED_FILES.contains(file))
+            LOGGER.debug("Skipping file that was already identified {}",fileName);
+        else {
+            LOGGER.debug("Querying coremods for mod file {}",fileName);
+            queryCoreMods(file);
+            String[] atPaths = new String[]{"META-INF","accesstransformer.cfg"};
+            Hacks.setFieldDirect(file,"accessTransformer",findFilePath(file,atPaths));
+            IDENTIFIED_FILES.add(file);
+        }
+        LOGGER.debug("Finalized mod identification for {} (path={})",fileName,absolutePath);
+        int candidateCount = CANDIDATE_MAP.size();
+        int identifiedCount = IDENTIFIED_FILES.size();
+        if(identifiedCount>=candidateCount) {
+            LOGGER.debug("Successfully identified {}/{} mod files",identifiedCount,candidateCount);
+            ForgeCoreLoader.removeDevModules();
+        }
+        return true;
     }
     
     private static Config initConfigDependencies() {
@@ -389,16 +494,16 @@ public class ForgeModLoading {
         boolean setLicense = false;
         for(Object info : infos) {
             if(!setLicense) {
-                config.set("license",Methods.invoke(info,"getLicense"));
+                config.set("license",Hacks.invoke(info,"getLicense"));
                 setLicense = true;
             }
             Config mod = Config.inMemory();
-            mod.set("description",Methods.invoke(info,"getDescription"));
-            mod.set("displayName",Methods.invoke(info,"getName"));
-            mod.set("license",Methods.invoke(info,"getLicense"));
+            mod.set("description",Hacks.invoke(info,"getDescription"));
+            mod.set("displayName",Hacks.invoke(info,"getName"));
+            mod.set("license",Hacks.invoke(info,"getLicense"));
             mod.set("logoFile","logo.png");
-            mod.set("modId",Methods.invoke(info,"getModID"));
-            mod.set("version",Methods.invoke(info,"getVersion"));
+            mod.set("modId",Hacks.invoke(info,"getModID"));
+            mod.set("version",Hacks.invoke(info,"getVersion"));
             mods.add(mod);
         }
         if(!setLicense) config.set("license","LGPL V3");
@@ -416,9 +521,10 @@ public class ForgeModLoading {
         return wrapConfig(config);
     }
     
-    private static Map<MultiVersionModInfo,MultiVersionModData> initInfoMap(Collection<?> infos) {
+    private static Map<MultiVersionModInfo,MultiVersionModData> initInfoMap(
+            Collection<MultiVersionModInfo> infos) {
         Map<MultiVersionModInfo,MultiVersionModData> infoMap = new HashMap<>();
-        for(Object info : infos) infoMap.put((MultiVersionModInfo)info,null);
+        for(MultiVersionModInfo info : infos) infoMap.put(info,null);
         LOGGER.info("Created <info,data> map with {} entries for multiversion mod file ({}) using {}",
                     infos.size(),workingVersion,infos);
         return infoMap;
@@ -437,8 +543,7 @@ public class ForgeModLoading {
         LOGGER.info("Starting multiversion mod scan");
         TILBetterModScan scan = new TILBetterModScan();
         scan.addModFileInfo(file.getModFileInfo());
-        Class<?> cScanner = ClassHelper.findClass(SCANNER);
-        file.scanFile(p -> scanReflectively(Constructors.newInstanceOf(cScanner,file),p,scan));
+        file.scanFile(p -> scanReflectively(Hacks.construct(SCANNER,file),p,scan));
         LOGGER.debug("Injecting @Mod annotations from multiversion mod info");
         if(Objects.nonNull(scan.getAnnotations())) return scan;
         LOGGER.error("@Mod scan annotation set for multiversion mod is null???");
@@ -468,10 +573,8 @@ public class ForgeModLoading {
         return config;
     }
     
-    public static ModFile langProviderModFile(ModFile reference) {
-        final Object locator = Methods.invoke(reference,locatorBased ? "getLocator" : "getProvider");
-        final ModFileInfoParser parser = ForgeModLoading::langFileInfo;
-        return createModFile(reference.getFilePath(),locator,parser,"LANGPROVIDER");
+    public static ModFile langProviderModFile(ModFile reference, String moduleName) {
+        return createModFile(reference,ForgeModLoading::langFileInfo,"LANGPROVIDER",moduleName);
     }
     
     private static void loadCandidateInfos(Object locator, Map<?,?> infoMap) {
@@ -481,9 +584,14 @@ public class ForgeModLoading {
         }
         for(Entry<?,?> entry : infoMap.entrySet()) {
             MultiVersionModCandidate candidate = (MultiVersionModCandidate)entry.getKey();
-            Collection<?> infos = (Collection<?>)entry.getValue();
+            Collection<MultiVersionModInfo> infos = GenericUtils.cast(entry.getValue());
+            if(Objects.isNull(infos)) {
+                LOGGER.error("Null MultiVersionModInfo collection for candidate {}",candidate);
+                continue;
+            }
             ModFileInfoParser parser = file -> getFileInfo(file,infos);
-            ModFile file = createModFile(candidate.getFile().toPath(),locator,parser,"MOD");
+            String firstModId = getFirstModId(candidate,infos);
+            ModFile file = createModFile(candidate.getFile().toPath(),locator,parser,"MOD",firstModId);
             CANDIDATE_MAP.put(candidate,file);
             FILE_INFO_MAP.put(file,initInfoMap(infos));
         }
@@ -496,8 +604,12 @@ public class ForgeModLoading {
         loadCandidateInfos(locator,Hacks.invoke(core,"getModInfo"));
     }
     
+    private static Object modFileLocator(Object modFile) {
+        return Hacks.invoke(modFile,locatorBased ? "getLocator" : "getProvider");
+    }
+    
     private static TILBetterModScan onFinishedWritingMods(TILBetterModScan scan, IModFile file) {
-        Object loader = Methods.invokeDirect(file,pathBased ? "getLoader" : "getLoaders");
+        Object loader = Hacks.invokeDirect(file,pathBased ? "getLoader" : "getLoaders");
         if(Objects.isNull(loader)) LOGGER.error("Why are there no language loaders??");
         else if(loader instanceof Collection<?>) {
             Collection<?> loaders = (Collection<?>)loader;
@@ -507,6 +619,16 @@ public class ForgeModLoading {
         LOGGER.debug("Finishing multiversion mod scan");
         scan.addFilePath(file.getFilePath());
         return scan;
+    }
+    
+    static @Nullable Manifest parseManifest(File file) {
+        Manifest manifest = null;
+        try(InputStream stream = Files.newInputStream(file.toPath())) {
+            manifest = new Manifest(stream);
+        } catch(IOException ex) {
+            LOGGER.error("Failed to parse manifest from {}",file,ex);
+        }
+        return manifest;
     }
     
     public static void populateMultiversionData(Map<MultiVersionModInfo,MultiVersionModData> infoMap,
@@ -532,11 +654,13 @@ public class ForgeModLoading {
     }
     
     public static void queryCoreMods(Object file) {
-        if(fixedCoreMods) return;
-        Object coremods = getCoreMods(file);
-        if(coremods instanceof Collection<?> && !((Collection<?>)coremods).isEmpty()) {
-            fixCoreModPackages();
-            fixedCoreMods = true;
+        List<Object> coremods = Hacks.invokeStaticDirect(ModFileParser.class,"getCoreMods",file);
+        if(Objects.nonNull(coremods)) {
+            Hacks.setFieldDirect(file,"coreMods",coremods);
+            if(!fixedCoreMods && !coremods.isEmpty()) {
+                fixCoreModPackages();
+                fixedCoreMods = true;
+            }
         }
     }
     
@@ -561,7 +685,7 @@ public class ForgeModLoading {
             populateMultiversionData(map,data);
             if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
                 LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
-                addScannedMod(langProviderModFile(candidateFile),mods,"LANGPROVIDER");
+                addScannedMod(langProviderModFile(candidateFile,LOADERID),mods,"LANGPROVIDER");
             }
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");
@@ -572,10 +696,15 @@ public class ForgeModLoading {
     private static void scanReflectively(Object scanner, Path path, ModFileScanData scan) {
         LOGGER.trace("Attempting to scan multiversion jar path {}", path);
         try {
-            Methods.invokeDirect(scanner,"fileVisitor",path,scan);
-        } catch(Throwable ex) {
-            LOGGER.error("Failed to scan {}!",path,ex);
+            Hacks.invokeDirect(scanner,"fileVisitor",path,scan);
+        } catch(Throwable t) {
+            LOGGER.error("Failed to scan {}!",path,t);
         }
+    }
+    
+    private static void setAutomaticModuleName(Attributes attributes, String moduleName) {
+        if(Objects.isNull(automaticModuleName)) automaticModuleName = new Name("Automatic-Module-Name");
+        attributes.put(automaticModuleName,moduleName);
     }
     
     private static String[] setCoreModExtensions(String version) {
@@ -606,11 +735,9 @@ public class ForgeModLoading {
         langProviderFileInfo = setLangProviderFileInfo(version);
         coreModEngineClass = "net.minecraftforge.coremod.CoreModEngine";
         coreModExtensions = setCoreModExtensions(version);
-        final Class<?> lClass = ClassHelper.findClass("net.minecraftforge.fml.loading."+
-                (pathBased ? "LibraryFinder" : "ClasspathLocatorUtils"));
-        final String arg2 = pathBased ? "manifest_jar" : MANIFEST;
-        urlToPath = (url,manifest) ->
-                Methods.invokeStatic(lClass,"findJarPathFor",manifest,arg2,url);
+        final String lClass = "net.minecraftforge.fml.loading."+(pathBased ? "LibraryFinder" : "ClasspathLocatorUtils");
+        final String arg2 = pathBased ? "manifest_jar" : MANIFEST_NAME;
+        urlToPath = (url,manifest) -> Hacks.invokeStatic(lClass,"findJarPathFor",manifest,arg2,url);
         pathToManifest = setPathToManifest();
         LOGGER.info("{} Forge Locator plugin loaded on {}",actualVersion,caller.getClassLoader());
     }
@@ -618,14 +745,14 @@ public class ForgeModLoading {
     private static Function<ModFile,IModFileInfo> setLangProviderFileInfo(String version) {
         switch(version) {
             case "16":
-            case "16_5": return file -> Constructors.newInstanceOf(ModFileInfo.class,file,
-                            wrapConfig(langProviderConfig()));
+            case "16_5": return file -> Hacks.construct(ModFileInfo.class,file,
+                                                        wrapConfig(langProviderConfig()));
             case "18":
             case "18_2":
             case "19":
             case "19_2":
-            case "19_4": return file -> Constructors.newInstanceOf(ModFileInfo.class,file,
-                    wrapConfig(langProviderConfig()),Collections.emptyList());
+            case "19_4": return file -> Hacks.construct(ModFileInfo.class,file,
+                                                        wrapConfig(langProviderConfig()),Collections.emptyList());
             case "20":
             case "20_1":
             case "20_4":
@@ -634,9 +761,9 @@ public class ForgeModLoading {
             case "21_1": return file -> {
                 IConfigurable configWrapper = wrapConfig(langProviderConfig());
                 Consumer<IModFileInfo> consumer = info ->
-                        Methods.invokeDirect(configWrapper,"setFile",info);
+                        Hacks.invokeDirect(configWrapper,"setFile",info);
                 List<?> languageSpecs = Collections.emptyList();
-                return Constructors.newInstanceOf(ModFileInfo.class,file,configWrapper,consumer,languageSpecs);
+                return Hacks.construct(ModFileInfo.class,file,configWrapper,consumer,languageSpecs);
             };
             default: return file -> {
                 LOGGER.error("Unknown version for creating a ModFileInfo instance {}",version);
@@ -653,8 +780,8 @@ public class ForgeModLoading {
             case "18_2":
             case "19":
             case "19_2":
-            case "19_4": return (file,infos) ->
-                    Constructors.newInstanceOf(ModFileInfo.class,file,initFileConfig(infos));
+            case "19_4": return (file,infos) -> Hacks.construct(ModFileInfo.class,file,
+                                                                initFileConfig(infos));
             case "20":
             case "20_1":
             case "20_4":
@@ -663,8 +790,8 @@ public class ForgeModLoading {
             case "21_1": return (file,infos) -> {
                 IConfigurable configWrapper = initFileConfig(infos);
                 Consumer<IModFileInfo> configConsumer = info ->
-                        Methods.invoke(configWrapper,"setFile",info);
-                return Constructors.newInstanceOf(ModFileInfo.class,file,configWrapper,configConsumer);
+                        Hacks.invoke(configWrapper,"setFile",info);
+                return Hacks.construct(ModFileInfo.class,file,configWrapper,configConsumer);
             };
             default: {
                 LOGGER.error("Cannot set ModFileInfo creator function for unknown version {}",version);
@@ -676,8 +803,8 @@ public class ForgeModLoading {
     private static BiFunction<Path,Object,Manifest> setPathToManifest() {
         if(pathBased) return (path,locator) -> {
             try {
-                Optional<Manifest> optional = Methods.invoke(locator, "findManifest", path);
-                return optional.orElse(null);
+                Optional<Manifest> optional = Hacks.invoke(locator,"findManifest",path);
+                return Objects.nonNull(optional) ? optional.orElse(null) : null;
             } catch(Throwable ignoredT) {
                 LOGGER.warn("Failed to get manifest from path {}",path);
             }
@@ -686,8 +813,8 @@ public class ForgeModLoading {
         final Class<?> jarClass = ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
         if(locatorBased) return (path,ignored) -> {
             try {
-                Object jar = Methods.invokeStatic(jarClass,"from", path);
-                return Methods.invoke(jar,"getManifest");
+                Object jar = Hacks.invokeStatic(jarClass,"from", path);
+                return Hacks.invoke(jar,"getManifest");
             } catch(Throwable ignoredT) {
                 LOGGER.warn("Failed to get manifest from path {}",path);
             }
@@ -695,9 +822,9 @@ public class ForgeModLoading {
         };
         return (path,ignored) -> {
             try {
-                Object jar = Methods.invokeStatic(jarClass, "from", path);
-                Object dataProvider = Methods.invoke(jar, "moduleDataProvider");
-                return Objects.nonNull(dataProvider) ? Methods.invoke(dataProvider, "getManifest") : null;
+                Object jar = Hacks.invokeStatic(jarClass, "from", path);
+                Object dataProvider = Hacks.invoke(jar, "moduleDataProvider");
+                return Objects.nonNull(dataProvider) ? Hacks.invoke(dataProvider,"getManifest") : null;
             } catch(Throwable ignoredT) {
                 LOGGER.warn("Failed to get manifest from path {}",path);
             }
@@ -715,17 +842,16 @@ public class ForgeModLoading {
     }
     
     private static IConfigurable wrapConfig(UnmodifiableConfig config) {
-        Class<?> wrapperClass = ClassHelper.findClass(NIGHT_CONFIG_WRAPPER);
-        return Constructors.newInstanceOf(wrapperClass,config);
+        return Hacks.construct(NIGHT_CONFIG_WRAPPER,config);
     }
     
     private static void writeClassBytes(IModFile file, TILBetterModScan scan, Class<?> visitorClass,
             MultiVersionModData data, String className, byte[] bytes) {
         scan.addWrittenClass(className,data.getInfo(),file,bytes);
-        ClassVisitor visitor = Constructors.newInstanceOf(visitorClass);
+        ClassVisitor visitor = Hacks.construct(visitorClass);
         ClassReader reader = new ClassReader(bytes);
         reader.accept(visitor,0);
-        Methods.invokeDirect(visitor,"buildData",scan.getClasses(),scan.getAnnotations());
+        Hacks.invokeDirect(visitor,"buildData",scan.getClasses(),scan.getAnnotations());
     }
     
     private static void writeEntry(IModFile file, TILBetterModScan scan, Class<?> visitorClass,

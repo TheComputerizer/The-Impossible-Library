@@ -12,9 +12,9 @@ List<String> getIntelliJGenTypes() {
     return switch(name) {
         case '1.12', 'cleanroom', 'fabric', 'forge', 'neoforge' -> [ 'genIntellijRuns' ]
         case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
-            [ 'genIntellijRuns', 'fabricGenIntellijRuns', 'forgeGenIntellijRuns' ]
+            [ 'genIntellijRuns', 'tilfabricGenIntellijRuns', 'tilforgeGenIntellijRuns' ]
         case 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
-            [ 'genIntellijRuns', 'fabricGenIntellijRuns', 'forgeGenIntellijRuns', 'neoforgeGenIntellijRuns' ]
+            [ 'genIntellijRuns', 'tilfabricGenIntellijRuns', 'tilforgeGenIntellijRuns', 'tilneoforgeGenIntellijRuns' ]
         default -> []
     }
 }
@@ -74,9 +74,9 @@ List<String> getPreviousGenIntelliJRuns() {
 List<String> getPreviousGenIntelliJRunsByType(String type) {
     if(type==null) return getPreviousGenIntelliJRuns()
     switch(type) {
-        case 'fabricGenIntellijRuns' -> getPreviousGenFabricIntelliJRuns()
-        case 'forgeGenIntellijRuns' -> getPreviousGenForgeIntelliJRuns()
-        case 'neoforgeGenIntellijRuns' -> getPreviousGenNeoforgeIntelliJRuns()
+        case 'tilfabricGenIntellijRuns' -> getPreviousGenFabricIntelliJRuns()
+        case 'tilforgeGenIntellijRuns' -> getPreviousGenForgeIntelliJRuns()
+        case 'tilneoforgeGenIntellijRuns' -> getPreviousGenNeoforgeIntelliJRuns()
         default -> getPreviousGenIntelliJRuns()
     }
 }
@@ -116,9 +116,9 @@ List<String> getPreviousGenSources(boolean exclude_problematic_versions) {
 List<String> getPreviousGenSourcesByType(String type, boolean exclude_problematic_versions) {
     if(type==null) return getPreviousGenSources(exclude_problematic_versions)
     switch(type) {
-        case 'fabricGenSources' -> getPreviousGenFabricSources(exclude_problematic_versions)
-        case 'forgeGenSources' -> getPreviousGenForgeSources(exclude_problematic_versions)
-        case 'neoforgeGenSources' -> getPreviousGenNeoforgeSources(exclude_problematic_versions)
+        case 'tilfabricGenSources' -> getPreviousGenFabricSources(exclude_problematic_versions)
+        case 'tilforgeGenSources' -> getPreviousGenForgeSources(exclude_problematic_versions)
+        case 'tilneoforgeGenSources' -> getPreviousGenNeoforgeSources(exclude_problematic_versions)
         default -> getPreviousGenSources(exclude_problematic_versions)
     }
 }
@@ -127,12 +127,12 @@ List<String> getSourceGenTypes(boolean exclude_problematic_versions) {
     return switch(name) {
         case '1.12', 'cleanroom', 'fabric', 'neoforge' -> [ 'genSources' ]
         case 'forge' -> exclude_problematic_versions ? [] : [ 'genSources' ]
-        case 'shared_1.16' -> exclude_problematic_versions ? [ 'genSources', 'fabricGenSources' ] :
-                [ 'genSources', 'fabricGenSources', 'forgeGenSources' ]
+        case 'shared_1.16' -> exclude_problematic_versions ? [ 'genSources', 'tilfabricGenSources' ] :
+                [ 'genSources', 'tilfabricGenSources', 'tilforgeGenSources' ]
         case 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
-            [ 'genSources', 'fabricGenSources', 'forgeGenSources' ]
+            [ 'genSources', 'tilfabricGenSources', 'tilforgeGenSources' ]
         case 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
-            [ 'genSources', 'fabricGenSources', 'forgeGenSources', 'neoforgeGenSources' ]
+            [ 'genSources', 'tilfabricGenSources', 'tilforgeGenSources', 'tilneoforgeGenSources' ]
         default -> parent==null ? [ 'genAllSources' ] : []
     }
 }
@@ -150,7 +150,7 @@ void setupIntelliJGenGraph() {
 }
 
 /**
- * Setup dependency ordering for genSources, fabricGenSources, forgeGenSources, and neoforgeGenSources.
+ * Setup dependency ordering for genSources, tilfabricGenSources, tilforgeGenSources, and tilneoforgeGenSources.
  * Use exclude_problematic_versions to exclude tasks from the graph that are known to cause problematic.
  * Register the genAllSources task if necessary.
  */
@@ -160,7 +160,7 @@ void setupSourceGenGraph() {
     getSourceGenTypes(exclude_problematic_versions).forEach {gen_type ->
         boolean gen_all = 'genAllSources'==gen_type
         tasks."${gen_all ? 'register' : 'named'}"(gen_type) {Task gen_task ->
-            (gen_all ? [ 'fabricGenSources', 'forgeGenSources', 'genSources', 'neoforgeGenSources' ] : [ gen_type ]).forEach {sub_gen ->
+            (gen_all ? [ 'tilfabricGenSources', 'tilforgeGenSources', 'genSources', 'tilneoforgeGenSources' ] : [ gen_type ]).forEach {sub_gen ->
                 getPreviousGenSourcesByType(sub_gen, exclude_problematic_versions).forEach {p_name ->
                     gen_task.dependsOn getFullTaskPath(p_name, sub_gen)
                 }
@@ -173,7 +173,7 @@ void setupSourceGenGraph() {
 
 void setupProblematicSourceGenGraph() {
     logger.lifecycle "Setting up problematic source gen graph"
-    def problematic_source_gens = [ ':forge': 'genSources', ':shared:shared_1.16': 'forgeGenSources' ]
+    def problematic_source_gens = [ ':forge': 'genSources', ':shared:shared_1.16': 'tilforgeGenSources' ]
     tasks.register('genProblematicSources') {
         it.dependsOn 'genAllSources'
     }

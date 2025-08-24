@@ -60,14 +60,15 @@ void addParentProcessedResources() {
     if('shared'!=name && isSharedProject()) {
         boolean minor_version = isMinorVersion()
         (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
-            String p_path = minor_version ? getFullPath(parent.name) : ":${loader.toLowerCase()}"
-            String t_name = "process${loader}Resources"
+            String l_loader = loader.toLowerCase()
+            String p_path = minor_version ? getFullPath(parent.name) : ":$l_loader"
+            String t_name = "processTil${l_loader}Resources"
             String c_name = "parent${loader}Resources"
             createConfiguration "parent${loader}Resources", false, true
             addResourceConfigurations t_name, [ c_name ]
-            addParentResourceDependency c_name, p_path, "processed${minor_version ? loader : ''}Resources"
+            addParentResourceDependency c_name, p_path, "processed${minor_version ? "$loader" : ''}Resources"
             tasks.named(t_name).configure {process_resources ->
-                process_resources.mustRunAfter "$p_path:process${minor_version ? loader : ''}Resources"
+                process_resources.mustRunAfter "$p_path:process${minor_version ? "Til$l_loader" : ''}Resources"
             }
         }
     } else {
@@ -118,7 +119,8 @@ void createResourceArtifact() {
     def config_map = [ processedResources: 'processResources' ]
     if('shared'!=name && isSharedProject()) {
         (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
-            config_map.put "processed${loader}Resources".toString(), "process${loader}Resources".toString()
+            String l_loader = loader.toLowerCase()
+            config_map.put "processed${loader}Resources".toString(), "processTil${l_loader}Resources".toString()
         }
     }
     config_map.forEach {config_name,task_name ->
@@ -154,11 +156,12 @@ private List<String> getDefaultExclusions() {
 
 private List<String> getDefaultExclusionsForLoader(String loader) {
     return switch(loader) {
-        case 'legacy' -> [ "assets/$mod_id/lang/en_us.json", 'META-INF/coremods.json', 'fabric.mod.json',
-                           'multiversion_forge_core.js' ]
-        case 'fabric' -> [ "assets/$mod_id/lang/en_us.lang", 'META-INF/coremods.json', 'mcmod.info',
-                           'multiversion_forge_core.js' ]
-        case 'forge', 'neoforge' -> [ "assets/$mod_id/lang/en_us.lang", 'fabric.mod.json', 'mcmod.info' ]
+        case 'legacy' ->
+            [ "assets/$mod_id/lang/en_us.json", 'META-INF/coremods.json', 'fabric.mod.json', 'multiversion_forge_core.js' ]
+        case 'fabric', 'tilfabric' ->
+            [ "assets/$mod_id/lang/en_us.lang", 'META-INF/coremods.json', 'mcmod.info', 'multiversion_forge_core.js' ]
+        case 'forge', 'neoforge', 'tilforge', 'tilneoforge' ->
+            [ "assets/$mod_id/lang/en_us.lang", 'fabric.mod.json', 'mcmod.info' ]
         default -> []
     }
 }
@@ -166,7 +169,7 @@ private List<String> getDefaultExclusionsForLoader(String loader) {
 @SuppressWarnings('GrUnresolvedAccess')
 private String getDefaultFileReplacement() {
     return switch(isLegacyProject() ? 'legacy' : name) {
-        case 'fabric' -> 'fabric.mod.json'
+        case 'fabric', 'tilfabric' -> 'fabric.mod.json'
         case 'legacy' -> 'mcmod.info'
         default -> null
     }
@@ -175,7 +178,7 @@ private String getDefaultFileReplacement() {
 @SuppressWarnings(['GroovyAssignabilityCheck','GrUnresolvedAccess'])
 private Map<String,?> getDefaultReplacements() {
     return switch(isLegacyProject() ? 'legacy' : name) {
-        case 'fabric' -> [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
+        case 'fabric', 'tilfabric' -> [ 'adaptor': fabric_adaptor, 'injector': fabric_injector, 'version': version ]
         case 'legacy' -> [ 'minecraft_version': libs.versions.minecraft.'1'.'12'.'2'.get(), 'mod_author': mod_authors,
                            'mod_description': mod_description, 'mod_license': mod_license, 'mod_id': mod_id,
                            'mod_name': mod_name, 'mod_version': version ]

@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
@@ -51,9 +53,9 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
         Set<Object> layers = new HashSet<>();
         for(String layerName : layerNames) {
             ModuleLayerAccess layer = getModuleLayer(layerName);
-            layers.add(layer.access);
+            layers.add(layer.access());
             layerToName.put(layer,layerName);
-            layerToWrapper.put(layer.access,layer);
+            layerToWrapper.put(layer.access(),layer);
             List<Object> parents = layer.parents();
             layers.addAll(parents);
         }
@@ -75,13 +77,14 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
     }
     
     public LayerInfoAccess getLayerInfo(String layerName) {
-        LayerInfoAccess layerInfo = getLayerInfo(ModuleSystemAccessor.getLayerEnum(layerName));
+        LayerInfoAccess layerInfo = getLayerInfo(ForgeModuleAccess.getLayerEnum(layerName));
         layerInfo.setLayerName(layerName);
         return layerInfo;
     }
     
     public LayerInfoAccess getLayerInfo(Enum<?> layerEnum) {
-        return getLayerInfo(completedLayers().get(layerEnum));
+        Object layerInfo = completedLayers().get(layerEnum);
+        return ForgeModuleAccess.getLayerInfo(layerInfo,this);
     }
     
     @IndirectCallers
@@ -101,7 +104,7 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
     
     public List<Object> getLayerPaths(String layerName) {
         Map<Object,List<Object>> map = layerPathMap();
-        Enum<?> layerEnum = ModuleSystemAccessor.getLayerEnum(layerName);
+        Enum<?> layerEnum = ForgeModuleAccess.getLayerEnum(layerName);
         if(Objects.isNull(layerEnum)) {
             logOrPrintError("Failed to get Layer "+layerName+"! Cannot return paths");
             return Collections.emptyList();
@@ -153,6 +156,6 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
      * 1.20.4+
      */
     String printSecureJar(Object secureJar) {
-        return getSecureJar(secureJar).print();
+        return ForgeModuleAccess.getSecureJar(secureJar,this).print();
     }
 }

@@ -1,5 +1,9 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorBuilderAccess;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -14,12 +18,15 @@ import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoad
  */
 public class SecureJarAccess extends AbstractModuleSystemAccessor {
     
+    String MODULE_FINDER_EXTENSION_CLASS = SECURE_CLASSLOADER_FORMAT ?
+            "net.minecraftforge.securemodules.SecureModuleFinder" : "cpw.mods.cl.JarModuleFinder";
+    
     SecureJarAccess(Object access, Object accessorOrLogger) {
         super(access,accessorOrLogger);
     }
     
     public JarMetadataAccess metadata() {
-        return getJarMetadata(get("metadata"));
+        return ForgeModuleAccess.getJarMetadata(get("metadata"),this);
     }
     
     public String name() {
@@ -28,7 +35,13 @@ public class SecureJarAccess extends AbstractModuleSystemAccessor {
     
     public ModuleDescriptorAccess newModuleDescriptor(String moduleName, List<String> usesServices) {
         ModuleDescriptorBuilderAccess builder = getModuleDescriptorBuilder(moduleName);
-        builder.inheritFromSecureJar(this);
+        builder.setVersion(metadata().version());
+        builder.setPackages(packages());
+        for(Object jarProvider : providers()) {
+            SecureJarProviderAccess providerAccess = ForgeModuleAccess.getSecureJarProvider(jarProvider);
+            List<String> providers = providerAccess.providers();
+            if(!providers.isEmpty()) builder.setProvides(providerAccess.serviceName(),providers);
+        }
         builder.setUses(usesServices);
         return builder.build();
     }

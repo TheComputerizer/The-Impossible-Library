@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import cpw.mods.modlauncher.ArgumentHandler;
 import cpw.mods.modlauncher.Launcher;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
 
 import java.util.Objects;
 
@@ -22,6 +23,6 @@ public class LauncherAccess extends AbstractModuleSystemAccessor {
     }
     
     public EnvironmentAccess environment() {
-        return getEnvironment(((Launcher)this.access).environment());
+        return ForgeModuleAccess.getEnvironment(((Launcher)this.access).environment(),this);
     }
 }

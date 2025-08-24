@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 
 import java.util.Objects;
 import java.util.Set;
@@ -11,6 +12,19 @@ import java.util.Set;
  */
 @Getter
 public class ResolvedModuleHolder {
+    
+    public static ResolvedModuleHolder findModule(String moduleName, ModuleClassLoaderAccess ... loaders) {
+        for(ModuleClassLoaderAccess loader : loaders) {
+            ResolvedModuleHolder holder = findModule(moduleName,loader);
+            if(Objects.nonNull(holder)) return holder;
+        }
+        return null;
+    }
+    
+    public static ResolvedModuleHolder findModule(String moduleName, ModuleClassLoaderAccess loader) {
+        ResolvedModuleAccess resolvedModule = loader.configuration().getModule(moduleName);
+        return Objects.nonNull(resolvedModule) ? new ResolvedModuleHolder(resolvedModule,loader) : null;
+    }
     
     public static ResolvedModuleHolder findPackage(String pkg, ModuleClassLoaderAccess ... loaders) {
         for(ModuleClassLoaderAccess loader : loaders) {
@@ -23,7 +37,7 @@ public class ResolvedModuleHolder {
     @IndirectCallers
     public static ResolvedModuleHolder findPackage(String pkg, String ... layerNames) {
         for(String layerName : layerNames) {
-            ResolvedModuleHolder holder = findPackage(pkg,ModuleSystemAccessor.getModuleClassLoader(layerName));
+            ResolvedModuleHolder holder = findPackage(pkg, ForgeModuleAccess.getModuleClassLoader(layerName));
             if(Objects.nonNull(holder)) return holder;
         }
         return null;

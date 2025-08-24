@@ -2,10 +2,16 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ClassAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.modules.ForgeModuleAccess;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
 import java.util.Map;
@@ -20,23 +26,40 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILLanguageProvider implements IModLanguageProvider {
     
+    static final Logger LOGGER;
+    
     static {
+        Logger logger;
         try {
             ClassLoader plugin = TILLanguageProvider.class.getClassLoader();
             ForgeCoreLoader.resyncModules(plugin,"PLUGIN",ForgeCoreLoader.bootLoader());
+            logger = TILRef.createLogger("TIL Language Provider (Forge)");
         } catch(Throwable t) {
             TILRef.logError("Failed to resync modules to BOOT layer",t);
+            logger = LogManager.getLogger("TIL Language Provider (Forge[ERRORED])");
         }
+        LOGGER = logger;
     }
     
     final Object core;
     
     public TILLanguageProvider() {
-        TILRef.logInfo("Initializing multiversion language provider (Forge edition)");
+        LOGGER.info("Initializing multiversion language provider");
         ClassLoader pluginLoader = ForgeCoreLoader.isJava8() ? getClass().getClassLoader() :
                 ForgeCoreLoader.layerClassLoader("PLUGIN");
         this.core = ForgeCoreLoader.initCoreAPI(pluginLoader);
-        TILRef.logInfo("Retrieved CoreAPI instance {} for multiversion language provider",this.core);
+        LOGGER.info("Retrieved CoreAPI instance {} for multiversion language provider",this.core);
+        if(ForgeCoreLoader.isJava8()) LOGGER.debug("{} successfully initialized in Java 8",getClass());
+        else {
+            ClassAccess c = ModuleSystemAccessor.getClassAccess(getClass(),LOGGER);
+            if(Objects.nonNull(c)) {
+                ModuleAccess module = c.getModule();
+                LOGGER.debug("{} succesfully initilized in module {}",c.access(),module.getName());
+                LOGGER.debug("Packages for module: {}",module.getPackages());
+                LOGGER.debug("Module in layer: {}", ForgeModuleAccess.getModuleLayerName(module));
+            }
+            else LOGGER.error("Failed to get ClassAccess for {}???",getClass());
+        }
     }
     
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> ignored)  {}

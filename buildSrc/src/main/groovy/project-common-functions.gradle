@@ -56,10 +56,10 @@ void createLoaderClassConfigs() {
         String l_loader = loader.toLowerCase()
         String c_name = "parent${loader}Classes"
         String t_name = "inheritParent${loader}Classes"
-        createClassesImport c_name, t_name, "${l_loader}Classes", l_loader
-        createClassesExport "export${loader}Classes", l_loader
+        createClassesImport c_name, t_name, "til${l_loader}Classes", "til$l_loader"
+        createClassesExport "export${loader}Classes", "til$l_loader"
         tasks.named(t_name).configure {
-            it.mustRunAfter "compile${loader}Java"
+            it.mustRunAfter "compileTil${l_loader}Java"
         }
     }
 }

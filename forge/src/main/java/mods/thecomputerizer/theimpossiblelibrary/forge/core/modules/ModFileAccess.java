@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
 
 /**
  * net.minecraftforge.fml.loading.moddiscovery.ModFile
@@ -18,6 +19,6 @@ public class ModFileAccess extends AbstractModuleSystemAccessor {
     
     @IndirectCallers
     public SecureJarAccess secureJar() {
-        return getSecureJar(invoke("getSecureJar"));
+        return ForgeModuleAccess.getSecureJar(invoke("getSecureJar"),this);
     }
 }

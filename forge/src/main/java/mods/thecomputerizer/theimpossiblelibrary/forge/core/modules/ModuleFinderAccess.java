@@ -1,5 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
@@ -10,7 +13,7 @@ import java.util.Objects;
  */
 public class ModuleFinderAccess extends AbstractModuleSystemAccessor {
     
-    static final String moduleReferenceMapField = changing("references","moduleReferenceMap");
+    static final String moduleReferenceMapField = ForgeModuleAccess.changing("references","moduleReferenceMap");
     
     ModuleFinderAccess(Object access, Object accessorOrLogger) {
         super(access,accessorOrLogger);

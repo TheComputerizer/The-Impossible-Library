@@ -2,6 +2,9 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
 
 import java.net.URI;
 
