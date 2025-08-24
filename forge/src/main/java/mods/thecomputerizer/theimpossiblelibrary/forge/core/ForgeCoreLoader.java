@@ -364,6 +364,10 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     }
     
     static void handleDevLoading(int stage) {
+        if(isJava8()) {
+            LOGGER.debug("No dev load handling needed in Java 8");
+            return;
+        }
         final String appendArg = "(-Dtil.debug.forge.modules.layers=false)";
         Set<Enum<?>> completedLayers = ForgeModuleAccess.getModuleLayerHandler().completedLayers().keySet();
         switch(stage) {

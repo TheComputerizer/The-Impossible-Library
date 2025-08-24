@@ -150,7 +150,7 @@ public class TILDev {
             Path build = classes.getParent().getParent().getParent();
             devResources = Paths.get(build.toAbsolutePath().toString(),"resources",sourceName());
         } else devResources = classes;
-        TILRef.logInfo("Set devResources to {}",devClasses);
+        TILRef.logInfo("Set devResources to {}",devResources);
     }
     
     /**
@@ -159,6 +159,6 @@ public class TILDev {
      */
     private static String sourceName() {
         String loader = CoreAPI.getModLoaderName();
-        return "legacy".equals(loader) ? "main" : loader;
+        return "legacy".equals(loader) ? "main" : "til"+loader;
     }
 }

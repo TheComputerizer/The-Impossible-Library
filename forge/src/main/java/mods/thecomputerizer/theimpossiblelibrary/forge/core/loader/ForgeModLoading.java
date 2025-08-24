@@ -96,6 +96,7 @@ public class ForgeModLoading {
     static final String JAR_METADATA = "cpw.mods.jarhandling.JarMetadata";
     static final String MOD_CLASS_VISITOR = "net.minecraftforge.fml.loading.moddiscovery.ModClassVisitor";
     static final String MOD_FILE_OR_EXCEPTION = "net.minecraftforge.forgespi.locating.IModLocator$ModFileOrException";
+    static final String MOD_FILE_PARSER = "net.minecraftforge.fml.loading.moddiscovery.ModFileParser";
     static final String MOD_PROVIDER = "net.minecraftforge.forgespi.locating.IModProvider";
     static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";
     static final String SCANNER = "net.minecraftforge.fml.loading.moddiscovery.Scanner";
@@ -463,6 +464,7 @@ public class ForgeModLoading {
         if(IDENTIFIED_FILES.contains(file))
             LOGGER.debug("Skipping file that was already identified {}",fileName);
         else {
+            if(pathBased) parseAndSetModFileInfo(file);
             LOGGER.debug("Querying coremods for mod file {}",fileName);
             queryCoreMods(file);
             String[] atPaths = new String[]{"META-INF","accesstransformer.cfg"};
@@ -619,6 +621,16 @@ public class ForgeModLoading {
         LOGGER.debug("Finishing multiversion mod scan");
         scan.addFilePath(file.getFilePath());
         return scan;
+    }
+    
+    static void parseAndSetModFileInfo(Object modFile) {
+        Object modFileInfoParser = Hacks.getFieldDirect(modFile,"parser");
+        if(Objects.nonNull(modFileInfoParser)) {
+            LOGGER.debug("Parsing ModFileInfo for {}",modFile);
+            Class<?> c = Hacks.findClass(MOD_FILE_PARSER);
+            Object modFileInfo = Hacks.invokeStatic(c,"readModList",modFile,modFileInfoParser);
+            Hacks.setFieldDirect(modFile,"modFileInfo",modFileInfo);
+        } else LOGGER.error("Failed to get ModFileInfoParser for {}!",modFile);
     }
     
     static @Nullable Manifest parseManifest(File file) {

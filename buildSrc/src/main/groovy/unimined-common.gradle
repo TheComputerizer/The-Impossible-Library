@@ -18,6 +18,7 @@ void addCustomRunProperties(Map<?,?> map, String primary_source) {
     map.put dev_arg, 'true'
     map.put common_entrypoint_arg, common_entrypoint
     map.put core_entrypoint_arg, core_entrypoint
+    map.put log4j_status_level, 'debug'
     //noinspection GrUnresolvedAccess
     if(isSharedProject()) {
         //noinspection GroovyAssignabilityCheck,GrUnresolvedAccess

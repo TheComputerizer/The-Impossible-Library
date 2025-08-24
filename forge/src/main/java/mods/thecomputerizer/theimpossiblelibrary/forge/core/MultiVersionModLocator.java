@@ -38,6 +38,7 @@ public class MultiVersionModLocator implements IModLocator {
     static ClassLoader modFileClassLoader(IModFile file) {
         if(Objects.isNull(file)) return IModFile.class.getClassLoader();
         Class<?> cls = file.getClass();
+        TILRef.logInfo("Finding ClassLoader for file {}({})",file.getFileName(),cls);
         return ("TILForgeModFile".equals(cls.getSimpleName()) ? ForgeModLoading.class : cls).getClassLoader();
     }
     
