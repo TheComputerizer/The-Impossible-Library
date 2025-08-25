@@ -45,6 +45,7 @@ public class TILSelfLocator implements IModFileCandidateLocator {
     private static final String MOD_LANGUAGE_SERVICE = LOCATING_PKG+".IModLanguageLoader";
     private static final String MOD_READER_IMPL = IMPL_PKG+".MultiVersionModReader";
     private static final String MOD_READER_SERVICE = LOCATING_PKG+".IModFileReader";
+    private static final boolean WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
     
     static {
         ClassLoader loader = MultiVersionModReader.class.getClassLoader();
@@ -94,8 +95,9 @@ public class TILSelfLocator implements IModFileCandidateLocator {
         } else LOGGER.error("ProtectionDomain instance for {} did not exist!",c);
     }
     
+    //TODO Needs to be verified or maybe there's a better way of extracting the path
     String fixPath(String path) {
-        if(path.startsWith("/") || path.startsWith("\\")) path = path.substring(1);
+        if(WINDOWS && (path.startsWith("/") || path.startsWith("\\"))) path = path.substring(1);
         if(path.contains(JAR_EXT) && !path.endsWith(JAR_EXT))
             path = path.substring(0,path.lastIndexOf(JAR_EXT)+JAR_EXT.length());
         return path.replace("%20"," ");
