@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -67,9 +68,10 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 @IndirectCallers
 public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
-    private static final String BURNINGWAVE_PATH = "org.burningwave.core.assembler.StaticComponentContainer";
-    private static final String CORE_PATH = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
-    private static final String TOOLFACTORY_PATH = "io.github.toolfactory.jvm.Info";
+    private static final String BURNINGWAVE = "org.burningwave.core.assembler.StaticComponentContainer";
+    private static final String BURNINGWAVE_DRIVER = "org.burningwave.jvm.NativeDriver";
+    private static final String CORE = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
+    private static final String TOOLFACTORY = "io.github.toolfactory.jvm.Info";
     
     static void burningWaveProperties() {
         Map<Object,Object> properties = new HashMap<>();
@@ -92,13 +94,13 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         FabricLauncher launcher = FabricLauncherBase.getLauncher();
         String target = addCoreSources(launcher);
         this.core = scheduleContainers(initializeCore(launcher.getTargetClassLoader(),target));
-        if(Objects.nonNull(this.core)) TILDev.logInfo("Successfully nstantiated multiversionAdaptor");
+        if(Objects.nonNull(this.core)) TILDev.logInfo("Successfully instantiated multiversionAdaptor");
     }
     
     String addCoreSources(FabricLauncher launcher) {
         if(Boolean.parseBoolean(System.getProperty("til.dev"))) {
             ClassLoader loader = ClassLoader.getSystemClassLoader();
-            for(String className : new String[]{TOOLFACTORY_PATH,BURNINGWAVE_PATH,CORE_PATH}) {
+            for(String className : new String[]{TOOLFACTORY,BURNINGWAVE,BURNINGWAVE_DRIVER,CORE}) {
                 try {
                     Class<?> clazz = loader.loadClass(className);
                     addSource(launcher,clazz.getProtectionDomain().getCodeSource().getLocation());
@@ -280,9 +282,15 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     }
     
     CoreAPI initializeCore(ClassLoader targetLoader, String classname) {
-        CoreAPI core = (CoreAPI)ClassHelper.initialize(ClassHelper.findClass(classname,targetLoader));
+        CoreAPI core = null;
+        Object[] failureArgs = new Object[]{classname,targetLoader};
+        try {
+            core = Hacks.construct(Hacks.findClass(classname,targetLoader,true));
+        } catch(Throwable t) {
+            failureArgs = new Object[]{classname,targetLoader,t};
+        }
         if(Objects.isNull(core)) {
-            TILRef.logFatal("Failed to initialize CoreAPI instance for {} on {}!",classname,targetLoader);
+            TILRef.logFatal("Failed to initialize CoreAPI instance for {} on {}!",failureArgs);
             return null;
         }
         TILRef.logInfo("Loading core mods");

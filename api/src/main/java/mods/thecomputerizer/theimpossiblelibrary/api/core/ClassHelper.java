@@ -38,30 +38,22 @@ public class ClassHelper {
      * The className input here should be the relative path rather than the binary name of the class.
      */
     public static URL absoluteLocation(@Nullable URL url, String className) {
-        LOGGER.info("Getting absolute location of class {} from URL {}",className,url);
         String locationStr = absoluteLocationStr(url,className);
-        LOGGER.info("Got location string as {}",locationStr);
         return Objects.nonNull(locationStr) ? FileHelper.toURL(locationStr) : null;
     }
     
     //TODO This method should probably be rewritten
     public static @Nullable String absoluteLocationStr(@Nullable URL url, String className) {
-        LOGGER.info("Getting absolute location string of class {} from URL {}",className,url);
         if(Objects.isNull(url)) {
             LOGGER.error("Cannot extract class path of null URL for {}!",className);
             return null;
         }
         String urlStr = url.toString().replace("%20"," ");
-        LOGGER.info("urlStr = {}",urlStr);
         String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
-        LOGGER.info("appended = {}",appended);
         String ret = urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length());
-        LOGGER.info("ret = {}",ret);
         if(ret.contains(".jar") || Hacks.isJava8()) return ret;
-        LOGGER.info("Assuming ret is a directory");
         //Assume the location is a directory since it isn't a jar
         int index = ret.lastIndexOf("/");
-        LOGGER.info("Last / index is {}",index);
         return index==-1 ? ret : ret.substring(0,index);
     }
     

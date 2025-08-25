@@ -1,33 +1,36 @@
 [bundles]
-    mods-1_16_5-compile = []
-    mods-1_16_5-implementation = [ 'cloth-1_16_5', 'coroutil-1_16_5', 'modmenu-1_16_5' ]
-    mods-1_16_5-runtime = [ 'architectury-1_16_5', 'rei-1_16_5' ]
-    mods-1_18_2-compile = []
-    mods-1_18_2-implementation = [ 'bookshelf-1_18_2', 'cloth-1_18_2', 'coroutil-1_18_2', 'modmenu-1_18_2' ]
-    mods-1_18_2-runtime = [ 'architectury-1_18_2', 'jei-1_18_2' ]
-    mods-1_19_2-compile = []
-    mods-1_19_2-implementation = [ 'bookshelf-1_19_2', 'cloth-1_19_2', 'coroutil-1_19_2', 'modmenu-1_19_2' ]
-    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'jei-1_19_2' ]
-    mods-1_19_4-compile = []
-    mods-1_19_4-implementation = [ 'bookshelf-1_19_4', 'cloth-1_19_4', 'coroutil-1_19_4', 'modmenu-1_19_4' ]
-    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'jei-1_19_4' ]
-    mods-1_20_1-compile = []
+    mods-1_16_5-compile = [ 'coroutil-1_16_5' ]
+    mods-1_16_5-implementation = [ 'cloth-1_16_5', 'modmenu-1_16_5' ]
+    mods-1_16_5-runtime = [ 'architectury-1_16_5', 'coroutil-1_16_5', 'rei-1_16_5' ]
+    mods-1_18_2-compile = [ 'coroutil-1_18_2' ]
+    mods-1_18_2-implementation = [ 'bookshelf-1_18_2', 'cloth-1_18_2', 'modmenu-1_18_2' ]
+    mods-1_18_2-runtime = [ 'architectury-1_18_2', 'coroutil-1_18_2', 'jei-1_18_2' ]
+    mods-1_19_2-compile = [ 'coroutil-1_19_2' ]
+    mods-1_19_2-implementation = [ 'bookshelf-1_19_2', 'cloth-1_19_2', 'modmenu-1_19_2' ]
+    mods-1_19_2-runtime = [ 'architectury-1_19_2', 'coroutil-1_19_2', 'jei-1_19_2' ]
+    mods-1_19_4-compile = [ 'coroutil-1_19_4' ]
+    mods-1_19_4-implementation = [ 'bookshelf-1_19_4', 'cloth-1_19_4', 'modmenu-1_19_4' ]
+    mods-1_19_4-runtime = [ 'architectury-1_19_4', 'coroutil-1_19_4', 'jei-1_19_4' ]
+    mods-1_20_1-compile = [  ]
     mods-1_20_1-implementation = [ 'bookshelf-1_20_1', 'cloth-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
         'dataanchor-1_20_1', 'glitchcore-1_20_1', 'modmenu-1_20_1', 'sereneseasons-1_20_1' ]
-    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'jei-1_20_1' ]
-    mods-1_20_4-compile = []
+    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'forgeconfig-1_20_1', 'nightconfig-1_20_1', 'typetools' ]
+    mods-1_20_4-compile = [  ]
     mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'cloth-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
         'glitchcore-1_20_4', 'modmenu-1_20_4', 'sereneseasons-1_20_4' ]
-    mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
-    mods-1_20_6-compile = []
+    mods-1_20_4-runtime = [ 'architectury-1_20_4', 'forgeconfig-1_20_4', 'jei-1_20_4', 'nightconfig-1_20_4',
+        'typetools' ]
+    mods-1_20_6-compile = [  ]
     mods-1_20_6-implementation = [ 'cloth-1_20_6', 'configured-1_20_6', 'coroutil-1_20_6', 'glitchcore-1_20_6',
         'modmenu-1_20_6', 'sereneseasons-1_20_6' ]
-    mods-1_20_6-runtime = [ 'architectury-1_20_6', 'jei-1_20_6' ]
-    mods-1_21_1-compile = []
+    mods-1_20_6-runtime = [ 'architectury-1_20_6', 'forgeconfig-1_20_6', 'jei-1_20_6', 'nightconfig-1_20_6',
+        'typetools' ]
+    mods-1_21_1-compile = [  ]
     mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'cloth-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1',
         'dataanchor-1_21_1', 'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'modmenu-1_21_1',
         'sereneseasons-1_21_1' ]
-    mods-1_21_1-runtime = [ 'architectury-1_21_1', 'corgilib-1_21_1', 'jei-1_21_1' ]
+    mods-1_21_1-runtime = [ 'architectury-1_21_1', 'corgilib-1_21_1', 'forgeconfig-1_21_1', 'jei-1_21_1',
+        'nightconfig-1_21_1', 'typetools' ]
 
 [libraries]
     architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }
@@ -76,6 +79,11 @@
 
     enhancedcelestials-1_21_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_21_1' }
 
+    forgeconfig-1_20_1 = { group = 'curse.maven', name = 'forgeconfigapi-547434', version.ref = 'forgeconfig-1_20_1' }
+    forgeconfig-1_20_4 = { group = 'curse.maven', name = 'forgeconfigapi-547434', version.ref = 'forgeconfig-1_20_4' }
+    forgeconfig-1_20_6 = { group = 'curse.maven', name = 'forgeconfigapi-547434', version.ref = 'forgeconfig-1_20_6' }
+    forgeconfig-1_21_1 = { group = 'curse.maven', name = 'forgeconfigapi-547434', version.ref = 'forgeconfig-1_21_1' }
+
     glitchcore-1_20_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_1' }
     glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
     glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
@@ -98,6 +106,11 @@
     modmenu-1_20_6 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_20_6' }
     modmenu-1_21_1 = { group = 'com.terraformersmc', name = 'modmenu', version.ref = 'modmenu-1_21_1' }
 
+    nightconfig-1_20_1 = { group = 'com.electronwill.night-config', name = 'toml', version.ref = 'nightconfig-1_20_1' }
+    nightconfig-1_20_4 = { group = 'com.electronwill.night-config', name = 'toml', version.ref = 'nightconfig-1_20_4' }
+    nightconfig-1_20_6 = { group = 'com.electronwill.night-config', name = 'toml', version.ref = 'nightconfig-1_20_6' }
+    nightconfig-1_21_1 = { group = 'com.electronwill.night-config', name = 'toml', version.ref = 'nightconfig-1_21_1' }
+
     rei-1_16_5 = { group = 'maven.modrinth', name = 'rei', version.ref = 'rei-1_16_5' }
 
     sereneseasons-1_20_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_1' }
@@ -105,9 +118,11 @@
     sereneseasons-1_20_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_6' }
     sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
 
+    typetools = { group = 'net.jodah', name = 'typetools', version.ref = 'typetools' }
+
 [versions]
     # Core & Loader Versions
-    loader = '0.17.0'
+    loader = '0.17.2'
 
     api-1_16 = '0.42.0+1.16'
     api-1_16_5 = '0.42.0+1.16'
@@ -152,15 +167,20 @@
 
     enhancedcelestials-1_21_1 = '6318194'
 
+    forgeconfig-1_20_1 = '6325013'
+    forgeconfig-1_20_4 = '5051714'
+    forgeconfig-1_20_6 = '5397254'
+    forgeconfig-1_21_1 = '6798213'
+
     glitchcore-1_20_1 = '5787838'
     glitchcore-1_20_4 = '5088443'
     glitchcore-1_20_6 = '5352265'
     glitchcore-1_21_1 = '5660741'
 
-    sereneseasons-1_20_1 = '5790654'
+    sereneseasons-1_20_1 = '6398228'
     sereneseasons-1_20_4 = '5206535'
     sereneseasons-1_20_6 = '5420643'
-    sereneseasons-1_21_1 = '5753502'
+    sereneseasons-1_21_1 = '6182595'
 
     # Non Curseforge Dependency Versions
     architectury-1_16_5 = '1.32.68+fabric'
@@ -205,4 +225,11 @@
     modmenu-1_20_6 = '10.0.0'
     modmenu-1_21_1 = '11.0.3'
 
+    nightconfig-1_20_1 = '3.6.4'
+    nightconfig-1_20_4 = '3.6.7'
+    nightconfig-1_20_6 = '3.6.7'
+    nightconfig-1_21_1 = '3.7.4'
+
     rei-1_16_5 = '5.10.177+fabric'
+
+    typetools = '0.6.3'

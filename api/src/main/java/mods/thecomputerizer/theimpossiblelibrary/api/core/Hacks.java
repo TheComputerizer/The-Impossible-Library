@@ -127,9 +127,16 @@ public class Hacks {
     }
     
     /**
-     * Finds and instantiates the target class using the given args
+     * Finds and instantiates the target class on the target class loader using the given args
      */
     @IndirectCallers
+    public static <T> T construct(String target, ClassLoader loader, Object ... args) {
+        return construct(findClass(target,loader),args);
+    }
+    
+    /**
+     * Finds and instantiates the target class using the given args
+     */
     public static <T> T construct(String targetClass, Object ... args) {
         return construct(findClass(targetClass),args);
     }
@@ -137,7 +144,6 @@ public class Hacks {
     /**
      * Finds the target class via the reference class and instantiates it using the given args
      */
-    @IndirectCallers
     public static <T> T construct(Class<?> reference, String targetClass, Object ... args) {
         return construct(findClass(reference,targetClass),args);
     }

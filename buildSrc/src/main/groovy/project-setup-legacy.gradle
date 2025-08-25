@@ -53,7 +53,7 @@ unimined.minecraft {
     runs.all {
         javaVersion = getJavaVersionEnum()
         if(use_dev_run_jar) {
-            classpath-=getBuildFiles([ 'classes\\java', 'resources' ], [ 'main' ])
+            classpath-=getBuildFiles([main: [ 'classes\\java', 'resources' ]])
             classpath+=files(devRunJar.archiveFile)
         }
         Map<?,?> map = getSystemProperties()
@@ -112,5 +112,5 @@ applySourceHelpers()
 
 List<String> fixLegacyRuntimePaths() {
 //noinspection GrUnresolvedAccess
-    return getBuildPaths([ 'classes\\java', 'resources' ], [ 'main' ])
+    return getBuildPaths([main: [ 'classes\\java', 'resources' ]])
 }

@@ -45,7 +45,7 @@ public abstract class CoreAPI {
     }
     
     public static String findLoadingClass(ModLoader loader, String versionStr) {
-        TILDev.logDebug("Parsing version from {}",versionStr);
+        TILRef.logDebug("Parsing version from {}",versionStr);
         GameVersion version = parseVersion(versionStr);
         TILRef.logInfo("Parsed version is {}",version);
         if(Objects.isNull(version))

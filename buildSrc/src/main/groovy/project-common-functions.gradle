@@ -64,18 +64,21 @@ void createLoaderClassConfigs() {
     }
 }
 
-ConfigurableFileCollection getBuildFiles(List<String> relative_paths, List<String> source_names) {
-    return files(getBuildPaths(relative_paths, source_names))
+/**
+ * Map<sourcename,relativepaths>
+ */
+ConfigurableFileCollection getBuildFiles(Map<String,List<String>> pathMap) {
+    return files(getBuildPaths(pathMap))
 }
 
 String getBuildPath(String relative_path, String source_name) {
     return "${projectDir.absolutePath}\\build\\$relative_path\\$source_name"
 }
 
-List<String> getBuildPaths(List<String> relative_paths, List<String> source_names) {
-    logger.lifecycle "Relative paths = $relative_paths | Source names = $source_names"
+List<String> getBuildPaths(Map<String,List<String>> pathMap) {
+    logger.lifecycle "Relative path map = $pathMap"
     List<String> paths = []
-    source_names.forEach {source_name ->
+    pathMap.forEach {source_name,relative_paths ->
         relative_paths.forEach {relative_path ->
             paths.add getBuildPath(relative_path, source_name)
         }

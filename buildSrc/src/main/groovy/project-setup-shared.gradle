@@ -83,7 +83,7 @@ unimined.minecraft(sourceSets.tilforge) {
     if(!mappingStyleOfficial()) defaultRemapJar = true
     if(isRunnableVersion()) {
         if(!isJava8()) {
-            def build_files = getBuildFiles([ 'classes\\java', 'resources' ], [ 'main', 'tilforge' ])
+            def build_files = getBuildFiles([main: [ 'classes\\java' ], tilforge: [ 'classes\\java', 'resources' ]])
             logger.lifecycle "Adding build files to minecraftLibraries $build_files"
             minecraftLibraries.dependencies.add dependencies.create(build_files)
             tasks.compileTilforgeJava.mustRunAfter 'processTilforgeResources'
@@ -298,8 +298,8 @@ void setSharedDependencies(List<String> extra_maven_ids) {
 void setSharedDependenciesInner(List<String> maven_ids) {
     if(isLoaderBase()) return
 
-    //Makes it so runtime mods can be disabled to avoid mapping issues when testing
-    boolean enable_runtime_mods = false
+    //Makes it so runtime mods can be disabled per loader to avoid mapping issues when testing
+    List<String> enabled_runtime_mods = [ 'fabric' ]
 
     setCommonRepositories maven_ids
     def loaders = isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]
@@ -335,12 +335,12 @@ void setSharedDependenciesInner(List<String> maven_ids) {
                 "til${l_loader}ModImplementation"(modsBundle(l_loader, 'implementation')) {
                     exclude group: 'net.fabricmc'
                 }
-                if(enable_runtime_mods) {
+                if(enabled_runtime_mods.contains(l_loader)) {
                     "til${l_loader}ModRuntimeOnly"(modsBundle(l_loader, 'runtime')) {
                         exclude group: 'net.fabricmc'
                     }
                 }
-                if(isJava8()) "til${l_loader}Implementation" libs.bundles.burningwave
+                if(isJava8() || 'forge'!=l_loader) "til${l_loader}Implementation" libs.bundles.burningwave
             } else if(isJava8() || 'forge'!=l_loader) "til${l_loader}Implementation" libs.bundles.burningwave
         }
     }
