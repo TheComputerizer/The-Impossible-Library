@@ -22,17 +22,17 @@ boolean use_dev_run_jar = true
 
 if(use_dev_run_jar) {
     tasks.register('devRunJar',Jar) {
-        [ 'classes', 'processResources' ].forEach {t_name ->
-            it.mustRunAfter t_name
-        }
-        archiveBaseName.set "$mod_id-dev_run"
         duplicatesStrategy = EXCLUDE
-        from sourceSets.main.output
-        manifest {
-            Map<?,Object> entries = getManifestEntries()
-            entries.put 'TILMultiversionCoreMods', core_entrypoint
-            entries.put 'TILMultiversionMods', common_entrypoint
-            attributes entries
+        for(String t_name : [ 'classes', 'processResources' ]) mustRunAfter t_name
+        doFirst {
+            archiveBaseName.set "$mod_id-dev_run"
+            from sourceSets.main.output
+            manifest {
+                Map<String,Object> entries = getManifestEntries()
+                entries['TILMultiversionCoreMods'] = core_entrypoint
+                entries['TILMultiversionMods'] = common_entrypoint
+                attributes entries
+            }
         }
     }
 }
@@ -59,11 +59,15 @@ unimined.minecraft {
         Map<?,?> map = getSystemProperties()
         addCustomRunProperties map, 'main'
         if(isCleanroomProject()) {
-            map.put cleanroom_dump, 'true'
-            map.put cleanroom_verbose, 'true'
+            //noinspection GroovyAssignabilityCheck
+            map[cleanroom_dump] = 'true'
+            //noinspection GroovyAssignabilityCheck
+            map[cleanroom_verbose] = 'true'
         } else {
-            map.put forge_log_markers_arg, forge_log_markers_values
-            map.put forge_log_level, 'debug'
+            //noinspection GroovyAssignabilityCheck
+            map[forge_log_markers_arg] = forge_log_markers_values
+            //noinspection GroovyAssignabilityCheck
+            map[forge_log_level] = 'debug'
         }
     }
     mods {

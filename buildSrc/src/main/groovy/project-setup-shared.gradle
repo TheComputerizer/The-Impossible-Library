@@ -25,10 +25,16 @@ unimined.minecraft(sourceSets.tilfabric) {
     combineWith sourceSets.main
     defaultRemapJar = true
     if(isRunnableVersion()) {
-        runs.all {
-            javaVersion = getJavaVersionEnum()
-            Map<?,?> map = getSystemProperties()
-            addCustomRunProperties map, 'tilfabric'
+        runs{
+            //noinspection ConfigurationAvoidance
+            all {
+                javaVersion = getJavaVersionEnum()
+                Map<?,?> map = getSystemProperties()
+                addCustomRunProperties map, 'tilfabric'
+            }
+            config('server') {
+                args+=[ 'nogui' ]
+            }
         }
     } else runs.off = true
     if(isRunnableVersion()) {
@@ -88,13 +94,25 @@ unimined.minecraft(sourceSets.tilforge) {
             minecraftLibraries.dependencies.add dependencies.create(build_files)
             tasks.compileTilforgeJava.mustRunAfter 'processTilforgeResources'
         }
-        runs.all {
-            javaVersion = getJavaVersionEnum()
-            Map<?, ?> map = getSystemProperties()
-            addCustomRunProperties map, 'tilforge'
-            map.put module_layer_movement, 'false'
-            map.put forge_log_markers_arg, forge_log_markers_values
-            map.put forge_log_level, 'debug'
+        runs {
+            //noinspection ConfigurationAvoidance
+            all {
+                javaVersion = getJavaVersionEnum()
+                Map<?, ?> map = getSystemProperties()
+                addCustomRunProperties map, 'tilforge'
+                //noinspection GroovyAssignabilityCheck
+                map[module_layer_movement] = 'false'
+                //noinspection GroovyAssignabilityCheck
+                map[forge_log_markers_arg] = forge_log_markers_values
+                //noinspection GroovyAssignabilityCheck
+                map[forge_log_level] = 'debug'
+            }
+            config('client') {
+                args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
+            }
+            config('server') {
+                args+=[ 'nogui' ]
+            }
         }
     } else runs.off = true
     if(isRunnableVersion()) {
@@ -133,10 +151,16 @@ if(isNeoforgeCompatible()) {
         combineWith sourceSets.main
         if(!mappingStyleOfficial()) defaultRemapJar = true
         if(isRunnableVersion()) {
-            runs.all {
-                javaVersion = getJavaVersionEnum()
-                Map<?,?> map = getSystemProperties()
-                addCustomRunProperties map, 'tilneoforge'
+            runs{
+                //noinspection ConfigurationAvoidance
+                all {
+                    javaVersion = getJavaVersionEnum()
+                    Map<?,?> map = getSystemProperties()
+                    addCustomRunProperties map, 'tilneoforge'
+                }
+                config('server') {
+                    args+=[ 'nogui' ]
+                }
             }
         } else runs.off = true
         if(isRunnableVersion()) {
@@ -202,10 +226,12 @@ void createJarTasks() {
     loaders.forEach {loader ->
         String task_name = "til${loader}Jar"
         tasks.register(task_name, Jar) {jar_task ->
-            jar_task.archiveBaseName = mod_id
-            jar_task.archiveClassifier = loader
-            jar_task.duplicatesStrategy = EXCLUDE
-            jar_task.from sourceSets."til$loader".output
+            duplicatesStrategy = EXCLUDE
+            doFirst {
+                archiveBaseName = mod_id
+                archiveClassifier = loader
+                from sourceSets."til$loader".output
+            }
         }
         tasks.assemble.dependsOn task_name
     }
@@ -300,6 +326,8 @@ void setSharedDependenciesInner(List<String> maven_ids) {
 
     //Makes it so runtime mods can be disabled per loader to avoid mapping issues when testing
     List<String> enabled_runtime_mods = [ 'fabric' ]
+    //Selectively enable which versions should have Music Triggers added to the runtime
+    Map<String,List<String>> enabled_mt = [fabric: [ 'all' ], forge: [ 'all' ], neoforge: [ 'all' ]]
 
     setCommonRepositories maven_ids
     def loaders = isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]
@@ -340,6 +368,9 @@ void setSharedDependenciesInner(List<String> maven_ids) {
                         exclude group: 'net.fabricmc'
                     }
                 }
+                def mt_versions = enabled_mt[l_loader]
+                if(mt_versions!=null && (mt_versions.contains('all') || mt_versions.contains(minecraftVersion())))
+                    "til${l_loader}RuntimeOnly"(libs.musictriggers)
                 if(isJava8() || 'forge'!=l_loader) "til${l_loader}Implementation" libs.bundles.burningwave
             } else if(isJava8() || 'forge'!=l_loader) "til${l_loader}Implementation" libs.bundles.burningwave
         }
@@ -347,6 +378,9 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     tasks.compileJava.mustRunAfter "${parent.path}:classes"
     loaders.forEach {loader ->
         String l_loader = loader.toLowerCase()
+        tasks.named("til${l_loader}Classes").configure {
+            it.mustRunAfter 'classes'
+        }
         if(minor_version) {
             String p_task = "${parent.path}:inheritParent${loader}Classes"
             tasks.named("compileTil${l_loader}Java").configure {

@@ -375,7 +375,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
                 LOGGER.debug("Skipping module layer movement hacks {}",appendArg);
                 boolean bootLoaded = ForgeCoreLoader.class.getClassLoader()==bootLoader();
                 LOGGER.debug("ForgeCoreLoader is boot loaded: {}",bootLoaded);
-                logModuleNames("BOOT","SERVICE");
+                //logModuleNames("BOOT","SERVICE");
                 LOGGER.debug("Completed layers: {}",completedLayers);
                 return;
             }
@@ -385,7 +385,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
             }
             case 3: {
                 LOGGER.debug("Skipping PLUGIN layer module resyncing {}",appendArg);
-                logModuleNames("BOOT","SERVICE","PLUGIN");
+                //logModuleNames("BOOT","SERVICE","PLUGIN");
                 LOGGER.debug("Completed layers: {}",completedLayers);
                 return;
             }

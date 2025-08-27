@@ -40,10 +40,12 @@ void createClassesImport(String c_name, String t_name, String c_t_name, String s
     //noinspection GrUnresolvedAccess
     createConfiguration c_name, false, true
     tasks.register(t_name, Copy) {copy_task ->
-        duplicatesStrategy = EXCLUDE
         mustRunAfter compileJava
-        from configurations.named(c_name)
-        destinationDir = sourceClassesDir s_name
+        doFirst {
+            duplicatesStrategy = EXCLUDE
+            from configurations.named(c_name)
+            destinationDir = sourceClassesDir s_name
+        }
     }
     tasks.named(c_t_name).configure {
         dependsOn t_name
@@ -59,16 +61,21 @@ void createLoaderClassConfigs() {
         createClassesImport c_name, t_name, "til${l_loader}Classes", "til$l_loader"
         createClassesExport "export${loader}Classes", "til$l_loader"
         tasks.named(t_name).configure {
-            it.mustRunAfter "compileTil${l_loader}Java"
+            mustRunAfter "compileTil${l_loader}Java"
         }
     }
 }
 
 /**
  * Map<sourcename,relativepaths>
+ * Any paths that resolve to a nonexistant directory will create a new directory at that path
  */
 ConfigurableFileCollection getBuildFiles(Map<String,List<String>> pathMap) {
-    return files(getBuildPaths(pathMap))
+    ConfigurableFileCollection ret = files(getBuildPaths(pathMap))
+    ret.files.forEach {
+        if(!it.exists() && !it.name.contains('.')) it.mkdirs()
+    }
+    return ret
 }
 
 String getBuildPath(String relative_path, String source_name) {
@@ -100,13 +107,13 @@ static String getFullPath(String p_name) {
     return p_path
 }
 
-Map<?,Object> getManifestEntries() {
-    Map<?,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
+Map<String,Object> getManifestEntries() {
+    Map<String,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
     //noinspection GrUnresolvedAccess
     if(isLegacyProject()) {
-        attribute_map.put('FMLCorePlugin', legacy_entrypoint)
-        attribute_map.put('FMLCorePluginContainsFMLMod', true)
-        attribute_map.put('ForceLoadAsMod', true)
+        attribute_map['FMLCorePlugin'] = legacy_entrypoint
+        attribute_map['FMLCorePluginContainsFMLMod'] = true
+        attribute_map['ForceLoadAsMod'] = true
     }
     return attribute_map
 }
@@ -145,9 +152,11 @@ void initCommonDeps() {
 
 void setDefaultManifestAttributes() {
     jar {
-        manifest {
-            Map<?,Object> manifest_attributes = getManifestEntries()
-            attributes(manifest_attributes)
+        doFirst {
+            manifest {
+                Map<String,Object> manifest_attributes = getManifestEntries()
+                attributes(manifest_attributes)
+            }
         }
     }
 }
@@ -156,21 +165,29 @@ void setDefaultManifestAttributes() {
 void setJarsRunAfter(List<String> p_names) {
     setDefaultManifestAttributes()
     def build_tasks = p_names.collect {p_name ->
-        "${getFullPath(p_name)}:build"
+        "${getFullPath(p_name)}:build".toString()
     }
     jar {
-        build_tasks.forEach {build_task ->
-            mustRunAfter build_task
+        final List<String> build_tasks_view = Collections.unmodifiableList build_tasks
+        doFirst {
+            build_tasks_view.forEach {build_task ->
+                mustRunAfter build_task
+            }
         }
     }
     sourcesJar {
-        build_tasks.forEach {build_task ->
-            mustRunAfter build_task
+        final List<String> build_tasks_view = Collections.unmodifiableList build_tasks
+        doFirst {
+            build_tasks_view.forEach {build_task ->
+                mustRunAfter build_task
+            }
         }
     }
 }
 
 @SuppressWarnings('GrMethodMayBeStatic')
 File sourceClassesDir(String source_name) {
-    return sourceSets.named(source_name).get().java.destinationDirectory.asFile.get()
+    SourceSet source = sourceSets.named(source_name).get()
+    DirectoryProperty java_destination = source.java.destinationDirectory
+    return java_destination.asFile.get()
 }

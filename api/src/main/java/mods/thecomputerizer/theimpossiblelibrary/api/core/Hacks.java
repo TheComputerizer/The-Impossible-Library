@@ -534,15 +534,6 @@ public class Hacks {
     
     /**
      * Invoke a non-static method of the given name on the given object with the given args.
-     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
-     */
-    @IndirectCallers
-    public static <T> T invoke(Object target, String named, String intermediary, Object ... args) {
-        return invoke(target,isNamedEnv() ? named : intermediary, args);
-    }
-    
-    /**
-     * Invoke a non-static method of the given name on the given object with the given args.
      */
     public static <T> T invoke(Object target, String method, Object ... args) {
         if(Objects.isNull(target)) {
@@ -554,16 +545,6 @@ public class Hacks {
             return null;
         }
         return Methods.invoke(target,method,args);
-    }
-    
-    /**
-     * Invoke a non-static method of the given name on the given object with the given args.
-     * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
-     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
-     */
-    @IndirectCallers
-    public static <T> T invokeDirect(Object target, String named, String intermediary, Object ... args) {
-        return invokeDirect(target, isNamedEnv() ? named : intermediary, args);
     }
     
     /**
@@ -584,11 +565,30 @@ public class Hacks {
         return Methods.invoke(target,method,args);
     }
     
+    /**
+     * Invoke a non-static method of the given name on the given object with the given args.
+     * Invoking a method directly will bypass any package-private, private, or protected access restrictions.
+     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
+     */
+    @IndirectCallers
+    public static <T> T invokeDirectNamed(Object target, String named, String intermediary, Object ... args) {
+        return invokeDirect(target, isNamedEnv() ? named : intermediary, args);
+    }
+    
     public static <T> T invokeMethodObj(@Nullable Object target, Method method, Object ... args) {
         if(Objects.isNull(method)) {
             LOGGER.error("Cannot invoke null method object! (args={})",(Object)args);
         }
         return Methods.invoke(target,method,args);
+    }
+    
+    /**
+     * Invoke a non-static method of the given name on the given object with the given args.
+     * The "named" input will be used in named environments for the method with "intermediary" being used otherwise.
+     */
+    @IndirectCallers
+    public static <T> T invokeNamed(Object target, String named, String intermediary, Object ... args) {
+        return invoke(target,isNamedEnv() ? named : intermediary, args);
     }
     
     /**

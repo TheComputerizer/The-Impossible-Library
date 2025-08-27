@@ -16,6 +16,7 @@
     google-jsr = { group = 'com.google.code.findbugs', name = 'jsr305', version.ref = 'jsr' }
     jetbrains-annotations = { group = 'org.jetbrains', name = 'annotations', version.ref = 'jetbrains-annotations' }
     log4j-core = { group = 'org.apache.logging.log4j', name = 'log4j-core', version.ref = 'log4j' }
+    musictriggers = { group = 'curse.maven', name = 'musictriggers-518410', version.ref = 'musictriggers' }
     lombok = { group = 'org.projectlombok', name = 'lombok', version.ref = 'lombok' }
     netty-all = { group = 'io.netty', name = 'netty-all', version.ref = 'netty-all' }
     spotbugs-annotations = { group = 'com.github.spotbugs', name = 'spotbugs-annotations', version.ref = 'spotbugs' }
@@ -37,6 +38,7 @@
     burningwave-core = '12.+'
     burningwave-driver = '8.+'
     lombok = '1.+'
+    musictriggers = '6497407'
     spotbugs = '4.8.6'
     toolfactory = '9.+'
 

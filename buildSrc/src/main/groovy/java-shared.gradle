@@ -14,6 +14,7 @@ plugins {
 group = base_package
 version = mod_version
 
+
 idea {
     module {
         downloadJavadoc = true
@@ -27,17 +28,21 @@ java {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.deprecation = false
+    doFirst {
+        options.encoding = 'UTF-8'
+        options.deprecation = false
+    }
 }
 
 tasks.withType(Jar).configureEach {
-    it.archiveBaseName = mod_id
-    it.duplicatesStrategy = EXCLUDE
+    duplicatesStrategy = EXCLUDE
+    doFirst {
+        archiveBaseName = mod_id
+    }
 }
 
 tasks.withType(ProcessResources).configureEach {
-    it.duplicatesStrategy = EXCLUDE
+    duplicatesStrategy = EXCLUDE
 }
 
 ext.addParentProcessedResources = this.&addParentProcessedResources as MethodClosure
@@ -91,13 +96,16 @@ private void addResourceConfigurations(String t_name, List<String> config_names)
     def exclude_these = loader==null ? getDefaultExclusions() : getDefaultExclusionsForLoader(loader)
     def file_replacement = getDefaultFileReplacement()
     def replacements = getDefaultReplacements()
-    tasks.named(t_name, Copy) {process_resources ->
-        config_names.forEach {config_name ->
-            from(configurations.named(config_name)) {
-                process_resources.exclude exclude_these
-                if(file_replacement!=null) {
-                    filesMatching(file_replacement) {copy_details ->
-                        copy_details.expand replacements
+    tasks.named(t_name, Copy) {Copy process_resources ->
+        final List<String> config_names_view = Collections.unmodifiableList config_names
+        doFirst {
+            config_names_view.forEach {config_name ->
+                from(configurations.named(config_name)) {
+                    process_resources.exclude exclude_these
+                    if(file_replacement!=null) {
+                        filesMatching(file_replacement) {
+                            expand replacements
+                        }
                     }
                 }
             }
@@ -120,7 +128,7 @@ void createResourceArtifact() {
     if('shared'!=name && isSharedProject()) {
         (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
             String l_loader = loader.toLowerCase()
-            config_map.put "processed${loader}Resources".toString(), "processTil${l_loader}Resources".toString()
+            config_map["processed${loader}Resources".toString()] = "processTil${l_loader}Resources".toString()
         }
     }
     config_map.forEach {config_name,task_name ->
@@ -133,9 +141,12 @@ void createResourceArtifact() {
 
 void excludeResources(String ... exclude_these) {
     if(exclude_these==null || exclude_these.length==0) return
-    tasks.withType(ProcessResources).configureEach {it ->
-        exclude_these.each {exclude_this ->
-            it.exclude exclude_this
+    tasks.withType(ProcessResources).configureEach {
+        final List<String> exclusion_view = List.of(exclude_these)
+        doFirst {
+            exclusion_view.forEach {String exclude_this->
+                exclude exclude_this
+            }
         }
     }
 }
@@ -217,7 +228,9 @@ void setJavaVersion(int java_version) {
     }
     if(java_version>=9) {
         tasks.withType(JavaCompile).configureEach {
-            it.options.release = java_version
+            doFirst {
+                options.release = java_version
+            }
         }
     }
 }
@@ -229,16 +242,19 @@ void setResourceDependencies(List<String> p_names, String ... exlude_these) {
 }
 
 void setResourceDependency(String p_name, String ... exclude_these) {
-    tasks.withType(ProcessResources).configureEach {it ->
-        it.dependsOn ":$p_name:processResources"
+    tasks.withType(ProcessResources).configureEach {
+        dependsOn ":$p_name:processResources"
     }
     excludeResources exclude_these
 }
 
 void setResourceReplacements(String replacement_file, Map<String,?> replacements) {
     processResources {
-        filesMatching(replacement_file) {copy_details ->
-            copy_details.expand replacements
+        final Map<String,?> replacements_view = Collections.unmodifiableMap replacements
+        doFirst {
+            filesMatching(replacement_file) {copy_details ->
+                expand replacements_view
+            }
         }
     }
 }

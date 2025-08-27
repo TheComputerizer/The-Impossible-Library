@@ -1,39 +1,10 @@
 import org.codehaus.groovy.runtime.MethodClosure
 
-import java.util.function.Consumer
-
 //noinspection GrUnresolvedAccess
 initCommonDeps()
 
 ext.modsBundle = this.&modsBundle as MethodClosure
 ext.setCommonRepositories = this.&setCommonRepositories as MethodClosure
-
-/**
- * Returns a RepositoryHandler consumer that uses the id to retrieve and add common maven data
- */
-Consumer<RepositoryHandler> commonMavenArtifact(String id) {
-    Consumer<RepositoryHandler> consumer = handler -> {
-        def maven_data = commonMavenData id
-        int size = maven_data.size()
-        if(size>1) {
-            handler.maven {
-                name = maven_data.get(0)
-                url = uri "https://${maven_data.get(1)}"
-                if(size>2) {
-                    def included_groups = maven_data.subList(2,maven_data.size())
-                    //noinspection GrUnresolvedAccess
-                    content {
-                        included_groups.forEach {grp ->
-                            //noinspection GrUnresolvedAccess
-                            includeGroup grp
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return consumer
-}
 
 /**
  * Returns common maven data as a list from the given id
@@ -65,14 +36,29 @@ Provider<ExternalModuleDependencyBundle> modsBundle(String loader, String type) 
 }
 
 void setCommonRepositories(List<String> maven_ids) {
-    repositories {handler ->
-        maven_ids.forEach {id ->
-            if('central'==id) mavenCentral()
-            else {
-                def consumer = commonMavenArtifact id
-                if(consumer!=null) {
-                    //noinspection GroovyAssignabilityCheck
-                    consumer.accept handler
+    maven_ids.forEach {id ->
+        if('central'==id) {
+            repositories {
+                mavenCentral()
+            }
+        } else setCommonRepositoryData commonMavenData(id)
+    }
+}
+
+private void setCommonRepositoryData(List<String> maven_data) {
+    if(maven_data==null || maven_data.empty) return
+    final String maven_name = maven_data.get 0
+    final String maven_location = maven_data.get 1
+    final List<String> content_filter = maven_data.size()>2 ? maven_data.subList(2,maven_data.size()) : null
+    repositories {
+        maven {
+            name = maven_name
+            url = uri "https://$maven_location"
+            if(content_filter!=null && !content_filter.empty) {
+                content {
+                    content_filter.forEach {grp ->
+                        includeGroup grp
+                    }
                 }
             }
         }
