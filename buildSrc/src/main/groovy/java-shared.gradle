@@ -228,9 +228,7 @@ void setJavaVersion(int java_version) {
     }
     if(java_version>=9) {
         tasks.withType(JavaCompile).configureEach {
-            doFirst {
-                options.release = java_version
-            }
+            options.release = java_version
         }
     }
 }
