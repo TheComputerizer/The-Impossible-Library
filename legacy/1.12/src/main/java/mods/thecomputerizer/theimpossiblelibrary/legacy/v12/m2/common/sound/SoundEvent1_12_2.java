@@ -5,14 +5,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 
+import java.util.Objects;
+
 public class SoundEvent1_12_2 extends SoundEventAPI<SoundEvent> {
 
     public SoundEvent1_12_2(Object sound) {
-        super((SoundEvent)sound);
+        super(sound);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
 }

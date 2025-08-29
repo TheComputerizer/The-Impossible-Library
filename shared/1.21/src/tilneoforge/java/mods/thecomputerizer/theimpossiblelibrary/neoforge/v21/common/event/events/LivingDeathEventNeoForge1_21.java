@@ -16,7 +16,7 @@ public class LivingDeathEventNeoForge1_21 extends LivingDeathEventNeoForge {
         LIVING_DEATH.invoke(event);
     }
     
-    @Override protected EventFieldWrapper<LivingDeathEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingDeathEvent,DamageAPI<?>> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_21(event.getSource(),1f),null);
     }
 }

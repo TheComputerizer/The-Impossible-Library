@@ -1,13 +1,17 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.common.event.events.*;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.event.CommonEvents1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events.LivingAttackedEventNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events.LivingDamageEventNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events.LivingDeathEventNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events.LivingHurtEventNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events.LootingLevelEventNeoForge1_20;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
 
-public abstract class CommonEventsNeoForge1_20 extends CommonEvents1_20 {
+public interface CommonEventsNeoForge1_20 {
 
-    @Override public void defineEvents() {
+    default void defineNeoforgeEvents() {
         ATTACH_CAPABILITIES.setConnector(new AttachCapabilitiesEventNeoForge());
         BLOCK_BREAK.setConnector(new BlockBreakEventNeoForge());
         BLOCK_CREATE_FLUID.setConnector(new FluidCreateSourceEventNeoForge());
@@ -27,10 +31,15 @@ public abstract class CommonEventsNeoForge1_20 extends CommonEvents1_20 {
         ENTITY_SMITTEN.setConnector(new EntityStruckByLightningEventNeoForge());
         EXPLOSION_DETONATE.setConnector(new ExplosionDetonateEventNeoForge());
         EXPLOSION_START.setConnector(new ExplosionStartEventNeoForge());
+        LIVING_ATTACKED.setConnector(new LivingAttackedEventNeoForge1_20());
+        LIVING_DAMAGE.setConnector(new LivingDamageEventNeoForge1_20());
+        LIVING_DEATH.setConnector(new LivingDeathEventNeoForge1_20());
         LIVING_FALL.setConnector(new LivingFallEventNeoForge());
         LIVING_HEAL.setConnector(new LivingHealEventNeoForge());
+        LIVING_HURT.setConnector(new LivingHurtEventNeoForge1_20());
         LIVING_JUMP.setConnector(new LivingJumpEventNeoForge());
         LIVING_KNOCKBACK.setConnector(new LivingKnockbackEventNeoForge());
+        LIVING_LOOTING_LEVEL.setConnector(new LootingLevelEventNeoForge1_20());
         LIVING_SET_TARGET.setConnector(new SetAttackTargetEventNeoForge());
         LIVING_UPDATE.setConnector(new LivingUpdateEventNeoForge());
         LIVING_ITEM_USE_FINISH.setConnector(new LivingItemUseFinishEventNeoForge());
@@ -78,6 +87,5 @@ public abstract class CommonEventsNeoForge1_20 extends CommonEvents1_20 {
         WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventNeoForge());
         WORLD_SAVE.setConnector(new WorldSaveEventNeoForge());
         WORLD_UNLOAD.setConnector(new WorldUnloadEventNeoForge());
-        super.defineEvents();
     }
 }

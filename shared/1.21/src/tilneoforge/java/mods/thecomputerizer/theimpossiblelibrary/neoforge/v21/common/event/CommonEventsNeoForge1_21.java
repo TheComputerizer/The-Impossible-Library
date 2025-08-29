@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.util.CustomTickNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.event.events.LivingAttackedEventNeoForge1_21;
@@ -156,8 +157,7 @@ public class CommonEventsNeoForge1_21 extends CommonEvents1_21 {
         else TILRef.logError("Unable to find an event bus to register event wrapper {}",wrapper);
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public TriState setEventResult(Result result) {
-        return result==DEFAULT ? TriState.DEFAULT : (result==DENY ? TriState.FALSE : TriState.TRUE);
+    @Override public <E> E setEventResult(Result result) {
+        return GenericUtils.cast(result==DEFAULT ? TriState.DEFAULT : (result==DENY ? TriState.FALSE : TriState.TRUE));
     }
 }

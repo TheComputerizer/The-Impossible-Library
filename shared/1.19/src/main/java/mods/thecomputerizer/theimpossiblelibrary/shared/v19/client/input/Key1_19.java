@@ -6,10 +6,10 @@ import net.minecraft.client.KeyMapping;
 public class Key1_19 extends KeyAPI<KeyMapping> {
 
     public Key1_19(Object key) {
-        super((KeyMapping)key);
+        super(key);
     }
     
     @Override public boolean isDown() {
-        return this.wrapped.isDown();
+        return getIfNotNullOrDefault(KeyMapping::isDown,false);
     }
 }

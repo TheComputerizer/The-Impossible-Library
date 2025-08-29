@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockSnapshotA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockStateAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -42,6 +43,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container.
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.Effect1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.EffectInstance1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.effect.Potion1_12_2;
+import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Damage1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Entity1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Living1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.Item1_12_2;
@@ -85,8 +87,12 @@ public class Wrapper1_12_2 implements WrapperAPI {
         return getAs(sender,CommandSender1_12_2::new);
     }
     
+    @Override public <S> @Nullable DamageAPI<S> wrapDamage(@Nullable Object source, float amount) {
+        return getAs(source,s -> new Damage1_12_2(s,amount));
+    }
+    
     @Override public @Nullable <D> DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable Object dimension) {
-        return getAs(dimension,type -> new Dimension1_12_2(world,type));
+        return getAs(dimension,Dimension1_12_2::new);
     }
 
     @Override public @Nullable <E> EffectAPI<E> wrapEffect(@Nullable Object effect) {

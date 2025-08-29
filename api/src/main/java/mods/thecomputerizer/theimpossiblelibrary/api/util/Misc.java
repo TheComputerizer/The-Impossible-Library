@@ -243,11 +243,6 @@ public class Misc {
             }
         };
     }
-    
-    @SuppressWarnings("unchecked")
-    public static <T> T stupidCast(Object o) {
-        return (T)o;
-    }
 
     public static <V,W> @Nullable W wrap(@Nullable V val, Function<V,W> wrapperFunc) {
         return applyNullable(val,wrapperFunc);

@@ -11,7 +11,7 @@ public class Minecraft1_20_6 extends Minecraft1_20 {
         return new Minecraft1_20_6(Minecraft.getInstance());
     }
     
-    public Minecraft1_20_6(Minecraft mc) {
+    public Minecraft1_20_6(Object mc) {
         super(mc,new Render1_20_6());
     }
 }

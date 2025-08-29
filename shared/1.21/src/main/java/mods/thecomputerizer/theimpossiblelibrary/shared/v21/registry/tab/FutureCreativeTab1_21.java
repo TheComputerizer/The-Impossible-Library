@@ -8,7 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.world.item.CreativeModeTab;
 import org.jetbrains.annotations.Nullable;
 
-
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import static net.minecraft.world.item.ItemStack.EMPTY;
@@ -24,18 +24,21 @@ public class FutureCreativeTab1_21 extends CreativeTabAPI<FutureCreativeTab<Crea
     }
     
     @Override public ItemStackAPI<?> getIcon() {
+        if(Objects.isNull(this.wrapped)) return WrapperHelper.wrapItemStack(EMPTY);
         if(this.wrapped.isRegistered()) return WrapperHelper.wrapItemStack(this.wrapped.getWrapped().getIconItem());
         TILRef.logError("Cannot get icon for CreativeModeTab before it has been registered!");
         return WrapperHelper.wrapItemStack(EMPTY);
     }
     
     public void register(@Nullable Object event) {
-        if(this.wrapped.isRegistered()) TILRef.logWarn("Tried to register FutureCreativeTab1_21 twice!");
-        else this.wrapped.register(event);
+        if(Objects.nonNull(this.wrapped)) {
+            if(this.wrapped.isRegistered()) TILRef.logWarn("Tried to register FutureCreativeTab1_20 twice!");
+            else this.wrapped.register(event);
+        }
     }
     
     public void supply(@Nullable Object event) {
-        this.wrapped.supply(event,this.stacks);
+        if(Objects.nonNull(this.wrapped)) this.wrapped.supply(event, this.stacks);
     }
     
     @Override public <P> P withItemProperties(P properties) {

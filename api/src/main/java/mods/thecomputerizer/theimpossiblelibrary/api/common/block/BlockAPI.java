@@ -12,7 +12,7 @@ public abstract class BlockAPI<B> extends AbstractWrapped<B> implements Registry
     
     protected ResourceLocationAPI<?> registryName;
     
-    protected BlockAPI(B block) {
+    protected BlockAPI(Object block) {
         super(block);
     }
     

@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public abstract class ItemStackAPI<S> extends AbstractWrapped<S> {
 
-    protected ItemStackAPI(S stack) {
+    protected ItemStackAPI(Object stack) {
         super(stack);
     }
 

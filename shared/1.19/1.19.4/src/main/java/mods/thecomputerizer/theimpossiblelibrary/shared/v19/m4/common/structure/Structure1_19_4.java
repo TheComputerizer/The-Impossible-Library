@@ -25,6 +25,7 @@ public class Structure1_19_4 extends Structure1_19 {
     }
     
     @Override protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
+        if(Objects.isNull(this.wrapped)) return null;
         Registry<Structure> registry = access.registry(STRUCTURE).orElse(null);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
     }

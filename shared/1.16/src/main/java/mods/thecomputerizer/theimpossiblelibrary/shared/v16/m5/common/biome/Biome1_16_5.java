@@ -24,11 +24,11 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     protected RegistryAccess access;
     
     public Biome1_16_5(Object biome) {
-        super((Biome)biome);
+        super(biome);
     }
     
     @Override public float getRainfall() {
-        return this.wrapped.getDownfall();
+        return getIfNotNullOrDefault(Biome::getDownfall,0f);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
@@ -54,7 +54,7 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     }
     
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
-        return this.wrapped.getTemperature(pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getTemperature(pos.unwrap()),0f);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

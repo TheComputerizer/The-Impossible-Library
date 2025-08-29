@@ -33,11 +33,7 @@ import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGE
 public class Entity1_20 extends EntityAPI<Entity,EntityType<?>> {
     
     public Entity1_20(Object entity) {
-        this((Entity)entity);
-    }
-    
-    Entity1_20(Entity entity) {
-        super(entity,entity.getType());
+        super(entity,((Entity)entity).getType());
     }
     
     @Override public boolean canTarget() {

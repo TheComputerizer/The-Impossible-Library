@@ -5,20 +5,20 @@ import net.minecraft.world.item.Tier;
 
 public class ToolTier1_21 extends ToolTierAPI<Tier> {
     
-    public ToolTier1_21(Tier tier) {
+    public ToolTier1_21(Object tier) {
         super(tier);
     }
     
     @Override public float getDamage() {
-        return this.wrapped.getAttackDamageBonus();
+        return getIfNotNullOrDefault(Tier::getAttackDamageBonus,0f);
     }
     
     @Override public float getEfficiency() {
-        return this.wrapped.getSpeed();
+        return getIfNotNullOrDefault(Tier::getSpeed,0f);
     }
     
     @Override public int getEnchantability() {
-        return this.wrapped.getEnchantmentValue();
+        return getIfNotNullOrDefault(Tier::getEnchantmentValue,0);
     }
     
     @Override public int getLevel() {
@@ -26,6 +26,6 @@ public class ToolTier1_21 extends ToolTierAPI<Tier> {
     }
     
     @Override public int getUses() {
-        return this.wrapped.getUses();
+        return getIfNotNullOrDefault(Tier::getUses,0);
     }
 }

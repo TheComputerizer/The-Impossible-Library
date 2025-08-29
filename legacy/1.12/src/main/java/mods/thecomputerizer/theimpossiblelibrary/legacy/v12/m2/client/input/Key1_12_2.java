@@ -5,7 +5,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class Key1_12_2 extends KeyAPI<KeyBinding> {
 
-    public Key1_12_2(KeyBinding key) {
+    public Key1_12_2(Object key) {
         super(key);
     }
 

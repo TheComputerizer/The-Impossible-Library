@@ -18,14 +18,13 @@ import java.util.function.Function;
 
 public class ArrayHelper {
 
-    @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] original, T toAppend, boolean allowDuplicates) {
         if(!allowDuplicates && contains(original,toAppend)) return original;
         if(Objects.isNull(toAppend)) {
             TILRef.logError("Cannot append null value to array! Use Misc#expandArray to do that.");
             return original;
         }
-        T[] expanded = expand(original,(Class<T>)toAppend.getClass());
+        T[] expanded = expand(original,GenericUtils.cast(toAppend.getClass()));
         expanded[expanded.length-1] = toAppend;
         return expanded;
     }
@@ -48,22 +47,20 @@ public class ArrayHelper {
     /**
      * Creates an array with the input dimensions. Ensures the length is at least 0.
      */
-    @SuppressWarnings("unchecked")
     @IndirectCallers
     public static <T> T[] create(Class<T> clazz, int length) {
-        return (T[])Array.newInstance(clazz,Math.max(length,0));
+        return GenericUtils.cast(Array.newInstance(clazz,Math.max(length,0)));
     }
 
     /**
      * Creates a potentially multidimensional array with the input dimensions. Return nulls if an exception is caught
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] createMulti(Class<T> clazz, int[] lengths) {
         if(Objects.isNull(lengths) || lengths.length==0) return create(clazz,0);
         if(lengths.length==1) return create(clazz,lengths[0]);
         for(int i=0;i<lengths.length;i++) lengths[i] = Math.max(lengths[i],0);
         try {
-            return (T[])Array.newInstance(clazz,lengths);
+            return GenericUtils.cast(Array.newInstance(clazz,lengths));
         } catch (IllegalArgumentException ex) {
             TILRef.logError("Failed to instantiate array of class {} with dimensions {}",clazz,lengths,ex);
             return null;
@@ -214,12 +211,11 @@ public class ArrayHelper {
         return primitive;
     }
 
-    @SuppressWarnings("unchecked")
     public static <E> E[] fixObjParsed(Object[] array, Class<?> fixAs) {
         DynamicArray base = new DynamicArray(-1,fixAs);
         base = new DynamicArray(base.getBracketCount()-1,base.getBaseClass());
         for(int i=0; i<array.length; i++) array[i] = Misc.getFixedObject(array[i],base.getTypeClass()); //Handle nested arrays
-        return (E[])supplyArrayCreation(base.getTypeClass(),array.length,i -> array[i]);
+        return GenericUtils.cast(supplyArrayCreation(base.getTypeClass(),array.length,i -> array[i]));
     }
 
     public static <E> E[] forEach(E[] array, BiConsumer<E,Integer> consumer) {
@@ -229,14 +225,14 @@ public class ArrayHelper {
         return array;
     }
 
-    @SuppressWarnings("unchecked") public static <T> T[] fromIterable(Iterable<?> itr, Class<T> clazz) {
+    public static <T> T[] fromIterable(Iterable<?> itr, Class<T> clazz) {
         int[] lengths = IterableHelper.getLengths(itr);
-        return (T[])fromIterator(itr.iterator(),clazz,createMulti(clazz,lengths));
+        return GenericUtils.cast(fromIterator(itr.iterator(),clazz,createMulti(clazz,lengths)));
     }
 
-    @SuppressWarnings("unchecked") public static <T> T[] fromIterator(Iterator<?> itr, Class<T> clazz) {
+    public static <T> T[] fromIterator(Iterator<?> itr, Class<T> clazz) {
         int[] lengths = IterableHelper.getLengths(itr);
-        return (T[])fromIterator(itr,clazz,createMulti(clazz,lengths));
+        return GenericUtils.cast(fromIterator(itr,clazz,createMulti(clazz,lengths)));
     }
 
     private static <T> Object[] fromIterator(Iterator<?> itr, Class<T> clazz, Object[] array) {
@@ -343,24 +339,23 @@ public class ArrayHelper {
         return removeAllOccurrencesAfter(array, element, -1);
     }
 
-    @SuppressWarnings("unchecked")
     public static <E> E[] removeElement(E[] array, int index) {
         if(Objects.nonNull(array) && array.length>0) {
             int length = array.length;
             for(int i=index;i<length-1;i++) array[i] = array[i+1];
-            E[] removed = create((Class<E>)array.getClass().getComponentType(),length-1);
+            E[] removed = create(GenericUtils.cast(array.getClass().getComponentType()),length-1);
             System.arraycopy(array,0,removed,0,length-1);
             array = removed;
         }
         return array;
     }
     
-    @SuppressWarnings("unchecked") public static <E> E[] removeMatching(E[] array, E toMatch, Function<E,Boolean> matcher) {
+    public static <E> E[] removeMatching(E[] array, E toMatch, Function<E,Boolean> matcher) {
         if(isNotEmpty(array)) {
             List<E> copy = new ArrayList<>();
             for(E element : array)
                 if(!matcher.apply(element)) copy.add(element);
-            if(copy.size()<array.length) array = (E[])fromIterable(copy,toMatch.getClass());
+            if(copy.size()<array.length) array = GenericUtils.cast(fromIterable(copy,toMatch.getClass()));
         }
         return array;
     }
@@ -375,18 +370,16 @@ public class ArrayHelper {
         for(int i=0; i<array.length; i++) array[i] = func.apply(thing,i);
     }
 
-    @SuppressWarnings("unchecked")
     public static <E> Object supplyArrayCreation(Class<E> clazz, int size, Function<Integer,?> func) {
         E[] array = create(clazz,size);
-        for(int i=0; i<array.length; i++) array[i] = (E)func.apply(i);
+        for(int i=0; i<array.length; i++) array[i] = GenericUtils.cast(func.apply(i));
         return array;
     }
 
-    @SuppressWarnings("unchecked")
     @IndirectCallers
     public static <E,F> Object supplyArrayCreation(Class<E> clazz, int size, F thing, BiFunction<F,Integer,?> func) {
         E[] array = create(clazz,size);
-        for(int i=0; i<array.length; i++) array[i] = (E)func.apply(thing,i);
+        for(int i=0; i<array.length; i++) array[i] = GenericUtils.cast(func.apply(thing,i));
         return array;
     }
 }

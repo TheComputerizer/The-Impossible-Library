@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Block;
 public class Block1_20 extends BlockAPI<Block> {
 
     public Block1_20(Object block) {
-        super(block instanceof Holder<?> ? (Block)((Holder<?>)block).value() : (Block)block);
+        super(block instanceof Holder<?> ? ((Holder<?>)block).value() : block);
     }
 
     @Override public BlockStateAPI<?> getDefaultState() {

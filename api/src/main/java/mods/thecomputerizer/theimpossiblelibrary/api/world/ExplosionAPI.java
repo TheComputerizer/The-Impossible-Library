@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class ExplosionAPI<E> extends AbstractWrapped<E> {
     
-    protected ExplosionAPI(E explosion) {
+    protected ExplosionAPI(Object explosion) {
         super(explosion);
     }
 }

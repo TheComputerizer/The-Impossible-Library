@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -44,15 +45,17 @@ import static net.minecraft.world.level.LightLayer.SKY;
 public class World1_16_5 extends WorldAPI<LevelAccessor> {
     
     public World1_16_5(Object world) {
-        super((LevelAccessor)world);
+        super(world);
     }
     
     @Override public boolean canSnowAt(BlockPosAPI<?> api) {
+        if(Objects.isNull(this.wrapped)) return false;
         BlockPos pos = api.unwrap();
         return this.wrapped.getBiome(pos).shouldSnow(this.wrapped,pos);
     }
     
     @Override public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
+        if(Objects.isNull(this.wrapped)) return null;
         BiomeAPI<Biome> biome = WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()));
         ((Biome1_16_5)biome).setAccess(this.wrapped.registryAccess());
         return biome;
@@ -73,7 +76,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos) {
-        BlockEntity tile = this.wrapped.getBlockEntity(pos.unwrap());
+        BlockEntity tile = getIfNotNull(w -> w.getBlockEntity(pos.unwrap()));
         return Objects.nonNull(tile) ? WrapperHelper.wrapBlockEntity(tile) : null;
     }
 
@@ -82,6 +85,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public int getDifficultyOrdinal() {
+        if(Objects.isNull(this.wrapped)) return -1;
         if(this.wrapped.getLevelData().isHardcore()) return 4;
         switch(this.wrapped.getDifficulty()) {
             case PEACEFUL: return 0;
@@ -93,7 +97,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public DimensionAPI<?> getDimension() {
-        return WrapperHelper.wrapDimension(this,this.wrapped.dimensionType());
+        return getIfNotNull(w -> WrapperHelper.wrapDimension(this,w.dimensionType()));
     }
     
     @Override public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
@@ -101,6 +105,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     private List<EntityAPI<?,?>> getEntitiesInBox(Object box) {
+        if(Objects.isNull(this.wrapped)) return Collections.emptyList();
         List<EntityAPI<?,?>> entities = new ArrayList<>();
         for(Entity entity : this.wrapped.getEntitiesOfClass(Entity.class,(AABB)box))
             entities.add(WrapperHelper.wrapEntity(entity));
@@ -108,22 +113,25 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public int getLightBlock(BlockPosAPI<?> pos) {
-        return this.wrapped.getBrightness(BLOCK,pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getBrightness(BLOCK,pos.unwrap()),0);
     }
     
     @Override public int getLightSky(BlockPosAPI<?> pos) {
-        return this.wrapped.getBrightness(SKY,pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getBrightness(SKY,pos.unwrap()),0);
     }
     
     @Override public int getLightTotal(BlockPosAPI<?> pos) {
-        return this.wrapped.getLightEngine().getRawBrightness(pos.unwrap(),0);
+        return getIfNotNullOrDefault(
+                w -> w.getLightEngine().getRawBrightness(pos.unwrap(),0),0);
     }
     
     @Override public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
+        if(Objects.isNull(this.wrapped)) return Collections.emptyList();
         return getLivingInBox(new AABB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
     
     private List<LivingEntityAPI<?,?>> getLivingInBox(Object box) {
+        if(Objects.isNull(this.wrapped)) return Collections.emptyList();
         List<LivingEntityAPI<?,?>> entities = new ArrayList<>();
         for(LivingEntity entity : this.wrapped.getEntitiesOfClass(LivingEntity.class,(AABB)box))
             entities.add(WrapperHelper.wrapLivingEntity(entity));
@@ -131,11 +139,12 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public int getMoonPhase() {
-        return this.wrapped.getMoonPhase();
+        return getIfNotNullOrDefault(LevelAccessor::getMoonPhase,0);
     }
     
     private Raid getRaid(BlockPosAPI<?> pos) {
-        return this.wrapped.isClientSide() ? null : ((ServerLevel)this.wrapped).getRaidAt(pos.unwrap());
+        return Objects.isNull(this.wrapped) || this.wrapped.isClientSide() ?
+                null : ((ServerLevel)this.wrapped).getRaidAt(pos.unwrap());
     }
     
     @Override public @Nullable String getRaidStatus(BlockPosAPI<?> pos) {
@@ -154,7 +163,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
-        return WrapperHelper.wrapState(this.wrapped.getBlockState(pos.unwrap()));
+        return getIfNotNull(w -> WrapperHelper.wrapState(w.getBlockState(pos.unwrap())));
     }
     
     @Override public StructureAPI<?> getStructureAt(BlockPosAPI<?> api) {
@@ -173,11 +182,11 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public long getTimeTotal() {
-        return this.wrapped.dayTime();
+        return getIfNotNullOrDefault(LevelAccessor::dayTime,0L);
     }
     
     @Override public boolean isClient() {
-        return this.wrapped.isClientSide();
+        return getIfNotNullOrDefault(LevelAccessor::isClientSide,false);
     }
     
     @Override public boolean isDaytime() {
@@ -193,7 +202,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public boolean isSkyVisible(BlockPosAPI<?> pos) {
-        return this.wrapped.canSeeSky(pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.canSeeSky(pos.unwrap()),false);
     }
     
     @Override public boolean isStorming() {
@@ -210,11 +219,11 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     }
     
     @Override public void setState(BlockPosAPI<?> pos, BlockStateAPI<?> state) {
-        this.wrapped.setBlock(pos.unwrap(),state.unwrap(),2);
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setBlock(pos.unwrap(),state.unwrap(),2);
     }
     
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
-        if(!this.wrapped.isClientSide()) {
+        if(Objects.nonNull(this.wrapped) && !this.wrapped.isClientSide()) {
             this.wrapped.addFreshEntity(entity.unwrapEntity());
             if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
         }
@@ -230,7 +239,7 @@ public class World1_16_5 extends WorldAPI<LevelAccessor> {
     
     @Override public void spawnItem(ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
-        if(!this.wrapped.isClientSide()) {
+        if(Objects.nonNull(this.wrapped) && !this.wrapped.isClientSide()) {
             ItemStackAPI<?> stack = WrapperHelper.wrapItemStack(new ItemStack(api.unwrap()));
             if(Objects.nonNull(beforeSpawn)) beforeSpawn.accept(stack);
             spawnItem(stack,pos,onSpawn);

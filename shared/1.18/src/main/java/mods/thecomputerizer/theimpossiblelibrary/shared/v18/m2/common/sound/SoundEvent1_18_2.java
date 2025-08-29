@@ -10,7 +10,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class SoundEvent1_18_2 extends SoundEventAPI<SoundEvent> {
 
     public SoundEvent1_18_2(Object sound) {
-        super(sound instanceof Holder<?> ? (SoundEvent)((Holder<?>)sound).value() : (SoundEvent)sound);
+        super(sound instanceof Holder<?> ? ((Holder<?>)sound).value() : sound);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

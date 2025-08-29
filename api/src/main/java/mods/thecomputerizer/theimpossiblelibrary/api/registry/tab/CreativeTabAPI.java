@@ -13,7 +13,7 @@ public abstract class CreativeTabAPI<T> extends AbstractWrapped<T> {
     
     protected final List<Supplier<ItemStackAPI<?>>> stacks = new ArrayList<>();
     
-    protected CreativeTabAPI(T wrapped) {
+    protected CreativeTabAPI(Object wrapped) {
         super(wrapped);
     }
     

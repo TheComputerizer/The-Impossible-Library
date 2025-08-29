@@ -46,7 +46,7 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
     }
 
     public Entity1_12_2(Object entity, Object entry) {
-        super((Entity)entity,(EntityEntry)entry);
+        super(entity,entry);
     }
     
     @Override public boolean canTarget() {

@@ -97,15 +97,12 @@ private void addResourceConfigurations(String t_name, List<String> config_names)
     def file_replacement = getDefaultFileReplacement()
     def replacements = getDefaultReplacements()
     tasks.named(t_name, Copy) {Copy process_resources ->
-        final List<String> config_names_view = Collections.unmodifiableList config_names
-        doFirst {
-            config_names_view.forEach {config_name ->
-                from(configurations.named(config_name)) {
-                    process_resources.exclude exclude_these
-                    if(file_replacement!=null) {
-                        filesMatching(file_replacement) {
-                            expand replacements
-                        }
+        config_names.forEach {config_name ->
+            from(configurations.named(config_name)) {
+                process_resources.exclude exclude_these
+                if(file_replacement!=null) {
+                    filesMatching(file_replacement) {
+                        expand replacements
                     }
                 }
             }

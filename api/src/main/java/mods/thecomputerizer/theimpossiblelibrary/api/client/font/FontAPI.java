@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
 
 import java.util.Collection;
@@ -47,8 +48,8 @@ public abstract class FontAPI<F> extends MutableWrapped<F> {
     
     public abstract String trimStringTo(String str, int width, boolean withReset);
     
-    @SuppressWarnings("unchecked")
     public <T> List<T> unwrapTooltipComponents(Collection<TextAPI<?>> lines) {
-        return (List<T>)lines.stream().map(text -> text.getAsComponent()).collect(Collectors.toList());
+        return GenericUtils.cast(lines.stream().map(text -> text.getAsComponent())
+                                         .collect(Collectors.toList()));
     }
 }

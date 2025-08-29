@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.IterableHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Matching;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Sorting;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,8 @@ import java.util.Map.Entry;
 /**
  Represents a TOML table. The root is considered a table.
  */
-@SuppressWarnings({"unused","UnusedReturnValue"}) public class Toml {
+@SuppressWarnings({"unused","UnusedReturnValue"})
+public class Toml {
     
     public static Toml getEmpty() {
         return new Toml("root");
@@ -335,34 +337,34 @@ import java.util.Map.Entry;
         return this.entries.getOrDefault(name,null);
     }
     
-    @SuppressWarnings("unchecked") public TomlEntry<List<?>> getEntryArray(String name) {
+    public TomlEntry<List<?>> getEntryArray(String name) {
         TomlEntry<?> entry = getEntry(name);
-        return Objects.nonNull(entry) && entry.value instanceof List<?> ? (TomlEntry<List<?>>)entry : null;
+        return Objects.nonNull(entry) && entry.value instanceof List<?> ? GenericUtils.cast(entry) : null;
     }
     
-    @SuppressWarnings("unchecked") public TomlEntry<Boolean> getEntryBool(String name) {
+    public TomlEntry<Boolean> getEntryBool(String name) {
         TomlEntry<?> entry = getEntry(name);
-        return Objects.nonNull(entry) && entry.value instanceof Boolean ? (TomlEntry<Boolean>)entry : null;
+        return Objects.nonNull(entry) && entry.value instanceof Boolean ? GenericUtils.cast(entry) : null;
     }
     
-    @SuppressWarnings("unchecked") public TomlEntry<Float> getEntryFloat(String name) {
+    public TomlEntry<Float> getEntryFloat(String name) {
         TomlEntry<?> entry = getEntry(name);
-        return Objects.nonNull(entry) && entry.value instanceof Float ? (TomlEntry<Float>)entry : null;
+        return Objects.nonNull(entry) && entry.value instanceof Float ? GenericUtils.cast(entry) : null;
     }
     
-    @SuppressWarnings("unchecked") public TomlEntry<Integer> getEntryInt(String name) {
+    public TomlEntry<Integer> getEntryInt(String name) {
         TomlEntry<?> entry = getEntry(name);
-        return Objects.nonNull(entry) && entry.value instanceof Integer ? (TomlEntry<Integer>)entry : null;
+        return Objects.nonNull(entry) && entry.value instanceof Integer ? GenericUtils.cast(entry) : null;
     }
     
-    @SuppressWarnings("unchecked") public TomlEntry<Number> getEntryNumber(String name) {
+    public TomlEntry<Number> getEntryNumber(String name) {
         TomlEntry<?> entry = getEntry(name);
-        return Objects.nonNull(entry) && entry.value instanceof Number ? (TomlEntry<Number>)entry : null;
+        return Objects.nonNull(entry) && entry.value instanceof Number ? GenericUtils.cast(entry) : null;
     }
     
-    @SuppressWarnings("unchecked") public TomlEntry<String> getEntryString(String name) {
+    public TomlEntry<String> getEntryString(String name) {
         TomlEntry<?> entry = getEntry(name);
-        return Objects.nonNull(entry) && entry.value instanceof String ? (TomlEntry<String>)entry : null;
+        return Objects.nonNull(entry) && entry.value instanceof String ? GenericUtils.cast(entry) : null;
     }
     
     public Map<String,Object> getEntryValuesAsMap() {
@@ -374,18 +376,16 @@ import java.util.Map.Entry;
     /**
      * Return a potentially empty generic optional depending on whether the value is present
      */
-    @SuppressWarnings("unchecked")
     public <T> Optional<T> getOptional(String name) {
-        TomlEntry<T> entry = (TomlEntry<T>)getEntry(name);
+        TomlEntry<T> entry = GenericUtils.cast(getEntry(name));
         return Objects.nonNull(entry) ? Optional.of(entry.value) : Optional.empty();
     }
     
     /**
      * Return a generic optional of the value if it is present or the defVal input.
      */
-    @SuppressWarnings("unchecked")
     public <T> Optional<T> getOptional(String name, @Nullable T defVal) {
-        TomlEntry<T> entry = (TomlEntry<T>)getEntry(name);
+        TomlEntry<T> entry = GenericUtils.cast(getEntry(name));
         return Optional.ofNullable(Objects.nonNull(entry) ? entry.value : defVal);
     }
     
@@ -596,8 +596,8 @@ import java.util.Map.Entry;
         return getValue(name,null);
     }
     
-    @SuppressWarnings("unchecked") public <T> T getValue(String name, @Nullable T defVal) {
-        TomlEntry<T> entry = (TomlEntry<T>)getEntry(name);
+    public <T> T getValue(String name, @Nullable T defVal) {
+        TomlEntry<T> entry = GenericUtils.cast(getEntry(name));
         return Objects.nonNull(entry) ? entry.value : defVal;
     }
     

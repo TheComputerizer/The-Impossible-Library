@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.item;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.item.ItemStack1_20;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.component.CompoundComponent1_20_6;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.Nullable;
@@ -19,16 +19,20 @@ public class ItemStack1_20_6 extends ItemStack1_20 {
     }
 
     @Override public CompoundTagAPI<?> getOrCreateTag() {
-        this.wrapped.update(CUSTOM_DATA,EMPTY,data -> data);
-        return new CompoundComponent1_20_6(this.wrapped.get(CUSTOM_DATA));
+        if(Objects.nonNull(this.wrapped)) {
+            this.wrapped.update(CUSTOM_DATA,EMPTY,data -> data);
+            return TagHelper.getWrapped(this.wrapped.get(CUSTOM_DATA)).asCompoundTag();
+        }
+        return TagHelper.makeCompoundTag();
     }
 
     @Override public @Nullable CompoundTagAPI<?> getTag() {
-        return this.wrapped.has(CUSTOM_DATA) ? new CompoundComponent1_20_6(this.wrapped.get(CUSTOM_DATA)) : null;
+        return Objects.nonNull(this.wrapped) && this.wrapped.has(CUSTOM_DATA) ?
+                TagHelper.getWrapped(this.wrapped.get(CUSTOM_DATA)).asCompoundTag() : null;
     }
 
     @Override public void setTag(@Nullable CompoundTagAPI<?> api) {
-        if(Objects.isNull(api)) return;
+        if(Objects.isNull(this.wrapped)|| Objects.isNull(api)) return;
         Object value = api.getWrapped();
         CompoundTag updateWith = value instanceof CompoundTag ? (CompoundTag)value : ((CustomData)value).copyTag();
         this.wrapped.update(CUSTOM_DATA,EMPTY,tag -> CustomData.of(tag.copyTag().merge(updateWith)));

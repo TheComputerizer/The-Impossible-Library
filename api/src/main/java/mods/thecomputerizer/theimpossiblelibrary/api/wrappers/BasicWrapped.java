@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 @IndirectCallers
 public class BasicWrapped<W> extends AbstractWrapped<W> {
     
-    public BasicWrapped(W wrapped) {
+    public BasicWrapped(Object wrapped) {
         super(wrapped);
     }
 }

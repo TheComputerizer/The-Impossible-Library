@@ -7,6 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
+import java.util.Objects;
+
 import static net.minecraft.world.level.block.Blocks.FIRE;
 import static net.minecraft.world.level.material.Fluids.FLOWING_WATER;
 import static net.minecraft.world.level.material.Fluids.WATER;
@@ -18,47 +20,50 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
  * As of 1.20, the Material class no longer exists...
  */
 public class Material1_21 extends MaterialAPI<BlockState> {
+    
+    private static final String CAN_BURN = NAMED_ENV ? "canBurn" : (SRG_ENV ? "m_7599_" : "method_10195");
 
     public Material1_21(Object state) {
-        super((BlockState)state);
+        super(state);
     }
     
     @SuppressWarnings("deprecation")
     @Override public boolean hasCollider() {
-        return this.wrapped.blocksMotion();
+        return getIfNotNullOrDefault(BlockState::blocksMotion,false);
     }
-
+    
     @Override public boolean isAir() {
-        return this.wrapped.isAir();
+        return getIfNotNullOrDefault(BlockState::isAir,false);
     }
-
+    
     @Override public boolean isDestroyedByPiston() {
-        return this.wrapped.getPistonPushReaction()==DESTROY;
+        return getIfNotNullOrDefault(w -> w.getPistonPushReaction()==DESTROY,false);
     }
-
+    
     @Override public boolean isFlammable(WorldAPI<?> world, BlockPosAPI<?> pos, Facing side) {
-        return Methods.invokeDirect(FIRE,"canBurn",this.wrapped);
+        return Methods.invokeDirect(FIRE,CAN_BURN,this.wrapped);
     }
     
     @SuppressWarnings("deprecation")
     @Override public boolean isLiquid() {
-        return this.wrapped.liquid();
+        return getIfNotNullOrDefault(BlockState::liquid,false);
     }
-
+    
     @Override public boolean isPushable() {
-        return this.wrapped.getPistonPushReaction()!=BLOCK;
+        return getIfNotNullOrDefault(w -> w.getPistonPushReaction()!=BLOCK,false);
     }
-
+    
     @Override public boolean isReplaceable() {
-        return this.wrapped.canBeReplaced();
+        return getIfNotNullOrDefault(BlockState::canBeReplaced,false);
     }
-
+    
     @SuppressWarnings("deprecation")
     @Override public boolean isSolid() {
-        return this.wrapped.isSolid();
+        return getIfNotNullOrDefault(BlockState::isSolid,false);
     }
-
+    
     @Override public boolean isUnderwater() {
+        if(Objects.isNull(this.wrapped)) return false;
         Fluid fluid = this.wrapped.getFluidState().getType();
         return fluid==WATER || fluid==FLOWING_WATER;
     }

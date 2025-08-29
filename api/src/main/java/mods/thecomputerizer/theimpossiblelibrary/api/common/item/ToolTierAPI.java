@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class ToolTierAPI<T> extends AbstractWrapped<T> {
     
-    protected ToolTierAPI(T tier) {
+    protected ToolTierAPI(Object tier) {
         super(tier);
     }
     

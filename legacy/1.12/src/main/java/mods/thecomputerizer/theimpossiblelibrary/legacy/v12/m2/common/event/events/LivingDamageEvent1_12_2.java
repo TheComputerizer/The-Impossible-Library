@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingDamageEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Damage1_12_2;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -28,11 +27,11 @@ public class LivingDamageEvent1_12_2 extends LivingDamageEventWrapper<LivingDama
 
     @Override public void setAmount(float amount) {
         this.event.setAmount(amount);
-        this.damage.set(this.event,new Damage1_12_2(this.event.getSource(),amount));
+        super.setAmount(amount);
     }
 
-    @Override protected EventFieldWrapper<LivingDamageEvent,DamageAPI> wrapDamageField() {
-        return wrapGenericGetter(event -> new Damage1_12_2(event.getSource(),this.event.getAmount()),null);
+    @Override protected EventFieldWrapper<LivingDamageEvent,DamageAPI<?>> wrapDamageField() {
+        return wrapDamageGetter(LivingDamageEvent::getSource,LivingDamageEvent::getAmount);
     }
 
     @Override protected EventFieldWrapper<LivingDamageEvent,LivingEntityAPI<?,?>> wrapLivingField() {

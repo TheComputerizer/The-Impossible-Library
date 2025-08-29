@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.ListTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentMap.Builder;
 import net.minecraft.core.component.TypedDataComponent;
@@ -24,9 +25,9 @@ public class ListComponent1_20_6 extends ListTagAPI<DataComponentMap> implements
 
     private DataComponentMap mutableWrapped;
     
-    public ListComponent1_20_6(DataComponentMap map) {
+    public ListComponent1_20_6(Object map) {
         super(map);
-        this.mutableWrapped = map;
+        this.mutableWrapped = GenericUtils.cast(map);
     }
 
     @Override public void addTag(BaseTagAPI<?> api) {
@@ -72,38 +73,6 @@ public class ListComponent1_20_6 extends ListTagAPI<DataComponentMap> implements
     
     private <T> void addComponent(Builder builder, TypedDataComponent<T> component) {
         builder.set(component.type(),component.value());
-    }
-    
-    @Override public CompoundComponent1_20_6 asCompoundTag() {
-        return null;
-    }
-    
-    @Override public ListComponent1_20_6 asListTag() {
-        return this;
-    }
-    
-    @Override public PrimitiveComponent1_20_6 asPrimitiveTag() {
-        return null;
-    }
-    
-    @Override public StringComponent1_20_6 asStringTag() {
-        return null;
-    }
-    
-    @Override public boolean isCompound() {
-        return false;
-    }
-    
-    @Override public boolean isList() {
-        return true;
-    }
-    
-    @Override public boolean isPrimitive() {
-        return false;
-    }
-    
-    @Override public boolean isString() {
-        return false;
     }
     
     @Override public Iterable<BaseTagAPI<?>> iterable() {

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class CommandSenderAPI<S> extends AbstractWrapped<S> {
 
-    protected CommandSenderAPI(S sender) {
+    protected CommandSenderAPI(Object sender) {
         super(sender);
     }
 

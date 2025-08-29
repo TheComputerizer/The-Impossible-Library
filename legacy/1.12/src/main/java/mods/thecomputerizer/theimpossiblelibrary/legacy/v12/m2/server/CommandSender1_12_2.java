@@ -15,23 +15,23 @@ import java.util.Objects;
 public class CommandSender1_12_2 extends CommandSenderAPI<ICommandSender> {
 
     public CommandSender1_12_2(Object sender) {
-        super((ICommandSender)sender);
+        super(sender);
     }
 
     @Override public @Nullable EntityAPI<?,?> getEntity() {
-        Entity entity = this.wrapped.getCommandSenderEntity();
+        Entity entity = getIfNotNull(ICommandSender::getCommandSenderEntity);
         return Objects.nonNull(entity) ? new Entity1_12_2(entity) : null;
     }
 
     @Override public String getName() {
-        return this.wrapped.getName();
+        return getIfNotNull(ICommandSender::getName);
     }
 
     @Override public WorldAPI<?> getWorld() {
-        return WrapperHelper.wrapWorld(this.wrapped.getEntityWorld());
+        return getIfNotNull(w -> WrapperHelper.wrapWorld(w.getEntityWorld()));
     }
 
     @Override public void sendMessage(TextAPI<?> text) {
-        this.wrapped.sendMessage(text.getAsComponent());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.sendMessage(text.getAsComponent());
     }
 }

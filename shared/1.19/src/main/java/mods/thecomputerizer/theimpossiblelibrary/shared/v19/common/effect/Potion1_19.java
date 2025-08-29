@@ -8,7 +8,7 @@ import net.minecraft.world.item.alchemy.Potion;
 public class Potion1_19 extends PotionAPI<Potion> {
 
     public Potion1_19(Object potion) {
-        super(potion instanceof Holder<?> ? (Potion)((Holder<?>)potion).value() : (Potion)potion);
+        super(potion instanceof Holder<?> ? ((Holder<?>)potion).value() : potion);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

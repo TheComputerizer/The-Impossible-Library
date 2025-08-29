@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.event;
 
 import lombok.Getter;
 import lombok.Setter;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ActionResult;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreStateAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
@@ -223,6 +224,23 @@ public abstract class EventWrapper<E> implements CoreStateAccessor {
     protected <V,T> EventFieldWrapper<E,V> wrapBoth(String type, Function<E,?> getter, BiConsumer<E,T> setter,
             V defVal) {
         return Hacks.invoke(this,"wrap"+type+"Both",getter,setter,defVal);
+    }
+    
+    protected @Nullable DamageAPI<?> wrapDamage(@Nullable Function<?,?> getter, @Nullable Function<?,Float> getAmount) {
+        return WrapperHelper.wrapDamage(this.event,getter,getAmount);
+    }
+    
+    protected @Nullable DamageAPI<?> wrapDamage(@Nullable Function<?,?> getter, float amount) {
+        return WrapperHelper.wrapDamage(this.event,getter,amount);
+    }
+    
+    protected <V> EventFieldWrapper<E,DamageAPI<?>> wrapDamageGetter(Function<E,?> sourceGetter,
+            Function<E,Float> getAmount) {
+        return new EventFieldWrapper<>(event -> wrapDamage(sourceGetter,getAmount),null);
+    }
+    
+    protected <V> EventFieldWrapper<E,DamageAPI<?>> wrapDamageGetter(Function<E,?> sourceGetter, float amount) {
+        return new EventFieldWrapper<>(event -> wrapDamage(sourceGetter,amount),null);
     }
 
     protected @Nullable EntityAPI<?,?> wrapEntity(@Nullable Function<?,?> getter) {

@@ -11,7 +11,7 @@ import java.util.StringJoiner;
 
 public abstract class StructureAPI<S> extends AbstractWrapped<S> {
 
-    protected StructureAPI(S structure) {
+    protected StructureAPI(Object structure) {
         super(structure);
     }
     

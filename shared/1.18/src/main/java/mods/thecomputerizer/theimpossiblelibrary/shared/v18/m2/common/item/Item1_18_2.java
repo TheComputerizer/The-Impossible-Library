@@ -13,7 +13,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Item1_18_2 extends ItemAPI<Item> {
 
     public Item1_18_2(Object item) {
-        super(item instanceof Holder<?> ? (Item)((Holder<?>)item).value() : (Item)item);
+        super(item instanceof Holder<?> ? ((Holder<?>)item).value() : item);
     }
     
     @Override public ItemStackAPI<?> defaultStack() {

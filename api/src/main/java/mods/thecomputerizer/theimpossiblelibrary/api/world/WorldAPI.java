@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public abstract class WorldAPI<W> extends AbstractWrapped<W> {
     
-    protected WorldAPI(W world) {
+    protected WorldAPI(Object world) {
         super(world);
     }
     

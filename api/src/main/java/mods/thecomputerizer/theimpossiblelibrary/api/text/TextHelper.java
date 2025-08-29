@@ -4,6 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -125,19 +126,16 @@ public class TextHelper {
         return TextHelper.isNotEmpty(val) ? val : null;
     }
 
-    @SuppressWarnings("unchecked")
     public static <S> TextHelperAPI<S> getHelper() {
-        return (TextHelperAPI<S>)TILRef.getCommonSubAPI(CommonAPI::getTextHelper);
+        return GenericUtils.cast(TILRef.getCommonSubAPI(CommonAPI::getTextHelper));
     }
 
-    @SuppressWarnings("unchecked")
     public static <S> TextStringAPI<S> getLiteral(String text) {
-        return (TextStringAPI<S>)getHelper().getLiteral(text);
+        return GenericUtils.cast(getHelper().getLiteral(text));
     }
     
-    @SuppressWarnings("unchecked")
     public static <S> TextTranslationAPI<S> getTranslated(String key, Object ... args) {
-        return (TextTranslationAPI<S>)getHelper().getTranslated(key,args);
+        return GenericUtils.cast(getHelper().getTranslated(key,args));
     }
     
     @IndirectCallers

@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 public class Item1_21 extends ItemAPI<Item> {
 
     public Item1_21(Object item) {
-        super(item instanceof Holder<?> ? (Item)((Holder<?>)item).value() : (Item)item);
+        super(item instanceof Holder<?> ? ((Holder<?>)item).value() : item);
     }
     
     @Override public ItemStackAPI<?> defaultStack() {

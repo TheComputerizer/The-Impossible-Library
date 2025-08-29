@@ -6,6 +6,6 @@ import net.minecraft.world.level.Explosion;
 public class Explosion1_18_2 extends ExplosionAPI<Explosion> {
     
     public Explosion1_18_2(Object explosion) {
-        super((Explosion)explosion);
+        super(explosion);
     }
 }

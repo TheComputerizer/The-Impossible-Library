@@ -1,6 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.registry.tab.CreativeTabBuilderForge1_20;
@@ -34,11 +36,12 @@ public class RegistryHandlerForge1_20 extends RegistryHandler1_20 {
         this.sound = getRegistry(registries,SOUND_EVENTS,"sound",SoundEvent.class);
     }
     
-    @SuppressWarnings("unchecked")
     private <V> RegistryForge1_20<V> getRegistry(
             Set<? super Registry1_20<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
-        ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryForge1_20<V> registry = new RegistryForge1_20<>(forgeRegistry,key,(Class<V>)type);
+        //Avoid deprecation warning I guess
+        ResourceLocation location = Hacks.construct(ResourceLocation.class,name);
+        ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(location);
+        RegistryForge1_20<V> registry = new RegistryForge1_20<>(forgeRegistry,key,GenericUtils.cast(type));
         registries.add(registry);
         return registry;
     }

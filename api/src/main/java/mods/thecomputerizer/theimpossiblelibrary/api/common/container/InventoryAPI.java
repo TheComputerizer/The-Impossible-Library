@@ -7,7 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class InventoryAPI<I> extends AbstractWrapped<I> {
 
-    protected InventoryAPI(I inventory) {
+    protected InventoryAPI(Object inventory) {
         super(inventory);
     }
 

@@ -5,14 +5,16 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Objects;
+
 public class Potion1_12_2 extends PotionAPI<PotionType> {
 
     public Potion1_12_2(Object potion) {
-        super((PotionType)potion);
+        super(potion);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
 }

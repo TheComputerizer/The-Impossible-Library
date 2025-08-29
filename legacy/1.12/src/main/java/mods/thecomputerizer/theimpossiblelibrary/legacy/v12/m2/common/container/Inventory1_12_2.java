@@ -5,25 +5,29 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.container.InventoryA
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import net.minecraft.inventory.IInventory;
 
+import java.util.Objects;
+
+import static net.minecraft.item.ItemStack.EMPTY;
+
 public class Inventory1_12_2 extends InventoryAPI<IInventory> {
 
     public Inventory1_12_2(Object inventory) {
-        super((IInventory)inventory);
+        super(inventory);
     }
 
     @Override public ItemStackAPI<?> getStack(int slot) {
-        return WrapperHelper.wrapItemStack(this.wrapped.getStackInSlot(slot));
+        return WrapperHelper.wrapItemStack(getIfNotNullOrDefault(w -> w.getStackInSlot(slot),EMPTY));
     }
 
     @Override public int getSlots() {
-        return this.wrapped.getSizeInventory();
+        return getIfNotNullOrDefault(IInventory::getSizeInventory,0);
     }
 
     @Override public boolean isEmpty() {
-        return this.wrapped.isEmpty();
+        return getIfNotNullOrDefault(IInventory::isEmpty,true);
     }
 
     @Override public void setStack(ItemStackAPI<?> stack, int slot) {
-        this.wrapped.setInventorySlotContents(slot,stack.unwrap());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setInventorySlotContents(slot,stack.unwrap());
     }
 }

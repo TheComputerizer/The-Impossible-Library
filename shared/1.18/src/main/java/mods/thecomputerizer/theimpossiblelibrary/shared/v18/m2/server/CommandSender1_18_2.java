@@ -14,25 +14,24 @@ import java.util.Objects;
 
 public class CommandSender1_18_2 extends CommandSenderAPI<CommandContext<CommandSourceStack>> {
 
-    @SuppressWarnings("unchecked")
     public CommandSender1_18_2(Object context) {
-        super((CommandContext<CommandSourceStack>)context);
+        super(context);
     }
     
     @Override public @Nullable EntityAPI<?,?> getEntity() {
-        return Objects.nonNull(this.wrapped) ? WrapperHelper.wrapEntity(this.wrapped.getSource().getEntity()) : null;
+        return getIfNotNull(w -> WrapperHelper.wrapEntity(w.getSource().getEntity()));
     }
     
     @Override public String getName() {
-        return this.wrapped.getSource().getTextName();
+        return getIfNotNull(w -> w.getSource().getTextName());
     }
     
     @Override public WorldAPI<?> getWorld() {
-        Entity entity = this.wrapped.getSource().getEntity();
+        Entity entity = getIfNotNull(w -> w.getSource().getEntity());
         return Objects.nonNull(entity) ? WrapperHelper.wrapWorld(entity.getCommandSenderWorld()) : null;
     }
     
     @Override public void sendMessage(TextAPI<?> text) {
-        this.wrapped.getSource().sendSuccess(text.getAsComponent(),true);
+        if(Objects.nonNull(this.wrapped)) this.wrapped.getSource().sendSuccess(text.getAsComponent(),true);
     }
 }

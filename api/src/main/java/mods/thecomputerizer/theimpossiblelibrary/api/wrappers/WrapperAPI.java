@@ -9,11 +9,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInve
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
@@ -33,16 +35,16 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+//TODO Surely this can be refactored so there doesn't need to be different methods for each type
 public interface WrapperAPI {
     
     default <A> A getAs(@Nullable Object toWrap, Function<Object,Object> wrapper) {
         return getAs(toWrap,wrapper,null);
     }
     
-    @SuppressWarnings("unchecked")
     default <A> A getAs(@Nullable Object toWrap, Function<Object,Object> wrapper, @Nullable Supplier<Object> ifNull) {
-        return Objects.nonNull(toWrap) ? (A)wrapper.apply(toWrap) :
-                (Objects.nonNull(ifNull) ? (A)wrapper.apply(ifNull.get()) : null);
+        return GenericUtils.cast(Objects.nonNull(toWrap) ? wrapper.apply(toWrap) :
+                        (Objects.nonNull(ifNull) ? wrapper.apply(ifNull.get()) : null));
     }
 
     <A> @Nullable AdvancementAPI<A> wrapAdvancement(@Nullable Object advancement);
@@ -50,14 +52,15 @@ public interface WrapperAPI {
     <B> @Nullable BlockAPI<B> wrapBlock(@Nullable Object block);
     <B> @Nullable BlockEntityAPI<B,?> wrapBlockEntity(@Nullable Object blockentity);
     <S> @Nullable CommandSenderAPI<S> wrapCommandSender(@Nullable Object sender);
+    <S> @Nullable DamageAPI<S> wrapDamage(@Nullable Object source, float amount);
     <D> @Nullable DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable Object dimension);
     <E> @Nullable EffectAPI<E> wrapEffect(@Nullable Object effect);
     <I> @Nullable EffectInstanceAPI<I> wrapEffectInstance(@Nullable Object instance);
     <E> @Nullable EntityAPI<E,?> wrapEntity(@Nullable Object entity);
     <E> @Nullable ExplosionAPI<E> wrapExplosion(@Nullable Object explosion);
-
+    
     @SuppressWarnings("unchecked") //TODO This is wrong since it checks the wrapper class instead of the wrapped class
-    default <G,W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable Object generic) {
+    default <W> @Nullable W wrapGeneric(Class<W> wrapperClass, @Nullable Object generic) {
         if(AdvancementAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapAdvancement(generic);
         if(BiomeAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBiome(generic);
         if(BlockAPI.class.isAssignableFrom(wrapperClass)) return (W)wrapBlock(generic);

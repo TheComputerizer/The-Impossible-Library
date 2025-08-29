@@ -25,8 +25,7 @@ public class Advancement1_21 extends AdvancementAPI<Advancement> {
     private RegistryAccess access;
 
     public Advancement1_21(Object advancement) {
-        super(advancement instanceof AdvancementHolder ? ((AdvancementHolder)advancement).value() :
-                      (Advancement)advancement);
+        super(advancement instanceof AdvancementHolder ? ((AdvancementHolder)advancement).value() : advancement);
         this.display = new AdvancementDisplayInfo1_21(this.wrapped.display().orElse(null));
     }
 

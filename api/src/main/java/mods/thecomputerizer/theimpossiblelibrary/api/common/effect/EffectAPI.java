@@ -11,7 +11,7 @@ public abstract class EffectAPI<E> extends AbstractWrapped<E> implements Registr
     
     protected ResourceLocationAPI<?> registryName;
 
-    protected EffectAPI(E effect) {
+    protected EffectAPI(Object effect) {
         super(effect);
     }
     

@@ -3,22 +3,24 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.container
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.item.ItemStack1_12_2;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
+
+import static net.minecraft.item.ItemStack.EMPTY;
 
 public class PlayerInventory1_12_2 extends PlayerInventoryAPI<InventoryPlayer> {
 
     public PlayerInventory1_12_2(Object inventory) {
-        super((InventoryPlayer)inventory);
+        super(inventory);
     }
 
     @Override public Collection<ItemStackAPI<?>> getArmorStacks() {
-        return this.wrapped.armorInventory.stream().map(WrapperHelper::wrapItemStack).collect(Collectors.toList());
+        return getStacks(w -> w.armorInventory);
     }
 
     @Override public Collection<ItemStackAPI<?>> getHotbarStacks() {
@@ -31,26 +33,27 @@ public class PlayerInventory1_12_2 extends PlayerInventoryAPI<InventoryPlayer> {
     }
 
     @Override public Collection<ItemStackAPI<?>> getMainStacks() {
-        return this.wrapped.mainInventory.stream().map(WrapperHelper::wrapItemStack).collect(Collectors.toList());
+        return getStacks(w -> w.mainInventory);
     }
 
     @Override public Collection<ItemStackAPI<?>> getOffHandStacks() {
-        return this.wrapped.offHandInventory.stream().map(WrapperHelper::wrapItemStack).collect(Collectors.toList());
+        return getStacks(w -> w.offHandInventory);
     }
-
+    
     @Override public ItemStackAPI<?> getStack(int slot) {
-        return new ItemStack1_12_2(this.wrapped.getStackInSlot(slot));
+        return WrapperHelper.wrapItemStack(getIfNotNullOrDefault(w -> w.getStackInSlot(slot),EMPTY));
     }
-
+    
     @Override public int getSlots() {
-        return this.wrapped.getSizeInventory();
+        return getIfNotNullOrDefault(IInventory::getSizeInventory, 0);
     }
-
+    
     @Override public boolean isEmpty() {
-        return this.wrapped.isEmpty();
+        return getIfNotNullOrDefault(IInventory::isEmpty,true);
     }
-
+    
     @Override public void setStack(ItemStackAPI<?> stack, int slot) {
-        this.wrapped.setInventorySlotContents(slot,stack.unwrap());
+        if(Objects.nonNull(this.wrapped))
+            this.wrapped.setInventorySlotContents(slot,stack.unwrap());
     }
 }

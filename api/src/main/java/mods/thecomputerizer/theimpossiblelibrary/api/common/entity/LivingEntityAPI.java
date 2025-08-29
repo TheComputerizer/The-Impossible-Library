@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 
 public abstract class LivingEntityAPI<L,V> extends EntityAPI<L,V> {
 
-    protected LivingEntityAPI(L entity, V type) {
+    protected LivingEntityAPI(Object entity, Object type) {
         super(entity,type);
     }
 

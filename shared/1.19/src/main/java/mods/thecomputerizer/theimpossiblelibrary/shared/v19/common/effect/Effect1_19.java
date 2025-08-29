@@ -8,7 +8,7 @@ import net.minecraft.world.effect.MobEffect;
 public class Effect1_19 extends EffectAPI<MobEffect> {
 
     public Effect1_19(Object effect) {
-        super(effect instanceof Holder<?> ? (MobEffect)((Holder<?>)effect).value() : (MobEffect)effect);
+        super(effect instanceof Holder<?> ? ((Holder<?>)effect).value() : effect);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

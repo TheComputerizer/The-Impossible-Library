@@ -8,7 +8,7 @@ import net.minecraft.client.audio.ISound;
 public class Sound1_12_2 extends SoundAPI<ISound> {
 
     public Sound1_12_2(Object sound) {
-        super((ISound)sound);
+        super(sound);
     }
 
     @Override public ResourceLocation1_12_2 getOggLocation() { //TODO

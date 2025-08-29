@@ -9,9 +9,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.block.BlockBuilderAPI.BlockEntityCreator;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -22,9 +24,9 @@ public abstract class BlockEntityAPI<E,T> extends AbstractWrapped<T> implements 
     protected ResourceLocationAPI<?> registryName;
     @Setter protected BlockEntityCreator creator;
 
-    protected BlockEntityAPI(E entity, T type) {
+    protected BlockEntityAPI(@Nullable Object entity, Object type) {
         super(type);
-        this.entity = entity;
+        this.entity = GenericUtils.cast(entity);
         if(Objects.nonNull(this.entity)) {
             this.creator = (world,pos,state) -> this;
         }

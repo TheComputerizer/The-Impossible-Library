@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingAttackedEventWrapper;
@@ -16,6 +17,10 @@ public abstract class LivingAttackedEventForge extends LivingAttackedEventWrappe
     @Override public void setEvent(LivingAttackEvent event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
+    }
+    
+    @Override protected EventFieldWrapper<LivingAttackEvent,DamageAPI<?>> wrapDamageField() {
+        return wrapDamageGetter(LivingAttackEvent::getSource,1f);
     }
 
     @Override protected EventFieldWrapper<LivingAttackEvent,LivingEntityAPI<?,?>> wrapLivingField() {

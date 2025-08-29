@@ -11,7 +11,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Block1_18_2 extends BlockAPI<Block> {
 
     public Block1_18_2(Object block) {
-        super(block instanceof Holder<?> ? (Block)((Holder<?>)block).value() : (Block)block);
+        super(block instanceof Holder<?> ? ((Holder<?>)block).value() : block);
     }
 
     @Override public BlockStateAPI<?> getDefaultState() {

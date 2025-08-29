@@ -4,27 +4,28 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyA
 import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 public class BlockProperty1_18_2<V extends Comparable<V>> extends BlockPropertyAPI<Property<V>,V> {
     
-    public BlockProperty1_18_2(Property<V> property) {
+    public BlockProperty1_18_2(Object property) {
         super(property);
     }
     
     @Override public String asString(V value) {
-        return this.wrapped.getName(value);
+        return getIfNotNull(w -> w.getName(value));
     }
     
     @Override public Collection<V> getAllowedValues() {
-        return this.wrapped.getPossibleValues();
+        return getIfNotNullOrDefault(Property::getPossibleValues, Collections.emptyList());
     }
     
     @Override public String getName() {
-        return this.wrapped.getName();
+        return getIfNotNull(Property::getName);
     }
     
     @Override public Optional<V> parseValue(String unparsed) {
-        return this.wrapped.getValue(unparsed);
+        return getIfNotNullOrDefault(w -> w.getValue(unparsed),Optional.empty());
     }
 }

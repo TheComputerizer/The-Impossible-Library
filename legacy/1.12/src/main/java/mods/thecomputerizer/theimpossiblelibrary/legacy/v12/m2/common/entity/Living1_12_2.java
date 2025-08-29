@@ -34,7 +34,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.ZERO;
 public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> {
 
     public Living1_12_2(Object living) {
-        super((EntityLivingBase)living,(EntityEntry)Entity1_12_2.getEntry(living));
+        super(living,Entity1_12_2.getEntry(living));
     }
     
     @Override public boolean canTarget() {

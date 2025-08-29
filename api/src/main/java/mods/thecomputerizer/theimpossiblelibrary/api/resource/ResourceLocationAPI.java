@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public abstract class ResourceLocationAPI<R> extends AbstractWrapped<R> {
     
-    protected ResourceLocationAPI(R instance) {
+    protected ResourceLocationAPI(Object instance) {
         super(instance);
     }
 
@@ -30,7 +30,7 @@ public abstract class ResourceLocationAPI<R> extends AbstractWrapped<R> {
      */
     public static final class Pseudo<V> extends ResourceLocationAPI<V> {
         
-        public Pseudo(V value) {
+        public Pseudo(Object value) {
             super(value);
         }
 

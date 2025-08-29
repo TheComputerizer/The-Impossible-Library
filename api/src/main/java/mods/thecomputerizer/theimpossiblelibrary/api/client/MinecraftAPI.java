@@ -25,7 +25,7 @@ public abstract class MinecraftAPI<M> extends AbstractWrapped<M> {
     protected final FontAPI<?> font;
     protected final RenderAPI renderer;
     
-    protected MinecraftAPI(M mc, FontAPI<?> font, RenderAPI renderer) {
+    protected MinecraftAPI(Object mc, FontAPI<?> font, RenderAPI renderer) {
         super(mc);
         this.font = font;
         this.renderer = renderer;

@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class EffectInstanceAPI<I> extends AbstractWrapped<I> {
 
-    protected EffectInstanceAPI(I instance) {
+    protected EffectInstanceAPI(Object instance) {
         super(instance);
     }
 

@@ -11,7 +11,7 @@ public abstract class PotionAPI<P> extends AbstractWrapped<P> implements Registr
     
     protected ResourceLocationAPI<?> registryName;
 
-    protected PotionAPI(P potion) {
+    protected PotionAPI(Object potion) {
         super(potion);
     }
     

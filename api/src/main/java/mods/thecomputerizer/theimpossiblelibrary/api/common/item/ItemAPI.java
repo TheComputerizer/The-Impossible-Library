@@ -11,7 +11,7 @@ public abstract class ItemAPI<I> extends AbstractWrapped<I> implements RegistryE
     
     protected ResourceLocationAPI<?> registryName;
 
-    protected ItemAPI(I item) {
+    protected ItemAPI(Object item) {
         super(item);
     }
     

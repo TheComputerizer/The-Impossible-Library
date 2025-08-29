@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEnt
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
@@ -42,6 +43,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.container.Pla
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.effect.Effect1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.effect.EffectInstance1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.effect.Potion1_20;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.entity.Damage1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.entity.Entity1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.entity.Living1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.item.Item1_20;
@@ -83,6 +85,10 @@ public class Wrapper1_20 implements WrapperAPI {
     
     @Override public @Nullable <S> CommandSenderAPI<S> wrapCommandSender(@Nullable Object sender) {
         return getAs(sender,CommandSender1_20::new);
+    }
+    
+    @Override public <S> @Nullable DamageAPI<S> wrapDamage(@Nullable Object source, float amount) {
+        return getAs(source,s -> new Damage1_20(s,amount));
     }
     
     @Override public @Nullable <D> DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable Object dimension) {

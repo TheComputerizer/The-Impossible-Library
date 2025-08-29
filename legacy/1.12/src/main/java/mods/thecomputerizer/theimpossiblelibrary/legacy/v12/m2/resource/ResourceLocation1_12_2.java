@@ -10,7 +10,7 @@ import java.util.Objects;
 public class ResourceLocation1_12_2 extends ResourceLocationAPI<ResourceLocation> {
 
     public ResourceLocation1_12_2(Object instance) {
-        super((ResourceLocation)instance);
+        super(instance);
     }
 
     @Override public void bind(MinecraftAPI<?> mc) {

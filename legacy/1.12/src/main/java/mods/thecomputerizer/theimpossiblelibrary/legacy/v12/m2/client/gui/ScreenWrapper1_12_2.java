@@ -38,7 +38,7 @@ public class ScreenWrapper1_12_2 extends GuiScreen implements Wrapped<ScreenAPI>
     }
     
     private static void initializeTicker() {
-        EventHelper.addListener(TICK_CLIENT, wrapper -> {
+        EventHelper.addListener(TICK_CLIENT,wrapper -> {
             if(wrapper.isPhase(END))
                 for(ScreenWrapper1_12_2 screen : TICKERS)
                     if(screen.isActivelyTicking() && screen.isOpen) screen.wrapped.onTick();

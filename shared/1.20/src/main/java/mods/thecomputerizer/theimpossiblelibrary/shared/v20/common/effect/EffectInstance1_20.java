@@ -8,18 +8,18 @@ import net.minecraft.world.effect.MobEffectInstance;
 public class EffectInstance1_20 extends EffectInstanceAPI<MobEffectInstance> {
 
     public EffectInstance1_20(Object instance) {
-        super((MobEffectInstance)instance);
+        super(instance);
     }
     
     @Override public int getAmplifier() {
-        return this.wrapped.getAmplifier();
+        return getIfNotNullOrDefault(MobEffectInstance::getAmplifier,0);
     }
     
     @Override public int getDuration() {
-        return this.wrapped.getDuration();
+        return getIfNotNullOrDefault(MobEffectInstance::getDuration,0);
     }
     
     @Override public EffectAPI<?> getEffect() {
-        return WrapperHelper.wrapEffect(this.wrapped.getEffect());
+        return getIfNotNull(w -> WrapperHelper.wrapEffect(w.getEffect()));
     }
 }

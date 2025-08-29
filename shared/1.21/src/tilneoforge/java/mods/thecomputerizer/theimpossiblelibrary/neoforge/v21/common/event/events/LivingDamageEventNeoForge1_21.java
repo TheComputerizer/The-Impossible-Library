@@ -22,7 +22,7 @@ public class LivingDamageEventNeoForge1_21 extends LivingDamageEventNeoForge<Liv
         this.damage.set(this.event,new Damage1_21(this.event.getSource(), amount));
     }
     
-    @Override protected EventFieldWrapper<LivingIncomingDamageEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingIncomingDamageEvent,DamageAPI<?>> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_21(event.getSource(),1f),null);
     }
 }

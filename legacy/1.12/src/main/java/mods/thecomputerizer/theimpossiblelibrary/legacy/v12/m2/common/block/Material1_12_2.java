@@ -14,11 +14,11 @@ import static net.minecraft.block.material.Material.WATER;
 public class Material1_12_2 extends MaterialAPI<Material> {
 
     public Material1_12_2(Object material) {
-        super((Material)material);
+        super(material);
     }
 
     @Override public boolean hasCollider() {
-        return this.wrapped.blocksMovement();
+        return getIfNotNullOrDefault(Material::blocksMovement,false);
     }
 
     @Override public boolean isAir() {
@@ -26,27 +26,27 @@ public class Material1_12_2 extends MaterialAPI<Material> {
     }
 
     @Override public boolean isDestroyedByPiston() {
-        return this.wrapped.getPushReaction()==DESTROY;
+        return getIfNotNullOrDefault(w -> w.getPushReaction()==DESTROY,false);
     }
 
     @Override public boolean isFlammable(WorldAPI<?> world, BlockPosAPI<?> pos, Facing side) {
-        return this.wrapped.getCanBurn();
+        return getIfNotNullOrDefault(Material::getCanBurn,false);
     }
 
     @Override public boolean isLiquid() {
-        return this.wrapped.isLiquid();
+        return getIfNotNullOrDefault(Material::isLiquid,false);
     }
 
     @Override public boolean isPushable() {
-        return this.wrapped.getPushReaction()!=BLOCK;
+        return getIfNotNullOrDefault(w -> w.getPushReaction()!=BLOCK,false);
     }
 
     @Override public boolean isReplaceable() {
-        return this.wrapped.isReplaceable();
+        return getIfNotNullOrDefault(Material::isReplaceable,false);
     }
 
     @Override public boolean isSolid() {
-        return this.wrapped.isSolid();
+        return getIfNotNullOrDefault(Material::isSolid,false);
     }
 
     @Override public boolean isUnderwater() {

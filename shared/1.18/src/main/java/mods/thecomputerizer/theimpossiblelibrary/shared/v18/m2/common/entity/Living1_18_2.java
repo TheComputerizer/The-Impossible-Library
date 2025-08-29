@@ -34,11 +34,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Living1_18_2 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     public Living1_18_2(Object living) {
-        this((LivingEntity)living);
-    }
-    
-    Living1_18_2(LivingEntity living) {
-        super(living,living.getType());
+        super(living,((Entity)living).getType());
     }
     
     @Override public boolean canTarget() {

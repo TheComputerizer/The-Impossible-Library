@@ -187,7 +187,7 @@ public class TagHelper {
         return getTagAPI().readFromFile(file);
     }
 
-    private static void writeDataFile(CompoundTagAPI<?> data, File directory, String modid) throws IOException {
+    private static void writeDataFile(CompoundTagAPI<?> data, File directory, String modid) {
         File dataFile = FileHelper.get(directory,modid+".dat",true);
         if(Objects.nonNull(dataFile)) writeToFile(data,dataFile);
         else TILRef.logError("Could not write data for {} due to an error in creating the file",modid);
@@ -203,16 +203,16 @@ public class TagHelper {
      * Will fail if the data folder failed to initialize or the data module is turned off
      */
     @IndirectCallers
-    public static void writeGlobalData(CompoundTagAPI<?> data, String modid) throws IOException {
+    public static void writeGlobalData(CompoundTagAPI<?> data, String modid) {
         writeDataFile(data,getDataDirectory(),modid);
     }
 
-    public static void writeToFile(CompoundTagAPI<?> data, File file) throws IOException {
+    public static void writeToFile(CompoundTagAPI<?> data, File file) {
         getTagAPI().writeToFile(data,file);
     }
 
     @IndirectCallers
-    public static void writeWorldData(CompoundTagAPI<?> data, String modid) throws IOException {
+    public static void writeWorldData(CompoundTagAPI<?> data, String modid) {
         File dataFile = getWorldDataFile(modid);
         if(Objects.nonNull(dataFile)) writeToFile(data,dataFile);
         else TILRef.logError("Failed to write world data for {}! Data file is null",modid);

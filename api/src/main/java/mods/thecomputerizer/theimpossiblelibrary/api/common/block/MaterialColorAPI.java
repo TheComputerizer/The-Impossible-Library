@@ -4,7 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class MaterialColorAPI<C> extends AbstractWrapped<C> {
     
-    protected MaterialColorAPI(C color) {
+    protected MaterialColorAPI(Object color) {
         super(color);
     }
     

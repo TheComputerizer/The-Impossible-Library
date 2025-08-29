@@ -30,7 +30,7 @@ public class PlayStreamingSoundSourceEvent1_12_2 extends PlayStreamingSoundSourc
     }
 
     @Override protected EventFieldWrapper<PlayStreamingSourceEvent,SoundAPI<?>> wrapSoundField() {
-        return wrapGenericGetter(event -> WrapperHelper.wrapSoundInstance(event.getSound()), null);
+        return wrapGenericGetter(event -> WrapperHelper.wrapSoundInstance(event.getSound()),null);
     }
 
     @Override protected EventFieldWrapper<PlayStreamingSourceEvent,String> wrapUUIDField() {

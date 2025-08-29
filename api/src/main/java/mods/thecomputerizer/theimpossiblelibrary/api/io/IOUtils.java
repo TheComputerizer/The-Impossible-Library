@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.WrapperableMappable;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
 
@@ -21,7 +22,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Read/write util methods with some addition-specific string stuff
  */
-@SuppressWarnings("unchecked")
 public class IOUtils {
 
     /**
@@ -67,7 +67,7 @@ public class IOUtils {
     /**
      * Removes blank values from string collections
      */
-    @IndirectCallers
+    @SafeVarargs @IndirectCallers
     public static void lintCollections(Collection<String> ... collections) {
         for(Collection<String> c : collections) c.removeIf(TextHelper::isBlank);
     }
@@ -93,8 +93,9 @@ public class IOUtils {
     @IndirectCallers
     public static <E> E[] mapArray(E[] instances, int[] indices) {
         assert instances.length>0 && indices.length>0;
-        E[] mapped = (E[])Array.newInstance(instances[0].getClass(),indices.length);
-        for(int i=0; i<indices.length; i++) mapped[i] = instances[indices[i]];
+        E[] mapped = GenericUtils.cast(Array.newInstance(instances[0].getClass(),indices.length));
+        if(Objects.nonNull(mapped))
+            for(int i=0;i<indices.length;i++) mapped[i] = instances[indices[i]];
         return mapped;
     }
 
@@ -104,10 +105,11 @@ public class IOUtils {
     @IndirectCallers
     public static <E> E[][] mapGrid(E[] instances, int[][] indices) {
         assert instances.length>0 && indices.length>0 && indices[0].length>0;
-        E[][] mapped = (E[][])Array.newInstance(instances[0].getClass(),indices.length,indices[0].length);
-        for(int i=0; i<indices.length; i++)
-            for(int j=0; j<indices[j].length; j++)
-                mapped[i][j] = instances[indices[i][j]];
+        E[][] mapped = GenericUtils.cast(Array.newInstance(instances[0].getClass(),indices.length,indices[0].length));
+        if(Objects.nonNull(mapped))
+            for(int i=0;i<indices.length;i++)
+                for(int j=0;j<indices[j].length;j++)
+                    mapped[i][j] = instances[indices[i][j]];
         return mapped;
     }
 
@@ -118,11 +120,12 @@ public class IOUtils {
     @IndirectCallers
     public static <E> E[][][] mapBox(E[] instances, int[][][] indices) {
         assert instances.length>0 && indices.length>0 && indices[0].length>0 && indices[0][0].length>0;
-        E[][][] mapped = (E[][][])Array.newInstance(instances[0].getClass(),indices.length,indices[0].length,indices[0][0].length);
-        for(int i=0; i<indices.length; i++)
-            for(int j=0; j<indices[j].length; j++)
-                for(int k=0; k<indices[i][j].length; k++)
-                    mapped[i][j][k] = instances[indices[i][j][k]];
+        E[][][] mapped = GenericUtils.cast(Array.newInstance(instances[0].getClass(),indices.length,indices[0].length,indices[0][0].length));
+        if(Objects.nonNull(mapped))
+            for(int i=0;i<indices.length;i++)
+                for(int j=0;j<indices[j].length;j++)
+                    for(int k=0;k<indices[i][j].length;k++)
+                        mapped[i][j][k] = instances[indices[i][j][k]];
         return mapped;
     }
     

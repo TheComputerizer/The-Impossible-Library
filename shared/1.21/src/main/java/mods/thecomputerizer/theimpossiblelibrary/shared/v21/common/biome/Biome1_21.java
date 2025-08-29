@@ -41,7 +41,7 @@ import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
     protected RegistryAccess access;
     
     public Biome1_21(Object biome) {
-        super(biome instanceof Holder<?> ? (Biome)((Holder<?>)biome).value() : (Biome)biome);
+        super(biome instanceof Holder<?> ? ((Holder<?>)biome).value() : biome);
     }
     
     @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {

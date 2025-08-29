@@ -159,10 +159,9 @@ public class ClassHelper {
         return null;
     }
     
-    @SuppressWarnings("unchecked")
     public static <T> T findAndInitialize(String className, Object ... args) {
         Class<?> target = findClass(className);
-        return Objects.nonNull(target) ? (T)initialize(target,args) : null;
+        return Objects.nonNull(target) ? GenericUtils.cast(initialize(target,args)) : null;
     }
 
     /**
@@ -429,9 +428,8 @@ public class ClassHelper {
         return newProxy(loader,handler,new Class<?>[]{type});
     }
     
-    @SuppressWarnings("unchecked")
     public static <T> T newProxy(ClassLoader loader, InvocationHandler handler, Class<?> ... types) {
-        return (T)Proxy.newProxyInstance(loader,types,handler);
+        return GenericUtils.cast(Proxy.newProxyInstance(loader,types,handler));
     }
     
     @IndirectCallers

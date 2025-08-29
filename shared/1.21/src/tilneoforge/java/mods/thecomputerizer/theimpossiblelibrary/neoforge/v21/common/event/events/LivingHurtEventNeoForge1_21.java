@@ -21,7 +21,7 @@ public class LivingHurtEventNeoForge1_21 extends LivingHurtEventNeoForge<Pre> {
         this.damage.set(this.event,new Damage1_21(this.event.getSource(),amount));
     }
     
-    @Override protected EventFieldWrapper<Pre,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<Pre,DamageAPI<?>> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_21(event.getSource(),1f),null);
     }
 }

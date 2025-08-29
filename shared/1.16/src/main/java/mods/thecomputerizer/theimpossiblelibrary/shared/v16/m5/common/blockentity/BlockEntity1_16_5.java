@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.tag.CompoundTag1_
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<BlockEntity,BlockEntityTyp
      * Assumes the input object will never be null
      */
     public static BlockEntity1_16_5 entity(Object tile) {
-        return new BlockEntity1_16_5((BlockEntity)tile);
+        return new BlockEntity1_16_5(tile,((BlockEntity)tile).getType());
     }
     
     /**
@@ -35,15 +36,11 @@ public class BlockEntity1_16_5 extends BlockEntityAPI<BlockEntity,BlockEntityTyp
      * Assumes the input object will never be null
      */
     public static BlockEntity1_16_5 type(Object type) {
-        return new BlockEntity1_16_5((BlockEntityType<?>)type);
-    }
-    
-    BlockEntity1_16_5(BlockEntity tile) {
-        super(tile,tile.getType());
+        return new BlockEntity1_16_5(null,type);
     }
 
-    BlockEntity1_16_5(BlockEntityType<?> type) {
-        super(null,type);
+    BlockEntity1_16_5(@Nullable Object tile, Object type) {
+        super(tile,type);
     }
     
     @Override public BlockPosAPI<?> getPos() {

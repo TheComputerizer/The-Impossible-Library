@@ -26,7 +26,7 @@ public class LivingDeathEvent1_12_2 extends LivingDeathEventWrapper<LivingDeathE
         setCanceled(event.isCanceled());
     }
 
-    @Override protected EventFieldWrapper<LivingDeathEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingDeathEvent,DamageAPI<?>> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_12_2(event.getSource(),1f),null);
     }
 

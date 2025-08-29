@@ -9,7 +9,7 @@ import java.util.Objects;
 public class ServerPlayer1_12_2 extends Player1_12_2<EntityPlayerMP> {
 
     public ServerPlayer1_12_2(Object player) {
-        super((EntityPlayerMP)player);
+        super(player);
     }
 
     @Override public int getGamemodeOrdinal() {

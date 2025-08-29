@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public abstract class BlockPropertyAPI<P,V extends Comparable<V>> extends AbstractWrapped<P> {
     
-    protected BlockPropertyAPI(P property) {
+    protected BlockPropertyAPI(Object property) {
         super(property);
     }
     

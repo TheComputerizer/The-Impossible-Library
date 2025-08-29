@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 
 public abstract class AdvancementAPI<A> extends AbstractWrapped<A> {
 
-    protected AdvancementAPI(A advancement) {
+    protected AdvancementAPI(Object advancement) {
         super(advancement);
     }
 

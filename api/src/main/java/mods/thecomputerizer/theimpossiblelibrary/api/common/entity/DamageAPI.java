@@ -2,21 +2,22 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 
+import java.util.function.Function;
 
-@SuppressWarnings("unused") @Getter
-public abstract class DamageAPI {
-
+@Getter
+public abstract class DamageAPI<S> extends AbstractWrapped<S> {
+    
     private final EntityAPI<?,?> entity;
     @Setter private float amount;
 
-    protected DamageAPI(@Nullable EntityAPI<?,?> entity, float amount) {
-        this.entity = entity;
+    protected DamageAPI(Object source, Function<S,Object> entityExtractor, float amount) {
+        super(source);
+        this.entity = WrapperHelper.wrapEntity(source,entityExtractor);
         this.amount = amount;
     }
 
     public abstract String getName();
-
-    public abstract <S> S getSourceObject();
 }

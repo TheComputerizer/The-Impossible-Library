@@ -5,111 +5,32 @@ import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
+
+import java.util.Objects;
 
 public class CompoundTag1_20 extends CompoundTagAPI<CompoundTag> {
 
-    public CompoundTag1_20(CompoundTag tag) {
+    public CompoundTag1_20(Object tag) {
         super(tag);
     }
     
-    @Override public CompoundTag1_20 asCompoundTag() {
-        return this;
-    }
-    
-    @Override public ListTag1_20 asListTag() {
-        return null;
-    }
-    
-    @Override public PrimitiveTag1_20 asPrimitiveTag() {
-        return null;
-    }
-    
-    @Override public StringTag1_20 asStringTag() {
-        return null;
-    }
-
     @Override public boolean contains(String key) {
-        return this.wrapped.contains(key);
-    }
-
-    @Override public CompoundTag1_20 getCompoundTag(String key) {
-        return new CompoundTag1_20(this.wrapped.getCompound(key));
-    }
-
-    @Override public ListTag1_20 getListTag(String key) {
-        return (ListTag1_20)getTag(key).asListTag();
-    }
-
-    @Override public PrimitiveTag1_20 getPrimitiveTag(String key) {
-        return (PrimitiveTag1_20)getTag(key).asPrimitiveTag();
-    }
-
-    @Override public String getString(String key) {
-        return this.wrapped.getString(key);
-    }
-
-    @Override public BaseTagAPI<?> getTag(String key) {
-        return TagHelper.getWrapped(this.wrapped.get(key));
+        return getIfNotNullOrDefault(w -> w.contains(key),false);
     }
     
-    @Override public boolean isCompound() {
-        return true;
+    @Override public BaseTagAPI<?> getTag(String key) {
+        return getIfNotNull(w -> TagHelper.getWrapped(w.get(key)));
     }
     
     @Override public boolean isEmpty() {
-        return this.wrapped.isEmpty();
+        return getIfNotNullOrDefault(CompoundTag::isEmpty,true);
     }
     
-    @Override public boolean isList() {
-        return false;
-    }
-    
-    @Override public boolean isPrimitive() {
-        return false;
-    }
-    
-    @Override public boolean isString() {
-        return false;
-    }
-    
-    @Override public void putBoolean(String key, boolean b) {
-        this.wrapped.putBoolean(key,b);
-    }
-    
-    @Override public void putByte(String key, byte b) {
-        this.wrapped.putByte(key,b);
-    }
-    
-    @Override public void putDouble(String key, double d) {
-        this.wrapped.putDouble(key,d);
-    }
-    
-    @Override public void putFloat(String key, float f) {
-        this.wrapped.putFloat(key,f);
-    }
-    
-    @Override public void putInt(String key, int value) {
-        this.wrapped.putInt(key,value);
-    }
-    
-    @Override public void putLong(String key, long l) {
-        this.wrapped.putLong(key,l);
-    }
-    
-    @Override public void putShort(String key, short s) {
-        this.wrapped.putShort(key,s);
-    }
-    
-    @Override public void putString(String key, String value) {
-        this.wrapped.putString(key,value);
-    }
-
     @Override public void putTag(String key, BaseTagAPI<?> tag) {
-        this.wrapped.put(key,(Tag)tag.getWrapped());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.put(key, tag.unwrap());
     }
     
     @Override public String toPrettyString() {
-        return NbtUtils.prettyPrint(this.wrapped, true);
+        return getIfNotNull(w -> NbtUtils.prettyPrint(w,true));
     }
 }

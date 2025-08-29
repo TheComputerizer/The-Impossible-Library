@@ -9,7 +9,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Effect1_16_5 extends EffectAPI<MobEffect> {
 
     public Effect1_16_5(Object effect) {
-        super((MobEffect)effect);
+        super(effect);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

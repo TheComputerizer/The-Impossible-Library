@@ -32,9 +32,8 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public abstract class Player1_18_2<P extends Player> extends PlayerAPI<P,EntityType<?>> {
 
-    @SuppressWarnings("unchecked")
     protected Player1_18_2(Object player) {
-        super((P)player,(((P)player).getType()));
+        super(player,((Entity)player).getType());
     }
     
     @Override public boolean canTarget() {

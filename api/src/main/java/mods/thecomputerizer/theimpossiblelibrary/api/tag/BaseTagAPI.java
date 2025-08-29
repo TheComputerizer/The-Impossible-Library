@@ -10,7 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 @SuppressWarnings("unused")
 public abstract class BaseTagAPI<T> extends AbstractWrapped<T> {
     
-    protected BaseTagAPI(T tag) {
+    protected BaseTagAPI(Object tag) {
         super(tag);
     }
     

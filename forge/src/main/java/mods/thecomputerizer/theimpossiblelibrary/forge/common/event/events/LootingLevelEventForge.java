@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LootingLevelEventWrapper;
@@ -16,6 +17,10 @@ public abstract class LootingLevelEventForge extends LootingLevelEventWrapper<Lo
     @Override public void setEvent(LootingLevelEvent event) {
         super.setEvent(event);
         setCanceled(event.isCanceled());
+    }
+    
+    @Override protected EventFieldWrapper<LootingLevelEvent,DamageAPI<?>> wrapDamageField() {
+        return wrapDamageGetter(LootingLevelEvent::getDamageSource,1f);
     }
     
     @Override protected EventFieldWrapper<LootingLevelEvent,Integer> wrapLootingLevelField() {

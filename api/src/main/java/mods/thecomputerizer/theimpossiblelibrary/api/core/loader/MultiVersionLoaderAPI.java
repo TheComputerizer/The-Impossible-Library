@@ -10,6 +10,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -40,7 +41,6 @@ public abstract class MultiVersionLoaderAPI {
     public abstract File findModRoot();
     protected abstract List<File> gatherCandidateModFiles(File root);
     
-    @SuppressWarnings("unchecked")
     protected <A extends Annotation> A getAnnotationMatching(Class<?> clazz, Class<A> annotation) { //might throw class cast exception
         String name = annotation.getName();
         Annotation type = null;
@@ -50,7 +50,7 @@ public abstract class MultiVersionLoaderAPI {
                 break;
             }
         }
-        return Objects.nonNull(type) ? (A)clazz.getAnnotation(type.annotationType()) : null;
+        return Objects.nonNull(type) ? GenericUtils.cast(clazz.getAnnotation(type.annotationType())) : null;
     }
     
     protected abstract @Nullable Attributes getFileAttributes(File file);

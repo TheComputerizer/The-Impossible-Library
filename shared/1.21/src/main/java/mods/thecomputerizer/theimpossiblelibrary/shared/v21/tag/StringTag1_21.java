@@ -5,43 +5,11 @@ import net.minecraft.nbt.StringTag;
 
 public class StringTag1_21 extends StringTagAPI<StringTag> implements TagWrapper {
 
-    public StringTag1_21(StringTag tag) {
+    public StringTag1_21(Object tag) {
         super(tag);
     }
     
-    @Override public CompoundTag1_21 asCompoundTag() {
-        return null;
-    }
-    
-    @Override public ListTag1_21 asListTag() {
-        return null;
-    }
-    
-    @Override public PrimitiveTag1_21 asPrimitiveTag() {
-        return null;
-    }
-    
-    @Override public StringTag1_21 asStringTag() {
-        return this;
-    }
-    
-    @Override public boolean isCompound() {
-        return false;
-    }
-    
-    @Override public boolean isList() {
-        return false;
-    }
-    
-    @Override public boolean isPrimitive() {
-        return false;
-    }
-    
-    @Override public boolean isString() {
-        return true;
-    }
-
     @Override public String getValue() {
-        return this.wrapped.getAsString();
+        return getIfNotNull(StringTag::getAsString);
     }
 }

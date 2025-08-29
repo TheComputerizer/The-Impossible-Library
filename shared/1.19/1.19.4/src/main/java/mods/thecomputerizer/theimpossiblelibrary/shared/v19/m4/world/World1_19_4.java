@@ -16,6 +16,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 
 import static net.minecraft.core.registries.Registries.STRUCTURE;
@@ -27,6 +28,7 @@ public class World1_19_4 extends World1_19 {
     }
     
     @Override public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
+        if(Objects.isNull(this.wrapped)) return null;
         BiomeAPI<Biome> biome = WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()).value());
         ((Biome1_19)biome).setAccess(this.wrapped.registryAccess());
         return biome;

@@ -33,11 +33,7 @@ import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGE
 public class Living1_19 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     public Living1_19(Object living) {
-        this((LivingEntity)living);
-    }
-    
-    Living1_19(LivingEntity living) {
-        super(living,living.getType());
+        super(living,((Entity)living).getType());
     }
     
     @Override public boolean canTarget() {

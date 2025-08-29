@@ -8,14 +8,14 @@ import net.minecraft.world.level.levelgen.feature.StructureFeature;
 public class Structure1_16_5 extends StructureAPI<StructureFeature<?>> {
     
     public Structure1_16_5(Object structure) {
-        super((StructureFeature<?>)structure);
+        super(structure);
     }
     
     @Override public String getName() {
-        return this.wrapped.getFeatureName();
+        return getIfNotNull(StructureFeature::getFeatureName);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        return RegistryHelper.getStructureRegistry().getKey(this.wrapped);
+        return getIfNotNull(w -> RegistryHelper.getStructureRegistry().getKey(w));
     }
 }

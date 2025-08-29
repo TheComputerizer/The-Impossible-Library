@@ -11,17 +11,19 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Biome1_12_2 extends BiomeAPI<Biome> {
 
     public Biome1_12_2(Object biome) {
-        super((Biome)biome);
+        super(biome);
     }
     
     @Override public boolean canRain(WorldAPI<?> world, BlockPosAPI<?> pos) {
-        return this.wrapped.canRain() && !canSnow(world,pos);
+        return getIfNotNullOrDefault(w -> w.canRain() && !canSnow(world,pos),false);
     }
     
     @Override public boolean canSnow(WorldAPI<?> world, BlockPosAPI<?> pos) {
@@ -29,7 +31,7 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
     }
 
     @Override public float getRainfall() {
-        return this.wrapped.getRainfall();
+        return getIfNotNullOrDefault(Biome::getRainfall,0f);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
@@ -38,20 +40,21 @@ public class Biome1_12_2 extends BiomeAPI<Biome> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
     
     @Override public Set<String> getTagNames(WorldAPI<?> world) {
         Set<String> tags = new HashSet<>();
-        for(Type type : BiomeDictionary.getTypes(this.wrapped)) tags.add(type.getName());
+        Set<Type> types = getIfNotNullOrDefault(BiomeDictionary::getTypes,Collections.emptySet());
+        for(Type type : types) tags.add(type.getName());
         return tags;
     }
 
     @Override public float getTemperatureAt(BlockPosAPI<?> pos) {
-        return this.wrapped.getTemperature(pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getTemperature(pos.unwrap()),0f);
     }
     
     @Override public String getName(WorldAPI<?> world) {
-        return CoreAPI.isClient() ? this.wrapped.getBiomeName() : null;
+        return CoreAPI.isClient() ? getIfNotNull(Biome::getBiomeName) : null;
     }
 }

@@ -4,17 +4,17 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.ListTag1_20_6;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.PrimitiveTag1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.TagWrapper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.component.CustomData;
+
+import java.util.Objects;
 
 import static net.minecraft.world.item.component.CustomData.EMPTY;
 
 public class CompoundComponent1_20_6 extends CompoundTagAPI<CustomData> implements ComponentWrapper {
 
-    public CompoundComponent1_20_6(CustomData data) {
+    public CompoundComponent1_20_6(Object data) {
         super(data);
     }
     
@@ -35,30 +35,22 @@ public class CompoundComponent1_20_6 extends CompoundTagAPI<CustomData> implemen
     }
 
     @Override public boolean contains(String key) {
-        return this.wrapped.contains(key);
+        return getIfNotNullOrDefault(w -> w.contains(key),false);
     }
-    
     
     /**
      * The tag needs to be modifiable without being required to get modified
      */
     @SuppressWarnings("deprecation")
     @Override public CompoundComponent1_20_6 getCompoundTag(String key) {
-        CompoundTag tag = this.wrapped.getUnsafe();
-        CustomData data = tag.contains(key,10) ? CustomData.of(tag.getCompound(key)) : EMPTY;
+        CompoundTag tag = getIfNotNull(CustomData::getUnsafe);
+        CustomData data = Objects.nonNull(tag) && tag.contains(key,10) ?
+                CustomData.of(tag.getCompound(key)) : EMPTY;
         return new CompoundComponent1_20_6(data);
     }
 
-    @Override public ListTag1_20_6 getListTag(String key) {
-        return (ListTag1_20_6)getTag(key).asListTag();
-    }
-
-    @Override public PrimitiveTag1_20_6 getPrimitiveTag(String key) {
-        return (PrimitiveTag1_20_6)getTag(key).asPrimitiveTag();
-    }
-
     @Override public String getString(String key) {
-        return this.wrapped.copyTag().getString(key);
+        return getIfNotNull(w -> w.copyTag().getString(key));
     }
     
     /**
@@ -66,67 +58,20 @@ public class CompoundComponent1_20_6 extends CompoundTagAPI<CustomData> implemen
      */
     @SuppressWarnings("deprecation")
     @Override public BaseTagAPI<?> getTag(String key) {
-        return TagHelper.getWrapped(this.wrapped.getUnsafe().get(key));
-    }
-    
-    @Override public boolean isCompound() {
-        return true;
+        return getIfNotNull(w -> TagHelper.getWrapped(w.getUnsafe().get(key)));
     }
     
     @Override public boolean isEmpty() {
-        return this.wrapped.isEmpty();
-    }
-    
-    @Override public boolean isList() {
-        return false;
-    }
-    
-    @Override public boolean isPrimitive() {
-        return false;
-    }
-    
-    @Override public boolean isString() {
-        return false;
-    }
-    
-    @Override public void putBoolean(String key, boolean b) {
-        this.wrapped.update(tag -> tag.putBoolean(key,b));
-    }
-    
-    @Override public void putByte(String key, byte b) {
-        this.wrapped.update(tag -> tag.putByte(key,b));
-    }
-    
-    @Override public void putDouble(String key, double d) {
-        this.wrapped.update(tag -> tag.putDouble(key,d));
-    }
-    
-    @Override public void putFloat(String key, float f) {
-        this.wrapped.update(tag -> tag.putFloat(key,f));
-    }
-    
-    @Override public void putInt(String key, int value) {
-        this.wrapped.update(tag -> tag.putInt(key,value));
-    }
-    
-    @Override public void putLong(String key, long l) {
-        this.wrapped.update(tag -> tag.putLong(key,l));
-    }
-    
-    @Override public void putShort(String key, short s) {
-        this.wrapped.update(tag -> tag.putShort(key,s));
-    }
-    
-    @Override public void putString(String key, String value) {
-        this.wrapped.update(tag -> tag.putString(key,value));
+        return getIfNotNullOrDefault(CustomData::isEmpty,true);
     }
 
     @Override public void putTag(String key, BaseTagAPI<?> api) {
-        if(api instanceof TagWrapper) this.wrapped.update(tag -> tag.put(key, api.unwrap()));
+        if(Objects.nonNull(this.wrapped) && api instanceof TagWrapper)
+            this.wrapped.update(tag -> tag.put(key,api.unwrap()));
         else TILRef.logError("Cannot add data component to CompoundTag");
     }
     
     @Override public String toPrettyString() { //TODO Is there a way to pretty print components?
-        return this.wrapped.toString();
+        return getIfNotNull(Object::toString);
     }
 }

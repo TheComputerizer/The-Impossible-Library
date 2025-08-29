@@ -18,7 +18,7 @@ public class Dimension1_21 extends DimensionAPI<DimensionType> {
     private final String name;
     
     public Dimension1_21(WorldAPI<?> world, Object dimension) {
-        super(world,(DimensionType)dimension);
+        super(dimension);
         this.cachedRegistryName = cacheRegistryName(world);
         this.name = calculateName();
     }

@@ -1,15 +1,14 @@
-package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m4.common.event.events;
+package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.common.event.events;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.common.event.events.LivingHurtEventNeoForge;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.entity.Damage1_20;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.LIVING_HURT;
 
-public class LivingHurtEventNeoForge1_20_4 extends LivingHurtEventNeoForge<LivingHurtEvent> {
+public class LivingHurtEventNeoForge1_20 extends LivingHurtEventNeoForge<LivingHurtEvent> {
     
     @SubscribeEvent
     public static void onEvent(LivingHurtEvent event) {
@@ -18,10 +17,10 @@ public class LivingHurtEventNeoForge1_20_4 extends LivingHurtEventNeoForge<Livin
     
     @Override public void setAmount(float amount) {
         this.event.setAmount(amount);
-        this.damage.set(this.event,new Damage1_20(this.event.getSource(),amount));
+        super.setAmount(amount);
     }
     
-    @Override protected EventFieldWrapper<LivingHurtEvent,DamageAPI> wrapDamageField() {
-        return wrapGenericGetter(event -> new Damage1_20(event.getSource(),1f),null);
+    @Override protected EventFieldWrapper<LivingHurtEvent,DamageAPI<?>> wrapDamageField() {
+        return wrapDamageGetter(LivingHurtEvent::getSource,LivingHurtEvent::getAmount);
     }
 }

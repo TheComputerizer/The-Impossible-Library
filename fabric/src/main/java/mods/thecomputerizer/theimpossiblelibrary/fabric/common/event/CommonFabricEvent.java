@@ -5,19 +5,20 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.E
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import net.fabricmc.fabric.api.event.Event;
 
 import java.lang.reflect.InvocationHandler;
 import java.util.Objects;
 import java.util.function.Function;
 
+//TODO Fabric events aren't fully implemented and the current implementation kinda sucks
 public interface CommonFabricEvent {
     
-    @SuppressWarnings("unchecked")
     static <T> void register(EventWrapper<?> wrapper, Event<T> event, EventType<?> type) {
         if(Objects.isNull(event)) return;
         Object invoker = event.invoker();
-        Class<T> eventType = (Class<T>)invoker.getClass().getInterfaces()[0];
+        Class<T> eventType = GenericUtils.cast(invoker.getClass().getInterfaces()[0]);
         TILRef.logInfo("Event invoker class is {}",eventType);
         event.register(ClassHelper.newProxy(eventType,((CommonFabricEvent)wrapper).createEventProxy(type)));
     }
@@ -61,10 +62,7 @@ public interface CommonFabricEvent {
         };
     }
     
-    @SuppressWarnings("unchecked") default <T> Function<Object[],T> wrapArrayGetter(int index) {
-        return args -> {
-            Object arg = args.length>index ? args[index] : null;
-            return Objects.nonNull(arg) ? (T)arg : null;
-        };
+    default <T> Function<Object[],T> wrapArrayGetter(int index) {
+        return args -> GenericUtils.cast(args.length>index ? args[index] : null);
     }
 }

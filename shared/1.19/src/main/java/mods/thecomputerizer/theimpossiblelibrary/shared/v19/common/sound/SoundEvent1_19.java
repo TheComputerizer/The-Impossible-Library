@@ -8,7 +8,7 @@ import net.minecraft.sounds.SoundEvent;
 public class SoundEvent1_19 extends SoundEventAPI<SoundEvent> {
 
     public SoundEvent1_19(Object sound) {
-        super(sound instanceof Holder<?> ? (SoundEvent)((Holder<?>)sound).value() : (SoundEvent)sound);
+        super(sound instanceof Holder<?> ? ((Holder<?>)sound).value() : sound);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

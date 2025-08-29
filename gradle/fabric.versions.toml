@@ -11,10 +11,10 @@
     mods-1_19_4-compile = [ 'coroutil-1_19_4' ]
     mods-1_19_4-implementation = [ 'bookshelf-1_19_4', 'cloth-1_19_4', 'modmenu-1_19_4' ]
     mods-1_19_4-runtime = [ 'architectury-1_19_4', 'coroutil-1_19_4', 'jei-1_19_4' ]
-    mods-1_20_1-compile = [  ]
-    mods-1_20_1-implementation = [ 'bookshelf-1_20_1', 'cloth-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
+    mods-1_20_1-compile = [ 'bookshelf-1_20_1' ]
+    mods-1_20_1-implementation = [ 'cloth-1_20_1', 'configured-1_20_1', 'coroutil-1_20_1',
         'dataanchor-1_20_1', 'glitchcore-1_20_1', 'modmenu-1_20_1', 'sereneseasons-1_20_1' ]
-    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'forgeconfig-1_20_1', 'nightconfig-1_20_1', 'typetools' ]
+    mods-1_20_1-runtime = [ 'architectury-1_20_1', 'bookshelf-1_20_1', 'forgeconfig-1_20_1', 'nightconfig-1_20_1', 'typetools' ]
     mods-1_20_4-compile = [  ]
     mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'cloth-1_20_4', 'configured-1_20_4', 'coroutil-1_20_4',
         'glitchcore-1_20_4', 'modmenu-1_20_4', 'sereneseasons-1_20_4' ]
@@ -197,7 +197,7 @@
     bookshelf-1_19_4 = '18.0.6'
     bookshelf-1_20_1 = '20.2.13'
     bookshelf-1_20_4 = '23.1.11'
-    bookshelf-1_21_1 = '21.1.10'
+    bookshelf-1_21_1 = '21.1.68'
 
     cloth-1_16_5 = '4.17.101'
     cloth-1_18_2 = '6.5.102'

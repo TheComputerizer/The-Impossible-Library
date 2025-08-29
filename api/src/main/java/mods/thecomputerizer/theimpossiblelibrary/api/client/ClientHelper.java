@@ -84,10 +84,10 @@ public class ClientHelper {
     }
     
     @IndirectCallers
-    @SuppressWarnings({"unchecked","DataFlowIssue"})
     public static <E extends Enum<E>> E getCachedOptionEnum(String key, E defualtValue) {
         String value = getCachedOption(key);
-        Class<E> clazz = (Class<E>)defualtValue.getClass();
+        Class<E> clazz = GenericUtils.cast(defualtValue.getClass());
+        if(Objects.isNull(clazz) || Objects.isNull(value)) return defualtValue;
         return checkValue(value,"enum ("+clazz.getName()+")",key) ? defualtValue : Enum.valueOf(clazz,value);
     }
     

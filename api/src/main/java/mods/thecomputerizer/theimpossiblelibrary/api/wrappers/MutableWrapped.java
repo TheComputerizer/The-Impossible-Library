@@ -1,5 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.wrappers;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,8 +13,8 @@ public abstract class MutableWrapped<W> implements Wrapped<W> {
         this(null);
     }
     
-    protected MutableWrapped(W wrapped) {
-        this.wrapped = wrapped;
+    protected MutableWrapped(Object wrapped) {
+        this.wrapped = GenericUtils.cast(wrapped);
     }
     
     public Optional<W> asOptional() {

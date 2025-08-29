@@ -15,7 +15,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAI
 
 public abstract class PlayerAPI<P,V> extends LivingEntityAPI<P,V> {
 
-    protected PlayerAPI(P entity, V type) {
+    protected PlayerAPI(Object entity, Object type) {
         super(entity,type);
     }
 

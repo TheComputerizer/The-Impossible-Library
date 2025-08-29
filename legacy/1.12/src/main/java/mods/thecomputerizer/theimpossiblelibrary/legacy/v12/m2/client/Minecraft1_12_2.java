@@ -52,7 +52,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
 
     private Minecraft1_12_2(Object mc) {
-        super((Minecraft)mc,new Font1_12_2(),new Render1_12_2());
+        super(mc,new Font1_12_2(),new Render1_12_2());
     }
     
     @Override public void addResourcePackFolder(File dir) {
@@ -71,11 +71,11 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public int getDisplayHeight() {
-        return this.wrapped.displayHeight;
+        return getIfNotNullOrDefault(w -> w.displayHeight,0);
     }
     
     @Override public int getDisplayWidth() {
-        return this.wrapped.displayWidth;
+        return getIfNotNullOrDefault(w -> w.displayWidth,0);
     }
     
     @Override public int getGUIScale() {
@@ -94,7 +94,8 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
         RayTraceResult target = getTarget();
         if(Objects.isNull(target) || Objects.nonNull(target.entityHit)) return null;
         BlockPos pos = target.getBlockPos();
-        return pos==ORIGIN ? null : WrapperHelper.wrapBlockEntity(this.wrapped.world.getTileEntity(pos));
+        return Objects.isNull(this.wrapped) || pos==ORIGIN ? null :
+                WrapperHelper.wrapBlockEntity(this.wrapped.world.getTileEntity(pos));
     }
     
     @Override public @Nullable EntityAPI<?,?> getTargetEntity() {
@@ -177,6 +178,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {
+        if(Objects.isNull(this.wrapped)) return () -> null;
         final ListenableFuture<T> future = this.wrapped.addScheduledTask(supplier::get);
         return () -> {
             try {
@@ -189,6 +191,7 @@ public class Minecraft1_12_2 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public void scheduleRunnable(Runnable runnable) {
+        if(Objects.isNull(this.wrapped)) return;
         try {
             this.wrapped.addScheduledTask(runnable).get();
         } catch(ExecutionException|InterruptedException ex) {

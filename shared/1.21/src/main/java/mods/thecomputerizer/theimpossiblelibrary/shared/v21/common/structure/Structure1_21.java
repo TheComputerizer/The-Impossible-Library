@@ -18,11 +18,11 @@ import static net.minecraft.core.registries.Registries.STRUCTURE;
 public class Structure1_21 extends StructureAPI<Structure> {
     
     public Structure1_21(Object structure) {
-        super(structure instanceof Holder<?> ? (Structure)((Holder<?>)structure).value() : (Structure)structure);
+        super(structure instanceof Holder<?> ? ((Holder<?>)structure).value() : structure);
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        return RegistryHelper.getStructureRegistry().getKey(this.wrapped);
+        return getIfNotNull(w -> RegistryHelper.getStructureRegistry().getKey(w));
     }
     
     @Override public ResourceLocationAPI<?> getRegistryName(WorldAPI<?> world) {
@@ -31,6 +31,7 @@ public class Structure1_21 extends StructureAPI<Structure> {
     }
     
     protected ResourceLocationAPI<?> getRegistryName(RegistryAccess access) {
+        if(Objects.isNull(this.wrapped)) return null;
         Registry<Structure> registry = access.registry(STRUCTURE).orElse(null);
         return WrapperHelper.wrapResourceLocation(Objects.nonNull(registry) ? registry.getKey(this.wrapped) : null);
     }

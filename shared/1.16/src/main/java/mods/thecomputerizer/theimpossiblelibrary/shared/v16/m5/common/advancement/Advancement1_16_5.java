@@ -11,7 +11,7 @@ public class Advancement1_16_5 extends AdvancementAPI<Advancement> {
     private final AdvancementDisplayInfo1_16_5 display;
 
     public Advancement1_16_5(Object advancement) {
-        super((Advancement)advancement);
+        super(advancement);
         this.display = new AdvancementDisplayInfo1_16_5(((Advancement)advancement).getDisplay());
     }
 

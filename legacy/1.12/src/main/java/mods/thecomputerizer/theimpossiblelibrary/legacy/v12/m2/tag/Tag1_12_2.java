@@ -1,78 +1,68 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.BaseTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import net.minecraft.nbt.*;
 
-import java.io.EOFException;
 import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
 
 public class Tag1_12_2 implements TagAPI {
     
-    @SuppressWarnings("unchecked") @Override public <T> BaseTagAPI<T> getWrapped(T tag) {
-        if(tag instanceof NBTTagCompound) return (BaseTagAPI<T>)new CompoundTag1_12_2((NBTTagCompound)tag);
-        if(tag instanceof NBTTagList) return (BaseTagAPI<T>)new ListTag1_12_2((NBTTagList)tag);
-        if(tag instanceof NBTPrimitive) return (BaseTagAPI<T>)new PrimitiveTag1_12_2((NBTPrimitive)tag);
-        if(tag instanceof NBTTagString) return (BaseTagAPI<T>)new StringTag1_12_2((NBTTagString)tag);
+    @Override public <T> BaseTagAPI<T> getWrapped(T tag) {
+        if(tag instanceof NBTTagCompound) return GenericUtils.cast(new CompoundTag1_12_2(tag));
+        if(tag instanceof NBTTagList) return GenericUtils.cast(new ListTag1_12_2(tag));
+        if(tag instanceof NBTPrimitive) return GenericUtils.cast(new PrimitiveTag1_12_2(tag));
+        if(tag instanceof NBTTagString) return GenericUtils.cast(new StringTag1_12_2(tag));
         return null;
     }
-
-    @Override public CompoundTag1_12_2 makeCompoundTag() {
-        return new CompoundTag1_12_2(new NBTTagCompound());
-    }
-
-    @Override public ListTag1_12_2 makeListTag() {
-        return new ListTag1_12_2(new NBTTagList());
+    
+    @Override public Object newCompoundTag() {
+        return new NBTTagCompound();
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(boolean b) {
-        return new PrimitiveTag1_12_2(new NBTTagByte(b ? (byte)1 : 0));
+    @Override public Object newListTag() {
+        return new NBTTagList();
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(byte b) {
-        return new PrimitiveTag1_12_2(new NBTTagByte(b));
+    @Override public Object newPrimitiveTag(boolean b) {
+        return new NBTTagByte(b ? (byte)1 : (byte)0);
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(double d) {
-        return new PrimitiveTag1_12_2(new NBTTagDouble(d));
+    @Override public Object newPrimitiveTag(byte b) {
+        return new NBTTagByte(b);
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(float f) {
-        return new PrimitiveTag1_12_2(new NBTTagFloat(f));
+    @Override public Object newPrimitiveTag(double d) {
+        return new NBTTagDouble(d);
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(int i) {
-        return new PrimitiveTag1_12_2(new NBTTagInt(i));
+    @Override public Object newPrimitiveTag(float f) {
+        return new NBTTagFloat(f);
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(long l) {
-        return new PrimitiveTag1_12_2(new NBTTagLong(l));
+    @Override public Object newPrimitiveTag(int i) {
+        return new NBTTagInt(i);
     }
     
-    @Override public PrimitiveTag1_12_2 makePrimitiveTag(short s) {
-        return new PrimitiveTag1_12_2(new NBTTagShort(s));
+    @Override public Object newPrimitiveTag(long l) {
+        return new NBTTagLong(l);
     }
     
-    @Override public StringTag1_12_2 makeStringTag(String value) {
-        return new StringTag1_12_2(new NBTTagString(value));
+    @Override public Object newPrimitiveTag(short s) {
+        return new NBTTagShort(s);
     }
     
-    @Override public CompoundTag1_12_2 readFromFile(File file) throws IOException {
-        NBTTagCompound tag = null;
-        try {
-            tag = CompressedStreamTools.read(file);
-        } catch(EOFException ex) {
-            TILRef.logWarn("Empty data file {}",file.toPath(),ex.getMessage());
-        }
-        if(Objects.isNull(tag)) tag = new NBTTagCompound();
-        return new CompoundTag1_12_2(tag);
+    @Override public Object newStringTag(String value) {
+        return new NBTTagString(value);
+    }
+    
+    @Override public Object readFromFileDirect(File file) throws Exception {
+        return CompressedStreamTools.read(file);
     }
 
-    @Override public void writeToFile(CompoundTagAPI<?> tag, File file) throws IOException {
-        if(!tag.isEmpty()) CompressedStreamTools.write(tag.unwrap(),file);
+    @Override public void writeToFileDirect(CompoundTagAPI<?> tag, File file) throws Exception {
+        CompressedStreamTools.write(tag.unwrap(),file);
     }
 }

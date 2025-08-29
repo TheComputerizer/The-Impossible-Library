@@ -34,11 +34,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Entity1_16_5 extends EntityAPI<Entity,EntityType<?>> {
     
     public Entity1_16_5(Object entity) {
-        this((Entity)entity);
-    }
-    
-    Entity1_16_5(Entity entity) {
-        super(entity,entity.getType());
+        super(entity,((Entity)entity).getType());
     }
     
     @Override public boolean canTarget() {

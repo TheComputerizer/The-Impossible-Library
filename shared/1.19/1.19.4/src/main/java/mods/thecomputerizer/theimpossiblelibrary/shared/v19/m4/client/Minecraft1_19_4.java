@@ -12,7 +12,7 @@ public class Minecraft1_19_4 extends Minecraft1_19 {
         return new Minecraft1_19_4(Minecraft.getInstance());
     }
     
-    public Minecraft1_19_4(Minecraft mc) {
+    public Minecraft1_19_4(Object mc) {
         super(mc,new Font1_19_4(),new Render1_19_4());
     }
 }

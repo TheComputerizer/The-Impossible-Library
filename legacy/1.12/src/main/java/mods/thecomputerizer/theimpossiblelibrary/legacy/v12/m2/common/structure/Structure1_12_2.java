@@ -7,14 +7,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 public class Structure1_12_2 extends StructureAPI<StructureRef> {
 
     public Structure1_12_2(Object structure) {
-        super((StructureRef)structure);
+        super(structure);
     }
 
     @Override public String getName() {
-        return this.wrapped.getName();
+        return getIfNotNull(StructureRef::getName);
     }
 
     @Override public ResourceLocationAPI<?> getRegistryName() {
-        return WrapperHelper.wrapResourceLocation(this.wrapped.getId());
+        return getIfNotNull(w -> WrapperHelper.wrapResourceLocation(w.getId()));
     }
 }

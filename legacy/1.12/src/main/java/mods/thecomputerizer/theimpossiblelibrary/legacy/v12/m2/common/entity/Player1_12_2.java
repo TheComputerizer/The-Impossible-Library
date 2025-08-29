@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 
 public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,EntityEntry> {
 
-    protected Player1_12_2(P player) {
-        super(player,(EntityEntry)Entity1_12_2.getEntry(player));
+    protected Player1_12_2(Object player) {
+        super(player,Entity1_12_2.getEntry(player));
     }
     
     @Override public boolean canTarget() {

@@ -16,7 +16,7 @@ public abstract class BiomeAPI<B> extends AbstractWrapped<B> implements Registry
     
     protected ResourceLocationAPI<?> registryName;
     
-    protected BiomeAPI(B biome) {
+    protected BiomeAPI(Object biome) {
         super(biome);
     }
 

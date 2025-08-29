@@ -10,7 +10,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 public class Potion1_18_2 extends PotionAPI<Potion> {
 
     public Potion1_18_2(Object potion) {
-        super(potion instanceof Holder<?> ? (Potion)((Holder<?>)potion).value() : (Potion)potion);
+        super(potion instanceof Holder<?> ? ((Holder<?>)potion).value() : potion);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {

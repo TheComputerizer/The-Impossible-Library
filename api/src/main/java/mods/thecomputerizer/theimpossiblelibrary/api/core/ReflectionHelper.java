@@ -7,8 +7,10 @@ import java.lang.reflect.Constructor;
 import java.util.Objects;
 
 /**
- * Temporary reimplementation for Music Triggers testing purposes
+ * Deprecated since 0.4.6 to be removed in 0.5.0
+ * Use mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks instead
  */
+@Deprecated
 public class ReflectionHelper {
     
     @IndirectCallers

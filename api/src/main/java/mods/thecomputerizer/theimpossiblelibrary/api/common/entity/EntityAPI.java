@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector3;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.PosHelper;
@@ -28,9 +29,9 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
 
     protected E entity;
 
-    protected EntityAPI(E entity, V type) {
+    protected EntityAPI(Object entity, Object type) {
         super(type);
-        this.entity = entity;
+        this.entity = GenericUtils.cast(entity);
     }
     
     @IndirectCallers public abstract boolean canTarget();
@@ -118,9 +119,8 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     
     public abstract void setPosition(double x, double y, double z);
     
-    @SuppressWarnings("unchecked")
     public <T> T unwrapEntity() {
-        return (T)getEntity();
+        return GenericUtils.cast(getEntity());
     }
     
     public abstract double x();

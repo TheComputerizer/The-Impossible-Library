@@ -8,19 +8,22 @@ import net.minecraft.item.ItemStack;
 
 import java.util.function.Supplier;
 
+import static net.minecraft.item.ItemStack.EMPTY;
+
 public class CreativeTab1_12_2 extends CreativeTabAPI<CreativeTabs> {
     
     public CreativeTab1_12_2(Object wrapped) {
-        super((CreativeTabs)wrapped);
+        super(wrapped);
     }
     
     @Override public void addStack(Supplier<ItemStackAPI<?>> supplier) {
         this.stacks.add(supplier);
-        ((ItemStack)supplier.get().unwrap()).getItem().setCreativeTab(getWrapped());
+        ItemStack stack = supplier.get().unwrap();
+        stack.getItem().setCreativeTab(unwrap());
     }
     
     @Override public ItemStackAPI<?> getIcon() {
-        return WrapperHelper.wrapItemStack(this.wrapped.getIcon());
+        return WrapperHelper.wrapItemStack(getIfNotNullOrDefault(CreativeTabs::getIcon,EMPTY));
     }
     
     @Override public <P> P withItemProperties(P properties) {

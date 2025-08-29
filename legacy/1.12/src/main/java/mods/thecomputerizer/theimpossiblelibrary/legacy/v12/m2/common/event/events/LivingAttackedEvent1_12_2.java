@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventFieldWrap
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.events.LivingAttackedEventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
-import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity.Damage1_12_2;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -26,8 +25,8 @@ public class LivingAttackedEvent1_12_2 extends LivingAttackedEventWrapper<Living
         setCanceled(event.isCanceled());
     }
 
-    @Override protected EventFieldWrapper<LivingAttackEvent,DamageAPI> wrapDamageField() {
-        return wrapGenericGetter(event -> new Damage1_12_2(event.getSource(),1f),null);
+    @Override protected EventFieldWrapper<LivingAttackEvent,DamageAPI<?>> wrapDamageField() {
+        return wrapDamageGetter(LivingAttackEvent::getSource,1f);
     }
 
     @Override protected EventFieldWrapper<LivingAttackEvent,LivingEntityAPI<?,?>> wrapLivingField() {

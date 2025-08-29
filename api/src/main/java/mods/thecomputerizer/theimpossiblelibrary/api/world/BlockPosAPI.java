@@ -15,11 +15,11 @@ public abstract class BlockPosAPI<P> extends AbstractWrapped<P> {
 
     protected Vector3 posVec;
     
-    protected BlockPosAPI(P pos, int x, int y, int z) {
+    protected BlockPosAPI(Object pos, int x, int y, int z) {
         this(pos,new Vector3(x,y,z));
     }
 
-    protected BlockPosAPI(P pos, Vector3 posVec) {
+    protected BlockPosAPI(Object pos, Vector3 posVec) {
         super(pos);
         this.posVec = posVec;
     }

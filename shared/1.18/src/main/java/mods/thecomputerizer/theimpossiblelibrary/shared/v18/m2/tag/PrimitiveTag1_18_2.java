@@ -5,67 +5,31 @@ import net.minecraft.nbt.NumericTag;
 
 public class PrimitiveTag1_18_2 extends PrimitiveTagAPI<NumericTag> {
 
-    public PrimitiveTag1_18_2(NumericTag tag) {
+    public PrimitiveTag1_18_2(Object tag) {
         super(tag);
     }
-
-    @Override public boolean asBoolean() {
-        return this.wrapped.getAsByte()==(byte)1;
-    }
-
+    
     @Override public byte asByte() {
-        return this.wrapped.getAsByte();
+        return getIfNotNullOrDefault(NumericTag::getAsByte,(byte)0);
     }
     
-    @Override public CompoundTag1_18_2 asCompoundTag() {
-        return null;
-    }
-
     @Override public double asDouble() {
-        return this.wrapped.getAsDouble();
+        return getIfNotNullOrDefault(NumericTag::getAsDouble,0d);
     }
-
+    
     @Override public float asFloat() {
-        return this.wrapped.getAsFloat();
+        return getIfNotNullOrDefault(NumericTag::getAsFloat,0f);
     }
-
+    
     @Override public int asInt() {
-        return this.wrapped.getAsInt();
+        return getIfNotNullOrDefault(NumericTag::getAsInt,0);
     }
     
-    @Override public ListTag1_18_2 asListTag() {
-        return null;
-    }
-
     @Override public long asLong() {
-        return this.wrapped.getAsLong();
+        return getIfNotNullOrDefault(NumericTag::getAsLong,0L);
     }
     
-    @Override public PrimitiveTag1_18_2 asPrimitiveTag() {
-        return this;
-    }
-
     @Override public short asShort() {
-        return this.wrapped.getAsShort();
-    }
-    
-    @Override public StringTag1_18_2 asStringTag() {
-        return null;
-    }
-    
-    @Override public boolean isCompound() {
-        return false;
-    }
-    
-    @Override public boolean isList() {
-        return false;
-    }
-    
-    @Override public boolean isPrimitive() {
-        return true;
-    }
-    
-    @Override public boolean isString() {
-        return false;
+        return getIfNotNullOrDefault(NumericTag::getAsShort,(short)0);
     }
 }

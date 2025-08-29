@@ -5,67 +5,39 @@ import net.minecraft.core.component.TypedDataComponent;
 
 public class PrimitiveComponent1_20_6 extends PrimitiveTagAPI<TypedDataComponent<Number>> implements ComponentWrapper {
 
-    public PrimitiveComponent1_20_6(TypedDataComponent<Number> component) {
+    public PrimitiveComponent1_20_6(Object component) {
         super(component);
     }
-
+    
     @Override public boolean asBoolean() {
         return asByte()==(byte)1;
     }
-
+    
     @Override public byte asByte() {
-        return this.wrapped.value().byteValue();
+        return asNumber().byteValue();
     }
     
-    @Override public CompoundComponent1_20_6 asCompoundTag() {
-        return null;
-    }
-
     @Override public double asDouble() {
-        return this.wrapped.value().doubleValue();
+        return asNumber().doubleValue();
     }
-
+    
     @Override public float asFloat() {
-        return this.wrapped.value().floatValue();
+        return asNumber().floatValue();
     }
-
+    
     @Override public int asInt() {
-        return this.wrapped.value().intValue();
+        return asNumber().intValue();
     }
     
-    @Override public ListComponent1_20_6 asListTag() {
-        return null;
-    }
-
     @Override public long asLong() {
-        return this.wrapped.value().longValue();
+        return asNumber().longValue();
     }
     
-    @Override public PrimitiveComponent1_20_6 asPrimitiveTag() {
-        return this;
+    private Number asNumber() {
+        return getIfNotNullOrDefault(TypedDataComponent::value,0);
     }
-
+    
     @Override public short asShort() {
-        return this.wrapped.value().shortValue();
-    }
-    
-    @Override public StringComponent1_20_6 asStringTag() {
-        return null;
-    }
-    
-    @Override public boolean isCompound() {
-        return false;
-    }
-    
-    @Override public boolean isList() {
-        return false;
-    }
-    
-    @Override public boolean isPrimitive() {
-        return true;
-    }
-    
-    @Override public boolean isString() {
-        return false;
+        return asNumber().shortValue();
     }
 }

@@ -36,15 +36,15 @@ import static net.minecraft.world.EnumSkyBlock.SKY;
 public class World1_12_2 extends WorldAPI<World> {
 
     public World1_12_2(Object world) {
-        super((World)world);
+        super(world);
     }
 
     @Override public boolean canSnowAt(BlockPosAPI<?> pos) {
-        return this.wrapped.canSnowAt(pos.unwrap(),false);
+        return getIfNotNullOrDefault(w -> w.canSnowAt(pos.unwrap(),false),false);
     }
 
     @Override public BiomeAPI<?> getBiomeAt(BlockPosAPI<?> pos) {
-        return WrapperHelper.wrapBiome(this.wrapped.getBiome(pos.unwrap()));
+        return getIfNotNull(w -> WrapperHelper.wrapBiome(w.getBiome(pos.unwrap())));
     }
 
     @Override public Collection<BlockEntityAPI<?,?>> getBlockEntitiesInBox(Box box) {
@@ -62,7 +62,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public @Nullable BlockEntityAPI<?,?> getBlockEntityAt(BlockPosAPI<?> pos) {
-        TileEntity tile = this.wrapped.getTileEntity(pos.unwrap());
+        TileEntity tile = getIfNotNull(w -> w.getTileEntity(pos.unwrap()));
         return Objects.nonNull(tile) ? WrapperHelper.wrapBlockEntity(tile) : null;
     }
 
@@ -71,6 +71,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public int getDifficultyOrdinal() {
+        if(Objects.isNull(this.wrapped)) return -1;
         if(this.wrapped.getWorldInfo().isHardcoreModeEnabled()) return 4;
         switch(this.wrapped.getDifficulty()) {
             case PEACEFUL: return 0;
@@ -82,7 +83,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public DimensionAPI<?> getDimension() {
-        return WrapperHelper.wrapDimension(this,this.wrapped.provider.getDimensionType());
+        return getIfNotNull(w -> WrapperHelper.wrapDimension(this,w.provider.getDimensionType()));
     }
 
     @Override public List<EntityAPI<?,?>> getEntitiesInBox(Box box) {
@@ -90,6 +91,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     public List<EntityAPI<?,?>> getEntitiesInBox(AxisAlignedBB box) {
+        if(Objects.isNull(this.wrapped)) return Collections.emptyList();
         List<EntityAPI<?,?>> entities = new ArrayList<>();
         for(Entity entity : this.wrapped.getEntitiesWithinAABB(Entity.class,box))
             entities.add(WrapperHelper.wrapEntity(entity));
@@ -97,22 +99,25 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public int getLightBlock(BlockPosAPI<?> pos) {
-        return this.wrapped.getLightFor(BLOCK,pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getLightFor(BLOCK,pos.unwrap()),0);
     }
 
     @Override public int getLightSky(BlockPosAPI<?> pos) {
-        return this.wrapped.getLightFor(SKY,pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getLightFor(SKY,pos.unwrap()),0);
     }
 
     @Override public int getLightTotal(BlockPosAPI<?> pos) {
-        return this.wrapped.getLight(pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.getLight(pos.unwrap()),0);
     }
 
     @Override public List<LivingEntityAPI<?,?>> getLivingInBox(Box box) {
-        return getLivingInBox(new AxisAlignedBB(box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
+        if(Objects.isNull(this.wrapped)) return Collections.emptyList();
+        return getLivingInBox(new AxisAlignedBB(
+                box.min.dX(),box.min.dY(),box.min.dZ(),box.max.dX(),box.max.dY(),box.max.dZ()));
     }
 
     public List<LivingEntityAPI<?,?>> getLivingInBox(AxisAlignedBB box) {
+        if(Objects.isNull(this.wrapped)) return Collections.emptyList();
         List<LivingEntityAPI<?,?>> entities = new ArrayList<>();
         for(EntityLivingBase entity : this.wrapped.getEntitiesWithinAABB(EntityLivingBase.class,box))
             entities.add(WrapperHelper.wrapLivingEntity(entity));
@@ -120,7 +125,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public int getMoonPhase() {
-        return this.wrapped.getMoonPhase();
+        return getIfNotNullOrDefault(World::getMoonPhase,0);
     }
     
     @Override public @Nullable String getRaidStatus(BlockPosAPI<?> pos) {
@@ -132,7 +137,7 @@ public class World1_12_2 extends WorldAPI<World> {
     }
     
     @Override public BlockStateAPI<?> getStateAt(BlockPosAPI<?> pos) {
-        return WrapperHelper.wrapState(this.wrapped.getBlockState(pos.unwrap()));
+        return getIfNotNull(w -> WrapperHelper.wrapState(w.getBlockState(pos.unwrap())));
     }
 
     @Override public StructureAPI<?> getStructureAt(BlockPosAPI<?> pos) {
@@ -148,11 +153,11 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public long getTimeTotal() {
-        return this.wrapped.getWorldTime();
+        return getIfNotNullOrDefault(World::getWorldTime,0L);
     }
 
     @Override public boolean isClient() {
-        return this.wrapped.isRemote;
+        return getIfNotNullOrDefault(w -> w.isRemote,false);
     }
 
     @Override public boolean isDaytime() {
@@ -160,15 +165,15 @@ public class World1_12_2 extends WorldAPI<World> {
     }
 
     @Override public boolean isRaining() {
-        return this.wrapped.isRaining();
+        return getIfNotNullOrDefault(World::isRaining,false);
     }
 
     @Override public boolean isSkyVisible(BlockPosAPI<?> pos) {
-        return this.wrapped.canBlockSeeSky(pos.unwrap());
+        return getIfNotNullOrDefault(w -> w.canBlockSeeSky(pos.unwrap()),false);
     }
 
     @Override public boolean isStorming() {
-        return this.wrapped.isThundering();
+        return getIfNotNullOrDefault(World::isThundering,false);
     }
 
     @Override public boolean isSunrise() {
@@ -181,18 +186,18 @@ public class World1_12_2 extends WorldAPI<World> {
     }
     
     @Override public void setState(BlockPosAPI<?> pos, BlockStateAPI<?> state) {
-        this.wrapped.setBlockState(pos.unwrap(),state.unwrap());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setBlockState(pos.unwrap(),state.unwrap());
     }
     
     @Override public void spawnEntity(EntityAPI<?,?> entity, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
-        if(!this.wrapped.isRemote) {
+        if(Objects.nonNull(this.wrapped) && !this.wrapped.isRemote) {
             this.wrapped.spawnEntity(entity.unwrapEntity());
             if(Objects.nonNull(onSpawn)) onSpawn.accept(entity);
         }
     }
     
     @Override public void spawnItem(ItemStackAPI<?> stack, Vector3 pos, @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
-        if(!this.wrapped.isRemote) {
+        if(Objects.nonNull(this.wrapped) && !this.wrapped.isRemote) {
             EntityItem item = new EntityItem(this.wrapped,pos.dX(),pos.dY(),pos.dZ(),stack.unwrap());
             item.setDefaultPickupDelay();
             spawnEntity(WrapperHelper.wrapEntity(item),onSpawn);
@@ -201,7 +206,7 @@ public class World1_12_2 extends WorldAPI<World> {
     
     @Override public void spawnItem(ItemAPI<?> api, Vector3 pos, @Nullable Consumer<ItemStackAPI<?>> beforeSpawn,
             @Nullable Consumer<EntityAPI<?,?>> onSpawn) {
-        if(!this.wrapped.isRemote) {
+        if(Objects.nonNull(this.wrapped) && !this.wrapped.isRemote) {
             ItemStackAPI<?> stack = WrapperHelper.wrapItemStack(new ItemStack((Item)api.unwrap()));
             if(Objects.nonNull(beforeSpawn)) beforeSpawn.accept(stack);
             spawnItem(stack,pos,onSpawn);

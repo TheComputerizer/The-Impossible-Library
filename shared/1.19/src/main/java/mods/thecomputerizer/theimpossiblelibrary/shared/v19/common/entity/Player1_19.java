@@ -30,9 +30,8 @@ import java.util.stream.Collectors;
 
 public abstract class Player1_19<P extends Player> extends PlayerAPI<P,EntityType<?>> {
 
-    @SuppressWarnings("unchecked")
     protected Player1_19(Object player) {
-        super((P)player,(((P)player).getType()));
+        super(player,((Entity)player).getType());
     }
     
     @Override public boolean canTarget() {

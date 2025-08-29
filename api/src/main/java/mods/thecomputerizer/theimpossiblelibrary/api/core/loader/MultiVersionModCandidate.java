@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionMod;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -160,12 +161,11 @@ public class MultiVersionModCandidate {
         classes.get(candidate).addAll(found);
     }
     
-    @SuppressWarnings("unchecked")
     public void findCoreClasses(Collection<Class<? extends CoreEntryPoint>> classes, ClassLoader classLoader) {
         for(String name : this.coreClassNames) {
             Class<?> clazz = findClass(classLoader,name);
             if(canBeLoaded(clazz,CoreEntryPoint.class,MultiVersionCoreMod.class))
-                classes.add((Class<? extends CoreEntryPoint>)clazz);
+                classes.add(GenericUtils.cast(clazz));
         }
     }
     
@@ -179,12 +179,11 @@ public class MultiVersionModCandidate {
         classes.get(candidate).addAll(found);
     }
     
-    @SuppressWarnings("unchecked")
     public void findModClasses(Collection<Class<? extends CommonEntryPoint>> classes, ClassLoader classLoader) {
         for(String name : this.modClassNames) {
             Class<?> clazz = findClass(classLoader,name);
             if(canBeLoaded(clazz,CommonEntryPoint.class,MultiVersionMod.class))
-                classes.add((Class<? extends CommonEntryPoint>)clazz);
+                classes.add(GenericUtils.cast(clazz));
         }
     }
     

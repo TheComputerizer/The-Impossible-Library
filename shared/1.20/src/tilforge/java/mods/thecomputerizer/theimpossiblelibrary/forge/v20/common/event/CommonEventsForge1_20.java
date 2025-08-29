@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v20.common.event;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.EventWrapper.Result;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.CustomTick;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.CommonForgeEventHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.common.event.events.*;
 import mods.thecomputerizer.theimpossiblelibrary.forge.util.CustomTickForge;
@@ -105,8 +106,8 @@ public abstract class CommonEventsForge1_20 extends CommonEvents1_20 implements 
         registerForgeOrModBus(wrapper);
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public Event.Result setEventResult(Result result) {
-        return result==DEFAULT ? Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW);
+    @Override public <E> E setEventResult(Result result) {
+        return GenericUtils.cast(result==DEFAULT ?
+                        Event.Result.DEFAULT : (result==DENY ? Event.Result.DENY : Event.Result.ALLOW));
     }
 }

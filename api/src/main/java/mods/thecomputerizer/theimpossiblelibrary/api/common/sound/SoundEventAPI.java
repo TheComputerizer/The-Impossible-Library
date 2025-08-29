@@ -11,7 +11,7 @@ public abstract class SoundEventAPI<S> extends AbstractWrapped<S> implements Reg
     
     protected ResourceLocationAPI<?> registryName;
 
-    protected SoundEventAPI(S sound) {
+    protected SoundEventAPI(Object sound) {
         super(sound);
     }
     

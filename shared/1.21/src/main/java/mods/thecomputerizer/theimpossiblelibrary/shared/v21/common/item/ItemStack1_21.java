@@ -1,10 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v21.common.item;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v21.tag.component.CompoundComponent1_21;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -18,36 +18,40 @@ import static net.minecraft.world.item.component.CustomData.EMPTY;
 public class ItemStack1_21 extends ItemStackAPI<ItemStack> {
 
     public ItemStack1_21(Object stack) {
-        super((ItemStack)stack);
+        super(stack);
     }
-
+    
     @Override public int getCount() {
-        return this.wrapped.getCount();
+        return getIfNotNullOrDefault(ItemStack::getCount,0);
     }
-
+    
     @Override public ItemAPI<?> getItem() {
-        return WrapperHelper.wrapItem(this.wrapped.getItem());
+        return getIfNotNull(w -> WrapperHelper.wrapItem(w.getItem()));
     }
-
+    
     @Override public CompoundTagAPI<?> getOrCreateTag() {
-        this.wrapped.update(CUSTOM_DATA,EMPTY,data -> data);
-        return new CompoundComponent1_21(this.wrapped.get(CUSTOM_DATA));
+        if(Objects.nonNull(this.wrapped)) {
+            this.wrapped.update(CUSTOM_DATA,EMPTY,data -> data);
+            return TagHelper.getWrapped(this.wrapped.get(CUSTOM_DATA)).asCompoundTag();
+        }
+        return TagHelper.makeCompoundTag();
     }
 
     @Override public @Nullable CompoundTagAPI<?> getTag() {
-        return this.wrapped.has(CUSTOM_DATA) ? new CompoundComponent1_21(this.wrapped.get(CUSTOM_DATA)) : null;
+        return Objects.nonNull(this.wrapped) && this.wrapped.has(CUSTOM_DATA) ?
+                TagHelper.getWrapped(this.wrapped.get(CUSTOM_DATA)).asCompoundTag() : null;
     }
-
+    
     @Override public boolean isEmpty() {
-        return this.wrapped.isEmpty();
+        return getIfNotNullOrDefault(ItemStack::isEmpty,true);
     }
-
+    
     @Override public void setCount(int count) {
-        this.wrapped.setCount(count);
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setCount(count);
     }
 
     @Override public void setTag(@Nullable CompoundTagAPI<?> api) {
-        if(Objects.isNull(api)) return;
+        if(Objects.isNull(this.wrapped)|| Objects.isNull(api)) return;
         Object value = api.getWrapped();
         CompoundTag updateWith = value instanceof CompoundTag ? (CompoundTag)value : ((CustomData)value).copyTag();
         this.wrapped.update(CUSTOM_DATA,EMPTY,tag -> CustomData.of(tag.copyTag().merge(updateWith)));

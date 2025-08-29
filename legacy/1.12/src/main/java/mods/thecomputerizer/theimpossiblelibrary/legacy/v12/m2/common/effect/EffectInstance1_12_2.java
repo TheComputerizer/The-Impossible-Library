@@ -8,18 +8,18 @@ import net.minecraft.potion.PotionEffect;
 public class EffectInstance1_12_2 extends EffectInstanceAPI<PotionEffect> {
 
     public EffectInstance1_12_2(Object effect) {
-        super((PotionEffect)effect);
+        super(effect);
     }
 
     @Override public int getAmplifier() {
-        return this.wrapped.getAmplifier();
+        return getIfNotNullOrDefault(PotionEffect::getAmplifier,0);
     }
 
     @Override public int getDuration() {
-        return this.wrapped.getDuration();
+        return getIfNotNullOrDefault(PotionEffect::getDuration,0);
     }
 
     @Override public EffectAPI<?> getEffect() {
-        return WrapperHelper.wrapEffect(this.wrapped.getPotion());
+        return getIfNotNull(w -> WrapperHelper.wrapEffect(w.getPotion()));
     }
 }

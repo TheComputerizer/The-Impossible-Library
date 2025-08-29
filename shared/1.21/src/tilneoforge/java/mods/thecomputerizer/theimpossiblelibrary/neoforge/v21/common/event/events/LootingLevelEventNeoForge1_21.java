@@ -16,7 +16,7 @@ public class LootingLevelEventNeoForge1_21 extends LootingLevelEventNeoForge<Liv
         LIVING_LOOTING_LEVEL.invoke(event);
     }
     
-    @Override protected EventFieldWrapper<LivingDropsEvent,DamageAPI> wrapDamageField() {
+    @Override protected EventFieldWrapper<LivingDropsEvent,DamageAPI<?>> wrapDamageField() {
         return wrapGenericGetter(event -> new Damage1_21(event.getSource(),1f),null);
     }
     

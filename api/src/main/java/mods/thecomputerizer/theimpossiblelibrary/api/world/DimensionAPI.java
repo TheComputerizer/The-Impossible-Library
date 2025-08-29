@@ -11,10 +11,9 @@ import java.util.function.Function;
 public abstract class DimensionAPI<D> extends AbstractWrapped<D> {
 
     /**
-     * The world is necessary for any versions past 1.12.2 to access the dynamic registries
+     * Any version past 1.12.2 needs a world in the constructor to access dynamic registries
      */
-    @SuppressWarnings("unused")
-    protected DimensionAPI(WorldAPI<?> world, D dimension) {
+    protected DimensionAPI(Object dimension) {
         super(dimension);
     }
     

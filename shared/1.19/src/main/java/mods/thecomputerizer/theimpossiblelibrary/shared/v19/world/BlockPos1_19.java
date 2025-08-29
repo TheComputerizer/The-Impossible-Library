@@ -27,14 +27,6 @@ public class BlockPos1_19 extends BlockPosAPI<BlockPos> {
         this(new BlockPos(Mth.floor(posVec.dX()),Mth.floor(posVec.dY()),Mth.floor(posVec.dZ())),posVec);
     }
 
-    public BlockPos1_19(double x, double y, double z) {
-        this(Mth.floor(x),Mth.floor(y),Mth.floor(z));
-    }
-
-    public BlockPos1_19(int x, int y, int z) {
-        this(new BlockPos(x,y,z),new Vector3(x,y,z));
-    }
-
     private BlockPos1_19(BlockPos pos, Vector3 posVec) {
         super(pos,posVec);
     }

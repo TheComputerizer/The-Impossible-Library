@@ -14,6 +14,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInve
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.PotionAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.DamageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
@@ -84,6 +85,25 @@ public class WrapperHelper {
     
     public static <S> CommandSenderAPI<S> wrapCommandSender(@Nullable Object sender) {
         return getAPI().wrapCommandSender(sender);
+    }
+    
+    public static <S> DamageAPI<S> wrapDamage(@Nullable Object source, @Nullable Function<?,?> getter,
+            @Nullable Function<?,Float> getAmount) {
+        return wrapDamage(fixGenericGetter(source,getter),getAmount);
+    }
+    
+    public static <S> DamageAPI<S> wrapDamage(@Nullable Object source, @Nullable Function<?,?> getter, float amount) {
+        return wrapDamage(fixGenericGetter(source,getter),amount);
+    }
+    
+    public static <S> DamageAPI<S> wrapDamage(@Nullable Object source, @Nullable Function<?,Float> getAmount) {
+        float amount = 0f;
+        if(Objects.nonNull(source) && Objects.nonNull(getAmount)) amount = getAmount.apply(GenericUtils.cast(source));
+        return wrapDamage(source,amount);
+    }
+    
+    public static <S> DamageAPI<S> wrapDamage(@Nullable Object source, float amount) {
+        return getAPI().wrapDamage(source,amount);
     }
     
     public static <D> DimensionAPI<D> wrapDimension(WorldAPI<?> world, @Nullable Object source,

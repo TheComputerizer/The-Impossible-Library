@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.tag.CompoundTag1_
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -22,7 +23,7 @@ public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends
      * Assumes the input object will never be null
      */
     public static BlockEntity1_12_2 entity(Object tile) {
-        return new BlockEntity1_12_2((TileEntity)tile);
+        return new BlockEntity1_12_2(tile,tile.getClass());
     }
     
     /**
@@ -35,18 +36,12 @@ public class BlockEntity1_12_2 extends BlockEntityAPI<TileEntity,Class<? extends
     /**
      * Assumes the input object will never be null
      */
-    @SuppressWarnings("unchecked")
     public static BlockEntity1_12_2 type(Object type) {
-        return new BlockEntity1_12_2((Class<? extends TileEntity>)type);
+        return new BlockEntity1_12_2(null,type);
     }
     
-    private BlockEntity1_12_2(TileEntity tile) {
-        super(tile,tile.getClass());
-        this.registryName = WrapperHelper.wrapResourceLocation(TileEntity.getKey(this.wrapped));
-    }
-    
-    private BlockEntity1_12_2(Class<? extends TileEntity> tileClass) {
-        super(null,tileClass);
+    private BlockEntity1_12_2(@Nullable Object tile, Object tileClass) {
+        super(tile,tileClass);
         this.registryName = WrapperHelper.wrapResourceLocation(TileEntity.getKey(this.wrapped));
     }
 

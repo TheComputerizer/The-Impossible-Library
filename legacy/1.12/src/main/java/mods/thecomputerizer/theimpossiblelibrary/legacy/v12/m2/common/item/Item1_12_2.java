@@ -8,15 +8,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Objects;
+
 public class Item1_12_2 extends ItemAPI<Item> {
 
     public Item1_12_2(Object item) {
-        super((Item)item);
+        super(item);
     }
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
+        if(Objects.nonNull(this.wrapped)) this.wrapped.setRegistryName((ResourceLocation)registryName.unwrap());
     }
     
     @Override public ItemStackAPI<?> defaultStack() {

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 public class Sound1_19 extends SoundAPI<SoundInstance> {
     
     public Sound1_19(Object sound) {
-        super((SoundInstance)sound);
+        super(sound);
     }
 
     @Override public ResourceLocationAPI<ResourceLocation> getOggLocation() { //TODO

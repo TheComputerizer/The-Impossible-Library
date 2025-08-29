@@ -222,16 +222,15 @@ List<String> collectRunAfter() {
 }
 
 void createJarTasks() {
+    //noinspection GrUnresolvedAccess
     def loaders = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
     loaders.forEach {loader ->
         String task_name = "til${loader}Jar"
         tasks.register(task_name, Jar) {jar_task ->
+            archiveBaseName = mod_id
+            archiveClassifier = loader
             duplicatesStrategy = EXCLUDE
-            doFirst {
-                archiveBaseName = mod_id
-                archiveClassifier = loader
-                from sourceSets."til$loader".output
-            }
+            from sourceSets."til$loader".output
         }
         tasks.assemble.dependsOn task_name
     }
@@ -239,10 +238,13 @@ void createJarTasks() {
 
 void initConfigs() {
     setLoaderConfigs()
+    //noinspection GrUnresolvedAccess
     if(isRunnableVersion()) {
+        //noinspection GrUnresolvedAccess
         def loaders = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
         configurations {
             loaders.forEach {loader ->
+                //noinspection GrUnresolvedAccess
                 logger.lifecycle "Adding runnable $loader configs"
                 [ 'CompileOnly', 'Implementation', 'RuntimeOnly' ].forEach {config_name ->
                     named("til$loader$config_name").get().extendsFrom create("til${loader}Mod$config_name")
@@ -259,6 +261,7 @@ void initConfigs() {
 
 void setLoaderConfigs() {
     sourceSets {
+        //noinspection GrUnresolvedAccess
         def main_output = sourceSets.main.output
         tilfabric {
             compileClasspath+=main_output
@@ -293,17 +296,19 @@ void setLoaderConfigs() {
         }
     }
     artifacts {
-        //noinspection GroovyAssignabilityCheck
+        //noinspection GrUnresolvedAccess
         tilfabric tilfabricJar
-        //noinspection GroovyAssignabilityCheck
+        //noinspection GrUnresolvedAccess
         tilforge tilforgeJar
+        //noinspection GrUnresolvedAccess
         if(isNeoforgeCompatible()) {
-            //noinspection GroovyAssignabilityCheck
+            //noinspection GrUnresolvedAccess
             tilneoforge tilneoforgeJar
         }
     }
 }
 
+@SuppressWarnings('GrUnresolvedAccess')
 void setupShared(List<String> extra_maven_ids) {
     setSharedDependencies extra_maven_ids
     addParentProcessedResources()
@@ -313,6 +318,7 @@ void setupShared(List<String> extra_maven_ids) {
 
 void setSharedDependencies(List<String> extra_maven_ids) {
     List<String> maven_ids = []
+    //noinspection GrUnresolvedAccess
     if(isRunnableVersion()) {
         maven_ids = [ 'cf', 'ct', 'jei', 'modrinth', 'modmenu' ]
         maven_ids.addAll extra_maven_ids
@@ -325,7 +331,7 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     if(isLoaderBase()) return
 
     //Makes it so runtime mods can be disabled per loader to avoid mapping issues when testing
-    List<String> enabled_runtime_mods = [ 'fabric' ]
+    List<String> enabled_runtime_mods = [ ]
     //Selectively enable which versions should have Music Triggers added to the runtime
     Map<String,List<String>> enabled_mt = [fabric: [ 'all' ], forge: [ 'all' ], neoforge: [ 'all' ]]
 
@@ -379,24 +385,24 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     loaders.forEach {loader ->
         String l_loader = loader.toLowerCase()
         tasks.named("til${l_loader}Classes").configure {
-            it.mustRunAfter 'classes'
+            mustRunAfter 'classes'
         }
         if(minor_version) {
             String p_task = "${parent.path}:inheritParent${loader}Classes"
             tasks.named("compileTil${l_loader}Java").configure {
-                it.mustRunAfter p_task
+                mustRunAfter p_task
             }
             tasks.compileJava.mustRunAfter p_task
             tasks.named("inheritParent${loader}Classes").configure {
-                it.mustRunAfter ":${parent.path}:classes"
-                it.mustRunAfter "${parent.path}:til${l_loader}Classes"
-                it.mustRunAfter ":${l_loader}:classes"
-                it.mustRunAfter ":api:classes"
+                mustRunAfter ":${parent.path}:classes"
+                mustRunAfter "${parent.path}:til${l_loader}Classes"
+                mustRunAfter ":${l_loader}:classes"
+                mustRunAfter ":api:classes"
             }
         } else {
             tasks.named("inheritParent${loader}Classes").configure {
-                it.mustRunAfter ":${l_loader}:classes"
-                it.mustRunAfter ":api:classes"
+                mustRunAfter ":${l_loader}:classes"
+                mustRunAfter ":api:classes"
             }
         }
     }

@@ -1,5 +1,4 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m4.core;
-
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;

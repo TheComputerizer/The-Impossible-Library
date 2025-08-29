@@ -5,15 +5,15 @@ import net.minecraft.world.level.material.MapColor;
 
 public class MaterialColor1_21 extends MaterialColorAPI<MapColor> {
     
-    public MaterialColor1_21(MapColor color) {
+    public MaterialColor1_21(Object color) {
         super(color);
     }
     
     @Override public int getColor() {
-        return this.wrapped.col;
+        return getIfNotNullOrDefault(w -> w.col,0);
     }
     
     @Override public int getID() {
-        return this.wrapped.id;
+        return getIfNotNullOrDefault(w -> w.id,0);
     }
 }

@@ -34,7 +34,7 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
         return new Minecraft1_16_5(Minecraft.getInstance());
     }
     
-    public Minecraft1_16_5(Minecraft mc) {
+    public Minecraft1_16_5(Object mc) {
         super(mc,new Font1_16_5(),new Render1_16_5());
     }
     
@@ -45,11 +45,11 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public int getDisplayHeight() {
-        return this.wrapped.getWindow().getHeight();
+        return getIfNotNullOrDefault(w -> w.getWindow().getHeight(),0);
     }
     
     @Override public int getDisplayWidth() {
-        return this.wrapped.getWindow().getWidth();
+        return getIfNotNullOrDefault(w -> w.getWindow().getWidth(),0);
     }
     
     @Override public int getGUIScale() {
@@ -57,7 +57,7 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public @Nullable PlayerAPI<?,?> getPlayer() {
-        return WrapperHelper.wrapPlayer(this.wrapped.player);
+        return getIfNotNull(w -> WrapperHelper.wrapPlayer(w.player));
     }
     
     private @Nullable HitResult getTarget() {
@@ -68,7 +68,7 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
         HitResult target = getTarget();
         if(target instanceof BlockHitResult && target.getType()==BLOCK) {
             BlockPos pos = ((BlockHitResult)target).getBlockPos();
-            Level world = this.wrapped.level;
+            Level world = getIfNotNull(w -> w.level);
             return Objects.nonNull(world) ? WrapperHelper.wrapBlockEntity(world.getBlockEntity(pos)) : null;
         }
         return null;
@@ -93,7 +93,8 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public @Nullable WorldAPI<?> getWorld() {
-        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.level) ? WrapperHelper.wrapWorld(this.wrapped.level) : null;
+        return Objects.nonNull(this.wrapped) && Objects.nonNull(this.wrapped.level) ?
+                WrapperHelper.wrapWorld(this.wrapped.level) : null;
     }
 
     @Override public <S> boolean isCurrentScreen(S screen) {
@@ -126,6 +127,7 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public <T> Supplier<T> scheduleReturnable(Supplier<T> supplier) {
+        if(Objects.isNull(this.wrapped)) return () -> null;
         final CompletableFuture<T> future = this.wrapped.submit(supplier);
         return () -> {
             try {
@@ -138,6 +140,6 @@ public class Minecraft1_16_5 extends MinecraftAPI<Minecraft> {
     }
     
     @Override public void scheduleRunnable(Runnable runnable) {
-        this.wrapped.submit(runnable).getNow(null);
+        if(Objects.nonNull(this.wrapped)) this.wrapped.submit(runnable).getNow(null);
     }
 }

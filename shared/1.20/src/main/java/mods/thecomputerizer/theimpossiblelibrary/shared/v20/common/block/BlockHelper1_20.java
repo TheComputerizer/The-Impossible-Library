@@ -2,8 +2,11 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialColorAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -71,30 +74,35 @@ public class BlockHelper1_20 implements BlockHelperAPI {
                 Map.entry("YELLOW_TERRACOTTA",MapColor.TERRACOTTA_YELLOW));
     }
     
-    @SuppressWarnings("unchecked") @Override public <V extends Comparable<V>> BlockPropertyAPI<?,V> createProperty(String name, V defVal) {
-        if(defVal instanceof Boolean) return new BlockProperty1_20<>((Property<V>)BooleanProperty.create(name));
-        if(defVal instanceof Enum<?>) return new BlockProperty1_20<>((Property<V>)createPropertyEnum(name, defVal.getClass()));
-        if(defVal instanceof Number) return new BlockProperty1_20<>((Property<V>)IntegerProperty.create(name,0, ((Number)defVal).intValue()));
+    @Override public <V extends Comparable<V>> BlockPropertyAPI<?,V> createProperty(String name, V defVal) {
+        if(defVal instanceof Boolean) return new BlockProperty1_20<>(BooleanProperty.create(name));
+        if(defVal instanceof Enum<?>) return new BlockProperty1_20<>(createPropertyEnum(name,defVal.getClass()));
+        if(defVal instanceof Number)
+            return new BlockProperty1_20<>(IntegerProperty.create(name,0,((Number)defVal).intValue()));
         TILRef.logError("Unsupported createProperty type for {}!",Objects.nonNull(defVal) ? defVal.getClass() : "null");
         return null;
     }
     
-    @SuppressWarnings("unchecked")
-    private  <E extends Enum<E> & StringRepresentable> EnumProperty<E> createPropertyEnum(String name, Class<?> clazz) {
-        return EnumProperty.create(name,(Class<E>)clazz);
+    private <E extends Enum<E> & StringRepresentable> EnumProperty<E> createPropertyEnum(String name, Class<?> clazz) {
+        Class<E> enumClass = GenericUtils.cast(clazz);
+        return Objects.nonNull(enumClass) ? EnumProperty.create(name,enumClass) : null;
     }
     
     @Override public <P> BlockPropertyAPI<?,?> getAsProperty(P property) {
-        if(property instanceof Property<?>) return new BlockProperty1_20<>((Property<?>)property);
+        if(property instanceof Property<?>) return new BlockProperty1_20<>(property);
         TILRef.logError("Object {} is not an instance of {}!",property,Property.class);
         return null;
     }
     
-    @Override public Material1_20 getMaterialByName(String name) { //TODO figure out how to handle materials in 1.20+
+    @Override public MaterialAPI<?> getMaterialByName(String name) { //TODO figure out how to handle materials in 1.20+
         return null;
     }
     
-    @Override public MaterialColor1_20 getMaterialColorByName(String name) {
+    @Override public Object getMaterialByNameDirect(String name) {
+        return null;
+    }
+    
+    @Override public MaterialColorAPI<?> getMaterialColorByName(String name) {
         MapColor color = TextHelper.isBlank(name) ? MapColor.GRASS :
                 COLOR_BY_NAME.getOrDefault(name,MapColor.GRASS);
         return new MaterialColor1_20(color);
