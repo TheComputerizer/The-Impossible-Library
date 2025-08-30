@@ -172,9 +172,10 @@ public class NetworkHandler {
     }
     
     /**
-     * Message registration must happen before load is called
+     * Message registration must happen before load is called.
      * Register a message on the designated side.
-     * If the 'both' flag is enabled, register an identical message on the opposite side
+     * If the 'both' flag is enabled, register an identical message on the opposite side.
+     * Registering more than 1 MessageInfo for the same message class in the same MessageDirectionInfo is not supported.
      */
     private static <DIR> void registerMsg(DIR dir, Function<MessageDirectionInfo<?>,MessageInfo<?>> infoSupplier) {
         if(Objects.nonNull(dir)) {

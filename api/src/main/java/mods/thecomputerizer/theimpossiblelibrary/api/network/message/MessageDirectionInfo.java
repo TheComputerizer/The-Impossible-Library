@@ -5,6 +5,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +14,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-@SuppressWarnings("unused")
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NETWORK;
+
 @Getter
 public class MessageDirectionInfo<DIR> {
 
@@ -30,6 +32,13 @@ public class MessageDirectionInfo<DIR> {
     }
     
     public void add(MessageInfo<?> info) {
+        Class<?> msgClass = info.getMsgClass();
+        for(MessageInfo<?> existing : this.infoSet) {
+            if(existing.getMsgClass()==msgClass) {
+                if(DEBUG_NETWORK) TILRef.logWarn("Tried registering a second MessageInfo for {}",msgClass);
+                return;
+            }
+        }
         this.infoSet.add(info);
     }
     
@@ -89,7 +98,8 @@ public class MessageDirectionInfo<DIR> {
     public boolean isToClient() {
         return Objects.nonNull(this.direction) && NetworkHelper.isDirToClient(this.direction);
     }
-
+    
+    @IndirectCallers
     public boolean isLoginToClient() {
         return isLogin() && isToClient();
     }
@@ -98,6 +108,7 @@ public class MessageDirectionInfo<DIR> {
         return Objects.nonNull(this.direction) && !NetworkHelper.isDirToClient(this.direction);
     }
 
+    @IndirectCallers
     public boolean isLoginToServer() {
         return isLogin() && isToServer();
     }

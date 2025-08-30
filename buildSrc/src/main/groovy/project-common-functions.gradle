@@ -41,11 +41,9 @@ void createClassesImport(String c_name, String t_name, String c_t_name, String s
     createConfiguration c_name, false, true
     tasks.register(t_name, Copy) {copy_task ->
         mustRunAfter compileJava
-        doFirst {
-            duplicatesStrategy = EXCLUDE
-            from configurations.named(c_name)
-            destinationDir = sourceClassesDir s_name
-        }
+        destinationDir = sourceClassesDir s_name
+        duplicatesStrategy = EXCLUDE
+        from configurations.named(c_name)
     }
     tasks.named(c_t_name).configure {
         dependsOn t_name
@@ -168,19 +166,13 @@ void setJarsRunAfter(List<String> p_names) {
         "${getFullPath(p_name)}:build".toString()
     }
     jar {
-        final List<String> build_tasks_view = Collections.unmodifiableList build_tasks
-        doFirst {
-            build_tasks_view.forEach {build_task ->
-                mustRunAfter build_task
-            }
+        build_tasks.forEach {build_task ->
+            mustRunAfter build_task
         }
     }
     sourcesJar {
-        final List<String> build_tasks_view = Collections.unmodifiableList build_tasks
-        doFirst {
-            build_tasks_view.forEach {build_task ->
-                mustRunAfter build_task
-            }
+        build_tasks.forEach {build_task ->
+            mustRunAfter build_task
         }
     }
 }

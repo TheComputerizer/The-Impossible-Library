@@ -142,13 +142,6 @@ public class Hacks {
     }
     
     /**
-     * Finds the target class via the reference class and instantiates it using the given args
-     */
-    public static <T> T construct(Class<?> reference, String targetClass, Object ... args) {
-        return construct(findClass(reference,targetClass),args);
-    }
-    
-    /**
      * Instantiates the target class using the given args
      */
     public static <T> T construct(Class<?> target, Object ... args) {
@@ -187,6 +180,14 @@ public class Hacks {
             return null;
         }
         return Constructors.newInstanceOf(target,args);
+    }
+    
+    /**
+     * Finds the target class via the reference class and instantiates it using the given args
+     */
+    @IndirectCallers
+    public static <T> T constructFromReference(Class<?> reference, String targetClass, Object ... args) {
+        return construct(findClass(reference,targetClass),args);
     }
     
     public static ClassLoader contextClassLoader() {

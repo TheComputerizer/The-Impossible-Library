@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.TILCommonEntryPoint1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.server.WrappedCommand1_20_6;
@@ -47,7 +48,9 @@ public class TILCommonEntryPointForge1_20_6 extends TILCommonEntryPoint1_20_6 {
     @Nullable IEventBus getModBus() {
         if(Objects.isNull(this.extraData)) {
             TILRef.logWarn("(Forge 1.20.6) Extra data not found! Attempting to extract from context");
-            this.extraData = ModLoadingContext.get().extension();
+            //Avoid depreaction warnings I guess
+            ModLoadingContext ctx = Hacks.invokeStatic(ModLoadingContext.class,"get");
+            if(Objects.nonNull(ctx)) this.extraData = ctx.extension();
         }
         if(this.extraData instanceof FMLJavaModLoadingContext)
             return ((FMLJavaModLoadingContext)this.extraData).getModEventBus();

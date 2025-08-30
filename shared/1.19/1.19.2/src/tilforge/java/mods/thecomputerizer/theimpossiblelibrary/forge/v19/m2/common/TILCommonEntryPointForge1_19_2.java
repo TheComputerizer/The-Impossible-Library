@@ -1,12 +1,9 @@
-package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.common;
+package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m2.common;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.TILCommonEntryPoint1_19;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.tab.CreativeTabBuilder1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.CreativeModeTabEvent.BuildContents;
-import net.minecraftforge.event.CreativeModeTabEvent.Register;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -16,46 +13,36 @@ import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.shared.v19.server.WrappedCommand1_19.INFO;
-import static net.minecraft.core.registries.Registries.COMMAND_ARGUMENT_TYPE;
+import static net.minecraft.core.Registry.COMMAND_ARGUMENT_TYPE_REGISTRY;
 
-public class TILCommonEntryPointForge1_19_4 extends TILCommonEntryPoint1_19 {
+public class TILCommonEntryPointForge1_19_2 extends TILCommonEntryPoint1_19 {
     
-    private static TILCommonEntryPointForge1_19_4 INSTANCE;
+    private static TILCommonEntryPointForge1_19_2 INSTANCE;
     
-    public static TILCommonEntryPointForge1_19_4 getInstance() {
-        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPointForge1_19_4();
-    }
-    
-    public static void onBuildCreativeTabs(Register event) {
-        CreativeTabBuilder1_19_4.onRegister(event);
+    public static TILCommonEntryPointForge1_19_2 getInstance() {
+        return Objects.nonNull(INSTANCE) ? INSTANCE : new TILCommonEntryPointForge1_19_2();
     }
     
     public static void onRegisterEvent(RegisterEvent event) {
-        if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
+        if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE_REGISTRY) {
             ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID, "custom_suggester");
-            event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
+            event.register(COMMAND_ARGUMENT_TYPE_REGISTRY,registryName,() -> INFO);
             WrappedCommand1_19.registerArgType();
         }
     }
     
-    public static void onSupplyCreativeTabs(BuildContents event) {
-        CreativeTabBuilder1_19_4.onSupply(event);
-    }
-    
-    private TILCommonEntryPointForge1_19_4() {
+    private TILCommonEntryPointForge1_19_2() {
         INSTANCE = this;
     }
     
     @Override public void onCommonSetup() {
         if(Objects.isNull(this.extraData)) {
-            TILRef.logWarn("(Forge 1.19.4) Extra data not found! Attempting to extract from context");
+            TILRef.logWarn("(Forge 1.19.2) Extra data not found! Attempting to extract from context");
             this.extraData = ModLoadingContext.get().extension();
         }
         if(this.extraData instanceof FMLJavaModLoadingContext) {
             IEventBus bus = ((FMLJavaModLoadingContext)this.extraData).getModEventBus();
-            bus.addListener(TILCommonEntryPointForge1_19_4::onBuildCreativeTabs);
-            bus.addListener(TILCommonEntryPointForge1_19_4::onSupplyCreativeTabs);
-            bus.addListener(TILCommonEntryPointForge1_19_4::onRegisterEvent);
+            bus.addListener(TILCommonEntryPointForge1_19_2::onRegisterEvent);
         } else TILRef.logError("(Forge 1.19.4) Extra data not set to instance of FMLJavaModLoadingContext! {}",
                                this.extraData);
         super.onCommonSetup();

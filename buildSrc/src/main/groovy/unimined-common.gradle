@@ -39,10 +39,10 @@ static String productionNamespace(String loader) {
 void remapForProduction(String loader) {
     if(shouldRemapForProduction(loader)) {
         remapJar {
+            prodNamespace productionNamespace(loader)
             doFirst {
                 archiveBaseName = mod_id
                 archiveClassifier = 'remapped'
-                prodNamespace productionNamespace(loader)
             }
         }
     }

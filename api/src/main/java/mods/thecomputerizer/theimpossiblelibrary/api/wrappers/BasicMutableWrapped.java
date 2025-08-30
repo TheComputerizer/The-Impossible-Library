@@ -9,7 +9,7 @@ public class BasicMutableWrapped<W> extends MutableWrapped<W> {
     }
     
     @IndirectCallers
-    public BasicMutableWrapped(W wrapped) {
+    public BasicMutableWrapped(Object wrapped) {
         super(wrapped);
     }
 }

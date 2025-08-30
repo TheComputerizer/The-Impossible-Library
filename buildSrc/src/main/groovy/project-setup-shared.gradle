@@ -90,22 +90,24 @@ unimined.minecraft(sourceSets.tilforge) {
     if(isRunnableVersion()) {
         if(!isJava8()) {
             def build_files = getBuildFiles([main: [ 'classes\\java' ], tilforge: [ 'classes\\java', 'resources' ]])
-            logger.lifecycle "Adding build files to minecraftLibraries $build_files"
-            minecraftLibraries.dependencies.add dependencies.create(build_files)
+            logger.lifecycle "Adding build files to forge minecraftLibraries $build_files"
+            configurations.tilforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
             tasks.compileTilforgeJava.mustRunAfter 'processTilforgeResources'
         }
         runs {
             //noinspection ConfigurationAvoidance
             all {
                 javaVersion = getJavaVersionEnum()
-                Map<?, ?> map = getSystemProperties()
+                Map<?,?> map = getSystemProperties()
                 addCustomRunProperties map, 'tilforge'
                 //noinspection GroovyAssignabilityCheck
-                map[module_layer_movement] = 'false'
+                map[debug_network] = 'true'
+                //noinspection GroovyAssignabilityCheck
+                map[forge_log_level] = 'debug'
                 //noinspection GroovyAssignabilityCheck
                 map[forge_log_markers_arg] = forge_log_markers_values
                 //noinspection GroovyAssignabilityCheck
-                map[forge_log_level] = 'debug'
+                map[module_layer_movement] = 'false'
             }
             config('client') {
                 args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]

@@ -1,10 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.core;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v19.common.TILCommonEntryPoint1_19;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -30,9 +28,5 @@ public abstract class TILCore1_19 extends CoreAPI {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader, url);
         TILRef.logError("Directly adding a URL is not supported in this version! Not adding {}", url);
         return false;
-    }
-    
-    @Override public CommonEntryPoint getCommonVersionHandler() {
-        return TILCommonEntryPoint1_19.getInstance();
     }
 }

@@ -110,6 +110,7 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
                 TILRef.logWarn("Tried to call MessageWrapperAPI#getInstance(dir,buf) with null direction!");
             return null;
         }
+        if(DEBUG_NETWORK) TILRef.logInfo("Decoding message for {}",dir);
         boolean client = NetworkHelper.isDirToClient(dir);
         boolean login = NetworkHelper.isDirLogin(dir);
         return login ? (client ? new ClientLogin<>(buf) : new ServerLogin<>(buf)) :

@@ -37,7 +37,8 @@ public class RegistryHandlerForge1_20 extends RegistryHandler1_20 {
     }
     
     private <V> RegistryForge1_20<V> getRegistry(
-            Set<? super Registry1_20<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
+            Set<? super Registry1_20<?>> registries, IForgeRegistry<V> forgeRegistry, String name,
+            Class<?> type) {
         //Avoid deprecation warning I guess
         ResourceLocation location = Hacks.construct(ResourceLocation.class,name);
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(location);

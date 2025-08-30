@@ -24,9 +24,9 @@ if(use_dev_run_jar) {
     tasks.register('devRunJar',Jar) {
         duplicatesStrategy = EXCLUDE
         for(String t_name : [ 'classes', 'processResources' ]) mustRunAfter t_name
+        from sourceSets.main.output
         doFirst {
             archiveBaseName.set "$mod_id-dev_run"
-            from sourceSets.main.output
             manifest {
                 Map<String,Object> entries = getManifestEntries()
                 entries['TILMultiversionCoreMods'] = core_entrypoint
