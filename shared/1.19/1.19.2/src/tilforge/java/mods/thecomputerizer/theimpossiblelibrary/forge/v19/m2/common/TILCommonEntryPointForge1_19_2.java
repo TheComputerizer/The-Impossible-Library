@@ -43,7 +43,7 @@ public class TILCommonEntryPointForge1_19_2 extends TILCommonEntryPoint1_19 {
         if(this.extraData instanceof FMLJavaModLoadingContext) {
             IEventBus bus = ((FMLJavaModLoadingContext)this.extraData).getModEventBus();
             bus.addListener(TILCommonEntryPointForge1_19_2::onRegisterEvent);
-        } else TILRef.logError("(Forge 1.19.4) Extra data not set to instance of FMLJavaModLoadingContext! {}",
+        } else TILRef.logError("(Forge 1.19.2) Extra data not set to instance of FMLJavaModLoadingContext! {}",
                                this.extraData);
         super.onCommonSetup();
     }
