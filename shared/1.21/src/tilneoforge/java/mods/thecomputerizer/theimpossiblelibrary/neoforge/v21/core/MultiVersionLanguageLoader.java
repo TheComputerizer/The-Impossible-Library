@@ -13,6 +13,7 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 
 import java.util.Collections;
 
+import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
 public class MultiVersionLanguageLoader implements IModLanguageLoader {
@@ -25,7 +26,7 @@ public class MultiVersionLanguageLoader implements IModLanguageLoader {
             String modid = info.getModId();
             String coreName = betterScan.getCore().getClass().getName();
             try {
-                ClassLoader loader = NeoForgeCoreLoader.layerClassLoader("GAME");
+                ClassLoader loader = NeoForgeCoreLoader.layerClassLoader(GAME);
                 betterScan.defineClasses(loader);
                 if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,loader));
                 NeoForgeCoreLoader.verifyModule(modClass,info,layer);

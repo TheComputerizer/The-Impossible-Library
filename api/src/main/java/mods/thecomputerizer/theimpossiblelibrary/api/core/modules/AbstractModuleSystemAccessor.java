@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.modules;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
@@ -27,6 +28,10 @@ public abstract class AbstractModuleSystemAccessor implements ModuleSystemAccess
     
     @Override public Object access() {
         return this.access;
+    }
+    
+    public final <T> T accessAs() {
+        return GenericUtils.cast(this.access);
     }
     
     @IndirectCallers

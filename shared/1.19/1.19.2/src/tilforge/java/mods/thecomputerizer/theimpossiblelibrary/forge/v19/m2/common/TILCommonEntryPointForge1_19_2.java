@@ -25,7 +25,7 @@ public class TILCommonEntryPointForge1_19_2 extends TILCommonEntryPoint1_19 {
     
     public static void onRegisterEvent(RegisterEvent event) {
         if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE_REGISTRY) {
-            ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID, "custom_suggester");
+            ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester");
             event.register(COMMAND_ARGUMENT_TYPE_REGISTRY,registryName,() -> INFO);
             WrappedCommand1_19.registerArgType();
         }

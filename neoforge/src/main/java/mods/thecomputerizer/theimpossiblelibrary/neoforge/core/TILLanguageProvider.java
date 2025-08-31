@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
+import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.PLUGIN;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILLanguageProvider implements IModLanguageProvider {
@@ -19,10 +21,10 @@ public class TILLanguageProvider implements IModLanguageProvider {
     private static final String MOD_PROVIDER_SERVICE = NEOFORGE_PKG+".language.IModLanguageProvider";
     
     static {
-        NeoForgeCoreLoader.removeServiceFrom(MOD_PROVIDER_SERVICE,MOD_PROVIDER_IMPL,"BOOT");
+        NeoForgeCoreLoader.removeServiceFrom(MOD_PROVIDER_SERVICE,MOD_PROVIDER_IMPL,BOOT);
         try {
             ClassLoader plugin = TILLanguageProvider.class.getClassLoader();
-            NeoForgeCoreLoader.resyncModules(plugin,"PLUGIN",NeoForgeCoreLoader.bootLoader());
+            NeoForgeCoreLoader.resyncModules(plugin,PLUGIN,NeoForgeCoreLoader.bootLoader());
         } catch(Throwable t) {
             TILRef.logError("Failed to resync modules to BOOT layer",t);
         }
@@ -33,7 +35,7 @@ public class TILLanguageProvider implements IModLanguageProvider {
     
     public TILLanguageProvider() {
         TILRef.logInfo("Initializing multiversion language provider (NeoForge edition)");
-        ClassLoader pluginLoader = NeoForgeCoreLoader.layerClassLoader("PLUGIN");
+        ClassLoader pluginLoader = NeoForgeCoreLoader.layerClassLoader(PLUGIN);
         this.core = NeoForgeCoreLoader.initCoreAPI(pluginLoader);
         this.versionProvider = Objects.nonNull(this.core) ?
                 Methods.invoke(this.core,"getLaunguageProvider") : null;

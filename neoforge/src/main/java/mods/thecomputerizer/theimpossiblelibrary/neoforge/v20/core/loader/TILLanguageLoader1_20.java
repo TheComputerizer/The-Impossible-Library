@@ -2,14 +2,18 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core.loader;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILLanguageLoader;
 import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.language.IModLanguageProvider.IModLanguageLoader;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 
+import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
+
 public class TILLanguageLoader1_20 extends TILLanguageLoader implements IModLanguageLoader {
     
+    @IndirectCallers
     public TILLanguageLoader1_20(CoreAPI core, String modClass, String modid, ModFileScanData scan) {
         super(core,modClass,modid,scan);
     }
@@ -20,7 +24,7 @@ public class TILLanguageLoader1_20 extends TILLanguageLoader implements IModLang
     @Override public <T> T loadMod(IModInfo info, ModFileScanData scanResults, ModuleLayer layer) {
         String modid = info.getModId();
         try {
-            ClassLoader loader = NeoForgeCoreLoader.layerClassLoader("GAME");
+            ClassLoader loader = NeoForgeCoreLoader.layerClassLoader(GAME);
             return super.loadModInner(info,loader,scanResults,layer);
         } catch(Throwable t) {
             String msg = "Failed to load mod "+modid;

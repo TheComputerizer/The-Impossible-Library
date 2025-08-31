@@ -39,7 +39,7 @@ public class Hacks {
     static boolean srgEnv;
     
     static boolean burningWaveInit;
-    
+
     /**
      * Returns true if the value was added.
      * Assumes the collection field is modifiable.
@@ -58,6 +58,28 @@ public class Hacks {
             @Nullable BiConsumer<String,Collection<V>> afterAdd) {
         Collection<V> collection = collectionGetter.apply(field);
         boolean added = collection.add(value);
+        if(Objects.nonNull(afterAdd)) afterAdd.accept(field,collection);
+        return added;
+    }
+    
+    /**
+     * Returns true if any of the values were added.
+     * Assumes the collection field is modifiable.
+     */
+    @IndirectCallers
+    public static <V> boolean addToCollectionField(String field, Collection<V> values,
+            Function<String,Collection<V>> collectionGetter) {
+        return addToCollectionField(field,values,collectionGetter,null);
+    }
+    
+    /**
+     * Returns true if the value was added.
+     */
+    public static <V> boolean addToCollectionField(String field, Collection<V> values,
+            Function<String,Collection<V>> collectionGetter,
+            @Nullable BiConsumer<String,Collection<V>> afterAdd) {
+        Collection<V> collection = collectionGetter.apply(field);
+        boolean added = collection.addAll(values);
         if(Objects.nonNull(afterAdd)) afterAdd.accept(field,collection);
         return added;
     }
@@ -127,14 +149,6 @@ public class Hacks {
     }
     
     /**
-     * Finds and instantiates the target class on the target class loader using the given args
-     */
-    @IndirectCallers
-    public static <T> T construct(String target, ClassLoader loader, Object ... args) {
-        return construct(findClass(target,loader),args);
-    }
-    
-    /**
      * Finds and instantiates the target class using the given args
      */
     public static <T> T construct(String targetClass, Object ... args) {
@@ -188,6 +202,14 @@ public class Hacks {
     @IndirectCallers
     public static <T> T constructFromReference(Class<?> reference, String targetClass, Object ... args) {
         return construct(findClass(reference,targetClass),args);
+    }
+    
+    /**
+     * Finds and instantiates the target class on the target class loader using the given args
+     */
+    @IndirectCallers
+    public static <T> T constructWithLoader(String target, ClassLoader loader, Object ... args) {
+        return construct(findClass(target,loader),args);
     }
     
     public static ClassLoader contextClassLoader() {
@@ -378,23 +400,6 @@ public class Hacks {
     
     /**
      * Finds the target class and returns a static field instance of the given name in it.
-     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
-     */
-    @IndirectCallers
-    public static <T> T getFieldStatic(String targetClass, String named, String intermediary) {
-        return getFieldStatic(findClass(targetClass),named,intermediary);
-    }
-    
-    /**
-     * Returns a static field instance of the given name in the target class.
-     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
-     */
-    public static <T> T getFieldStatic(Class<?> target, String named, String intermediary) {
-        return getFieldStatic(target,isNamedEnv() ? named : intermediary);
-    }
-    
-    /**
-     * Finds the target class and returns a static field instance of the given name in it.
      */
     @IndirectCallers
     public static <T> T getFieldStatic(String targetClass, String field) {
@@ -414,25 +419,6 @@ public class Hacks {
             return null;
         }
         return Fields.getStatic(target,field);
-    }
-    
-    /**
-     * Finds the target class and returns a static field instance of the given name in it.
-     * Getting a field directly will bypass any package-private, private, or protected access restrictions.
-     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
-     */
-    @IndirectCallers
-    public static <T> T getFieldStaticDirect(String targetClass, String named, String intermediary) {
-        return getFieldStaticDirect(findClass(targetClass),named,intermediary);
-    }
-    
-    /**
-     * Returns a static field instance of the given name in the target class.
-     * Getting a field directly will bypass any package-private, private, or protected access restrictions.
-     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
-     */
-    public static <T> T getFieldStaticDirect(Class<?> target, String named, String intermediary) {
-        return getFieldStaticDirect(target,isNamedEnv() ? named : intermediary);
     }
     
     /**
@@ -458,6 +444,42 @@ public class Hacks {
             return null;
         }
         return Fields.getStaticDirect(target,field);
+    }
+    
+    /**
+     * Finds the target class and returns a static field instance of the given name in it.
+     * Getting a field directly will bypass any package-private, private, or protected access restrictions.
+     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
+     */
+    @IndirectCallers
+    public static <T> T getFieldStaticDirectNamed(String targetClass, String named, String intermediary) {
+        return getFieldStaticDirectNamed(findClass(targetClass),named,intermediary);
+    }
+    
+    /**
+     * Returns a static field instance of the given name in the target class.
+     * Getting a field directly will bypass any package-private, private, or protected access restrictions.
+     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
+     */
+    public static <T> T getFieldStaticDirectNamed(Class<?> target, String named, String intermediary) {
+        return getFieldStaticDirect(target,isNamedEnv() ? named : intermediary);
+    }
+    
+    /**
+     * Finds the target class and returns a static field instance of the given name in it.
+     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
+     */
+    @IndirectCallers
+    public static <T> T getFieldStaticNamed(String targetClass, String named, String intermediary) {
+        return getFieldStaticNamed(findClass(targetClass),named,intermediary);
+    }
+    
+    /**
+     * Returns a static field instance of the given name in the target class.
+     * The "named" input will be used in named environments for the field with "intermediary" being used otherwise.
+     */
+    public static <T> T getFieldStaticNamed(Class<?> target, String named, String intermediary) {
+        return getFieldStatic(target,isNamedEnv() ? named : intermediary);
     }
     
     /**

@@ -41,9 +41,9 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     
     public static final boolean MODULE_LAYERS = Boolean.parseBoolean(System.getProperty("til.debug.forge.modules.layers","true"));
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
+    private static final String COREAPI_CLASS = API_PKG+".core.CoreAPI";
     private static final String FORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.forge";
     private static final String FORGE_CORE_PKG = FORGE_PKG+".core";
-    private static final String COREAPI_CLASS = API_PKG+".core.CoreAPI";
     private static final Logger LOGGER = LogManager.getLogger("TIL ForgeCoreLoader");
     public static final boolean SECURE_CLASSLOADER_FORMAT = newModuleClassLoaderFormat();
     

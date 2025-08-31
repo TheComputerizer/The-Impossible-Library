@@ -5,8 +5,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.modules;
  */
 public class ServiceProviderAccess extends AbstractModuleSystemAccessor {
     
-    ServiceProviderAccess(Object access, Object accessorOrLogger) {
-        super(access,accessorOrLogger);
+    ServiceProviderAccess(Object serviceProvider, Object accessorOrLogger) {
+        super(serviceProvider,accessorOrLogger);
     }
     
     public ModuleAccess module() {

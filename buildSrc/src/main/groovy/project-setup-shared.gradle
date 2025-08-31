@@ -1,5 +1,7 @@
 import org.codehaus.groovy.runtime.MethodClosure
 
+import java.util.function.Function
+
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 plugins {
@@ -107,7 +109,7 @@ unimined.minecraft(sourceSets.tilforge) {
                 //noinspection GroovyAssignabilityCheck
                 map[forge_log_markers_arg] = forge_log_markers_values
                 //noinspection GroovyAssignabilityCheck
-                map[module_layer_movement] = 'false'
+                map[forge_module_layer_movement] = 'false'
             }
             config('client') {
                 args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
@@ -153,12 +155,24 @@ if(isNeoforgeCompatible()) {
         combineWith sourceSets.main
         if(!mappingStyleOfficial()) defaultRemapJar = true
         if(isRunnableVersion()) {
+            //def build_files = getBuildFiles([main: [ 'classes\\java' ], tilneoforge: [ 'classes\\java', 'resources' ]])
+            //logger.lifecycle "Adding build files to neoforge minecraftLibraries $build_files"
+            //configurations.tilneoforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
+            //tasks.compileTilneoforgeJava.mustRunAfter 'processTilneoforgeResources'
             runs{
                 //noinspection ConfigurationAvoidance
                 all {
                     javaVersion = getJavaVersionEnum()
                     Map<?,?> map = getSystemProperties()
                     addCustomRunProperties map, 'tilneoforge'
+                    //noinspection GroovyAssignabilityCheck
+                    map[debug_network] = 'true'
+                    //noinspection GroovyAssignabilityCheck
+                    map[forge_log_level] = 'debug'
+                    //noinspection GroovyAssignabilityCheck
+                    map[forge_log_markers_arg] = forge_log_markers_values
+                    //noinspection GroovyAssignabilityCheck
+                    map[neoforge_module_layer_movement] = 'false'
                 }
                 config('server') {
                     args+=[ 'nogui' ]
@@ -256,6 +270,11 @@ void initConfigs() {
                 forgeLegacyClasspathImplementation
                 tilforgeImplementation.extendsFrom forgeLegacyClasspathImplementation
                 tilforgeMinecraftLibraries.extendsFrom forgeLegacyClasspathImplementation
+                if(isNeoforgeCompatible()) {
+                    neoforgeLegacyClasspathImplementation
+                    tilneoforgeImplementation.extendsFrom neoforgeLegacyClasspathImplementation
+                    tilneoforgeMinecraftLibraries.extendsFrom neoforgeLegacyClasspathImplementation
+                }
             }
         }
     }
@@ -336,6 +355,8 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     List<String> enabled_runtime_mods = [ ]
     //Selectively enable which versions should have Music Triggers added to the runtime
     Map<String,List<String>> enabled_mt = [fabric: [ 'all' ], forge: [ 'all' ], neoforge: [ 'all' ]]
+    boolean neoforge_legacy_classpath = true
+    Function<String,Boolean> check_legacy_classpath = l -> 'forge'==l || (neoforge_legacy_classpath && 'neoforge'==l)
 
     setCommonRepositories maven_ids
     def loaders = isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]
@@ -345,7 +366,10 @@ void setSharedDependenciesInner(List<String> maven_ids) {
         compileOnly project(':api')
         if(runnable_version) {
             parentClasses project(path: ':api', configuration: 'exportClasses')
-            if(!isJava8()) forgeLegacyClasspathImplementation libs.bundles.burningwave
+            if(!isJava8()) {
+                forgeLegacyClasspathImplementation libs.bundles.burningwave
+                if(neoforge_legacy_classpath) neoforgeLegacyClasspathImplementation libs.bundles.burningwave
+            }
         }
         if(minor_version) {
             compileOnly parent
@@ -379,8 +403,10 @@ void setSharedDependenciesInner(List<String> maven_ids) {
                 def mt_versions = enabled_mt[l_loader]
                 if(mt_versions!=null && (mt_versions.contains('all') || mt_versions.contains(minecraftVersion())))
                     "til${l_loader}RuntimeOnly"(libs.musictriggers)
-                if(isJava8() || 'forge'!=l_loader) "til${l_loader}Implementation" libs.bundles.burningwave
-            } else if(isJava8() || 'forge'!=l_loader) "til${l_loader}Implementation" libs.bundles.burningwave
+                if(isJava8() || !check_legacy_classpath.apply(l_loader))
+                    "til${l_loader}Implementation" libs.bundles.burningwave
+            } else if(isJava8() || !check_legacy_classpath.apply(l_loader))
+                "til${l_loader}Implementation" libs.bundles.burningwave
         }
     }
     tasks.compileJava.mustRunAfter "${parent.path}:classes"

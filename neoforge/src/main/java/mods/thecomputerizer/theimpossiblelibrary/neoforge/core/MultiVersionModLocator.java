@@ -2,8 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.core;
 
 import cpw.mods.modlauncher.Launcher;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModLocator;
 
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import static mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader.MODULE_LAYERS;
 
 public class MultiVersionModLocator implements IModLocator {
     
@@ -29,31 +31,25 @@ public class MultiVersionModLocator implements IModLocator {
             throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
         if(loader!=NeoForgeCoreLoader.bootLoader())
             NeoForgeCoreLoader.fixService(MOD_LOCATOR_SERVICE,MOD_LOCATOR_IMPL,loader,true);
+        if(!MODULE_LAYERS) Hacks.removeEnvironmentProperty("MOD_CLASSES");
     }
     
-    private final Object localLocator;
+    final boolean failed;
     
     public MultiVersionModLocator() {
-        ClassLoader loader = getClass().getClassLoader();
-        ClassLoader bootLoader = Launcher.class.getClassLoader();
-        TILRef.logInfo("Core NeoForge Locator plugin loaded on {}",loader);
-        if(!loader.equals(bootLoader))
-            TILRef.logInfo("That's the wrong ClassLoader... Retrieving locator instance from the right "+
-                           "ClassLoader {}",bootLoader);
-        Object instance = NeoForgeCoreLoader.initCoreAPI(bootLoader);
-        
-        this.localLocator = Objects.nonNull(instance) ?
-                Hacks.invoke(instance,"getModLocator",instance.getClass().getClassLoader()) : null;
-        if(Objects.nonNull(this.localLocator)) TILRef.logInfo("Found mod locator {}",this.localLocator.getClass());
-        else TILRef.logFatal("Failed to find mod locator! Unable to load multiversion mods");
+        Class<?> c = getClass();
+        TILRef.logInfo("Core Neoforge Locator plugin loaded on {}",c.getClassLoader());
+        Object coreAPI = NeoForgeCoreLoader.initCoreAPI(Launcher.class.getClassLoader());
+        this.failed = !NeoForgeModLoading.setLoadingVersion(c,coreAPI);
     }
     
     @Override public void initArguments(Map<String,?> arguments) {
-        if(Objects.nonNull(this.localLocator)) {
-            ClassLoader loader = getClass().getClassLoader();
-            TILDev.logInfo("Initializing mod locator with {}",loader);
-            Hacks.invoke(this.localLocator,"initFor",loader,this);
-        } else TILRef.logFatal("Locator is null and cannot load multiversion mods! Did it fail to initialize?");
+        if(this.failed) {
+            TILRef.logWarn("Not initializing mod loading for MultiVersionModLocator that failed to load");
+            return;
+        }
+        TILRef.logInfo("Initializing Forge mod loading with args {}",arguments);
+        NeoForgeModLoading.initModLoading(getClass().getClassLoader(),this);
     }
     
     @Override public boolean isValid(IModFile file) {
@@ -67,10 +63,18 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public void scanFile(IModFile file, Consumer<Path> pathConsumer) {}
     
     @Override public List<ModFileOrException> scanMods() {
-        List<ModFileOrException> files = null;
-        if(Objects.nonNull(this.localLocator))
-            files = Hacks.invoke(this.localLocator,"scanMods",this.localLocator,this);
-        else TILRef.logFatal("Locator is null and cannot scan for multiversion mods! Did it fail to initialize?");
-        return Objects.nonNull(files) ? files : Collections.emptyList();
+        if(this.failed) {
+            TILRef.logWarn("Not scanning for mods with MultiVersionModLocator that failed to load");
+            return Collections.emptyList();
+        }
+        TILRef.logInfo("Scanning for mods");
+        try {
+            List<ModFileOrException> files = NeoForgeModLoading.scanMods();
+            TILRef.logInfo("Returing scanned mods {}",files);
+            return files;
+        } catch(Throwable t) {
+            TILRef.logError("Failed to scan mods",t);
+            throw t;
+        }
     }
 }

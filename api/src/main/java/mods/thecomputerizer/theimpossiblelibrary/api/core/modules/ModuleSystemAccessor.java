@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import org.apache.logging.log4j.Logger;
 
@@ -9,9 +10,6 @@ import java.util.function.BiConsumer;
 
 import static java.lang.System.err;
 import static java.lang.System.out;
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public interface ModuleSystemAccessor {
     
@@ -29,7 +27,7 @@ public interface ModuleSystemAccessor {
     
     static <T> T construct(Object accessorOrLogger, Class<?> target, boolean direct, Object ... args) {
         if(Objects.nonNull(target))
-            return direct ? Constructors.newInstanceDirectOf(target,args) : Constructors.newInstanceOf(target,args);
+            return direct ? Hacks.constructDirect(target,args) : Hacks.construct(target,args);
         String msg = "Cannot contruct null class! args = "+Arrays.toString(args);
         Logger logger = getAsLogger(accessorOrLogger);
         if(Objects.nonNull(logger)) logger.error(msg);
@@ -156,7 +154,7 @@ public interface ModuleSystemAccessor {
     
     static <T> T getStatic(Class<?> target, String name, boolean direct, Object accessorOrLogger) {
         if(Objects.nonNull(target))
-            return direct ? Fields.getStaticDirect(target,name) : Fields.getStatic(target,name);
+            return direct ? Hacks.getFieldStaticDirect(target,name) : Hacks.getFieldStatic(target,name);
         String msg = "Cannot get static field "+name+" on null target class!";
         Logger logger = getAsLogger(accessorOrLogger);
         if(Objects.nonNull(logger)) logger.error(msg);
@@ -189,8 +187,8 @@ public interface ModuleSystemAccessor {
     static <T> T invokeStatic(Object accessorOrLogger, Class<?> target, String methodName, boolean direct,
             Object ... args) {
         if(Objects.nonNull(target))
-            return direct ? Methods.invokeStaticDirect(target,methodName,args) :
-                    Methods.invokeStatic(target,methodName,args);
+            return direct ? Hacks.invokeStaticDirect(target,methodName,args) :
+                    Hacks.invokeStatic(target,methodName,args);
         String msg = "Cannot invoke static method "+methodName+" on null target class!";
         Logger logger = getAsLogger(accessorOrLogger);
         if(Objects.nonNull(logger)) logger.error(msg);
@@ -279,7 +277,7 @@ public interface ModuleSystemAccessor {
     
     default <T> T get(String name, boolean direct) {
         Object obj = access();
-        if(Objects.nonNull(obj)) return direct ? Fields.getDirect(obj,name) : Fields.get(obj,name);
+        if(Objects.nonNull(obj)) return direct ? Hacks.getFieldDirect(obj,name) : Hacks.getField(obj,name);
         logOrPrintError("Cannot get field "+name+"! (return value of access() was null)");
         return null;
     }
@@ -295,7 +293,7 @@ public interface ModuleSystemAccessor {
     
     default <T> T invoke(String name, boolean direct, Object ... args) {
         Object obj = access();
-        if(Objects.nonNull(obj)) return direct ? Methods.invokeDirect(obj,name,args) : Methods.invoke(obj,name,args);
+        if(Objects.nonNull(obj)) return direct ? Hacks.invokeDirect(obj,name,args) : Hacks.invoke(obj,name,args);
         logger().error("Cannot invoke method {}! (return value of access() was null)",name);
         return null;
     }
@@ -349,8 +347,8 @@ public interface ModuleSystemAccessor {
     default void set(String name, Object value, boolean direct) {
         Object obj = access();
         if(Objects.nonNull(obj)) {
-            if(direct) Fields.setDirect(obj,name,value);
-            else Fields.set(obj,name,value);
+            if(direct) Hacks.setFieldDirect(obj,name,value);
+            else Hacks.setField(obj,name,value);
             return;
         }
         logOrPrintError("Cannot set field "+name+" to "+value+"! (return value of access() was null)");
