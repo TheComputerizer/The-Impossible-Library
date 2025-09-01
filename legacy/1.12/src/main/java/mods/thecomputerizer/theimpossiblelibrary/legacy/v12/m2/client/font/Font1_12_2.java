@@ -12,10 +12,13 @@ import net.minecraftforge.client.event.RenderTooltipEvent.PostBackground;
 import net.minecraftforge.client.event.RenderTooltipEvent.PostText;
 import net.minecraftforge.client.event.RenderTooltipEvent.Pre;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import static net.minecraft.item.ItemStack.EMPTY;
 import static net.minecraft.util.text.TextFormatting.RESET;
@@ -26,10 +29,15 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
     public Font1_12_2() {
         super(mc -> ((Minecraft)mc.unwrap()).fontRenderer);
     }
+    
+    protected void draw(@Nullable RenderAPI renderer, @Nullable String text, Consumer<String> drawFunc) {
+        if(Objects.isNull(renderer)) return;
+        renderer.setFont(this.wrapped);
+        if(Objects.nonNull(text)) drawFunc.accept(text);
+    }
 
     @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
-        renderer.setFont(this.wrapped);
-        getWrapped().drawString(text,x,y,color,false);
+        draw(renderer,text,t -> getWrapped().drawString(t,x,y,color,false));
     }
     
     @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
@@ -38,8 +46,7 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
     }
     
     @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
-        renderer.setFont(this.wrapped);
-        getWrapped().drawStringWithShadow(text,x,y,color);
+        draw(renderer,text,t -> getWrapped().drawStringWithShadow(t,x,y,color));
     }
 
     @Override public int getCharWidth(char c) {
@@ -51,7 +58,7 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
     }
 
     @Override public int getStringWidth(String str) {
-        return getWrapped().getStringWidth(str);
+        return getStringWidth(str,FontRenderer::getStringWidth);
     }
     
     /**
@@ -59,10 +66,11 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
      */
     @Override public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width,
             int height, int maxWidth) {
+        if(Objects.isNull(renderer)) return;
         renderer.setFont(this.wrapped);
         List<String> textLines = new ArrayList<>();
         for(TextAPI<?> text : lines) {
-            String asLine = text.getApplied();
+            String asLine = Objects.nonNull(text) ? text.getApplied() : "";
             if(TextHelper.isNotBlank(asLine)) textLines.add(asLine);
         }
         if(!textLines.isEmpty()) {
@@ -163,7 +171,8 @@ public class Font1_12_2 extends FontAPI<FontRenderer> {
     }
     
     @Override public String trimStringTo(String str, int width, boolean withReset) {
-        String trimmed = getWrapped().trimStringToWidth(str, width);
+        if(Objects.isNull(str)) return "";
+        String trimmed = getWrapped().trimStringToWidth(str,width);
         String reset = RESET.toString();
         return !withReset && trimmed.endsWith(reset) ? trimmed.substring(0,trimmed.length()-reset.length()) : trimmed;
     }

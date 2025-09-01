@@ -8,10 +8,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,15 +31,22 @@ public abstract class FontAPI<F> extends MutableWrapped<F> {
     public abstract void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color);
     @IndirectCallers public abstract int getCharWidth(char c);
     public abstract int getFontHeight();
-    public abstract int getStringWidth(String str);
+    public abstract int getStringWidth(@Nullable String str);
+    protected final int getStringWidth(@Nullable String str, BiFunction<F,String,Integer> widthGetter) {
+        return Objects.nonNull(str) ? widthGetter.apply(getWrapped(),str) : 0;
+    }
     
     @Override public F getWrapped() {
-        if(Objects.isNull(this.wrapped)) this.wrapped = this.fontGetter.apply(ClientHelper.getMinecraft());
+        if(Objects.isNull(this.wrapped)) {
+            MinecraftAPI<?> mc = ClientHelper.getMinecraft();
+            if(Objects.nonNull(mc)) this.wrapped = this.fontGetter.apply(mc);
+        }
         return this.wrapped;
     }
     
     public void renderToolTip(RenderAPI renderer, Collection<TextAPI<?>> lines, int x, int y, int width,
             int height, int maxWidth) {
+        if(Objects.isNull(renderer)) return;
         renderer.setFont(getWrapped());
         TILRef.getClientHandles().renderToolTip(renderer,unwrapTooltipComponents(lines),x,y,width,height,maxWidth);
     }

@@ -23,7 +23,7 @@ public class Font1_21 extends FontAPI<Font> {
     }
     
     protected void draw(@Nullable GuiGraphics graphics, String text, int x, int y, int color, boolean shadow) {
-        if(Objects.nonNull(graphics)) graphics.drawString(getWrapped(),text,x,y,color,shadow);
+        if(Objects.nonNull(graphics) && Objects.nonNull(text)) graphics.drawString(getWrapped(),text,x,y,color,shadow);
     }
     
     @Override public void draw(RenderAPI renderer, String text, float x, float y, int color) {
@@ -32,8 +32,9 @@ public class Font1_21 extends FontAPI<Font> {
     
     @Override public void drawInBatch(Object text, float x, float y, int color, boolean shadow, Object matrix,
             Object source, boolean transparent, int bgColor, int light) {
-        getWrapped().drawInBatch((FormattedCharSequence)text,x,y,color,shadow,(Matrix4f)matrix,
-                                 (MultiBufferSource)source,NORMAL,bgColor,light);
+        if(text instanceof FormattedCharSequence chars && matrix instanceof Matrix4f mat4f &&
+           source instanceof MultiBufferSource buffer)
+            getWrapped().drawInBatch(chars,x,y,color,shadow,mat4f,buffer,NORMAL,bgColor,light);
     }
     
     @Override public void drawWithShadow(RenderAPI renderer, String text, float x, float y, int color) {
@@ -49,15 +50,16 @@ public class Font1_21 extends FontAPI<Font> {
     }
     
     protected @Nullable GuiGraphics getGraphics(RenderAPI renderer) {
-        return ((Render1_21)renderer).getGraphics();
+        return renderer instanceof Render1_21 render21 ? render21.getGraphics() : null;
     }
     
     @Override public int getStringWidth(String str) {
-        return getWrapped().width(str);
+        return getStringWidth(str,Font::width);
     }
     
     @Override public String trimStringTo(String str, int width, boolean withReset) {
-        String trimmed = getWrapped().plainSubstrByWidth(str, width);
+        if(Objects.isNull(str)) return "";
+        String trimmed = getWrapped().plainSubstrByWidth(str,width);
         String reset = RESET.toString();
         return !withReset && trimmed.endsWith(reset) ? trimmed.substring(0,trimmed.length()-reset.length()) : trimmed;
     }
