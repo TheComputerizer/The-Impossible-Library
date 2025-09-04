@@ -4,6 +4,7 @@ import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreStateAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.MathHelper;
 import org.objectweb.asm.AnnotationVisitor;
@@ -336,6 +337,7 @@ public abstract class ModWriter implements CoreStateAccessor {
             this.entryMethods = entryMethods;
         }
         
+        @IndirectCallers
         public InnerClassDataBuilder allFlags() {
             return bothSides().modBus();
         }
@@ -377,10 +379,12 @@ public abstract class ModWriter implements CoreStateAccessor {
             return this;
         }
         
+        @IndirectCallers
         public InnerClassDataBuilder modBusClient() {
             return modBus().client();
         }
         
+        @IndirectCallers
         public InnerClassDataBuilder modBusServer() {
             return modBus().server();
         }

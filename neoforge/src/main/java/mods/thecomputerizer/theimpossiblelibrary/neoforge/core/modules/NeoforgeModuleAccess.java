@@ -247,8 +247,8 @@ public class NeoforgeModuleAccess {
         return new SecureJarProviderAccess(provider,accessorOrLogger);
     }
     
-    public static void moveModule(ModuleClassLoaderAccess sourceLoader, ModuleClassLoaderAccess targetLoader,
-            String moduleName) {
+    public static void moveModule(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, String moduleName) {
         moveModule(sourceLoader.getModuleLayer(),targetLoader.layer,moduleName);
     }
     

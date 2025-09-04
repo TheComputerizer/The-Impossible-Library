@@ -75,6 +75,7 @@ public record ResolvedModuleHolder(ResolvedModuleAccess module, ModuleClassLoade
      * Get a resolved module in the current loader.
      * Returns null if it isn't found or this if the package is in the same module.
      */
+    @IndirectCallers
     public ResolvedModuleHolder otherPackageRef(String pkg) {
         ResolvedModuleHolder holder = findPackage(pkg,this.loader);
         if(Objects.nonNull(holder) && moduleName().equals(holder.moduleName())) return this;

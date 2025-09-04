@@ -5,8 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-
 @Getter
 public class MultiVersionCoreModInfo {
     
@@ -36,7 +34,7 @@ public class MultiVersionCoreModInfo {
     }
 
     public CoreEntryPoint getInstance() {
-        return Constructors.newInstanceOf(this.entryClass);
+        return Hacks.construct(this.entryClass);
     }
     
     @Override public String toString() {

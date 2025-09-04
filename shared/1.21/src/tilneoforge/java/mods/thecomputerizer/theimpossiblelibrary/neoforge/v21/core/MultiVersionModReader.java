@@ -10,8 +10,6 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
-
 public class MultiVersionModReader extends TILModFinderNeoForge1_21 implements IModFileReader {
     
     static final Set<String> alreadyHandled = new HashSet<>();
@@ -40,6 +38,6 @@ public class MultiVersionModReader extends TILModFinderNeoForge1_21 implements I
     }
     
     @Override public @Nullable IModFile read(JarContents jar, ModFileDiscoveryAttributes attributes) {
-        return findAndLoad(jar,() -> attributes.withReader(this),MOD);
+        return findAndLoad(jar,() -> attributes.withReader(this));
     }
 }

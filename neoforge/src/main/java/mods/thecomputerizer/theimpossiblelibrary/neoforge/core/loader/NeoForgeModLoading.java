@@ -72,6 +72,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVO
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.RETURN_OBJ;
 import static mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader.MODULE_LAYERS;
 import static net.neoforged.neoforgespi.locating.IModFile.Type.LIBRARY;
+import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 
 /**
@@ -98,6 +99,7 @@ public class NeoForgeModLoading {
     
     //collections
     static final Collection<Object> IDENTIFIED_FILES = new HashSet<>();
+    static final Collection<IModFile> LOADER_FILES = new ArrayList<>();
     
     //version-dependent
     static final boolean JAVA_21 = NeoForgeCoreLoader.isJava21();
@@ -119,6 +121,7 @@ public class NeoForgeModLoading {
     static Class<?> dynamicModFileClass;
     static Set<String> coreModExtensions;
     static boolean fixedCoreMods;
+    static MultiVersionModCandidate loaderCandidate;
     @Getter static String workingVersion;
     
     private static <F> void addScannedMod(IModFile file, List<F> mods, String type) {
@@ -174,6 +177,22 @@ public class NeoForgeModLoading {
         };
     }
     
+    /**
+     * Create separate LIBRARY and MOD type mod files for this library.
+     * This should only be called from TILSelfLocator in 1.20.6+
+     */
+    public static IModFile[] createLoaderFiles(JarContents[] contents, Object locator,
+            MultiVersionModCandidate candidate, final Collection<?> infos) {
+        loaderCandidate = candidate;
+        IModFile modFile = createModFile(contents[0],locator,f -> getFileInfo(f,infos),MOD,MODID);
+        FILE_INFO_MAP.put(modFile,initInfoMap(candidate,infos));
+        if(Objects.isNull(modFile)) return new IModFile[]{};
+        IModFile langFile = createModFile(contents[1],locator,NeoForgeModLoading::langFileInfo,LIBRARY,LOADERID);
+        IModFile[] files = new IModFile[]{langFile,modFile};
+        LOADER_FILES.addAll(List.of(files));
+        return files;
+    }
+    
     @SuppressWarnings("SameParameterValue")
     static IModFile createModFile(IModFile reference, Function<IModFile,IModFileInfo> parser, String type,
             final String moduleName) {
@@ -197,13 +216,14 @@ public class NeoForgeModLoading {
             return null;
         }
         LOGGER.debug("Creating mod file of type {} with module name {} at path {}",type,moduleName,pathOrJarContents);
-        SecureJar jar = null;
+        SecureJar jar = pathOrJarContents instanceof SecureJar ? (SecureJar)pathOrJarContents : null;
         boolean updatePathMap = false;
         if(Objects.nonNull(moduleName)) {
             if(SECURE_JAR_MAP.containsKey(moduleName)) {
-                LOGGER.debug("Found existing SecureJar for module {}",moduleName);
-                jar = SECURE_JAR_MAP.get(moduleName);
-                
+                if(Objects.isNull(jar)) {
+                    LOGGER.debug("Found existing SecureJar for module {}",moduleName);
+                    jar = SECURE_JAR_MAP.get(moduleName);
+                }
             } else updatePathMap = true;
         }
         if(Objects.isNull(jar)) {
@@ -466,7 +486,7 @@ public class NeoForgeModLoading {
         String fileName = file.getFileName();
         Path absolutePath = file.getFilePath().toAbsolutePath();
         LOGGER.debug("Finalizing mod identification for {} (path={})",fileName,absolutePath);
-        if(!CANDIDATE_MAP.containsValue(file)) {
+        if(!CANDIDATE_MAP.containsValue(file) && !LOADER_FILES.contains(file)) {
             LOGGER.warn("There are no mods to identify for {}",fileName);
             return false;
         }
@@ -480,12 +500,10 @@ public class NeoForgeModLoading {
             IDENTIFIED_FILES.add(file);
         }
         LOGGER.debug("Finalized mod identification for {} (path={})",fileName,absolutePath);
-        int candidateCount = CANDIDATE_MAP.size();
+        int candidateCount = (CANDIDATE_MAP.size()+LOADER_FILES.size())-1; //Ignore the language provider file
         int identifiedCount = IDENTIFIED_FILES.size();
-        if(identifiedCount>=candidateCount) {
+        if(identifiedCount>=candidateCount)
             LOGGER.debug("Successfully identified {}/{} mod files",identifiedCount,candidateCount);
-            NeoForgeCoreLoader.removeDevModules();
-        }
         return true;
     }
     
@@ -517,7 +535,7 @@ public class NeoForgeModLoading {
             mod.set("version",info.getVersion());
             mods.add(mod);
         }
-        if(!setLicense) config.set("license","LGPL V3");
+        if(!setLicense) config.set("license",DEFAULT_LICENSE);
         return mods;
     }
     
@@ -591,16 +609,16 @@ public class NeoForgeModLoading {
         IConfigurable configWrapper = wrapConfig(langProviderConfig());
         Consumer<IModFileInfo> consumer = info ->
                 Hacks.invokeDirect(configWrapper,"setFile",info);
-        List<?> languageSpecs = Collections.emptyList();
-        return Hacks.construct(ModFileInfo.class,file,configWrapper,consumer,languageSpecs);
+        return new ModFileInfo((ModFile)file,configWrapper,consumer,Collections.emptyList());
     }
     
     public static Config langProviderConfig() {
         Config config = Config.inMemory();
         config.set("modLoader","minecraft");
         config.set("loaderVersion","1");
+        config.set("license",DEFAULT_LICENSE);
         Config mod = Config.inMemory();
-        mod.set("modId","multiversionprovider");
+        mod.set("modId",PROVIDERID);
         mod.set("version",VERSION);
         mod.set("displayName","Multiversion Language Provider");
         mod.set("logoFile","logo.png");
@@ -811,6 +829,7 @@ public class NeoForgeModLoading {
         Map<MultiVersionModInfo,MultiVersionModData> infoMap = FILE_INFO_MAP.get(file);
         if(Objects.isNull(infoMap) || infoMap.isEmpty()) {
             LOGGER.error("Cannot write multiversion mods for {} with null or empty info map! {}",file,infoMap);
+            return null;
         }
         TILBetterModScan scan = initModScanner(file);
         if(Objects.isNull(scan)) {

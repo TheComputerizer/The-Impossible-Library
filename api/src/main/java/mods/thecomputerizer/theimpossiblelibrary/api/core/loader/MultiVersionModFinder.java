@@ -31,17 +31,9 @@ public class MultiVersionModFinder {
         return candidates;
     }
     
-    public static @Nullable MultiVersionModCandidate discoverCoreCandidate(MultiVersionLoaderAPI loader, File file) {
-        return getCandidate(loader,file,true,new HashSet<>(),new HashSet<>());
-    }
-    
     public static @Nullable MultiVersionModCandidate discoverCoreCandidate(MultiVersionLoaderAPI loader, File file,
             Function<File,Attributes> attributesGetter) {
         return getCandidate(loader,file,attributesGetter,true,new HashSet<>(),new HashSet<>());
-    }
-    
-    public static @Nullable MultiVersionModCandidate discoverModCandidate(MultiVersionLoaderAPI loader, File file) {
-        return getCandidate(loader,file,false,new HashSet<>(),new HashSet<>());
     }
     
     public static @Nullable MultiVersionModCandidate discoverModCandidate(MultiVersionLoaderAPI loader, File file,
@@ -57,7 +49,7 @@ public class MultiVersionModFinder {
     private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file,
             Function<File,Attributes> attributesGetter, boolean isCore, Set<String> foundCoreMods,
             Set<String> foundMods) {
-        TILRef.logDebug("Examining candidate file`{}` for {}",file,isCore ? "coremods" : "mods");
+        TILRef.logDebug("Examining candidate file`{}` for {}mods",file,isCore ? "core" : "");
         Attributes attributes = attributesGetter.apply(file);
         if(Objects.nonNull(attributes)) {
             MultiVersionModCandidate candidate = new MultiVersionModCandidate(loader.parent,file);

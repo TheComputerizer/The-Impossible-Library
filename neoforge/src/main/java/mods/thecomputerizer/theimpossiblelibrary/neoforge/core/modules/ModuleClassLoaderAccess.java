@@ -49,7 +49,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         addPackages(pkgs,(ResolvedModule)resolvedModule.accessAs());
     }
     
-    void addPackages(Collection<String> pkgs, ResolvedModule resolvedModule) {
+    public void addPackages(Collection<String> pkgs, ResolvedModule resolvedModule) {
         Map<String,ResolvedModule> packageLookup = packageLookup();
         for(String pkg : pkgs) packageLookup.put(pkg,resolvedModule);
     }
@@ -196,6 +196,27 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
      */
     public void lookupAndRemovePackagesFor(String moduleName) {
         removePackages(lookupResolvedModule(moduleName));
+    }
+    
+    public Set<ResolvedModule> lookupModules(Collection<String> packages) {
+        Set<ResolvedModule> modules = new HashSet<>();
+        for(Entry<String,ResolvedModule> lookupEntry : packageLookup().entrySet())
+            if(packages.contains(lookupEntry.getKey())) modules.add(lookupEntry.getValue());
+        return modules;
+    }
+    
+    public Set<String> lookupPackagesFor(String ... moduleNames) {
+        Set<String> pkgs = new HashSet<>();
+        for(Entry<String,ResolvedModule> lookupEntry : packageLookup().entrySet()) {
+            String entryName = lookupEntry.getValue().name();
+            for(String moduleName : moduleNames) {
+                if(moduleName.equals(entryName)) {
+                    pkgs.add(lookupEntry.getKey());
+                    break;
+                }
+            }
+        }
+        return pkgs;
     }
     
     /**

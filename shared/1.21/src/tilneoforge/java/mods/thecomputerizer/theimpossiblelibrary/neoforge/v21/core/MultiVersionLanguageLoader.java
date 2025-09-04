@@ -32,10 +32,14 @@ public class MultiVersionLanguageLoader implements IModLanguageLoader {
     
     static boolean loadedNewCore;
     
+    String ensureOuterClassName(String className) {
+        return className.contains("$") ? className.substring(0,className.indexOf('$')) : className;
+    }
+    
     @Override public ModContainer loadMod(IModInfo info, ModFileScanData scan, ModuleLayer layer) throws ModLoadingException {
         if(scan instanceof TILBetterModScan betterScan) {
             String modid = info.getModId();
-            String modClass = betterScan.getModClass(modid);
+            String modClass = ensureOuterClassName(betterScan.getModClass(modid));
             String coreName = betterScan.getCore().getClass().getName();
             try {
                 ClassLoader loader = NeoForgeCoreLoader.layerClassLoader(GAME);

@@ -27,6 +27,10 @@ import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOADERID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
+
 public abstract class TILModFinderNeoForge1_21 {
     
     static {
@@ -45,11 +49,27 @@ public abstract class TILModFinderNeoForge1_21 {
         this.logger = initializeLogger(getClass());
     }
     
-    protected @Nullable IModFile findAndLoad(JarContents contents, Supplier<Object> attributeSupplier, Type type) {
-        MultiVersionModCandidate candidate = findCandidate(contents);
+    protected @Nullable IModFile findAndLoad(JarContents contents, Supplier<Object> attributeSupplier) {
+        IModFile[] files = findAndLoad(new JarContents[]{contents},attributeSupplier,MOD,false);
+        return Objects.nonNull(files) && files.length>0 ? files[0] : null;
+    }
+    
+    @SuppressWarnings("resource")
+    protected @Nullable IModFile[] findAndLoadSelf(Path[] paths, Supplier<Object> attributeSupplier) {
+        JarContents[] contents = new JarContents[]{NeoForgeModLoading.buildJarContents(MODID,paths),
+                NeoForgeModLoading.buildJarContents(LOADERID,paths)};
+        return findAndLoad(contents,attributeSupplier,null,true);
+    }
+    
+    protected @Nullable IModFile[] findAndLoad(JarContents[] contents, Supplier<Object> attributeSupplier, Type type,
+            boolean loader) {
+        MultiVersionModCandidate candidate = findCandidate(contents[0]);
         Collection<?> infos = loadCandidate(candidate);
-        return Objects.nonNull(candidate) && !infos.isEmpty() ?
-                NeoForgeModLoading.createModFile(contents,attributeSupplier.get(),candidate,infos,type) : null;
+        if(Objects.isNull(candidate) || infos.isEmpty()) return null;
+        if(loader)
+            return NeoForgeModLoading.createLoaderFiles(contents,attributeSupplier.get(),candidate,infos);
+        IModFile file = NeoForgeModLoading.createModFile(contents[0],attributeSupplier.get(),candidate,infos,type);
+        return Objects.nonNull(file) ? new IModFile[]{file} : null;
     }
     
     private @Nullable MultiVersionModCandidate findAndMergeCandidates(File file,

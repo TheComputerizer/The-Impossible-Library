@@ -23,14 +23,14 @@ import java.util.Objects;
 import java.util.Set;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Setter @Getter
 public class TILBetterModScan extends ModFileScanData {
     
-    private static final Map<String,IModFile> MOD_FILES = new HashMap<>();
-    private static final Map<String,MultiVersionModInfo> MOD_INFOS = new HashMap<>();
-    private static final Set<String> NUKED_PACKAGES = new HashSet<>();
+    private static final Map<String,IModFile> MOD_FILES = new HashMap<>(); //pkg -> file
+    private static final Map<String,MultiVersionModInfo> MOD_INFOS = new HashMap<>(); //class name -> info
     private static final Set<Path> PATHS = new HashSet<>();
     private static final Map<String,byte[]> WRITTEN_CLASSES = new HashMap<>();
     
@@ -42,14 +42,11 @@ public class TILBetterModScan extends ModFileScanData {
     }
     
     public void addWrittenClass(String className, MultiVersionModInfo info, IModFile file, byte[] bytecode) {
-        MOD_INFOS.put(className,info);
+        MOD_INFOS.putIfAbsent(className,info);
         WRITTEN_CLASSES.put(className,bytecode);
-        MOD_FILES.put(className.substring(0,className.lastIndexOf('.')),file);
+        MOD_FILES.putIfAbsent(className.substring(0,className.lastIndexOf('.')),file);
     }
     
-    /**
-     * Called via reflection from TILLanguageLoader
-     */
     public void defineClasses(ClassLoader target) {
         if(MOD_INFOS.isEmpty() || WRITTEN_CLASSES.isEmpty() ) {
             TILRef.logInfo("No classes left to define for TILBetterModScan");
@@ -81,33 +78,17 @@ public class TILBetterModScan extends ModFileScanData {
             TILRef.logWarn("No classes were defined so no sources will be added");
             return;
         }
-        String doLast = getLastPkg(pkgs);
         try {
-            Set<String> finalizedPkgs = new HashSet<>();
-            for(String pkg : pkgs) finalizeModPackage(pkg,pkgToModMap.get(pkg),finalizedPkgs);
-            finalizeModPackage(doLast,pkgToModMap.get(doLast),finalizedPkgs);
-            for(Class<?> c : defined)
-                NeoForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
-            NeoForgeCoreLoader.exportAllModules();
+            NeoForgeCoreLoader.handleDevPackages(getLoaderPkg(pkgs),MODID);
         } catch(Throwable t) {
             TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
         }
-        NUKED_PACKAGES.addAll(pkgs);
-    }
-    
-    private void finalizeModPackage(String pkg, IModInfo mod, Set<String> finalizedPkgs) {
-        if(NUKED_PACKAGES.contains(pkg)) {
-            TILRef.logInfo("Skipping already handled sources for {}",pkg);
-            return;
-        }
-        NeoForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs);
     }
     
     /**
-     * If the given collection of packages contains a package from this library, it needs to be handled last.
-     * The package is removed from the collection if found.
+     * If the given collection of packages contains a package from this library, it needs to be specially handled
      */
-    protected String getLastPkg(Collection<String> pkgs) {
+    protected String getLoaderPkg(Collection<String> pkgs) {
         String last = null;
         for(String pkg : pkgs) {
             if(pkg.contains(BASE_PACKAGE)) {

@@ -18,6 +18,7 @@ public class TextTranslation1_21 extends Text1_21 implements TextTranslationAPI<
         if(Objects.isNull(original)) original = "";
         this.original = original;
         Object[] contentArgs = Objects.nonNull(args) ? args : new Object[]{};
+        for(int i=0;i<contentArgs.length;i++) contentArgs[i] = String.valueOf(contentArgs[i]);
         this.component = MutableComponent.create(new TranslatableContents(original,original,contentArgs));
     }
     

@@ -191,6 +191,9 @@ if(isNeoforgeCompatible()) {
                     addForgeLoggingMarkers map, true
                     setForgeLoggingLevel map, 'debug'
                 }
+                config('client') {
+                    args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
+                }
                 config('server') {
                     args+=[ 'nogui' ]
                 }

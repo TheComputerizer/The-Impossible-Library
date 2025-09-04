@@ -26,6 +26,7 @@ public class TILRef {
     public static final String DATA_DIRECTORY = "impossible_data";
     public static final Logger LOGGER = createLogger("The Impossible Library");
     public static final String BASE_PACKAGE = "mods.thecomputerizer.theimpossiblelibrary";
+    public static final String DEFAULT_LICENSE = "LGPL V3"; //Default for this library or when the license it not set
     public static final String DESCRIPTION = "Multiversion API & mod loader with helpers to do things deemed impossible";
     public static final String LOADERID = "theimpossibleloader";
     public static final String MODID = "theimpossiblelibrary";

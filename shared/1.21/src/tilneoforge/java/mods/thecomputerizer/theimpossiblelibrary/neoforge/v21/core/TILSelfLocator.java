@@ -2,7 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
 import cpw.mods.jarhandling.JarContents;
 import cpw.mods.niofs.union.UnionPath;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
 import net.neoforged.neoforgespi.ILaunchContext;
 import net.neoforged.neoforgespi.locating.IDiscoveryPipeline;
 import net.neoforged.neoforgespi.locating.IModFile;
@@ -22,7 +21,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder.MULTIVERSION_COREMODS;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder.MULTIVERSION_MODS;
-import static net.neoforged.neoforgespi.locating.IModFile.Type.LIBRARY;
 
 /**
  * Since this library is loaded as a service, we need to tell NeoForge that it's also a mod
@@ -46,12 +44,16 @@ public class TILSelfLocator extends TILModFinderNeoForge1_21 implements IModFile
         this.logger.info("Attempting to read self from URL {}",url);
         Path[] paths = fixedPath(url);
         this.logger.info("Attempting to read self from paths {}",Arrays.toString(paths));
-        IModFile file = findAndLoad(NeoForgeModLoading.buildJarContents(MODID,paths),() -> this,LIBRARY);
-        if(Objects.nonNull(file)) {
-            pipeline.addModFile(file);
+        IModFile[] files = findAndLoadSelf(paths,() -> this);
+        if(Objects.nonNull(files)) {
+            if(files.length!=2) {
+                this.logger.error("Read the wrong number of loader files?? ({} files)",files.length);
+                return false;
+            }
+            for(IModFile file : files) pipeline.addModFile(file);
             return true;
         }
-        this.logger.error("Read IModFile instance as null!");
+        this.logger.error("Read loader IModFile instances as null!");
         return false;
     }
     

@@ -10,9 +10,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationA
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ServicesCatalogAccess;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.LayerInfoAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModFileInfoAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModuleClassLoaderAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModuleReferenceHolder;
@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.module.Configuration;
 import java.lang.module.ResolvedModule;
 import java.util.*;
 import java.util.function.Consumer;
@@ -32,7 +33,6 @@ import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.PLUGIN;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.SERVICE;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 /**
  * Figures out which version to load on and how to load stuff on it
@@ -176,22 +176,6 @@ public class NeoForgeCoreLoader { //TODO So much of this is obselete now :(
         return null;
     }
     
-    public static void fixForServiceLayer() {
-        if(!MODULE_LAYERS) {
-            handleDevLoading(1);
-            return;
-        }
-        LOGGER.info("Running SERVICE layer fix");
-        String pkg = NeoForgeCoreLoader.class.getPackage().getName();
-        ResolvedModuleHolder holder = ResolvedModuleHolder.findPackage(pkg,BOOT,SERVICE);
-        if(Objects.nonNull(holder)) {
-            LOGGER.debug("Found module {} for {} in layer {}",holder.moduleName(),pkg,holder.layerName());
-            ModuleClassLoaderAccess targetLoader = bootLoaderAccess();
-            Consumer<ResolvedModuleHolder> ifValidMovement = ResolvedModuleHolder::removePackagesFromLoader;
-            addResolvedModule(holder,targetLoader,ifValidMovement);
-        } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
-    }
-    
     public static void fixService(String service, String impl, ClassLoader loaderFrom) {
         fixService(service,impl,loaderFrom,false);
     }
@@ -298,59 +282,26 @@ public class NeoForgeCoreLoader { //TODO So much of this is obselete now :(
         return null;
     }
     
-    static void handleDevLoading(int stage) {
-        final String appendArg = "(-Dtil.debug.neoforge.modules.layers=false)";
-        Set<Layer> completedLayers = NeoforgeModuleAccess.getModuleLayerHandler().completedLayers().keySet();
-        switch(stage) {
-            case 1: {
-                LOGGER.debug("Skipping module layer movement hacks {}",appendArg);
-                boolean bootLoaded = NeoforgeModuleAccess.class.getClassLoader()==bootLoader();
-                LOGGER.debug("NeoforgeCoreLoader is boot loaded: {}",bootLoaded);
-                //logModuleNames("BOOT","SERVICE");
-                LOGGER.debug("Completed layers: {}",completedLayers);
+    public static void handleDevPackages(String pkg, String moduleName) {
+        ModuleClassLoaderAccess bootLoader = bootLoaderAccess();
+        ModuleClassLoaderAccess gameLoader = NeoforgeModuleAccess.getModuleClassLoader(GAME);
+        String originalModule = bootLoader.getResolvedModule(pkg).name();
+        if("main".equals(originalModule) || "tilneoforge".equals(originalModule)) {
+            Set<String> packages = bootLoader.lookupPackagesFor("main","tilneoforge");
+            Set<ResolvedModule> modules = bootLoader.lookupModules(packages);
+            bootLoader.removePackages(packages);
+            bootLoader.addParentLoaders(packages,gameLoader);
+            gameLoader.removeParentLoaders(packages);
+            Configuration gameConfig = gameLoader.configuration().accessAs();
+            ResolvedModule module = gameConfig.findModule(moduleName).orElse(null);
+            if(Objects.isNull(module)) {
+                LOGGER.error("Failed to find module in GAME layer {}",moduleName);
                 return;
             }
-            case 2: {
-                LOGGER.debug("Completed layers: {}",completedLayers);
-                return;
-            }
-            case 3: {
-                LOGGER.debug("Skipping PLUGIN layer module resyncing {}",appendArg);
-                //logModuleNames("BOOT","SERVICE","PLUGIN");
-                LOGGER.debug("Completed layers: {}",completedLayers);
-                return;
-            }
-            case 4: {
-                LOGGER.debug("Finalizing dev packages {}",appendArg);
-                ModuleClassLoaderAccess bootLoader = bootLoaderAccess();
-                ModuleLayerAccess bootLayer = bootLoader.getModuleLayer();
-                LayerInfoAccess gameLayerInfo = NeoforgeModuleAccess.getLayerInfo(GAME);
-                ModuleClassLoaderAccess gameLoader = gameLayerInfo.getModuleClassLoader();
-                ModuleLayerAccess gameLayer = gameLayerInfo.getModuleLayer();
-                ModuleAccess module = gameLayer.getModule(MODID);
-                if(Objects.nonNull(module)) {
-                    Set<String> allPackages = new HashSet<>();
-                    for(String moduleName : new String[]{"main","tilneoforge"}) {
-                        LOGGER.debug("Moving module {} classes to game layer",moduleName);
-                        ModuleAccess bootModule = bootLayer.getModule(moduleName);
-                        if(Objects.nonNull(bootModule)) {
-                            Set<String> packages = bootModule.getPackages();
-                            gameLoader.inheritClasses(bootModule,moduleName,bootLoader);
-                            allPackages.addAll(packages);
-                            gameLoader.addPackages(packages,bootLoader.configuration().getModule(moduleName));
-                            gameLoader.addRoot(moduleName,bootLoader.getRootDirect(moduleName));
-                        }
-                        else LOGGER.debug("Module {} not found in the boot layer",moduleName);
-                    }
-                    module.addPackages(allPackages);
-                } else LOGGER.error("Failed to find dev module {}! Cannot finalize packages!",MODID);
-                LOGGER.debug("Finalized dev packages {}",appendArg);
-                return;
-            }
-            default: {
-                LOGGER.error("Unknown dev loading stage {} {}",stage,appendArg);
-            }
-        }
+            if(gameConfig!=module.configuration()) LOGGER.warn("Module found in non-GAME layer {}",moduleName);
+            gameLoader.addPackages(packages,module);
+            ModuleSystemAccessor.getModuleDescriptor(module.reference().descriptor(),LOGGER).setPackages(packages);
+        } else NeoforgeModuleAccess.moveModule(bootLoader,gameLoader,originalModule);
     }
     
     /**
@@ -440,11 +391,9 @@ public class NeoForgeCoreLoader { //TODO So much of this is obselete now :(
      */
     public static void nukeAndFinalize(IModInfo mod, String pkg, Set<String> finalizedPkgs) {
         ModuleClassLoaderAccess[] loaders = NeoforgeModuleAccess.getModuleClassLoaders(BOOT,SERVICE,PLUGIN);
-        if(MODULE_LAYERS) {
-            LOGGER.info("Finalizing package {}",pkg);
-            ResolvedModuleHolder holder = ResolvedModuleHolder.findPackage(pkg,loaders);
-            nukeAndFinalize(mod,holder,finalizedPkgs,true,loaders);
-        } else handleDevLoading(4);
+        LOGGER.info("Finalizing package {}",pkg);
+        ResolvedModuleHolder holder = ResolvedModuleHolder.findPackage(pkg,loaders);
+        nukeAndFinalize(mod,holder,finalizedPkgs,true,loaders);
     }
     
     /**
@@ -502,30 +451,11 @@ public class NeoForgeCoreLoader { //TODO So much of this is obselete now :(
         for(ModuleClassLoaderAccess loader : loaders) loader.removeModuleFully(moduleName);
     }
     
-    public static void removeDevModules(String ... layers) {
-        if(!MODULE_LAYERS) handleDevLoading(2);
-    }
-    
     public static void removeServiceFrom(String service, String impl, Layer layer) {
         Hacks.checkBurningWaveInit();
         LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
         NeoforgeModuleAccess.getModuleLayer(layer).removeServiceImplementations(service,impl);
         LOGGER.info("Sucessfully removed all service providers from {} layer for {}",layer,impl);
-    }
-    
-    /**
-     * Since this class is intially loaded in the SERVICE layer which has BOOT as a parent separate from PLUGIN,
-     * we need a workaround for the PLUGIN layer thinking there are duplicate modules.
-     * This is needed since IModLanguageProvider implementations are forced into PLUGIN layer from service loading and
-     * can likely only be called via reflection.
-     */
-    public static void resyncModules(ClassLoader loaderTo, Layer layerTo, ClassLoader loaderFrom) {
-        if(!MODULE_LAYERS) { //Resolve differently in dev since the modules are initially loaded in the BOOT layer
-            handleDevLoading(3);
-            return;
-        }
-        resyncModules(NeoforgeModuleAccess.getModuleClassLoader(loaderTo),layerTo,
-                      NeoforgeModuleAccess.getModuleClassLoader(loaderFrom));
     }
     
     private static void resyncModules(ModuleClassLoaderAccess loaderTo, Layer layerTo,
