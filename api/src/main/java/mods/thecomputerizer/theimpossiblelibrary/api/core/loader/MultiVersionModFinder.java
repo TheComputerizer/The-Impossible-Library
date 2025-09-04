@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 
@@ -34,14 +35,30 @@ public class MultiVersionModFinder {
         return getCandidate(loader,file,true,new HashSet<>(),new HashSet<>());
     }
     
+    public static @Nullable MultiVersionModCandidate discoverCoreCandidate(MultiVersionLoaderAPI loader, File file,
+            Function<File,Attributes> attributesGetter) {
+        return getCandidate(loader,file,attributesGetter,true,new HashSet<>(),new HashSet<>());
+    }
+    
     public static @Nullable MultiVersionModCandidate discoverModCandidate(MultiVersionLoaderAPI loader, File file) {
         return getCandidate(loader,file,false,new HashSet<>(),new HashSet<>());
     }
-
+    
+    public static @Nullable MultiVersionModCandidate discoverModCandidate(MultiVersionLoaderAPI loader, File file,
+            Function<File,Attributes> attributesGetter) {
+        return getCandidate(loader,file,attributesGetter,false,new HashSet<>(),new HashSet<>());
+    }
+    
     private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file,
             boolean isCore, Set<String> foundCoreMods, Set<String> foundMods) {
+        return getCandidate(loader,file,loader::getFileAttributes,isCore,foundCoreMods,foundMods);
+    }
+
+    private static @Nullable MultiVersionModCandidate getCandidate(MultiVersionLoaderAPI loader, File file,
+            Function<File,Attributes> attributesGetter, boolean isCore, Set<String> foundCoreMods,
+            Set<String> foundMods) {
         TILRef.logDebug("Examining candidate file`{}` for {}",file,isCore ? "coremods" : "mods");
-        Attributes attributes = loader.getFileAttributes(file);
+        Attributes attributes = attributesGetter.apply(file);
         if(Objects.nonNull(attributes)) {
             MultiVersionModCandidate candidate = new MultiVersionModCandidate(loader.parent,file);
             if(isCore) candidate.addCoreClasses(foundCoreMods,parseClasses(attributes,MULTIVERSION_COREMODS));

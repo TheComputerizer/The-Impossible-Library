@@ -45,7 +45,7 @@ public class SecureJarAccess extends AbstractModuleSystemAccessor {
     }
     
     public ModuleFinderAccess newModuleFinder() {
-        return construct(JarModuleFinder.class,(Object)new SecureJar[]{accessAs()});
+        return new ModuleFinderAccess(construct(JarModuleFinder.class,(Object)new SecureJar[]{accessAs()}),this);
     }
     
     public Set<String> packages() {

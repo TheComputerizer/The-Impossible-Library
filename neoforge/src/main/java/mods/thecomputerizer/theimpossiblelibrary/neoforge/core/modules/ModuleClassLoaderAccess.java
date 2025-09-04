@@ -186,6 +186,10 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return NeoforgeModuleAccess.getModuleLayerHandler(this);
     }
     
+    public String layerName() {
+        return Objects.nonNull(this.layer) ? this.layer.name() : "UNKNOWN";
+    }
+    
     /**
      * Get a ResolvedModule from the packageLookup map that matches the input moduleName
      * Remove all packages associated with the module from the packageLookup

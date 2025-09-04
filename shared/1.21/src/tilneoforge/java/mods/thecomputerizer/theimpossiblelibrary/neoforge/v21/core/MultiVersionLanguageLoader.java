@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILBetterModScan;
@@ -12,18 +13,29 @@ import net.neoforged.neoforgespi.language.IModLanguageLoader;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.PROVIDERID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
 public class MultiVersionLanguageLoader implements IModLanguageLoader {
+    
+    static {
+        Package pkg = MultiVersionLanguageLoader.class.getPackage();
+        Object versionInfo = Hacks.getFieldDirect(pkg,"versionInfo");
+        if(Objects.nonNull(versionInfo)) {
+            Hacks.setFieldDirect(versionInfo,"implVersion",VERSION);
+            TILDev.logDebug("Set implementation version of {} to {}",pkg,VERSION);
+        }
+    }
     
     static boolean loadedNewCore;
     
     @Override public ModContainer loadMod(IModInfo info, ModFileScanData scan, ModuleLayer layer) throws ModLoadingException {
         if(scan instanceof TILBetterModScan betterScan) {
-            String modClass = betterScan.getModClass(info);
             String modid = info.getModId();
+            String modClass = betterScan.getModClass(modid);
             String coreName = betterScan.getCore().getClass().getName();
             try {
                 ClassLoader loader = NeoForgeCoreLoader.layerClassLoader(GAME);
@@ -44,7 +56,7 @@ public class MultiVersionLanguageLoader implements IModLanguageLoader {
     }
     
     @Override public String name() {
-        return "multiversionloader";
+        return PROVIDERID;
     }
     
     protected void setCoreAPI(Class<?> implClass) {

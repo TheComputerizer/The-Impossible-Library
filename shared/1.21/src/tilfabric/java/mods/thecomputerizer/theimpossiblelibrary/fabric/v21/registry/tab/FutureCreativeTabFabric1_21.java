@@ -40,9 +40,9 @@ public class FutureCreativeTabFabric1_21 extends FutureCreativeTab<CreativeModeT
     
     public FutureCreativeTabFabric1_21(ResourceLocationAPI<?> registryName) {
         super(registryName);
-        this.both = Hacks.getFieldStaticDirect(VISIBILITY, "PARENT_AND_SEARCH_TABS", "field_40191");
-        this.parent = Hacks.getFieldStaticDirect(VISIBILITY,"PARENT_TAB_ONLY","field_40192");
-        this.search = Hacks.getFieldStaticDirect(VISIBILITY,"SEARCH_TAB_ONLY","field_40193");
+        this.both = Hacks.getFieldStaticDirectNamed(VISIBILITY, "PARENT_AND_SEARCH_TABS", "field_40191");
+        this.parent = Hacks.getFieldStaticDirectNamed(VISIBILITY,"PARENT_TAB_ONLY","field_40192");
+        this.search = Hacks.getFieldStaticDirectNamed(VISIBILITY,"SEARCH_TAB_ONLY","field_40193");
     }
     
     /**

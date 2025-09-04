@@ -5,28 +5,28 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
-public abstract class ModWriterNeoForge extends ModWriter {
+public class ModWriterNeoForge extends ModWriter {
     
+    protected static final String EVENT_SUBSCRIBER_NAME = (JAVA_21 ? "" : "Mod$")+"EventBusSubscriber";
     protected static final Type DIST = TypeHelper.neoforged("api/distmarker/Dist");
     protected static final Type EVENT_BUS = TypeHelper.neoforged("bus/api/IEventBus");
-    protected static final Type EVENT_SUBSCRIBER = TypeHelper.neofml("common/Mod$EventBusSubscriber");
-    protected static final Type EVENT_SUBSCRIBER_BUS = TypeHelper.neofml("common/Mod$EventBusSubscriber$Bus");
+    protected static final Type EVENT_SUBSCRIBER = TypeHelper.neofml("common/"+EVENT_SUBSCRIBER_NAME);
+    protected static final Type EVENT_SUBSCRIBER_BUS = TypeHelper.neofml("common/"+EVENT_SUBSCRIBER_NAME+"$Bus");
     protected static final Type MOD_ANNOTATION = TypeHelper.neofml("common/Mod");
     protected static final Type SUBSCRIBE_EVENT = TypeHelper.neoforged("bus/api/SubscribeEvent");
     
-    protected ModWriterNeoForge(CoreAPI core, MultiVersionModInfo info, int javaVersion) {
-        super(core,info,javaVersion);
+    public ModWriterNeoForge(CoreAPI core, MultiVersionModInfo info) {
+        super(core,info);
     }
     
     @Override protected void addClassAnnotations(ClassVisitor visitor) {
@@ -37,10 +37,14 @@ public abstract class ModWriterNeoForge extends ModWriter {
         super.addEntryHooks(visitor,true,method,false);
     }
     
-    protected void addEventSubscriber(ClassVisitor visitor, String modid, boolean modBus, boolean client,
+    protected void addEventSubscriber(InnerClassData data, ClassVisitor visitor) {
+        addEventSubscriber(visitor,data.isModBus(),data.isClient(),data.isServer());
+    }
+    
+    protected void addEventSubscriber(ClassVisitor visitor, boolean modBus, boolean client,
             boolean server) {
         writeClassAnnotation(visitor,getEventSubscriberType(),annotation -> {
-            annotation.visit("modid",modid);
+            annotation.visit("modid",this.info.getModID());
             if(modBus) annotation.visitEnum("bus",getEventSubscriberBusType().getDescriptor(),"MOD");
             if((client && !server) || (!client && server))
                 writeAnnotationArray(annotation,"value",array ->
@@ -48,19 +52,41 @@ public abstract class ModWriterNeoForge extends ModWriter {
         });
     }
     
-    protected Entry<ClassWriter,Type> addInnerEventSubscriber(ClassVisitor outerClass, String modid, boolean modBus,
-            boolean client, boolean server, String innerName, String ... entryMethods) {
-        return addInnerClass(outerClass,innerName,inner -> {
-            addEventSubscriber(inner,modid,modBus,client,server);
-            for(String methodName : entryMethods) {
-                Type eventType = this.entryPointMethodTypes.get(methodName);
-                writeMethod(inner,cv -> ASMHelper.getMethod(cv,PUBLIC_STATIC,methodName,eventType.getArgumentTypes()),
-                        method -> {
-                            writeMethodAnnotation(method,SUBSCRIBE_EVENT,annotation -> {});
-                            addEntryHooks(method,methodName);
-                        });
-            }
-        });
+    protected InnerClassData buildInnerClassData(ClassVisitor outerClass, String className, int flags,
+            String ... entryPoints) {
+        return buildInnerClassData(innerClassDataBuilder(outerClass,className,entryPoints).setFlags(flags));
+    }
+    
+    protected InnerClassData buildInnerClassData(InnerClassDataBuilder builder) {
+        return builder.constructorInit((writer,cv) -> ASMHelper.getConstructor(cv,PUBLIC))
+                .constructorHandle((writer,constructor) -> {
+                    writer.basicContructorHandle(constructor);
+                    constructor.visitInsn(RETURN);
+                    ASMHelper.finishMethod(constructor);
+                })
+                .entryPointHandle((visitor,entryPoint) -> {
+                    final Type[] args = this.entryPointMethodTypes.get(entryPoint).getArgumentTypes();
+                    writeMethod(visitor,cv -> ASMHelper.getMethod(cv,PUBLIC_STATIC,entryPoint,args),
+                    method -> {
+                        writeMethodAnnotation(method,SUBSCRIBE_EVENT,annotation -> {});
+                        addEntryHooks(method,entryPoint);
+                    });
+        }).build();
+    }
+    
+    @Override protected List<String[]> entryPointMappings() {
+        return List.of(new String[]{"<init>","","onConstructed","onPreRegistration"},
+                new String[]{"clientSetup","FMLClientSetupEvent","checkClientSetup"},
+                new String[]{"commonSetup","FMLCommonSetupEvent","onCommonSetup"},
+                new String[]{"dedicatedServerSetup","FMLDedicatedServerSetupEvent","checkDedicatedServerSetup"},
+                new String[]{"interModEnqueue","InterModEnqueueEvent","onInterModEnqueue"},
+                new String[]{"interModProcess","InterModProcessEvent","onInterModProcess"},
+                new String[]{"loadComplete","FMLLoadCompleteEvent","onLoadComplete"},
+                new String[]{"serverAboutToStart","FMLServerAboutToStartEvent","onServerAboutToStart"},
+                new String[]{"serverStarting","FMLServerStartingEvent","onServerStarting"},
+                new String[]{"serverStarted","FMLServerStartedEvent","onServerStarted"},
+                new String[]{"serverStopping","FMLServerStoppingEvent","onServerStopping"},
+                new String[]{"serverStopped","FMLServerStoppedEvent","onServerStopped"});
     }
     
     @Override protected MethodVisitor getConstructor(ClassVisitor visitor) {
@@ -68,8 +94,12 @@ public abstract class ModWriterNeoForge extends ModWriter {
     }
     
     @Override protected Type getEventMethod(String className) {
-        className = (className.startsWith("FMLServer") ? "server" : "lifecycle")+"/"+className;
-        return TypeHelper.method(VOID_TYPE,TypeHelper.neofml("event/"+className));
+        if(TextHelper.isBlank(className)) return EMPTY_METHOD;
+        if(className.contains("FMLServer")) {
+            className = className.replace("FML","");
+            return TypeHelper.method(VOID_TYPE,TypeHelper.neoforge("event/server/"+className));
+        }
+        return TypeHelper.method(VOID_TYPE,TypeHelper.neofml("event/lifecycle/"+className));
     }
     
     protected Type getEventSubscriberBusType() {
@@ -80,43 +110,31 @@ public abstract class ModWriterNeoForge extends ModWriter {
         return EVENT_SUBSCRIBER;
     }
     
-    @Override protected void mappedEntryPointMethods(Map<String,String[]> redirects, Map<String,Type> types) {
-        mapEntryPointMethod(redirects,types,"<init>",EMPTY_METHOD,"onConstructed","onPreRegistration");
-        mapEntryPointMethod(redirects,types,"clientSetup",getEventMethod("FMLClientSetupEvent"),
-                            "checkClientSetup");
-        mapEntryPointMethod(redirects,types,"commonSetup",getEventMethod("FMLCommonSetupEvent"),
-                            "onCommonSetup");
-        mapEntryPointMethod(redirects,types,"dedicatedServerSetup",getEventMethod("FMLDedicatedServerSetupEvent"),
-                            "checkDedicatedServerSetup");
-        mapEntryPointMethod(redirects,types,"interModEnqueue",getEventMethod("InterModEnqueueEvent"),
-                            "onInterModEnqueue");
-        mapEntryPointMethod(redirects,types,"interModProcess",getEventMethod("InterModProcessEvent"),
-                            "onInterModProcess");
-        mapEntryPointMethod(redirects,types,"loadComplete",getEventMethod("FMLLoadCompleteEvent"),
-                            "onLoadComplete");
-        mapEntryPointMethod(redirects,types,"serverAboutToStart", getEventMethod("FMLServerAboutToStartEvent"),
-                            "onServerAboutToStart");
-        mapEntryPointMethod(redirects,types,"serverStarting",getEventMethod("FMLServerStartingEvent"),
-                            "onServerStarting");
-        mapEntryPointMethod(redirects,types,"serverStarted",getEventMethod("FMLServerStartedEvent"),
-                            "onServerStarted");
-        mapEntryPointMethod(redirects,types,"serverStopping",getEventMethod("FMLServerStoppingEvent"),
-                            "onServerStopping");
-        mapEntryPointMethod(redirects,types,"serverStopped",getEventMethod("FMLServerStoppedEvent"),
-                            "onServerStopped");
+    protected InnerClassDataBuilder innerClassDataBuilder(ClassVisitor outer, String name, String ... entryPoints) {
+        return innerClassDataBuilder(outer,name,this::addEventSubscriber,entryPoints);
+    }
+    
+    @Override protected InnerClassData[] innerClasses(ClassVisitor outerClass) {
+        return new InnerClassData[]{
+                buildInnerClassData(outerClass,"LoaderClient",6,"clientSetup"),
+                buildInnerClassData(outerClass,"LoaderCommon",7,"commonSetup",
+                                    "interModEnqueue","interModProcess","loadComplete"),
+                buildInnerClassData(outerClass,"LoaderServer",5,"dedicatedServerSetup"),
+                buildInnerClassData(outerClass,"ServerLifecycle",3,"serverAboutToStart",
+                                    "serverStarting","serverStarted","serverStopping","serverStopped")
+        };
     }
     
     /**
      * Sets the extraData field of CommonEntryPoint to the IEventBus passed into the constructor of the written class
      * so that it is internally accessible
      */
-    @Override protected final void writeConstructor(ClassVisitor visitor) {
-        final String extraDataDesc = TypeHelper.voidMethodDesc(OBJECT_TYPE);
-        writeConstructor(visitor,constructor -> {
-            constructor.visitVarInsn(ALOAD,0);
-            constructor.visitFieldInsn(GETFIELD,this.modTypeInternal,"entryPoint",this.entryPointDesc);
+    @Override protected final void writeConstructor(ClassVisitor cv) {
+        writeConstructor(cv,constructor -> {
+            entryPointGetter(constructor); //Load entrypoint field
             constructor.visitVarInsn(ALOAD,1); //Load IEventBus parameter
-            constructor.visitMethodInsn(INVOKEVIRTUAL,this.entryPointInternal,"setExtraData",extraDataDesc,false);
+            constructor.visitMethodInsn(INVOKEVIRTUAL,this.entryPointInternal,"setExtraData",
+                    VOID_OBJECT_METHOD_DESC,false);
         });
     }
 }

@@ -51,6 +51,7 @@ public class ServicesCatalogAccess extends AbstractModuleSystemAccessor {
         return getDirect("map");
     }
     
+    @SuppressWarnings("UnusedReturnValue")
     public boolean removeImplementations(String service, String impl) {
         return providers().getOrDefault(service,new ArrayList<>())
                 .removeIf(provider -> impl.equals(asProvider(provider).providerName()));

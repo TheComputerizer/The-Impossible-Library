@@ -1,19 +1,19 @@
 [bundles]
     mods-1_20_1-compile = []
     mods-1_20_1-implementation = [ 'dataanchor-1_20_1', 'enhancedcelestials-1_20_1' ]
-    mods-1_20_1-runtime = []
+    mods-1_20_1-runtime = [ 'corgilib-1_20_1' ]
     mods-1_20_4-compile = []
     mods-1_20_4-implementation = [ 'bookshelf-1_20_4', 'configured-1_20_4', 'glitchcore-1_20_4', 'infernalmobs-1_20_4',
         'sereneseasons-1_20_4' ]
     mods-1_20_4-runtime = [ 'architectury-1_20_4', 'jei-1_20_4' ]
-    mods-1_20_6-compile = []
-    mods-1_20_6-implementation = [ 'configured-1_20_6', 'glitchcore-1_20_6', 'infernalmobs-1_20_6',
-        'sereneseasons-1_20_6' ]
-    mods-1_20_6-runtime = [ 'architectury-1_20_6', 'jei-1_20_6' ]
-    mods-1_21_1-compile = []
-    mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'dataanchor-1_21_1',
-        'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
-    mods-1_21_1-runtime = [ 'architectury-1_21_1', 'corgilib-1_21_1', 'jei-1_21_1' ]
+    mods-1_20_6-compile = [ 'glitchcore-1_20_6', 'sereneseasons-1_20_6' ]
+    mods-1_20_6-implementation = [ 'configured-1_20_6', 'infernalmobs-1_20_6' ]
+    mods-1_20_6-runtime = [ 'architectury-1_20_6', 'glitchcore-1_20_6', 'jei-1_20_6', 'sereneseasons-1_20_6' ]
+    mods-1_21_1-compile = [ 'bookshelf-1_21_1', 'corgilib-1_21_1', 'dataanchor-1_21_1', 'enhancedcelestials-1_21_1',
+        'glitchcore-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_1-implementation = [ 'configured-1_21_1', 'coroutil-1_21_1', 'infernalmobs-1_21_1' ]
+    mods-1_21_1-runtime = [ 'architectury-1_21_1', 'bookshelf-1_21_1', 'corgilib-1_21_1', 'dataanchor-1_21_1',
+        'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'jei-1_21_1', 'sereneseasons-1_21_1' ]
 
 [libraries]
     architectury-1_20_4 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_4' }
@@ -27,6 +27,7 @@
     configured-1_20_6 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_20_6' }
     configured-1_21_1 = { group = 'curse.maven', name = 'configured-457570', version.ref = 'configured-1_21_1' }
 
+    corgilib-1_20_1 = { group = 'curse.maven', name = 'corgilib-693313', version.ref = 'corgilib-1_20_1' }
     corgilib-1_21_1 = { group = 'curse.maven', name = 'corgilib-693313', version.ref = 'corgilib-1_21_1' }
 
     coroutil-1_21_1 = { group = 'curse.maven', name = 'coroutil-237749', version.ref = 'coroutil-1_21_1' }
@@ -58,7 +59,7 @@
     neoforge_1_20_1 = '47.1.106'
     neoforge_1_20_4 = '249'
     neoforge_1_20_6 = '138'
-    neoforge_1_21_1 = '197'
+    neoforge_1_21_1 = '206'
     neoforge_1_21_3 = '87'
     neoforge_1_21_4 = '149'
     neoforge_1_21_5 = '90'
@@ -71,6 +72,7 @@
     configured-1_20_6 = '5340194'
     configured-1_21_1 = '5873783'
 
+    corgilib-1_20_1 = '6616784'
     corgilib-1_21_1 = '6808264'
 
     coroutil-1_21_1 = '5622966'
@@ -79,7 +81,7 @@
     dataanchor-1_21_1 = '6507634'
 
     enhancedcelestials-1_20_1 = '6318263'
-    enhancedcelestials-1_21_1 = '6320077'
+    enhancedcelestials-1_21_1 = '6849257'
 
     glitchcore-1_20_4 = '5088442'
     glitchcore-1_20_6 = '5352264'
@@ -99,7 +101,7 @@
     architectury-1_21_1 = '13.0.8+neoforge'
 
     bookshelf-1_20_4 = '23.1.11'
-    bookshelf-1_21_1 = '21.1.10'
+    bookshelf-1_21_1 = '21.1.69'
 
     jei-1_20_4 = '17.3.1.5'
     jei-1_20_6 = '18.0.0.66'

@@ -28,7 +28,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PAC
 @Setter @Getter
 public class TILBetterModScan extends ModFileScanData {
     
-    private static final Map<IModInfo,String> MOD_CLASSES = new HashMap<>();
     private static final Map<String,IModFile> MOD_FILES = new HashMap<>();
     private static final Map<String,MultiVersionModInfo> MOD_INFOS = new HashMap<>();
     private static final Set<String> NUKED_PACKAGES = new HashSet<>();
@@ -40,10 +39,6 @@ public class TILBetterModScan extends ModFileScanData {
     public void addFilePath(Path path) {
         PATHS.add(path);
         TILRef.logInfo("Adding file path to scan (total paths = {})",PATHS);
-    }
-    
-    public void setModClass(IModInfo mod, String className) {
-        MOD_CLASSES.put(mod,className);
     }
     
     public void addWrittenClass(String className, MultiVersionModInfo info, IModFile file, byte[] bytecode) {
@@ -124,8 +119,10 @@ public class TILBetterModScan extends ModFileScanData {
         return last;
     }
     
-    public String getModClass(IModInfo info) {
-        return MOD_CLASSES.get(info);
+    public String getModClass(String modid) {
+        for(Entry<String,MultiVersionModInfo> classToInfoEntry : MOD_INFOS.entrySet())
+            if(modid.equals(classToInfoEntry.getValue().getModID())) return classToInfoEntry.getKey();
+        return null;
     }
     
     protected IModInfo getModFromFile(IModFile file, String modid) {

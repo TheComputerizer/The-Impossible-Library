@@ -12,9 +12,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreEntryPointForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.TILCoreForge;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.asm.ModWriterForge;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.client.ClientForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.common.CommonForge1_16_5;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.asm.ModWriterForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v16.m5.core.loader.MultiVersionLoaderForge1_16_5;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.core.TILCore1_16_5;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -67,7 +67,7 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterForge1_16_5(this, info);
+        return new ModWriterForge(this,info);
     }
     
     @Override public void initAPI() {

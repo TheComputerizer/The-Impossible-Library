@@ -65,9 +65,9 @@ unimined.minecraft {
             map[cleanroom_verbose] = 'true'
         } else {
             //noinspection GroovyAssignabilityCheck
-            map[forge_log_markers_arg] = forge_log_markers_values
+            map[forge_log_markers_arg] = forge_log_markers_reduced
             //noinspection GroovyAssignabilityCheck
-            map[forge_log_level] = 'debug'
+            map[forge_log_level_console] = 'debug'
         }
     }
     mods {

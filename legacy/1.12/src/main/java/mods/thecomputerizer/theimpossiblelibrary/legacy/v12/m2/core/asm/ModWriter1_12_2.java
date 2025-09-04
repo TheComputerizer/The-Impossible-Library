@@ -5,17 +5,18 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.EMPTY_METHOD;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA21;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.JAVA8;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.PUBLIC;
 import static org.objectweb.asm.Type.VOID_TYPE;
 
@@ -25,7 +26,7 @@ public class ModWriter1_12_2 extends ModWriter {
     private static final Type MOD_ANNOTATION = TypeHelper.fml("common/Mod");
     
     public ModWriter1_12_2(CoreAPI core, MultiVersionModInfo info) {
-        super(core,info,CoreAPI.isJava8() ? JAVA8 : JAVA21);
+        super(core,info);
     }
     
     @Override protected void addClassAnnotations(ClassVisitor visitor) {
@@ -36,43 +37,36 @@ public class ModWriter1_12_2 extends ModWriter {
         });
     }
     
-    @Override protected Type getEventMethod(String className) {
-        return TypeHelper.method(VOID_TYPE,TypeHelper.fml("common/event/"+className));
+    @Override protected List<String[]> entryPointMappings() {
+        return Arrays.asList(
+                new String[]{"<init>","","onConstructed"},
+                new String[]{"preInit","FMLPreInitializationEvent","onPreRegistration"},
+                new String[]{"init","FMLInitializationEvent","onCommonSetup","checkClientSetup","checkDedicatedServerSetup"},
+                new String[]{"postInit","FMLPostInitializationEvent","onInterModEnqueue","onInterModProcess"},
+                new String[]{"loadComplete","FMLLoadCompleteEvent","onLoadComplete"},
+                new String[]{"serverAboutToStart","FMLServerAboutToStartEvent","onServerAboutToStart"},
+                new String[]{"serverStarting","FMLServerStartingEvent","onServerStarting"},
+                new String[]{"serverStarted","FMLServerStartedEvent","onServerStarted"},
+                new String[]{"serverStopping","FMLServerStoppingEvent","onServerStopping"},
+                new String[]{"serverStopped","FMLServerStoppedEvent","onServerStopped"});
     }
     
-    @Override protected void mappedEntryPointMethods(Map<String,String[]> redirects, Map<String,Type> types) {
-        mapEntryPointMethod(redirects,types,"<init>",EMPTY_METHOD,"onConstructed");
-        mapEntryPointMethod(redirects,types,"preInit",getEventMethod("FMLPreInitializationEvent"),
-                            "onPreRegistration");
-        mapEntryPointMethod(redirects,types,"init",getEventMethod("FMLInitializationEvent"),
-                            "onCommonSetup","checkClientSetup","checkDedicatedServerSetup");
-        mapEntryPointMethod(redirects,types,"postInit",getEventMethod("FMLPostInitializationEvent"),
-                            "onInterModEnqueue","onInterModProcess");
-        mapEntryPointMethod(redirects,types,"loadComplete",getEventMethod("FMLLoadCompleteEvent"),
-                            "onLoadComplete");
-        mapEntryPointMethod(redirects,types,"serverAboutToStart",getEventMethod("FMLServerAboutToStartEvent"),
-                            "onServerAboutToStart");
-        mapEntryPointMethod(redirects,types,"serverStarting",getEventMethod("FMLServerStartingEvent"),
-                            "onServerStarting");
-        mapEntryPointMethod(redirects,types,"serverStarted",getEventMethod("FMLServerStartedEvent"),
-                            "onServerStarted");
-        mapEntryPointMethod(redirects,types,"serverStopping",getEventMethod("FMLServerStoppingEvent"),
-                            "onServerStopping");
-        mapEntryPointMethod(redirects,types,"serverStopped",getEventMethod("FMLServerStoppedEvent"),
-                            "onServerStopped");
+    @Override protected Type getEventMethod(String className) {
+        if(TextHelper.isBlank(className)) return EMPTY_METHOD;
+        return TypeHelper.method(VOID_TYPE,TypeHelper.fml("common/event/"+className));
     }
     
     @Override protected void writeMod(ClassWriter writer, List<Entry<String,byte[]>> classBytes) {
         super.writeMod(writer,classBytes);
         for(Entry<String,String[]> entryPoint : this.entryPointMethods.entrySet()) {
-            String methodName = entryPoint.getKey();
-            if(methodName.equals("<init>")) continue;
-            Type eventType = this.entryPointMethodTypes.get(methodName);
-            writeMethod(writer,visitor -> ASMHelper.getMethod(visitor,PUBLIC,methodName,eventType.getArgumentTypes()),
-                    method -> {
-                        writeMethodAnnotation(method,EVENT_HANDLER,annotation -> {});
-                        addEntryHooks(method,false,methodName,false);
-                    });
+            final String methodName = entryPoint.getKey();
+            if("<init>".equals(methodName)) continue;
+            final Type[] eventArgs = this.entryPointMethodTypes.get(methodName).getArgumentTypes();
+            final Consumer<MethodVisitor> methodWriter = method -> {
+                writeMethodAnnotation(method,EVENT_HANDLER,annotation -> {});
+                addEntryHooks(method,false,methodName,false);
+            };
+            writeMethod(writer,cv -> ASMHelper.getMethod(cv,PUBLIC,methodName,eventArgs),methodWriter);
         }
     }
 }

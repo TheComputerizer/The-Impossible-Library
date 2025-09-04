@@ -9,8 +9,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm.ModWriterFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v21.common.TILCommonEntryPointFabric1_21;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v21.core.asm.ModWriterFabric1_21;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v21.core.loader.MultiVersionLoaderFabric1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.core.TILCore1_21;
 import net.fabricmc.loader.api.FabricLoader;
@@ -62,7 +62,7 @@ public abstract class TILCoreFabric1_21 extends TILCore1_21 implements TILCoreFa
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterFabric1_21(this,info);
+        return new ModWriterFabric(this,info);
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}

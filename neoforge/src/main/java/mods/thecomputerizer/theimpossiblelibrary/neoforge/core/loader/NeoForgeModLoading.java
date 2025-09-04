@@ -110,7 +110,6 @@ public class NeoForgeModLoading {
     static final String MOD_FILE_INFO_PARSER = "net.neoforged.neoforgespi.locating."+(JAVA_21 ? "" : "ModFileFactory$")+"ModFileInfoParser";
     static final String MOD_FILE_OR_EXCEPTION = "net.neoforged.neoforgespi.locating.IModLocator$ModFileOrException";
     static final String MOD_PROVIDER = "net.neoforged.neoforgespi.locating.IModProvider";
-    static final String MOD_READER = "net.neoforged.neoforgespi.locating.IModFileReader";
     static final String NIGHT_CONFIG_WRAPPER = "net.neoforged.fml.loading.moddiscovery.NightConfigWrapper";
     static final String SCANNER = MOD_SCAN_PKG+".Scanner";
     static final String SELF_ENTRYPOINT = "mods.thecomputerizer.theimpossiblelibrary.api.common.TILCommonEntryPoint";
@@ -126,6 +125,15 @@ public class NeoForgeModLoading {
         Hacks.setFieldDirect(file,"modFileType",getModFileType(type));
         if(JAVA_21) mods.add(GenericUtils.cast(file));
         else mods.add(Hacks.construct(MOD_FILE_OR_EXCEPTION,file,null));
+    }
+    
+    private static JarContents buildJarContents(Object contentsOrPath, String moduleName) {
+        return contentsOrPath instanceof JarContents contents ?
+                contents : buildJarContents(moduleName,(Path)contentsOrPath);
+    }
+    
+    public static JarContents buildJarContents(String moduleName, Path ... paths) {
+        return new JarContentsBuilder().paths(paths).defaultManifest(getDefaultManifest(moduleName)).build();
     }
     
     static void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {
@@ -176,11 +184,14 @@ public class NeoForgeModLoading {
     public static IModFile createModFile(Object pathOrJarContents, Object locator, MultiVersionModCandidate candidate,
             final Collection<?> infos, Type type) {
         String moduleName = getFirstModId(candidate,infos);
-        return createModFile(pathOrJarContents,locator,file -> getFileInfo(file,infos),type,moduleName);
+        IModFile file = createModFile(pathOrJarContents,locator,f -> getFileInfo(f,infos),type,moduleName);
+        CANDIDATE_MAP.put(candidate,file);
+        FILE_INFO_MAP.put(file,initInfoMap(candidate,infos));
+        return file;
     }
     
     private static IModFile createModFile(Object pathOrJarContents, Object locator,
-            Function<IModFile,IModFileInfo> parser, Object type, final String moduleName) {
+            Function<IModFile,IModFileInfo> parserFunc, Object type, final String moduleName) {
         if(Objects.isNull(dynamicModFileClass)) {
             LOGGER.error("Cannot create ModFile with null dynamicModFileClass! Did it fail to initialize?");
             return null;
@@ -196,14 +207,16 @@ public class NeoForgeModLoading {
             } else updatePathMap = true;
         }
         if(Objects.isNull(jar)) {
-            JarContents contents = pathOrJarContents instanceof JarContents ? (JarContents)pathOrJarContents :
-                    new JarContentsBuilder().paths((Path)pathOrJarContents).defaultManifest(getDefaultManifest(moduleName)).build();
-            jar = SecureJar.from(contents,getDefaultJarMetadata(contents,moduleName));
-            if(!MODULE_LAYERS) {
-                Hacks.setFieldDirect(jar,"packages",Collections.emptySet());
-                Hacks.setFieldDirect(jar,"providers",Collections.emptyList());
+            JarContents contents = buildJarContents(pathOrJarContents,moduleName);
+            if(DEV && TILDev.isLoaderPath(contents.getPrimaryPath())) {
+                Hacks.setFieldDirect(contents,"packages",Collections.emptySet());
+                Hacks.setFieldDirect(contents,"providers",Collections.emptyList());
             }
+            jar = SecureJar.from(contents,getDefaultJarMetadata(contents,moduleName));
         }
+        //ModFileInfoParser isn't an inner class in 1.20.6+ and we can't just cast Function (I already tried that)
+        Object parser = ClassHelper.newGenericProxy(Hacks.findClass(MOD_FILE_INFO_PARSER),"build",
+                args -> parserFunc.apply((IModFile)args[0]));
         IModFile file;
         if(JAVA_21) {
             Object discoveryAttributes = createDiscoveryAttributes(locator);
@@ -316,7 +329,7 @@ public class NeoForgeModLoading {
         String modFile = TypeHelper.get(ModFile.class).getInternalName();
         String modLoading = TypeHelper.get(NeoForgeModLoading.class).getInternalName();
         String writeModsDesc = TypeHelper.methodDesc(ModFileScanData.class,ModFile.class);
-        String identifyModsDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,OBJECT_TYPE);
+        String identifyModsDesc = TypeHelper.methodDesc(BOOLEAN_TYPE,TypeHelper.get(IModFile.class));
         
         MethodVisitor constructor = writer.visitMethod(PUBLIC,"<init>",constructorDesc,null,null);
         constructor.visitCode();
@@ -519,12 +532,31 @@ public class NeoForgeModLoading {
         return wrapConfig(config);
     }
     
+    /**
+     * 1.20.4 version
+     */
     private static Map<MultiVersionModInfo,MultiVersionModData> initInfoMap(
             Collection<MultiVersionModInfo> infos) {
+        infos = Objects.nonNull(infos) ? infos : Collections.emptyList();
         Map<MultiVersionModInfo,MultiVersionModData> infoMap = new HashMap<>();
         for(MultiVersionModInfo info : infos) infoMap.put(info,null);
         LOGGER.info("Created <info,data> map with {} entries for multiversion mod file ({}) using {}",
                     infos.size(),workingVersion,infos);
+        return infoMap;
+    }
+    
+    /**
+     * 1.20.6+ version
+     */
+    private static Map<MultiVersionModInfo,MultiVersionModData> initInfoMap(MultiVersionModCandidate candidate,
+            Collection<?> infos) {
+        CoreAPI core = CoreAPI.getInstance();
+        Map<MultiVersionModInfo,MultiVersionModData> infoMap = new HashMap<>();
+        for(Object o : infos) {
+            MultiVersionModInfo info = (MultiVersionModInfo)o;
+            MultiVersionModData data = core.getModData(new File("."),candidate,info);
+            infoMap.put(info,data);
+        }
         return infoMap;
     }
     
@@ -543,7 +575,10 @@ public class NeoForgeModLoading {
         scan.addModFileInfo(file.getModFileInfo());
         file.scanFile(p -> scanReflectively(Hacks.construct(SCANNER,file),p,scan));
         LOGGER.debug("Injecting @Mod annotations from multiversion mod info");
-        if(Objects.nonNull(scan.getAnnotations())) return scan;
+        if(Objects.nonNull(scan.getAnnotations())) {
+            scan.setCore(CoreAPI.getInstance());
+            return scan;
+        }
         LOGGER.error("@Mod scan annotation set for multiversion mod is null???");
         return null;
     }
@@ -642,6 +677,17 @@ public class NeoForgeModLoading {
         }
     }
     
+    /**
+     * Called via ASM from the generated ModFile extension
+     */
+    @IndirectCallers
+    public static void queryCoreMods(String ... resourcePaths) {
+        if(!fixedCoreMods && hasCoreModPath(resourcePaths)) {
+            fixCoreModPackages();
+            fixedCoreMods = true;
+        }
+    }
+    
     public static void queryCoreMods(Object file) {
         List<Object> coremods = Hacks.invokeStaticDirect(ModFileParser.class,"getCoreMods",file);
         if(Objects.nonNull(coremods)) {
@@ -663,7 +709,7 @@ public class NeoForgeModLoading {
         LOGGER.debug("Getting CoreAPI instance");
         CoreAPI instance = CoreAPI.getInstance();
         if(Objects.isNull(instance)) LOGGER.error("Failed to get CoreAPI instance :(");
-        Map<String,MultiVersionModData> data = Hacks.invoke(instance,"getModData",new File("."));
+        Map<String,MultiVersionModData> data = instance.getModData(new File("."));
         for(Entry<MultiVersionModCandidate,IModFile> candidateEntry : CANDIDATE_MAP.entrySet()) {
             IModFile candidateFile = candidateEntry.getValue();
             Map<MultiVersionModInfo,MultiVersionModData> map = FILE_INFO_MAP.get(candidateFile);
@@ -703,24 +749,19 @@ public class NeoForgeModLoading {
             set.add("neoforge."+coremodVersionExtension);
         coreModExtensions = set.stream().map(s -> BASE_PACKAGE+"."+s+".core").collect(Collectors.toSet());
         dynamicModFileClass = dynamicModFileCreator();
-        LOGGER.info("1.{} NeoForge Locator plugin loaded on {}",actualVersion,caller.getClassLoader());
+        LOGGER.info("{} NeoForge Locator plugin loaded on {}",actualVersion,caller.getClassLoader());
     }
     
     /**
      * Returns false if the version was not set correctly
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean setLoadingVersion(Class<?> caller, @Nullable Object coreInstance) {
+    public static boolean setLoadingVersion(Class<?> caller) {
         if(Objects.nonNull(workingVersion)) {
             LOGGER.debug("Tried to set loading version from {} after it was already set",caller);
-            return true;
-        }
-        if(Objects.isNull(coreInstance)) {
-            LOGGER.error("Failed to set Forge mod loading version with null CoreAPI instance!");
             return false;
         }
-        Hacks.checkBurningWaveInit();
-        String version = String.valueOf((Object)Hacks.invoke(coreInstance,"gameVersion"));
+        String version = String.valueOf(CoreAPI.gameVersion());
         String checkedVersion = version.substring(2).replace('.','_');
         NeoForgeModLoading.setFileVersion(caller,checkedVersion,version);
         LOGGER.info("Successfully set Neoforge mod loading version ({}->{})",checkedVersion,version);

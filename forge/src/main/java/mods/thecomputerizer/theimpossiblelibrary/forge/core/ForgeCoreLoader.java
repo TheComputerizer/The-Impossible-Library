@@ -425,7 +425,7 @@ public class ForgeCoreLoader { //TODO Refactor common accessors & setters for th
     /**
      * Returns a CoreAPI instance on the input ClassLoader. Initializes the source if necessary
      */
-    static @Nullable Object initCoreAPI(ClassLoader loader) {
+    public static @Nullable Object initCoreAPI(ClassLoader loader) {
         Hacks.checkBurningWaveInit();
         LOGGER.info("Starting CoreAPI init");
         Object bootInstance = getBootLoadedCoreAPI();

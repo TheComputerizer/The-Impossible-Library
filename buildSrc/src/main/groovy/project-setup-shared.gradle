@@ -17,6 +17,29 @@ createClassConfigs true, true
 createLoaderClassConfigs()
 initUnimined()
 
+/**
+ * Forge/Neoforge logging markers are calculated during SERVICE layer initializtion but we can just do it manually
+ */
+void addForgeLoggingMarkers(Map<?,?> propertyMap, boolean reduced, String ... exclusions) {
+    List<String> exclude_these = List.of exclusions
+    (reduced ? forge_log_markers_reduced : forge_log_markers_all).split(',').each {marker ->
+        if(!exclude_these.contains(marker)) {
+            //noinspection GroovyAssignabilityCheck
+            propertyMap["${forge_log_marker_arg}.$marker".toString()] = 'ACCEPT'
+        }
+    }
+}
+
+void setForgeLoggingLevel(Map<?,?> propertyMap, String level, String ... exclusions) {
+    List<String> exclude_these = List.of exclusions
+    forge_log_level_all.split(',').each {log ->
+        if(!exclude_these.contains(log)) {
+            //noinspection GroovyAssignabilityCheck
+            propertyMap["forge.logging.${log}.level".toString()] = level
+        }
+    }
+}
+
 unimined.minecraft {
     //Nothing to do here
 }
@@ -91,7 +114,7 @@ unimined.minecraft(sourceSets.tilforge) {
     if(!mappingStyleOfficial()) defaultRemapJar = true
     if(isRunnableVersion()) {
         if(!isJava8()) {
-            def build_files = getBuildFiles([main: [ 'classes\\java' ], tilforge: [ 'classes\\java', 'resources' ]])
+            def build_files = getBuildFiles( [main: [ 'classes\\java' ], tilforge: [ 'classes\\java', 'resources' ]] )
             logger.lifecycle "Adding build files to forge minecraftLibraries $build_files"
             configurations.tilforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
             tasks.compileTilforgeJava.mustRunAfter 'processTilforgeResources'
@@ -104,12 +127,8 @@ unimined.minecraft(sourceSets.tilforge) {
                 addCustomRunProperties map, 'tilforge'
                 //noinspection GroovyAssignabilityCheck
                 map[debug_network] = 'true'
-                //noinspection GroovyAssignabilityCheck
-                map[forge_log_level] = 'debug'
-                //noinspection GroovyAssignabilityCheck
-                map[forge_log_markers_arg] = forge_log_markers_values
-                //noinspection GroovyAssignabilityCheck
-                map[forge_module_layer_movement] = 'false'
+                addForgeLoggingMarkers map, true
+                setForgeLoggingLevel map, 'debug'
             }
             config('client') {
                 args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
@@ -155,24 +174,22 @@ if(isNeoforgeCompatible()) {
         combineWith sourceSets.main
         if(!mappingStyleOfficial()) defaultRemapJar = true
         if(isRunnableVersion()) {
-            //def build_files = getBuildFiles([main: [ 'classes\\java' ], tilneoforge: [ 'classes\\java', 'resources' ]])
-            //logger.lifecycle "Adding build files to neoforge minecraftLibraries $build_files"
-            //configurations.tilneoforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
-            //tasks.compileTilneoforgeJava.mustRunAfter 'processTilneoforgeResources'
             runs{
+                def build_files = getBuildFiles( [main: [ 'classes\\java' ], tilneoforge: [ 'classes\\java', 'resources' ]] )
+                logger.lifecycle "Adding build files to neoforge minecraftLibraries $build_files"
+                configurations.tilneoforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
+                tasks.compileTilneoforgeJava.mustRunAfter 'processTilneoforgeResources'
                 //noinspection ConfigurationAvoidance
                 all {
                     javaVersion = getJavaVersionEnum()
                     Map<?,?> map = getSystemProperties()
                     addCustomRunProperties map, 'tilneoforge'
-                    //noinspection GroovyAssignabilityCheck
-                    map[debug_network] = 'true'
-                    //noinspection GroovyAssignabilityCheck
-                    map[forge_log_level] = 'debug'
-                    //noinspection GroovyAssignabilityCheck
-                    map[forge_log_markers_arg] = forge_log_markers_values
-                    //noinspection GroovyAssignabilityCheck
-                    map[neoforge_module_layer_movement] = 'false'
+                    [ debug_network, forge_bootstrap_debug ].forEach {debug_prop ->
+                        //noinspection GroovyAssignabilityCheck
+                        map[debug_prop] = 'true'
+                    }
+                    addForgeLoggingMarkers map, true
+                    setForgeLoggingLevel map, 'debug'
                 }
                 config('server') {
                     args+=[ 'nogui' ]
@@ -354,8 +371,9 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     //Makes it so runtime mods can be disabled per loader to avoid mapping issues when testing
     List<String> enabled_runtime_mods = [ ]
     //Selectively enable which versions should have Music Triggers added to the runtime
-    Map<String,List<String>> enabled_mt = [fabric: [ 'all' ], forge: [ 'all' ], neoforge: [ 'all' ]]
-    boolean neoforge_legacy_classpath = true
+    Map<String,List<String>> enabled_mt = [ fabric: [ 'all' ], forge: [ 'all' ], neoforge: [ 'all' ] ]
+    boolean enable_neoforge_legacy_classpath = true
+    boolean neoforge_legacy_classpath = isNeoforgeCompatible() && enable_neoforge_legacy_classpath
     Function<String,Boolean> check_legacy_classpath = l -> 'forge'==l || (neoforge_legacy_classpath && 'neoforge'==l)
 
     setCommonRepositories maven_ids

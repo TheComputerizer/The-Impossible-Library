@@ -1,69 +1,76 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
 import cpw.mods.jarhandling.JarContents;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
+import cpw.mods.niofs.union.UnionPath;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
 import net.neoforged.neoforgespi.ILaunchContext;
 import net.neoforged.neoforgespi.locating.IDiscoveryPipeline;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModFileCandidateLocator;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
+import static java.io.File.separatorChar;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder.MULTIVERSION_COREMODS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder.MULTIVERSION_MODS;
+import static net.neoforged.neoforgespi.locating.IModFile.Type.LIBRARY;
 
 /**
  * Since this library is loaded as a service, we need to tell NeoForge that it's also a mod
  */
 public class TILSelfLocator extends TILModFinderNeoForge1_21 implements IModFileCandidateLocator {
     
-    private static final CoreAPI CORE;
-    private static final String JAR_EXT = ".jar";
-    private static final String IMPL_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core";
-    private static final String LOCATING_PKG = "net.neoforged.neoforgespi.locating";
-    private static final String MOD_FILE_IMPL = IMPL_PKG+".TILSelfLocator";
-    private static final String MOD_FILE_SERVICE = LOCATING_PKG+".IModFileCandidateLocator";
-    private static final String MOD_LANGUAGE_IMPL = IMPL_PKG+".MultiVersionLanguageLoader";
-    private static final String MOD_LANGUAGE_SERVICE = LOCATING_PKG+".IModLanguageLoader";
-    private static final String MOD_READER_IMPL = IMPL_PKG+".MultiVersionModReader";
-    private static final String MOD_READER_SERVICE = LOCATING_PKG+".IModFileReader";
-    private static final boolean WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+    static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
+    static final String SOURCE_NAME = "tilneoforge";
     
-    static {
-        Class<?> c = TILSelfLocator.class;
-        ClassLoader loader = c.getClassLoader();
-        NeoForgeCoreLoader.fixForServiceLayer();
-        CORE = (CoreAPI)NeoForgeCoreLoader.initCoreAPI(loader);
-        if(Objects.isNull(CORE))
-            throw new RuntimeException("Failed to retrieve CoreAPI instance for TILSelfLocator");
-        if(!NeoForgeModLoading.setLoadingVersion(c,CORE))
-            throw new RuntimeException("Failed to set mod loading version for TILSelfLocator!");
-        if(loader!=NeoForgeCoreLoader.bootLoader()) {
-            NeoForgeCoreLoader.fixService(MOD_FILE_SERVICE,MOD_FILE_IMPL,loader,true);
-            NeoForgeCoreLoader.fixService(MOD_LANGUAGE_SERVICE,MOD_LANGUAGE_IMPL,loader);
-            NeoForgeCoreLoader.fixService(MOD_READER_SERVICE,MOD_READER_IMPL,loader);
-        }
-    }
+    static final String[] RELATIVE_SOURCE_PATHS = new String[]{
+            "classes"+separatorChar+"java"+separatorChar+"main",
+            "classes"+separatorChar+"java"+separatorChar+SOURCE_NAME,
+            "resources"+separatorChar+SOURCE_NAME,
+    };
     
     public TILSelfLocator() {
-        super(CORE);
+        super();
     }
     
     boolean addSelf(URL url, IDiscoveryPipeline pipeline) throws Exception {
         this.logger.info("Attempting to read self from URL {}",url);
-        Path path = Paths.get(url.toURI()).toAbsolutePath();
-        this.logger.info("Attempting to read self from path {}",path);
-        IModFile file = findAndLoad(JarContents.of(path),() -> this);
+        Path[] paths = fixedPath(url);
+        this.logger.info("Attempting to read self from paths {}",Arrays.toString(paths));
+        IModFile file = findAndLoad(NeoForgeModLoading.buildJarContents(MODID,paths),() -> this,LIBRARY);
         if(Objects.nonNull(file)) {
             pipeline.addModFile(file);
             return true;
         }
         this.logger.error("Read IModFile instance as null!");
         return false;
+    }
+    
+    Path[] expandedLoaderPaths(String basePath) {
+        Path[] newPaths = new Path[3];
+        for(int i=0;i<RELATIVE_SOURCE_PATHS.length;i++)
+            newPaths[i] = Path.of(basePath+RELATIVE_SOURCE_PATHS[i]);
+        return newPaths;
+    }
+    
+    /**
+     * Returns the path with the file separator at the end
+     */
+    String extractBasePath(String pathStr) {
+        for(String relativePath : RELATIVE_SOURCE_PATHS)
+            if(pathStr.endsWith(relativePath))
+                return pathStr.substring(0,pathStr.length()-relativePath.length());
+        this.logger.error("Failed to extract base path from {}",pathStr);
+        return pathStr;
     }
     
     @Override public void findCandidates(ILaunchContext context, IDiscoveryPipeline pipeline) {
@@ -75,12 +82,24 @@ public class TILSelfLocator extends TILModFinderNeoForge1_21 implements IModFile
         }
     }
     
-    //TODO Needs to be verified or maybe there's a better way of extracting the path
-    String fixPath(String path) {
-        if(WINDOWS && (path.startsWith("/") || path.startsWith("\\"))) path = path.substring(1);
-        if(path.contains(JAR_EXT) && !path.endsWith(JAR_EXT))
-            path = path.substring(0,path.lastIndexOf(JAR_EXT)+JAR_EXT.length());
-        return path.replace("%20"," ");
+    Path[] fixedPath(URL url) throws Exception {
+        Path path = Paths.get(url.toURI());
+        path = (path instanceof UnionPath union ? union.getFileSystem().getPrimaryPath() : path).toAbsolutePath();
+        if(DEV) {
+            File f = path.toFile();
+            String fileName = f.getName();
+            if(f.isDirectory() && ("main".equals(fileName) || SOURCE_NAME.equals(fileName)))
+                return expandedLoaderPaths(extractBasePath(path.toString()));
+        }
+        return new Path[]{path};
+    }
+    
+    @Override protected Manifest getManifest(JarContents jar) {
+        Manifest manifest = super.getManifest(jar);
+        Attributes attributes = manifest.getMainAttributes();
+        attributes.putIfAbsent(MULTIVERSION_COREMODS,API_PKG+".core.TILCoreEntryPoint");
+        attributes.putIfAbsent(MULTIVERSION_MODS,API_PKG+".common.TILCommonEntryPoint");
+        return manifest;
     }
     
     /**

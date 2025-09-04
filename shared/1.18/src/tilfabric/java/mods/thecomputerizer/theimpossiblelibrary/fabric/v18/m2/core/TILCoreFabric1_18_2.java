@@ -11,10 +11,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoa
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreEntryPointFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.core.TILCoreFabric;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm.ModWriterFabric;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.client.ClientFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common.CommonFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.common.TILCommonEntryPointFabric1_18_2;
-import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.core.asm.ModWriterFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v18.m2.core.loader.MultiVersionLoaderFabric1_18_2;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.core.TILCore1_18_2;
 import net.fabricmc.loader.api.FabricLoader;
@@ -63,7 +63,7 @@ public class TILCoreFabric1_18_2 extends TILCore1_18_2 implements TILCoreFabric 
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterFabric1_18_2(this,info);
+        return new ModWriterFabric(this,info);
     }
     
     @Override public void initAPI() {

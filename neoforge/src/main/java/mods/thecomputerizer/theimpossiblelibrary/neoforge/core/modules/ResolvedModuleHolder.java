@@ -62,4 +62,26 @@ public record ResolvedModuleHolder(ResolvedModuleAccess module, ModuleClassLoade
     public Set<String> getPackages() {
         return this.module.packages();
     }
+    
+    public String layerName() {
+        return getLayer().name();
+    }
+    
+    public String moduleName() {
+        return this.module.name();
+    }
+    
+    /**
+     * Get a resolved module in the current loader.
+     * Returns null if it isn't found or this if the package is in the same module.
+     */
+    public ResolvedModuleHolder otherPackageRef(String pkg) {
+        ResolvedModuleHolder holder = findPackage(pkg,this.loader);
+        if(Objects.nonNull(holder) && moduleName().equals(holder.moduleName())) return this;
+        return holder;
+    }
+    
+    public void removePackagesFromLoader() {
+        this.loader.removePackagesForModule(this.module);
+    }
 }

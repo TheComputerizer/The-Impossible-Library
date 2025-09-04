@@ -2,10 +2,6 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ClassAccess;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
-import mods.thecomputerizer.theimpossiblelibrary.forge.core.modules.ForgeModuleAccess;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -49,17 +45,6 @@ public class TILLanguageProvider implements IModLanguageProvider {
                 ForgeCoreLoader.layerClassLoader("PLUGIN");
         this.core = ForgeCoreLoader.initCoreAPI(pluginLoader);
         LOGGER.info("Retrieved CoreAPI instance {} for multiversion language provider",this.core);
-        if(ForgeCoreLoader.isJava8()) LOGGER.debug("{} successfully initialized in Java 8",getClass());
-        else {
-            ClassAccess c = ModuleSystemAccessor.getClassAccess(getClass(),LOGGER);
-            if(Objects.nonNull(c)) {
-                ModuleAccess module = c.getModule();
-                LOGGER.debug("{} succesfully initilized in module {}",c.access(),module.getName());
-                LOGGER.debug("Packages for module: {}",module.getPackages());
-                LOGGER.debug("Module in layer: {}", ForgeModuleAccess.getModuleLayerName(module));
-            }
-            else LOGGER.error("Failed to get ClassAccess for {}???",getClass());
-        }
     }
     
     @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> ignored)  {}

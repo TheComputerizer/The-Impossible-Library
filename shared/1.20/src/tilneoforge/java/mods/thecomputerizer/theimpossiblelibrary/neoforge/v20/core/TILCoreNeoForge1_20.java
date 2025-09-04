@@ -12,7 +12,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoa
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreEntryPointNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreNeoforge;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core.asm.ModWriterNeoForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.asm.ModWriterNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core.loader.MultiVersionLoaderNeoForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.core.TILCore1_20;
 
@@ -54,7 +54,7 @@ public abstract class TILCoreNeoForge1_20 extends TILCore1_20 implements TILCore
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterNeoForge1_20(this,info);
+        return new ModWriterNeoForge(this,info);
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}

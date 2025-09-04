@@ -48,7 +48,7 @@ public class SecureJarAccess extends AbstractModuleSystemAccessor {
     
     public ModuleFinderAccess newModuleFinder() {
         Object arg = SECURE_CLASSLOADER_FORMAT ? Collections.singletonList(this.access) : this.access;
-        return construct(MODULE_FINDER_EXTENSION_CLASS,arg);
+        return new ModuleFinderAccess(construct(MODULE_FINDER_EXTENSION_CLASS,arg),this);
     }
     
     public Set<String> packages() {

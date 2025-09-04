@@ -1,9 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core;
 
 import cpw.mods.jarhandling.JarContents;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModFileReader;
 import net.neoforged.neoforgespi.locating.ModFileDiscoveryAttributes;
@@ -11,26 +8,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
+import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
+
 public class MultiVersionModReader extends TILModFinderNeoForge1_21 implements IModFileReader {
-    
-    private static final CoreAPI CORE;
-    
-    static {
-        Class<?> c = MultiVersionModReader.class;
-        CORE = (CoreAPI)NeoForgeCoreLoader.initCoreAPI(c.getClassLoader());
-        if(Objects.isNull(CORE))
-            throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModReader");
-        if(!NeoForgeModLoading.setLoadingVersion(c,CORE))
-            throw new RuntimeException("Failed to set mod loading version for MultiVersionModReader!");
-    }
     
     static final Set<String> alreadyHandled = new HashSet<>();
     
     public MultiVersionModReader() {
-        super(CORE);
+        super();
     }
     
     /**
@@ -53,6 +40,6 @@ public class MultiVersionModReader extends TILModFinderNeoForge1_21 implements I
     }
     
     @Override public @Nullable IModFile read(JarContents jar, ModFileDiscoveryAttributes attributes) {
-        return findAndLoad(jar,() -> attributes.withReader(this));
+        return findAndLoad(jar,() -> attributes.withReader(this),MOD);
     }
 }

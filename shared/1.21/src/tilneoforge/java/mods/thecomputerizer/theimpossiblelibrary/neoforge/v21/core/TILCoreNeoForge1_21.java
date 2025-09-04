@@ -11,11 +11,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreEntryPointNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILCoreNeoforge;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.asm.ModWriterNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.client.TILClientEntryPointNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.common.TILCommonEntryPointNeoForge1_21;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.asm.ModWriterNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.core.loader.MultiVersionLoaderNeoForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.core.TILCore1_21;
 import net.neoforged.fml.loading.targets.CommonLaunchHandler;
@@ -30,13 +31,13 @@ public abstract class TILCoreNeoForge1_21 extends TILCore1_21 implements TILCore
 
     public static final Reference NEOFORGE_REF = TILRef.instance(() -> isClient(Launcher.INSTANCE),"");
     
-    static ILaunchHandlerService findLaunchHandler(Environment environment) {
+    static <L extends ILaunchHandlerService> L findLaunchHandler(Environment environment) {
         final String launchTarget = environment.getProperty(LAUNCHTARGET.get()).orElse("MISSING");
-        return environment.findLaunchHandler(launchTarget).orElse(null);
+        return GenericUtils.cast(environment.findLaunchHandler(launchTarget).orElse(null));
     }
     
     static boolean isClient(Launcher launcher) {
-        final CommonLaunchHandler launch = (CommonLaunchHandler)findLaunchHandler(launcher.environment());
+        final CommonLaunchHandler launch = findLaunchHandler(launcher.environment());
         return Objects.isNull(launch) || launch.getDist().isClient();
     }
     
@@ -70,7 +71,7 @@ public abstract class TILCoreNeoForge1_21 extends TILCore1_21 implements TILCore
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {
-        return new ModWriterNeoForge1_21(this,info);
+        return new ModWriterNeoForge(this,info);
     }
 
     @Override public void injectWrittenMod(Class<?> containerClass, String modid) {}

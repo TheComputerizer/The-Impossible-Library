@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.core;
 
 import cpw.mods.modlauncher.api.IModuleLayerManager.Layer;
 import io.github.toolfactory.jvm.function.catalog.ConsulterSupplyFunction;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ClassAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationAccess;
@@ -10,7 +12,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAcc
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ServicesCatalogAccess;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ArgumentHandlerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.LayerInfoAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModFileInfoAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModuleClassLoaderAccess;
@@ -32,20 +33,17 @@ import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.PLUGIN;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.SERVICE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
-import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
-import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
-import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 /**
  * Figures out which version to load on and how to load stuff on it
  */
 @SuppressWarnings({"unused","LoggingSimilarMessage"})
-public class NeoForgeCoreLoader {
+public class NeoForgeCoreLoader { //TODO So much of this is obselete now :(
     
     public static final boolean MODULE_LAYERS = Boolean.parseBoolean(System.getProperty("til.debug.neoforge.modules.layers","true"));
     private static final String API_PKG = "mods.thecomputerizer.theimpossiblelibrary.api";
-    private static final String COREAPI_CLASS = API_PKG+".core.CoreAPI";
+    private static final String CORE_PKG = API_PKG+".core";
+    private static final String COREAPI_CLASS = CORE_PKG+".CoreAPI";
     private static final String NEOFORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge";
     private static final String NEOFORGE_CORE_PKG = NEOFORGE_PKG+".core";
     private static final Logger LOGGER = LogManager.getLogger("TIL NeoforgeCoreLoader");
@@ -117,24 +115,33 @@ public class NeoForgeCoreLoader {
      * package in the right ResolvedModule. Luckily we already have those in the current (SERVICE) layer, so
      * all we need to do is transfer some stuff over and then handle the duplicates
      */
-    private static void addResolvedModule(ResolvedModuleAccess resolvedModule, ModuleClassLoaderAccess thisLoader) {
-        ModuleClassLoaderAccess loader = bootLoaderAccess();
+    private static void addResolvedModule(ResolvedModuleHolder source,
+            ModuleClassLoaderAccess targetLoader, Consumer<ResolvedModuleHolder> ifValidMovement) {
+        ModuleClassLoaderAccess sourceLoader = source.loader();
+        ResolvedModuleAccess sourceModule = source.module();
+        if(sourceLoader.access()==targetLoader.access()) {
+            LOGGER.debug("Not adding module {} to matching source loader {}",sourceModule.name(),
+                         targetLoader.layerName());
+            return;
+        }
         
-        loader.addRoot(resolvedModule);
-        loader.addPackages(resolvedModule);
+        String moduleName = sourceModule.name();
+        Set<String> pkgs = sourceModule.packages();
+        targetLoader.addRoot(sourceModule);
+        targetLoader.addPackages(sourceModule);
         
-        Set<String> pkgs = resolvedModule.packages();
-        
-        //Finalize by moving the original Module from SERVICE to the BOOT layer & fixing parent loaders
-        NeoforgeModuleAccess.moveModule(SERVICE,BOOT,resolvedModule.name());
-        thisLoader.addParentLoaders(pkgs,loader);
+        //Finalize by moving the original Module from the source to the targer layer & fixing parent loaders
+        NeoforgeModuleAccess.moveModule(sourceLoader,targetLoader,moduleName);
+        sourceLoader.addParentLoaders(pkgs,targetLoader);
+        ifValidMovement.accept(source);
         
         //Fix configurations & prevent reading duplicate modules
-        loader.configuration().addModuleIfAbsent(resolvedModule);
-        thisLoader.configuration().removeModule(resolvedModule);
-        thisLoader.removeRoot(resolvedModule.name());
+        targetLoader.configuration().addModuleIfAbsent(sourceModule);
+        sourceLoader.configuration().removeModule(sourceModule);
+        sourceLoader.removeRoot(moduleName);
         
-        LOGGER.debug("Finished migrating module {} from the SERVICE layer to the BOOT layer",resolvedModule.name());
+        LOGGER.debug("Finished migrating module {} from the {} layer to the {} layer",moduleName,
+                     sourceLoader.layerName(),targetLoader.layerName());
     }
     
     /**
@@ -155,25 +162,6 @@ public class NeoForgeCoreLoader {
         NeoforgeModuleAccess.exportAllPackages(BOOT,SERVICE,PLUGIN,GAME);
     }
     
-    static Class<?> findClassInHeirarchy(ClassLoader loader, String className) {
-        Class<?> foundClass = null;
-        ClassLoader searchIn = loader;
-        while(Objects.nonNull(searchIn)) {
-            try {
-                foundClass = Driver.getClassByName(className,false,loader,Classes.getClass());
-            } catch(Throwable t) {
-                LOGGER.debug("Class not found in ClassLoader {} (name = {})",searchIn,className);
-            }
-            if(Objects.nonNull(foundClass)) break;
-            searchIn = ClassLoaders.getParent(searchIn);
-        }
-        if(Objects.isNull(foundClass)) {
-            LOGGER.error("Class {} not found in ClassLoader heirarchy for {}",className,loader);
-            return null;
-        }
-        return foundClass;
-    }
-    
     /**
      * Returns an array where the elements are the ClassLoader, resolved module, and the name of the layer.
      * Assumes the given loaders array will always be in the order of BOOT, SERVICE, PLUGIN, GAME
@@ -189,16 +177,18 @@ public class NeoForgeCoreLoader {
     }
     
     public static void fixForServiceLayer() {
+        if(!MODULE_LAYERS) {
+            handleDevLoading(1);
+            return;
+        }
         LOGGER.info("Running SERVICE layer fix");
-        String pkg = ConsulterSupplyFunction.class.getPackage().getName();
-        ClassLoader thisLoader = NeoForgeCoreLoader.class.getClassLoader();
-        ModuleClassLoaderAccess loaderAccess = NeoforgeModuleAccess.getModuleClassLoader(thisLoader);
-        ResolvedModuleAccess resolvedModule = loaderAccess.getResolvedModule(pkg);
-        if(Objects.nonNull(resolvedModule)) {
-            if(MODULE_LAYERS) {
-                loaderAccess.removePackagesForModule(resolvedModule);
-                addResolvedModule(resolvedModule,loaderAccess);
-            } else handleDevLoading(1);
+        String pkg = NeoForgeCoreLoader.class.getPackage().getName();
+        ResolvedModuleHolder holder = ResolvedModuleHolder.findPackage(pkg,BOOT,SERVICE);
+        if(Objects.nonNull(holder)) {
+            LOGGER.debug("Found module {} for {} in layer {}",holder.moduleName(),pkg,holder.layerName());
+            ModuleClassLoaderAccess targetLoader = bootLoaderAccess();
+            Consumer<ResolvedModuleHolder> ifValidMovement = ResolvedModuleHolder::removePackagesFromLoader;
+            addResolvedModule(holder,targetLoader,ifValidMovement);
         } else LOGGER.fatal("FAILED TO GET RESOLVED MODULE FOR {}",pkg);
     }
     
@@ -207,8 +197,14 @@ public class NeoForgeCoreLoader {
     }
     
     public static void fixService(String service, String impl, ClassLoader loaderFrom, boolean isRemoval) {
-        LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
+        Class<?> coreClass = NeoForgeCoreLoader.class;
         ModuleClassLoaderAccess bootLoader = bootLoaderAccess();
+        if(bootLoader.unwrap()!=coreClass.getClassLoader()) {
+            Hacks.invokeStatic(Hacks.findClass(coreClass.getName(),bootLoader.unwrap()),"fixService",service,
+                               impl,loaderFrom,isRemoval);
+            return;
+        }
+        LOGGER.info("Attempting to fix service {} (implementation of {})",impl,service);
         String pkg = ConsulterSupplyFunction.class.getPackage().getName();
         ResolvedModule resolvedModule = bootLoader.packageLookup().get(pkg);
         if(Objects.isNull(resolvedModule)) {
@@ -218,7 +214,7 @@ public class NeoForgeCoreLoader {
         String name = resolvedModule.name();
         ModuleLayerAccess serviceLayer = NeoforgeModuleAccess.getModuleLayer(SERVICE);
         ModuleLayerAccess bootLayer = bootLoader.getModuleLayer();
-        Map<String,Module> nameToModule = Fields.getDirect(bootLayer,"nameToModule");
+        Map<String,Object> nameToModule = bootLayer.nameToModule();
         Module module = (Module)bootLayer.nameToModule().get(name);
         if(Objects.isNull(module)) {
             LOGGER.error("Failed to get module {} in BOOT layer!",name);
@@ -229,30 +225,43 @@ public class NeoForgeCoreLoader {
             fixServiceFor(service,impl,module,serviceLayer,true);
             try {
                 Class<?> implClass = Class.forName(impl,false,bootLoader.unwrap());
-                Fields.setDirect(implClass,"module",module);
-                Fields.setDirect(implClass,"classLoader",bootLoader.unwrap());
+                Hacks.setFieldDirect(implClass,"module",module);
+                Hacks.setFieldDirect(implClass,"classLoader",bootLoader.unwrap());
             } catch(ClassNotFoundException ignored) {} //The class won't be found when loading in 1.20.4
         }
         LOGGER.info("Sucessfully notified the ServicesCatalog that {} has been moved",impl);
     }
     
-    private static void fixServiceFor(String service, String impl, Module module, ModuleLayerAccess layer,
+    private static void fixServiceFor(String service, String impl, Module module, Object layer,
             boolean isRemoval) {
-        ServicesCatalogAccess catalog = layer.getServicesCatalog();
-        if(!catalog.removeImplementations(service,impl) && !isRemoval) catalog.addProvider(service,module,impl);
-    }
-    
-    public static @Nullable Object getBootLoadedCoreAPI() {
-        return getCoreAPIReflectively(bootLoader());
-    }
-    
-    static Object getCoreAPIReflectively(ClassLoader loader) {
-        try {
-            return Hacks.getFieldStatic(Hacks.findClass(COREAPI_CLASS,loader),"INSTANCE");
-        } catch(Throwable ignored) {
-            LOGGER.debug("CoreAPI not found on {}",loader);
+        ServicesCatalogAccess catalog = Hacks.invoke(layer,"getServicesCatalog");
+        if(Objects.nonNull(catalog)) {
+            if(isRemoval) {
+                if(catalog.removeImplementations(service,impl))
+                    LOGGER.debug("Successfully removed service implementation {} (service={})",impl,service);
+                else LOGGER.debug("Service implementation was not present {} (service={})",impl,service);
+            }
+            else {
+                catalog.addProvider(service,module,impl);
+                LOGGER.debug("Successfully added service implementation {} (service={})",impl,service);
+            }
         }
-        return null;
+    }
+    
+    public static @Nullable CoreAPI getBootLoadedCoreAPI() {
+        return getCoreAPIReflectively(bootLoaderAccess());
+    }
+    
+    static CoreAPI getCoreAPIReflectively(ModuleClassLoaderAccess loader) {
+        CoreAPI coreInstance;
+        try {
+            Class<?> c = ClassHelper.existsOn(COREAPI_CLASS,loader.unwrap());
+            coreInstance = Objects.nonNull(c) ? Hacks.getFieldStatic(c,"INSTANCE") : null;
+        } catch(Throwable ignored) {
+            coreInstance = null;
+        }
+        if(Objects.isNull(coreInstance)) LOGGER.debug("CoreAPI not found on {} layer",loader.layerName());
+        return coreInstance;
     }
     
     public static Object getLogger() {
@@ -262,6 +271,7 @@ public class NeoForgeCoreLoader {
     /**
      * Returns the index of the first matching element in the array or -1 if nothing matches
      */
+    @SuppressWarnings("SameParameterValue")
     static <T> int getMatchingArrayIndex(T[] array, T value) {
         if(Objects.isNull(array) || array.length==0) return -1;
         for(int i=0;i<array.length;i++)
@@ -270,23 +280,17 @@ public class NeoForgeCoreLoader {
     }
     
     static String getVersionStr() {
-        ArgumentHandlerAccess handler = NeoforgeModuleAccess.getLauncher().argumentHandler();
+        Class<?> accessClass = Hacks.findClass(NeoforgeModuleAccess.class.getName(),bootLoader());
+        Object launcher = Hacks.invokeStatic(accessClass,"getLauncher");
+        Object handler = Objects.nonNull(launcher) ? Hacks.invoke(launcher,"argumentHandler") : null;
         if(Objects.isNull(handler)) return null;
-        String[] rawArgs = handler.getArgs();
+        String[] rawArgs = Hacks.invoke(handler,"getArgs");
         if(Objects.isNull(rawArgs)) {
             LOGGER.error("Failed to find version using handler {}",handler);
             return null;
         }
-        int versionIndex = -1;
-        boolean found = false;
-        for(int i=0;i<rawArgs.length;i++) {
-            if(rawArgs[i].equals("--fml.mcVersion")) {
-                versionIndex = i+1;
-                found = true;
-                break;
-            }
-        }
-        if(found) {
+        int versionIndex = getMatchingArrayIndex(rawArgs,"--fml.mcVersion")+1;
+        if(versionIndex>0) {
             LOGGER.debug("Found fml.mcVersion arg at index {} -> {}",versionIndex,rawArgs[versionIndex]);
             return rawArgs[versionIndex];
         }
@@ -352,22 +356,19 @@ public class NeoForgeCoreLoader {
     /**
      * Returns a CoreAPI instance on the input ClassLoader. Initializes the source if necessary
      */
-    public static @Nullable Object initCoreAPI(ClassLoader loader) {
+    public static @Nullable CoreAPI initCoreAPI(ClassLoader loader) {
         LOGGER.debug("Starting CoreAPI init");
-        Object bootInstance = getBootLoadedCoreAPI();
+        CoreAPI bootInstance = getBootLoadedCoreAPI();
         if(Objects.nonNull(bootInstance)) {
             LOGGER.debug("Returning existing CoreAPI instance found in the BOOT layer");
             return bootInstance;
         }
         String version = getVersionStr();
-        Class<?> coreClass = loadAPI(version,bootLoader());
+        Class<?> coreClass = loadAPI(version,bootLoader()); //Throws an exception instead of returning null
         try {
-            //noinspection deprecation
-            return coreClass.newInstance();
-        } catch(InstantiationException | IllegalAccessException ex) {
-            LOGGER.fatal("Caught reflection exception while trying to get CoreAPI instance as {}",coreClass,ex);
-        } catch(Exception ex) {
-            LOGGER.fatal("Unknown error while trying to get CoreAPI instance as {}",coreClass,ex);
+            return Hacks.construct(coreClass);
+        } catch(Throwable t) {
+            LOGGER.fatal("Unknown error while trying to get CoreAPI instance as {}",coreClass,t);
         }
         LOGGER.fatal("Failed to initialize CoreAPI [Neoforge-{}] using {}",version,loader);
         return null;
@@ -389,13 +390,7 @@ public class NeoForgeCoreLoader {
      * Returns the instance class
      */
     static Class<?> loadAPI(String version, ClassLoader loader) {
-        String className = versionClassName("core.TILCoreNeoforge",version);
-        Class<?> clazz = null;
-        try {
-            clazz = Class.forName(className,true,loader);
-        } catch(Exception ex) {
-            LOGGER.error("Failed to load class {} for {}",className,loader,ex);
-        }
+        Class<?> clazz = Hacks.findClass(versionClassName("core.TILCoreNeoForge",version),loader,true);
         if(Objects.isNull(clazz)) throw new RuntimeException("Failed to load CoreAPI instance [Neoforge-"+version+"]");
         LOGGER.debug("Successfully loaded CoreAPI instance {}",clazz);
         return clazz;

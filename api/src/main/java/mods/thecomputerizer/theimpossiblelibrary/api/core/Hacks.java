@@ -163,7 +163,12 @@ public class Hacks {
             LOGGER.error("Tried to call construct on null target class! (args = {})",args);
             return null;
         }
-        return Constructors.newInstanceOf(target,args);
+        try {
+            return Constructors.newInstanceOf(target,args);
+        } catch(Throwable t) {
+            LOGGER.error("Failed to contruct {} with args {}",target,args);
+            throw t;
+        }
     }
     
     /**

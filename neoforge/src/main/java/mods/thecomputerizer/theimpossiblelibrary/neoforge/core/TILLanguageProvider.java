@@ -1,57 +1,50 @@
 package mods.thecomputerizer.theimpossiblelibrary.neoforge.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
-import net.neoforged.neoforgespi.language.ILifecycleEvent;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.TILLanguageLoader;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.core.loader.TILLanguageLoader1_20;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforgespi.language.IModLanguageProvider;
 import net.neoforged.neoforgespi.language.ModFileScanData;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.Type;
 
-import java.util.Objects;
+import java.util.Map;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.PLUGIN;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class TILLanguageProvider implements IModLanguageProvider {
     
-    private static final String IMPL_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge.core";
-    private static final String NEOFORGE_PKG = "net.neoforged.neoforgespi";
-    private static final String MOD_PROVIDER_IMPL = IMPL_PKG+".TILLanguageProvider";
-    private static final String MOD_PROVIDER_SERVICE = NEOFORGE_PKG+".language.IModLanguageProvider";
+    static final Logger LOGGER = TILRef.createLogger("TIL Language Provider (Neoforge)");
     
-    static {
-        NeoForgeCoreLoader.removeServiceFrom(MOD_PROVIDER_SERVICE,MOD_PROVIDER_IMPL,BOOT);
-        try {
-            ClassLoader plugin = TILLanguageProvider.class.getClassLoader();
-            NeoForgeCoreLoader.resyncModules(plugin,PLUGIN,NeoForgeCoreLoader.bootLoader());
-        } catch(Throwable t) {
-            TILRef.logError("Failed to resync modules to BOOT layer",t);
-        }
-    }
-    
-    final Object core;
-    final Object versionProvider;
+    final CoreAPI core;
     
     public TILLanguageProvider() {
         TILRef.logInfo("Initializing multiversion language provider (NeoForge edition)");
         ClassLoader pluginLoader = NeoForgeCoreLoader.layerClassLoader(PLUGIN);
         this.core = NeoForgeCoreLoader.initCoreAPI(pluginLoader);
-        this.versionProvider = Objects.nonNull(this.core) ?
-                Methods.invoke(this.core,"getLaunguageProvider") : null;
-        if(Objects.nonNull(this.versionProvider))
-            TILRef.logInfo("Successfully initialized versioned language provider on {}",this.versionProvider.getClass().getClassLoader());
-        else TILRef.logError("Initialized versioned language provider as null");
+        LOGGER.info("Retrieved CoreAPI instance {} for multiversion language provider",this.core);
     }
     
-    @Override public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> ignored) {}
-    
     @Override public Consumer<ModFileScanData> getFileVisitor() {
-        Consumer<ModFileScanData> visitor = scan -> {};
-        if(Objects.nonNull(this.versionProvider))
-            visitor = Methods.invoke(this.versionProvider,"getFileVisitor",this.core,this);
-        else TILRef.logError("Version specific language provider not found! Did it fail to load?");
-        return visitor;
+        final Function<TILLanguageLoader1_20,String> keyMapper = TILLanguageLoader::getModid;
+        final Function<TILLanguageLoader1_20,TILLanguageLoader1_20> valueMapper = Function.identity();
+        final BinaryOperator<TILLanguageLoader1_20> merger = (a,b) -> a;
+        final Function<ModFileScanData,Map<String,TILLanguageLoader1_20>> loaderMappper = scan ->
+                scan.getAnnotations().stream()
+                        .filter(ad -> ad.annotationType().equals(Type.getType(Mod.class)))
+                        .map(ad -> {
+                            String className = ad.clazz().getClassName();
+                            String value = String.valueOf(ad.annotationData().get("value"));
+                            TILRef.logInfo("Found @Mod class {} with id {}",className,value);
+                            return new TILLanguageLoader1_20(this.core,className,value,scan);
+                        }).collect(Collectors.toMap(keyMapper,valueMapper,merger));
+        return scan -> scan.addLanguageLoader(loaderMappper.apply(scan));
     }
     
     @Override public String name() {

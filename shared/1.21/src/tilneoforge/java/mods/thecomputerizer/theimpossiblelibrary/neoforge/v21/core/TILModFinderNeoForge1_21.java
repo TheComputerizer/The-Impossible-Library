@@ -7,8 +7,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
 import net.neoforged.neoforgespi.locating.IModFile;
+import net.neoforged.neoforgespi.locating.IModFile.Type;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,48 +22,61 @@ import java.security.ProtectionDomain;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
-
 public abstract class TILModFinderNeoForge1_21 {
+    
+    static {
+        NeoForgeCoreLoader.initCoreAPI(TILSelfLocator.class.getClassLoader());
+        if(!NeoForgeModLoading.setLoadingVersion(TILModFinderNeoForge1_21.class))
+            throw new RuntimeException("Failed to set mod loading version for MultiVersionModReader!");
+    }
    
     private final CoreAPI core;
     private final MultiVersionLoaderAPI loader;
     protected final Logger logger;
     
-    protected TILModFinderNeoForge1_21(CoreAPI core) {
-        this.core = core;
-        this.loader = Objects.nonNull(core) ? core.getLoader() : null;
+    protected TILModFinderNeoForge1_21() {
+        this.core = CoreAPI.getInstance();
+        this.loader = Objects.nonNull(this.core) ? this.core.getLoader() : null;
         this.logger = initializeLogger(getClass());
     }
     
-    protected @Nullable IModFile findAndLoad(JarContents contents, Supplier<Object> attributeSupplier) {
+    protected @Nullable IModFile findAndLoad(JarContents contents, Supplier<Object> attributeSupplier, Type type) {
         MultiVersionModCandidate candidate = findCandidate(contents);
         Collection<?> infos = loadCandidate(candidate);
         return Objects.nonNull(candidate) && !infos.isEmpty() ?
-                NeoForgeModLoading.createModFile(contents,attributeSupplier.get(),candidate,infos,MOD) : null;
+                NeoForgeModLoading.createModFile(contents,attributeSupplier.get(),candidate,infos,type) : null;
     }
     
-    private @Nullable MultiVersionModCandidate findAndMergeCandidates(File file) {
-        MultiVersionModCandidate coreCandidate = MultiVersionModFinder.discoverCoreCandidate(this.loader,file);
-        MultiVersionModCandidate modCandidate = MultiVersionModFinder.discoverCoreCandidate(this.loader,file);
+    private @Nullable MultiVersionModCandidate findAndMergeCandidates(File file,
+            Function<File,Attributes> attributesGetter) {
+        MultiVersionModCandidate coreCandidate =
+                MultiVersionModFinder.discoverCoreCandidate(this.loader,file,attributesGetter);
+        MultiVersionModCandidate modCandidate =
+                MultiVersionModFinder.discoverModCandidate(this.loader, file, attributesGetter);
         return mergeCandidates(coreCandidate,modCandidate);
     }
     
     private @Nullable MultiVersionModCandidate findCandidate(JarContents jar) {
-        Manifest manifest = jar.getManifest();
+        final Manifest manifest = getManifest(jar);
         if(Objects.nonNull(manifest) && MultiVersionModFinder.hasMods(manifest.getMainAttributes())) {
             Path path = jar.getPrimaryPath();
             if(Objects.nonNull(this.loader)) {
                 this.loader.addPotentialModPath(path);
-                this.logger.info("[{}]: Found mod candidate at {}",this.loader.getName(),path);
+                this.logger.info("[{}]: Found mod candidate at {}",loaderName(),path);
             }
             File file = path.toFile();
-            return queryFile(file) ? null : findAndMergeCandidates(file);
+            return queryFile(file) ? null : findAndMergeCandidates(file,f -> manifest.getMainAttributes());
         }
         return null;
+    }
+    
+    protected Manifest getManifest(JarContents jar) {
+        return jar.getManifest();
     }
     
     Logger initializeLogger(Class<?> c) {
@@ -72,8 +87,13 @@ public abstract class TILModFinderNeoForge1_21 {
     }
     
     private Collection<?> loadCandidate(@Nullable MultiVersionModCandidate candidate) {
-        return Objects.nonNull(candidate) && Objects.nonNull(this.core) && Objects.nonNull(this.loader) ?
-                this.core.loadCandidate(candidate,this.loader,getClass().getClassLoader()) : Collections.emptyList();
+        if(Objects.isNull(candidate) || Objects.isNull(this.core) || Objects.isNull(this.loader))
+            return Collections.emptyList();
+        return this.core.loadCandidate(candidate,this.loader,getClass().getClassLoader());
+    }
+    
+    protected String loaderName() {
+        return Objects.nonNull(this.loader) ? this.loader.getName() : null;
     }
     
     private @Nullable MultiVersionModCandidate mergeCandidates(@Nullable MultiVersionModCandidate candidate1,
@@ -86,7 +106,7 @@ public abstract class TILModFinderNeoForge1_21 {
     }
     
     private boolean queryFile(File file) {
-        return Objects.nonNull(this.loader) && queryFile(this.loader.getName(),file);
+        return Objects.nonNull(this.loader) && queryFile(loaderName(),file);
     }
     
     protected boolean queryFile(String loaderName, File file) {

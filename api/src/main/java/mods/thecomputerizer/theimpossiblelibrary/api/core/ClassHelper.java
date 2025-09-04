@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
@@ -154,7 +155,8 @@ public class ClassHelper {
         try {
             return Class.forName(name,false,loader);
         } catch(ClassNotFoundException ex) {
-            TILDev.logDebug("Class `{}` does not exist on {}",name,loader);
+            if(DEV) LOGGER.debug("Class `{}` does not exist on {}",name,loader,ex);
+            else LOGGER.debug("Class `{}` does not exist on {}",name,loader); //Ignore the stacktrace in prod
         }
         return null;
     }

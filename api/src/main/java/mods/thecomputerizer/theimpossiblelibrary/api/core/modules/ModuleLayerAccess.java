@@ -225,6 +225,7 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
     /**
      * It's possible that the module set of a layer contains a module that was removed from the nameToModule map
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasMatchingModuleInSet(String name) {
         for(ModuleAccess module : moduleAccessors())
             if(name.equals(module.getName())) return true;
