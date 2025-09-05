@@ -7,8 +7,6 @@ plugins {
 initJavaPlugin()
 initShadow()
 
-JavaVersion
-
 configurations {
     shaded
     implementation.extendsFrom shaded

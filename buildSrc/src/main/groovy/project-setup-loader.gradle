@@ -38,6 +38,16 @@ tasks.compileJava.mustRunAfter ':api:classes'
 //noinspection GrUnresolvedAccess
 applySourceHelpers()
 
+/**
+ * Register a jar task for bundling the compiled classes only
+ */
+tasks.register('classesJar', Jar) {
+    archiveBaseName = mod_id
+    archiveClassifier = name
+    dependsOn classes
+    from(sourceClassesDir('main'))
+}
+
 @SuppressWarnings('GrUnresolvedAccess')
 private void finishUniminedSetup() {
     unimined.minecraft {
@@ -58,8 +68,12 @@ private void finishUniminedSetup() {
                 }
             }
         }
+        remap(classesJar) {
+            archiveBaseName = mod_id
+            archiveClassifier = "$name-remapped"
+            prodNamespace productionNamespace(name)
+        }
     }
-    remapForProduction(name)
 }
 
 void setupFabricBase() {

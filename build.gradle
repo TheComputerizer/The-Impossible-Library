@@ -2,26 +2,20 @@
  * BUILD WORKFLOW
  *
  * Main project:
- *      1: Apply shadow plugin
- *      2: Apply the functions & shared scripts
- *      3: Do some preliminary setup for the jar & shadowJar tasks
+ *      1: Setup separate configurations for importing subproject classes & resources as depedencies
+ *      2: Avoid duplicates by only importing subprojects with unique classes or resources
+ *      3: Ensure the dependency graph is properly setup for the jar task
+ *      4: Use Shadow to relocate included API dependencies
+ *      5: Set up dependency graph for sourcesJar & javadocJar tasks
  *
  * Sub Projects:
- *      [BEFORE EVALUATING]
- *          1: Apply the functions & shared scripts
- *
- *      [AFTER EVALUATING]
- *          1: Wait until all sub projects finish building before running the main project jar task
- *          2: Each subproject with loader sources has it's build task run after the relevant source jar tasks
- *          3: Each jar task must do any necessary remapping in the relevant sub project
- *          4: Inherit resources from the fabric sub project (which inherits from the api sub project)
- *          5: Finalize the jar task with shadowJar
- *          6: Collect the contents of all sub project jars in the shadowJar task
- *          7: Do any necessary relocations & exclusions for shading before finalizing the jar
- *          8: Add all relevant sub project classpaths the javadoc task
- *          9: Include all content from sub project javadoc and source jars in the relevant main project jars
+ *      1: Disable the local jar task unless it is necessary for remapping
+ *      2: Setup separate configurations for importing parent classes & resources as depedencies
+ *      3: Setup separate configurations for exporting classes & resources as artifacts
+ *      3: Collect all necessary classes & resources from parents to ensure the run tasks are functional
+ *      4: Use Shadow to duplicate shared classes for separate forge/fabric mappings
+ *      5: Ensure classes are remapped before being exported to the main project for building
  */
-
 
 /*
  * External Plugin List
@@ -68,7 +62,7 @@ tasks.fixManifest.dependsOn shadowJar
 tasks.jar.finalizedBy shadowJar
 tasks.shadowJar.finalizedBy fixManifest
 
-createClassesImport 'allClasses', 'gatherAllClasses', 'classes', null
+createClassesImport 'allClasses', 'gatherAllClasses', 'classes', 'main'
 
 private static List<String> getLoaders(String p_name) {
     return switch(p_name) {
@@ -80,8 +74,8 @@ private static List<String> getLoaders(String p_name) {
     }
 }
 
-[ '1.12', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4',
-  'shared_1.20.6', 'shared_1.21.1' ].forEach {included_project ->
+([ '1.12', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4',
+   'shared_1.20.6', 'shared_1.21.1' ]).forEach {included_project ->
     String p_path = getFullPath(included_project)
     getLoaders(included_project).forEach {loader ->
         tasks.compileJava.mustRunAfter "$p_path:inheritParent${loader}Classes"
@@ -91,61 +85,7 @@ private static List<String> getLoaders(String p_name) {
     }
 }
 
+addParentProcessedResources()
+
 //noinspection GrUnresolvedAccess
 applySourceHelpers()
-
-/* TODO Refactor that V with proper Gradle task API & parallelization stuff
-def main_project = project
-
-subprojects {sub ->
-    sub.afterEvaluate {sub_final ->
-        //noinspection GroovyAssignabilityCheck
-        main_project.jar.mustRunAfter getTaskPath(sub_final.name, 'build')
-        main_project.shadowJar {
-            //noinspection GrUnresolvedAccess
-            def archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar' ] : [ 'remapJar' ]
-            if(isProjectShared(sub_final)) {
-                //noinspection GrUnresolvedAccess
-                archive_tasks = sub_final.mappingStyleOfficial() ? [ 'jar', 'shadowJar', 'forgeJar' ] :
-                        [ 'shadowJar', 'remapForgeJar' ]
-                if(isProjectNeoforgeCompatible(sub_final)) {
-                    //noinspection GrUnresolvedAccess
-                    archive_tasks+=(sub_final.mappingStyleOfficial() || sub_final.name=='shared_1.20.4' ?
-                            'neoforgeJar' : 'remapNeoforgeJar')
-                }
-            } else if(sub_final.name in [ 'api', 'legacy', 'neoforge', 'shared' ]) archive_tasks = [ 'jar' ]
-            archive_tasks.forEach {archive_task ->
-                //noinspection GrUnresolvedAccess
-                from getArchiveTaskTree(sub_final, archive_task)
-            }
-        }
-        main_project.javadoc {
-            classpath+=classpathCompile(sub_final, 'main')
-            if(isProjectShared(sub_final)) {
-                classpath+=classpathCompile(sub_final, 'fabric')
-                classpath+=classpathCompile(sub_final, 'forge')
-                if(isProjectNeoforgeCompatible(sub_final))
-                    classpath+=classpathCompile(sub_final, 'neoforge')
-            }
-        }
-        main_project.javadocJar {
-            //noinspection GroovyAssignabilityCheck
-            mustRunAfter getTaskPath(sub_final.name, 'javadocJar')
-            from getArchiveTaskTree(sub_final, 'javadocJar')
-        }
-        main_project.sourcesJar {
-            //noinspection GroovyAssignabilityCheck
-            mustRunAfter getTaskPath(sub_final.name, 'sourcesJar')
-            from getArchiveTaskTree(sub_final, 'sourcesJar')
-        }
-        if('fabric'==sub_final.name) {
-            main_project.processResources {
-                from getTaskOutputs(sub_final, 'processResources')
-            }
-            main_project.processTestResources {
-                from getTaskOutputs(sub_final, 'processTestResources')
-            }
-        }
-    }
-}
-*/

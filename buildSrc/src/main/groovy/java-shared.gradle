@@ -45,6 +45,8 @@ tasks.withType(ProcessResources).configureEach {
     duplicatesStrategy = EXCLUDE
 }
 
+if(parent!=null) tasks.jar.enabled = false
+
 ext.addParentProcessedResources = this.&addParentProcessedResources as MethodClosure
 ext.createConfiguration = this.&createConfiguration as MethodClosure
 ext.createResourceArtifact = this.&createResourceArtifact as MethodClosure
@@ -77,11 +79,16 @@ void addParentProcessedResources() {
             }
         }
     } else {
-        String p_path = isLegacyProject() ? ':legacy' : ':api'
         createConfiguration 'parentResources', false, true
         addResourceConfigurations 'processResources', [ 'parentResources' ]
-        addParentResourceDependency 'parentResources', p_path, 'processedResources'
-        tasks.processResources.mustRunAfter "$p_path:processResources"
+        def p_paths = [ ':api' ]
+        if(isLegacyProject()) p_paths = [ ':legacy' ]
+        else if(parent==null) p_paths = [ ':fabric', ':forge', ':legacy:1.12', ':neoforge' ]
+        p_paths.forEach {
+            addParentResourceDependency 'parentResources', it, 'processedResources'
+            tasks.processResources.mustRunAfter "$it:processResources"
+            logger.lifecycle "$name:processResources must now run after $it:processResources"
+        }
     }
 }
 

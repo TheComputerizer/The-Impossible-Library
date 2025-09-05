@@ -2,8 +2,6 @@ import org.codehaus.groovy.runtime.MethodClosure
 
 import java.util.function.Function
 
-import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
-
 plugins {
     id 'project-setup-common'
 }
@@ -16,6 +14,7 @@ createResourceArtifact()
 createClassConfigs true, true
 createLoaderClassConfigs()
 initUnimined()
+
 
 /**
  * Forge/Neoforge logging markers are calculated during SERVICE layer initializtion but we can just do it manually
@@ -48,9 +47,8 @@ def official_mappings = mappingStyleOfficial()
 
 unimined.minecraft(sourceSets.tilfabric) {
     combineWith sourceSets.main
-    defaultRemapJar = true
     if(isRunnableVersion()) {
-        runs{
+        runs {
             //noinspection ConfigurationAvoidance
             all {
                 javaVersion = getJavaVersionEnum()
@@ -87,15 +85,16 @@ unimined.minecraft(sourceSets.tilfabric) {
         loader project.fabric.versions.loader.get()
     }
 }
-
+/*
 remapTilfabricJar {
     archiveBaseName = mod_id
     archiveClassifier = 'fabric-remapped'
     prodNamespace 'intermediary'
-}
+}*/
 
 // Only fabric is relocated since forge and neoforge technically both use the same intermediary
 // production namespace in 1.20.1 before neoforge switched to using official mappings
+/*
 shadowJar {
     archiveBaseName = mod_id
     archiveClassifier = 'fabric-remapped-relocated'
@@ -105,13 +104,14 @@ shadowJar {
     //noinspection GroovyAssignabilityCheck
     relocate "${base_package}.shared", "${base_package}.fabric"
 }
+*/
 
 //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
 tasks.assemble.dependsOn shadowJar
 
 unimined.minecraft(sourceSets.tilforge) {
     combineWith sourceSets.main
-    if(!mappingStyleOfficial()) defaultRemapJar = true
+    //if(!mappingStyleOfficial()) defaultRemapJar = true
     if(isRunnableVersion()) {
         if(!isJava8()) {
             def build_files = getBuildFiles( [main: [ 'classes\\java' ], tilforge: [ 'classes\\java', 'resources' ]] )
@@ -161,6 +161,7 @@ unimined.minecraft(sourceSets.tilforge) {
         loader modernForgeVersion()
     }
 }
+/*
 if(!official_mappings) {
     remapTilforgeJar {
         archiveBaseName = mod_id
@@ -168,13 +169,14 @@ if(!official_mappings) {
         prodNamespace 'searge'
     }
 }
+ */
 
 if(isNeoforgeCompatible()) {
     unimined.minecraft(sourceSets.tilneoforge) {
         combineWith sourceSets.main
-        if(!mappingStyleOfficial()) defaultRemapJar = true
+        //if(!mappingStyleOfficial()) defaultRemapJar = true
         if(isRunnableVersion()) {
-            runs{
+            runs {
                 def build_files = getBuildFiles( [main: [ 'classes\\java' ], tilneoforge: [ 'classes\\java', 'resources' ]] )
                 logger.lifecycle "Adding build files to neoforge minecraftLibraries $build_files"
                 configurations.tilneoforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
@@ -223,6 +225,7 @@ if(isNeoforgeCompatible()) {
             loader neoforgeVersion()
         }
     }
+    /*
     if(!official_mappings) {
         remapTilneoforgeJar {
             archiveBaseName = mod_id
@@ -230,45 +233,35 @@ if(isNeoforgeCompatible()) {
             prodNamespace 'searge'
         }
     }
+     */
 }
 
 ext.setupShared = this.&setupShared as MethodClosure
 
 List<String> collectRunAfter() {
-    def run_after = [ ':shared' ]
-    //noinspection GrUnresolvedAccess
-    if(isMinorVersion()) {
-        run_after+=":${parent.name}"
-        switch(name) {
-            case '1.19.4': {
-                run_after+=":shared_1.19.2"
-                break
-            }
-            case '1.20.4': {
-                run_after+=":shared_1.20.1"
-                break
-            }
-            case '1.20.6': {
-                run_after+=":shared_1.20.4"
-                break
-            }
-        }
+    return switch(name) {
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> [ parent.name ]
+        case 'shared_1.19.2', 'shared_1.20.1', 'shared_1.21.1' -> [ parent.parent.name, parent.name ]
+        case 'shared_1.19.4' -> [ parent.parent.name, parent.name, "${parent.name}.2" ]
+        case 'shared_1.20.4' -> [ parent.parent.name, parent.name, "${parent.name}.1" ]
+        case 'shared_1.20.6' -> [ parent.parent.name, parent.name, "${parent.name}.4" ]
+        default -> []
     }
-    return run_after as List<String>
 }
 
+/**
+ * Register jar tasks for bundling the compiled classes only
+ */
 void createJarTasks() {
     //noinspection GrUnresolvedAccess
     def loaders = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
     loaders.forEach {loader ->
-        String task_name = "til${loader}Jar"
-        tasks.register(task_name, Jar) {jar_task ->
+        tasks.register("${loader}ClassesJar", Jar) {
             archiveBaseName = mod_id
             archiveClassifier = loader
-            duplicatesStrategy = EXCLUDE
-            from sourceSets."til$loader".output
+            dependsOn "til${loader}Classes"
+            from(sourceClassesDir("til$loader"))
         }
-        tasks.assemble.dependsOn task_name
     }
 }
 

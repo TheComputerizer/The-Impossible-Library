@@ -4,3 +4,6 @@
 plugins {
     id 'project-setup-legacy'
 }
+
+tasks.inheritParentClasses.mustRunAfter ':legacy:1.12:compileJava'
+tasks.inheritParentClasses.mustRunAfter ':legacy:1.12:inheritParentClasses'

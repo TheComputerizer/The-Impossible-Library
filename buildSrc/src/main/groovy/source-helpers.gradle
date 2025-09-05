@@ -1,6 +1,7 @@
 import org.codehaus.groovy.runtime.MethodClosure
 
 ext.setupIntelliJGenGraph = this.&setupIntelliJGenGraph as MethodClosure
+ext.setupJarGraphs = this.&setupJarGraphs as MethodClosure
 ext.setupSourceGenGraph = this.&setupSourceGenGraph as MethodClosure
 
 @SuppressWarnings('GrUnresolvedAccess')
@@ -16,6 +17,20 @@ List<String> getIntelliJGenTypes() {
         case 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
             [ 'genIntellijRuns', 'tilfabricGenIntellijRuns', 'tilforgeGenIntellijRuns', 'tilneoforgeGenIntellijRuns' ]
         default -> []
+    }
+}
+
+List<String> getJarParents() {
+    return switch(name) {
+        case '1.12', 'cleanroom' -> [ 'legacy' ]
+        case 'fabric', 'forge', 'legacy', 'neoforge', 'shared' -> [ 'api' ]
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20' -> [ 'fabric', 'forge', 'shared' ]
+        case 'shared_1.21' -> [ 'fabric', 'forge', 'neoforge', 'shared' ]
+        case 'shared_1.20.1' -> [ 'shared_1.20' ]
+        case 'shared_1.20.4', 'shared_1.20.6' -> [ 'neoforge', 'shared_1.20' ]
+        case 'shared_1.21.1' -> [ 'shared_1.21' ]
+        default -> parent==null ? [ '1.12', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4',
+                                       'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ] : []
     }
 }
 
@@ -149,6 +164,34 @@ void setupIntelliJGenGraph() {
     logger.lifecycle "Finished setting up IntelliJ gen graph for $name"
 }
 
+void setupJarGraph(String t_name) {
+    tasks.named(t_name).configure {
+        getJarParents().forEach {p_name ->
+            dependsOn getFullTaskPath(p_name, t_name)
+        }
+    }
+}
+
+void setupJarGraphs() {
+    [ 'javadocJar', 'sourcesJar' ].forEach {t_name ->
+        setupJarGraph t_name
+    }
+}
+
+void setupProblematicSourceGenGraph() {
+    logger.lifecycle "Setting up problematic source gen graph"
+    def problematic_source_gens = [ ':forge': 'genSources', ':shared:shared_1.16': 'tilforgeGenSources' ]
+    tasks.register('genProblematicSources') {
+        it.dependsOn 'genAllSources'
+    }
+    problematic_source_gens.forEach {p_name,t_name ->
+        tasks.genProblematicSources.dependsOn "$p_name:$t_name"
+        project(p_name).tasks.named(t_name) {
+            it.mustRunAfter project.tasks.genAllSources
+        }
+    }
+}
+
 /**
  * Setup dependency ordering for genSources, tilfabricGenSources, tilforgeGenSources, and tilneoforgeGenSources.
  * Use exclude_problematic_versions to exclude tasks from the graph that are known to cause problematic.
@@ -169,18 +212,4 @@ void setupSourceGenGraph() {
     }
     if(name==null && exclude_problematic_versions) setupProblematicSourceGenGraph()
     logger.lifecycle "Finished setting up source gen graph for $name"
-}
-
-void setupProblematicSourceGenGraph() {
-    logger.lifecycle "Setting up problematic source gen graph"
-    def problematic_source_gens = [ ':forge': 'genSources', ':shared:shared_1.16': 'tilforgeGenSources' ]
-    tasks.register('genProblematicSources') {
-        it.dependsOn 'genAllSources'
-    }
-    problematic_source_gens.forEach {p_name,t_name ->
-        tasks.genProblematicSources.dependsOn "$p_name:$t_name"
-        project(p_name).tasks.named(t_name) {
-            it.mustRunAfter project.tasks.genAllSources
-        }
-    }
 }

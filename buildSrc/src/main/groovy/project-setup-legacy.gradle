@@ -40,6 +40,16 @@ if(use_dev_run_jar) {
 
 initUnimined()
 
+/**
+ * Register a jar task for bundling the compiled classes only
+ */
+tasks.register('classesJar', Jar) {
+    archiveBaseName = mod_id
+    archiveClassifier = 'legacy'
+    dependsOn classes
+    from(sourceClassesDir('main'))
+}
+
 unimined.minecraft {
     if(isCleanroomProject()) {
         cleanroom {
@@ -81,9 +91,12 @@ unimined.minecraft {
             catchAWNamespaceAssertion()
         }
     }
+    remap(classesJar) {
+        archiveBaseName = mod_id
+        archiveClassifier = 'legacy-remapped'
+        prodNamespace 'searge'
+    }
 }
-
-remapForProduction isCleanroomProject() ? 'cleanroom' : 'forge'
 
 setCommonRepositories(isCleanroomProject() ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
 

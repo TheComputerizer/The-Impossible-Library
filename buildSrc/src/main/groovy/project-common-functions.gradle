@@ -96,10 +96,10 @@ List<String> getBuildPaths(Map<String,List<String>> pathMap) {
  * Returns the full project path in the format ':p_name', or ':parent_path:p_name' depending on whether a parent exists
  */
 static String getFullPath(String p_name) {
-    String p_path = ":$p_name"
+    String p_path = p_name.startsWith(':') ? p_name : ":$p_name"
     String parent_name = getParentFromName p_name
     while(parent_name!=null) {
-        p_path = ":$parent_name:$p_path"
+        p_path = ":$parent_name$p_path"
         parent_name = getParentFromName parent_name
     }
     return p_path
@@ -118,7 +118,7 @@ Map<String,Object> getManifestEntries() {
 
 static String getParentFromName(String p_name) {
     if(p_name==null) return null
-    return switch(p_name) {
+    return switch(p_name.startsWith(':') ? p_name.substring(1) : p_name) {
         case '1.12', 'cleanroom' -> 'legacy'
         case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> 'shared'
         case 'shared_1.19.2', 'shared_1.19.4' -> 'shared_1.19'

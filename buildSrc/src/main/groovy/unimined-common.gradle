@@ -72,7 +72,7 @@ void initUniminedSetup() {
                 off = true
             }
         }
-        defaultRemapJar = !mappingStyleOfficial()
+        defaultRemapJar = false
     }
 }
 

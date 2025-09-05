@@ -16,6 +16,7 @@ ext.initUnimined = this.&initUnimined as MethodClosure
 @SuppressWarnings('GrUnresolvedAccess')
 void applySourceHelpers() {
     plugins.apply 'source-helpers'
+    setupJarGraphs()
     setupIntelliJGenGraph()
     setupSourceGenGraph()
 }
