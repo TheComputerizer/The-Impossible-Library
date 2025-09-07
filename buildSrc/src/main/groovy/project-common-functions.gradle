@@ -18,12 +18,11 @@ ext.getBuildPath = this.&getBuildPath as MethodClosure
 ext.getBuildPaths = this.&getBuildPaths as MethodClosure
 ext.getFullPath = this.&getFullPath as MethodClosure
 ext.getLoaderList = this.&getLoaderList as MethodClosure
+ext.getLoaderListFor = this.&getLoaderListFor as MethodClosure
 ext.getManifestEntries = this.&getManifestEntries as MethodClosure
 ext.getParentFromName = this.&getParentFromName as MethodClosure
 ext.getSubProjectLevel = this.&getSubProjectLevel as MethodClosure
 ext.initCommonDeps = this.&initCommonDeps as MethodClosure
-ext.setDefaultManifestAttributes = this.&setDefaultManifestAttributes as MethodClosure
-ext.setJarsRunAfter = this.&setJarsRunAfter as MethodClosure
 ext.sourceClassesDir = this.&sourceClassesDir as MethodClosure
 
 void createClassConfigs(boolean add_import, boolean add_export) {
@@ -41,7 +40,7 @@ void createClassesImport(String c_name, String t_name, String c_t_name, String s
     //noinspection GrUnresolvedAccess
     createConfiguration c_name, false, true
     tasks.register(t_name, Copy) {copy_task ->
-        mustRunAfter compileJava
+        dependsOn compileJava
         destinationDir = sourceClassesDir s_name
         duplicatesStrategy = EXCLUDE
         from configurations.named(c_name)
@@ -60,7 +59,7 @@ void createLoaderClassConfigs() {
         createClassesImport c_name, t_name, "til${l_loader}Classes", "til$l_loader"
         createClassesExport "export${loader}Classes", "til$l_loader"
         tasks.named(t_name).configure {
-            mustRunAfter "compileTil${l_loader}Java"
+            dependsOn "compileTil${l_loader}Java"
         }
     }
 }
@@ -114,6 +113,17 @@ List<String> getLoaderList(boolean capitalized) {
     return loader_list
 }
 
+@SuppressWarnings('GrUnresolvedAccess')
+static List<String> getLoaderListFor(String p_name, boolean capitalized) {
+    return switch(p_name) {
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
+            capitalized ? [ 'Fabric', 'Forge' ] : [ 'fabric', 'forge' ]
+        case 'shared_1.20', 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ->
+            capitalized ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'fabric', 'forge', 'neoforge' ]
+        default -> []
+    }
+}
+
 Map<String,Object> getManifestEntries() {
     Map<String,Object> attribute_map = [ 'Implementation-Title': mod_name, 'Implementation-Version': mod_version ]
     //noinspection GrUnresolvedAccess
@@ -155,35 +165,6 @@ static int getSubProjectLevel(String p_name) {
  */
 void initCommonDeps() {
     plugins.apply 'common-deps'
-}
-
-void setDefaultManifestAttributes() {
-    jar {
-        doFirst {
-            manifest {
-                Map<String,Object> manifest_attributes = getManifestEntries()
-                attributes(manifest_attributes)
-            }
-        }
-    }
-}
-
-@SuppressWarnings('GrUnresolvedAccess')
-void setJarsRunAfter(List<String> p_names) {
-    setDefaultManifestAttributes()
-    def build_tasks = p_names.collect {p_name ->
-        "${getFullPath(p_name)}:build".toString()
-    }
-    jar {
-        build_tasks.forEach {build_task ->
-            mustRunAfter build_task
-        }
-    }
-    sourcesJar {
-        build_tasks.forEach {build_task ->
-            mustRunAfter build_task
-        }
-    }
 }
 
 @SuppressWarnings('GrMethodMayBeStatic')

@@ -35,17 +35,6 @@ void addForgeLoggingMarkers(Map<?,?> propertyMap, boolean reduced, String ... ex
     }
 }
 
-List<String> collectRunAfter() {
-    return switch(name) {
-        case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> [ parent.name ]
-        case 'shared_1.19.2', 'shared_1.20.1', 'shared_1.21.1' -> [ parent.parent.name, parent.name ]
-        case 'shared_1.19.4' -> [ parent.parent.name, parent.name, "${parent.name}.2" ]
-        case 'shared_1.20.4' -> [ parent.parent.name, parent.name, "${parent.name}.1" ]
-        case 'shared_1.20.6' -> [ parent.parent.name, parent.name, "${parent.name}.4" ]
-        default -> []
-    }
-}
-
 @SuppressWarnings('GrUnresolvedAccess')
 void finalizeUnimined() {
     unimined.minecraft {
@@ -55,6 +44,7 @@ void finalizeUnimined() {
         uniminedSetupLoader sourceSets.named("til$loader").get(), loader
         if(isRunnableVersion() && !isJava8() && [ 'forge', 'neoforge' ].contains(loader)) setupForgeLikeConfigs loader
     }
+    registerCombinedJar()
 }
 
 /**
@@ -78,7 +68,7 @@ TaskProvider<Jar> registerClassesJar(String loader) {
         archiveBaseName = mod_id
         archiveClassifier = loader==null ? 'main' : loader
         dependsOn loader==null ? 'classes' : "til${loader}Classes"
-        File main_classes = sourceClassesDir('main')
+        File main_classes = sourceClassesDir 'main'
         if(loader==null) from(main_classes)
         else {
             from(sourceClassesDir("til$loader"))
@@ -90,6 +80,25 @@ TaskProvider<Jar> registerClassesJar(String loader) {
             }
         }
     } as TaskProvider<Jar>
+}
+
+@SuppressWarnings('GrUnresolvedAccess')
+private void registerCombinedJar() {
+    createConfiguration 'processedClasses', true, false
+    artifacts.add('processedClasses', tasks.register('combinedClassesJar', Jar) {
+        archiveBaseName = mod_id
+        archiveClassifier = 'combined'
+        getLoaderList(true).forEach {String loader ->
+            String jar_task_name = "remap${'Fabric'==loader ? 'Shadow' : "${loader}Classes"}Jar"
+            dependsOn jar_task_name
+            doFirst {
+                from(zipTree(tasks.named(jar_task_name, Jar).get().archiveFile.get()))// {
+                    //exclude '**/api/**'
+                    //if('Neoforge'==loader) exclude '**/shared/**'
+                //}
+            }
+        }
+    })
 }
 
 void setForgeLoggingLevel(Map<?,?> propertyMap, String level, String ... exclusions) {
@@ -241,6 +250,7 @@ void setupForgeLikeConfigs(String loader) {
 
 @SuppressWarnings('GrUnresolvedAccess')
 void uniminedSetupLoader(SourceSet source, String l_name) {
+    boolean official_mappings = 'neoforge'==l_name || ('forge'==l_name && mappingStyleOfficial())
     unimined.minecraft(source) {
         combineWith sourceSets.main
         boolean is_fabric = 'fabric'==l_name
@@ -300,7 +310,7 @@ void uniminedSetupLoader(SourceSet source, String l_name) {
         remap(is_fabric ? shadowJar : tasks.named("${l_name}ClassesJar").get()) {
             archiveBaseName = mod_id
             archiveClassifier = "$l_name${is_fabric ? '-relocated-' : '-'}remapped"
-            prodNamespace is_fabric ? 'intermediary' : 'searge'
+            prodNamespace official_mappings ? 'mojmap' : (is_fabric ? 'intermediary' : 'searge')
         }
         switch(l_name) {
             case 'fabric' -> {
@@ -328,6 +338,5 @@ ext.setupShared = this.&setupShared as MethodClosure
 void setupShared(List<String> extra_maven_ids) {
     setSharedDependencies extra_maven_ids
     addParentProcessedResources()
-    setJarsRunAfter collectRunAfter()
     applySourceHelpers()
 }

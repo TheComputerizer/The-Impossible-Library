@@ -4,40 +4,40 @@ plugins {
     id 'project-setup-common' //project-setup-common <- project-common-functions <- java-shared
 }
 
-//noinspection GrUnresolvedAccess
-initJavaPlugin()
-//noinspection GrUnresolvedAccess
-initShadow()
+initShadedDeps()
 
-configurations {
-    shaded
-    implementation.extendsFrom shaded
+@SuppressWarnings('GrUnresolvedAccess')
+void initShadedDeps() {
+    initJavaPlugin()
+    initShadow()
+    addShadedDeps()
+    configureShadowJar()
 }
 
-repositories {
-    mavenCentral() {
-        content {
-            [ toolfactory_group, burningwave_group ].forEach {
-                includeGroup it
+void addShadedDeps() {
+    repositories {
+        mavenCentral() {
+            content {
+                [ toolfactory_group, burningwave_group ].forEach {
+                    includeGroup it
+                }
             }
         }
     }
+    dependencies {
+        //noinspection GrUnresolvedAccess
+        shadow(libs.bundles.burningwave) { transitive = false }
+    }
 }
 
-dependencies {
-    //noinspection GrUnresolvedAccess
-    shaded(libs.bundles.burningwave) { transitive = false }
-}
-
-//noinspection GrUnresolvedAccess
-shadowJar {
-    archiveBaseName = mod_id
-    //noinspection GroovyAssignabilityCheck
-    configurations = [ project.configurations.shaded ]
-    duplicatesStrategy = EXCLUDE
-    //noinspection GrUnresolvedAccess
-    exclude '**/LICENSE', '**/LICENSE.txt', '**/MANIFEST.*', 'META-INF/maven/**', 'META-INF/*.RSA',
-            'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
-    //noinspection GrUnresolvedAccess
-    mergeServiceFiles()
+@SuppressWarnings('GrUnresolvedAccess')
+void configureShadowJar() {
+    shadowJar {
+        archiveBaseName = mod_id
+        archiveClassifier = 'shaded'
+        duplicatesStrategy = EXCLUDE
+        exclude '**/LICENSE', '**/LICENSE.txt', '**/MANIFEST.*', 'META-INF/maven/**', 'META-INF/*.RSA',
+                'META-INF/*.SF', 'META-INF/services/*.Processor', 'META-INF/**/*.class', 'module-info.*'
+        mergeServiceFiles()
+    }
 }

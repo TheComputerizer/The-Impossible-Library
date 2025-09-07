@@ -164,17 +164,36 @@ void setupIntelliJGenGraph() {
     logger.lifecycle "Finished setting up IntelliJ gen graph for $name"
 }
 
-void setupJarGraph(String t_name) {
-    tasks.named(t_name).configure {
-        getJarParents().forEach {p_name ->
-            dependsOn getFullTaskPath(p_name, t_name)
+@SuppressWarnings('GrUnresolvedAccess')
+void setupJarGraph(String t_name, String p_t_name) {
+    String export_name = p_t_name.replace 'parent', 'export'
+    if(parent!=null) {
+        createConfiguration export_name, true, false
+        artifacts.add export_name, tasks.named(t_name)
+    }
+    List<String> p_names = getJarParents()
+    if(p_names.isEmpty()) return
+    createConfiguration p_t_name, false, true
+    TaskProvider<Task> provider = tasks.named t_name
+    p_names.forEach {p_name ->
+        String p_path = getFullPath p_name
+        dependencies {
+            "$p_t_name" project(path: p_path, configuration: export_name)
+        }
+        provider.configure {
+            dependsOn "$p_path:$t_name"
+        }
+    }
+    provider.configure {
+        doFirst {
+            from configurations.named(p_t_name)
         }
     }
 }
 
 void setupJarGraphs() {
-    [ 'javadocJar', 'sourcesJar' ].forEach {t_name ->
-        setupJarGraph t_name
+    [ 'javadocJar': 'parentJavadocJar', 'sourcesJar': 'parentSourcesJar' ].forEach {t_name, p_t_name ->
+        setupJarGraph t_name, p_t_name
     }
 }
 

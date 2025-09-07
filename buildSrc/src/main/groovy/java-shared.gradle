@@ -82,7 +82,9 @@ void addParentProcessedResources() {
         addResourceConfigurations 'processResources', [ 'parentResources' ]
         def p_paths = [ ':api' ]
         if(isLegacyProject()) p_paths = [ ':legacy' ]
-        else if(parent==null) p_paths = [ ':fabric', ':forge', ':legacy:1.12', ':neoforge' ]
+        else if(parent==null) {
+            p_paths = [ ':fabric', ':forge', ':legacy:1.12', ':neoforge' ]
+        }
         p_paths.forEach {
             addParentResourceDependency 'parentResources', it, 'processedResources'
             tasks.processResources.mustRunAfter "$it:processResources"

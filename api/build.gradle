@@ -30,6 +30,9 @@ processResources {
     from sourceSets.main.resources.srcDirs
 }
 
+plugins.apply 'source-helpers'
+setupJarGraphs()
+
 def injectConstants() {
     def path = "api/src/main/java/${ "${api_package}.core.TILRef".replace '.', '/'}.java"
     def target = file("${rootProject.projectDir}/$path")
@@ -38,6 +41,7 @@ def injectConstants() {
                          'VERSION = "': "VERSION = \"$mod_version\";" ]
     List<String> lines = new ArrayList<>()
     target.eachLine { line ->
+        //noinspection GroovyMissingReturnStatement
         replacements.each {entry ->
             String key = entry.key
             if(line.contains(key)) {

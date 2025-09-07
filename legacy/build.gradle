@@ -26,4 +26,7 @@ dependencies {
 
 addParentProcessedResources()
 
+plugins.apply 'source-helpers'
+setupJarGraphs()
+
 tasks.compileJava.mustRunAfter ':api:classes'

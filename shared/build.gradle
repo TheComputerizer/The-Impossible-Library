@@ -22,4 +22,7 @@ dependencies {
     compileOnly project(':api')
 }
 
+plugins.apply 'source-helpers'
+setupJarGraphs()
+
 tasks.compileJava.mustRunAfter ':api:classes'

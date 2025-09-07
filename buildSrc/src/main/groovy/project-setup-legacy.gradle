@@ -91,12 +91,14 @@ void finalizeUnimined(boolean use_dev_run_jar) {
             }
         }
     }
+    artifacts.add 'processedClasses', tasks.named('remapClassesJar')
 }
 
 /**
  * Register a jar task for bundling the compiled classes only
  */
 void registerClassesJar() {
+    createConfiguration 'processedClasses', true, false
     tasks.register('classesJar', Jar) {
         archiveBaseName = mod_id
         archiveClassifier = 'legacy'
