@@ -1,10 +1,12 @@
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 plugins {
-    id 'project-setup-common'
+    id 'project-setup-common' //project-setup-common <- project-common-functions <- java-shared
 }
 
+//noinspection GrUnresolvedAccess
 initJavaPlugin()
+//noinspection GrUnresolvedAccess
 initShadow()
 
 configurations {
@@ -30,7 +32,6 @@ dependencies {
 //noinspection GrUnresolvedAccess
 shadowJar {
     archiveBaseName = mod_id
-    archiveClassifier = 'unfixed'
     //noinspection GroovyAssignabilityCheck
     configurations = [ project.configurations.shaded ]
     duplicatesStrategy = EXCLUDE

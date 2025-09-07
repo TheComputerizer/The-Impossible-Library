@@ -1,56 +1,51 @@
 plugins {
-    id 'project-setup-common'
+    id 'project-setup-common' //project-setup-common <- project-common-functions <- java-shared
 }
 
-//noinspection GrUnresolvedAccess
-initJavaPlugin()
-createResourceArtifact()
-plugins.apply 'common-deps'
+initLoaderSetup()
 
-//noinspection GrUnresolvedAccess
-if(usesUnimined) {
-//noinspection GrUnresolvedAccess
-    initUnimined()
-    finishUniminedSetup()
-}
-
-createClassConfigs false, true
-
-dependencies {
-    compileOnly project(':api')
-}
-
-jar {
-    manifest {
-        attributes([
-                'Implementation-Title': mod_name,
-                'Implementation-Version': mod_version
-        ])
+@SuppressWarnings('GrUnresolvedAccess')
+void initLoaderSetup() {
+    initJavaPlugin()
+    createResourceArtifact()
+    registerClassesJar()
+    plugins.apply 'common-deps'
+    if(usesUnimined()) {
+        initUnimined()
+        finishUniminedSetup()
     }
-}
+    createClassConfigs false, true
 
-addParentProcessedResources()
+    dependencies {
+        compileOnly project(':api')
+    }
 
-if('fabric'==name) setupFabricBase()
+    jar {
+        manifest {
+            attributes([
+                    'Implementation-Title': mod_name,
+                    'Implementation-Version': mod_version
+            ])
+        }
+    }
 
-tasks.compileJava.mustRunAfter ':api:classes'
+    addParentProcessedResources()
 
-//noinspection GrUnresolvedAccess
-applySourceHelpers()
+    if('fabric'==name) setupFabricBase()
 
-/**
- * Register a jar task for bundling the compiled classes only
- */
-tasks.register('classesJar', Jar) {
-    archiveBaseName = mod_id
-    archiveClassifier = name
-    dependsOn classes
-    from(sourceClassesDir('main'))
+    tasks.compileJava.mustRunAfter ':api:classes'
+
+    applySourceHelpers()
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
 private void finishUniminedSetup() {
     unimined.minecraft {
+        remap(classesJar) {
+            archiveBaseName = mod_id
+            archiveClassifier = "$name-remapped"
+            prodNamespace productionNamespace(name)
+        }
         switch(name) {
             case 'fabric' -> {
                 fabric {
@@ -68,11 +63,19 @@ private void finishUniminedSetup() {
                 }
             }
         }
-        remap(classesJar) {
-            archiveBaseName = mod_id
-            archiveClassifier = "$name-remapped"
-            prodNamespace productionNamespace(name)
-        }
+    }
+}
+
+/**
+ * Register a jar task for bundling the compiled classes only
+ */
+@SuppressWarnings('GrUnresolvedAccess')
+void registerClassesJar() {
+    tasks.register('classesJar', Jar) {
+        archiveBaseName = mod_id
+        archiveClassifier = name
+        dependsOn classes
+        from sourceClassesDir('main')
     }
 }
 

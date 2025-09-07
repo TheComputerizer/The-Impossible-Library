@@ -3,18 +3,24 @@ import org.codehaus.groovy.runtime.MethodClosure
 import java.util.function.Function
 
 plugins {
-    id 'project-setup-common'
+    id 'project-setup-common' //project-setup-common <- project-common-functions <- java-shared
 }
 
-initJavaPlugin()
-initShadow()
-initDependencies()
-initConfigs()
-createResourceArtifact()
-createClassConfigs true, true
-createLoaderClassConfigs()
-initUnimined()
+initShared()
 
+//Bundled into a method just for easy warning supression
+@SuppressWarnings('GrUnresolvedAccess')
+void initShared() {
+    initJavaPlugin()                //project-setup-common
+    initShadow()                    //project-setup-common
+    initDependencies()              //project-setup-common
+    setLoaderConfigs()
+    createResourceArtifact()        //java-shared
+    createClassConfigs true, true   //project-common-functions
+    createLoaderClassConfigs()      //project-common-functions
+    initUnimined()                  //unimined-common
+    finalizeUnimined()
+}
 
 /**
  * Forge/Neoforge logging markers are calculated during SERVICE layer initializtion but we can just do it manually
@@ -29,215 +35,6 @@ void addForgeLoggingMarkers(Map<?,?> propertyMap, boolean reduced, String ... ex
     }
 }
 
-void setForgeLoggingLevel(Map<?,?> propertyMap, String level, String ... exclusions) {
-    List<String> exclude_these = List.of exclusions
-    forge_log_level_all.split(',').each {log ->
-        if(!exclude_these.contains(log)) {
-            //noinspection GroovyAssignabilityCheck
-            propertyMap["forge.logging.${log}.level".toString()] = level
-        }
-    }
-}
-
-unimined.minecraft {
-    //Nothing to do here
-}
-
-def official_mappings = mappingStyleOfficial()
-
-unimined.minecraft(sourceSets.tilfabric) {
-    combineWith sourceSets.main
-    if(isRunnableVersion()) {
-        runs {
-            //noinspection ConfigurationAvoidance
-            all {
-                javaVersion = getJavaVersionEnum()
-                Map<?,?> map = getSystemProperties()
-                addCustomRunProperties map, 'tilfabric'
-            }
-            config('server') {
-                args+=[ 'nogui' ]
-            }
-        }
-    } else runs.off = true
-    if(isRunnableVersion()) {
-        mods {
-            modImplementation {
-                mixinRemap {
-                    reset()
-                    enableMixinExtra()
-                    enableBaseMixin()
-                    disableRefmap()
-                }
-            }
-            remap(configurations.tilfabricModRuntimeOnly) {
-                mixinRemap {
-                    reset()
-                    enableMixinExtra()
-                    enableBaseMixin()
-                    disableRefmap()
-                }
-            }
-        }
-    }
-    //noinspection GroovyAssignabilityCheck
-    fabric {
-        loader project.fabric.versions.loader.get()
-    }
-}
-/*
-remapTilfabricJar {
-    archiveBaseName = mod_id
-    archiveClassifier = 'fabric-remapped'
-    prodNamespace 'intermediary'
-}*/
-
-// Only fabric is relocated since forge and neoforge technically both use the same intermediary
-// production namespace in 1.20.1 before neoforge switched to using official mappings
-/*
-shadowJar {
-    archiveBaseName = mod_id
-    archiveClassifier = 'fabric-remapped-relocated'
-    //noinspection GroovyAssignabilityCheck
-    configurations = [ project.configurations.shadow ]
-    dependsOn 'remapTilfabricJar'
-    //noinspection GroovyAssignabilityCheck
-    relocate "${base_package}.shared", "${base_package}.fabric"
-}
-*/
-
-//noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
-tasks.assemble.dependsOn shadowJar
-
-unimined.minecraft(sourceSets.tilforge) {
-    combineWith sourceSets.main
-    //if(!mappingStyleOfficial()) defaultRemapJar = true
-    if(isRunnableVersion()) {
-        if(!isJava8()) {
-            def build_files = getBuildFiles( [main: [ 'classes\\java' ], tilforge: [ 'classes\\java', 'resources' ]] )
-            logger.lifecycle "Adding build files to forge minecraftLibraries $build_files"
-            configurations.tilforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
-            tasks.compileTilforgeJava.mustRunAfter 'processTilforgeResources'
-        }
-        runs {
-            //noinspection ConfigurationAvoidance
-            all {
-                javaVersion = getJavaVersionEnum()
-                Map<?,?> map = getSystemProperties()
-                addCustomRunProperties map, 'tilforge'
-                //noinspection GroovyAssignabilityCheck
-                map[debug_network] = 'true'
-                addForgeLoggingMarkers map, true
-                setForgeLoggingLevel map, 'debug'
-            }
-            config('client') {
-                args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
-            }
-            config('server') {
-                args+=[ 'nogui' ]
-            }
-        }
-    } else runs.off = true
-    if(isRunnableVersion()) {
-        mods {
-            modImplementation {
-                mixinRemap {
-                    reset()
-                    enableMixinExtra()
-                    enableBaseMixin()
-                }
-            }
-            remap(configurations.tilforgeModRuntimeOnly) {
-                catchAWNamespaceAssertion()
-                mixinRemap {
-                    reset()
-                    enableMixinExtra()
-                    enableBaseMixin()
-                }
-            }
-        }
-    }
-    minecraftForge {
-        loader modernForgeVersion()
-    }
-}
-/*
-if(!official_mappings) {
-    remapTilforgeJar {
-        archiveBaseName = mod_id
-        archiveClassifier = 'forge-remapped'
-        prodNamespace 'searge'
-    }
-}
- */
-
-if(isNeoforgeCompatible()) {
-    unimined.minecraft(sourceSets.tilneoforge) {
-        combineWith sourceSets.main
-        //if(!mappingStyleOfficial()) defaultRemapJar = true
-        if(isRunnableVersion()) {
-            runs {
-                def build_files = getBuildFiles( [main: [ 'classes\\java' ], tilneoforge: [ 'classes\\java', 'resources' ]] )
-                logger.lifecycle "Adding build files to neoforge minecraftLibraries $build_files"
-                configurations.tilneoforgeMinecraftLibraries.dependencies.add dependencies.create(build_files)
-                tasks.compileTilneoforgeJava.mustRunAfter 'processTilneoforgeResources'
-                //noinspection ConfigurationAvoidance
-                all {
-                    javaVersion = getJavaVersionEnum()
-                    Map<?,?> map = getSystemProperties()
-                    addCustomRunProperties map, 'tilneoforge'
-                    [ debug_network, forge_bootstrap_debug ].forEach {debug_prop ->
-                        //noinspection GroovyAssignabilityCheck
-                        map[debug_prop] = 'true'
-                    }
-                    addForgeLoggingMarkers map, true
-                    setForgeLoggingLevel map, 'debug'
-                }
-                config('client') {
-                    args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
-                }
-                config('server') {
-                    args+=[ 'nogui' ]
-                }
-            }
-        } else runs.off = true
-        if(isRunnableVersion()) {
-            mods {
-                modImplementation {
-                    mixinRemap {
-                        reset()
-                        enableMixinExtra()
-                        enableBaseMixin()
-                        disableRefmap()
-                    }
-                }
-                remap(configurations.tilneoforgeModRuntimeOnly) {
-                    mixinRemap {
-                        reset()
-                        enableMixinExtra()
-                        enableBaseMixin()
-                        disableRefmap()
-                    }
-                }
-            }
-        }
-        neoForge {
-            loader neoforgeVersion()
-        }
-    }
-    /*
-    if(!official_mappings) {
-        remapTilneoforgeJar {
-            archiveBaseName = mod_id
-            archiveClassifier = 'neoforge-remapped'
-            prodNamespace 'searge'
-        }
-    }
-     */
-}
-
-ext.setupShared = this.&setupShared as MethodClosure
-
 List<String> collectRunAfter() {
     return switch(name) {
         case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' -> [ parent.name ]
@@ -249,105 +46,86 @@ List<String> collectRunAfter() {
     }
 }
 
+@SuppressWarnings('GrUnresolvedAccess')
+void finalizeUnimined() {
+    unimined.minecraft {
+        //Nothing to do here
+    }
+    (getLoaderList(false)).forEach {String loader ->
+        uniminedSetupLoader sourceSets.named("til$loader").get(), loader
+        if(isRunnableVersion() && !isJava8() && [ 'forge', 'neoforge' ].contains(loader)) setupForgeLikeConfigs loader
+    }
+}
+
 /**
- * Register jar tasks for bundling the compiled classes only
+ * Only fabric is relocated since forge and neoforge technically both use the same intermediary production namespace in
+ * 1.20.1 before neoforge switched to using official mappings
  */
-void createJarTasks() {
-    //noinspection GrUnresolvedAccess
-    def loaders = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
-    loaders.forEach {loader ->
-        tasks.register("${loader}ClassesJar", Jar) {
-            archiveBaseName = mod_id
-            archiveClassifier = loader
-            dependsOn "til${loader}Classes"
+@SuppressWarnings('GrUnresolvedAccess')
+void initFabricShading() {
+    shadowJar {
+        archiveBaseName = mod_id
+        archiveClassifier = 'fabric-relocated'
+        configurations = [ project.configurations.shadow ]
+        dependsOn 'fabricClassesJar'
+        relocate "${base_package}.shared", "${base_package}.fabric"
+    }
+}
+
+@SuppressWarnings('GrUnresolvedAccess')
+TaskProvider<Jar> registerClassesJar(String loader) {
+    return tasks.register(loader==null ? 'classesJar' : "${loader}ClassesJar", Jar) {
+        archiveBaseName = mod_id
+        archiveClassifier = loader==null ? 'main' : loader
+        dependsOn loader==null ? 'classes' : "til${loader}Classes"
+        File main_classes = sourceClassesDir('main')
+        if(loader==null) from(main_classes)
+        else {
             from(sourceClassesDir("til$loader"))
+            from(main_classes) {
+                //Avoid needing to exclude duplicate api classes in every subproject by handling them in the main build
+                exclude '**/api/**'
+                //Forge & Neoforge use the same intermediary mappings so we don't have to remap shared stuff in both
+                if('neoforge'==loader) '**/shared/**'
+            }
         }
-    }
+    } as TaskProvider<Jar>
 }
 
-void initConfigs() {
-    setLoaderConfigs()
-    //noinspection GrUnresolvedAccess
-    if(isRunnableVersion()) {
-        //noinspection GrUnresolvedAccess
-        def loaders = isNeoforgeCompatible() ? [ 'fabric', 'forge', 'neoforge' ] : [ 'fabric', 'forge' ]
-        configurations {
-            loaders.forEach {loader ->
-                //noinspection GrUnresolvedAccess
-                logger.lifecycle "Adding runnable $loader configs"
-                [ 'CompileOnly', 'Implementation', 'RuntimeOnly' ].forEach {config_name ->
-                    named("til$loader$config_name").get().extendsFrom create("til${loader}Mod$config_name")
-                }
-            }
-            if(!isJava8()) { //Add shaded dependencies to the legacy_classpath for dev runs
-                forgeLegacyClasspathImplementation
-                tilforgeImplementation.extendsFrom forgeLegacyClasspathImplementation
-                tilforgeMinecraftLibraries.extendsFrom forgeLegacyClasspathImplementation
-                if(isNeoforgeCompatible()) {
-                    neoforgeLegacyClasspathImplementation
-                    tilneoforgeImplementation.extendsFrom neoforgeLegacyClasspathImplementation
-                    tilneoforgeMinecraftLibraries.extendsFrom neoforgeLegacyClasspathImplementation
-                }
-            }
-        }
-    }
-}
-
-void setLoaderConfigs() {
-    sourceSets {
-        //noinspection GrUnresolvedAccess
-        def main_output = sourceSets.main.output
-        tilfabric {
-            compileClasspath+=main_output
-            runtimeClasspath+=main_output
-        }
-        tilforge {
-            compileClasspath+=main_output
-            runtimeClasspath+=main_output
-        }
-        if(isNeoforgeCompatible) {
-            tilneoforge {
-                compileClasspath+=main_output
-                runtimeClasspath+=main_output
-            }
-        }
-    }
-    createJarTasks()
-    configurations {
-        tilfabric {
-            canBeResolved = false
-            canBeConsumed = true
-        }
-        tilforge {
-            canBeResolved = false
-            canBeConsumed = true
-        }
-        if(neoforge_compatible) {
-            tilneoforge {
-                canBeResolved = false
-                canBeConsumed = true
-            }
-        }
-    }
-    artifacts {
-        //noinspection GrUnresolvedAccess
-        tilfabric tilfabricJar
-        //noinspection GrUnresolvedAccess
-        tilforge tilforgeJar
-        //noinspection GrUnresolvedAccess
-        if(isNeoforgeCompatible()) {
-            //noinspection GrUnresolvedAccess
-            tilneoforge tilneoforgeJar
+void setForgeLoggingLevel(Map<?,?> propertyMap, String level, String ... exclusions) {
+    List<String> exclude_these = List.of exclusions
+    forge_log_level_all.split(',').each {log ->
+        if(!exclude_these.contains(log)) {
+            //noinspection GroovyAssignabilityCheck
+            propertyMap["forge.logging.${log}.level".toString()] = level
         }
     }
 }
 
 @SuppressWarnings('GrUnresolvedAccess')
-void setupShared(List<String> extra_maven_ids) {
-    setSharedDependencies extra_maven_ids
-    addParentProcessedResources()
-    setJarsRunAfter collectRunAfter()
-    applySourceHelpers()
+void setLoaderConfigs() {
+    getLoaderList(false).forEach {String loader ->
+        String source_name = "til$loader"
+        sourceSets.create(source_name) {
+            compileClasspath+=sourceSets.main.output
+            runtimeClasspath+=sourceSets.main.output
+        }
+        def jar_provider = registerClassesJar loader
+        configurations.create(source_name) {
+            canBeResolved = false
+            canBeConsumed = true
+        }
+        artifacts.add source_name, jar_provider
+        if('fabric'==loader) initFabricShading()
+        if(isRunnableVersion()) {
+            logger.lifecycle "Adding runnable $loader configs"
+            [ 'CompileOnly', 'Implementation', 'RuntimeOnly' ].forEach {config_name ->
+                configurations {
+                    named("$source_name$config_name").get().extendsFrom create("${source_name}Mod$config_name")
+                }
+            }
+        }
+    }
 }
 
 void setSharedDependencies(List<String> extra_maven_ids) {
@@ -373,7 +151,7 @@ void setSharedDependenciesInner(List<String> maven_ids) {
     Function<String,Boolean> check_legacy_classpath = l -> 'forge'==l || (neoforge_legacy_classpath && 'neoforge'==l)
 
     setCommonRepositories maven_ids
-    def loaders = isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]
+    List<String> loaders = getLoaderList true
     boolean minor_version = isMinorVersion()
     boolean runnable_version = isRunnableVersion()
     dependencies {
@@ -390,43 +168,42 @@ void setSharedDependenciesInner(List<String> maven_ids) {
             parentClasses project(path: parent.path, configuration: 'exportClasses')
         }
         tilfabricModImplementation fabricApi.fabric(fabricAPIVersion())
-        loaders.forEach {loader ->
-            String l_loader = loader.toLowerCase()
-            "til${l_loader}AnnotationProcessor" libs.lombok
-            "til${l_loader}CompileOnly" project(':api')
-            "til${l_loader}CompileOnly" project(":$l_loader")
-            "til${l_loader}CompileOnly" libs.lombok
+    }
+    loaders.forEach {loader ->
+        String l_loader = loader.toLowerCase()
+        String source_name = "til$l_loader"
+        dependencies {
+            "${source_name}AnnotationProcessor" libs.lombok
+            "${source_name}CompileOnly" project(':api')
+            "${source_name}CompileOnly" project(":$l_loader")
+            "${source_name}CompileOnly" libs.lombok
             if(minor_version) {
                 "parent${loader}Classes"(project(path: parent.path, configuration: "export${loader}Classes"))
-                "til${l_loader}CompileOnly" parent
-                "til${l_loader}CompileOnly" project(path: parent.path, configuration: "til$l_loader")
+                "${source_name}CompileOnly" parent
+                "${source_name}CompileOnly" project(path: parent.path, configuration: "$source_name")
             }
             if(runnable_version) {
                 "parent${loader}Classes"(project(path: ":$l_loader", configuration: 'exportClasses'))
-                "til${l_loader}ModCompileOnly"(modsBundle(l_loader, 'compile')) {
+                "${source_name}ModCompileOnly"(modsBundle(l_loader, 'compile')) {
                     exclude group: 'net.fabricmc'
                 }
-                "til${l_loader}ModImplementation"(modsBundle(l_loader, 'implementation')) {
+                "${source_name}ModImplementation"(modsBundle(l_loader, 'implementation')) {
                     exclude group: 'net.fabricmc'
                 }
                 if(enabled_runtime_mods.contains(l_loader)) {
-                    "til${l_loader}ModRuntimeOnly"(modsBundle(l_loader, 'runtime')) {
+                    "${source_name}ModRuntimeOnly"(modsBundle(l_loader, 'runtime')) {
                         exclude group: 'net.fabricmc'
                     }
                 }
                 def mt_versions = enabled_mt[l_loader]
                 if(mt_versions!=null && (mt_versions.contains('all') || mt_versions.contains(minecraftVersion())))
-                    "til${l_loader}RuntimeOnly"(libs.musictriggers)
+                    "${source_name}RuntimeOnly"(libs.musictriggers)
                 if(isJava8() || !check_legacy_classpath.apply(l_loader))
-                    "til${l_loader}Implementation" libs.bundles.burningwave
+                    "${source_name}Implementation" libs.bundles.burningwave
             } else if(isJava8() || !check_legacy_classpath.apply(l_loader))
-                "til${l_loader}Implementation" libs.bundles.burningwave
+                "${source_name}Implementation" libs.bundles.burningwave
         }
-    }
-    tasks.compileJava.mustRunAfter "${parent.path}:classes"
-    loaders.forEach {loader ->
-        String l_loader = loader.toLowerCase()
-        tasks.named("til${l_loader}Classes").configure {
+        tasks.named("${source_name}Classes").configure {
             mustRunAfter 'classes'
         }
         if(minor_version) {
@@ -437,7 +214,7 @@ void setSharedDependenciesInner(List<String> maven_ids) {
             tasks.compileJava.mustRunAfter p_task
             tasks.named("inheritParent${loader}Classes").configure {
                 mustRunAfter ":${parent.path}:classes"
-                mustRunAfter "${parent.path}:til${l_loader}Classes"
+                mustRunAfter "${parent.path}:${source_name}Classes"
                 mustRunAfter ":${l_loader}:classes"
                 mustRunAfter ":api:classes"
             }
@@ -448,4 +225,109 @@ void setSharedDependenciesInner(List<String> maven_ids) {
             }
         }
     }
+    tasks.compileJava.mustRunAfter "${parent.path}:classes"
+}
+
+void setupForgeLikeConfigs(String loader) {
+    configurations {
+        def config = create "${loader}LegacyClasspathImplementation"
+        [ 'Implementation', 'MinecraftLibraries' ].forEach {config_type ->
+            named("til${loader}$config_type").configure {
+                extendsFrom config
+            }
+        }
+    }
+}
+
+@SuppressWarnings('GrUnresolvedAccess')
+void uniminedSetupLoader(SourceSet source, String l_name) {
+    unimined.minecraft(source) {
+        combineWith sourceSets.main
+        boolean is_fabric = 'fabric'==l_name
+        if(isRunnableVersion()) {
+            boolean forge_like = [ 'forge', 'neoforge' ].contains l_name
+            runs {
+                if(forge_like) {
+                    def build_files = getBuildFiles([main: ['classes\\java'], ("til$l_name".toString()): ['classes\\java', 'resources']])
+                    logger.lifecycle "Adding build files to $l_name minecraftLibraries $build_files"
+                    configurations.named("til${l_name}MinecraftLibraries").get().dependencies.add dependencies.create(build_files)
+                    tasks.named("compileTil${l_name}Java").configure {
+                        mustRunAfter "processTil${l_name}Resources"
+                    }
+                }
+                //noinspection ConfigurationAvoidance
+                all {
+                    javaVersion = getJavaVersionEnum()
+                    Map<?,?> map = getSystemProperties()
+                    addCustomRunProperties map, "til$l_name"
+                    if(forge_like) {
+                        [ debug_network, forge_bootstrap_debug ].forEach {debug_prop ->
+                            //noinspection GroovyAssignabilityCheck
+                            map[debug_prop] = 'true'
+                        }
+                        addForgeLoggingMarkers map, true
+                        setForgeLoggingLevel map, 'debug'
+                    }
+                }
+                if(forge_like) {
+                    config('client') {
+                        args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
+                    }
+                }
+                config('server') {
+                    args+=[ 'nogui' ]
+                }
+            }
+            mods {
+                modImplementation {
+                    mixinRemap {
+                        reset()
+                        enableMixinExtra()
+                        enableBaseMixin()
+                        if(is_fabric) disableRefmap()
+                    }
+                }
+                remap(configurations.named("til${l_name}ModRuntimeOnly").get()) {
+                    mixinRemap {
+                        reset()
+                        enableMixinExtra()
+                        enableBaseMixin()
+                        if(is_fabric) disableRefmap()
+                    }
+                }
+            }
+        } else runs.off = true
+        remap(is_fabric ? shadowJar : tasks.named("${l_name}ClassesJar").get()) {
+            archiveBaseName = mod_id
+            archiveClassifier = "$l_name${is_fabric ? '-relocated-' : '-'}remapped"
+            prodNamespace is_fabric ? 'intermediary' : 'searge'
+        }
+        switch(l_name) {
+            case 'fabric' -> {
+                fabric {
+                    loader project.fabric.versions.loader.get()
+                }
+            }
+            case 'forge' -> {
+                minecraftForge {
+                    loader modernForgeVersion()
+                }
+            }
+            case 'neoforge' -> {
+                neoForge {
+                    loader neoforgeVersion()
+                }
+            }
+        }
+    }
+}
+
+ext.setupShared = this.&setupShared as MethodClosure
+
+@SuppressWarnings('GrUnresolvedAccess')
+void setupShared(List<String> extra_maven_ids) {
+    setSharedDependencies extra_maven_ids
+    addParentProcessedResources()
+    setJarsRunAfter collectRunAfter()
+    applySourceHelpers()
 }

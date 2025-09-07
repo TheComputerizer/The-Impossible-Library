@@ -16,6 +16,7 @@ version = mod_version
 
 
 idea {
+    //noinspection GrUnresolvedAccess
     module {
         downloadJavadoc = true
         downloadSources = true
@@ -35,17 +36,15 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.withType(Jar).configureEach {
+    archiveBaseName = mod_id
     duplicatesStrategy = EXCLUDE
-    doFirst {
-        archiveBaseName = mod_id
-    }
 }
 
 tasks.withType(ProcessResources).configureEach {
     duplicatesStrategy = EXCLUDE
 }
 
-if(parent!=null) tasks.jar.enabled = false
+tasks.jar.enabled = false
 
 ext.addParentProcessedResources = this.&addParentProcessedResources as MethodClosure
 ext.createConfiguration = this.&createConfiguration as MethodClosure
@@ -66,7 +65,7 @@ ext.setResourceReplacements = this.&setResourceReplacements as MethodClosure
 void addParentProcessedResources() {
     if('shared'!=name && isSharedProject()) {
         boolean minor_version = isMinorVersion()
-        (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
+        (getLoaderList(true)).forEach {loader ->
             String l_loader = loader.toLowerCase()
             String p_path = minor_version ? getFullPath(parent.name) : ":$l_loader"
             String t_name = "processTil${l_loader}Resources"
@@ -130,7 +129,7 @@ void createConfiguration(String config_name, boolean consumable, boolean resolva
 void createResourceArtifact() {
     def config_map = [ processedResources: 'processResources' ]
     if('shared'!=name && isSharedProject()) {
-        (isNeoforgeCompatible() ? [ 'Fabric', 'Forge', 'Neoforge' ] : [ 'Fabric', 'Forge' ]).forEach {loader ->
+        (getLoaderList(true)).forEach {loader ->
             String l_loader = loader.toLowerCase()
             config_map["processed${loader}Resources".toString()] = "processTil${l_loader}Resources".toString()
         }

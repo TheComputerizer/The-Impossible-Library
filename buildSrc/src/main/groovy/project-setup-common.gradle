@@ -4,7 +4,7 @@ import org.codehaus.groovy.runtime.MethodClosure
  * Initialize common functions
  */
 plugins {
-    id 'project-common-functions'
+    id 'project-common-functions' //project-common-functions <- java-shared
 }
 
 ext.applySourceHelpers = this.&applySourceHelpers as MethodClosure

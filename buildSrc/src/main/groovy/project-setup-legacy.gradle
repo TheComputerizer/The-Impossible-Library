@@ -1,34 +1,123 @@
 import static org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 
 plugins {
-    id 'project-setup-common'
+    id 'project-setup-common' //project-setup-common -> project-common-functions -> java-shared
 }
 
-initJavaPlugin()
-createResourceArtifact()
-initDependencies()
+initLegacy()
 
-createClassConfigs true, true
+@SuppressWarnings('GrUnresolvedAccess')
+void initLegacy() {
 
-configurations {
-    modCompileOnly
-    modRuntimeOnly
-    compileOnly.extendsFrom modCompileOnly
-    runtimeOnly.extendsFrom modRuntimeOnly
+    //Enables using a jar for dev runs to bundle all the required subprojects into a single path
+    boolean use_dev_run_jar = true
+
+    initJavaPlugin()                //project-setup-common
+    createResourceArtifact()        //java-shared
+    initDependencies()              //project-setup-common
+    createClassConfigs true, true   //project-common-functions
+
+    [ 'CompileOnly': 'compileOnly', 'RuntimeOnly': 'runtimeOnly' ].forEach {key,val ->
+        configurations.named(val).get().extendsFrom configurations.create("mod$key")
+    }
+
+    registerClassesJar()
+    if(use_dev_run_jar) registerDevJar()
+
+    initUnimined()                  //unimined-common
+    finalizeUnimined(use_dev_run_jar)
+
+    setupDependencies()
+    addParentProcessedResources()   //java-shared
+
+    tasks.compileJava.mustRunAfter ':api:classes'
+    tasks.compileJava.mustRunAfter ':legacy:classes'
+    if(use_dev_run_jar) tasks.preRunClient.mustRunAfter 'devRunJar'
+
+    applySourceHelpers()            //project-setup-common
 }
 
-//Enables using a jar for dev runs to bundle all the required subprojects into a single path
-boolean use_dev_run_jar = true
+@SuppressWarnings(['GrUnresolvedAccess','GroovyAssignabilityCheck'])
+void finalizeUnimined(boolean use_dev_run_jar) {
+    unimined.minecraft {
+        runs {
+            //noinspection ConfigurationAvoidance
+            all {
+                javaVersion = getJavaVersionEnum()                                      //project-status
+                if(use_dev_run_jar) {
+                    classpath-=getBuildFiles([main: [ 'classes\\java', 'resources' ]])  //project-common-functions
+                    classpath+=files(devRunJar.archiveFile)
+                }
+                Map<?,?> map = getSystemProperties()
+                addCustomRunProperties map, 'main'                                      //unimined-common
+                if(isCleanroomProject()) {                                              //project-status
+                    map[cleanroom_dump] = 'true'
+                    map[cleanroom_verbose] = 'true'
+                } else {
+                    map[forge_log_markers_arg] = forge_log_markers_reduced
+                    map[forge_log_level_console] = 'debug'
+                }
+            }
+            config('client') {
+                args+=[ '--username', minecraft_username, '--uuid', minecraft_uuid ]
+            }
+            config('server') {
+                args+=[ 'nogui' ]
+            }
+        }
+        mods {
+            modImplementation {
+                catchAWNamespaceAssertion()
+            }
+            remap(configurations.modCompileOnly) {
+                catchAWNamespaceAssertion()
+            }
+            remap(configurations.modRuntimeOnly) {
+                catchAWNamespaceAssertion()
+            }
+        }
+        remap(classesJar) {
+            archiveBaseName = mod_id
+            archiveClassifier = 'legacy-remapped'
+            prodNamespace 'searge'
+        }
+        if(isCleanroomProject()) {                                                      //project-status
+            cleanroom {
+                loader project.legacy.versions.cleanroom.loader.get()
+            }
+        } else {
+            minecraftForge {
+                loader legacyForgeVersion()
+            }
+        }
+    }
+}
 
-if(use_dev_run_jar) {
-    tasks.register('devRunJar',Jar) {
+/**
+ * Register a jar task for bundling the compiled classes only
+ */
+void registerClassesJar() {
+    tasks.register('classesJar', Jar) {
+        archiveBaseName = mod_id
+        archiveClassifier = 'legacy'
+        dependsOn classes
+        //noinspection GrUnresolvedAccess
+        from(sourceClassesDir('main')) {
+            exclude '**/api/**'
+        }
+    }
+}
+
+@SuppressWarnings('GrUnresolvedAccess')
+void registerDevJar() {
+    tasks.register('devRunJar', Jar) {
         duplicatesStrategy = EXCLUDE
         for(String t_name : [ 'classes', 'processResources' ]) mustRunAfter t_name
         from sourceSets.main.output
         doFirst {
             archiveBaseName.set "$mod_id-dev_run"
             manifest {
-                Map<String,Object> entries = getManifestEntries()
+                Map<String,Object> entries = getManifestEntries()       //project-common-functions
                 entries['TILMultiversionCoreMods'] = core_entrypoint
                 entries['TILMultiversionMods'] = common_entrypoint
                 attributes entries
@@ -37,97 +126,25 @@ if(use_dev_run_jar) {
     }
 }
 
-
-initUnimined()
-
-/**
- * Register a jar task for bundling the compiled classes only
- */
-tasks.register('classesJar', Jar) {
-    archiveBaseName = mod_id
-    archiveClassifier = 'legacy'
-    dependsOn classes
-    from(sourceClassesDir('main'))
-}
-
-unimined.minecraft {
-    if(isCleanroomProject()) {
-        cleanroom {
-            loader project.legacy.versions.cleanroom.loader.get()
+@SuppressWarnings('GrUnresolvedAccess')
+void setupDependencies() {
+    boolean is_cleanroom = isCleanroomProject()     //project-status
+    setCommonRepositories(is_cleanroom ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])//project-dependencies
+    dependencies {
+        [ ':api', ':legacy' ].forEach {p_path ->
+            compileOnly project(p_path)
+            parentClasses project(path: p_path, configuration: 'exportClasses')
         }
-    } else {
-        minecraftForge {
-            loader legacyForgeVersion()
-        }
+        if(is_cleanroom) {
+            //noinspection DependencyNotationArgument
+            compileOnly legacy.bundles.cleanroom.compile
+            parentClasses project(path: ':legacy:1.12', configuration: 'exportClasses')
+        } else modRuntimeOnly legacy.bundles.forge.runtime
+        //noinspection DependencyNotationArgument
+        annotationProcessor libs.bundles.legacy.annotations
+        modCompileOnly modsBundle('legacy', 'compile')
+        modImplementation modsBundle('legacy', 'implementation')
+        modRuntimeOnly modsBundle('legacy', 'runtime')
+        modRuntimeOnly legacy.bundles.nothirium
     }
-    runs.all {
-        javaVersion = getJavaVersionEnum()
-        if(use_dev_run_jar) {
-            classpath-=getBuildFiles([main: [ 'classes\\java', 'resources' ]])
-            classpath+=files(devRunJar.archiveFile)
-        }
-        Map<?,?> map = getSystemProperties()
-        addCustomRunProperties map, 'main'
-        if(isCleanroomProject()) {
-            //noinspection GroovyAssignabilityCheck
-            map[cleanroom_dump] = 'true'
-            //noinspection GroovyAssignabilityCheck
-            map[cleanroom_verbose] = 'true'
-        } else {
-            //noinspection GroovyAssignabilityCheck
-            map[forge_log_markers_arg] = forge_log_markers_reduced
-            //noinspection GroovyAssignabilityCheck
-            map[forge_log_level_console] = 'debug'
-        }
-    }
-    mods {
-        modImplementation {
-            catchAWNamespaceAssertion()
-        }
-        remap(configurations.modCompileOnly) {
-            catchAWNamespaceAssertion()
-        }
-        remap(configurations.modRuntimeOnly) {
-            catchAWNamespaceAssertion()
-        }
-    }
-    remap(classesJar) {
-        archiveBaseName = mod_id
-        archiveClassifier = 'legacy-remapped'
-        prodNamespace 'searge'
-    }
-}
-
-setCommonRepositories(isCleanroomProject() ? [ 'central', 'cf', 'ct', 'hei' ] : [ 'cf', 'ct', 'hei' ])
-
-dependencies {
-    [ ':api', ':legacy' ].forEach {p_path ->
-        compileOnly project(p_path)
-        parentClasses project(path: p_path, configuration: 'exportClasses')
-    }
-    if(isCleanroomProject()) {
-        //noinspection DependencyNotationArgument,GrUnresolvedAccess
-        compileOnly legacy.bundles.cleanroom.compile
-        parentClasses project(path: ':legacy:1.12', configuration: 'exportClasses')
-    } else modRuntimeOnly legacy.bundles.forge.runtime
-    //noinspection DependencyNotationArgument,GrUnresolvedAccess
-    annotationProcessor libs.bundles.legacy.annotations
-    modCompileOnly modsBundle('legacy', 'compile')
-    modImplementation modsBundle('legacy', 'implementation')
-    modRuntimeOnly modsBundle('legacy', 'runtime')
-    modRuntimeOnly legacy.bundles.nothirium
-}
-
-addParentProcessedResources()
-
-tasks.compileJava.mustRunAfter ':api:classes'
-tasks.compileJava.mustRunAfter ':legacy:classes'
-if(use_dev_run_jar) tasks.preRunClient.mustRunAfter 'devRunJar'
-
-//noinspection GrUnresolvedAccess
-applySourceHelpers()
-
-List<String> fixLegacyRuntimePaths() {
-//noinspection GrUnresolvedAccess
-    return getBuildPaths([main: [ 'classes\\java', 'resources' ]])
 }

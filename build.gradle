@@ -40,6 +40,51 @@ plugins {
     id 'shaded-deps'
 }
 
+addParentProcessedResources()
+
+createClassesImport 'apiClasses', 'gatherAllClasses', 'classes', 'main'
+
+dependencies {
+    apiClasses project(path: ':api', configuration: 'exportClasses')
+}
+
+static List<String> getJarDependencyPaths(String p_name) {
+    return switch(p_name) {
+        case '1.12' -> [ 'classesJar' ]
+        case 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
+            [ 'fabricClassesJar', 'forgeClassesJar' ]
+        case 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ->
+            [ 'fabricClassesJar', 'forgeClassesJar', 'neoforgeClassesJar' ]
+        default -> []
+    }
+}
+
+def included_projects = [ '1.12', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1',
+        'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' ]
+
+shadowJar {
+    archiveClassifier = 'shaded'
+    included_projects.forEach {included_project ->
+        String p_path = getFullPath included_project
+        getJarDependencyPaths(included_project).forEach {jar_task ->
+            dependsOn "$p_path:$jar_task"
+        }
+    }
+    doFirst {
+        manifest {
+            attributes([
+                    'FMLCorePlugin': legacy_entrypoint,
+                    'FMLCorePluginContainsFMLMod': true,
+                    'ForceLoadAsMod': true,
+                    'Implementation-Title': mod_name,
+                    'Implementation-Version': mod_version,
+                    'TILMultiversionCoreMods': core_entrypoint,
+                    'TILMultiversionMods': common_entrypoint
+            ])
+        }
+    }
+}
+
 tasks.register('fixManifest', Jar) {
     dependsOn shadowJar
     archiveBaseName = mod_id
@@ -58,34 +103,8 @@ tasks.register('fixManifest', Jar) {
 }
 
 tasks.assemble.dependsOn fixManifest
-tasks.fixManifest.dependsOn shadowJar
-tasks.jar.finalizedBy shadowJar
+tasks.compileJava.mustRunAfter ':api:classes'
 tasks.shadowJar.finalizedBy fixManifest
-
-createClassesImport 'allClasses', 'gatherAllClasses', 'classes', 'main'
-
-private static List<String> getLoaders(String p_name) {
-    return switch(p_name) {
-        case '1.12' -> [ '' ]
-        case 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1' ->
-            [ '', 'Fabric', 'Forge' ]
-        case 'shared_1.20.4', 'shared_1.20.6', 'shared_1.21.1' -> [ '', 'Fabric', 'Forge', 'Neoforge' ]
-        default -> []
-    }
-}
-
-([ '1.12', 'shared_1.16', 'shared_1.18', 'shared_1.19.2', 'shared_1.19.4', 'shared_1.20.1', 'shared_1.20.4',
-   'shared_1.20.6', 'shared_1.21.1' ]).forEach {included_project ->
-    String p_path = getFullPath(included_project)
-    getLoaders(included_project).forEach {loader ->
-        tasks.compileJava.mustRunAfter "$p_path:inheritParent${loader}Classes"
-        dependencies {
-            allClasses project(path: p_path, configuration: "export${loader}Classes")
-        }
-    }
-}
-
-addParentProcessedResources()
 
 //noinspection GrUnresolvedAccess
 applySourceHelpers()
