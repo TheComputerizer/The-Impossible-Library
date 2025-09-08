@@ -253,17 +253,26 @@ public class ForgeModuleAccess {
     }
     
     public static void moveModule(String layerName, String targetLayerName, String moduleName) {
-        moveModule(getModuleLayer(layerName),targetLayerName,moduleName);
+        moveModule(layerName,targetLayerName,moduleName,false);
+    }
+    
+    public static void moveModule(String layerName, String targetLayerName, String moduleName, boolean moveServices) {
+        moveModule(getModuleLayer(layerName),targetLayerName,moduleName,moveServices);
     }
     
     public static void moveModule(ModuleLayerAccess layer, String targetLayerName, String moduleName) {
+        moveModule(layer,targetLayerName,moduleName,false);
+    }
+    
+    public static void moveModule(ModuleLayerAccess layer, String targetLayerName, String moduleName,
+            boolean moveServices) {
         ModuleAccess module = layer.removeModuleAndReturn(moduleName);
         if(Objects.isNull(module)) {
             layer.logOrPrintError("Unable to move module "+moduleName+"! Cannot find module in supplier layer "+
                                   layer.getLayerName());
             return;
         }
-        moveModuleToLayer(module,targetLayerName);
+        moveModuleToLayer(module,targetLayerName,moveServices);
     }
     
     private static void moveModuleClassesTo(ModuleAccess module, ClassLoader target) {
@@ -274,14 +283,15 @@ public class ForgeModuleAccess {
         else logger.info("Skipping movement of already present module {}",module.getName());
     }
     
-    public static void moveModuleToLayer(ModuleAccess module, String targetLayer) {
+    public static void moveModuleToLayer(ModuleAccess module, String targetLayer, boolean moveServices) {
         LayerInfoAccess info = getLayerInfo(targetLayer);
-        moveModuleToLayer(module,info.getModuleLayer(),info.getClassLoader(),null);
+        moveModuleToLayer(module,info.getModuleLayer(),info.getClassLoader(),null,moveServices);
     }
     
     public static void moveModuleToLayer(ModuleAccess module, ModuleLayerAccess targetLayer,
-            ClassLoader targetLoader, String extraModule) {
+            ClassLoader targetLoader, String extraModule, boolean moveServices) {
         ModuleClassLoaderAccess loaderFrom = getModuleClassLoader(module.getClassLoader());
+        if(moveServices) loaderFrom.moveServicesTo(targetLayer,module);
         moveModuleClassesTo(module,targetLoader);
         module.setLayer(targetLayer);
         module.setLoader(targetLoader);

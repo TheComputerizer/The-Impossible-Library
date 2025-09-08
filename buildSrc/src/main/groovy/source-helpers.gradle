@@ -186,7 +186,9 @@ void setupJarGraph(String t_name, String p_t_name) {
     }
     provider.configure {
         doFirst {
-            from configurations.named(p_t_name)
+            configurations.named(p_t_name).get().files.forEach {file ->
+                from zipTree(file)
+            }
         }
     }
 }

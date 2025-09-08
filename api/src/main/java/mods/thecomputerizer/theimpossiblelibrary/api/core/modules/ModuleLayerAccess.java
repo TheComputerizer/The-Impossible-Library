@@ -249,6 +249,14 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return modules().stream().map(this::getModule).collect(Collectors.toSet());
     }
     
+    public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module) {
+        moveServicesTo(target.getServicesCatalog(),module);
+    }
+    
+    public void moveServicesTo(ServicesCatalogAccess target, ModuleAccess module) {
+        target.inheritProviders(getServicesCatalog(),module.access,module.getName());
+    }
+    
     @IndirectCallers
     public Map<String,Object> nameToModule() {
         return nameToModule(true);

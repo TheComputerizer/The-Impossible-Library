@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModFinder;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.loader.NeoForgeModLoading;
 import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModFile.Type;
@@ -27,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import static java.lang.System.out;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOADERID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
@@ -34,9 +34,7 @@ import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
 public abstract class TILModFinderNeoForge1_21 {
     
     static {
-        NeoForgeCoreLoader.initCoreAPI(TILSelfLocator.class.getClassLoader());
-        if(!NeoForgeModLoading.setLoadingVersion(TILModFinderNeoForge1_21.class))
-            throw new RuntimeException("Failed to set mod loading version for MultiVersionModReader!");
+        out.println("Class init: "+TILModFinderNeoForge1_21.class.getName());
     }
    
     private final CoreAPI core;

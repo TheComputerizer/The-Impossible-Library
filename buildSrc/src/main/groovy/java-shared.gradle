@@ -62,6 +62,7 @@ ext.setResourceReplacements = this.&setResourceReplacements as MethodClosure
 /**
  * Add the result of the processResources tasks from parent projects as dependencies.
  */
+@SuppressWarnings('GrUnresolvedAccess')
 void addParentProcessedResources() {
     if('shared'!=name && isSharedProject()) {
         boolean minor_version = isMinorVersion()
@@ -84,6 +85,8 @@ void addParentProcessedResources() {
         if(isLegacyProject()) p_paths = [ ':legacy' ]
         else if(parent==null) {
             p_paths = [ ':fabric', ':forge', ':legacy:1.12', ':neoforge' ]
+            addParentResourceDependency 'parentResources', ':shared:shared_1.21', 'processedNeoforgeResources'
+            tasks.processResources.mustRunAfter ':shared:shared_1.21:processTilneoforgeResources'
         }
         p_paths.forEach {
             addParentResourceDependency 'parentResources', it, 'processedResources'
@@ -128,6 +131,7 @@ void createConfiguration(String config_name, boolean consumable, boolean resolva
 /**
  * Create an artifact for the processResources task that can be consumed as a dependency.
  */
+@SuppressWarnings('GrUnresolvedAccess')
 void createResourceArtifact() {
     def config_map = [ processedResources: 'processResources' ]
     if('shared'!=name && isSharedProject()) {

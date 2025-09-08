@@ -6,6 +6,7 @@ import lombok.Setter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ClassLoaderAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleDescriptorAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleHolder;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
@@ -277,6 +278,10 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
             removeRoot(moduleName);
             targetLoader.addRoot(moduleName,ref);
         }
+    }
+    
+    public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module) {
+        getModuleLayer().moveServicesTo(target,module);
     }
     
     @IndirectCallers

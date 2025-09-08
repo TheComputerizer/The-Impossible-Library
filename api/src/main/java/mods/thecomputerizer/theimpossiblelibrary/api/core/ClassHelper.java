@@ -379,6 +379,12 @@ public class ClassHelper {
         if(Objects.nonNull(clazz)) classLoader.loadClass(clazz.getName());
         else LOGGER.error("Tried to load null class to {}",classLoader);
     }
+    
+    public static void loadURL(ClassLoader loader, Class<?> clazz) {
+        URL source = getSourceURL(clazz);
+        if(!loadURL((URLClassLoader)loader,source))
+            LOGGER.error("Failed to load source for {} (URL={})",clazz,source);
+    }
 
     @SneakyThrows
     public static boolean loadURL(URLClassLoader classLoader, URL url) {

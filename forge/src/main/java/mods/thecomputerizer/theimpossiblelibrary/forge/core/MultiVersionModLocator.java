@@ -21,19 +21,10 @@ import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.MODULE_LAYERS;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Getter
 public class MultiVersionModLocator implements IModLocator {
-    
-    static {
-        ForgeCoreLoader.fixFirstEntryPoint();
-        Object instance = ForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
-        if(Objects.isNull(instance))
-            throw new RuntimeException("Failed to retrieve CoreAPI instance for MultiVersionModLocator");
-        if(!MODULE_LAYERS) Hacks.removeEnvironmentProperty("MOD_CLASSES");
-    }
     
     static ClassLoader modFileClassLoader(IModFile file) {
         if(Objects.isNull(file)) return IModFile.class.getClassLoader();

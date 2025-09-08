@@ -476,10 +476,8 @@ public class ForgeModLoading {
         LOGGER.debug("Finalized mod identification for {} (path={})",fileName,absolutePath);
         int candidateCount = CANDIDATE_MAP.size();
         int identifiedCount = IDENTIFIED_FILES.size();
-        if(identifiedCount>=candidateCount) {
+        if(identifiedCount>=candidateCount)
             LOGGER.debug("Successfully identified {}/{} mod files",identifiedCount,candidateCount);
-            ForgeCoreLoader.removeDevModules();
-        }
         return true;
     }
     
@@ -784,6 +782,22 @@ public class ForgeModLoading {
                 return null;
             };
         }
+    }
+    
+    /**
+     * Returns false if the version was not set correctly
+     */
+    @IndirectCallers
+    public static boolean setLoadingVersion(Class<?> caller) {
+        if(Objects.nonNull(workingVersion)) {
+            LOGGER.debug("Tried to set loading version from {} after it was already set",caller);
+            return false;
+        }
+        String version = String.valueOf(CoreAPI.gameVersion());
+        String checkedVersion = version.substring(2).replace('.','_');
+        setFileVersion(caller,checkedVersion,version);
+        LOGGER.info("Successfully set Neoforge mod loading version ({}->{})",checkedVersion,version);
+        return true;
     }
     
     static BiFunction<ModFile,Collection<?>,ModFileInfo> setModFileInfoCreator(String version) {
