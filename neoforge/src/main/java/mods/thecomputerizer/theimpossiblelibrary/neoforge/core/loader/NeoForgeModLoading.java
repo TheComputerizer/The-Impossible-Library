@@ -17,6 +17,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
@@ -79,10 +80,6 @@ import static org.objectweb.asm.Type.BOOLEAN_TYPE;
  * Helper methods for common functionalities between all 1.20.4+ versions of NeoForge mod loading
  */
 public class NeoForgeModLoading {
-    
-    static {
-        Hacks.checkBurningWaveInit();
-    }
     
     static final Logger LOGGER = LoggerFactory.getLogger("NeoForge Mod Loading");
     static final BiConsumer<TILBetterModScan,Object> AFTER_WRITING_MODS = (scan,language) -> {
@@ -187,7 +184,8 @@ public class NeoForgeModLoading {
         IModFile modFile = createModFile(contents[0],locator,f -> getFileInfo(f,infos),MOD,MODID);
         FILE_INFO_MAP.put(modFile,initInfoMap(candidate,infos));
         if(Objects.isNull(modFile)) return new IModFile[]{};
-        IModFile langFile = createModFile(contents[1],locator,NeoForgeModLoading::langFileInfo,LIBRARY,LOADERID);
+        IModFile langFile = createModFile(contents[1], locator, NeoForgeModLoading::langFileInfo, LIBRARY,
+                                          TILLauncherRef.LOADER_ID);
         IModFile[] files = new IModFile[]{langFile,modFile};
         LOADER_FILES.addAll(List.of(files));
         return files;
@@ -252,7 +250,6 @@ public class NeoForgeModLoading {
     }
     
     static @Nullable Class<?> dynamicModFileCreator() {
-        Hacks.checkBurningWaveInit();
         String pkgName = NeoForgeCoreLoader.class.getPackage().getName();
         String className = pkgName+".TILNeoForgeModFile";
         byte[] byteCode = generateModFileExtension(className);
@@ -582,7 +579,6 @@ public class NeoForgeModLoading {
         Object core = CoreAPI.getInstance(loader);
         if(Objects.isNull(core))
             throw new RuntimeException("Failed to initialize multiversion mod loader! Cannot find CoreAPI on "+loader);
-        Hacks.checkBurningWaveInit();
         findPaths(loader,Hacks.invoke(core,"getLoader"));
         loadMods(loader,locator,core);
     }
@@ -738,7 +734,7 @@ public class NeoForgeModLoading {
             populateMultiversionData(map,data);
             if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
                 LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
-                addScannedMod(langProviderModFile(candidateFile,LOADERID),mods,"LANGPROVIDER");
+                addScannedMod(langProviderModFile(candidateFile, TILLauncherRef.LOADER_ID), mods, "LANGPROVIDER");
             }
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");
@@ -773,7 +769,7 @@ public class NeoForgeModLoading {
     /**
      * Returns false if the version was not set correctly
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    @IndirectCallers
     public static boolean setLoadingVersion(Class<?> caller) {
         if(Objects.nonNull(workingVersion)) {
             LOGGER.debug("Tried to set loading version from {} after it was already set",caller);

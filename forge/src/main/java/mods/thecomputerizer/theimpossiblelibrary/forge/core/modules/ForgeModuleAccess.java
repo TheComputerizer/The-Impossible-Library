@@ -252,68 +252,39 @@ public class ForgeModuleAccess {
         return new SecureJarProviderAccess(provider,accessorOrLogger);
     }
     
-    public static void moveModule(String layerName, String targetLayerName, String moduleName) {
-        moveModule(layerName,targetLayerName,moduleName,false);
+    public static void moveModule(String layer, String targetLayer, String moduleName, boolean moveServices) {
+        moveModule(getModuleClassLoader(layer),getModuleClassLoader(targetLayer),moduleName,moveServices);
     }
     
-    public static void moveModule(String layerName, String targetLayerName, String moduleName, boolean moveServices) {
-        moveModule(getModuleLayer(layerName),targetLayerName,moduleName,moveServices);
-    }
-    
-    public static void moveModule(ModuleLayerAccess layer, String targetLayerName, String moduleName) {
-        moveModule(layer,targetLayerName,moduleName,false);
-    }
-    
-    public static void moveModule(ModuleLayerAccess layer, String targetLayerName, String moduleName,
-            boolean moveServices) {
-        ModuleAccess module = layer.removeModuleAndReturn(moduleName);
+    public static void moveModule(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveServices) {
+        ModuleLayerAccess sourceLayer = sourceLoader.getModuleLayer();
+        ModuleAccess module = sourceLayer.removeModuleAndReturn(moduleName);
         if(Objects.isNull(module)) {
-            layer.logOrPrintError("Unable to move module "+moduleName+"! Cannot find module in supplier layer "+
-                                  layer.getLayerName());
+            sourceLoader.logOrPrintError("Unable to move module "+moduleName+"! Cannot find module in supplier layer "+
+                                         sourceLayer.getLayerName());
             return;
         }
-        moveModuleToLayer(module,targetLayerName,moveServices);
+        moveModuleToLayer(sourceLoader,targetLoader,module,null,moveServices);
     }
     
-    private static void moveModuleClassesTo(ModuleAccess module, ClassLoader target) {
-        ClassLoader moduleLoader = module.getClassLoader();
-        Logger logger = ModuleSystemAccessor.getAsLogger(defaultLogger());
-        if(moduleLoader!=target)
-            ModuleSystemAccessor.getClassLoader(moduleLoader,logger).moveModuleClassesTo(module,target);
-        else logger.info("Skipping movement of already present module {}",module.getName());
+    private static void moveModuleClassesTo(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, ModuleAccess module) {
+        if(sourceLoader.access()!=targetLoader.access()) sourceLoader.moveModuleClassesTo(module,targetLoader);
+        else sourceLoader.logger().info("Skipping movement of already present module {}",module.getName());
     }
     
-    public static void moveModuleToLayer(ModuleAccess module, String targetLayer, boolean moveServices) {
-        LayerInfoAccess info = getLayerInfo(targetLayer);
-        moveModuleToLayer(module,info.getModuleLayer(),info.getClassLoader(),null,moveServices);
-    }
-    
-    public static void moveModuleToLayer(ModuleAccess module, ModuleLayerAccess targetLayer,
-            ClassLoader targetLoader, String extraModule, boolean moveServices) {
-        ModuleClassLoaderAccess loaderFrom = getModuleClassLoader(module.getClassLoader());
-        if(moveServices) loaderFrom.moveServicesTo(targetLayer,module);
-        moveModuleClassesTo(module,targetLoader);
+    public static void moveModuleToLayer(ModuleClassLoaderAccess sourceLoader, ModuleClassLoaderAccess targetLoader,
+            ModuleAccess module, String extraModule, boolean moveServices) {
+        ModuleLayerAccess targetLayer = targetLoader.getModuleLayer();
+        if(moveServices) sourceLoader.moveServicesTo(targetLayer,module);
+        moveModuleClassesTo(sourceLoader,targetLoader,module);
         module.setLayer(targetLayer);
         module.setLoader(targetLoader);
         targetLayer.addModule(module);
-        ModuleClassLoaderAccess mTargetLoader = getModuleClassLoader(targetLoader);
-        Set<String> packages = module.getPackages();
         String moduleName = module.getName();
-        Object resolvedModule = loaderFrom.configuration().getModuleDirect(moduleName);
-        mTargetLoader.addPackages(packages,resolvedModule);
-        Object root = loaderFrom.getRoot(moduleName).access();
-        mTargetLoader.addRoot(moduleName,root);
-        if(Objects.nonNull(extraModule)) mTargetLoader.addRoot(extraModule,root);
-        mTargetLoader.removeParentLoaders(packages);
-        getModuleClassLoader("BOOT").addParentLoaders(packages,targetLoader);
-        loaderFrom.removePackages(packages);
-        loaderFrom.removeRoot(moduleName);
-        if(SECURE_CLASSLOADER_FORMAT) {
-            Object secureModule = loaderFrom.ourModulesSecure().get(moduleName);
-            mTargetLoader.ourModulesSecure().put(moduleName,secureModule);
-            if(Objects.nonNull(extraModule)) mTargetLoader.ourModulesSecure().put(extraModule,secureModule);
-            loaderFrom.ourModulesSecure().remove(moduleName);
-        }
+        if(Objects.nonNull(extraModule)) targetLoader.addRoot(extraModule,sourceLoader.getRoot(moduleName).access());
+        sourceLoader.moveModuleTo(targetLoader,moduleName,extraModule);
     }
     
     @IndirectCallers

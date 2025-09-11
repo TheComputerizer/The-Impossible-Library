@@ -24,8 +24,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
-
 /**
  * [1.18.2+] cpw.mods.cl.ModuleClassLoader
  * [1.20.4+] extends net.minecraftforge.securemodules.SecureModuleClassLoader
@@ -38,6 +36,16 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         super(loader,accessorOrLogger);
     }
     
+    @IndirectCallers
+    public void addPackage(String pkg, ResolvedModuleAccess resolvedModule) {
+        addPackage(pkg,(ResolvedModule)resolvedModule.accessAs());
+    }
+    
+    void addPackage(String pkg, ResolvedModule resolvedModule) {
+        packageLookup().put(pkg,resolvedModule);
+    }
+    
+    @IndirectCallers
     public void addPackages(ResolvedModuleAccess resolvedModule) {
         addPackages(resolvedModule.reference().descriptor(),resolvedModule);
     }
@@ -56,12 +64,9 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     @IndirectCallers
-    public void addPackage(String pkg, ResolvedModuleAccess resolvedModule) {
-        addPackage(pkg,(ResolvedModule)resolvedModule.accessAs());
-    }
-    
-    void addPackage(String pkg, ResolvedModule resolvedModule) {
-        packageLookup().put(pkg,resolvedModule);
+    public void addPackagesFrom(Collection<String> pkgs, ModuleClassLoaderAccess source, String moduleName) {
+        ResolvedModule module = source.getConfigModuleDirect(moduleName);
+        addPackages(pkgs,module);
     }
     
     @IndirectCallers
@@ -91,6 +96,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         parentLoaders().put(pkg,loader);
     }
     
+    @IndirectCallers
     public void addRoot(ResolvedModuleAccess resolvedModule) {
         addRoot(resolvedModule.reference());
     }
@@ -99,6 +105,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         addRoot(moduleReference.name(),(ModuleReference)moduleReference.accessAs());
     }
     
+    @IndirectCallers
     public void addRoot(String name, ModuleReferenceAccess moduleReference) {
         addRoot(name,(ModuleReference)moduleReference.accessAs());
     }
@@ -156,6 +163,10 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return ModuleSystemAccessor.getResolvedModule(resolvedModule,this);
     }
     
+    public <T> T getConfigModuleDirect(String name) {
+        return configuration().getModuleDirect(name);
+    }
+    
     public ModuleLayerAccess getModuleLayer() {
         if(Objects.isNull(this.layer)) {
             logOrPrintError("Cannot get ModuleLayer! (ModuleClassLoaderAccess#layerName is null)");
@@ -178,6 +189,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return Objects.nonNull(moduleReference) ? getModuleReference(moduleReference) : null;
     }
     
+    @IndirectCallers
     public ModuleReference getRootDirect(String name) {
         return resolvedRoots().get(name);
     }
@@ -199,6 +211,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         removePackages(lookupResolvedModule(moduleName));
     }
     
+    @IndirectCallers
     public Set<ResolvedModule> lookupModules(Collection<String> packages) {
         Set<ResolvedModule> modules = new HashSet<>();
         for(Entry<String,ResolvedModule> lookupEntry : packageLookup().entrySet())
@@ -231,44 +244,30 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return null;
     }
     
-    @IndirectCallers
-    public void moveModulesTo(Layer targetLayer, String ... moduleNames) {
-        ModuleClassLoaderAccess targetLoader = NeoforgeModuleAccess.getModuleClassLoader(targetLayer,this);
-        for(String moduleName : moduleNames) moveModuleTo(targetLoader,moduleName);
-    }
-    
-    @IndirectCallers
-    public void moveModuleTo(Layer targetLayer, String moduleName) {
-        moveModuleTo(NeoforgeModuleAccess.getModuleClassLoader(targetLayer,this),moduleName);
-    }
-    
     /**
      * Assumes layer has been set for both this and the targetLoader
      */
     public void moveModuleTo(ModuleClassLoaderAccess targetLoader, String moduleName) {
         ResolvedModuleAccess resolvedModule = lookupResolvedModule(moduleName);
         resolvedModule.configuration().moveModuleTo(targetLoader.configuration(),resolvedModule);
-        movePackageLookup(targetLoader,resolvedModule);
         moveRoots(targetLoader,moduleName);
-        NeoforgeModuleAccess.moveModule(getModuleLayer(),targetLoader.layer,moduleName);
+        movePackageLookup(targetLoader,resolvedModule);
     }
     
     private void movePackageLookup(ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess resolvedModule) {
-        Set<String> packages = new HashSet<>();
+        Set<String> packages = resolvedModule.packages(true);
+        movePackageParent(targetLoader,packages);
         Map<String,ResolvedModule> packageLookup = packageLookup();
-        for(Entry<String,ResolvedModule> packageEntry : packageLookup.entrySet())
-            if(packageEntry.getValue()==resolvedModule.access()) packages.add(packageEntry.getKey());
         Map<String,ResolvedModule> targetPackageLookup = targetLoader.packageLookup();
         for(String pkg : packages) {
             packageLookup.remove(pkg);
             targetPackageLookup.put(pkg,resolvedModule.accessAs());
         }
-        movePackageParent(targetLoader,packages);
     }
     
     private void movePackageParent(ModuleClassLoaderAccess targetLoader, Set<String> packages) {
         if(packages.isEmpty()) return;
-        if(this.layer!=BOOT) addParentLoaders(packages,targetLoader);
+        addParentLoaders(packages,targetLoader);
         targetLoader.removeParentLoaders(packages);
     }
     
@@ -280,8 +279,9 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         }
     }
     
-    public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module) {
-        getModuleLayer().moveServicesTo(target,module);
+    @IndirectCallers
+    public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module, String ... serviceMovementBlacklist) {
+        getModuleLayer().moveServicesTo(target,module,serviceMovementBlacklist);
     }
     
     @IndirectCallers

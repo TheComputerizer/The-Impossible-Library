@@ -2,12 +2,15 @@ package mods.thecomputerizer.theimpossiblelibrary.api.core.modules;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * jdk.internal.module.ServicesCatalog
@@ -70,14 +73,16 @@ public class ServicesCatalogAccess extends AbstractModuleSystemAccessor {
         return providers;
     }
     
-    public void inheritProviders(ServicesCatalogAccess catalog, Object module, String moduleName) {
+    public void inheritProviders(ServicesCatalogAccess catalog, Object module, String moduleName,
+            Collection<String> serviceMovementBlacklist) {
+        this.logger.info("Inherting providers for {} (blacklist = {})",module,serviceMovementBlacklist);
         Map<String,List<String>> serviceMap = catalog.getProvidersFor(moduleName);
         for(Entry<String,List<String>> serviceEntry : serviceMap.entrySet()) {
             String service = serviceEntry.getKey();
             for(String provider : serviceEntry.getValue())
                 if(!containsProviderFor(service,provider,moduleName)) addProvider(service,module,provider);
         }
-        catalog.removeProviders(serviceMap);
+        catalog.removeProviders(serviceMap,serviceMovementBlacklist);
     }
     
     public Class<?> providerClass() {
@@ -88,16 +93,29 @@ public class ServicesCatalogAccess extends AbstractModuleSystemAccessor {
         return getDirect("map");
     }
     
+    public void registerModule(ModuleAccess module) {
+        if(Objects.nonNull(module)) {
+            logOrPrint("Registering module "+module.getName()+" to service catalog",Logger::info);
+            registerModule(module.access);
+        } else logOrPrint("Not registering null module accessor",Logger::warn);
+    }
+    
+    public void registerModule(Object module) {
+        if(Objects.nonNull(module)) invokeDirect("register",module);
+        else logOrPrint("Not registering null module",Logger::warn);
+    }
+    
     @SuppressWarnings("UnusedReturnValue")
     public boolean removeImplementations(String service, String impl) {
         return providers().getOrDefault(service,new ArrayList<>())
                 .removeIf(provider -> impl.equals(asProvider(provider).providerName()));
     }
     
-    void removeProviders(Map<String,List<String>> serviceMap) {
+    void removeProviders(Map<String,List<String>> serviceMap, Collection<String> serviceMovementBlacklist) {
         Map<String,List<Object>> existingServiceMap = providers();
         for(Entry<String,List<String>> serviceEntry : serviceMap.entrySet()) {
             String service = serviceEntry.getKey();
+            if(serviceMovementBlacklist.contains(service)) continue;
             List<String> providers = serviceEntry.getValue();
             if(existingServiceMap.containsKey(service)) {
                 List<Object> values = existingServiceMap.get(service);

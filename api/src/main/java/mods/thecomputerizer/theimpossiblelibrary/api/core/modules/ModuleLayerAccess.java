@@ -249,12 +249,16 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return modules().stream().map(this::getModule).collect(Collectors.toSet());
     }
     
-    public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module) {
-        moveServicesTo(target.getServicesCatalog(),module);
+    public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module,
+            String ... serviceMovementBlacklist) {
+        logOrPrint("Moving services from "+this.layerName+" to "+target.layerName,Logger::debug);
+        moveServicesTo(target.getServicesCatalog(),module,serviceMovementBlacklist);
     }
     
-    public void moveServicesTo(ServicesCatalogAccess target, ModuleAccess module) {
-        target.inheritProviders(getServicesCatalog(),module.access,module.getName());
+    public void moveServicesTo(ServicesCatalogAccess target, ModuleAccess module,
+            String ... serviceMovementBlacklist) {
+        target.inheritProviders(getServicesCatalog(),module.access,module.getName(),
+                                Arrays.asList(serviceMovementBlacklist));
     }
     
     @IndirectCallers
@@ -316,6 +320,7 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         setModules(modules);
     }
     
+    @IndirectCallers
     public void removeServiceImplementations(String serviceName, String impl) {
         getServicesCatalog().removeImplementations(serviceName,impl);
     }

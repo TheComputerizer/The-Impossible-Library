@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.bootstrap.TILLauncherNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModuleClassLoaderAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.NeoforgeModuleAccess;
 import net.neoforged.neoforgespi.language.IModFileInfo;
@@ -21,6 +22,7 @@ import java.util.*;
 
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 /**
  * Figures out which version to load on and how to load stuff on it
@@ -32,6 +34,31 @@ public class NeoForgeCoreLoader {
     private static final String COREAPI_CLASS = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
     private static final String NEOFORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge";
     private static final Logger LOGGER = LogManager.getLogger("TIL NeoforgeCoreLoader");
+    
+    /**
+     * Since the library interacts with GAME layer modules, we need to ensure it is available on the GAME layer
+     */
+    public static void addLibraryToGameLayer(String pkg, String moduleName) {
+        ModuleClassLoaderAccess bootLoader = bootLoaderAccess();
+        String originalModule = bootLoader.getResolvedModule(pkg).name();
+        ModuleClassLoaderAccess gameLoader = NeoforgeModuleAccess.getModuleClassLoader(GAME);
+        if(DEV && ("main".equals(originalModule) || "tilneoforge".equals(originalModule))) {
+            Set<String> packages = bootLoader.lookupPackagesFor("main","tilneoforge");
+            bootLoader.removePackages(packages);
+            bootLoader.addParentLoaders(packages,gameLoader);
+            gameLoader.removeParentLoaders(packages);
+            Configuration gameConfig = gameLoader.configuration().accessAs();
+            ResolvedModule module = gameConfig.findModule(moduleName).orElse(null);
+            if(Objects.isNull(module)) {
+                LOGGER.error("Failed to find module in GAME layer {}",moduleName);
+                return;
+            }
+            if(gameConfig!=module.configuration()) LOGGER.warn("Module found in non-GAME layer {}",moduleName);
+            gameLoader.addPackages(packages,module);
+            ModuleSystemAccessor.getModuleDescriptor(module.reference().descriptor(),LOGGER).setPackages(packages);
+        } else NeoforgeModuleAccess.moveModule(bootLoader,gameLoader,originalModule,true);
+        TILLauncherNeoForge.checkHacksInit(false,gameLoader.unwrap());
+    }
     
     /**
      * Should be the ClassLoader for the BOOT layer or the system ClassLoader if Java 8
@@ -92,27 +119,6 @@ public class NeoForgeCoreLoader {
         }
         LOGGER.error("Failed to find fml.mcVersion or version flags from args {}",Arrays.toString(rawArgs));
         return null;
-    }
-    
-    public static void handleDevPackages(String pkg, String moduleName) {
-        ModuleClassLoaderAccess bootLoader = bootLoaderAccess();
-        ModuleClassLoaderAccess gameLoader = NeoforgeModuleAccess.getModuleClassLoader(GAME);
-        String originalModule = bootLoader.getResolvedModule(pkg).name();
-        if("main".equals(originalModule) || "tilneoforge".equals(originalModule)) {
-            Set<String> packages = bootLoader.lookupPackagesFor("main","tilneoforge");
-            bootLoader.removePackages(packages);
-            bootLoader.addParentLoaders(packages,gameLoader);
-            gameLoader.removeParentLoaders(packages);
-            Configuration gameConfig = gameLoader.configuration().accessAs();
-            ResolvedModule module = gameConfig.findModule(moduleName).orElse(null);
-            if(Objects.isNull(module)) {
-                LOGGER.error("Failed to find module in GAME layer {}",moduleName);
-                return;
-            }
-            if(gameConfig!=module.configuration()) LOGGER.warn("Module found in non-GAME layer {}",moduleName);
-            gameLoader.addPackages(packages,module);
-            ModuleSystemAccessor.getModuleDescriptor(module.reference().descriptor(),LOGGER).setPackages(packages);
-        } else NeoforgeModuleAccess.moveModule(bootLoader,gameLoader,originalModule);
     }
     
     /**

@@ -45,6 +45,7 @@ public class ConfigurationAccess extends AbstractModuleSystemAccessor implements
         resolvedModule.setConfiguration(this);
     }
     
+    @IndirectCallers
     public void addModuleIfAbsent(ResolvedModuleAccess resolvedModule) {
         addModuleIfAbsent(resolvedModule.name(),resolvedModule);
     }
@@ -154,8 +155,9 @@ public class ConfigurationAccess extends AbstractModuleSystemAccessor implements
         return getResolvedModule(getModuleDirect(moduleName));
     }
     
-    public Object getModuleDirect(String moduleName) {
-        return nameToModule(false).get(moduleName);
+    @SuppressWarnings("unchecked")
+    public <T> T getModuleDirect(String moduleName) {
+        return (T)nameToModule(false).get(moduleName);
     }
     
     private ResolvedModuleAccess getModuleFromSet(String name) {

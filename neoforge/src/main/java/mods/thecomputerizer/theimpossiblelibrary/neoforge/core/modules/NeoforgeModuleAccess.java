@@ -3,16 +3,15 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules;
 import cpw.mods.cl.ModuleClassLoader;
 import cpw.mods.modlauncher.api.IModuleLayerManager.Layer;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ClassAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ServicesCatalogAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.module.ModuleReference;
-import java.lang.module.ResolvedModule;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -22,6 +21,7 @@ import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.PLUGIN;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.SERVICE;
+import static java.lang.System.out;
 
 public class NeoforgeModuleAccess {
     
@@ -63,14 +63,6 @@ public class NeoforgeModuleAccess {
         return NeoForgeCoreLoader.getLogger();
     }
     
-    public static void exportAllPackages(Layer ... layers) {
-        exportAllPackages(defaultLogger(),layers);
-    }
-    
-    public static void exportAllPackages(Object accessorOrLogger, Layer ... layers) {
-        for(Layer layer : layers) NeoforgeModuleAccess.getModuleLayer(layer,accessorOrLogger).exportPackagesToAll();
-    }
-    
     public static String findConfigurationLayerName(ConfigurationAccess configuration) {
         Set<Layer> potentialLayers = getModuleLayerHandler().completedLayers().keySet();
         for(Layer potentialLayer : potentialLayers) {
@@ -78,6 +70,13 @@ public class NeoforgeModuleAccess {
                 return potentialLayer.name();
         }
         return "UNKNOWN LAYER";
+    }
+    
+    @IndirectCallers
+    public static Layer findMatchingLayer(ClassLoader loader) {
+        for(Layer layer : Layer.values())
+            if(getModuleClassLoader(layer).unwrap()==loader) return layer;
+        return null;
     }
     
     @IndirectCallers
@@ -97,13 +96,6 @@ public class NeoforgeModuleAccess {
     
     public static ModuleAccess findModuleInLayer(String moduleName, Layer layer) {
         return getModuleLayer(layer).getModule(moduleName);
-    }
-    
-    /**
-     * We don't want to accidentally override or throw any errors related to getClass
-     */
-    public static ClassAccess getClassAccess(Class<?> clazz) {
-        return Objects.nonNull(clazz) ? ModuleSystemAccessor.getClassAccess(clazz,defaultLogger()) : null;
     }
     
     public static EnvironmentAccess getEnvironment() {
@@ -159,30 +151,18 @@ public class NeoforgeModuleAccess {
         return new ModFileAccess(modFile,accessorOrLogger);
     }
     
-    public static ModFileInfoAccess getModFileInfo(Object modFileInfo) {
-        return getModFileInfo(modFileInfo,defaultLogger());
-    }
-    
-    public static ModFileInfoAccess getModFileInfo(Object modFileInfo, Object accessorOrLogger) {
-        return new ModFileInfoAccess(modFileInfo,accessorOrLogger);
-    }
-    
     public static ModuleAccess getModule(Object module) {
         return ModuleSystemAccessor.getModule(module,defaultLogger());
     }
     
-    public static ModuleClassLoaderAccess[] getModuleClassLoaders(Layer... layers) {
-        ModuleClassLoaderAccess[] loaders = new ModuleClassLoaderAccess[layers.length];
-        for(int i=0;i<layers.length;i++) loaders[i] = getModuleClassLoader(layers[i]);
-        return loaders;
-    }
-    
-    public static ModuleClassLoaderAccess getModuleClassLoader(Layer layer) {
+    public static ModuleClassLoaderAccess getModuleClassLoader(@Nullable Layer layer) {
+        if(Objects.isNull(layer)) throw new NullPointerException("Tried to get ModuleClassLoader from null Layer!");
         return getLayerInfo(layer,defaultLogger()).getModuleClassLoader();
     }
     
     @IndirectCallers
-    public static ModuleClassLoaderAccess getModuleClassLoader(Layer layer, Object accessorOrLogger) {
+    public static ModuleClassLoaderAccess getModuleClassLoader(@Nullable Layer layer, Object accessorOrLogger) {
+        if(Objects.isNull(layer)) throw new NullPointerException("Tried to get ModuleClassLoader from null Layer!");
         return getLayerInfo(layer,accessorOrLogger).getModuleClassLoader();
     }
     
@@ -247,68 +227,42 @@ public class NeoforgeModuleAccess {
         return new SecureJarProviderAccess(provider,accessorOrLogger);
     }
     
-    public static void moveModule(ModuleClassLoaderAccess sourceLoader,
-            ModuleClassLoaderAccess targetLoader, String moduleName) {
-        moveModule(sourceLoader,targetLoader,moduleName,false);
+    public static void moveModule(Layer layer, Layer targetLayer, String moduleName, boolean moveClasses) {
+        moveModule(getModuleClassLoader(layer),getModuleClassLoader(targetLayer),moduleName,moveClasses);
     }
     
     public static void moveModule(ModuleClassLoaderAccess sourceLoader,
-            ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveServices) {
-        moveModule(sourceLoader.getModuleLayer(),targetLoader.layer,moduleName,moveServices);
-    }
-    
-    public static void moveModule(Layer layer, Layer targetLayer, String moduleName, boolean moveServices) {
-        moveModule(getModuleLayer(layer),targetLayer,moduleName,moveServices);
-    }
-    
-    public static void moveModule(ModuleLayerAccess layer, Layer targetLayer, String moduleName) {
-        moveModule(layer,targetLayer,moduleName,false);
-    }
-    
-    public static void moveModule(ModuleLayerAccess layer, Layer targetLayer, String moduleName,
-            boolean moveServices) {
-        ModuleAccess module = layer.removeModuleAndReturn(moduleName);
+            ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveClasses) {
+        ModuleLayerAccess sourceLayer = sourceLoader.getModuleLayer();
+        ModuleAccess module = sourceLayer.removeModuleAndReturn(moduleName);
         if(Objects.isNull(module)) {
-            layer.logOrPrintError("Unable to move module "+moduleName+"! Cannot find module in supplier layer "+
-                                  layer.getLayerName());
+            sourceLoader.logOrPrintError("Unable to move module "+moduleName+"! Cannot find module in source "+
+                                         "layer "+sourceLayer.getLayerName());
             return;
         }
-        moveModuleToLayer(module,targetLayer,moveServices);
+        moveModuleToLayer(sourceLoader,targetLoader,module,moveClasses);
     }
     
-    private static void moveModuleClassesTo(ModuleAccess module, ClassLoader target) {
-        ClassLoader moduleLoader = module.getClassLoader();
-        Logger logger = ModuleSystemAccessor.getAsLogger(defaultLogger());
-        if(moduleLoader!=target)
-            ModuleSystemAccessor.getClassLoader(moduleLoader,logger).moveModuleClassesTo(module,target);
-        else logger.info("Skipping movement of already present module {}",module.getName());
+    private static void moveModuleClassesTo(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, ModuleAccess module) {
+        if(sourceLoader.access()!=targetLoader.access()) sourceLoader.moveModuleClassesTo(module,targetLoader);
+        else sourceLoader.logger().info("Skipping movement of already present module {}",module.getName());
     }
     
-    public static void moveModuleToLayer(ModuleAccess module, Layer targetLayer, boolean moveServices) {
-        LayerInfoAccess info = getLayerInfo(targetLayer);
-        moveModuleToLayer(module,info.getModuleLayer(),info.getClassLoader(),null,moveServices);
-    }
-    
-    public static void moveModuleToLayer(ModuleAccess module, ModuleLayerAccess targetLayer,
-            ClassLoader targetLoader, String extraModule, boolean moveServices) {
-        ModuleClassLoaderAccess loaderFrom = getModuleClassLoader(module.getClassLoader());
-        if(moveServices) loaderFrom.moveServicesTo(targetLayer,module);
-        moveModuleClassesTo(module,targetLoader);
+    public static void moveModuleToLayer(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, ModuleAccess module, boolean moveClasses) {
+        ModuleLayerAccess targetLayer = targetLoader.getModuleLayer();
+        ServicesCatalogAccess targetServices = targetLayer.getServicesCatalog();
+        if(moveClasses) {
+            sourceLoader.logger().info("Moving classes");
+            new Throwable("Stacktrace test").printStackTrace(out);
+            moveModuleClassesTo(sourceLoader,targetLoader,module);
+        }
+        sourceLoader.moveModuleTo(targetLoader,module.getName());
+        targetServices.registerModule(module);
         module.setLayer(targetLayer);
         module.setLoader(targetLoader);
         targetLayer.addModule(module);
-        ModuleClassLoaderAccess mTargetLoader = getModuleClassLoader(targetLoader);
-        Set<String> packages = module.getPackages();
-        String moduleName = module.getName();
-        ResolvedModule resolvedModule = (ResolvedModule)loaderFrom.configuration().getModuleDirect(moduleName);
-        mTargetLoader.addPackages(packages,resolvedModule);
-        ModuleReference root = loaderFrom.getRoot(moduleName).accessAs();
-        mTargetLoader.addRoot(moduleName,root);
-        if(Objects.nonNull(extraModule)) mTargetLoader.addRoot(extraModule,root);
-        mTargetLoader.removeParentLoaders(packages);
-        getModuleClassLoader(BOOT).addParentLoaders(packages,targetLoader);
-        loaderFrom.removePackages(packages);
-        loaderFrom.removeRoot(moduleName);
     }
     
     @IndirectCallers
@@ -334,9 +288,5 @@ public class NeoforgeModuleAccess {
     
     public static void removeResolvedModule(Layer layer, String moduleName) {
         getModuleClassLoader(layer).removeModuleFully(moduleName);
-    }
-    
-    public static void setClassModule(ClassAccess c, Layer layer, String moduleName) {
-        c.setModule(getModuleLayer(layer),moduleName);
     }
 }

@@ -7,7 +7,6 @@ import net.neoforged.neoforgespi.locating.IModFile;
 import net.neoforged.neoforgespi.locating.IModLocator;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -19,20 +18,13 @@ public class MultiVersionModLocator implements IModLocator {
         NeoForgeCoreLoader.initCoreAPI(MultiVersionModLocator.class.getClassLoader());
     }
     
-    final boolean failed;
-    
     public MultiVersionModLocator() {
         Class<?> c = getClass();
         TILDev.logInfo("Core Neoforge Locator plugin loaded on {}", c.getClassLoader());
-        this.failed = !NeoForgeModLoading.setLoadingVersion(c);
     }
     
     @Override public void initArguments(Map<String,?> arguments) {
-        if(this.failed) {
-            TILRef.logWarn("Not initializing mod loading for MultiVersionModLocator that failed to load");
-            return;
-        }
-        TILRef.logInfo("Initializing Forge mod loading with args {}",arguments);
+        TILRef.logInfo("Initializing Neoforge mod loading with args {}",arguments);
         NeoForgeModLoading.initModLoading(getClass().getClassLoader(),this);
     }
     
@@ -47,10 +39,6 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public void scanFile(IModFile file, Consumer<Path> pathConsumer) {}
     
     @Override public List<ModFileOrException> scanMods() {
-        if(this.failed) {
-            TILRef.logWarn("Not scanning for mods with MultiVersionModLocator that failed to load");
-            return Collections.emptyList();
-        }
         TILRef.logInfo("Scanning for mods");
         try {
             List<ModFileOrException> files = NeoForgeModLoading.scanMods();

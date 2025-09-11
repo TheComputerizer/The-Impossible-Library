@@ -27,7 +27,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import static java.lang.System.out;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOADERID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
 
@@ -55,7 +55,7 @@ public abstract class TILModFinderNeoForge1_21 {
     @SuppressWarnings("resource")
     protected @Nullable IModFile[] findAndLoadSelf(Path[] paths, Supplier<Object> attributeSupplier) {
         JarContents[] contents = new JarContents[]{NeoForgeModLoading.buildJarContents(MODID,paths),
-                NeoForgeModLoading.buildJarContents(LOADERID,paths)};
+                NeoForgeModLoading.buildJarContents(LOADER_ID, paths)};
         return findAndLoad(contents,attributeSupplier,null,true);
     }
     

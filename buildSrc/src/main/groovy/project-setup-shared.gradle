@@ -92,10 +92,7 @@ private void registerCombinedJar() {
             String jar_task_name = "remap${'Fabric'==loader ? 'Shadow' : "${loader}Classes"}Jar"
             dependsOn jar_task_name
             doFirst {
-                from(zipTree(tasks.named(jar_task_name, Jar).get().archiveFile.get()))// {
-                    //exclude '**/api/**'
-                    //if('Neoforge'==loader) exclude '**/shared/**'
-                //}
+                from(zipTree(tasks.named(jar_task_name, Jar).get().archiveFile.get()))
             }
         }
     })

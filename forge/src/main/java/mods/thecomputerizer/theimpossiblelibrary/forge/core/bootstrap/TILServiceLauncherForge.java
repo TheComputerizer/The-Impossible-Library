@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.bootstrap;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILForgeLikeServiceLauncher;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
@@ -11,8 +12,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
-import static java.lang.System.out;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOADERID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
 
 /**
  * Use a dummy IModLocator for Forge SERVICE layer initialization.
@@ -23,8 +23,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOADERID
 public class TILServiceLauncherForge implements IModLocator {
     
     static {
-        out.println("Class init: "+TILServiceLauncherForge.class.getName());
-        TILLauncherForge.checkInit(TILServiceLauncherForge.class);
+        TILForgeLikeServiceLauncher.init(TILServiceLauncherForge.class,TILLauncherForge.class);
     }
     
     public Optional<Manifest> findManifest(Path file) {
@@ -48,6 +47,6 @@ public class TILServiceLauncherForge implements IModLocator {
     }
     
     @Override public String name() {
-        return LOADERID;
+        return LOADER_ID;
     }
 }

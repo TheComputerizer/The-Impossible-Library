@@ -47,19 +47,17 @@ public abstract class TILLanguageLoader {
     
     protected <T> T loadModInner(IModInfo info, ClassLoader classLoader, ModFileScanData scanResults,
             ModuleLayer layer) {
-        final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
-            final Class<?> container = Class.forName(MOD_CONTAINER,true,contextLoader);
-            String coreName = this.core.getClass().getName();
+            final String coreName = this.core.getClass().getName();
             
             //Finalizes the module for the class being loaded in the GAME layer
             Methods.invoke(this.scan,"defineClasses",classLoader);
             
             if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
             NeoForgeCoreLoader.verifyModule(this.modClass,info,layer);
-            return getInstance(container,info,scanResults,layer);
+            return getInstance(Hacks.findClass(MOD_CONTAINER,true),info,scanResults,layer);
         } catch(Throwable t) {
-            String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";
+            final String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";
             TILRef.logError(msg,t);
             throw new RuntimeException(msg,t);
         }

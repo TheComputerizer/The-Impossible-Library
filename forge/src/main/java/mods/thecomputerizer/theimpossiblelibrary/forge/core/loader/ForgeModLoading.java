@@ -11,6 +11,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
@@ -698,7 +699,7 @@ public class ForgeModLoading {
             populateMultiversionData(map,data);
             if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
                 LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
-                addScannedMod(langProviderModFile(candidateFile,LOADERID),mods,"LANGPROVIDER");
+                addScannedMod(langProviderModFile(candidateFile, TILLauncherRef.LOADER_ID), mods, "LANGPROVIDER");
             }
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");

@@ -6,10 +6,10 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import org.apache.logging.log4j.Logger;
 
 import java.util.EnumSet;
-import java.util.Objects;
 
 import static java.lang.System.out;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.LOADERID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.launcher;
 
 /**
@@ -43,15 +43,21 @@ public class TILLauncher {
     protected TILLauncher(boolean withHacks) {
         this.activeLoader = validate(fmlLoader("minecraftforge")) ? "forge" :
                 (validate(fmlLoader("neoforged")) ? "neoforge" : "");
-        this.logger = TILRef.createLogger(LOADERID);
-        boolean active = !this.activeLoader.isEmpty();
-        this.logger.info("Created {}active {}launch plugin",active ? "" : "in",
-                         active ? this.activeLoader+" " : "");
+        this.logger = TILRef.createLogger(LOADER_NAME+(isActive() ? " ("+activeLoaderExt()+")" : ""));
+        this.logger.info("Created {}active launch plugin",isActive() ? "" : "in");
         if(withHacks) {
             Hacks.checkBurningWaveInit();
             if(DEV) Hacks.removeEnvironmentProperty("MOD_CLASSES");
         }
         launcher = this;
+    }
+    
+    String activeLoaderExt() {
+        return this.activeLoader.substring(0,1).toUpperCase()+this.activeLoader.substring(1);
+    }
+    
+    boolean isActive() {
+        return !this.activeLoader.isEmpty();
     }
     
     boolean isActive(String loader) {
@@ -67,7 +73,7 @@ public class TILLauncher {
     }
     
     public String name() {
-        return LOADERID;
+        return LOADER_ID;
     }
     
     /**
@@ -78,14 +84,7 @@ public class TILLauncher {
         try {
             Class.forName(validator,false,thisClassLoader);
             return true;
-        } catch(Throwable t) {
-            if(Objects.isNull(this.logger)) {
-                t.printStackTrace(out);
-                return false;
-            }
-            this.logger.debug("Assuming incorrect environment since the validator class was not found {} "+
-                              "(ClassLoader={})",validator,thisClassLoader);
-        }
+        } catch(Throwable ignored) {}
         return false;
     }
 }

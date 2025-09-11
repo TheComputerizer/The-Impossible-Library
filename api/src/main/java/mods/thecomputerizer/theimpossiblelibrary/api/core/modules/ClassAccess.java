@@ -58,11 +58,16 @@ public class ClassAccess extends AbstractModuleSystemAccessor {
         setModule(module);
     }
     
+    public String pkgName() {
+        return unwrap().getPackage().getName();
+    }
+    
     public void setClassLoader(ClassLoaderAccess loader) {
         setClassLoader(loader.unwrap());
     }
     
     public void setClassLoader(ClassLoader loader) {
+        this.logger.info("Setting ClassLoader of {} to {}",this.access,loader);
         setDirect("classLoader",loader);
     }
     
@@ -75,6 +80,7 @@ public class ClassAccess extends AbstractModuleSystemAccessor {
     }
     
     public void setModule(ModuleAccess module) {
+        this.logger.info("Setting Module of {} to {}",this.access,module.getName());
         setModule(module.access);
     }
     

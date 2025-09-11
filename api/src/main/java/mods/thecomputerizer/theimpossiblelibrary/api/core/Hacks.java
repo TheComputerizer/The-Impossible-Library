@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static java.lang.System.err;
 import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
 import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
@@ -28,6 +29,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
  */
 public class Hacks {
     
+    static final String SELF_NAME = "mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks";
     static final Logger LOGGER = TILRef.createLogger("TIL Hacks (BurningWave)");
     static final int JAVA_VERSION = CoreAPI.javaVersion();
     
@@ -120,6 +122,26 @@ public class Hacks {
         //Disable the resource releaser to prevent a shutdown hook crash
         properties.put("resource-releaser.enabled","false");
         return properties;
+    }
+    
+    public static <T> T callOnOtherClassLoader(ClassLoader loader, String method, Object ... args) {
+        boolean staticCall = method.contains("static") || method.contains("Static");
+        Class<?>[] argClasses = new Class<?>[]{(staticCall ? Class.class : Object.class),String.class,Object[].class};
+        if(method.contains("field") || method.contains("Field")) argClasses[2] = Object.class;
+        return callOnOtherClassLoader(loader,method,argClasses,args);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T callOnOtherClassLoader(ClassLoader loader, String method, Class<?>[] argClasses,
+            Object ... args) {
+        try {
+            Class<?> c = Class.forName(SELF_NAME,false,loader);
+            return (T)c.getDeclaredMethod(method,argClasses).invoke(null,args);
+        } catch(Throwable t) {
+            LOGGER.error("Failed to call {}#{} on ClassLoader {} with args {}",SELF_NAME,method,loader,args);
+            t.printStackTrace(err); //Avoid the logger loading stacktrace classes
+        }
+        return null;
     }
     
     /**
@@ -632,7 +654,7 @@ public class Hacks {
      */
     public static <T> T invokeStatic(Class<?> target, String method, Object ... args) {
         if(Objects.isNull(target)) {
-            LOGGER.error("Tried to call invokeStatic on null target object! (method = {} | args = {})",
+            LOGGER.error("Tried to call invokeStatic on null target class! (method = {} | args = {})",
                             method,args);
             return null;
         }
@@ -660,7 +682,7 @@ public class Hacks {
      */
     public static <T> T invokeStaticDirect(Class<?> target, String method, Object ... args) {
         if(Objects.isNull(target)) {
-            LOGGER.error("Tried to call invokeStaticDirect on null target object! (method = {} | args = {})",
+            LOGGER.error("Tried to call invokeStaticDirect on null target class! (method = {} | args = {})",
                             method,args);
             return null;
         }

@@ -25,7 +25,6 @@ import java.util.Set;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
-@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Setter @Getter
 public class TILBetterModScan extends ModFileScanData {
     
@@ -47,6 +46,7 @@ public class TILBetterModScan extends ModFileScanData {
         MOD_FILES.putIfAbsent(className.substring(0,className.lastIndexOf('.')),file);
     }
     
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     public void defineClasses(ClassLoader target) {
         if(MOD_INFOS.isEmpty() || WRITTEN_CLASSES.isEmpty() ) {
             TILRef.logInfo("No classes left to define for TILBetterModScan");
@@ -79,7 +79,7 @@ public class TILBetterModScan extends ModFileScanData {
             return;
         }
         try {
-            NeoForgeCoreLoader.handleDevPackages(getLoaderPkg(pkgs),MODID);
+            NeoForgeCoreLoader.addLibraryToGameLayer(getLoaderPkg(pkgs),MODID);
         } catch(Throwable t) {
             TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
         }
