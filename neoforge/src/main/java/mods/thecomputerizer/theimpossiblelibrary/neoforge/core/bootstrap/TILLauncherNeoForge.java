@@ -14,6 +14,7 @@ import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.SERVICE;
 import static java.lang.System.err;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 
 public class TILLauncherNeoForge extends TILForgeLikeServiceLauncher {
     
@@ -45,7 +46,8 @@ public class TILLauncherNeoForge extends TILForgeLikeServiceLauncher {
     }
     
     public TILLauncherNeoForge(Class<?> caller) {
-        super(Launcher.class.getClassLoader(),caller,"Neoforge");
+        super(Launcher.class.getClassLoader(),"Neoforge");
+        load(caller);
     }
     
     @Override protected String coreLoader() {
@@ -66,5 +68,6 @@ public class TILLauncherNeoForge extends TILForgeLikeServiceLauncher {
     
     @Override protected void moveModule(String moduleName) {
         NeoforgeModuleAccess.moveModule(SERVICE,BOOT,moduleName,true);
+        NeoforgeModuleAccess.renameModule(BOOT,moduleName,BOOT_ID);
     }
 }

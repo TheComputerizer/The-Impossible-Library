@@ -13,9 +13,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAcc
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleReferenceAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.module.ModuleDescriptor;
 import java.lang.module.ModuleReference;
 import java.lang.module.ResolvedModule;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -130,6 +133,10 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         }
     }
     
+    /**
+     * Moves the packages from a module to a module with a different name.
+     * Add the packages if the module already exists or rename the original module if it does not
+     */
     void clonePackages(String moduleName, String newModuleName) {
         ResolvedModuleAccess existingModule = lookupResolvedModule(newModuleName);
         boolean existed = Objects.nonNull(existingModule);
@@ -144,6 +151,32 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         }
         if(existed)
             for(String pkg : packages) packageLookup.put(pkg,existingModule.accessAs());
+    }
+    
+    /**
+     * Assumes the combined module already has a defined root
+     */
+    public void combineModules(URI combinedLocation, String combinedName, String ... others) {
+        ConfigurationAccess configuration = configuration();
+        ResolvedModuleAccess module = configuration.getModule(combinedName);
+        if(Objects.isNull(module)) {
+            this.logger.error("Cannot combined modules {} into module {} that does not exist!",others,
+                              combinedLocation);
+            return;
+        }
+        ModuleLayerAccess layer = getModuleLayer();
+        ModuleReferenceAccess reference = getRoot(combinedName);
+        if(Objects.nonNull(reference)) reference.setLocation(combinedLocation);
+        module.inheritFrom(configuration,others);
+        Map<String,ClassLoader> parentLoaders = parentLoaders();
+        Map<String,ResolvedModule> packageLookup = packageLookup();
+        for(String pkg : module.packages()) {
+            packageLookup.put(pkg,module.accessAs());
+            parentLoaders.remove(pkg);
+        }
+        removeRoots(others);
+        configuration.removeModules(others);
+        layer.combineModules(combinedName,others);
     }
     
     public ConfigurationAccess configuration() {
@@ -167,12 +200,28 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return configuration().getModuleDirect(name);
     }
     
+    public @Nullable ModuleDescriptorAccess getModuleDescriptor(String name) {
+        ModuleAccess module = getModuleLayer().getModule(name);
+        return Objects.nonNull(module) ? module.getDescriptor() : null;
+    }
+    
+    public @Nullable ModuleDescriptor getModuleDescriptorDirect(String name) {
+        ModuleDescriptorAccess descriptorAccess = getModuleDescriptor(name);
+        return Objects.nonNull(descriptorAccess) ? descriptorAccess.accessAs() : null;
+    }
+    
     public ModuleLayerAccess getModuleLayer() {
         if(Objects.isNull(this.layer)) {
             logOrPrintError("Cannot get ModuleLayer! (ModuleClassLoaderAccess#layerName is null)");
             return null;
         }
         return NeoforgeModuleAccess.getModuleLayer(this.layer,this);
+    }
+    
+    @IndirectCallers
+    public Set<String> getModulePackages(String name) {
+        ModuleDescriptorAccess descriptor = getModuleDescriptor(name);
+        return Objects.nonNull(descriptor) ? descriptor.packages() : Set.of();
     }
     
     public ResolvedModuleAccess getResolvedModule(String pkg) {
@@ -219,6 +268,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         return modules;
     }
     
+    @IndirectCallers
     public Set<String> lookupPackagesFor(String ... moduleNames) {
         Set<String> pkgs = new HashSet<>();
         for(Entry<String,ResolvedModule> lookupEntry : packageLookup().entrySet()) {
@@ -360,8 +410,36 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         resolvedRoots().remove(root);
     }
     
+    public void removeRoots(String ... roots) {
+        Map<String,ModuleReference> resolvedRoots = resolvedRoots();
+        for(String root : roots) resolvedRoots.remove(root);
+    }
+    
+    public void renameModule(String name, String newName) {
+        ConfigurationAccess configuration = configuration();
+        ResolvedModuleAccess module = configuration.getModule(name);
+        if(Objects.isNull(module)) {
+            this.logger.error("Cannot rename module {} that does not exist on layer {}!",name,this.layer);
+            return;
+        }
+        ModuleLayerAccess layer = getModuleLayer();
+        module.setName(newName);
+        ModuleReference root = getRootDirect(name);
+        if(Objects.nonNull(root)) {
+            removeRoot(name);
+            addRoot(newName,root);
+        }
+        configuration.renameModule(name,newName);
+        layer.renameModule(name,newName);
+    }
+    
     @IndirectCallers
     public Map<String,ModuleReference> resolvedRoots() {
         return getDirect("resolvedRoots");
+    }
+    
+    @Override public String toString() {
+        String layerVal = String.valueOf(this.layer);
+        return "ModuleClassLoaderAccess["+layerVal+"]";
     }
 }

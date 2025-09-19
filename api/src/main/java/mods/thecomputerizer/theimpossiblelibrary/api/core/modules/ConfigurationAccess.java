@@ -299,11 +299,26 @@ public class ConfigurationAccess extends AbstractModuleSystemAccessor implements
         removeFromGraph(moduleName);
     }
     
+    /**
+     * Remove all from modules, moduleToName, and graph
+     */
+    public void removeModules(String ... moduleNames) {
+        for(String moduleName : moduleNames) removeModule(moduleName);
+    }
+    
     public void removeModuleFully(ResolvedModuleAccess resolvedModule) {
         removeFromModules(resolvedModule.access);
         String name = resolvedModule.name();
         removeFromModuleMap(name);
         removeFromGraph(name);
+    }
+    
+    /**
+     * Assumes the ResolvedModule instance itself has already been renamed
+     */
+    public void renameModule(String name, String newName) {
+        Object module = removeFromModuleMap(name);
+        if(Objects.nonNull(module)) addModuleIfAbsent(newName,module);
     }
     
     public void setGraph(Map<Object,Set<Object>> graph) {

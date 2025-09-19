@@ -7,11 +7,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationA
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ServicesCatalogAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -21,7 +23,6 @@ import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.PLUGIN;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.SERVICE;
-import static java.lang.System.out;
 
 public class NeoforgeModuleAccess {
     
@@ -51,12 +52,11 @@ public class NeoforgeModuleAccess {
         return name;
     }
     
-    @IndirectCallers
-    public static void cloneModuleTo(ModuleClassLoaderAccess loader, String moduleName, String newName) {
-        ModuleLayerAccess layer = loader.getModuleLayer();
-        layer.cloneModule(getModuleClassLoader(getLayerFromName(layer.getLayerName())),moduleName,newName);
-        loader.configuration().cloneModule(moduleName,newName);
-        loader.cloneModule(moduleName,newName);
+    public static void combineModules(Layer layer, URI combinedLocation, String combinedName, String base,
+            String ... others) {
+        ModuleClassLoaderAccess loader = getModuleClassLoader(layer);
+        if(!base.equals(combinedName)) loader.renameModule(base,combinedName);
+        loader.combineModules(combinedLocation,combinedName,others);
     }
     
     static Object defaultLogger() {
@@ -98,6 +98,18 @@ public class NeoforgeModuleAccess {
         return getModuleLayer(layer).getModule(moduleName);
     }
     
+    /**
+     * Find a module in the given layer without logging an error when the module is absent
+     */
+    @IndirectCallers
+    public static ModuleAccess findModuleInLayerNoError(String moduleName, Layer layer) {
+        return getModuleLayer(layer).getModule(moduleName,false);
+    }
+    
+    public static ResolvedModuleAccess findResolvedModuleIn(String moduleName, Layer layer) {
+        return getModuleClassLoader(layer).configuration().getModule(moduleName);
+    }
+    
     public static EnvironmentAccess getEnvironment() {
         return getLauncher().environment();
     }
@@ -123,6 +135,7 @@ public class NeoforgeModuleAccess {
         return new LauncherAccess(accessorOrLogger);
     }
     
+    @IndirectCallers
     public static Layer getLayerFromName(String layerName) {
         return Layer.valueOf(layerName);
     }
@@ -232,6 +245,12 @@ public class NeoforgeModuleAccess {
     }
     
     public static void moveModule(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess module, boolean moveClasses) {
+        if(Objects.nonNull(module)) moveModule(sourceLoader,targetLoader,module.name(),moveClasses);
+        else sourceLoader.logger().error("Cannot move null module from {} to {}",sourceLoader,targetLoader);
+    }
+    
+    public static void moveModule(ModuleClassLoaderAccess sourceLoader,
             ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveClasses) {
         ModuleLayerAccess sourceLayer = sourceLoader.getModuleLayer();
         ModuleAccess module = sourceLayer.removeModuleAndReturn(moduleName);
@@ -255,7 +274,6 @@ public class NeoforgeModuleAccess {
         ServicesCatalogAccess targetServices = targetLayer.getServicesCatalog();
         if(moveClasses) {
             sourceLoader.logger().info("Moving classes");
-            new Throwable("Stacktrace test").printStackTrace(out);
             moveModuleClassesTo(sourceLoader,targetLoader,module);
         }
         sourceLoader.moveModuleTo(targetLoader,module.getName());
@@ -288,5 +306,19 @@ public class NeoforgeModuleAccess {
     
     public static void removeResolvedModule(Layer layer, String moduleName) {
         getModuleClassLoader(layer).removeModuleFully(moduleName);
+    }
+    
+    public static void renameModule(Layer layer, String name, String newName) {
+        ModuleClassLoaderAccess loader = getModuleClassLoader(layer);
+        Logger logger = loader.logger();
+        if(Objects.isNull(name) || Objects.isNull(newName)) {
+            logger.error("Tried to rename {} module {} to {}",layer,name,newName);
+            return;
+        }
+        if(name.equals(newName)) {
+            logger.info("{} module name is already equal to {}",layer,newName);
+            return;
+        }
+        loader.renameModule(name,newName);
     }
 }

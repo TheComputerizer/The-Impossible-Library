@@ -29,7 +29,11 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PAC
 
 @Getter
 public abstract class CoreAPI {
-
+    
+    /**
+     * Bypasses the auto version detection used to instantiate the CoreAPI
+     */
+    static final String INSTANCE_CLASS = System.getProperty("til.core.instance");
     static final String JAVA_VERSION = System.getProperty("java.version");
     public static Object INSTANCE;
     static String BINARY = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
@@ -57,6 +61,21 @@ public abstract class CoreAPI {
     @IndirectCallers
     public static GameVersion gameVersion() {
         return getInstance().getVersion();
+    }
+    
+    public static CoreAPI getInstance() {
+        return getInstance(CoreAPI.class.getClassLoader());
+    }
+    
+    public static CoreAPI getInstance(ClassLoader loader) {
+        if(Objects.nonNull(INSTANCE)) return (CoreAPI)INSTANCE;
+        if(Objects.nonNull(instantiateFromProperty(loader))) return (CoreAPI)INSTANCE;
+        TILRef.logDebug("Attempting to get CoreAPI instance that does not exist yet on loader {}",loader);
+        if(Objects.nonNull(loader)) {
+            Hacks.checkBurningWaveInit();
+            syncInstanceClassLoader(loader);
+        } else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
+        return (CoreAPI)INSTANCE;
     }
     
     public static ModLoader getInstanceModLoader() {
@@ -96,21 +115,6 @@ public abstract class CoreAPI {
         return instance.getModLoader().pkg;
     }
     
-    public static CoreAPI getInstance() {
-        return getInstance(CoreAPI.class.getClassLoader());
-    }
-    
-    public static CoreAPI getInstance(ClassLoader loader) {
-        if(Objects.isNull(INSTANCE)) {
-            TILRef.logDebug("Attempting to get CoreAPI instance that does not exist yet on loader {}",loader);
-            if(Objects.nonNull(loader)) {
-                Hacks.checkBurningWaveInit();
-                syncInstanceClassLoader(loader);
-            } else TILRef.logError("Tried to get CoreAPI instance on null ClassLoader??");
-        }
-        return (CoreAPI)INSTANCE;
-    }
-    
     public static String injectModLoaderName(String pre, String post) {
         String loaderName = getModLoaderName();
         if(Objects.isNull(loaderName)) {
@@ -118,6 +122,19 @@ public abstract class CoreAPI {
             return null;
         }
         return pre+"."+loaderName+"."+post;
+    }
+    
+    public static Object instantiateFromProperty(ClassLoader loader) {
+        if(Objects.nonNull(INSTANCE)) return INSTANCE;
+        TILRef.logDebug("Searching for CoreAPI instance property '-dtil.core.instance'");
+        if(Objects.nonNull(INSTANCE_CLASS)) {
+            try {
+                INSTANCE = Hacks.construct(Hacks.findClass(INSTANCE_CLASS,loader,true));
+            } catch(Throwable t) {
+                TILRef.logError("Failed to instantiate CoreAPI from property '-dtil.core.instance={}'",INSTANCE,t);
+            }
+        } else TILRef.logDebug("CoreAPI instance property not found");
+        return INSTANCE;
     }
     
     public static boolean isClient() {

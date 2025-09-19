@@ -1,8 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.bootstrap;
 
+import cpw.mods.modlauncher.Launcher;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILForgeLikeServiceLauncher;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.Collections;
@@ -12,7 +14,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.launcher;
 
 /**
  * Use a dummy IModLocator for Forge SERVICE layer initialization.
@@ -22,8 +26,23 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLa
  */
 public class TILServiceLauncherForge implements IModLocator {
     
+    static final String LANGUAGE_LOADER = "mods.thecomputerizer.theimpossiblelibrary.forge.core.TILLanguageProvider";
+    static final String LOCATOR = "mods.thecomputerizer.theimpossiblelibrary.forge.core.MultiVersionModLocator";
+    
     static {
-        TILForgeLikeServiceLauncher.init(TILServiceLauncherForge.class,TILLauncherForge.class);
+        Class<?> c = TILServiceLauncherForge.class;
+        boolean serviceLoaded = c.getClassLoader()!=Launcher.class.getClassLoader();
+        TILForgeLikeServiceLauncher.init(c,TILLauncherForge.class,serviceLoaded);
+        if(serviceLoaded && notJava8()) validateServices(c.getName(),LOCATOR,LANGUAGE_LOADER);
+    }
+    
+    static boolean notJava8() {
+        return !System.getProperty("java.version").startsWith("1.");
+    }
+    
+    static void validateServices(String ... classNames) {
+        Logger logger = launcher.getLogger();
+        for(String className : classNames) TILLauncherForge.validateBootClass(logger,MODID,className);
     }
     
     public Optional<Manifest> findManifest(Path file) {

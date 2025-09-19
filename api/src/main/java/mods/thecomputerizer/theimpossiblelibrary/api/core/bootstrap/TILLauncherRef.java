@@ -8,6 +8,7 @@ import static java.lang.System.out;
  */
 public class TILLauncherRef {
     
+    public static final String BOOT_ID = "theimpossiblebootstrap";
     public static final String LOADER_ID = "theimpossibleloader";
     public static final String LOADER_NAME = "The Impossible Loader";
     public static TILLauncher launcher;

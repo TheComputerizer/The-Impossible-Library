@@ -4,6 +4,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -35,8 +36,12 @@ public class ResolvedModuleAccess extends AbstractModuleSystemAccessor {
         return packages;
     }
     
+    public void inheritFrom(ConfigurationAccess configuration, String ... moduleNames) {
+        for(String moduleName : moduleNames) inheritFrom(configuration.getModule(moduleName));
+    }
+    
     public void inheritFrom(ResolvedModuleAccess resolvedModule) {
-        descriptor().inheritFrom(resolvedModule.descriptor());
+        if(Objects.nonNull(resolvedModule)) descriptor().inheritFrom(resolvedModule.descriptor());
     }
     
     public Set<String> packages() {
@@ -64,5 +69,9 @@ public class ResolvedModuleAccess extends AbstractModuleSystemAccessor {
     
     public void setName(String name) {
         descriptor().setName(name);
+    }
+    
+    @Override public String toString() {
+        return "ResolvedModuleAccess["+name()+"]";
     }
 }

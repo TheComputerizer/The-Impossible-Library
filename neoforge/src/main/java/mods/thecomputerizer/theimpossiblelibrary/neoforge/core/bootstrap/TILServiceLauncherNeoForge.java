@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.launcher;
 
@@ -26,20 +26,20 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLa
 @IndirectCallers
 public class TILServiceLauncherNeoForge implements IModLocator {
     
-    static final String LANGUAGE_LOADER = "mods.thecomputerizer.theimpossiblelibrary.neoforge.core.TILLanguageProvider";
-    static final String LOCATOR = "mods.thecomputerizer.theimpossiblelibrary.neoforge.core.MultiVersionModLocator";
+    static final String CORE_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge.core";
+    static final String LANGUAGE_LOADER = CORE_PKG+".TILLanguageProvider";
+    static final String LOCATOR = CORE_PKG+".MultiVersionModLocator";
     
     static {
         Class<?> c = TILServiceLauncherNeoForge.class;
-        if(c.getClassLoader()!=Launcher.class.getClassLoader()) {
-            TILForgeLikeServiceLauncher.init(c,TILLauncherNeoForge.class);
-            validateServices(c.getName(),LOCATOR,LANGUAGE_LOADER);
-        }
+        boolean serviceLoaded = c.getClassLoader()!=Launcher.class.getClassLoader();
+        TILForgeLikeServiceLauncher.init(c,TILLauncherNeoForge.class,serviceLoaded);
+        if(serviceLoaded) validateServices(c.getName(),LOCATOR,LANGUAGE_LOADER);
     }
     
     static void validateServices(String ... classNames) {
         Logger logger = launcher.getLogger();
-        for(String className : classNames) TILLauncherNeoForge.validateBootClass(logger,MODID,className);
+        for(String className : classNames) TILLauncherNeoForge.validateBootClass(logger,BOOT_ID,className);
     }
     
     @Override public void initArguments(Map<String,?> arguments) {}

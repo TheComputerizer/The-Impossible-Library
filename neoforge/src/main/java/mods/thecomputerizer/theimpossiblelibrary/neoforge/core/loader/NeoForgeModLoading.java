@@ -6,7 +6,6 @@ import cpw.mods.jarhandling.JarContents;
 import cpw.mods.jarhandling.JarContentsBuilder;
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
-import cpw.mods.jarhandling.impl.SimpleJarMetadata;
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
@@ -17,7 +16,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
@@ -71,7 +69,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.ALOAD;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.INVOKESPECIAL;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.RETURN_OBJ;
-import static mods.thecomputerizer.theimpossiblelibrary.neoforge.core.NeoForgeCoreLoader.MODULE_LAYERS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
 import static net.neoforged.neoforgespi.locating.IModFile.Type.LIBRARY;
 import static net.neoforged.neoforgespi.locating.IModFile.Type.MOD;
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
@@ -184,8 +182,7 @@ public class NeoForgeModLoading {
         IModFile modFile = createModFile(contents[0],locator,f -> getFileInfo(f,infos),MOD,MODID);
         FILE_INFO_MAP.put(modFile,initInfoMap(candidate,infos));
         if(Objects.isNull(modFile)) return new IModFile[]{};
-        IModFile langFile = createModFile(contents[1], locator, NeoForgeModLoading::langFileInfo, LIBRARY,
-                                          TILLauncherRef.LOADER_ID);
+        IModFile langFile = createModFile(contents[1],locator,NeoForgeModLoading::langFileInfo,LIBRARY,LOADER_ID);
         IModFile[] files = new IModFile[]{langFile,modFile};
         LOADER_FILES.addAll(List.of(files));
         return files;
@@ -224,14 +221,7 @@ public class NeoForgeModLoading {
                 }
             } else updatePathMap = true;
         }
-        if(Objects.isNull(jar)) {
-            JarContents contents = buildJarContents(pathOrJarContents,moduleName);
-            if(DEV && TILDev.isLoaderPath(contents.getPrimaryPath())) {
-                Hacks.setFieldDirect(contents,"packages",Collections.emptySet());
-                Hacks.setFieldDirect(contents,"providers",Collections.emptyList());
-            }
-            jar = SecureJar.from(contents,getDefaultJarMetadata(contents,moduleName));
-        }
+        if(Objects.isNull(jar)) jar = getDefaultJar(buildJarContents(pathOrJarContents,moduleName),moduleName);
         //ModFileInfoParser isn't an inner class in 1.20.6+ and we can't just cast Function (I already tried that)
         Object parser = ClassHelper.newGenericProxy(Hacks.findClass(MOD_FILE_INFO_PARSER),"build",
                 args -> parserFunc.apply((IModFile)args[0]));
@@ -385,13 +375,9 @@ public class NeoForgeModLoading {
         return writer.toByteArray();
     }
     
-    private static JarMetadata getDefaultJarMetadata(JarContents contents, final String moduleName) {
-        if(MODULE_LAYERS) return JarMetadata.from(contents);
-        Path path = contents.getPrimaryPath();
-        Object nameAndVersion = Hacks.invokeStaticDirect(JarMetadata.class,"computeNameAndVersion",path);
-        String name = Objects.nonNull(moduleName) ? moduleName : Hacks.invoke(nameAndVersion,"name");
-        String version = Hacks.invoke(nameAndVersion,"version");
-        return new SimpleJarMetadata(name,version,Collections::emptySet,Collections.emptyList());
+    private static SecureJar getDefaultJar(JarContents contents, final String moduleName) {
+        return LOADER_ID.equals(moduleName) || MODID.equals(moduleName) ?
+                TILLoaderJar.get(contents,moduleName) : SecureJar.from(contents,JarMetadata.from(contents));
     }
     
     private static Supplier<Manifest> getDefaultManifest(final String automaticModuleName) {
@@ -734,7 +720,7 @@ public class NeoForgeModLoading {
             populateMultiversionData(map,data);
             if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
                 LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
-                addScannedMod(langProviderModFile(candidateFile, TILLauncherRef.LOADER_ID), mods, "LANGPROVIDER");
+                addScannedMod(langProviderModFile(candidateFile, LOADER_ID), mods, "LANGPROVIDER");
             }
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");

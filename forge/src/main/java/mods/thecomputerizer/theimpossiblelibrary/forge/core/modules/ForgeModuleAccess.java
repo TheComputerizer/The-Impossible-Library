@@ -312,6 +312,20 @@ public class ForgeModuleAccess {
         getModuleClassLoader(layerName).removeModuleFully(moduleName);
     }
     
+    public static void renameModule(String layerName, String name, String newName) {
+        ModuleClassLoaderAccess loader = getModuleClassLoader(layerName);
+        Logger logger = loader.logger();
+        if(Objects.isNull(name) || Objects.isNull(newName)) {
+            logger.error("Tried to rename {} module {} to {}",layerName,name,newName);
+            return;
+        }
+        if(name.equals(newName)) {
+            logger.info("{} module name is already equal to {}",layerName,newName);
+            return;
+        }
+        loader.renameModule(name,newName);
+    }
+    
     public static void setClassModule(ClassAccess c, String layerName, String moduleName) {
         c.setModule(getModuleLayer(layerName),moduleName);
     }

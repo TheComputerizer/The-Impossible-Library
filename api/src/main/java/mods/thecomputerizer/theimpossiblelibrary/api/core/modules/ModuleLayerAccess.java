@@ -94,6 +94,18 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         }
     }
     
+    public void combineModules(String combinedName, String ... others) {
+        ModuleAccess combinedModule = getModule(combinedName);
+        if(Objects.isNull(combinedModule)) return;
+        for(String other : others) {
+            ModuleAccess otherModule = getModule(other);
+            if(Objects.nonNull(otherModule)) {
+                combinedModule.inheritFrom(otherModule);
+                removeModule(other);
+            }
+        }
+    }
+    
     @IndirectCallers
     public ConfigurationAccess configuration() {
         return getDirect("cf");
@@ -187,7 +199,7 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
         return getModule(name,true);
     }
     
-    private ModuleAccess getModule(String name, boolean logError) {
+    public ModuleAccess getModule(String name, boolean logError) {
         Map<String,Object> nameToModule = nameToModule(false);
         Object module = nameToModule.get(name);
         if(Objects.nonNull(module)) return getModule(module);
@@ -323,6 +335,14 @@ public class ModuleLayerAccess extends AbstractModuleSystemAccessor implements M
     @IndirectCallers
     public void removeServiceImplementations(String serviceName, String impl) {
         getServicesCatalog().removeImplementations(serviceName,impl);
+    }
+    
+    public void renameModule(String name, String newName) {
+        ModuleAccess module = removeModuleAndReturn(name);
+        if(Objects.nonNull(module)) {
+            module.setName(newName);
+            addModule(newName,module);
+        }
     }
     
     public void setModules(Set<Object> modules) {

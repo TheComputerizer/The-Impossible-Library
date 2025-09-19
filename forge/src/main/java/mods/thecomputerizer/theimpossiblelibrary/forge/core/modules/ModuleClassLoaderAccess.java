@@ -374,6 +374,24 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         if(SECURE_CLASSLOADER_FORMAT) ourModulesSecure().remove(moduleName);
     }
     
+    public void renameModule(String name, String newName) {
+        ConfigurationAccess configuration = configuration();
+        ResolvedModuleAccess module = configuration.getModule(name);
+        if(Objects.isNull(module)) {
+            this.logger.error("Cannot rename module {} that does not exist on layer {}!",name,this.layerName);
+            return;
+        }
+        ModuleLayerAccess layer = getModuleLayer();
+        module.setName(newName);
+        Object root = getRootDirect(name);
+        if(Objects.nonNull(root)) {
+            removeRoot(name);
+            addRoot(newName,root);
+        }
+        configuration.renameModule(name,newName);
+        layer.renameModule(name,newName);
+    }
+    
     @IndirectCallers
     public Map<String,Object> resolvedRoots() {
         return getDirect(resolvedRootsField);

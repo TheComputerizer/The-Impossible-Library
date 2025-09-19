@@ -6,7 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.bootstrap.TILLauncherNeoForge;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.ModuleClassLoaderAccess;
 import mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules.NeoforgeModuleAccess;
@@ -16,13 +16,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.module.Configuration;
-import java.lang.module.ResolvedModule;
+import java.lang.module.ModuleDescriptor;
 import java.util.*;
 
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.GAME;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 /**
  * Figures out which version to load on and how to load stuff on it
@@ -30,7 +28,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 @SuppressWarnings("LoggingSimilarMessage")
 public class NeoForgeCoreLoader {
     
-    public static final boolean MODULE_LAYERS = Boolean.parseBoolean(System.getProperty("til.debug.neoforge.modules.layers","true"));
     private static final String COREAPI_CLASS = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
     private static final String NEOFORGE_PKG = "mods.thecomputerizer.theimpossiblelibrary.neoforge";
     private static final Logger LOGGER = LogManager.getLogger("TIL NeoforgeCoreLoader");
@@ -38,26 +35,29 @@ public class NeoForgeCoreLoader {
     /**
      * Since the library interacts with GAME layer modules, we need to ensure it is available on the GAME layer
      */
-    public static void addLibraryToGameLayer(String pkg, String moduleName) {
+    public static void addLibraryToGameLayer(String pkg, String gameLayerName) {
         ModuleClassLoaderAccess bootLoader = bootLoaderAccess();
-        String originalModule = bootLoader.getResolvedModule(pkg).name();
         ModuleClassLoaderAccess gameLoader = NeoforgeModuleAccess.getModuleClassLoader(GAME);
-        if(DEV && ("main".equals(originalModule) || "tilneoforge".equals(originalModule))) {
-            Set<String> packages = bootLoader.lookupPackagesFor("main","tilneoforge");
-            bootLoader.removePackages(packages);
-            bootLoader.addParentLoaders(packages,gameLoader);
-            gameLoader.removeParentLoaders(packages);
-            Configuration gameConfig = gameLoader.configuration().accessAs();
-            ResolvedModule module = gameConfig.findModule(moduleName).orElse(null);
-            if(Objects.isNull(module)) {
-                LOGGER.error("Failed to find module in GAME layer {}",moduleName);
-                return;
-            }
-            if(gameConfig!=module.configuration()) LOGGER.warn("Module found in non-GAME layer {}",moduleName);
-            gameLoader.addPackages(packages,module);
-            ModuleSystemAccessor.getModuleDescriptor(module.reference().descriptor(),LOGGER).setPackages(packages);
-        } else NeoforgeModuleAccess.moveModule(bootLoader,gameLoader,originalModule,true);
+        ResolvedModuleAccess module = bootLoader.getResolvedModule(pkg);
+        Set<String> packages = module.packages(false);
+        ModuleDescriptor descriptor = gameLoader.getModuleDescriptorDirect(gameLayerName);
+        NeoforgeModuleAccess.moveModule(bootLoader,gameLoader,module,true);
         TILLauncherNeoForge.checkHacksInit(false,gameLoader.unwrap());
+        addPackagesToDescriptor(module,packages,descriptor);
+    }
+    
+    static void addPackagesToDescriptor(Object source, Set<String> packages, @Nullable ModuleDescriptor descriptor) {
+        if(Objects.isNull(descriptor)) {
+            LOGGER.error("Cannot add packages from {} to null game layer module descriptor",source);
+            return;
+        }
+        String target = descriptor.name();
+        if(packages.isEmpty()) {
+            LOGGER.warn("Tried adding 0 packages from {} to game layer module {}",source,target);
+            return;
+        }
+        LOGGER.info("Adding {} packages from {} to game layer module {}",packages.size(),source,target);
+        Hacks.setFieldDirect(descriptor,"packages",packages);
     }
     
     /**

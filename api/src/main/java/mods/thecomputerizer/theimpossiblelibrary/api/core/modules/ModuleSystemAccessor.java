@@ -131,11 +131,11 @@ public interface ModuleSystemAccessor {
     }
     
     static ModuleReferenceAccess getModuleReference(Object moduleReference, Object accessorOrLogger) {
-        return new ModuleReferenceAccess(moduleReference,accessorOrLogger);
+        return Objects.nonNull(moduleReference) ? new ModuleReferenceAccess(moduleReference,accessorOrLogger) : null;
     }
     
     static ResolvedModuleAccess getResolvedModule(Object resolvedModule, Object accessorOrLogger) {
-        return new ResolvedModuleAccess(resolvedModule,accessorOrLogger);
+        return Objects.nonNull(resolvedModule) ? new ResolvedModuleAccess(resolvedModule,accessorOrLogger) : null;
     }
     
     @IndirectCallers

@@ -21,10 +21,6 @@ public abstract class TILForgeLikeServiceLauncher {
     public static final String HACKS = "mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks";
     static TILForgeLikeServiceLauncher instance;
     
-    static {
-        printClassInit(TILForgeLikeServiceLauncher.class);
-    }
-    
     private static Class<?> bootClass(String target, boolean useHacks) throws Throwable {
         return findClass(target,useHacks,bootLoader());
     }
@@ -83,8 +79,8 @@ public abstract class TILForgeLikeServiceLauncher {
         return null;
     }
     
-    public static void init(Class<?> caller, Class<?> instanceClass) {
-        printClassInit(instanceClass);
+    public static void init(Class<?> caller, Class<?> instanceClass, boolean serviceLoaded) {
+        printClassInit(instanceClass,serviceLoaded);
         try {
             instanceClass.getConstructor(Class.class).newInstance(caller);
         } catch(Throwable t) {
@@ -101,8 +97,8 @@ public abstract class TILForgeLikeServiceLauncher {
         return "Forge".equals(loader) ? TILLauncher::isActiveForge : TILLauncher::isActiveNeoforge;
     }
     
-    static void printClassInit(Class<?> c) {
-        out.println("Class init: "+c.getName());
+    static void printClassInit(Class<?> c, boolean serviceLoaded) {
+        out.println("["+(serviceLoaded ? "SERVICE" : "BOOT")+"] Class init: "+c.getName());
     }
     
     protected static Class<?> thisClass() {
@@ -114,25 +110,18 @@ public abstract class TILForgeLikeServiceLauncher {
     }
     
     final ClassLoader bootLoader;
+    final String loader;
     protected final Logger logger;
     
-    protected TILForgeLikeServiceLauncher(ClassLoader bootLoader, Class<?> caller, String loader) {
+    protected TILForgeLikeServiceLauncher(ClassLoader bootLoader, String loader) {
         instance = this;
         this.bootLoader = bootLoader;
-        if(Objects.nonNull(launcher)) {
-            this.logger = launcher.getLogger();
-            if(Objects.nonNull(initCoreAPI())) {
-                checkHacksInit(true);
-                setModLoadingVersion(caller);
-            } else this.logger.error("Failed to initialized {} CoreAPI instance in the BOOT layer!",loader);
-        } else if(launcherCheck(loader).apply(TILLauncher.init(false))) {
-            this.logger = launcher.getLogger();
-            if(this.bootLoader!=thisClassLoader()) initBootLayerCoreAPI(caller);
-            else this.logger.info("Skipping {} initialization since we are already in the BOOT layer",loader);
-        } else {
-            this.logger = null;
-            out.println("Skipping "+loader+" initialization for non "+loader+" environment");
-        }
+        this.loader = loader;
+        this.logger = initLogger();
+    }
+    
+    boolean bootLoaded() {
+        return this.bootLoader==thisClassLoader();
     }
     
     protected abstract String coreLoader();
@@ -169,7 +158,28 @@ public abstract class TILForgeLikeServiceLauncher {
         return false;
     }
     
-    private void initBootLayerCoreAPI(Class<?> caller) {
+    /**
+     * If this class is already on the BOOT layer we can initialize it directly
+     */
+    protected final void initCoreAPI(Class<?> caller) {
+        if(Objects.nonNull(initCoreAPI())) {
+            checkHacksInit(true);
+            setModLoadingVersion(caller);
+        } else this.logger.error("Failed to initialized {} CoreAPI instance in the BOOT layer!",loader);
+    }
+    
+    protected abstract Object initCoreAPI();
+    
+    Logger initLogger() {
+        if(Objects.isNull(launcher)) launcherCheck(this.loader).apply(TILLauncher.init(bootLoaded()));
+        return launcher.getLogger();
+    }
+    
+    protected final void load(Class<?> caller) {
+        if(bootLoaded()) {
+            initCoreAPI(caller);
+            return;
+        }
         this.logger.info("Handling SERVICE layer launcher");
         if(!handleServiceEntryPoint()) return;
         try {
@@ -181,7 +191,6 @@ public abstract class TILForgeLikeServiceLauncher {
         }
     }
     
-    protected abstract Object initCoreAPI();
     protected abstract String modLoading();
     protected abstract String moduleName(Class<?> c);
     protected abstract void moveModule(String moduleName);
