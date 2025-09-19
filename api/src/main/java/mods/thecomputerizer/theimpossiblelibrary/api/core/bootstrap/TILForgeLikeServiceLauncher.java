@@ -184,7 +184,6 @@ public abstract class TILForgeLikeServiceLauncher {
         if(!handleServiceEntryPoint()) return;
         try {
             Hacks.invokeStatic(bootClass(coreLoader(),true),"initCoreAPI");
-            setModLoadingVersion(caller);
             this.logger.info("Successfully handled SERVICE layer initialized");
         } catch(Throwable t) {
             this.logger.fatal("Failed to initialize BOOT layer CoreAPI instance",t);

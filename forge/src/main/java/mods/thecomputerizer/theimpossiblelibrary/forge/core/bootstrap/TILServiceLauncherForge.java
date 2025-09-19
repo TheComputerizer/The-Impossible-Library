@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.launcher;
 
@@ -42,7 +42,7 @@ public class TILServiceLauncherForge implements IModLocator {
     
     static void validateServices(String ... classNames) {
         Logger logger = launcher.getLogger();
-        for(String className : classNames) TILLauncherForge.validateBootClass(logger,MODID,className);
+        for(String className : classNames) TILLauncherForge.validateBootClass(logger,BOOT_ID,className);
     }
     
     public Optional<Manifest> findManifest(Path file) {

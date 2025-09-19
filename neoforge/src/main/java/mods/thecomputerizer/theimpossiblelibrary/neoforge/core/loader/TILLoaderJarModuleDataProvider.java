@@ -22,13 +22,13 @@ import java.util.Optional;
 import java.util.jar.Manifest;
 
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 
 public class TILLoaderJarModuleDataProvider implements ModuleDataProvider {
     
     private static URI computeLoaderURI() {
-        ResolvedModuleAccess module = NeoforgeModuleAccess.findResolvedModuleIn(MODID,BOOT);
-        if(Objects.isNull(module)) TILRef.logError("Failed to find ResolvedModule {} in BOOT layer!",MODID);
+        ResolvedModuleAccess module = NeoforgeModuleAccess.findResolvedModuleIn(BOOT_ID,BOOT);
+        if(Objects.isNull(module)) TILRef.logError("Failed to find ResolvedModule {} in BOOT layer!",BOOT_ID);
         URI uri = Objects.nonNull(module) ? module.reference().location() : null;
         TILRef.logInfo("Called computeLoaderURI on TILLoaderJarModuleDataProvider and returning URI is {}",uri);
         return uri;

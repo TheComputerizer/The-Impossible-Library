@@ -13,7 +13,6 @@ import java.util.Objects;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.SERVICE;
 import static java.lang.System.err;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 
 public class TILLauncherNeoForge extends TILForgeLikeServiceLauncher {
@@ -33,7 +32,7 @@ public class TILLauncherNeoForge extends TILForgeLikeServiceLauncher {
     static void validateBootClass(Logger logger, ClassLoader bootLoader, Module module, String className) {
         try {
             Class<?> c = Hacks.callOnOtherClassLoader(bootLoader,"invokeDirect",bootLoader,"findClass",
-                    new Object[]{MODID,className});
+                    new Object[]{BOOT_ID,className});
             String moduleName = module.getName();
             if(Objects.nonNull(c)) {
                 Hacks.callOnOtherClassLoader(bootLoader,"setFieldDirect",c,"module",module);

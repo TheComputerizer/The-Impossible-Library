@@ -44,7 +44,8 @@ public class TILLauncher {
         this.activeLoader = validate(fmlLoader("minecraftforge")) ? "forge" :
                 (validate(fmlLoader("neoforged")) ? "neoforge" : "");
         this.logger = TILRef.createLogger(LOADER_NAME+(isActive() ? " ("+activeLoaderExt()+")" : ""));
-        this.logger.info("Created {}active launch plugin",isActive() ? "" : "in");
+        this.logger.info("Created {}active {} launch plugin",isActive() ? "" : "in",
+                         withHacks ? "BOOT" : "SERVICE");
         if(withHacks) {
             Hacks.checkBurningWaveInit();
             if(DEV) Hacks.removeEnvironmentProperty("MOD_CLASSES");

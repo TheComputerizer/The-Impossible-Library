@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Objects;
 
 import static java.lang.System.err;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 
 public class TILLauncherForge extends TILForgeLikeServiceLauncher {
@@ -31,7 +30,7 @@ public class TILLauncherForge extends TILForgeLikeServiceLauncher {
     static void validateBootClass(Logger logger, ClassLoader bootLoader, ModuleAccess module, String className) {
         try {
             Class<?> c = Hacks.callOnOtherClassLoader(bootLoader,"invokeDirect",bootLoader,"findClass",
-                                                      new Object[]{MODID,className});
+                                                      new Object[]{BOOT_ID,className});
             String moduleName = module.getName();
             if(Objects.nonNull(c)) {
                 Hacks.callOnOtherClassLoader(bootLoader,"setFieldDirect",c,"module",module.access());
