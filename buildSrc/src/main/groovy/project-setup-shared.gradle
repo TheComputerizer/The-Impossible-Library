@@ -268,7 +268,7 @@ void uniminedSetupLoader(SourceSet source, String l_name) {
                     Map<?,?> map = getSystemProperties()
                     addCustomRunProperties map, "til$l_name"
                     if(forge_like) {
-                        [ debug_network, forge_bootstrap_debug ].forEach {debug_prop ->
+                        [ debug_network ].forEach {debug_prop ->
                             //noinspection GroovyAssignabilityCheck
                             map[debug_prop] = 'true'
                         }

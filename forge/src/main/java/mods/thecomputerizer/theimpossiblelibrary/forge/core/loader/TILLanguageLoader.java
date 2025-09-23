@@ -2,20 +2,18 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
-import java.lang.reflect.Constructor;
-
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 /**
  * Basically the same as FMLJavaModLanguageProvider$FMLModTarget but since it's private, we can't use it...
  */
-public abstract class TILLanguageLoader { //TODO Use ASM to build extension
+public abstract class TILLanguageLoader { //TODO Use a proxy to avoid needing different implementation classes for different versions
     
+    private static final String CORE_LOADER = "mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader";
     private static final String MOD_CONTAINER = "net.minecraftforge.fml.javafmlmod.FMLModContainer";
     static boolean loadedNewCore;
     
@@ -31,16 +29,12 @@ public abstract class TILLanguageLoader { //TODO Use ASM to build extension
         this.scan = scan;
     }
     
-    @SuppressWarnings("unchecked")
-    private <T> T getInstance(Class<?> container, IModInfo info, ClassLoader classLoader, ModFileScanData scanResults,
+    private <T> T getInstance(Class<?> container, IModInfo info, ClassLoader loader, ModFileScanData scan,
             Object ... extras) {
         try {
-            boolean java8 = ForgeCoreLoader.isJava8();
-            Constructor<?> init = java8 ? container.getConstructor(
-                    IModInfo.class,String.class,ClassLoader.class,ModFileScanData.class) : container.getConstructor(
-                            IModInfo.class,String.class,ModFileScanData.class,extras[0].getClass());
-            T instance = (T)(java8 ? init.newInstance(info,this.modClass,classLoader,scanResults) :
-                    init.newInstance(info,this.modClass,scanResults,extras[0]));
+            final Object[] args = new Object[]{info,this.modClass,loader,scan};
+            if(!ForgeCoreLoader.isJava8()) { args[2] = scan; args[3] = extras[0]; }
+            T instance = Hacks.construct(container,args);
             TILRef.logInfo("Successfully initialized mod container for {}",this.modClass);
             return instance;
         } catch(Throwable t) {
@@ -51,16 +45,18 @@ public abstract class TILLanguageLoader { //TODO Use ASM to build extension
     
     protected <T> T loadModInner(IModInfo info, ClassLoader classLoader, ModFileScanData scanResults,
             Object ... extras) {
-        final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
         try {
-            final Class<?> container = Class.forName(MOD_CONTAINER,true,contextLoader);
-            String coreName = this.core.getClass().getName();
+            final Class<?> container = Hacks.findClass(MOD_CONTAINER);
+            final String coreName = this.core.getClass().getName();
             
             //Finalizes the module for the class being loaded in the GAME layer
-            Methods.invoke(this.scan,"defineClasses",classLoader);
+            Hacks.invoke(this.scan,"defineClasses",classLoader);
             
-            if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
-            if(extras.length>0) ForgeCoreLoader.verifyModule(this.modClass,info,extras[0]);
+            if(!loadedNewCore) setCoreAPI(coreName,classLoader);
+            if(extras.length>0) {
+                Class<?> coreLoaderGameLayer = Hacks.findClass(CORE_LOADER,classLoader);
+                Hacks.invokeStatic(coreLoaderGameLayer,"verifyModule",this.modClass,info,extras[0]);
+            }
             return getInstance(container,info,classLoader,scanResults,extras);
         } catch(Throwable t) {
             String msg = "Failed to load "+MOD_CONTAINER+" for multiversion mod!";
@@ -69,12 +65,12 @@ public abstract class TILLanguageLoader { //TODO Use ASM to build extension
         }
     }
     
-    protected void setCoreAPI(Class<?> implClass) {
+    protected void setCoreAPI(String implName, ClassLoader loader) {
         try {
-            implClass.newInstance();
+            Hacks.constructWithLoader(implName,loader);
             loadedNewCore = true;
         } catch(Throwable t) {
-            TILRef.logError("Failed to set CoreAPI instance {}",implClass,t);
+            TILRef.logError("Failed to set CoreAPI instance {}",implName,t);
         }
     }
 }

@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.loader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -26,8 +27,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVer
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class TILBetterModScan extends ModFileScanData {
@@ -93,34 +93,33 @@ public class TILBetterModScan extends ModFileScanData {
             try {
                 fixBrokenMods(ClassHelper.findClass(MODLOADER,target));
                 ForgeCoreLoader.nukeAndFinalizeJava8(sourceStack(outerClasses),target,NUKED_PACKAGES.isEmpty());
+                NUKED_PACKAGES.addAll(pkgs);
             } catch(Throwable t) {
                 TILRef.logError("Failed to finalize packages for Java 8 {}",pkgs,t);
             }
         } else {
-            String doLast = getLastPkg(pkgs);
             try {
-                Set<String> finalizedPkgs = new HashSet<>();
-                for(String pkg : pkgs) handleNotJava8(pkg,pkgToModMap.get(pkg),finalizedPkgs);
-                handleNotJava8(doLast,pkgToModMap.get(doLast),finalizedPkgs);
-                for(Class<?> c : defined)
-                    ForgeCoreLoader.sanityCheckModule(c,MOD_INFOS.get(c.getName()).getModID());
-                ForgeCoreLoader.exportAllModules();
+                ForgeCoreLoader.addLibraryToGameLayer(getLoaderPkg(pkgs),MODID);
             } catch(Throwable t) {
                 TILRef.logError("Failed to finalize packages for Java 9+ {}",pkgs,t);
             }
         }
-        NUKED_PACKAGES.addAll(pkgs);
+    }
+    
+    public void fixBrokenMods(Class<?> loaderClass) {
+        fixBrokenMods(loaderClass,"loadingWarnings");
     }
     
     /**
      * Yeah, this is kinda necessary when trying to work with classes on the wrong class loader
      */
-    public void fixBrokenMods(Class<?> loaderClass) {
-        List<?> warnings = Fields.get(Methods.invokeStatic(loaderClass,"get"),"loadingWarnings");
-        if(Objects.isNull(warnings)) TILRef.logWarn("You win this round, Forge");
+    private void fixBrokenMods(Class<?> loaderClass, String fieldName) {
+        List<?> warningsOrExceptions = Hacks.getField(Hacks.invokeStatic(loaderClass,"get"),fieldName);
+        if(Objects.isNull(warningsOrExceptions)) TILRef.logWarn("You win this round, Forge");
         else {
-            warnings.removeIf(warning -> {
-                String[] split = ((String)Methods.invoke(warning,"formatToString")).split(" ");
+            warningsOrExceptions.removeIf(warningOrException -> {
+                String formatted = Hacks.invoke(warningOrException,"formatToString");
+                String[] split = Objects.nonNull(formatted) ? formatted.split(" ") : new String[]{};
                 if(split.length>1) {
                     for(Path path : PATHS) {
                         if(path.toString().endsWith(split[1])) {
@@ -135,30 +134,13 @@ public class TILBetterModScan extends ModFileScanData {
     }
     
     public void fixBrokenModsNew(Class<?> loaderClass) {
-        List<?> exceptions = Fields.get(Methods.invokeStatic(loaderClass,"get"),"loadingExceptions");
-        if(Objects.isNull(exceptions)) TILRef.logWarn("You win this round, Forge");
-        else {
-            TILRef.logWarn("Alright Forge, lets see about those \"invalid\" mod files");
-            exceptions.removeIf(warning -> {
-                String[] split = ((String)Methods.invoke(warning,"formatToString")).split(" ");
-                if(split.length>1) {
-                    for(Path path : PATHS) {
-                        if(path.toString().endsWith(split[1])) {
-                            TILRef.logWarn("{} is a perfectly valid mod file thanks",path);
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            });
-        }
+        fixBrokenMods(loaderClass,"loadingExceptions");
     }
     
     /**
-     * If the given collection of packages contains a package from this library, it needs to be handled last.
-     * The package is removed from the collection if found.
+     * If the given collection of packages contains a package from this library, it needs to be specially handled
      */
-    protected String getLastPkg(Collection<String> pkgs) {
+    protected String getLoaderPkg(Collection<String> pkgs) {
         String last = null;
         for(String pkg : pkgs) {
             if(pkg.contains(BASE_PACKAGE)) {
@@ -174,14 +156,6 @@ public class TILBetterModScan extends ModFileScanData {
         for(IModInfo info : file.getModInfos())
             if(modid.equals(info.getModId())) return info;
         return null;
-    }
-    
-    private void handleNotJava8(String pkg, IModInfo mod, Set<String> finalizedPkgs) {
-        if(NUKED_PACKAGES.contains(pkg)) {
-            TILRef.logInfo("Skipping already handled sources for {}",pkg);
-            return;
-        }
-        ForgeCoreLoader.nukeAndFinalize(mod,pkg,finalizedPkgs);
     }
     
     /**

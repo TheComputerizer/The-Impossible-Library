@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAc
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -109,6 +110,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         addRoot(moduleReference.name(),moduleReference.access());
     }
     
+    @IndirectCallers
     public void addRoot(String name, ModuleReferenceAccess moduleReference) {
         addRoot(name,moduleReference.access());
     }
@@ -156,6 +158,32 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
             for(String pkg : packages) packageLookup.put(pkg,existingModule.access());
     }
     
+    /**
+     * Assumes the combined module already has a defined root
+     */
+    public void combineModules(URI combinedLocation, String combinedName, String ... others) {
+        ConfigurationAccess configuration = configuration();
+        ResolvedModuleAccess module = configuration.getModule(combinedName);
+        if(Objects.isNull(module)) {
+            this.logger.error("Cannot combined modules {} into module {} that does not exist!",others,
+                              combinedLocation);
+            return;
+        }
+        ModuleLayerAccess layer = getModuleLayer();
+        ModuleReferenceAccess reference = getRoot(combinedName);
+        if(Objects.nonNull(reference)) reference.setLocation(combinedLocation);
+        module.inheritFrom(configuration,others);
+        Map<String,Object> parentLoaders = parentLoaders();
+        Map<String,Object> packageLookup = packageLookup();
+        for(String pkg : module.packages()) {
+            packageLookup.put(pkg,module.accessAs());
+            parentLoaders.remove(pkg);
+        }
+        removeRoots(others);
+        configuration.removeModules(others);
+        layer.combineModules(combinedName,others);
+    }
+    
     public ConfigurationAccess configuration() {
         Object configuration = getDirect("configuration");
         if(Objects.nonNull(configuration)) return getConfiguration(configuration);
@@ -175,6 +203,16 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     
     public <T> T getConfigModuleDirect(String name) {
         return configuration().getModuleDirect(name);
+    }
+    
+    public @Nullable ModuleDescriptorAccess getModuleDescriptor(String name) {
+        ModuleAccess module = getModuleLayer().getModule(name);
+        return Objects.nonNull(module) ? module.getDescriptor() : null;
+    }
+    
+    public @Nullable Object getModuleDescriptorDirect(String name) {
+        ModuleDescriptorAccess descriptorAccess = getModuleDescriptor(name);
+        return Objects.nonNull(descriptorAccess) ? descriptorAccess.accessAs() : null;
     }
     
     public ModuleLayerAccess getModuleLayer() {
@@ -261,7 +299,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     private void moveRoots(ModuleClassLoaderAccess targetLoader, String moduleName) {
-        Object ref = getRoot(moduleName);
+        Object ref = getRootDirect(moduleName);
         if(Objects.nonNull(ref)) {
             removeRoot(moduleName);
             targetLoader.addRoot(moduleName,ref);
@@ -349,6 +387,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         if(SECURE_CLASSLOADER_FORMAT) packageToCodeSource().remove(pkg);
     }
     
+    @IndirectCallers
     public void removePackagesForModule(ResolvedModuleAccess resolvedModule) {
         removePackagesForModule(resolvedModule.access());
     }
@@ -370,11 +409,17 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         resolvedRoots().remove(root);
     }
     
+    public void removeRoots(String ... roots) {
+        Map<String,Object> resolvedRoots = resolvedRoots();
+        for(String root : roots) resolvedRoots.remove(root);
+    }
+    
     public void removeSecureModule(String moduleName) {
         if(SECURE_CLASSLOADER_FORMAT) ourModulesSecure().remove(moduleName);
     }
     
     public void renameModule(String name, String newName) {
+        this.logger.info("Renaming module from {} to {}",name,newName);
         ConfigurationAccess configuration = configuration();
         ResolvedModuleAccess module = configuration.getModule(name);
         if(Objects.isNull(module)) {

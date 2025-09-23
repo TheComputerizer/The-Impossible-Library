@@ -6,9 +6,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ConfigurationA
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import org.apache.logging.log4j.Logger;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -61,10 +63,18 @@ public class ForgeModuleAccess {
         loader.cloneModule(moduleName,newName);
     }
     
+    public static void combineModules(String layerName, URI combinedLocation, String combinedName, String base,
+            String ... others) {
+        ModuleClassLoaderAccess loader = getModuleClassLoader(layerName);
+        if(!base.equals(combinedName)) loader.renameModule(base,combinedName);
+        loader.combineModules(combinedLocation,combinedName,others);
+    }
+    
     static Object defaultLogger() {
         return ForgeCoreLoader.getLogger();
     }
     
+    @IndirectCallers
     public static void exportAllPackages(String ... layerNames) {
         exportAllPackages(defaultLogger(),layerNames);
     }
@@ -101,9 +111,14 @@ public class ForgeModuleAccess {
         return getModuleLayer(layerName).getModule(moduleName);
     }
     
+    public static ResolvedModuleAccess findResolvedModuleIn(String moduleName, String layerName) {
+        return getModuleClassLoader(layerName).configuration().getModule(moduleName);
+    }
+    
     /**
      * We don't want to accidentally override or throw any errors related to getClass
      */
+    @IndirectCallers
     public static ClassAccess getClassAccess(Class<?> clazz) {
         return Objects.nonNull(clazz) ? ModuleSystemAccessor.getClassAccess(clazz,defaultLogger()) : null;
     }
@@ -139,7 +154,7 @@ public class ForgeModuleAccess {
     }
     
     public static Enum<?> getLayerEnum(String layerName) {
-        return ForgeCoreLoader.getEnum(ForgeCoreLoader.bootLoader(), LAYER_ENUM_CLASS, layerName);
+        return ForgeCoreLoader.getEnum(ForgeCoreLoader.bootLoader(),LAYER_ENUM_CLASS,layerName);
     }
     
     @IndirectCallers
@@ -177,6 +192,7 @@ public class ForgeModuleAccess {
         return ModuleSystemAccessor.getModule(module,defaultLogger());
     }
     
+    @IndirectCallers
     public static ModuleClassLoaderAccess[] getModuleClassLoaders(String... layerNames) {
         ModuleClassLoaderAccess[] loaders = new ModuleClassLoaderAccess[layerNames.length];
         for(int i=0;i<layerNames.length;i++) loaders[i] = getModuleClassLoader(layerNames[i]);
@@ -257,6 +273,12 @@ public class ForgeModuleAccess {
     }
     
     public static void moveModule(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess module, boolean moveClasses) {
+        if(Objects.nonNull(module)) moveModule(sourceLoader,targetLoader,module.name(),moveClasses);
+        else sourceLoader.logger().error("Cannot move null module from {} to {}",sourceLoader,targetLoader);
+    }
+    
+    public static void moveModule(ModuleClassLoaderAccess sourceLoader,
             ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveServices) {
         ModuleLayerAccess sourceLayer = sourceLoader.getModuleLayer();
         ModuleAccess module = sourceLayer.removeModuleAndReturn(moduleName);
@@ -326,6 +348,7 @@ public class ForgeModuleAccess {
         loader.renameModule(name,newName);
     }
     
+    @IndirectCallers
     public static void setClassModule(ClassAccess c, String layerName, String moduleName) {
         c.setModule(getModuleLayer(layerName),moduleName);
     }

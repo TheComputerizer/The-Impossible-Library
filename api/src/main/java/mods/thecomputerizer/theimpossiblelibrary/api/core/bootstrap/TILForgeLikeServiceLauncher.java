@@ -141,12 +141,14 @@ public abstract class TILForgeLikeServiceLauncher {
         this.logger.info("I see you are running Java 9+ so I'll be using burningwave to break its strong encapsulation");
         try {
             checkHacksInit(true);
+            this.logger.info("Initialized hacks");
             String moduleName = moduleName(thisClass());
             if(Objects.nonNull(moduleName)) {
+                this.logger.info("Module name is {}",moduleName);
                 moveModule(moduleName);
                 this.logger.info("Moved module {} to the BOOT layer",moduleName);
                 return true;
-            }
+            } else this.logger.info("Null module?");
         } catch(Throwable t) {
             //We can't use the Logger here since it tries to load the class associated with each StackTraceElement
             //Since the class that tries to load may have just been moved (or errored while moving), we can't do that

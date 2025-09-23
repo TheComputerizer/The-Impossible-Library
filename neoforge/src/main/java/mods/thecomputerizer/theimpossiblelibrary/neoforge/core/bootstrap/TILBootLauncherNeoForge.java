@@ -33,6 +33,7 @@ import static cpw.mods.modlauncher.Launcher.INSTANCE;
 import static cpw.mods.modlauncher.api.IModuleLayerManager.Layer.BOOT;
 import static java.io.File.separator;
 import static java.lang.System.out;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_NAME;
 
@@ -48,6 +49,7 @@ public class TILBootLauncherNeoForge extends TILLauncher implements ILaunchPlugi
     static final String HACKS = BASE_PKG+".api.core.Hacks";
     static final String LANGUAGE_LOADER = CORE_PKG+"."+(JAVA21 ? "MultiVersionLanguageLoader" : "TILLanguageProvider");
     static final String LOCATOR = CORE_PKG+"."+(JAVA21 ? "TILSelfLocator" : "MultiVersionModLocator");
+    static final String PACKAGE_VERSION_INFO = Package.class.getName()+"$VersionInfo";
     static final String READER = JAVA21 ? CORE_PKG+".MultiVersionModReader" : null;
     static final String SERVICE_LAUNCHER = CORE_PKG+".bootstrap.TILServiceLauncherNeoForge"+(JAVA21 ? "1_21" : "");
     /**
@@ -261,7 +263,18 @@ public class TILBootLauncherNeoForge extends TILLauncher implements ILaunchPlugi
             Method setField = findSetFieldDirect(hacksClass,Object.class,String.class,Object.class);
             invokeMethod(setField,c,"module",m);
         } else LOGGER.info("Class {} already present in module {}",c.getName(),m.getName());
+        setPackageModule(c.getPackage(),m);
         return c;
+    }
+    
+    static void setPackageModule(Package p, Module m) {
+        if(Hacks.invokeDirect(p,"module")!=m) {
+            Hacks.setFieldDirect(p,"module",m);
+            //Account for forge using Package#getImplementationVersion to find service class versions
+            Object versionInfo = Hacks.construct(PACKAGE_VERSION_INFO,null,null,null,null,VERSION,null,null);
+            Hacks.setFieldDirect(p,"versionInfo",versionInfo);
+        }
+        else LOGGER.info("Package {} already present in module {}",p.getName(),m.getName());
     }
     
     static String ufsSeparator() {

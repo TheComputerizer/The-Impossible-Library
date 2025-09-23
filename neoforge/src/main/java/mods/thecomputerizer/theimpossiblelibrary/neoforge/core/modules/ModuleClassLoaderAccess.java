@@ -322,7 +322,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     }
     
     private void moveRoots(ModuleClassLoaderAccess targetLoader, String moduleName) {
-        ModuleReference ref = getRoot(moduleName).accessAs();
+        ModuleReference ref = getRootDirect(moduleName);
         if(Objects.nonNull(ref)) {
             removeRoot(moduleName);
             targetLoader.addRoot(moduleName,ref);

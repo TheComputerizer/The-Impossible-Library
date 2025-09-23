@@ -11,7 +11,6 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import java.lang.reflect.Constructor;
 
 import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public abstract class TILLanguageLoader {
     
@@ -51,7 +50,7 @@ public abstract class TILLanguageLoader {
             final String coreName = this.core.getClass().getName();
             
             //Finalizes the module for the class being loaded in the GAME layer
-            Methods.invoke(this.scan,"defineClasses",classLoader);
+            Hacks.invoke(this.scan,"defineClasses",classLoader);
             
             if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
             NeoForgeCoreLoader.verifyModule(this.modClass,info,layer);

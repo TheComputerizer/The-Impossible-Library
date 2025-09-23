@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.logging.log4j.Logger;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -639,6 +641,38 @@ public class Hacks {
     @IndirectCallers
     public static <T> T invokeNamed(Object target, String named, String intermediary, Object ... args) {
         return invoke(target,isNamedEnv() ? named : intermediary, args);
+    }
+    
+    /**
+     * Double-layer invoke that returns the default value when the wrapped invoke returns null.
+     * The default value will also be returned if the wrapped invoke throws an exception.
+     * Uses Hacks#invoke or (if the target object is a class or string) Hacks#invokeStatic.
+     */
+    public static <T> T invokeDefault(T defVal, Object target, String method, Object ... args) {
+        String hacksMethod = "invoke";
+        if(target instanceof String || target instanceof Class<?>) hacksMethod+="Static";
+        return invokeDefault(hacksMethod,defVal,target,method,args);
+    }
+    
+    /**
+     * Double-layer invoke that returns the default value when the wrapped invoke returns null.
+     * The default value will also be returned if the wrapped invoke throws an exception.
+     * Special case:
+     *      If the wrapped invoke returns an Optional, the value it contains will be returned.
+     *      If the optional is empty, the default value will be returned,
+     *      If the value is also an optional, it will be unwrapped until a non-optional or null value is found
+     */
+    public static <T> T invokeDefault(String hacksMethod, T defVal, Object target, String method, Object ... args) {
+        try {
+            Object ret = invokeStatic(Hacks.class,hacksMethod,target,method,args);
+            if(Objects.isNull(ret)) return defVal;
+            while(ret instanceof Optional<?>) ret = ((Optional<?>)ret).orElse(GenericUtils.cast(defVal));
+            return GenericUtils.cast(ret);
+        } catch(Throwable t) {
+            LOGGER.error("Failed to invoke {} using Hacks#{}! Returning default value {}",
+                         method,hacksMethod,defVal,t);
+        }
+        return defVal;
     }
     
     /**

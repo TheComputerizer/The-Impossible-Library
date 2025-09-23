@@ -11,7 +11,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModCandidate;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModData;
@@ -64,7 +63,7 @@ import static java.util.jar.JarFile.MANIFEST_NAME;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.*;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
-import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.MODULE_LAYERS;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_ID;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LANGPROVIDER;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.LIBRARY;
 import static net.minecraftforge.forgespi.locating.IModFile.Type.MOD;
@@ -175,18 +174,7 @@ public class ForgeModLoading {
                 
             } else updatePathMap = true;
         }
-        if(Objects.isNull(pathOrJar)) {
-            if(pathBased) pathOrJar = path;
-            else {
-                Supplier<Manifest> defaultManifest = getDefaultManifest(moduleName);
-                Function<Object,Object> jarMetadataSupplier = getJarMetadataSupplier(path);
-                pathOrJar = Hacks.invokeStatic(SECURE_JAR,"from",defaultManifest,jarMetadataSupplier,path);
-                if(!MODULE_LAYERS) {
-                    Hacks.setFieldDirect(pathOrJar,"packages",Collections.emptySet());
-                    Hacks.setFieldDirect(pathOrJar,"providers",Collections.emptyList());
-                }
-            }
-        }
+        if(Objects.isNull(pathOrJar)) pathOrJar = getDefaultJar(moduleName,path);
         ModFile file = Hacks.construct(dynamicModFileClass,pathOrJar,locator,parser,type);
         //Construct the file first to ensure there aren't any errors before the PATH_OR_JAR_MAP is updated
         if(updatePathMap) {
@@ -373,6 +361,15 @@ public class ForgeModLoading {
         };
     }
     
+    private static Object getDefaultJar(String moduleName, Path path) {
+        if(pathBased) return path;
+        Supplier<Manifest> defaultManifest = getDefaultManifest(moduleName);
+        if(LOADER_ID.equals(moduleName) || MODID.equals(moduleName))
+            return TILLoaderJar.get(defaultManifest,moduleName);
+        Function<Object,Object> jarMetadataSupplier = getJarMetadataSupplier(path);
+        return Hacks.invokeStatic(SECURE_JAR,"from",defaultManifest,jarMetadataSupplier,path);
+    }
+    
     /**
      * Also initializes the info map
      */
@@ -403,7 +400,6 @@ public class ForgeModLoading {
     
     private static Function<Object,Object> getJarMetadataSupplier(Path ... paths) {
         return secureJar -> {
-            if(MODULE_LAYERS) return Hacks.invokeStatic(JAR_METADATA,"from",secureJar,paths);
             Set<String> packages = new HashSet<>();
             List<?> providers = new ArrayList<>();
             Manifest manifest = Hacks.invoke(Hacks.invoke(secureJar,"moduleDataProvider"),"getManifest");
@@ -699,7 +695,7 @@ public class ForgeModLoading {
             populateMultiversionData(map,data);
             if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
                 LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
-                addScannedMod(langProviderModFile(candidateFile, TILLauncherRef.LOADER_ID), mods, "LANGPROVIDER");
+                addScannedMod(langProviderModFile(candidateFile, LOADER_ID), mods, "LANGPROVIDER");
             }
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");

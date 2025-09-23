@@ -405,44 +405,154 @@ public class ClassHelper {
     }
     
     @IndirectCallers
+    public static <T> T newGenericProxy(ClassLoader loader, String typeName, String namedMethod,
+            String intermediaryMethod, Function<Object[],Object> handler) {
+        return newGenericProxy(loader,typeName,Hacks.isNamedEnv() ? namedMethod : intermediaryMethod,handler);
+    }
+    
+    @IndirectCallers
+    public static <T> T newGenericProxy(String typeName, String namedMethod, String intermediaryMethod,
+            Function<Object[],Object> handler) {
+        return newGenericProxy(typeName,Hacks.isNamedEnv() ? namedMethod : intermediaryMethod,handler);
+    }
+    
+    @IndirectCallers
     public static <T> T newGenericProxy(Class<T> type, String namedMethod, String intermediaryMethod,
             Function<Object[],Object> handler) {
         return newGenericProxy(type,Hacks.isNamedEnv() ? namedMethod : intermediaryMethod,handler);
+    }
+    
+    public static <T> T newGenericProxy(String typeName, String methodName, Function<Object[],Object> handler) {
+        return newGenericProxy(Hacks.contextClassLoader(),typeName,methodName,handler);
+    }
+    
+    public static <T> T newGenericProxy(ClassLoader loader, String typeName, String methodName, Function<Object[],Object> handler) {
+        return newGenericProxy(loader,typeName,method -> methodName.equals(method.getName()),handler);
     }
     
     public static <T> T newGenericProxy(Class<T> type, String methodName, Function<Object[],Object> handler) {
         return newGenericProxy(type,method -> methodName.equals(method.getName()),handler);
     }
     
+    @IndirectCallers
+    public static <T> T newGenericProxy(ClassLoader loader, String typeName, BiFunction<String,Object[],Object> handler) {
+        return newProxy(typeName,proxyInvoker(handler));
+    }
+    
+    @IndirectCallers
+    public static <T> T newGenericProxy(String typeName, BiFunction<String,Object[],Object> handler) {
+        return newProxy(typeName,proxyInvoker(handler));
+    }
+    
+    @IndirectCallers
+    public static <T> T newGenericProxy(Class<T> type, BiFunction<String,Object[],Object> handler) {
+        return newProxy(type,proxyInvoker(handler));
+    }
+    
+    public static <T> T newGenericProxy(ClassLoader loader, String typeName, Function<Method,Boolean> methodMatcher,
+            Function<Object[],Object> argsHandler) {
+        return newProxy(loader,typeName,proxyInvoker(methodMatcher,argsHandler));
+    }
+    
+    @IndirectCallers
+    public static <T> T newGenericProxy(String typeName, Function<Method,Boolean> methodMatcher,
+            Function<Object[],Object> argsHandler) {
+        return newProxy(typeName,proxyInvoker(methodMatcher,argsHandler));
+    }
+    
     public static <T> T newGenericProxy(Class<T> type, Function<Method,Boolean> methodMatcher,
             Function<Object[],Object> argsHandler) {
-        return newProxy(type,(proxy,method,args) -> {
-            switch(method.getName()) {
-                case "equals": return args.length>0 && proxy==args[0];
-                case "hashCode": return 0;
-                default: {
-                    LOGGER.info("Invoking generic proxy method {}",method.getName());
-                    return methodMatcher.apply(method) ? argsHandler.apply(args) : null;
-                }
-            }
-        });
+        return newProxy(type,proxyInvoker(methodMatcher,argsHandler));
+    }
+    
+    @IndirectCallers
+    public static <T> T newProxy(String typeName, InvocationHandler handler) {
+        return newProxy(Hacks.contextClassLoader(),typeName,handler);
     }
     
     public static <T> T newProxy(Class<T> type, InvocationHandler handler) {
-        return newProxy(type.getClassLoader(),type,handler);
+        return newProxy(type.getClassLoader(),handler,type);
     }
     
+    public static <T> T newProxy(ClassLoader loader, String typeName, InvocationHandler handler) {
+        return newProxy(loader,handler,new Object[]{typeName});
+    }
+    
+    @IndirectCallers
     public static <T> T newProxy(ClassLoader loader, Class<T> type, InvocationHandler handler) {
         return newProxy(loader,handler,new Class<?>[]{type});
     }
     
+    public static <T> T newProxy(ClassLoader loader, InvocationHandler handler, Object ... typesOrNames) {
+        if(Objects.isNull(typesOrNames) || typesOrNames.length==0) return proxyFail(2);
+        Class<?>[] types = new Class<?>[typesOrNames.length];
+        for(int i=0;i<types.length;i++) {
+            Object typeOrName = typesOrNames[i];
+            if(Objects.isNull(typeOrName)) return proxyFail(1,(Object)null);
+            if(typeOrName instanceof Class<?>) {
+                types[i] = (Class<?>)typeOrName;
+                continue;
+            }
+            String typeName = String.valueOf(typeOrName);
+            Class<?> type = Hacks.findClass(typeName);
+            if(Objects.isNull(type)) return proxyFail(1,typeName);
+            types[i] = type;
+        }
+        return newProxy(loader,handler,types);
+    }
+    
     public static <T> T newProxy(ClassLoader loader, InvocationHandler handler, Class<?> ... types) {
-        return GenericUtils.cast(Proxy.newProxyInstance(loader,types,handler));
+        return Objects.nonNull(types) && types.length>0 ?
+                GenericUtils.cast(Proxy.newProxyInstance(loader,types,handler)) : proxyFail(2);
     }
     
     @IndirectCallers
     public static String packageName(@Nullable Class<?> clazz) {
         return Objects.nonNull(clazz) ? clazz.getPackage().getName() : "";
+    }
+    
+    private static <T> T proxyFail(int failType, Object ... args) {
+        switch(failType) {
+            case 1: LOGGER.error("Cannot create proxy! Class not found: {}",args);
+            case 2: LOGGER.error("Cannot create proxy with null or empty types array");
+        }
+        return null;
+    }
+    
+    public static InvocationHandler proxyInvoker(Function<Method,Boolean> matcher, Function<Object[],Object> handler) {
+        return proxyInvoker(true,matcher,handler);
+    }
+    
+    public static InvocationHandler proxyInvoker(boolean handleDefault, Function<Method,Boolean> matcher,
+            Function<Object[],Object> handler) {
+        return proxyInvokerWrappedHandle(handleDefault,(method,args) ->
+                matcher.apply(method) ? handler.apply(args) : null);
+    }
+    
+    public static InvocationHandler proxyInvoker(BiFunction<String,Object[],Object> handler) {
+        return proxyInvoker(true,handler);
+    }
+    
+    public static InvocationHandler proxyInvoker(boolean handleDefault, BiFunction<String,Object[],Object> handler) {
+        return proxyInvokerWrappedHandle(handleDefault,
+                (method,args) -> handler.apply(method.getName(),args));
+    }
+    
+    @IndirectCallers
+    public static InvocationHandler proxyInvokerWrappedHandle(final BiFunction<Method,Object[],Object> handler) {
+        return proxyInvokerWrappedHandle(true,handler);
+    }
+    
+    public static InvocationHandler proxyInvokerWrappedHandle(boolean handleDefault,
+            final BiFunction<Method,Object[],Object> handler) {
+        return handleDefault ? (instance,method,args) -> {
+            switch(method.getName()) {
+                case "equals": return args.length>0 && instance==args[0];
+                case "hashCode": return 0;
+                case "toString": return instance.toString();
+                default: return handler.apply(method,args);
+            }
+        } : (instance,method,args) -> handler.apply(method,args);
     }
     
     /**
