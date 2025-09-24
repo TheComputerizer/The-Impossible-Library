@@ -27,7 +27,7 @@ public interface ModuleSystemAccessor {
     
     static <T> T construct(Object accessorOrLogger, Class<?> target, boolean direct, Object ... args) {
         if(Objects.nonNull(target))
-            return direct ? Hacks.constructDirect(target,args) : Hacks.construct(target,args);
+            return direct ? Hacks.constructDirect(target,args) : Hacks.constructAndCast(target,args);
         String msg = "Cannot contruct null class! args = "+Arrays.toString(args);
         Logger logger = getAsLogger(accessorOrLogger);
         if(Objects.nonNull(logger)) logger.error(msg);
