@@ -74,6 +74,7 @@ public class ClassLoaderAccess extends AbstractModuleSystemAccessor {
         return packages().get(pkgName);
     }
     
+    @IndirectCallers
     public void inheritClasses(ModuleAccess module, String moduleName, ClassLoaderAccess ... loaders) {
         inheritClasses(module,new String[]{moduleName},loaders);
     }

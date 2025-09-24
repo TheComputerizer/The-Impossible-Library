@@ -7,17 +7,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Patterns;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URL;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 /**
  * Read/write util methods with some addition-specific string stuff
@@ -28,6 +32,7 @@ public class IOUtils {
      * case-insensitive
      */
     private static final WrapperableMappable<Class<?>,String> CLASS_ALIASES = new WrapperableMappable<>(new HashMap<>(),false);
+    private static final Logger LOGGER = TILRef.createLogger("TIL I/O");
 
     public static void addBasicClassAliases(Class<?> ... classes) {
         for(Class<?> clazz : classes) addClassAliases(clazz);
@@ -50,7 +55,7 @@ public class IOUtils {
             } else Misc.lowerCaseAddCollection(aliasSet,arg.toString());
         }
         CLASS_ALIASES.putFast(clazz,aliasSet);
-        TILRef.logDebug("Added class aliases {} for class {}",TextHelper.compileCollection(aliasSet),clazz);
+        LOGGER.debug("Added class aliases {} for class {}",TextHelper.compileCollection(aliasSet),clazz);
     }
 
     /**
@@ -78,7 +83,7 @@ public class IOUtils {
     }
 
     private static void loadDefaultClassAliases() {
-        TILRef.logInfo("Loading default class aliases");
+        LOGGER.info("Loading default class aliases");
         addBasicClassAliases(Byte.class,Character.class,Double.class,Float.class,Long.class,Short.class,String.class,
                 Void.class);
         addClassAliases(Boolean.class,"bool");
@@ -139,5 +144,14 @@ public class IOUtils {
     @IndirectCallers
     public static InputStream stringToStream(String str) {
         return new ByteArrayInputStream(str.getBytes(UTF_8));
+    }
+    
+    public static ByteBuffer toBuffer(URL url) {
+        try {
+            Streams.toByteBuffer(url.openStream());
+        } catch(IOException ex) {
+            LOGGER.error("Failed to open buffer for URL {}",url,ex);
+        }
+        return null;
     }
 }

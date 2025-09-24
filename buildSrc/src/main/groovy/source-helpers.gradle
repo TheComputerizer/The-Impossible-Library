@@ -77,11 +77,16 @@ List<String> getPreviousGenForgeSources(boolean exclude_problematic_versions) {
 
 List<String> getPreviousGenIntelliJRuns() {
     return switch(name) {
+        case 'cleanroom' -> [ '1.12' ]
+        case 'fabric', 'forge', 'neoforge' -> [ 'cleanroom' ]
         case 'shared_1.16', 'shared_1.18', 'shared_1.19', 'shared_1.20', 'shared_1.21' ->
-            [ '1.12', 'cleanroom', 'fabric', 'forge', 'neoforge' ]
-        case 'shared_1.19.2', 'shared_1.19.4' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.19' ]
-        case 'shared_1.20.1', 'shared_1.20.4', 'shared_1.20.6' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.20' ]
-        case 'shared_1.21.1' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.21' ]
+            [ 'fabric', 'forge', 'neoforge' ]
+        case 'shared_1.19.2' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.19' ]
+        case 'shared_1.19.4' -> [ 'shared_1.19.2' ]
+        case 'shared_1.20.1' -> [ 'shared_1.16', 'shared_1.18', 'shared_1.20' ]
+        case 'shared_1.20.4' -> [ 'shared_1.19.4', 'shared_1.20.1' ]
+        case 'shared_1.20.6' -> [ 'shared_1.20.4' ]
+        case 'shared_1.21.1' -> [ 'shared_1.20.6' ]
         default -> []
     }
 }
@@ -158,6 +163,8 @@ void setupIntelliJGenGraph() {
         tasks.named(gen_type) {gen_task ->
             getPreviousGenIntelliJRunsByType(gen_type).forEach {p_name ->
                 gen_task.mustRunAfter getFullTaskPath(p_name, gen_type)
+                if(gen_type!='genIntellijRuns')
+                    gen_task.mustRunAfter getFullTaskPath(p_name, 'genIntellijRuns')
             }
         }
     }

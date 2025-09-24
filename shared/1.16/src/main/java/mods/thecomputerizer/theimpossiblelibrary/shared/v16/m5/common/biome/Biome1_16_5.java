@@ -16,7 +16,6 @@ import net.minecraft.world.level.biome.Biome;
 import java.util.Objects;
 
 import static net.minecraft.core.Registry.BIOME_REGISTRY;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Setter
 public class Biome1_16_5 extends BiomeAPI<Biome> {
@@ -59,6 +58,6 @@ public class Biome1_16_5 extends BiomeAPI<Biome> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

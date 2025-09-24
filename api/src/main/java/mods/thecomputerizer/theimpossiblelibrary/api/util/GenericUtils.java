@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
 
 public class GenericUtils {
     
@@ -236,7 +236,7 @@ public class GenericUtils {
     public static <N extends Number> N parseNumber(String unparsed, Class<?> valType) {
         String typeName = valType.getSimpleName();
         if("Integer".equals(typeName)) typeName = "Int";
-        return Methods.invokeStatic(valType,"parse"+typeName,unparsed);
+        return STATIC.invoke(valType,"parse"+typeName,unparsed);
     }
     
     public static <N extends Number> N parseNumber(String unparsed, N defaultValue) {

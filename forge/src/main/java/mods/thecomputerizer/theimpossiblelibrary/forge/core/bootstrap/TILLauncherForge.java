@@ -67,7 +67,7 @@ public class TILLauncherForge extends TILForgeLikeServiceLauncher {
     }
     
     @Override protected void moveModule(String moduleName) {
-        this.logger.info("Moving module {} from SERVICE to BOOT layer");
+        this.logger.info("Moving module {} from SERVICE to BOOT layer",moduleName);
         ForgeModuleAccess.moveModule("SERVICE","BOOT",moduleName,true);
         this.logger.info("Renaming BOOT module from {} to {}",moduleName,BOOT_ID);
         ForgeModuleAccess.renameModule("BOOT",moduleName,BOOT_ID);

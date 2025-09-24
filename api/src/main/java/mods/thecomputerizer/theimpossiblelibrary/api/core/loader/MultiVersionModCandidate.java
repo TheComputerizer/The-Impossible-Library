@@ -6,6 +6,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.MultiVersionCoreMod;
@@ -148,7 +149,7 @@ public class MultiVersionModCandidate {
         URL source = this.classpath ? ClassHelper.getSourceURL(name,loader) : this.source;
         core.addURLToClassLoader(loader,source);
         TILRef.logInfo("Added URL {} to loader {}",source,loader);
-        return ClassHelper.findClass(name,loader);
+        return Hacks.findClass(name, loader);
     }
 
     public void findCoreClasses(Map<MultiVersionModCandidate,Collection<Class<? extends CoreEntryPoint>>> classes,

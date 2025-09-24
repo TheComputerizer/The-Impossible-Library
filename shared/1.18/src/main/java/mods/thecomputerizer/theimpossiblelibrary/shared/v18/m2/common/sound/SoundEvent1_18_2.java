@@ -5,8 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class SoundEvent1_18_2 extends SoundEventAPI<SoundEvent> {
 
     public SoundEvent1_18_2(Object sound) {
@@ -15,6 +13,6 @@ public class SoundEvent1_18_2 extends SoundEventAPI<SoundEvent> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

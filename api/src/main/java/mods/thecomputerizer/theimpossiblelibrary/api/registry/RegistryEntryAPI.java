@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
@@ -44,4 +45,8 @@ public interface RegistryEntryAPI<V> extends Wrapped<V> {
     }
     
     void setRegistryName(ResourceLocationAPI<?> registryName);
+    
+    default void setForgeRegistryName(Wrapped<?> wrapped, ResourceLocationAPI<?> registryName) {
+        if(FORGE) Hacks.invoke(wrapped.getWrapped(),"setRegistryName",(Object)registryName.unwrap());
+    }
 }

@@ -1,9 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V12_2;
@@ -37,17 +36,7 @@ public abstract class RegistryEntryBuilder<API> {
      */
     @SuppressWarnings("SameParameterValue")
     protected <T> T findAndInitializeForVersion(String baseClassName, boolean minor, Object ... args) {
-        return ClassHelper.findAndInitialize(getClassForVersion(baseClassName,minor),args);
-    }
-    
-    /**
-     * Assumes the target class is in the same package as the instance of this class.
-     * Returns the version qualified name of the target class.
-     * Minor versions will be qualified for 1.12 (1.12.2), 1.16 (1.16.5), and 1.18 (1.18.2)
-     */
-    @IndirectCallers
-    protected String getClassForVersion(String className) {
-        return getClassForVersion(className,DEFAULT_MINOR_VERSION);
+        return Hacks.construct(getClassForVersion(baseClassName,minor),args);
     }
     
     /**

@@ -16,10 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
-import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
-import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
 
 /**
  * Figures out which version to load on and how to load stuff on it
@@ -87,40 +84,21 @@ public class ForgeCoreLoader {
         return ForgeModuleAccess.getModuleClassLoader(bootLoader(),"BOOT");
     }
     
-    static Class<?> findClassInHeirarchy(ClassLoader loader, String className) {
-        Class<?> foundClass = null;
-        ClassLoader searchIn = loader;
-        while(Objects.nonNull(searchIn)) {
-            try {
-                foundClass = Driver.getClassByName(className,false,loader,Classes.getClass());
-            } catch(Throwable t) {
-                LOGGER.debug("Class not found in ClassLoader {} (name = {})",searchIn,className);
-            }
-            if(Objects.nonNull(foundClass)) break;
-            searchIn = ClassLoaders.getParent(searchIn);
-        }
-        if(Objects.isNull(foundClass)) {
-            LOGGER.error("Class {} not found in ClassLoader heirarchy for {}",className,loader);
-            return null;
-        }
-        return foundClass;
-    }
-    
     public static @Nullable Object getBootLoadedCoreAPI() {
         return getCoreAPIReflectively(bootLoader());
     }
     
     static Object getCoreAPIReflectively(ClassLoader loader) {
         try {
-            return Fields.getStaticDirect(Class.forName(COREAPI_CLASS,false,loader),"INSTANCE");
-        } catch(ClassNotFoundException ex) {
-            LOGGER.debug("CoreAPI not found on {}",loader);
+            return STATIC_DIRECT.get(Hacks.findClass(COREAPI_CLASS,loader),"INSTANCE");
+        } catch(Throwable t) {
+            LOGGER.debug("Failed to get CoreAPI instance on {}",loader);
         }
         return null;
     }
     
-    public static <E extends Enum<E>> E getEnum(ClassLoader loader, String className, String name) {
-        Class<?> foundClass = findClassInHeirarchy(loader,className);
+    public static <E extends Enum<E>> E getEnum(String className, ClassLoader loader, String name) {
+        Class<?> foundClass = Hacks.findClassInHeirarchy(className,loader);
         return Objects.nonNull(foundClass) ? getEnum(foundClass,name) : null;
     }
     

@@ -7,8 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class Item1_16_5 extends ItemAPI<Item> {
 
     public Item1_16_5(Object item) {
@@ -21,6 +19,6 @@ public class Item1_16_5 extends ItemAPI<Item> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

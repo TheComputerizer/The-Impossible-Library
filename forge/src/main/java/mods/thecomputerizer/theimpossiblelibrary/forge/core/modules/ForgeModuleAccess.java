@@ -154,7 +154,7 @@ public class ForgeModuleAccess {
     }
     
     public static Enum<?> getLayerEnum(String layerName) {
-        return ForgeCoreLoader.getEnum(ForgeCoreLoader.bootLoader(),LAYER_ENUM_CLASS,layerName);
+        return ForgeCoreLoader.getEnum(LAYER_ENUM_CLASS,ForgeCoreLoader.bootLoader(),layerName);
     }
     
     @IndirectCallers

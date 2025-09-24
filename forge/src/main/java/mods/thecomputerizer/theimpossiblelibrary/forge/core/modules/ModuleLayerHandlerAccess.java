@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core.modules;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
@@ -20,7 +21,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader.SECURE_CLASSLOADER_FORMAT;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 /**
  * cpw.mods.modlauncher.ModuleLayerHandler
@@ -124,6 +124,7 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
         return getDirect("layers");
     }
     
+    @IndirectCallers
     public void printAllModuleNames(String ... layerNames) {
         defaultMapPrinter().accept(getAllModuleNames(layerNames));
     }
@@ -133,6 +134,7 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
         defaultMapPrinter().accept(mapGetter.apply(layerNames));
     }
     
+    @IndirectCallers
     public void printLayerPaths(String ... layerNames) {
         defaultMapPrinter().accept(getLayerPathNames(layerNames));
     }
@@ -142,9 +144,9 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
      */
     String printPathOrJar(Object pathOrJar) {
         try {
-            Object namedPath = Methods.invoke(pathOrJar,"path");
-            String name = Methods.invoke(namedPath,"name");
-            Path[] paths = Methods.invoke(namedPath,"paths");
+            Object namedPath = Hacks.invoke(pathOrJar,"path");
+            String name = Hacks.invoke(namedPath,"name");
+            Path[] paths = Hacks.invoke(namedPath,"paths");
             return "name = '"+name+"' | paths = '"+Arrays.toString(paths)+"'";
         } catch(Throwable t) {
             logOrPrintError("Failed to extract path string from "+pathOrJar,t);

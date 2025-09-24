@@ -3,6 +3,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.blockentity.BlockEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryBuilder;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -13,8 +14,6 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @SuppressWarnings("unused")
 public abstract class BlockEntityBuilderAPI extends RegistryEntryBuilder<BlockEntityAPI<?,?>> {
@@ -33,12 +32,12 @@ public abstract class BlockEntityBuilderAPI extends RegistryEntryBuilder<BlockEn
             TILRef.logError("Unable to build BlockEntityType from null BlockEntitySupplier!");
             return null;
         }
-        return Methods.invokeStaticDirect(builderClass,OF,blockEntitySupplier,blocks);
+        return Hacks.invokeStaticDirect(builderClass,OF,blockEntitySupplier,blocks);
     }
     
     @SuppressWarnings("unchecked")
     private static <P1,P2>Object getSupplier(BiFunction<P1,P2,?> supplier) {
-        Class<?> supplierClass = ClassHelper.findClass(SUPPLIER);
+        Class<?> supplierClass = Hacks.findClass(SUPPLIER);
         if(Objects.isNull(supplierClass)) {
             TILRef.logError("Unable to get BlockEntitySupplier class! {}", SUPPLIER);
             return null;

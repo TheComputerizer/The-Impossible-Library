@@ -271,6 +271,8 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     public void moveModuleTo(ModuleClassLoaderAccess targetLoader, String moduleName,
             @Nullable String extraModule) {
         ResolvedModuleAccess resolvedModule = lookupResolvedModule(moduleName);
+        Object resolvedModuleAccecss = resolvedModule.access();
+        Set<String> packages = resolvedModule.packages(true);
         resolvedModule.configuration().moveModuleTo(targetLoader.configuration(),resolvedModule);
         moveRoots(targetLoader,moduleName);
         if(SECURE_CLASSLOADER_FORMAT) {
@@ -278,17 +280,17 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
                     Objects.nonNull(extraModule) ? new String[]{moduleName,extraModule} : new String[]{moduleName});
             removeSecureModule(moduleName);
         }
-        movePackageLookup(targetLoader,resolvedModule);
+        movePackageLookup(targetLoader,resolvedModuleAccecss,packages);
     }
     
-    private void movePackageLookup(ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess resolvedModule) {
-        Set<String> packages = resolvedModule.packages(true);
+    private void movePackageLookup(ModuleClassLoaderAccess targetLoader, Object resolvedModule,
+            Set<String> packages) {
         movePackageParent(targetLoader,packages);
         Map<String,Object> packageLookup = packageLookup();
         Map<String,Object> targetPackageLookup = targetLoader.packageLookup();
         for(String pkg : packages) {
             packageLookup.remove(pkg);
-            targetPackageLookup.put(pkg,resolvedModule.accessAs());
+            targetPackageLookup.put(pkg,resolvedModule);
         }
     }
     

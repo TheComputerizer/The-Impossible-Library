@@ -7,7 +7,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -40,7 +39,7 @@ public abstract class CoreAPI {
     static int javaVersionCache;
     
     public static @Nullable Object findInstance(ClassLoader loader) {
-        return Hacks.invokeStatic(ClassHelper.findClass(BINARY,loader),"getInstance");
+        return Hacks.invokeStatic(Hacks.findClass(BINARY,loader),"getInstance");
     }
     
     @IndirectCallers
@@ -103,7 +102,7 @@ public abstract class CoreAPI {
         }
         ModLoader loader = getInstanceModLoader();
         return Objects.nonNull(loader) ?
-                ClassHelper.findClass(gameVersion().withClassExt(name+loader.name,minor)) : null;
+                Hacks.findClass(gameVersion().withClassExt(name+loader.name,minor)) : null;
     }
     
     public static String getModLoaderName() {
@@ -334,7 +333,7 @@ public abstract class CoreAPI {
             String className = String.valueOf(unparsed).split(" ")[0];
             Class<?> coreClass;
             if(java8) {
-                coreClass = ClassHelper.findClass(className,loader);
+                coreClass = Hacks.findClass(className,loader);
                 if(Objects.nonNull(coreClass)) return coreClass.newInstance();
                 TILRef.logError("Failed to parse CoreAPI class from {} on loader {}",className,loader);
             } else {
@@ -417,12 +416,12 @@ public abstract class CoreAPI {
     @IndirectCallers
     public <T> T getLaunguageProvider() {
         String name = ".core.TILLanguageProvider"+this.version.name.replace(".","_");
-        Class<T> foundClass = GenericUtils.cast(ClassHelper.findClass(getPackageName(BASE_PACKAGE)+name));
+        Class<T> foundClass = Hacks.findClass(getPackageName(BASE_PACKAGE)+name);
         if(Objects.isNull(foundClass)) {
             TILRef.logError("Failed to find language provider class! {}",getPackageName(BASE_PACKAGE)+name);
             return null;
         }
-        return ClassHelper.initialize(foundClass);
+        return Hacks.construct(foundClass);
     }
     
     public abstract MultiVersionLoaderAPI getLoader();
@@ -443,12 +442,12 @@ public abstract class CoreAPI {
     @IndirectCallers
     public <T> T getModLocator(ClassLoader loader) {
         String name = ".core.MultiVersionModLocator"+this.version.name.replace(".","_");
-        Class<T> foundClass = GenericUtils.cast(ClassHelper.findClass(getPackageName(BASE_PACKAGE+name),loader));
+        Class<T> foundClass = Hacks.findClass(getPackageName(BASE_PACKAGE+name),loader);
         if(Objects.isNull(foundClass)) {
             TILRef.logError("Failed to find mod locator class! {}",getPackageName(BASE_PACKAGE)+name);
             return null;
         }
-        return ClassHelper.initialize(foundClass,this);
+        return Hacks.construct(foundClass,this);
     }
     
     protected abstract ModWriter getModWriter(MultiVersionModInfo info);
@@ -577,7 +576,7 @@ public abstract class CoreAPI {
     public abstract String unmapClass(String className);
     
     protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
-        return ClassHelper.findClassFrom(pkg,name+"Generated"+entryType+"Mod");
+        return Hacks.findClass(pkg,name+"Generated"+entryType+"Mod");
     }
     
     public void writeModContainers(ClassLoader loader) {

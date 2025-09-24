@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
@@ -127,7 +126,7 @@ public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
     
     @Override public void setPosition(double x, double y, double z) {

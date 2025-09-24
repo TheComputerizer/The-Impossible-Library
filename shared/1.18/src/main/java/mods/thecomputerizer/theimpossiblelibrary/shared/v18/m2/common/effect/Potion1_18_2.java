@@ -5,8 +5,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.alchemy.Potion;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class Potion1_18_2 extends PotionAPI<Potion> {
 
     public Potion1_18_2(Object potion) {
@@ -15,6 +13,6 @@ public class Potion1_18_2 extends PotionAPI<Potion> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

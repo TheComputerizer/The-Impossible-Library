@@ -10,8 +10,6 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 
 import java.lang.reflect.Constructor;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-
 public abstract class TILLanguageLoader {
     
     private static final String MOD_CONTAINER = "net.neoforged.fml.javafmlmod.FMLModContainer";
@@ -52,7 +50,7 @@ public abstract class TILLanguageLoader {
             //Finalizes the module for the class being loaded in the GAME layer
             Hacks.invoke(this.scan,"defineClasses",classLoader);
             
-            if(!loadedNewCore) setCoreAPI(Class.forName(coreName,true,classLoader));
+            if(!loadedNewCore) setCoreAPI(coreName,classLoader);
             NeoForgeCoreLoader.verifyModule(this.modClass,info,layer);
             return getInstance(Hacks.findClass(MOD_CONTAINER,true),info,scanResults,layer);
         } catch(Throwable t) {
@@ -62,13 +60,12 @@ public abstract class TILLanguageLoader {
         }
     }
     
-    protected void setCoreAPI(Class<?> implClass) {
+    protected void setCoreAPI(String implName, ClassLoader loader) {
         try {
-            Hacks.checkBurningWaveInit();
-            Constructors.newInstanceOf(implClass);
+            Hacks.constructWithLoader(implName,loader);
             loadedNewCore = true;
         } catch(Throwable t) {
-            TILRef.logError("Failed to set CoreAPI instance {}",implClass,t);
+            TILRef.logError("Failed to set CoreAPI instance {}",implName,t);
         }
     }
 }

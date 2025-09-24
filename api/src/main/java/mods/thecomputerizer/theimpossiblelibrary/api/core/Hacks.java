@@ -9,12 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -160,6 +155,15 @@ public class Hacks {
         }
     }
     
+    /**
+     * Ensuring BurningWave has been initialized before calling a Hacks method
+     */
+    @IndirectCallers
+    public static <T> T checkBurningWaveInitAndCall(String method, Object ... args) {
+        checkBurningWaveInit();
+        return invokeStatic(Hacks.class,method,args);
+    }
+    
     private static void checkEnvironmentInit() {
         if(!initializedEnvironment) {
             try {
@@ -182,7 +186,7 @@ public class Hacks {
     /**
      * Instantiates the target class using the given args
      */
-    public static <T> T construct(Class<?> target, Object ... args) {
+    public static <T> T construct(Class<T> target, Object ... args) {
         if(Objects.isNull(target)) {
             LOGGER.error("Tried to call construct on null target class! (args = {})",args);
             return null;
@@ -193,6 +197,13 @@ public class Hacks {
             LOGGER.error("Failed to contruct {} with args {}",target,args);
             throw t;
         }
+    }
+    
+    /**
+     * Instantiates the target generic class using the given args
+     */
+    public static <T> T constructAndCast(Class<?> target, Object ... args) {
+        return GenericUtils.cast(construct(target,args));
     }
     
     /**
@@ -252,12 +263,12 @@ public class Hacks {
     /**
      * Defines and resolves a class from byteCode
      */
-    public static Class<?> defineClass(ClassLoader loader, String name, @Nullable ByteBuffer buffer) {
+    public static <T> Class<T> defineClass(ClassLoader loader, String name, @Nullable ByteBuffer buffer) {
         if(java.util.Objects.isNull(buffer))
             throw new NullPointerException("Tried to define class with null ByteBuffer: "+name);
         try {
             checkBurningWaveInit();
-            return ClassLoaders.loadOrDefineByByteCode(buffer,loader);
+            return GenericUtils.cast(ClassLoaders.loadOrDefineByByteCode(buffer,loader));
         } catch(Throwable t) {
             TILRef.logError("Failed to define class {} on {}",name,loader,t);
         }
@@ -268,13 +279,14 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given ClassLoader and the given caller class.
      * The initialize flag determines whether the target class will be initialized.
      */
-    public static @Nullable Class<?> findClass(String target, ClassLoader loader, Class<?> caller, boolean initialize) {
+    public static <T> @Nullable Class<T> findClass(String target, ClassLoader loader, Class<?> caller,
+            boolean initialize) {
         if(Misc.anyNull(target,loader,caller)) {
             LOGGER.error("Cannot find target class {} on {} with caller {}!",target,loader,caller);
             return null;
         }
         try {
-            return Driver.getClassByName(target,initialize,loader,caller);
+            return GenericUtils.cast(Driver.getClassByName(target,initialize,loader,caller));
         } catch(Throwable t) {
             LOGGER.error("Failed to find class {} on loader {} with caller {}! (initialize={})",target,loader,
                             caller,initialize,t);
@@ -286,7 +298,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given caller class.
      * The initialize flag determines whether the target class will be initialized.
      */
-    public static @Nullable Class<?> findClass(String target, Class<?> caller, boolean initialize) {
+    public static <T> @Nullable Class<T> findClass(String target, Class<?> caller, boolean initialize) {
         return Objects.nonNull(caller) ? findClass(target,contextClassLoader(),caller,initialize) :
                 findClass(target,initialize);
     }
@@ -295,7 +307,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given caller class.
      * Does not attempt to initialize the target class.
      */
-    public static @Nullable Class<?> findClass(String target, Class<?> caller) {
+    public static <T> @Nullable Class<T> findClass(String target, Class<?> caller) {
         return findClass(target,caller,false);
     }
     
@@ -303,7 +315,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given ClassLoader and the given caller class.
      * Does not attempt to initialize the target class.
      */
-    public static @Nullable Class<?> findClass(String target, ClassLoader loader, Class<?> caller) {
+    public static <T> @Nullable Class<T> findClass(String target, ClassLoader loader, Class<?> caller) {
         return findClass(target,loader,caller,false);
     }
     
@@ -311,7 +323,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given ClassLoader.
      * The initialize flag determines whether the target class will be initialized.
      */
-    public static @Nullable Class<?> findClass(String target, ClassLoader loader, boolean initialize) {
+    public static <T> @Nullable Class<T> findClass(String target, ClassLoader loader, boolean initialize) {
         return Objects.nonNull(loader) ? findClass(target,loader,defaultCaller(),initialize) :
                 findClass(target,initialize);
     }
@@ -320,7 +332,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given ClassLoader.
      * Does not attempt to initialize the target class.
      */
-    public static @Nullable Class<?> findClass(String target, ClassLoader loader) {
+    public static <T> @Nullable Class<T> findClass(String target, ClassLoader loader) {
         return findClass(target,loader,false);
     }
     
@@ -328,7 +340,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name using the given ClassLoader.
      * The initialize flag determines whether the target class will be initialized.
      */
-    public static @Nullable Class<?> findClass(String target, boolean initialize) {
+    public static <T> @Nullable Class<T> findClass(String target, boolean initialize) {
         return findClass(target,contextClassLoader(),defaultCaller(),initialize);
     }
     
@@ -336,7 +348,7 @@ public class Hacks {
      * Finds and returns a Class object with the target name.
      * Does not attempt to initialize the target class.
      */
-    public static @Nullable Class<?> findClass(String target) {
+    public static <T> @Nullable Class<T> findClass(String target) {
         return findClass(target,false);
     }
     
@@ -344,7 +356,7 @@ public class Hacks {
      * Uses a reference class to find and return the target class in the same package as the reference class.
      * The ClassLoader of the reference class will be used to find the target class.
      */
-    public static @Nullable Class<?> findClass(@Nullable Class<?> reference, String target) {
+    public static <T> @Nullable Class<T> findClass(@Nullable Class<?> reference, String target) {
         if(Objects.isNull(reference)) return findClass(target);
         return findClass(reference.getPackage().getName()+"."+target,reference.getClassLoader());
     }
@@ -352,7 +364,7 @@ public class Hacks {
     /**
      * Find and return the target class in given package
      */
-    public static @Nullable Class<?> findClass(@Nullable Package pkg, String target) {
+    public static <T> @Nullable Class<T> findClass(@Nullable Package pkg, String target) {
         return Objects.nonNull(pkg) ? findClass(pkg.getName(),target) : findClass(target);
     }
     
@@ -360,8 +372,35 @@ public class Hacks {
     /**
      * Find and return the target class in given package name
      */
-    public static @Nullable Class<?> findClass(@Nullable String pkg, String target) {
+    public static <T> @Nullable Class<T> findClass(@Nullable String pkg, String target) {
         return Objects.nonNull(pkg) ? findClass(pkg+"."+target) : findClass(target);
+    }
+    
+    public static Class<?> findClassInHeirarchy(String name, ClassLoader loader) {
+        return findClassInHeirarchy(name,loader,false);
+    }
+    
+    public static Class<?> findClassInHeirarchy(String name, ClassLoader loader, boolean initialize) {
+        Class<?> foundClass = null;
+        ClassLoader searchIn = loader;
+        while(Objects.nonNull(searchIn)) {
+            try {
+                foundClass = Driver.getClassByName(name,initialize,loader,Classes.getClass());
+            } catch(Throwable t) {
+                LOGGER.debug("Class not found in ClassLoader {} (name = {})",searchIn,name);
+            }
+            if(Objects.nonNull(foundClass)) break;
+            searchIn = ClassLoaders.getParent(searchIn);
+        }
+        if(Objects.isNull(foundClass)) {
+            LOGGER.error("Class {} not found in ClassLoader heirarchy for {}",name,loader);
+            return null;
+        }
+        return foundClass;
+    }
+    
+    public static @Nullable ByteBuffer getByteCode(Class<?> clazz) {
+        return Classes.getByteCode(clazz);
     }
     
     /**
@@ -389,15 +428,30 @@ public class Hacks {
     }
     
     @IndirectCallers
-    public static <E,C extends Collection<E>> C getFieldCollection(String field, Function<String,C> getter) {
-        return getFieldCollection(field,getter,null);
+    public static <E> Collection<E> getFieldCollection(Object instance, String getter, String field) {
+        Collection<E> collection = invokeStatic(Hacks.class,getter,instance,field);
+        return Objects.nonNull(collection) ? collection : Collections.emptyList();
     }
     
-    public static <E,C extends Collection<E>> C getFieldCollection(String field,
-            Function<String,C> getter, Function<C,C> ifNotNull) {
-        C collection = getter.apply(field);
-        return Objects.isNull(ifNotNull) ? collection :
-                (Objects.nonNull(collection) ? ifNotNull.apply(collection) : null);
+    /**
+     * Finds a collection field with the input name and wraps it in an ArrayList.
+     * Returns Collections#emptyList if the field is not found.
+     */
+    @IndirectCallers
+    public static <E> Collection<E> getFieldCollectionWrapped(Object instance, String getter, String field) {
+        return getFieldCollectionWrapped(instance,getter,field,null);
+    }
+    
+    /**
+     * Finds a collection field with the input name and wraps it with the input wrapper.
+     * If the wrapper is null, the field with be wrapped in an ArrayList.
+     * Returns Collections#emptyList if the field is not found.
+     */
+    public static <E> Collection<E> getFieldCollectionWrapped(Object instance, String getter,
+            String field, Function<Collection<E>,Collection<E>> wrapper) {
+        Collection<E> collection = invokeStatic(Hacks.class,getter,instance,field);
+        if(Objects.isNull(collection)) return Collections.emptyList();
+        return Objects.nonNull(wrapper) ? wrapper.apply(collection) : new ArrayList<>(collection);
     }
     
     /**
@@ -425,6 +479,65 @@ public class Hacks {
             return null;
         }
         return Fields.getDirect(target,field);
+    }
+    
+    /**
+     * Gets a field as a nonnulll List.
+     * Returns Collections#emptyList if the field is not found.
+     */
+    @IndirectCallers
+    public static <E> List<E> getFieldList(Object instance, String getter, String field) {
+        List<E> list = invokeStatic(Hacks.class,getter,instance,field);
+        return Objects.nonNull(list) ? list : Collections.emptyList();
+    }
+    
+    /**
+     * Finds a collection field with the input name and wraps it in an ArrayList.
+     * Returns Collections#emptyList if the field is not found.
+     */
+    public static <E> List<E> getFieldListWrapped(Object instance, String getter, String field) {
+        Collection<E> collection = invokeStatic(Hacks.class,getter,instance,field);
+        return Objects.nonNull(collection) ? new ArrayList<>(collection) : Collections.emptyList();
+    }
+    
+    /**
+     * Gets a field as a nonnulll Map.
+     * Returns Collections#emptyMap if the field is not found.
+     */
+    @IndirectCallers
+    public static <K,V> Map<K,V> getFieldMap(Object target, String getter, String field) {
+        Map<K,V> map = invokeStatic(Hacks.class,getter,target,field);
+        return Objects.nonNull(map) ? map : Collections.emptyMap();
+    }
+    
+    /**
+     * Gets a field as a nonnulll Map.
+     * Returns Collections#emptyMap if the field is not found.
+     */
+    @IndirectCallers
+    public static <K,V> Map<K,V> getFieldMapWrapped(Object target, String getter, String field) {
+        Map<K,V> map = invokeStatic(Hacks.class,getter,target,field);
+        return Objects.nonNull(map) ? new HashMap<>(map) : Collections.emptyMap();
+    }
+    
+    /**
+     * Gets a field as a nonnulll List.
+     * Returns Collections#emptyList if the field is not found.
+     */
+    @IndirectCallers
+    public static <E> Set<E> getFieldSet(Object instance, String getter, String field) {
+        Set<E> set = invokeStatic(Hacks.class,getter,instance,field);
+        return Objects.nonNull(set) ? set : Collections.emptySet();
+    }
+    
+    /**
+     * Finds a collection field with the input name and wraps it in an ArrayList.
+     * Returns Collections#emptyList if the field is not found.
+     */
+    @IndirectCallers
+    public static <E> Set<E> getFieldSetWrapped(Object instance, String getter, String field) {
+        Collection<E> collection = invokeStatic(Hacks.class,getter,instance,field);
+        return Objects.nonNull(collection) ? new HashSet<>(collection) : Collections.emptySet();
     }
     
     /**
@@ -584,6 +697,22 @@ public class Hacks {
         return getRecordFieldInstance(getRecordComponent(target,field),null,field);
     }
     
+    private static @Nullable Object getStaticComponentByName(String component) {
+        switch(component) {
+            case "classloader": case "classloaders": case "Classloader": case "Classloaders":
+            case "ClassLoader": case "ClassLoaders": return ClassLoaders;
+            case "class": case "classes": case "Class": case "Classes": return Classes;
+            case "contructor": case "constructors": case "Contructor": case "Constructors": return Constructors;
+            case "driver": case "Driver": return Driver;
+            case "field": case "fields": case "Field": case "Fields": return Fields;
+            case "method": case "methods": case "Method": case "Methods": return Methods;
+            default: {
+                LOGGER.error("Static component type not found {}",component);
+                return null;
+            }
+        }
+    }
+    
     /**
      * Invoke a non-static method of the given name on the given object with the given args.
      */
@@ -597,6 +726,38 @@ public class Hacks {
             return null;
         }
         return Methods.invoke(target,method,args);
+    }
+    
+    /**
+     * Double-layer invoke that returns the default value when the wrapped invoke returns null.
+     * The default value will also be returned if the wrapped invoke throws an exception.
+     * Uses Hacks#invoke or (if the target object is a class or string) Hacks#invokeStatic.
+     */
+    public static <T> T invokeDefault(T defVal, Object target, String method, Object ... args) {
+        String hacksMethod = "invoke";
+        if(target instanceof String || target instanceof Class<?>) hacksMethod+="Static";
+        return invokeDefault(hacksMethod,defVal,target,method,args);
+    }
+    
+    /**
+     * Double-layer invoke that returns the default value when the wrapped invoke returns null.
+     * The default value will also be returned if the wrapped invoke throws an exception.
+     * Special case:
+     *      If the wrapped invoke returns an Optional, the value it contains will be returned.
+     *      If the optional is empty, the default value will be returned,
+     *      If the value is also an optional, it will be unwrapped until a non-optional or null value is found
+     */
+    public static <T> T invokeDefault(String hacksMethod, T defVal, Object target, String method, Object ... args) {
+        try {
+            Object ret = invokeStatic(Hacks.class,hacksMethod,target,method,args);
+            if(Objects.isNull(ret)) return defVal;
+            while(ret instanceof Optional<?>) ret = ((Optional<?>)ret).orElse(GenericUtils.cast(defVal));
+            return GenericUtils.cast(ret);
+        } catch(Throwable t) {
+            LOGGER.error("Failed to invoke {} using Hacks#{}! Returning default value {}",
+                         method,hacksMethod,defVal,t);
+        }
+        return defVal;
     }
     
     /**
@@ -643,36 +804,14 @@ public class Hacks {
         return invoke(target,isNamedEnv() ? named : intermediary, args);
     }
     
-    /**
-     * Double-layer invoke that returns the default value when the wrapped invoke returns null.
-     * The default value will also be returned if the wrapped invoke throws an exception.
-     * Uses Hacks#invoke or (if the target object is a class or string) Hacks#invokeStatic.
-     */
-    public static <T> T invokeDefault(T defVal, Object target, String method, Object ... args) {
-        String hacksMethod = "invoke";
-        if(target instanceof String || target instanceof Class<?>) hacksMethod+="Static";
-        return invokeDefault(hacksMethod,defVal,target,method,args);
-    }
-    
-    /**
-     * Double-layer invoke that returns the default value when the wrapped invoke returns null.
-     * The default value will also be returned if the wrapped invoke throws an exception.
-     * Special case:
-     *      If the wrapped invoke returns an Optional, the value it contains will be returned.
-     *      If the optional is empty, the default value will be returned,
-     *      If the value is also an optional, it will be unwrapped until a non-optional or null value is found
-     */
-    public static <T> T invokeDefault(String hacksMethod, T defVal, Object target, String method, Object ... args) {
-        try {
-            Object ret = invokeStatic(Hacks.class,hacksMethod,target,method,args);
-            if(Objects.isNull(ret)) return defVal;
-            while(ret instanceof Optional<?>) ret = ((Optional<?>)ret).orElse(GenericUtils.cast(defVal));
-            return GenericUtils.cast(ret);
-        } catch(Throwable t) {
-            LOGGER.error("Failed to invoke {} using Hacks#{}! Returning default value {}",
-                         method,hacksMethod,defVal,t);
+    @IndirectCallers
+    public static <T> T invokeOnComponent(String componentName, String method, Object ... args) {
+        Object component = getStaticComponentByName(componentName);
+        if(Objects.isNull(component)) {
+            LOGGER.error("Cannot invoke {} on null component! (args = {})",method,args);
+            return null;
         }
-        return defVal;
+        return invoke(component,method,args);
     }
     
     /**
@@ -947,5 +1086,68 @@ public class Hacks {
             return;
         }
         Fields.setStaticDirect(target,field,value);
+    }
+    
+    public enum CallStrategy {
+        
+        DEFAULT("",Object.class),
+        DIRECT("Direct",Object.class),
+        STATIC("Static",Class.class),
+        STATIC_DIRECT("StaticDirect",Class.class);
+        
+        private static final Map<String,CallStrategy> ALIAS_CACHE = new HashMap<>();
+        
+        public static CallStrategy byName(String strategy) {
+            if(Objects.isNull(strategy)) return DEFAULT;
+            if(ALIAS_CACHE.containsKey(strategy)) return ALIAS_CACHE.get(strategy);
+            switch(strategy) {
+                case "direct": case "Direct": case "DIRECT": {
+                    ALIAS_CACHE.put(strategy,DIRECT);
+                    return DIRECT;
+                }
+                case "static": case "Static": case "STATIC": {
+                    ALIAS_CACHE.put(strategy,STATIC);
+                    return STATIC;
+                }
+                default: {
+                    if("both".equalsIgnoreCase(strategy) ||
+                       Misc.equalsAnyIgnoreCase(strategy,Misc.wordCombinations("direct","static",""," ","_","-"))) {
+                        ALIAS_CACHE.put(strategy,STATIC_DIRECT);
+                        return STATIC_DIRECT;
+                    }
+                    ALIAS_CACHE.put(strategy,DEFAULT);
+                    return DEFAULT;
+                }
+            }
+        }
+        
+        @IndirectCallers
+        public static <T> T callWith(String strategy, String s, Object ... args) {
+            return byName(strategy).call(s, args);
+        }
+        
+        final String ext;
+        final Class<?> targetType;
+        
+        CallStrategy(final String ext, final Class<?> targetType) {
+            this.ext = ext;
+            this.targetType = targetType;
+        }
+        
+        public <T> T call(String s, Object ... args) {
+            return invokeStatic(Hacks.class,s+this.ext,args);
+        }
+        
+        public <T> T get(Object ... args) {
+            return call("getField",args);
+        }
+        
+        public <T> T invoke(Object ... args) {
+            return call("invoke",args);
+        }
+        
+        public void set(Object ... args) {
+            call("setField",args);
+        }
     }
 }

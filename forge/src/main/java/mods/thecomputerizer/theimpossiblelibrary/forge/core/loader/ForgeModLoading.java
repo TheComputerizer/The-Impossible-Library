@@ -175,7 +175,7 @@ public class ForgeModLoading {
             } else updatePathMap = true;
         }
         if(Objects.isNull(pathOrJar)) pathOrJar = getDefaultJar(moduleName,path);
-        ModFile file = Hacks.construct(dynamicModFileClass,pathOrJar,locator,parser,type);
+        ModFile file = Hacks.constructAndCast(dynamicModFileClass,pathOrJar,locator,parser,type);
         //Construct the file first to ensure there aren't any errors before the PATH_OR_JAR_MAP is updated
         if(updatePathMap) {
             LOGGER.debug("Adding {} instance for module {} to the cache",pathType,moduleName);
@@ -288,8 +288,8 @@ public class ForgeModLoading {
     }
     
     private static byte[] generateModFileExtension(String className) {
-        Class<?> pathOrJarClass = pathBased ? Path.class : ClassHelper.findClass(SECURE_JAR);
-        Class<?> locatorClass = locatorBased ? IModLocator.class : ClassHelper.findClass(MOD_PROVIDER);
+        Class<?> pathOrJarClass = pathBased ? Path.class : Hacks.findClass(SECURE_JAR);
+        Class<?> locatorClass = locatorBased ? IModLocator.class : Hacks.findClass(MOD_PROVIDER);
         int javaVer = ForgeCoreLoader.isJava8() ? JAVA8 : (ForgeCoreLoader.isJava21() ? JAVA21 : JAVA17);
         ClassWriter writer = ASMHelper.getWriter(javaVer,ASMRef.PUBLIC,TypeHelper.fromBinary(className),
                                                  TypeHelper.get(ModFile.class));
@@ -835,7 +835,7 @@ public class ForgeModLoading {
             }
             return null;
         };
-        final Class<?> jarClass = ClassHelper.findClass("cpw.mods.jarhandling.SecureJar");
+        final Class<?> jarClass = Hacks.findClass("cpw.mods.jarhandling.SecureJar");
         if(locatorBased) return (path,ignored) -> {
             try {
                 Object jar = Hacks.invokeStatic(jarClass,"from", path);

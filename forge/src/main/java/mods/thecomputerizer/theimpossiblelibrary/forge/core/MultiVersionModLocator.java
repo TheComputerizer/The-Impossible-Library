@@ -1,15 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
-import cpw.mods.modlauncher.Launcher;
 import lombok.Getter;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -21,7 +18,6 @@ import java.util.function.Consumer;
 import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Getter
 public class MultiVersionModLocator implements IModLocator {
@@ -38,7 +34,6 @@ public class MultiVersionModLocator implements IModLocator {
     
     public MultiVersionModLocator() {
         TILRef.logInfo("Core Forge Locator plugin loaded on {}",getClass().getClassLoader());
-        setLoadingVersion(ForgeCoreLoader.initCoreAPI(Launcher.class.getClassLoader()));
     }
     
     FileSystem fileSystemFor(IModFile file) {
@@ -126,18 +121,5 @@ public class MultiVersionModLocator implements IModLocator {
             TILRef.logError("Failed to scan mods",t);
             throw t;
         }
-    }
-    
-    void setLoadingVersion(@Nullable Object coreInstance) {
-        if(Objects.isNull(coreInstance)) {
-            TILRef.logError("Failed to set Forge mod loading version with null CoreAPI instance!");
-            this.failed = true;
-            return;
-        }
-        Hacks.checkBurningWaveInit();
-        String version = String.valueOf((Object)Methods.invoke(coreInstance,"gameVersion"));
-        String checkedVersion = version.substring(2).replace('.','_');
-        ForgeModLoading.setFileVersion(getClass(),checkedVersion,version);
-        TILRef.logInfo("Successfully set Forge mod loading version ({}->{})",checkedVersion,version);
     }
 }

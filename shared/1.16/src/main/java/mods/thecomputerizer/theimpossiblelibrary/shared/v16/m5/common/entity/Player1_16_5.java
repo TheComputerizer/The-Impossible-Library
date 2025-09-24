@@ -28,8 +28,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public abstract class Player1_16_5<P extends Player> extends PlayerAPI<P,EntityType<?>> {
 
     protected Player1_16_5(Object player) {
@@ -159,7 +157,7 @@ public abstract class Player1_16_5<P extends Player> extends PlayerAPI<P,EntityT
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
     
     @Override public void setPosition(double x, double y, double z) {

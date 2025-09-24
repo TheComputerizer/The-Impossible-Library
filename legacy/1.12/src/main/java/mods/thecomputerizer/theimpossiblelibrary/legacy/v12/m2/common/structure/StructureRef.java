@@ -17,8 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.DIRECT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public class StructureRef {
 
@@ -54,7 +54,7 @@ public class StructureRef {
     }
     
     private static MapGenScatteredFeature getFeatureGenerator(IChunkGenerator generator) {
-        return Fields.getDirect(generator,FEATURE_GEN_FIELD);
+        return DIRECT.get(generator,FEATURE_GEN_FIELD);
     }
     
     public static Collection<StructureRef> getRegisteredStructures() {

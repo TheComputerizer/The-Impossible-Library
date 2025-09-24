@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
 import static net.minecraft.core.component.DataComponents.CUSTOM_DATA;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class ListComponent1_20_6 extends ListTagAPI<DataComponentMap> implements ComponentWrapper {
 
@@ -59,8 +59,8 @@ public class ListComponent1_20_6 extends ListTagAPI<DataComponentMap> implements
                     if(hasCustomData) yield compound;
                     Hacks.checkBurningWaveInit();
                     //Why did TypedDataComponent#createUnchecked start out as package-private??
-                    addComponent(builder,Methods.invokeStaticDirect(TypedDataComponent.class,
-                            "createUnchecked",CUSTOM_DATA,CustomData.of(compound)));
+                    addComponent(builder,STATIC_DIRECT.invoke(TypedDataComponent.class,"createUnchecked",
+                            CUSTOM_DATA,CustomData.of(compound)));
                 } else TILRef.logWarn("Tag must be CompoundTag instance to add to ListComponent! {}", tag);
                 yield null;
             }

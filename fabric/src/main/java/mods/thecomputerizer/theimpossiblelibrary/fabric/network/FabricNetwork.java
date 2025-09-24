@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
@@ -41,9 +40,9 @@ import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 /**
  * Abusing interfaces to abstract the hell out of fabric network stuff
@@ -92,8 +91,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     
     static @Nullable Object getStaticField(@Nullable Class<?> c, String fieldName) {
         try {
-            Hacks.checkBurningWaveInit();
-            return Objects.nonNull(c) ? Fields.getStatic(c, fieldName) : null;
+            return STATIC.get(c,fieldName);
         } catch(Throwable t) {
             TILRef.logError("Failed to get static field {} for {}",fieldName,c,t);
         }
@@ -131,7 +129,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             default: return MessageWrapperFabric.class;
         }
         String className = classNameGetter.apply(packageGetter.get()+".network.MessageWrapperFabric");
-        Class<?> wrapperClass = ClassHelper.findClass(className);
+        Class<?> wrapperClass = Hacks.findClass(className);
         if(Objects.isNull(wrapperClass)) TILRef.logError("Failed to find MessageWrapper class {}",className);
         return wrapperClass;
     }
@@ -142,7 +140,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     static @Nullable Class<?> tryGetClass(String className) {
         Class<?> c;
         try {
-            c = ClassHelper.findClass(className);
+            c = Hacks.findClass(className);
         } catch(Throwable t) {
             TILRef.logError("Failed to get class {}",className,t);
             return null;
@@ -156,8 +154,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     static NbtAccounter unlimitedAccounter() {
-        return atLeastV20_4() ? Methods.invokeStaticDirect(NbtAccounter.class,DEV ? "unlimitedHeap" : "method_53898") :
-                Fields.getStaticDirect(NbtAccounter.class,DEV ? "UNLIMITED" : "field_11556");
+        return atLeastV20_4() ? STATIC_DIRECT.invoke(NbtAccounter.class,DEV ? "unlimitedHeap" : "method_53898") :
+                STATIC_DIRECT.get(NbtAccounter.class,DEV ? "UNLIMITED" : "field_11556");
     }
     
     @Nullable default Object createHandlerProxy(DIR dir, boolean newType) {
@@ -215,8 +213,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             }
             try {
                 MessageWrapperFabric wrapper = (MessageWrapperFabric)args[0];
-                PacketSender sender = Methods.invoke(args[1],"responseSender");
-                ServerPlayer player = client ? null : Methods.invoke(args[1],"player");
+                PacketSender sender = Hacks.invoke(args[1],"responseSender");
+                ServerPlayer player = client ? null : Hacks.invoke(args[1],"player");
                 receiveAndRespond(wrapper,sender,player);
                 TILRef.logDebug("InvocationHandler success for {} ({})",dir,c);
             } catch(Throwable t) {
@@ -309,7 +307,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logError("Cannot get direction-based registry name from null MessageWrapper class!");
             return null;
         }
-        return Methods.invokeStatic(wrapperClass,"getInstance",this,dir);
+        return STATIC.invoke(wrapperClass,"getInstance",this,dir);
     }
     
     @Override default boolean isDirToClient(DIR dir) {
@@ -347,7 +345,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             @Nullable P player) {
         Class<?> wrapperClass = getWrapperClass();
         if(Objects.isNull(wrapperClass)) return;
-        M wrapper = Methods.invokeStaticDirect(wrapperClass,"getInstance",this,dir,buf);
+        M wrapper = STATIC_DIRECT.invoke(wrapperClass,"getInstance",this,dir,buf);
         receiveAndRespond(wrapper,ctx,player);
     }
     
@@ -392,7 +390,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logWarn("Tried to register sided network receiver {} twice!",registryName);
             return;
         }
-        Object type = Methods.invoke(wrapper,DEV ? "type" : "method_56479");
+        Object type = Hacks.invoke(wrapper,DEV ? "type" : "method_56479");
         if(Objects.isNull(type)) return;
         String registryClassName = fabricPkg("api.networking.v1.PayloadTypeRegistry");
         Class<?> c = tryGetClass(registryClassName);
@@ -402,14 +400,14 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         }
         boolean client = isDirToClient(dir);
         String methodName = "play"+(client ? "S2C" : "C2S");
-        Object registry = Methods.invokeStatic(c,methodName);
+        Object registry = STATIC.invoke(c,methodName);
         if(Objects.isNull(registry)) {
             TILRef.logError("Failed to get payload registry from {}#{}",registryClassName,methodName);
             return;
         }
         Object codec = codecBuilder.apply(dir);
         try {
-            Methods.invoke(registry,"register",type,codec);
+            Hacks.invoke(registry,"register",type,codec);
         } catch(Throwable t) {
             TILRef.logError("Failed to register payload codec for type {} ({})",type,codec,t);
             return;
@@ -429,7 +427,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             return false;
         }
         try {
-            Methods.invokeStatic(c,"registerGlobalReceiver",registerAs,proxy);
+            STATIC.invoke(c,"registerGlobalReceiver",registerAs,proxy);
             return true;
         } catch(Throwable t) {
             TILRef.logError("Failed to invoke registerGlobalReceiver for {} using ({},{})",c,registerAs,proxy,t);
@@ -452,7 +450,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         }
         Object[] args = newType ? new Object[]{player,message} :
                 new Object[]{player,getRegistryName(message),encodeMessage(message)};
-        Methods.invokeStaticDirect(PLAY_SERVER_CLASS,"send",args);
+        STATIC_DIRECT.invoke(PLAY_SERVER_CLASS,"send",args);
     }
     
     @Override default <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
@@ -469,7 +467,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             return;
         }
         Object[] args = newType ? new Object[]{message} : new Object[]{getRegistryName(message),encodeMessage(message)};
-        Methods.invokeStaticDirect(PLAY_CLIENT_CLASS,"send",args);
+        STATIC_DIRECT.invoke(PLAY_CLIENT_CLASS,"send",args);
     }
     
     @Override default <CTX> MessageWrapperAPI<?,CTX> wrapMessage(DIR dir, MessageAPI<CTX> message) {
@@ -479,7 +477,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     @SuppressWarnings("unchecked")
-    @Override default <CTX> MessageWrapperAPI<?,CTX> wrapMessages(DIR dir, MessageAPI<CTX>... messages) {
+    @Override default <CTX> MessageWrapperAPI<?,CTX> wrapMessages(DIR dir, MessageAPI<CTX> ... messages) {
         MessageWrapperAPI<?,CTX> wrapper = getWrapper(dir);
         wrapper.setMessages(dir,messages);
         return wrapper;

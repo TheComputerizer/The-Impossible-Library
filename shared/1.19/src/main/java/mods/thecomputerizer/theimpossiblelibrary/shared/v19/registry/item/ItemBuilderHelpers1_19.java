@@ -16,8 +16,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V19_4;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.DIRECT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.registry.item.WithItemProperties.VERSION;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public interface ItemBuilderHelpers1_19 {
     
@@ -32,11 +32,11 @@ public interface ItemBuilderHelpers1_19 {
     }
     
     default Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> getPropertyMapField() {
-        return Fields.getDirect(this,"propertyMap");
+        return DIRECT.get(this,"propertyMap");
     }
     
     default ResourceLocationAPI<?> getRegistryNameField() {
-        return Fields.getDirect(this,"registryName");
+        return DIRECT.get(this,"registryName");
     }
     
     default void registerVariants(Item item) {

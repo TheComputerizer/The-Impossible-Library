@@ -8,8 +8,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class Item1_18_2 extends ItemAPI<Item> {
 
     public Item1_18_2(Object item) {
@@ -22,6 +20,6 @@ public class Item1_18_2 extends ItemAPI<Item> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

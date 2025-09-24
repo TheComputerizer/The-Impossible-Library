@@ -14,8 +14,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public class BlockEntityRegistry1_12_2 extends RegistryAPI<Class<? extends TileEntity>> {
     
@@ -24,7 +24,7 @@ public class BlockEntityRegistry1_12_2 extends RegistryAPI<Class<? extends TileE
     public static final RegistryNamespaced<ResourceLocation,Class<? extends TileEntity>> REGISTRY = findRegistry();
     
     public static RegistryNamespaced<ResourceLocation,Class<? extends TileEntity>> findRegistry() {
-        return Fields.getStaticDirect(TileEntity.class,REGISTRY_FIELD_NAME);
+        return STATIC_DIRECT.get(TileEntity.class,REGISTRY_FIELD_NAME);
     }
 
     public BlockEntityRegistry1_12_2() {

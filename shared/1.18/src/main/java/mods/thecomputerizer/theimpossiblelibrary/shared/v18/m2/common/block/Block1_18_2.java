@@ -6,8 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.Block;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class Block1_18_2 extends BlockAPI<Block> {
 
     public Block1_18_2(Object block) {
@@ -20,6 +18,6 @@ public class Block1_18_2 extends BlockAPI<Block> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

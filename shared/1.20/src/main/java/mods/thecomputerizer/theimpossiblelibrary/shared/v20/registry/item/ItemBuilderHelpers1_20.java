@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
 
 public interface ItemBuilderHelpers1_20 {
     
@@ -30,11 +30,11 @@ public interface ItemBuilderHelpers1_20 {
     }
     
     default Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> getPropertyMapField() {
-        return Fields.getDirect(this,"propertyMap");
+        return STATIC.get(this,"propertyMap");
     }
     
     default ResourceLocationAPI<?> getRegistryNameField() {
-        return Fields.getDirect(this,"registryName");
+        return STATIC.get(this,"registryName");
     }
     
     default void registerVariants(Item item) {

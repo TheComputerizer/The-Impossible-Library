@@ -19,8 +19,7 @@ public class MultiVersionModLocator implements IModLocator {
     }
     
     public MultiVersionModLocator() {
-        Class<?> c = getClass();
-        TILDev.logInfo("Core Neoforge Locator plugin loaded on {}", c.getClassLoader());
+        TILDev.logInfo("Core Neoforge Locator plugin loaded on {}", getClass().getClassLoader());
     }
     
     @Override public void initArguments(Map<String,?> arguments) {

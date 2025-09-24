@@ -4,13 +4,13 @@ import io.github.toolfactory.jvm.util.BufferHandler;
 import lombok.SneakyThrows;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.io.IOUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -25,10 +25,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.ClassLoaders;
-import static org.burningwave.core.assembler.StaticComponentContainer.Classes;
-import static org.burningwave.core.assembler.StaticComponentContainer.Constructors;
-import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 public class ClassHelper {
     
@@ -118,12 +114,11 @@ public class ClassHelper {
     public static @Nullable Class<?> defineClass(ClassLoader loader, String name, URL url) {
         if(Objects.nonNull(url)) {
             TILDev.logInfo("Attempting to define class {} from URL {} on loader {}",name,url,loader);
-            try {
-                Hacks.checkBurningWaveInit();
-                return Hacks.defineClass(loader, name, Streams.toByteBuffer(url.openStream()));
-            } catch(IOException ex) {
-                LOGGER.error("Failed to open stream from URL {}",url,ex);
-            }
+            Hacks.checkBurningWaveInit();
+            ByteBuffer buffer = IOUtils.toBuffer(url);
+            if(Objects.nonNull(buffer)) return Hacks.defineClass(loader,name,buffer);
+            LOGGER.error("Cannot define class after buffer retrieval failure: {}",name);
+            return null;
         } else LOGGER.error("Cannot define class at null URL on {}",loader);
         return null;
     }
@@ -161,130 +156,22 @@ public class ClassHelper {
         return null;
     }
     
-    public static <T> T findAndInitialize(String className, Object ... args) {
-        Class<?> target = findClass(className);
-        return Objects.nonNull(target) ? GenericUtils.cast(initialize(target,args)) : null;
-    }
-
-    /**
-     * Finds a class from the input name via the context ClassLoader.
-     * Returns null if the class does not exist.
-     */
-    public static @Nullable Class<?> findClass(String name) {
-        return findClass(name,true,Thread.currentThread().getContextClassLoader(),false);
-    }
-
-    /**
-     * Finds a class from the input name via the input ClassLoader.
-     * Returns null if the class does not exist.
-     */
-    public static @Nullable Class<?> findClass(String name, ClassLoader classLoader) {
-        return findClass(name,true,classLoader,false);
-    }
-
-    /**
-     * Finds a class from the input name via the context ClassLoader.
-     * Set initialize to false if you don't want the Class to be loaded in case it doesn't exist.
-     * Returns null if the class does not exist.
-     */
-    public static @Nullable Class<?> findClass(String name, boolean initialize) {
-        return findClass(name,initialize,Thread.currentThread().getContextClassLoader(),false);
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader) {
-        return findClass(name,initialize,classLoader,false);
-    }
-
-    /**
-     * Finds a class from the input name via the input ClassLoader.
-     * If the class is found on a different ClassLoader and forceLoader is true it will be defined on the given loader
-     * Set initialize to false if you don't want the Class to be loaded in case it doesn't exist.
-     * Returns null if the class does not exist.
-     */
-    public static @Nullable Class<?> findClass(String name, boolean initialize, ClassLoader classLoader,
-            boolean forceLoader) {
-        if(Objects.isNull(name) || name.isEmpty()) {
-            LOGGER.error("Cannot find class from null or blank name!");
-            return null;
-        }
-        try {
-            Class<?> c = Class.forName(name,initialize,classLoader);
-            if(forceLoader && c.getClassLoader()!=classLoader) moveClassTo(c,classLoader);
-            return c;
-        } catch(ClassNotFoundException ex) {
-            LOGGER.error("Unable to find class with name `{}` using ClassLoader of type `{}`",name,
-                    classLoader.getClass().getName(),ex);
-            return null;
-        }
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?>[] findClasses(String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,ClassHelper::findClass);
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?>[] findClasses(ClassLoader classLoader, String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,classLoader));
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?>[] findClasses(boolean initialize, String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,initialize));
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?>[] findClasses(boolean initialize, ClassLoader classLoader, String ... names) {
-        return ArrayHelper.mapTo(names,Class.class,name -> findClass(name,initialize,classLoader,false));
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName) {
-        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName);
-    }
-
-    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName) {
-        return findClass(withPkgName(pkg,simpleName));
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, ClassLoader classLoader) {
-        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,classLoader);
-    }
-
-    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, ClassLoader classLoader) {
-        return findClass(withPkgName(pkg,simpleName),classLoader);
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, boolean initialize) {
-        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,initialize);
-    }
-
-    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean initialize) {
-        return findClass(withPkgName(pkg,simpleName),initialize);
-    }
-    
-    @IndirectCallers
-    public static @Nullable Class<?> findClassFrom(@Nullable Class<?> clazz, String simpleName, boolean initialize,
-                                                   ClassLoader classLoader) {
-        return findClassFrom(Objects.nonNull(clazz) ? clazz.getPackage() : null,simpleName,initialize,classLoader);
-    }
-
-    public static @Nullable Class<?> findClassFrom(@Nullable Package pkg, String simpleName, boolean initialize,
-                                                   ClassLoader classLoader) {
-        return findClass(withPkgName(pkg,simpleName),initialize,classLoader,false);
-    }
-    
     public static @Nullable <T> Class<T> findExtensibleClass(String name, Class<?> superClass) {
-        Class<T> clazz = GenericUtils.cast(findClass(name));
+        Class<T> clazz = GenericUtils.cast(Hacks.findClass(name));
         return Objects.nonNull(clazz) && superClass.isAssignableFrom(clazz) ? clazz : null;
     }
     
-    public static byte[] getClassBytes(Class<?> clazz) {
-        Hacks.checkBurningWaveInit();
-        return BufferHandler.toByteArray(Classes.getByteCode(clazz));
+    public static byte[] getClassBytes(@Nullable Class<?> clazz) {
+        if(Objects.isNull(clazz)) {
+            LOGGER.error("Cannot get bytecode for null class!");
+            return null;
+        }
+        ByteBuffer byteCode = Hacks.getByteCode(clazz);
+        if(Objects.isNull(byteCode)) {
+            LOGGER.error("Bytecode not found for {}!",clazz);
+            return new byte[]{};
+        }
+        return BufferHandler.toByteArray(byteCode);
     }
     
     public static URL getJarResource(String path, String relativePath) {
@@ -339,18 +226,6 @@ public class ClassHelper {
         return null;
     }
     
-    public static <T> @Nullable T initialize(@Nullable Class<T> clazz, Object ... args) {
-        if(Objects.nonNull(clazz)) {
-            try {
-                Hacks.checkBurningWaveInit();
-                return Constructors.newInstanceOf(clazz,args);
-            } catch(Exception ex) {
-                LOGGER.error("Failed to initialize {}",clazz,ex);
-            }
-        } else LOGGER.error("Cannot initialize null class");
-        return null;
-    }
-    
     @IndirectCallers
     public static String internalName(Class<?> clazz) {
         return internalName(clazz.getName());
@@ -391,17 +266,6 @@ public class ClassHelper {
         TILDev.logDebug("Attempting to load URL `{}` with ClassLoader `{}`",url,classLoader);
         Hacks.invokeDirect(classLoader,"addURL",url);
         return true;
-    }
-    
-    public static void moveClassTo(Class<?> c, ClassLoader target) {
-        ClassLoader from = c.getClassLoader();
-        if(from==target) {
-            TILDev.logDebug("Not moving {} since it was already from {}",c,target);
-            return;
-        }
-        Hacks.setFieldDirect(c,"classLoader",target);
-        Hacks.removeCollectionFieldValue("classes",c,s -> Hacks.getFieldDirect(from,s));
-        Hacks.addToCollectionField("classes",c,s -> Hacks.getFieldDirect(target,s));
     }
     
     @IndirectCallers
@@ -560,13 +424,12 @@ public class ClassHelper {
      */
     @SuppressWarnings("UnusedReturnValue")
     @SneakyThrows
-    public static Class<?> resolveClass(ClassLoader classLoader, @Nullable Class<?> clazz) {
+    public static Class<?> resolveClass(ClassLoader loader, @Nullable Class<?> clazz) {
         if(Objects.isNull(clazz)) {
-            LOGGER.fatal("Cannot resolve null defined class! (ClassLoader = {})",classLoader);
+            LOGGER.fatal("Cannot resolve null defined class! (ClassLoader = {})",loader);
             return null;
         }
-        Hacks.checkBurningWaveInit();
-        return ClassLoaders.loadOrDefine(clazz,classLoader);
+        return Hacks.checkBurningWaveInitAndCall("loadOrDefineClass",clazz,loader);
     }
 
     /**
@@ -631,7 +494,7 @@ public class ClassHelper {
                 if(!urlLoader.apply(syncTo,url))
                     LOGGER.error("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo);
                 else if(Objects.nonNull(classesToLoad))
-                    for(String classToLoad : classesToLoad) findClass(classToLoad,syncTo);
+                    for(String classToLoad : classesToLoad) Hacks.findClass(classToLoad,syncTo);
             } else LOGGER.debug("Not syncing null URL");
         } catch(ClassNotFoundException ex) {
             ClassLoader systemLoader = ClassLoader.getSystemClassLoader();

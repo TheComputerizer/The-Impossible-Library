@@ -14,8 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
-
 public class BlockEntity1_18_2 extends BlockEntityAPI<BlockEntity,BlockEntityType<?>> {
     
     /**
@@ -57,7 +55,7 @@ public class BlockEntity1_18_2 extends BlockEntityAPI<BlockEntity,BlockEntityTyp
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
     
     @Override public void writeTagTo(CompoundTagAPI<?> tag) {

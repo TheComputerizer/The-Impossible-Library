@@ -24,7 +24,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static net.minecraft.core.Registry.BIOME_REGISTRY;
 import static net.minecraft.world.level.biome.Biome.Precipitation.RAIN;
 import static net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @Setter
 public class Biome1_18_2 extends BiomeAPI<Biome> {
@@ -97,6 +96,6 @@ public class Biome1_18_2 extends BiomeAPI<Biome> {
     
     @Override public void setRegistryName(ResourceLocationAPI<?> registryName) {
         setLocalRegistryName(registryName);
-        if(FORGE) Methods.invoke(this.wrapped,"setRegistryName",(Object)registryName.unwrap());
+        setForgeRegistryName(this,registryName);
     }
 }

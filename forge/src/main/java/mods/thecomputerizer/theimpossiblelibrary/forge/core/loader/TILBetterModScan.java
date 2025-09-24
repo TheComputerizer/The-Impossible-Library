@@ -88,10 +88,10 @@ public class TILBetterModScan extends ModFileScanData {
             TILRef.logWarn("No classes were defined so no sources will be added");
             return;
         }
-        if(newFormat) fixBrokenModsNew(ClassHelper.findClass(MODLOADER,target));
+        if(newFormat) fixBrokenModsNew(Hacks.findClass(MODLOADER,target));
         if(java8) {
             try {
-                fixBrokenMods(ClassHelper.findClass(MODLOADER,target));
+                fixBrokenMods(Hacks.findClass(MODLOADER,target));
                 ForgeCoreLoader.nukeAndFinalizeJava8(sourceStack(outerClasses),target,NUKED_PACKAGES.isEmpty());
                 NUKED_PACKAGES.addAll(pkgs);
             } catch(Throwable t) {

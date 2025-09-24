@@ -1,7 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.parameter;
 
 import io.netty.buffer.ByteBuf;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
@@ -20,10 +21,10 @@ public class ParameterList<E> extends Parameter<List<E>> { //TODO Does not curre
         this.type = type;
     }
     
-    @SuppressWarnings({"unused","unchecked"}) //See ParameterHelper#parse
+    @IndirectCallers
     public ParameterList(ByteBuf buf) {
         super(buf);
-        this.type = (Class<E>)ClassHelper.findClass(NetworkHelper.readString(buf));
+        this.type = Hacks.findClass(NetworkHelper.readString(buf));
     }
     
     @Override public ParameterList<E> copy() {

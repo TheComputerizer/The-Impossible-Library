@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 
 import static net.minecraft.launchwrapper.Launch.classLoader;
 import static net.minecraftforge.fml.common.discovery.ContainerType.JAR;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class InjectedModCandidate1_12_2 extends ModCandidate {
 
@@ -80,7 +79,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
                 byte[] bytes = classBytes.getValue();
                 ASMHelper.writeDebugByteCode(className,bytes);
                 Class<?> clazz = java8 ? ClassHelper.defineClass(classLoader,className,bytes) :
-                        Methods.invoke(classLoader,"defineClass",className,bytes,source);
+                        Hacks.invoke(classLoader,"defineClass",className,bytes,source);
                 ModContainerWriter1_12_2.cacheClass(classLoader,className,clazz);
                 InjectedModCandidate1_12_2 candidate = CANDIDATE_MAP.get(data.getSource());
                 candidate.injectMod(data.getInfo(),className,bytes);

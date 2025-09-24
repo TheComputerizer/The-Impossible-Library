@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.fabric.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
@@ -14,7 +15,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 
 public class TILFabricCoreModLoader extends GamePatch {
     
@@ -46,7 +45,7 @@ public class TILFabricCoreModLoader extends GamePatch {
         registerEditors(core,DEV ? null : loader.getMappingResolver());
         log(TILRef::logInfo,"Adding coremod transformer patch");
         final GameProvider provider = loader.getGameProvider();
-        setupPatch(provider.getEntrypointTransformer(),Fields.getDirect(provider,"gameJars"));
+        setupPatch(provider.getEntrypointTransformer(),Hacks.getFieldDirect(provider,"gameJars"));
         log(TILRef::logInfo,"Finished adding coremod transformer patch");
     }
     
@@ -65,13 +64,13 @@ public class TILFabricCoreModLoader extends GamePatch {
     }
     
     static void setupPatch(final GameTransformer transformer, final List<Path> gameJars) {
-        List<GamePatch> patches = new ArrayList<>(Fields.getDirect(transformer,"patches"));
+        List<GamePatch> patches = Hacks.getFieldListWrapped(transformer,"getFieldDirect","patches");
         patches.add(new TILFabricCoreModLoader());
-        Fields.setDirect(transformer,"patches",Collections.unmodifiableList(patches));
+        Hacks.setFieldDirect(transformer,"patches",Collections.unmodifiableList(patches));
         //Recalculate the patch map
-        Fields.setDirect(transformer,"entrypointsLocated",false);
+        Hacks.setFieldDirect(transformer,"entrypointsLocated",false);
         transformer.locateEntrypoints(FabricLauncherBase.getLauncher(),gameJars);
-        Map<String,byte[]> patchedClasses = Fields.getDirect(transformer,"patchedClasses");
+        Map<String,byte[]> patchedClasses = Hacks.getFieldMap(transformer,"getFieldDirect","patchedClasses");
         announcePatches(patchedClasses.keySet());
     }
     

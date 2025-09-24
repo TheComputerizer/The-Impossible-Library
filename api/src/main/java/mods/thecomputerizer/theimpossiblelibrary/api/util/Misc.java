@@ -59,14 +59,24 @@ public class Misc {
         if(Objects.nonNull(thing)) conumer.accept(thing);
     }
     
-    public static <T> boolean equalsNullable(@Nullable T thing, @Nullable Object other) {
-        return Objects.isNull(thing) ? Objects.isNull(other) : Objects.nonNull(other) && thing.equals(other);
-    }
-    
     @SafeVarargs public static <T> boolean equalsAny(T thing, T ... others) {
         for(T other : others)
             if(equalsNullable(thing,other)) return true;
         return false;
+    }
+    
+    public static boolean equalsAnyIgnoreCase(String s1, String ... others) {
+        for(String other : others)
+            if(equalsNullableIgnoreCase(s1,other)) return true;
+        return false;
+    }
+    
+    public static <T> boolean equalsNullable(@Nullable T thing, @Nullable Object other) {
+        return Objects.isNull(thing) ? Objects.isNull(other) : Objects.nonNull(other) && thing.equals(other);
+    }
+    
+    public static <T> boolean equalsNullableIgnoreCase(@Nullable String s1, @Nullable String s2) {
+        return Objects.isNull(s1) ? Objects.isNull(s2) : Objects.nonNull(s2) && s1.equalsIgnoreCase(s2);
     }
 
     /**
@@ -242,6 +252,46 @@ public class Misc {
                 return onThrow.apply(t);
             }
         };
+    }
+    
+    public static String[] wordCombinations(String word1, String word2, String ... separators) {
+        return wordCombinations(new String[]{word1,word2},separators);
+    }
+    
+    public static String[] wordCombinations(String[] words, String ... separators) {
+        if(Objects.isNull(words)) return new String[]{};
+        if(words.length==0) return words;
+        String[] nonBlankWords = new String[words.length];
+        int nonBlankIndex = 0;
+        for(String word : words) {
+            if(TextHelper.isNotBlank(word)) {
+                nonBlankWords[nonBlankIndex] = word;
+                nonBlankIndex++;
+            }
+        }
+        switch(nonBlankIndex) {
+            case 0: return new String[]{};
+            case 1: return new String[]{nonBlankWords[0]};
+            default: {
+                if(Objects.isNull(separators) || separators.length==0) separators = new String[]{" "};
+                return wordCombinationsVerified(Arrays.copyOfRange(nonBlankWords,0,nonBlankIndex),separators);
+            }
+        }
+    }
+    
+    /**
+     * Assumes the input words array is not null, does not contain any blank strings, and contains at least 2 elements.
+     * Assumes there is at least 1 separator.
+     */
+    private static String[] wordCombinationsVerified(String[] words, String ... separators) {
+        String[] combined = new String[separators.length*2];
+        for(int i=0;i<separators.length;i++) {
+            String separator = separators[i];
+            StringJoiner joiner = new StringJoiner(Objects.nonNull(separator) ? separator : " ");
+            for(String word : words) joiner.add(word);
+            combined[i] = joiner.toString();
+        }
+        return combined;
     }
 
     public static <V,W> @Nullable W wrap(@Nullable V val, Function<V,W> wrapperFunc) {

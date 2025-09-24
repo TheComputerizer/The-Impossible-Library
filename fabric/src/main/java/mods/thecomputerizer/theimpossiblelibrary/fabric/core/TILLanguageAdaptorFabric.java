@@ -62,8 +62,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static net.fabricmc.loader.impl.FabricLoaderImpl.INSTANCE;
 import static net.fabricmc.loader.impl.util.log.LogCategory.ENTRYPOINT;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 @IndirectCallers
 public class TILLanguageAdaptorFabric implements LanguageAdapter {
@@ -116,7 +114,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         String version = INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0];
         String className = CoreAPI.findLoadingClass(FABRIC,version);
         ClassLoader loader = launcher.getTargetClassLoader();
-        Class<?> clazz = ClassHelper.findClass(className,loader);
+        Class<?> clazz = Hacks.findClass(className,loader);
         while(Objects.nonNull(clazz) && clazz!=Object.class) {
             addSource(launcher,ClassHelper.getSourceURL(className,loader));
             clazz = clazz.getSuperclass();
@@ -227,8 +225,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     @Nullable ModCandidateImpl buildCandidate(List<Path> paths, LoaderModMetadata metadata, String modid) {
         TILRef.logDebug("Successfully built mod metadata for {}! Attempting some reflection magic",modid);
         try {
-            return Methods.invokeStaticDirect(ModCandidateImpl.class,"createPlain",paths,metadata,
-                                              INSTANCE.isDevelopmentEnvironment(),Collections.emptyList());
+            return Hacks.invokeStaticDirect(ModCandidateImpl.class,"createPlain",paths,metadata,
+                    INSTANCE.isDevelopmentEnvironment(),Collections.emptyList());
         } catch(Throwable t) {
             TILRef.logFatal("Failed to build mod candidate for {}!",metadata.getId(),t);
         }
@@ -272,8 +270,7 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     
     @SuppressWarnings("unchecked")
     @Override public <T> T create(ModContainer mod, String value, Class<T> type) {
-        ClassLoader loader = FabricLauncherBase.getLauncher().getTargetClassLoader();
-        Object instance = ClassHelper.initialize(ClassHelper.findClass(value,loader));
+        Object instance = Hacks.constructWithLoader(value,FabricLauncherBase.getLauncher().getTargetClassLoader());
         if(instance instanceof TILModInjectorFabric && Objects.nonNull(this.queuedContainers)) {
             TILDev.logInfo("Queuing {} new mod containers",this.queuedContainers.size());
             ((TILModInjectorFabric)instance).setContainers(this.queuedContainers);
@@ -352,8 +349,8 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     CoreAPI scheduleContainers(@Nullable CoreAPI core) {
         if(Objects.isNull(core)) return null;
         Collection<ModContainerImpl> containers = loadCandidateInfos(core);
-        Map<String,ModContainerImpl> modMap = Fields.getDirect(INSTANCE,"modMap");
-        EntrypointStorage storage = Fields.getDirect(INSTANCE,"entrypointStorage");
+        Map<String,ModContainerImpl> modMap = Hacks.getFieldDirect(INSTANCE,"modMap");
+        EntrypointStorage storage = Hacks.getFieldDirect(INSTANCE,"entrypointStorage");
         Map<String,LanguageAdapter> adapters = new HashMap<>();
         adapters.put("multiversionAdaptor",this);
         scheduleContainers(containers,modMap,storage,adapters);

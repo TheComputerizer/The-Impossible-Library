@@ -2,11 +2,13 @@ package mods.thecomputerizer.theimpossiblelibrary.neoforge.core.modules;
 
 import cpw.mods.modlauncher.api.IModuleLayerManager.Layer;
 import cpw.mods.modlauncher.api.NamedPath;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.AbstractModuleSystemAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,8 +21,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 /**
  * cpw.mods.modlauncher.ModuleLayerHandler
@@ -117,6 +117,7 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
         return getDirect("layers");
     }
     
+    @IndirectCallers
     public void printAllModuleNames(Layer ... layers) {
         defaultMapPrinter().accept(getAllModuleNames(layers));
     }
@@ -126,6 +127,7 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
         defaultMapPrinter().accept(mapGetter.apply(layers));
     }
     
+    @IndirectCallers
     public void printLayerPaths(Layer ... layers) {
         defaultMapPrinter().accept(getLayerPathNames(layers));
     }
@@ -135,8 +137,10 @@ public class ModuleLayerHandlerAccess extends AbstractModuleSystemAccessor {
      */
     String printPathOrJar(Object pathOrJar) {
         try {
-            NamedPath path = Methods.invoke(pathOrJar, "path");
-            return "name = '"+path.name()+"' | paths = '"+Arrays.toString(path.paths())+"'";
+            NamedPath path = Hacks.invoke(pathOrJar,"path");
+            String name = Objects.nonNull(path) ? path.name() : "null";
+            String paths = Arrays.toString(Objects.nonNull(path) ? path.paths() : new Path[]{});
+            return "name = '"+name+"' | paths = '"+paths+"'";
         } catch(Throwable t) {
             logOrPrintError("Failed to extract path string from "+pathOrJar,t);
         }

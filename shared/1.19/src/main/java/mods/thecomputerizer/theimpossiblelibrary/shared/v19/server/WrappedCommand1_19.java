@@ -40,9 +40,9 @@ import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
-import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
-import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
 
 public class WrappedCommand1_19 {
     
@@ -110,10 +110,10 @@ public class WrappedCommand1_19 {
     
     public static void registerArgType() {
         if(CoreAPI.isForge() || CoreAPI.isNeoforge())
-            Methods.invokeStatic(ArgumentTypeInfos.class,"registerByClass",CustomSuggester.class,INFO);
+            STATIC.invoke(ArgumentTypeInfos.class,"registerByClass",CustomSuggester.class,INFO);
         else {
             String field = DEV ? "BY_CLASS" : "field_10921";
-            Map<Class<?>,Object> byClass = Fields.getStaticDirect(ArgumentTypeInfos.class,field);
+            Map<Class<?>,Object> byClass = STATIC_DIRECT.get(ArgumentTypeInfos.class,field);
             byClass.put(CustomSuggester.class,INFO);
         }
     }

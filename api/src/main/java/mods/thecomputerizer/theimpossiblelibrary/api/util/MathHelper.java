@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.util;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.vectors.Vector2;
 
 import static java.lang.Math.PI;
@@ -27,6 +28,18 @@ public class MathHelper {
         return Math.max(min,Math.min(val,max));
     }
     
+    /**
+     * Formula: n!/(r!(n-r)!)
+     * If n is negative, r is negative or r>n 0 will be returned
+     */
+    public static int combination(int n, int r) {
+        if(r<0 || r>n) {
+            TILRef.logWarn("Tried to calculate combination with incorrect inputs: {}!/({}!({}-{})!)",n,r,n,r);
+            return 0;
+        }
+        return factorial(n)/(factorial(r)*factorial(n-r));
+    }
+    
     public static double cosFromSin(double sin, double angle) {
         double cos = Math.sqrt(1d-sin*sin);
         double a = angle+(PI/2d);
@@ -43,6 +56,20 @@ public class MathHelper {
         double total = 0d;
         for(double value : values) total+=(value*value);
         return Math.sqrt(total);
+    }
+    
+    /**
+     * Returns num!
+     * Negative num values are undefined (1/0), but 0 will be returned instead
+     */
+    public static int factorial(int num) {
+        if(num<0) {
+            TILRef.logError("Tried to calculate factorial with incorrect input: {}!",num);
+            return 0;
+        }
+        int prod = 1;
+        for(int i=num;i>1;i--) prod*=i;
+        return prod;
     }
     
     /**
@@ -80,5 +107,17 @@ public class MathHelper {
      */
     public static float getHalfway(float start, float end) {
         return Math.min(start,end)+(Math.abs(end-start)/2f);
+    }
+    
+    /**
+     * Formula: n!/(n-r)!
+     * If n is negative, r is negative or r>n 0 will be returned
+     */
+    public static int permutation(int n, int r) {
+        if(r<0 || r>n) {
+            TILRef.logWarn("Tried to calculate permutation with incorrect inputs: {}!/({}-{})!",n,n,r);
+            return 0;
+        }
+        return factorial(n)/factorial(n-r);
     }
 }
