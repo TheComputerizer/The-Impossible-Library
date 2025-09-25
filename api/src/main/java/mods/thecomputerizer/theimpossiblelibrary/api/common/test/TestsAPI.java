@@ -16,34 +16,32 @@ public abstract class TestsAPI implements CoreStateAccessor, LoggableAPI {
         this.type = type;
     }
     
-    @Override
-    public void logDebug(String msg, Object ... args) {
+    @Override public void logDebug(String msg, Object ... args) {
         this.logger.debug(msg,args);
     }
     
-    @Override
-    public void logError(String msg, Object ... args) {
+    @Override public void logError(String msg, Object ... args) {
         this.logger.error(msg,args);
     }
     
-    @Override
-    public void logFatal(String msg, Object ... args) {
+    @Override public void logFatal(String msg, Object ... args) {
         this.logger.fatal(msg,args);
     }
     
-    @Override
-    public void logInfo(String msg, Object ... args) {
+    @Override public void logInfo(String msg, Object ... args) {
         this.logger.info(msg,args);
     }
     
-    @Override
-    public void logTrace(String msg, Object ... args) {
+    @Override public void logTrace(String msg, Object ... args) {
         this.logger.trace(msg,args);
     }
     
-    @Override
-    public void logWarn(String msg, Object ... args) {
+    @Override public void logWarn(String msg, Object ... args) {
         this.logger.warn(msg,args);
+    }
+    
+    @Override public Logger logger() {
+        return this.logger;
     }
     
     public final void runAndLog(Object ... args) {

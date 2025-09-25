@@ -268,29 +268,25 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
     /**
      * Assumes layerName has been set for both this and the targetLoader
      */
-    public void moveModuleTo(ModuleClassLoaderAccess targetLoader, String moduleName,
-            @Nullable String extraModule) {
+    public void moveModuleTo(ModuleClassLoaderAccess targetLoader, String moduleName) {
         ResolvedModuleAccess resolvedModule = lookupResolvedModule(moduleName);
-        Object resolvedModuleAccecss = resolvedModule.access();
-        Set<String> packages = resolvedModule.packages(true);
         resolvedModule.configuration().moveModuleTo(targetLoader.configuration(),resolvedModule);
         moveRoots(targetLoader,moduleName);
         if(SECURE_CLASSLOADER_FORMAT) {
-            targetLoader.addSecureModule(secureModuleDirect(moduleName),
-                    Objects.nonNull(extraModule) ? new String[]{moduleName,extraModule} : new String[]{moduleName});
+            targetLoader.addSecureModule(secureModuleDirect(moduleName),moduleName);
             removeSecureModule(moduleName);
         }
-        movePackageLookup(targetLoader,resolvedModuleAccecss,packages);
+        movePackageLookup(targetLoader,resolvedModule);
     }
     
-    private void movePackageLookup(ModuleClassLoaderAccess targetLoader, Object resolvedModule,
-            Set<String> packages) {
+    private void movePackageLookup(ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess resolvedModule) {
+        Set<String> packages = resolvedModule.packages(true);
         movePackageParent(targetLoader,packages);
         Map<String,Object> packageLookup = packageLookup();
         Map<String,Object> targetPackageLookup = targetLoader.packageLookup();
         for(String pkg : packages) {
             packageLookup.remove(pkg);
-            targetPackageLookup.put(pkg,resolvedModule);
+            targetPackageLookup.put(pkg,resolvedModule.accessAs());
         }
     }
     
@@ -308,6 +304,7 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
         }
     }
     
+    @IndirectCallers
     public void moveServicesTo(ModuleLayerAccess target, ModuleAccess module) {
         getModuleLayer().moveServicesTo(target,module);
     }

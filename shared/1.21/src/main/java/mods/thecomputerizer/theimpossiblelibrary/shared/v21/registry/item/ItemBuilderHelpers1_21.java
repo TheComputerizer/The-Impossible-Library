@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.DIRECT;
 
 public interface ItemBuilderHelpers1_21 {
     
@@ -30,11 +30,11 @@ public interface ItemBuilderHelpers1_21 {
     }
     
     default Map<ResourceLocationAPI<?>,BiFunction<ItemStackAPI<?>,WorldAPI<?>,Float>> getPropertyMapField() {
-        return STATIC.get(this,"propertyMap");
+        return DIRECT.get(this,"propertyMap");
     }
     
     default ResourceLocationAPI<?> getRegistryNameField() {
-        return STATIC.get(this,"registryName");
+        return DIRECT.get(this,"registryName");
     }
     
     default void registerVariants(Item item) {

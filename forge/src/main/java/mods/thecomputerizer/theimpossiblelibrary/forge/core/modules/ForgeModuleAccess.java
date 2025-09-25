@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleLayerAccess;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ModuleSystemAccessor;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ResolvedModuleAccess;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.modules.ServicesCatalogAccess;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
 import org.apache.logging.log4j.Logger;
 
@@ -268,8 +269,8 @@ public class ForgeModuleAccess {
         return new SecureJarProviderAccess(provider,accessorOrLogger);
     }
     
-    public static void moveModule(String layer, String targetLayer, String moduleName, boolean moveServices) {
-        moveModule(getModuleClassLoader(layer),getModuleClassLoader(targetLayer),moduleName,moveServices);
+    public static void moveModule(String layer, String targetLayer, String moduleName, boolean moveClasses) {
+        moveModule(getModuleClassLoader(layer),getModuleClassLoader(targetLayer),moduleName,moveClasses);
     }
     
     public static void moveModule(ModuleClassLoaderAccess sourceLoader,
@@ -279,7 +280,7 @@ public class ForgeModuleAccess {
     }
     
     public static void moveModule(ModuleClassLoaderAccess sourceLoader,
-            ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveServices) {
+            ModuleClassLoaderAccess targetLoader, String moduleName, boolean moveClasses) {
         ModuleLayerAccess sourceLayer = sourceLoader.getModuleLayer();
         ModuleAccess module = sourceLayer.removeModuleAndReturn(moduleName);
         if(Objects.isNull(module)) {
@@ -287,7 +288,7 @@ public class ForgeModuleAccess {
                                          sourceLayer.getLayerName());
             return;
         }
-        moveModuleToLayer(sourceLoader,targetLoader,module,null,moveServices);
+        moveModuleToLayer(sourceLoader,targetLoader,module,moveClasses);
     }
     
     private static void moveModuleClassesTo(ModuleClassLoaderAccess sourceLoader,
@@ -296,17 +297,19 @@ public class ForgeModuleAccess {
         else sourceLoader.logger().info("Skipping movement of already present module {}",module.getName());
     }
     
-    public static void moveModuleToLayer(ModuleClassLoaderAccess sourceLoader, ModuleClassLoaderAccess targetLoader,
-            ModuleAccess module, String extraModule, boolean moveServices) {
+    public static void moveModuleToLayer(ModuleClassLoaderAccess sourceLoader,
+            ModuleClassLoaderAccess targetLoader, ModuleAccess module, boolean moveClasses) {
         ModuleLayerAccess targetLayer = targetLoader.getModuleLayer();
-        if(moveServices) sourceLoader.moveServicesTo(targetLayer,module);
-        moveModuleClassesTo(sourceLoader,targetLoader,module);
+        ServicesCatalogAccess targetServices = targetLayer.getServicesCatalog();
+        if(moveClasses) {
+            sourceLoader.logger().info("Moving classes");
+            moveModuleClassesTo(sourceLoader,targetLoader,module);
+        }
+        sourceLoader.moveModuleTo(targetLoader,module.getName());
+        targetServices.registerModule(module);
         module.setLayer(targetLayer);
         module.setLoader(targetLoader);
         targetLayer.addModule(module);
-        String moduleName = module.getName();
-        if(Objects.nonNull(extraModule)) targetLoader.addRoot(extraModule,sourceLoader.getRoot(moduleName).access());
-        sourceLoader.moveModuleTo(targetLoader,moduleName,extraModule);
     }
     
     @IndirectCallers

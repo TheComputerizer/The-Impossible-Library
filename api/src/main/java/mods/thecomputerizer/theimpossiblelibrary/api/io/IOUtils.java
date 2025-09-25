@@ -148,7 +148,7 @@ public class IOUtils {
     
     public static ByteBuffer toBuffer(URL url) {
         try {
-            Streams.toByteBuffer(url.openStream());
+            return Streams.toByteBuffer(url.openStream());
         } catch(IOException ex) {
             LOGGER.error("Failed to open buffer for URL {}",url,ex);
         }
