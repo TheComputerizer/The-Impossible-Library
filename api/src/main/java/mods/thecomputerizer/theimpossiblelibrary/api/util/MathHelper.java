@@ -30,7 +30,7 @@ public class MathHelper {
     
     /**
      * Formula: n!/(r!(n-r)!)
-     * If n is negative, r is negative or r>n 0 will be returned
+     * If n is negative, r is negative or r is greater than n 0 will be returned
      */
     public static int combination(int n, int r) {
         if(r<0 || r>n) {
@@ -111,7 +111,7 @@ public class MathHelper {
     
     /**
      * Formula: n!/(n-r)!
-     * If n is negative, r is negative or r>n 0 will be returned
+     * If n is negative, r is negative or r is greater than n 0 will be returned
      */
     public static int permutation(int n, int r) {
         if(r<0 || r>n) {

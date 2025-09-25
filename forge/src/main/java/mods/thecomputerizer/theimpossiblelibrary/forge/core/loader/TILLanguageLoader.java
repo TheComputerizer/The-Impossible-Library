@@ -34,7 +34,7 @@ public abstract class TILLanguageLoader { //TODO Use a proxy to avoid needing di
         try {
             final Object[] args = new Object[]{info,this.modClass,loader,scan};
             if(!ForgeCoreLoader.isJava8()) { args[2] = scan; args[3] = extras[0]; }
-            T instance = Hacks.construct(container,args);
+            T instance = Hacks.constructAndCast(container,args);
             TILRef.logInfo("Successfully initialized mod container for {}",this.modClass);
             return instance;
         } catch(Throwable t) {

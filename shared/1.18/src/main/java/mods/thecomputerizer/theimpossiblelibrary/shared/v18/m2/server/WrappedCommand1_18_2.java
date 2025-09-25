@@ -117,8 +117,8 @@ public class WrappedCommand1_18_2 implements CoreStateAccessor {
         Map<Class<?>,E> byClass = Hacks.getFieldStaticDirect(ArgumentTypes.class,FIELD_BY_CLASS);
         Map<ResourceLocation,E> byName = Hacks.getFieldStaticDirect(ArgumentTypes.class,FIELD_BY_NAME);
         E entry = Hacks.construct(ARGUMENT_TYPE_ENTRY,SERIALIZER,name);
-        byClass.put(CustomSuggester.class,entry);
-        byName.put(name,entry);
+        if(Objects.nonNull(byClass)) byClass.put(CustomSuggester.class,entry);
+        if(Objects.nonNull(byName)) byName.put(name,entry);
     }
     
     public record CustomSuggester(CommandAPI command) implements ArgumentType<String> {

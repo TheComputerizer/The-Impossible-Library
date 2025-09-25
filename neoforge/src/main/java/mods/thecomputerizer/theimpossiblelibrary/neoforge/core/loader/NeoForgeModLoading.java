@@ -228,9 +228,9 @@ public class NeoForgeModLoading {
         IModFile file;
         if(JAVA_21) {
             Object discoveryAttributes = createDiscoveryAttributes(locator);
-            file = Hacks.construct(dynamicModFileClass,jar,parser,type,discoveryAttributes);
+            file = Hacks.constructAndCast(dynamicModFileClass,jar,parser,type,discoveryAttributes);
             updateDiscoveryAttributes(file,"withParent",file);
-        } else file = Hacks.construct(dynamicModFileClass,jar,locator,parser,type);
+        } else file = Hacks.constructAndCast(dynamicModFileClass,jar,locator,parser,type);
         //Construct the file first to ensure there aren't any errors before the SECURE_JAR_MAP is updated
         if(updatePathMap) {
             LOGGER.debug("Adding SecureJar instance for module {} to the cache",moduleName);

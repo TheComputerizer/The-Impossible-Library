@@ -141,7 +141,7 @@ public class NeoForgeCoreLoader {
         String version = getVersionStr();
         Class<?> coreClass = loadAPI(version,bootLoader()); //Throws an exception instead of returning null
         try {
-            return Hacks.construct(coreClass);
+            return Hacks.constructAndCast(coreClass);
         } catch(Throwable t) {
             LOGGER.fatal("Unknown error while trying to get CoreAPI instance as {}",coreClass,t);
         }

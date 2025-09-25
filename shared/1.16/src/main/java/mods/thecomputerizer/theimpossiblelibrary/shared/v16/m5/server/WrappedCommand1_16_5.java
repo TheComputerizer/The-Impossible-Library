@@ -123,7 +123,7 @@ public class WrappedCommand1_16_5 implements CoreStateAccessor {
             return;
         }
         String entryClassName = ARGUMENT_TYPE_ENTRY.get();
-        E entry = Hacks.construct(ArgumentTypes.class,entryClassName,CustomSuggester.class,SERIALIZER,name);
+        E entry = Hacks.constructAndCast(ArgumentTypes.class,entryClassName,CustomSuggester.class,SERIALIZER,name);
         if(Objects.isNull(entry)) {
             TILRef.logError("Failed to contruct {} with args {}",entryClassName,new Object[]{
                     CustomSuggester.class,SERIALIZER,name});
