@@ -54,7 +54,7 @@ public abstract class MinecraftServer1_20 extends MinecraftServerAPI<MinecraftSe
                             "the client side?");
             return null;
         }
-        LevelStorageAccess levelAccess = Hacks.getFieldDirect(server, this.saveFieldName);
+        LevelStorageAccess levelAccess = Hacks.getFieldDirect(server,this.saveFieldName);
         if(Objects.isNull(levelAccess)) {
             TILRef.logError("Failed to get LevelSave instance from server");
             return null;

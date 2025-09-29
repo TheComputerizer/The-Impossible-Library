@@ -403,15 +403,15 @@ public class ForgeModLoading {
             Set<String> packages = new HashSet<>();
             List<?> providers = new ArrayList<>();
             Manifest manifest = Hacks.invoke(Hacks.invoke(secureJar,"moduleDataProvider"),"getManifest");
-            Object candidate = Hacks.invokeStatic(JAR_METADATA,"fromFileName",paths[0],packages,providers);
-            if(Objects.isNull(manifest) || Objects.isNull(candidate)) {
-                LOGGER.error("Something is null that should not be null");
+            String name = Objects.nonNull(manifest) ? manifest.getMainAttributes().getValue(automaticModuleName) : null;
+            if(Objects.isNull(name)) {
+                LOGGER.info("Falling back to default jar metatdata since {} attribute was not found for: {}",
+                            automaticModuleName,paths);
                 return Hacks.invokeStatic(JAR_METADATA,"from",secureJar,paths);
             }
-            String name = manifest.getMainAttributes().getValue(automaticModuleName);
-            if(Objects.isNull(name)) {
-                LOGGER.error("Tried initializing custom JarMetadata for paths '{}' but no {} attribute was"+
-                             " found!", paths,automaticModuleName);
+            Object candidate = Hacks.invokeStatic(JAR_METADATA,"fromFileName",paths[0],packages,providers);
+            if(Objects.isNull(candidate)) {
+                LOGGER.error("Failed to get jar metadata candidate from paths {}",(Object)paths);
                 return Hacks.invokeStatic(JAR_METADATA,"from",secureJar,paths);
             }
             LOGGER.debug("Returning customized JarMetadata for module {}",name);

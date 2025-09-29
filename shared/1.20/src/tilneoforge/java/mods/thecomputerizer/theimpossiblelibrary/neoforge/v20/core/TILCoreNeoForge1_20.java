@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Reference;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionLoaderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.MultiVersionModInfo;
@@ -69,11 +68,6 @@ public abstract class TILCoreNeoForge1_20 extends TILCore1_20 implements TILCore
     
     @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
         return unmappedMethod;
-    }
-    
-    @Override protected boolean modConstructed(String modid, Class<?> clazz) {
-        TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
-        return true;
     }
     
     @Override public String unmapClass(String className) {

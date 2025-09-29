@@ -49,12 +49,12 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
             URLClassLoader urlLoader = Hacks.getField(loader,"delegatedClassLoader");
             if(Objects.nonNull(urlLoader)) {
                 if(ClassHelper.loadURL(urlLoader,url)) {
-                    TILRef.logDebug("Successfully loaded URL to mod class loader {}",url);
+                    this.logger.debug("Successfully loaded URL to mod class loader {}",url);
                     return true;
-                } else TILRef.logError("Failed to load URL to mod class loader {}",url);
-            } else TILRef.logError("Failed to get delegatedClassLoader field as instance of URLClassLoader");
+                } else this.logger.error("Failed to load URL to mod class loader {}",url);
+            } else this.logger.error("Failed to get delegatedClassLoader field as instance of URLClassLoader");
         }
-        TILRef.logError("Cannot add URL to unknown ClassLoader type {} (URL = {})",loader,url);
+        this.logger.error("Cannot add URL to unknown ClassLoader type {} (URL = {})",loader,url);
         return false;
     }
     
@@ -86,11 +86,6 @@ public class TILCoreForge1_16_5 extends TILCore1_16_5 implements TILCoreForge {
     
     @Override public String mapMethodName(String unmappedClass, String unmappedMethod, String desc) {
         return unmappedMethod;
-    }
-    
-    @Override protected boolean modConstructed(String modid, Class<?> clazz) {
-        TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
-        return true;
     }
     
     @Override public String unmapClass(String className) {

@@ -80,11 +80,6 @@ public abstract class TILCoreFabric1_20 extends TILCore1_20 implements TILCoreFa
         return mapper().mapMethodName("intermediary",unmappedClass,unmappedMethod,desc);
     }
     
-    @Override protected boolean modConstructed(String modid, Class<?> clazz) {
-        TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
-        return true;
-    }
-    
     @Override public String unmapClass(String className) {
         return mapper().unmapClassName("intermediary",className);
     }

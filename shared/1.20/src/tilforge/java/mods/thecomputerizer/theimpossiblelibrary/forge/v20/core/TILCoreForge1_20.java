@@ -82,11 +82,6 @@ public abstract class TILCoreForge1_20 extends TILCore1_20 implements TILCoreFor
         return unmappedMethod;
     }
     
-    @Override protected boolean modConstructed(String modid, Class<?> clazz) {
-        TILRef.logInfo("Successfully constructed mod class for {} as {}",modid,clazz);
-        return true;
-    }
-    
     @Override public String unmapClass(String className) {
         return className;
     }

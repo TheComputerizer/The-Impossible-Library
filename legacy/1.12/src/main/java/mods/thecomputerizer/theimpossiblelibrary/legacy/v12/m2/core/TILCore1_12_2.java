@@ -106,8 +106,8 @@ public class TILCore1_12_2 extends CoreAPI implements TILCoreLegacy {
                     return InjectedModCandidate1_12_2.injectIntoTable(container,clazz.getPackage().getName(),table);
                 }
             }
-            TILRef.logFatal("Unable to find ModContainer instance to inject! The game will likely crash very soon.");
-        } else TILRef.logFatal("ASMDataTable instance was not found! The game will likely crash very soon.");
+            this.logger.fatal("Unable to find ModContainer instance to inject! The game will likely crash very soon.");
+        } else this.logger.fatal("ASMDataTable instance was not found! The game will likely crash very soon.");
         return false;
     }
     

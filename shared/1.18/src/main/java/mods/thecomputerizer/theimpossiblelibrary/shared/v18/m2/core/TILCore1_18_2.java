@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.core;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.TILCommonEntryPoint1_18_2;
 
 import java.net.URL;
@@ -27,7 +26,7 @@ public abstract class TILCore1_18_2 extends CoreAPI {
     
     @Override public boolean addURLToClassLoader(ClassLoader loader, URL url) {
         if(loader instanceof URLClassLoader) return ClassHelper.loadURL((URLClassLoader)loader, url);
-        TILRef.logError("Directly adding a URL is not supported in this version! Not adding {}", url);
+        this.logger.error("Directly adding a URL is not supported in this version! Not adding {}", url);
         return false;
     }
     

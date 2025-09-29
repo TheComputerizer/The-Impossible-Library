@@ -299,19 +299,21 @@ public class ModuleClassLoaderAccess extends ClassLoaderAccess implements Module
      */
     public void moveModuleTo(ModuleClassLoaderAccess targetLoader, String moduleName) {
         ResolvedModuleAccess resolvedModule = lookupResolvedModule(moduleName);
+        Set<String> packages = resolvedModule.packages(false);
+        ResolvedModule resolveModuleAccess = resolvedModule.accessAs();
         resolvedModule.configuration().moveModuleTo(targetLoader.configuration(),resolvedModule);
         moveRoots(targetLoader,moduleName);
-        movePackageLookup(targetLoader,resolvedModule);
+        movePackageLookup(targetLoader,packages,resolveModuleAccess);
     }
     
-    private void movePackageLookup(ModuleClassLoaderAccess targetLoader, ResolvedModuleAccess resolvedModule) {
-        Set<String> packages = resolvedModule.packages(true);
+    private void movePackageLookup(ModuleClassLoaderAccess targetLoader, Set<String> packages,
+            ResolvedModule resolveModuleAccess) {
         movePackageParent(targetLoader,packages);
         Map<String,ResolvedModule> packageLookup = packageLookup();
         Map<String,ResolvedModule> targetPackageLookup = targetLoader.packageLookup();
         for(String pkg : packages) {
             packageLookup.remove(pkg);
-            targetPackageLookup.put(pkg,resolvedModule.accessAs());
+            targetPackageLookup.put(pkg,resolveModuleAccess);
         }
     }
     

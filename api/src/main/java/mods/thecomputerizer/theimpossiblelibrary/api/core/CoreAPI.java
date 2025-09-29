@@ -7,6 +7,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCal
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.loader.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoad
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.NEOFORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.NAME;
 
 @Getter
 public abstract class CoreAPI {
@@ -374,6 +376,8 @@ public abstract class CoreAPI {
     protected final GameVersion version;
     protected final ModLoader modLoader;
     protected final Side side;
+    protected final Logger logger;
+    protected final boolean dev;
     private final Map<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> coreInfo;
     private final Set<CoreEntryPoint> coreInstances;
     private final Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> modInfo;
@@ -387,10 +391,11 @@ public abstract class CoreAPI {
         this.coreInstances = new HashSet<>();
         this.modInfo = new HashMap<>();
         this.injectedMods = new HashSet<>();
+        this.dev = DEV;
+        this.logger = buildLogger();
         INSTANCE = this;
-        TILRef.logInfo("I am running with `{}` in version `{}` on the `{}` side!",this.modLoader,
-                this.version,this.side);
-        TILDev.logDebug("Context ClassLoader is {}",Thread.currentThread().getContextClassLoader());
+        this.logger.info("Successfully initialized!");
+        if(this.dev) this.logger.debug("Context ClassLoader is {}",Hacks.contextClassLoader());
     }
     
     public void addSources(Set<String> sources) {
@@ -401,13 +406,19 @@ public abstract class CoreAPI {
         try {
             return addURLToClassLoader(loader,URI.create(url).toURL());
         } catch(Exception ex) {
-            TILRef.logError("Failed to add url from string ({}) to {}",url,loader,ex);
+            this.logger.error("Failed to add url from string ({}) to {}",url,loader,ex);
         }
         return false;
     }
     
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public abstract boolean addURLToClassLoader(ClassLoader loader, URL url);
+    
+    private Logger buildLogger() {
+        String logQualifiers = "["+this.version+"] ["+this.modLoader+"] ["+this.side+"]";
+        if(this.dev) logQualifiers+=" [DEV]";
+        return TILRef.createLogger(NAME+" CoreAPI "+logQualifiers);
+    }
     
     public abstract CommonEntryPoint getClientVersionHandler();
     public abstract CommonEntryPoint getCommonVersionHandler();
@@ -416,9 +427,10 @@ public abstract class CoreAPI {
     @IndirectCallers
     public <T> T getLaunguageProvider() {
         String name = ".core.TILLanguageProvider"+this.version.name.replace(".","_");
-        Class<T> foundClass = Hacks.findClass(getPackageName(BASE_PACKAGE)+name);
+        name = getPackageName(BASE_PACKAGE)+name;
+        Class<T> foundClass = Hacks.findClass(name);
         if(Objects.isNull(foundClass)) {
-            TILRef.logError("Failed to find language provider class! {}",getPackageName(BASE_PACKAGE)+name);
+            this.logger.error("Failed to find language provider class! {}",name);
             return null;
         }
         return Hacks.construct(foundClass);
@@ -428,7 +440,7 @@ public abstract class CoreAPI {
 
     public Map<String,MultiVersionModData> getModData(File root) {
         Map<String,MultiVersionModData> map = new HashMap<>();
-        TILRef.logInfo("Parsing data for {} mod candidate(s)",this.modInfo.size());
+        this.logger.info("Parsing data for {} mod candidate(s)",this.modInfo.size());
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionModInfo>> entry : this.modInfo.entrySet())
             for(MultiVersionModInfo info : entry.getValue())
                 map.putIfAbsent(info.getModID(),getModData(root,entry.getKey(),info));
@@ -442,9 +454,10 @@ public abstract class CoreAPI {
     @IndirectCallers
     public <T> T getModLocator(ClassLoader loader) {
         String name = ".core.MultiVersionModLocator"+this.version.name.replace(".","_");
-        Class<T> foundClass = Hacks.findClass(getPackageName(BASE_PACKAGE+name),loader);
+        name = getPackageName(BASE_PACKAGE)+name;
+        Class<T> foundClass = Hacks.findClass(name,loader);
         if(Objects.isNull(foundClass)) {
-            TILRef.logError("Failed to find mod locator class! {}",getPackageName(BASE_PACKAGE)+name);
+            this.logger.error("Failed to find mod locator class! {}",name);
             return null;
         }
         return Hacks.construct(foundClass,this);
@@ -461,7 +474,7 @@ public abstract class CoreAPI {
     public abstract void injectWrittenMod(Class<?> containerClass, String modid);
 
     public void instantiateCoreMods() {
-        TILRef.logInfo("Instantiating {} coremod candidate(s)",this.coreInfo.size());
+        this.logger.info("Instantiating {} coremod candidate(s)",this.coreInfo.size());
         for(Entry<MultiVersionModCandidate,Collection<MultiVersionCoreModInfo>> infos : this.coreInfo.entrySet()) {
             String path = infos.getKey().getFile().getName();
             instantiateCoreMods(path,infos.getValue());
@@ -471,14 +484,16 @@ public abstract class CoreAPI {
     @IndirectCallers
     public void instantiateCoreMods(String containerName, Collection<MultiVersionCoreModInfo> infos) {
         if(infos.isEmpty()) {
-            TILRef.logInfo("No coremods to instantiate for {}");
+            this.logger.info("No coremods to instantiate for {}");
             return;
         }
         for(MultiVersionCoreModInfo info : infos) {
             CoreEntryPoint core = info.getInstance();
             if(Objects.nonNull(core)) {
                 this.coreInstances.add(core);
-                TILRef.logInfo("Successfully instantiated coremod for {} as `{}`!",info.getModid(),info.getName());
+                String modid = info.getModid();
+                String name = info.getName();
+                this.logger.info("Successfully instantiated coremod for {} as `{}`!",modid,name);
             }
         }
     }
@@ -539,19 +554,25 @@ public abstract class CoreAPI {
     @SneakyThrows
     public void modConstructed(Package pkg, String modid, String name, String entryType) {
         if(TextHelper.isBlank(modid) || TextHelper.isBlank(name)) {
-            TILRef.logFatal("Found CommonEntryPoint instance in package `{}` with a blank modid or name! "+
+            this.logger.fatal("Found CommonEntryPoint instance in package `{}` with a blank modid or name! "+
                     "Things may break or crash very soon.",pkg);
             return;
         }
-        if(this.injectedMods.contains(modid)) TILRef.logInfo("Skipping extra entrypoint for `{}` in `{}`",modid,pkg);
-        else if(modConstructed(modid,verifyGeneratedClass(pkg,name,entryType)))
-            this.injectedMods.add(modid);
+        if(this.injectedMods.contains(modid))
+            this.logger.info("Skipping extra entrypoint in package {}",modid,pkg);
+        else {
+            Class<?> verified = verifyGeneratedClass(pkg,name.replace(" ",""),entryType);
+            if(modConstructed(modid,verified)) this.injectedMods.add(modid);
+        }
     }
 
     /**
      * Mod class
      */
-    protected abstract boolean modConstructed(String modid, Class<?> clazz);
+    protected boolean modConstructed(String modid, Class<?> clazz) {
+        this.logger.info("Successfully constructed mod class for {} as {}",modid,clazz);
+        return true;
+    }
     
     /**
      * Coremod pass-through stuff. Returns a new map.
