@@ -37,7 +37,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -457,50 +456,23 @@ public class WrapperHelper {
         final String name;
         final String[] aliases;
         final String wrapperMethod;
-        MethodHandle defaultHandle;
-        MethodHandle getterHandle;
         WrapperType(final String name, final String ... aliases) {
             this.name = name;
             this.aliases = aliases;
             this.wrapperMethod = wrapperMethodName(name);
         }
         
-        public MethodHandle defaultHandle() {
-            return getHandle(false);
-        }
-        
-        public MethodHandle getterHandle() {
-            return getHandle(true);
-        }
-        
-        private MethodHandle getHandle(boolean getter) {
-            if(getter) {
-                if(Objects.isNull(this.getterHandle))
-                    this.getterHandle = Hacks.getMethodHandle(WrapperHelper.class,this.wrapperMethod,
-                                                              Object.class,Function.class);
-                return this.getterHandle;
-            }
-            if(Objects.isNull(this.defaultHandle))
-                this.defaultHandle = Hacks.getMethodHandle(WrapperHelper.class,this.wrapperMethod,Object.class);
-            return this.defaultHandle;
-        }
-        
         public <A extends AbstractWrapped<?>> A wrap(@Nullable Object toWrap) {
-            try {
-                return GenericUtils.cast(defaultHandle().invoke(null,toWrap));
-            } catch(Throwable t) {
-                LOGGER.error("Failed to wrap {} using type {}",toWrap,this.name,t);
-            }
-            return null;
+            A wrapped = Hacks.invokeStatic(WrapperHelper.class,this.wrapperMethod,toWrap);
+            if(Objects.isNull(wrapped)) LOGGER.error("Failed to wrap {} using type {}",toWrap,this.name);
+            return wrapped;
         }
         
         public <A extends AbstractWrapped<?>> A wrap(@Nullable Object source, @Nullable Function<?,?> getter) {
-            try {
-                return GenericUtils.cast(getterHandle().invoke(null,source,getter));
-            } catch(Throwable t) {
-                LOGGER.error("Failed to wrap {} via getter {} using type {}",source,getter,this.name,t);
-            }
-            return null;
+            A wrapped = Hacks.invokeStatic(WrapperHelper.class,this.wrapperMethod,source,getter);
+            if(Objects.isNull(wrapped))
+                LOGGER.error("Failed to wrap {} via getter {} using type {}",source,getter,this.name);
+            return wrapped;
         }
         
         public <A extends AbstractWrapped<?>> Collection<A> wrapCollectionGetter(@Nullable Object source,

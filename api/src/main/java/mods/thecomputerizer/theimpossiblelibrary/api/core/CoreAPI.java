@@ -315,8 +315,8 @@ public abstract class CoreAPI {
             }
         }
         if(javaVersionCache>24) {
-            throw new RuntimeException("The Impossible Library is not yet compatible with Java "+javaVersionCache+"! "+
-                                       "Please ensure that you are using Java 24 or earlier.");
+            throw new RuntimeException(NAME+" is not yet compatible with Java "+javaVersionCache+"! Please ensure "+
+                                       "that you are using Java 24 or earlier.");
         }
         return javaVersionCache;
     }
