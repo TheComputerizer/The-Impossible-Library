@@ -1,7 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.common.entity;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
@@ -23,10 +22,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public abstract class Player1_16_5<P extends Player> extends PlayerAPI<P,EntityType<?>> {
 
@@ -36,10 +33,6 @@ public abstract class Player1_16_5<P extends Player> extends PlayerAPI<P,EntityT
     
     @Override public boolean canTarget() {
         return false;
-    }
-    
-    @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        return this.entity.getActiveEffects().stream().map(WrapperHelper::wrapEffectInstance).collect(Collectors.toList());
     }
     
     @Override public int getAir() {

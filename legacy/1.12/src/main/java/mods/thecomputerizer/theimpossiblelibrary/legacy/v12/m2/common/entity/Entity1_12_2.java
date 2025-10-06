@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -26,10 +25,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.ZERO;
 import static net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES;
@@ -53,10 +49,8 @@ public class Entity1_12_2 extends EntityAPI<Entity,EntityEntry> {
         return this.entity instanceof EntityLiving;
     }
     
-    @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        return this.entity instanceof EntityLivingBase ?
-                ((EntityLivingBase)this.entity).getActivePotionEffects().stream().map(WrapperHelper::wrapEffectInstance)
-                        .collect(Collectors.toList()) : Collections.emptyList();
+    @Override protected String getActiveEffectsMethodName() {
+        return "getActivePotionEffects";
     }
     
     @Override public EntityAPI<?,?> getAttackTarget() {

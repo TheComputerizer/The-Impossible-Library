@@ -2,6 +2,8 @@ package mods.thecomputerizer.theimpossiblelibrary.api.common.entity;
 
 import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryEntryAPI;
@@ -18,9 +20,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.AbstractWrapped;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static java.lang.Double.MAX_VALUE;
+import static mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper.WrapperType.EFFECT_INSTANCE;
 
 @Getter
 public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements RegistryEntryAPI<V> {
@@ -28,6 +33,7 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
     protected ResourceLocationAPI<?> registryName;
 
     protected E entity;
+    private boolean erroredEffects;
 
     protected EntityAPI(Object entity, Object type) {
         super(type);
@@ -45,7 +51,24 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
         return false;
     }
 
-    public abstract Collection<EffectInstanceAPI<?>> getActiveEffects();
+    @IndirectCallers
+    public Collection<EffectInstanceAPI<?>> getActiveEffects() {
+        if(this.erroredEffects || !isLiving()) return Collections.emptyList();
+        try {
+            Function<Object,Collection<?>> effectsGetter = e -> Hacks.invoke(e,getActiveEffectsMethodName());
+            return EFFECT_INSTANCE.wrapCollectionGetter(this.entity,effectsGetter);
+        } catch(Throwable t) {
+            TILRef.logError("Failed to retrieve active effects for entity! This check will be disable for the "+
+                            "current entity",t);
+            this.erroredEffects = true;
+        }
+        return Collections.emptyList();
+    }
+    
+    protected String getActiveEffectsMethodName() {
+        return "getActiveEffects";
+    }
+    
     @IndirectCallers public abstract EntityAPI<?,?> getAttackTarget();
     public abstract Box getBoundingBox();
     public abstract CompoundTagAPI<?> getData();

@@ -3,7 +3,6 @@ package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.common.entity;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.LivingEntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box;
@@ -25,9 +24,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.ZERO;
 
@@ -40,10 +37,9 @@ public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> 
     @Override public boolean canTarget() {
         return this.entity instanceof EntityLiving;
     }
-
-    @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        return this.entity.getActivePotionEffects().stream().map(WrapperHelper::wrapEffectInstance)
-                .collect(Collectors.toList());
+    
+    @Override protected String getActiveEffectsMethodName() {
+        return "getActivePotionEffects";
     }
     
     @Override public EntityAPI<?,?> getAttackTarget() {

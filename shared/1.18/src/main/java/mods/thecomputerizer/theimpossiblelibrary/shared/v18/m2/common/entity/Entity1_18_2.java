@@ -1,6 +1,5 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v18.m2.common.entity;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
@@ -23,10 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET;
 
@@ -38,11 +34,6 @@ public class Entity1_18_2 extends EntityAPI<Entity,EntityType<?>> {
     
     @Override public boolean canTarget() {
         return this.entity instanceof Mob;
-    }
-    
-    @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        return isLiving() ? ((LivingEntity)this.entity).getActiveEffects().stream()
-                .map(WrapperHelper::wrapEffectInstance).collect(Collectors.toList()) : Collections.emptyList();
     }
     
     @Override public EntityAPI<?,?> getAttackTarget() {

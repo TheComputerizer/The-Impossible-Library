@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -711,6 +712,15 @@ public class Hacks {
                 return null;
             }
         }
+    }
+    
+    public static MethodHandle getMethodHandle(Class<?> c, String methodName, Class<?> ... argTypes) {
+        try {
+            return Methods.findDirectHandle(c,methodName,argTypes);
+        } catch(Throwable t) {
+            LOGGER.error("Failed to get method hand for {}#{}({})",c,methodName,argTypes,t);
+        }
+        return null;
     }
     
     /**

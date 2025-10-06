@@ -4,7 +4,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAP
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.container.PlayerInventoryAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.common.effect.EffectInstanceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.EntityAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.entity.PlayerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
@@ -25,10 +24,8 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,EntityEntry> {
 
@@ -39,9 +36,9 @@ public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,E
     @Override public boolean canTarget() {
         return false;
     }
-
-    @Override public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        return this.entity.getActivePotionEffects().stream().map(WrapperHelper::wrapEffectInstance).collect(Collectors.toList());
+    
+    @Override protected String getActiveEffectsMethodName() {
+        return "getActivePotionEffects";
     }
 
     @Override public int getAir() {

@@ -22,22 +22,39 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.item.ItemStackAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.sound.SoundEventAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.structure.StructureAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.ExplosionAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.WorldAPI;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandle;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class WrapperHelper {
+    
+    static final Logger LOGGER = TILRef.createLogger("TIL Wrapper Helper");
+    
+    public static <W,G> Collector<W,G,Collection<W>> defaultCollector() {
+        return GenericUtils.cast(Collectors.toList());
+    }
     
     private static @Nullable Object fixGenericGetter(@Nullable Object source, @Nullable Function<?,?> getter) {
         return Objects.nonNull(source) && Objects.nonNull(getter) ? getter.apply(GenericUtils.cast(source)) : null;
@@ -45,6 +62,10 @@ public class WrapperHelper {
 
     public static WrapperAPI getAPI() {
         return TILRef.getCommonSubAPI(CommonAPI::getWrapper);
+    }
+    
+    public static WrapperType getWrapperType(String name) {
+        return WrapperType.getByName(name);
     }
     
     public static <A> AdvancementAPI<A> wrapAdvancement(@Nullable Object source, @Nullable Function<?,?> getter) {
@@ -77,6 +98,75 @@ public class WrapperHelper {
 
     public static <B> BlockEntityAPI<B,?> wrapBlockEntity(@Nullable Object blockentity) {
         return getAPI().wrapBlockEntity(blockentity);
+    }
+    
+    @IndirectCallers
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            String typeName) {
+        return wrapCollection(collection,getWrapperType(typeName));
+    }
+    
+    @IndirectCallers
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            String typeName, boolean mutableIfEmpty) {
+        return wrapCollection(collection,getWrapperType(typeName),mutableIfEmpty);
+    }
+    
+    @IndirectCallers
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            String typeName, @Nullable Collector<A,?,Collection<A>> collector) {
+        return wrapCollection(collection,getWrapperType(typeName),collector);
+    }
+    
+    @IndirectCallers
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            String typeName, boolean mutableIfEmpty, @Nullable Collector<A,?,Collection<A>> collector) {
+        return wrapCollection(collection,getWrapperType(typeName),mutableIfEmpty,collector);
+    }
+    
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            WrapperType type) {
+        return wrapCollection(collection,type::wrap);
+    }
+    
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            WrapperType type, boolean mutableIfEmpty) {
+        return wrapCollection(collection,type::wrap,mutableIfEmpty);
+    }
+    
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            WrapperType type, @Nullable Collector<A,?,Collection<A>> collector) {
+        return wrapCollection(collection,type::wrap,collector);
+    }
+    
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            WrapperType type, boolean mutableIfEmpty, @Nullable Collector<A,?,Collection<A>> collector) {
+        return wrapCollection(collection,type::wrap,mutableIfEmpty,collector);
+    }
+    
+    @IndirectCallers
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            Function<Object,A> wrapperFunc) {
+        return wrapCollection(collection,wrapperFunc,false,null);
+    }
+    
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            Function<Object,A> wrapperFunc, boolean mutableIfEmpty) {
+        return wrapCollection(collection,wrapperFunc,mutableIfEmpty,null);
+    }
+    
+    @IndirectCallers
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            Function<Object,A> wrapperFunc, @Nullable Collector<A,?,Collection<A>> collector) {
+        return wrapCollection(collection,wrapperFunc,false,collector);
+    }
+    
+    public static <A extends AbstractWrapped<?>> Collection<A> wrapCollection(@Nullable Collection<?> collection,
+            Function<Object,A> wrapperFunc, boolean mutableIfEmpty, @Nullable Collector<A,?,Collection<A>> collector) {
+        if(Objects.isNull(collection) || collection.isEmpty())
+            return mutableIfEmpty ? new ArrayList<>() : Collections.emptyList();
+        if(Objects.isNull(collector)) collector = defaultCollector();
+        return collection.stream().map(wrapperFunc).collect(collector);
     }
     
     public static <S> CommandSenderAPI<S> wrapCommandSender(@Nullable Object source, @Nullable Function<?,?> getter) {
@@ -123,6 +213,7 @@ public class WrapperHelper {
         return getAPI().wrapEffect(effect);
     }
     
+    @IndirectCallers
     public static <I> EffectInstanceAPI<I> wrapEffectInstance(@Nullable Object source, @Nullable Function<?,?> getter) {
         return wrapEffectInstance(fixGenericGetter(source,getter));
     }
@@ -292,5 +383,130 @@ public class WrapperHelper {
 
     public static <W> WorldAPI<W> wrapWorld(@Nullable Object world) {
         return getAPI().wrapWorld(world);
+    }
+    
+    public enum WrapperType {
+        
+        ADVANCEMENT("advancement"),
+        BIOME("biome"),
+        BLOCK("block"),
+        BLOCK_ENTITY("block_entity","blockentity"),
+        BLOCK_SNAPSHOT("snapshot","block_snapshot","blocksnapshot"),
+        BLOCK_STATE("state","block_state","blockstate"),
+        COMMAND_SENDER("command_sender","commandsender"),
+        CREATIVE_MODE_TAB("tab","creative_mode_tab","creative_modetab","creativemode_tab",
+                          "creativemodetab","creative_tab","creativetab"),
+        DAMAGE("damage"),
+        EFFECT("effect"),
+        EFFECT_INSTANCE("effect_instance","effectinstance"),
+        ENTITY("entity"),
+        EXPLOSION("explosion"),
+        INVENTORY("inventory"),
+        ITEM("item"),
+        ITEM_STACK("item_stack","itemstack"),
+        LIVING_ENTITY("living_entity","livingentity","living"),
+        MATERIAL("material"),
+        PLAYER("player","server_player","serverplayer","remote_player","remoteplayer","local_player",
+               "localplayer","client_player","clientplayer"),
+        PLAYER_INVENTORY("player_inventory","playerinventory"),
+        POTION("potion"),
+        POSITION("position","block_position","blockposition","block_pos","blockpos","pos"),
+        RESOURCE_LOCATION("resource_location","resourcelocation","resource_name","resourcename",
+                          "resource","name","identifier","id"),
+        SOUND_EVENT("sound_event","soundevent"),
+        SOUND_INSTANCE("sound_instance","soundinstance","sound"),
+        STRUCTURE("structure","structure_feature","structurefeature","configured_structure",
+                  "configuredstructure","configured_structure_feature","configured_structurefeature",
+                  "configuredstructure_feature","configuredstructurefeature"),
+        WORLD("world","level","server_world","serverworld","server_level","serverlevel","remote_world",
+              "remoteworld","remote_level","remotelevel","local_world","localworld","local_level","locallevel",
+              "client_world","clientworld","client_level","clientlevel");
+        
+        static final Map<String,WrapperType> ALIAS_MAP = new HashMap<>();
+        
+        /**
+         * Returns the first WrapperType that has a name or alias matching the input or null if nothing is found
+         */
+        public static WrapperType getByName(String alias) {
+            if(Objects.isNull(alias) || alias.isEmpty()) return null;
+            if(ALIAS_MAP.containsKey(alias)) return ALIAS_MAP.get(alias);
+            for(WrapperType type : values()) { //Check only the names first
+                if(type.name.equals(alias)) {
+                    ALIAS_MAP.put(alias,type);
+                    return type;
+                }
+            }
+            for(WrapperType type : values()) { //Check the aliases after all names have been checked
+                for(String typeAlias : type.aliases) {
+                    if(typeAlias.equals(alias)) {
+                        ALIAS_MAP.put(alias,type);
+                        return type;
+                    }
+                }
+            }
+            return null; //No names or aliases match
+        }
+        
+        static String wrapperMethodName(final String name) {
+            if(!name.contains("_")) return "wrap"+TextHelper.capitalize(name);
+            StringBuilder methodName = new StringBuilder("wrap");
+            for(String part : name.split("_")) methodName.append(TextHelper.capitalize(part));
+            return methodName.toString();
+        }
+        
+        final String name;
+        final String[] aliases;
+        final String wrapperMethod;
+        MethodHandle defaultHandle;
+        MethodHandle getterHandle;
+        WrapperType(final String name, final String ... aliases) {
+            this.name = name;
+            this.aliases = aliases;
+            this.wrapperMethod = wrapperMethodName(name);
+        }
+        
+        public MethodHandle defaultHandle() {
+            return getHandle(false);
+        }
+        
+        public MethodHandle getterHandle() {
+            return getHandle(true);
+        }
+        
+        private MethodHandle getHandle(boolean getter) {
+            if(getter) {
+                if(Objects.isNull(this.getterHandle))
+                    this.getterHandle = Hacks.getMethodHandle(WrapperHelper.class,this.wrapperMethod,
+                                                              Object.class,Function.class);
+                return this.getterHandle;
+            }
+            if(Objects.isNull(this.defaultHandle))
+                this.defaultHandle = Hacks.getMethodHandle(WrapperHelper.class,this.wrapperMethod,Object.class);
+            return this.defaultHandle;
+        }
+        
+        public <A extends AbstractWrapped<?>> A wrap(@Nullable Object toWrap) {
+            try {
+                return GenericUtils.cast(defaultHandle().invoke(null,toWrap));
+            } catch(Throwable t) {
+                LOGGER.error("Failed to wrap {} using type {}",toWrap,this.name,t);
+            }
+            return null;
+        }
+        
+        public <A extends AbstractWrapped<?>> A wrap(@Nullable Object source, @Nullable Function<?,?> getter) {
+            try {
+                return GenericUtils.cast(getterHandle().invoke(null,source,getter));
+            } catch(Throwable t) {
+                LOGGER.error("Failed to wrap {} via getter {} using type {}",source,getter,this.name,t);
+            }
+            return null;
+        }
+        
+        public <A extends AbstractWrapped<?>> Collection<A> wrapCollectionGetter(@Nullable Object source,
+                @Nullable Function<Object,Collection<?>> getter) {
+            Collection<?> collection = Objects.nonNull(source) && Objects.nonNull(getter) ? getter.apply(source) : null;
+            return wrapCollection(collection,this);
+        }
     }
 }
