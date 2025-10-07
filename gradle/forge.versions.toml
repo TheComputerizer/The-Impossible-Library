@@ -38,6 +38,30 @@
     mods-1_21_1-implementation = [ 'bookshelf-1_21_1', 'configured-1_21_1', 'coroutil-1_21_1', 'dataanchor-1_21_1',
         'glitchcore-1_21_1', 'infernalmobs-1_21_1', 'sereneseasons-1_21_1' ]
     mods-1_21_1-runtime = [ 'corgilib-1_21_1', 'enhancedcelestials-1_21_1', 'jei-1_21_1' ]
+    mods-1_21_3-compile = [ 'sereneseasons-1_21_3' ]
+    mods-1_21_3-implementation = [ 'glitchcore-1_21_3' ]
+    mods-1_21_3-runtime = [ 'sereneseasons-1_21_3' ]
+    mods-1_21_4-compile = [ 'sereneseasons-1_21_4' ]
+    mods-1_21_4-implementation = [ 'glitchcore-1_21_4' ]
+    mods-1_21_4-runtime = [ 'sereneseasons-1_21_4' ]
+    mods-1_21_5-compile = [ 'sereneseasons-1_21_5' ]
+    mods-1_21_5-implementation = [ 'glitchcore-1_21_5' ]
+    mods-1_21_5-runtime = [ 'sereneseasons-1_21_5' ]
+    mods-1_21_6-compile = [ 'sereneseasons-1_21_6' ]
+    mods-1_21_6-implementation = [ 'glitchcore-1_21_6' ]
+    mods-1_21_6-runtime = [ 'sereneseasons-1_21_6' ]
+    mods-1_21_7-compile = [ 'sereneseasons-1_21_7' ]
+    mods-1_21_7-implementation = [ 'glitchcore-1_21_7' ]
+    mods-1_21_7-runtime = [ 'sereneseasons-1_21_7' ]
+    mods-1_21_8-compile = [ 'sereneseasons-1_21_8' ]
+    mods-1_21_8-implementation = [ 'glitchcore-1_21_8' ]
+    mods-1_21_8-runtime = [ 'sereneseasons-1_21_8' ]
+    mods-1_21_9-compile = [ 'sereneseasons-1_21_9' ]
+    mods-1_21_9-implementation = [ 'glitchcore-1_21_9' ]
+    mods-1_21_9-runtime = [ 'sereneseasons-1_21_9' ]
+    mods-1_21_10-compile = []
+    mods-1_21_10-implementation = []
+    mods-1_21_10-runtime = []
 
 [libraries]
     architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }
@@ -109,10 +133,17 @@
     gamestages-1_19_4 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.19.4', version.ref = 'gamestages-1_19_4' }
     gamestages-1_20_1 = { group = 'net.darkhax.gamestages', name = 'GameStages-Forge-1.20.1', version.ref = 'gamestages-1_20_1' }
 
-    glitchcore-1_20_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_1' }
-    glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
-    glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
-    glitchcore-1_21_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_21_1' }
+    glitchcore-1_20_1 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_20_1' }
+    glitchcore-1_20_4 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_20_4' }
+    glitchcore-1_20_6 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_20_6' }
+    glitchcore-1_21_1 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_1' }
+    glitchcore-1_21_3 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_3' }
+    glitchcore-1_21_4 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_4' }
+    glitchcore-1_21_5 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_5' }
+    glitchcore-1_21_6 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_6' }
+    glitchcore-1_21_7 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_7' }
+    glitchcore-1_21_8 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_8' }
+    glitchcore-1_21_9 = { group = 'com.github.glitchfiend', name = 'GlitchCore-forge', version.ref = 'glitchcore-1_21_9' }
 
     infernalmobs-1_18_2 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_18_2' }
     infernalmobs-1_19_2 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_19_2' }
@@ -139,6 +170,13 @@
     sereneseasons-1_20_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_4' }
     sereneseasons-1_20_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_6' }
     sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
+    sereneseasons-1_21_3 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_3' }
+    sereneseasons-1_21_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_4' }
+    sereneseasons-1_21_5 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_5' }
+    sereneseasons-1_21_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_6' }
+    sereneseasons-1_21_7 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_7' }
+    sereneseasons-1_21_8 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_8' }
+    sereneseasons-1_21_9 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_9' }
 
     structuregel-1_16_5 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_16_5' }
     structuregel-1_18_2 = { group = 'curse.maven', name = 'structure-gel-378802', version.ref = 'structuregel-1_18_2' }
@@ -155,17 +193,18 @@
     forge_1_16_5 = '36.2.42'
     forge_1_18_2 = '40.3.11'
     forge_1_19_2 = '43.5.1'
-    forge_1_19_4 = '45.4.1'
-    forge_1_20_1 = '47.4.6'
-    forge_1_20_4 = '49.2.0'
-    forge_1_20_6 = '50.2.1'
-    forge_1_21_1 = '52.1.3'
-    forge_1_21_3 = '53.1.2'
-    forge_1_21_4 = '54.1.6'
-    forge_1_21_5 = '55.0.24'
+    forge_1_19_4 = '45.4.2'
+    forge_1_20_1 = '47.4.9'
+    forge_1_20_4 = '49.2.2'
+    forge_1_20_6 = '50.2.2'
+    forge_1_21_1 = '52.1.5'
+    forge_1_21_3 = '53.1.4'
+    forge_1_21_4 = '54.1.8'
+    forge_1_21_5 = '55.1.2'
     forge_1_21_6 = '56.0.9'
     forge_1_21_7 = '57.0.3'
-    forge_1_21_8 = '58.0.4'
+    forge_1_21_8 = '58.1.7'
+    forge_1_21_9 = '59.0.5'
 
     # Curseforge Dependency Versions
     betterweather-1_16_5 = '3420517'
@@ -215,11 +254,6 @@
     enhancedcelestials-1_20_1 = '6318263'
     enhancedcelestials-1_21_1 = '6318196'
 
-    glitchcore-1_20_1 = '5787839'
-    glitchcore-1_20_4 = '5088441'
-    glitchcore-1_20_6 = '5352263'
-    glitchcore-1_21_1 = '5660738'
-
     infernalmobs-1_18_2 = '4149699'
     infernalmobs-1_19_2 = '4375427'
     infernalmobs-1_19_4 = '4721549'
@@ -236,6 +270,13 @@
     sereneseasons-1_20_4 = '5206531'
     sereneseasons-1_20_6 = '5420642'
     sereneseasons-1_21_1 = '6182592'
+    sereneseasons-1_21_3 = '6184005'
+    sereneseasons-1_21_4 = '6299862'
+    sereneseasons-1_21_5 = '6747294'
+    sereneseasons-1_21_6 = '6682332'
+    sereneseasons-1_21_7 = '6747298'
+    sereneseasons-1_21_8 = '6812963'
+    sereneseasons-1_21_9 = '7064161'
 
     structuregel-1_16_5 = '3498310'
     structuregel-1_18_2 = '4804138'
@@ -247,6 +288,7 @@
     weather2-1_18_2 = '4426524'
     weather2-1_20_1 = '5244118'
 
+    # Non Curseforge Dependency Versions
     architectury-1_16_5 = '1.32.68+forge'
     architectury-1_18_2 = '4.12.94+forge'
     architectury-1_19_2 = '6.6.92+forge'
@@ -268,11 +310,23 @@
     gamestages-1_19_4 = '13.0.1'
     gamestages-1_20_1 = '15.0.2'
 
+    glitchcore-1_20_1 = '1.20.1-0.0.1.1'
+    glitchcore-1_20_4 = '1.20.4-1.0.0.59'
+    glitchcore-1_20_6 = '1.20.6-1.1.0.10'
+    glitchcore-1_21_1 = '1.21.1-2.1.0.0'
+    glitchcore-1_21_3 = '1.21.3-2.2.0.5'
+    glitchcore-1_21_4 = '1.21.4-2.3.0.4'
+    glitchcore-1_21_5 = '1.21.5-2.5.0.1'
+    glitchcore-1_21_6 = '1.21.6-2.6.0.5'
+    glitchcore-1_21_7 = '1.21.7-2.7.0.0'
+    glitchcore-1_21_8 = '1.21.8-2.8.0.0'
+    glitchcore-1_21_9 = '1.21.9-2.9.0.1'
+
     jei-1_16_5 = '7.8.0.1013'
     jei-1_18_2 = '10.2.1.1009'
     jei-1_19_2 = '11.8.1.1034'
     jei-1_19_4 = '13.1.0.19'
-    jei-1_20_1 = '15.20.0.113'
+    jei-1_20_1 = '15.20.0.116'
     jei-1_20_4 = '17.3.1.5'
     jei-1_20_6 = '18.0.0.66'
-    jei-1_21_1 = '19.22.1.316'
+    jei-1_21_1 = '19.25.0.322'

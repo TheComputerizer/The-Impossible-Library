@@ -31,6 +31,30 @@
         'sereneseasons-1_21_1' ]
     mods-1_21_1-runtime = [ 'architectury-1_21_1', 'corgilib-1_21_1', 'forgeconfig-1_21_1', 'jei-1_21_1',
         'nightconfig-1_21_1', 'typetools' ]
+    mods-1_21_3-compile = [ 'sereneseasons-1_21_3' ]
+    mods-1_21_3-implementation = [ 'glitchcore-1_21_3' ]
+    mods-1_21_3-runtime = [ 'sereneseasons-1_21_3' ]
+    mods-1_21_4-compile = [ 'sereneseasons-1_21_4' ]
+    mods-1_21_4-implementation = [ 'glitchcore-1_21_4' ]
+    mods-1_21_4-runtime = [ 'sereneseasons-1_21_4' ]
+    mods-1_21_5-compile = [ 'sereneseasons-1_21_5' ]
+    mods-1_21_5-implementation = [ 'glitchcore-1_21_5' ]
+    mods-1_21_5-runtime = [ 'sereneseasons-1_21_5' ]
+    mods-1_21_6-compile = [ 'sereneseasons-1_21_6' ]
+    mods-1_21_6-implementation = [ 'glitchcore-1_21_6' ]
+    mods-1_21_6-runtime = [ 'sereneseasons-1_21_6' ]
+    mods-1_21_7-compile = [ 'sereneseasons-1_21_7' ]
+    mods-1_21_7-implementation = [ 'glitchcore-1_21_7' ]
+    mods-1_21_7-runtime = [ 'sereneseasons-1_21_7' ]
+    mods-1_21_8-compile = [ 'sereneseasons-1_21_8' ]
+    mods-1_21_8-implementation = [ 'glitchcore-1_21_8' ]
+    mods-1_21_8-runtime = [ 'sereneseasons-1_21_8' ]
+    mods-1_21_9-compile = [ 'sereneseasons-1_21_9' ]
+    mods-1_21_9-implementation = [ 'glitchcore-1_21_9' ]
+    mods-1_21_9-runtime = [ 'sereneseasons-1_21_9' ]
+    mods-1_21_10-compile = []
+    mods-1_21_10-implementation = []
+    mods-1_21_10-runtime = []
 
 [libraries]
     architectury-1_16_5 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_16_5' }
@@ -84,10 +108,17 @@
     forgeconfig-1_20_6 = { group = 'curse.maven', name = 'forgeconfigapi-547434', version.ref = 'forgeconfig-1_20_6' }
     forgeconfig-1_21_1 = { group = 'curse.maven', name = 'forgeconfigapi-547434', version.ref = 'forgeconfig-1_21_1' }
 
-    glitchcore-1_20_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_1' }
-    glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
-    glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
-    glitchcore-1_21_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_21_1' }
+    glitchcore-1_20_1 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_20_1' }
+    glitchcore-1_20_4 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_20_4' }
+    glitchcore-1_20_6 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_20_6' }
+    glitchcore-1_21_1 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_1' }
+    glitchcore-1_21_3 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_3' }
+    glitchcore-1_21_4 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_4' }
+    glitchcore-1_21_5 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_5' }
+    glitchcore-1_21_6 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_6' }
+    glitchcore-1_21_7 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_7' }
+    glitchcore-1_21_8 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_8' }
+    glitchcore-1_21_9 = { group = 'com.github.glitchfiend', name = 'GlitchCore-fabric', version.ref = 'glitchcore-1_21_9' }
 
     jei-1_18_2 = { group = 'mezz.jei', name = 'jei-1.18.2-fabric', version.ref = 'jei-1_18_2' }
     jei-1_19_2 = { group = 'mezz.jei', name = 'jei-1.19.2-fabric', version.ref = 'jei-1_19_2' }
@@ -117,6 +148,13 @@
     sereneseasons-1_20_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_4' }
     sereneseasons-1_20_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_6' }
     sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
+    sereneseasons-1_21_3 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_3' }
+    sereneseasons-1_21_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_4' }
+    sereneseasons-1_21_5 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_5' }
+    sereneseasons-1_21_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_6' }
+    sereneseasons-1_21_7 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_7' }
+    sereneseasons-1_21_8 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_8' }
+    sereneseasons-1_21_9 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_9' }
 
     typetools = { group = 'net.jodah', name = 'typetools', version.ref = 'typetools' }
 
@@ -133,17 +171,18 @@
     api-1_19_4 = '0.87.2+1.19.4'
     api-1_20 = '0.92.6+1.20.1'
     api-1_20_1 = '0.92.6+1.20.1'
-    api-1_20_4 = '0.97.2+1.20.4'
+    api-1_20_4 = '0.97.3+1.20.4'
     api-1_20_6 = '0.100.8+1.20.6'
-    api-1_21 = '0.116.4+1.21.1'
-    api-1_21_1 = '0.116.4+1.21.1'
+    api-1_21 = '0.116.6+1.21.1'
+    api-1_21_1 = '0.116.6+1.21.1'
     api-1_21_3 = '0.114.1+1.21.3'
-    api-1_21_4 = '0.119.3+1.21.4'
-    api-1_21_5 = '0.128.1+1.21.5'
+    api-1_21_4 = '0.119.4+1.21.4'
+    api-1_21_5 = '0.128.2+1.21.5'
     api-1_21_6 = '0.128.2+1.21.6'
     api-1_21_7 = '0.129.0+1.21.7'
-    api-1_21_8 = '0.131.0+1.21.8'
-    api-1_21_9 = '0.131.0+1.21.9'
+    api-1_21_8 = '0.134.0+1.21.8'
+    api-1_21_9 = '0.134.0+1.21.9'
+    api-1_21_10 = '0.134.1+1.21.10'
 
     # Curseforge Dependency Versions
     configured-1_20_1 = '5180902'
@@ -172,15 +211,17 @@
     forgeconfig-1_20_6 = '5397254'
     forgeconfig-1_21_1 = '6798213'
 
-    glitchcore-1_20_1 = '5787838'
-    glitchcore-1_20_4 = '5088443'
-    glitchcore-1_20_6 = '5352265'
-    glitchcore-1_21_1 = '5660741'
-
     sereneseasons-1_20_1 = '6398228'
     sereneseasons-1_20_4 = '5206535'
     sereneseasons-1_20_6 = '5420643'
     sereneseasons-1_21_1 = '6182595'
+    sereneseasons-1_21_3 = '6184007'
+    sereneseasons-1_21_4 = '6299864'
+    sereneseasons-1_21_5 = '6747295'
+    sereneseasons-1_21_6 = '6682334'
+    sereneseasons-1_21_7 = '6747300'
+    sereneseasons-1_21_8 = '6812964'
+    sereneseasons-1_21_9 = '7064164'
 
     # Non Curseforge Dependency Versions
     architectury-1_16_5 = '1.32.68+fabric'
@@ -208,13 +249,25 @@
     cloth-1_20_6 = '14.0.139+fabric'
     cloth-1_21_1 = '15.0.140+fabric'
 
+    glitchcore-1_20_1 = '1.20.1-0.0.1.1'
+    glitchcore-1_20_4 = '1.20.4-1.0.0.59'
+    glitchcore-1_20_6 = '1.20.6-1.1.0.10'
+    glitchcore-1_21_1 = '1.21.1-2.1.0.0'
+    glitchcore-1_21_3 = '1.21.3-2.2.0.5'
+    glitchcore-1_21_4 = '1.21.4-2.3.0.4'
+    glitchcore-1_21_5 = '1.21.5-2.5.0.1'
+    glitchcore-1_21_6 = '1.21.6-2.6.0.5'
+    glitchcore-1_21_7 = '1.21.7-2.7.0.0'
+    glitchcore-1_21_8 = '1.21.8-2.8.0.0'
+    glitchcore-1_21_9 = '1.21.9-2.9.0.1'
+
     jei-1_18_2 = '10.2.1.1009'
     jei-1_19_2 = '11.8.1.1034'
     jei-1_19_4 = '13.1.0.19'
-    jei-1_20_1 = '15.20.0.113'
+    jei-1_20_1 = '15.20.0.116'
     jei-1_20_4 = '17.3.1.5'
     jei-1_20_6 = '18.0.0.66'
-    jei-1_21_1 = '19.22.1.316'
+    jei-1_21_1 = '19.25.0.322'
 
     modmenu-1_16_5 = '1.16.23'
     modmenu-1_18_2 = '3.2.5'

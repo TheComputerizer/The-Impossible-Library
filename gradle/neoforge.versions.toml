@@ -14,6 +14,30 @@
     mods-1_21_1-implementation = [ 'configured-1_21_1', 'coroutil-1_21_1', 'infernalmobs-1_21_1' ]
     mods-1_21_1-runtime = [ 'architectury-1_21_1', 'bookshelf-1_21_1', 'corgilib-1_21_1', 'dataanchor-1_21_1',
         'enhancedcelestials-1_21_1', 'glitchcore-1_21_1', 'jei-1_21_1', 'sereneseasons-1_21_1' ]
+    mods-1_21_3-compile = [ 'sereneseasons-1_21_3' ]
+    mods-1_21_3-implementation = [ 'glitchcore-1_21_3' ]
+    mods-1_21_3-runtime = [ 'sereneseasons-1_21_3' ]
+    mods-1_21_4-compile = [ 'sereneseasons-1_21_4' ]
+    mods-1_21_4-implementation = [ 'glitchcore-1_21_4' ]
+    mods-1_21_4-runtime = [ 'jei-1_21_4', 'sereneseasons-1_21_4' ]
+    mods-1_21_5-compile = [ 'sereneseasons-1_21_5' ]
+    mods-1_21_5-implementation = [ 'glitchcore-1_21_5' ]
+    mods-1_21_5-runtime = [ 'jei-1_21_5', 'sereneseasons-1_21_5' ]
+    mods-1_21_6-compile = [ 'sereneseasons-1_21_6' ]
+    mods-1_21_6-implementation = [ 'glitchcore-1_21_6' ]
+    mods-1_21_6-runtime = [ 'sereneseasons-1_21_6' ]
+    mods-1_21_7-compile = [ 'sereneseasons-1_21_7' ]
+    mods-1_21_7-implementation = [ 'glitchcore-1_21_7' ]
+    mods-1_21_7-runtime = [ 'jei-1_21_7', 'sereneseasons-1_21_7' ]
+    mods-1_21_8-compile = [ 'sereneseasons-1_21_8' ]
+    mods-1_21_8-implementation = [ 'glitchcore-1_21_8' ]
+    mods-1_21_8-runtime = [ 'jei-1_21_8', 'sereneseasons-1_21_8' ]
+    mods-1_21_9-compile = [ 'sereneseasons-1_21_9' ]
+    mods-1_21_9-implementation = [ 'glitchcore-1_21_9' ]
+    mods-1_21_9-runtime = [ 'jei-1_21_9', 'sereneseasons-1_21_9' ]
+    mods-1_21_10-compile = []
+    mods-1_21_10-implementation = []
+    mods-1_21_10-runtime = []
 
 [libraries]
     architectury-1_20_4 = { group = 'maven.modrinth', name = 'architectury-api', version.ref = 'architectury-1_20_4' }
@@ -38,9 +62,16 @@
     enhancedcelestials-1_20_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_20_1' }
     enhancedcelestials-1_21_1 = { group = 'curse.maven', name = 'enhancedcelestials-438447', version.ref = 'enhancedcelestials-1_21_1' }
 
-    glitchcore-1_20_4 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_4' }
-    glitchcore-1_20_6 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_20_6' }
-    glitchcore-1_21_1 = { group = 'curse.maven', name = 'glitchcore-955399', version.ref = 'glitchcore-1_21_1' }
+    glitchcore-1_20_4 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_20_4' }
+    glitchcore-1_20_6 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_20_6' }
+    glitchcore-1_21_1 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_1' }
+    glitchcore-1_21_3 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_3' }
+    glitchcore-1_21_4 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_4' }
+    glitchcore-1_21_5 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_5' }
+    glitchcore-1_21_6 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_6' }
+    glitchcore-1_21_7 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_7' }
+    glitchcore-1_21_8 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_8' }
+    glitchcore-1_21_9 = { group = 'com.github.glitchfiend', name = 'GlitchCore-neoforge', version.ref = 'glitchcore-1_21_9' }
 
     infernalmobs-1_20_4 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_20_4' }
     infernalmobs-1_20_6 = { group = 'curse.maven', name = 'infernalmobs-227875', version.ref = 'infernalmobs-1_20_6' }
@@ -49,23 +80,37 @@
     jei-1_20_4 = { group = 'mezz.jei', name = 'jei-1.20.4-neoforge', version.ref = 'jei-1_20_4' }
     jei-1_20_6 = { group = 'mezz.jei', name = 'jei-1.20.6-neoforge', version.ref = 'jei-1_20_6' }
     jei-1_21_1 = { group = 'mezz.jei', name = 'jei-1.21.1-neoforge', version.ref = 'jei-1_21_1' }
+    jei-1_21_4 = { group = 'mezz.jei', name = 'jei-1.21.4-neoforge', version.ref = 'jei-1_21_4' }
+    jei-1_21_5 = { group = 'mezz.jei', name = 'jei-1.21.5-neoforge', version.ref = 'jei-1_21_5' }
+    jei-1_21_7 = { group = 'mezz.jei', name = 'jei-1.21.7-neoforge', version.ref = 'jei-1_21_7' }
+    jei-1_21_8 = { group = 'mezz.jei', name = 'jei-1.21.8-neoforge', version.ref = 'jei-1_21_8' }
+    jei-1_21_9 = { group = 'mezz.jei', name = 'jei-1.21.9-neoforge', version.ref = 'jei-1_21_9' }
 
     sereneseasons-1_20_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_4' }
     sereneseasons-1_20_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_20_6' }
     sereneseasons-1_21_1 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_1' }
+    sereneseasons-1_21_3 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_3' }
+    sereneseasons-1_21_4 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_4' }
+    sereneseasons-1_21_5 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_5' }
+    sereneseasons-1_21_6 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_6' }
+    sereneseasons-1_21_7 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_7' }
+    sereneseasons-1_21_8 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_8' }
+    sereneseasons-1_21_9 = { group = 'curse.maven', name = 'sereneseasons-291874', version.ref = 'sereneseasons-1_21_9' }
 
 [versions]
     # Core & Loader Versions
     neoforge_1_20_1 = '47.1.106'
-    neoforge_1_20_4 = '249'
+    neoforge_1_20_4 = '250'
     neoforge_1_20_6 = '138'
-    neoforge_1_21_1 = '206'
-    neoforge_1_21_3 = '87'
-    neoforge_1_21_4 = '149'
-    neoforge_1_21_5 = '90'
+    neoforge_1_21_1 = '209'
+    neoforge_1_21_3 = '93'
+    neoforge_1_21_4 = '154'
+    neoforge_1_21_5 = '95'
     neoforge_1_21_6 = '20-beta'
     neoforge_1_21_7 = '25-beta'
-    neoforge_1_21_8 = '27'
+    neoforge_1_21_8 = '47'
+    neoforge_1_21_9 = '16-beta'
+    neoforge_1_21_10 = '0-beta'
 
     # Curseforge Dependency Versions
     configured-1_20_4 = '5105024'
@@ -83,10 +128,6 @@
     enhancedcelestials-1_20_1 = '6318263'
     enhancedcelestials-1_21_1 = '6849257'
 
-    glitchcore-1_20_4 = '5088442'
-    glitchcore-1_20_6 = '5352264'
-    glitchcore-1_21_1 = '5660740'
-
     infernalmobs-1_20_4 = '5151259'
     infernalmobs-1_20_6 = '5329764'
     infernalmobs-1_21_1 = '5798525'
@@ -94,6 +135,13 @@
     sereneseasons-1_20_4 = '5206533'
     sereneseasons-1_20_6 = '5420644'
     sereneseasons-1_21_1 = '6182596'
+    sereneseasons-1_21_3 = '6184006'
+    sereneseasons-1_21_4 = '6299863'
+    sereneseasons-1_21_5 = '6747297'
+    sereneseasons-1_21_6 = '6682333'
+    sereneseasons-1_21_7 = '6747299'
+    sereneseasons-1_21_8 = '6812965'
+    sereneseasons-1_21_9 = '7064165'
 
     # Non Curseforge Dependency Versions
     architectury-1_20_4 = '11.1.17+neoforge'
@@ -103,6 +151,22 @@
     bookshelf-1_20_4 = '23.1.11'
     bookshelf-1_21_1 = '21.1.69'
 
+    glitchcore-1_20_4 = '1.20.4-1.0.0.59'
+    glitchcore-1_20_6 = '1.20.6-1.1.0.10'
+    glitchcore-1_21_1 = '1.21.1-2.1.0.0'
+    glitchcore-1_21_3 = '1.21.3-2.2.0.5'
+    glitchcore-1_21_4 = '1.21.4-2.3.0.4'
+    glitchcore-1_21_5 = '1.21.5-2.5.0.1'
+    glitchcore-1_21_6 = '1.21.6-2.6.0.5'
+    glitchcore-1_21_7 = '1.21.7-2.7.0.0'
+    glitchcore-1_21_8 = '1.21.8-2.8.0.0'
+    glitchcore-1_21_9 = '1.21.9-2.9.0.1'
+
     jei-1_20_4 = '17.3.1.5'
     jei-1_20_6 = '18.0.0.66'
-    jei-1_21_1 = '19.22.1.316'
+    jei-1_21_1 = '19.25.0.322'
+    jei-1_21_4 = '20.0.0.4'
+    jei-1_21_5 = '21.4.0.27'
+    jei-1_21_7 = '23.1.0.8'
+    jei-1_21_8 = '24.2.0.6'
+    jei-1_21_9 = '25.0.1.4'
