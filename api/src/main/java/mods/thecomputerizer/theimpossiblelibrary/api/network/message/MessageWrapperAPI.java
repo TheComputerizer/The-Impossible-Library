@@ -38,6 +38,13 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
         return Objects.nonNull(dir) ? decoder(dir.getDirection()) : buf -> null;
     }
     
+    public static <P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder() {
+        return buf -> {
+            final Function<B,MessageWrapperAPI<P,C>> wrappedDecoder = decoder(NetworkHelper.readDir(buf));
+            return wrappedDecoder.apply(buf);
+        };
+    }
+    
     public static <DIR,P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder(final DIR dir) {
         if(Objects.isNull(dir)) return buf -> null;
         return buf -> GenericUtils.cast(getInstance(dir,buf));

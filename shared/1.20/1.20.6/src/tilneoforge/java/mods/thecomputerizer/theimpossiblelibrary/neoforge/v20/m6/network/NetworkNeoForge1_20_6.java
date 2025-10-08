@@ -5,6 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.network.Network1_20_6;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
@@ -14,11 +15,13 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 import static mods.thecomputerizer.theimpossiblelibrary.neoforge.v20.m6.network.MessageWrapperNeoForge1_20_6.TYPE;
 import static net.minecraft.network.protocol.PacketFlow.CLIENTBOUND;
 import static net.minecraft.network.protocol.PacketFlow.SERVERBOUND;
+import static net.neoforged.neoforge.network.registration.HandlerThread.NETWORK;
 
 /**
  * Fabric doesn't have mod specific network channels or network direction API classes...
@@ -27,7 +30,8 @@ public class NetworkNeoForge1_20_6 extends Network1_20_6<Object,Object> {
     
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
         TILRef.logInfo("Registering packet payloads");
-        event.registrar(MODID).commonBidirectional(TYPE,streamCodec(),MessageWrapperNeoForge1_20_6::handle);
+        event.registrar(MODID).executesOn(NETWORK)
+                .playBidirectional(TYPE,streamCodec(),MessageWrapperNeoForge1_20_6::handle);
     }
     
     static <B extends ByteBuf> StreamCodec<B,MessageWrapperNeoForge1_20_6> streamCodec() {
@@ -91,24 +95,22 @@ public class NetworkNeoForge1_20_6 extends Network1_20_6<Object,Object> {
         PacketDistributor.sendToServer((MessageWrapperNeoForge1_20_6)message);
     }
     
-    @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Object dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperNeoForge1_20_6.getInstance();
-        wrapper.setMessage(dir,message);
+        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapperNeoForge1_20_6.getInstance());
+        if(Objects.nonNull(wrapper)) wrapper.setMessage(dir,message);
         return wrapper;
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperNeoForge1_20_6.getInstance();
-        wrapper.setMessages(dir,messages);
+    @SafeVarargs
+    @Override public final <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
+        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapperNeoForge1_20_6.getInstance());
+        if(Objects.nonNull(wrapper)) wrapper.setMessages(dir,messages);
         return wrapper;
     }
     
-    @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperNeoForge1_20_6.getInstance();
-        wrapper.setMessages(dir,messages);
+        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapperNeoForge1_20_6.getInstance());
+        if(Objects.nonNull(wrapper)) wrapper.setMessages(dir, messages);
         return wrapper;
     }
 }

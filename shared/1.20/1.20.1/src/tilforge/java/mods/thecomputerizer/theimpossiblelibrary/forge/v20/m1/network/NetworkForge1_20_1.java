@@ -57,12 +57,7 @@ public class NetworkForge1_20_1 extends Network1_20<SimpleChannel,NetworkDirecti
     }
 
     @Override public @Nullable NetworkDirection getOppositeDir(NetworkDirection dir) {
-        return switch(dir) {
-            case PLAY_TO_CLIENT -> PLAY_TO_SERVER;
-            case PLAY_TO_SERVER -> PLAY_TO_CLIENT;
-            case LOGIN_TO_CLIENT -> LOGIN_TO_SERVER;
-            case LOGIN_TO_SERVER -> LOGIN_TO_CLIENT;
-        };
+        return Objects.nonNull(dir) ? dir.reply() : null;
     }
 
     @Override public SimpleChannel getNetwork() {

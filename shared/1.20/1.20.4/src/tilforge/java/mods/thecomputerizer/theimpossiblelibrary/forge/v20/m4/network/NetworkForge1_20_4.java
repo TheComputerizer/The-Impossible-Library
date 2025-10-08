@@ -4,9 +4,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.network.Network1_20;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.SimpleChannel;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_CLIENT;
 import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_SERVER;
@@ -56,14 +59,10 @@ public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirecti
     }
 
     @Override public @Nullable NetworkDirection getOppositeDir(NetworkDirection dir) {
-        return switch(dir) {
-            case PLAY_TO_CLIENT -> PLAY_TO_SERVER;
-            case PLAY_TO_SERVER -> PLAY_TO_CLIENT;
-            case LOGIN_TO_CLIENT -> LOGIN_TO_SERVER;
-            case LOGIN_TO_SERVER -> LOGIN_TO_CLIENT;
-        };
+        return Objects.nonNull(dir) ? dir.reply() : null;
     }
 
+    @SuppressWarnings({"rawtypes","unchecked"})
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network)) {
             ResourceLocation name = TILRef.res("main_network").unwrap();
@@ -71,9 +70,10 @@ public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirecti
                     .clientAcceptedVersions((status,version) -> true)
                     .serverAcceptedVersions((status,version) -> true)
                     .networkProtocolVersion(1).simpleChannel()
-                    .messageBuilder(MessageWrapperForge1_20_4.class)
-                    .encoder(MessageWrapperForge1_20_4::encode).decoder(MessageWrapperForge1_20_4::getInstance)
-                    .consumerMainThread(MessageWrapperAPI::handle).add();
+                    .messageBuilder(MessageWrapperAPI.class)
+                    .encoder(GenericUtils.cast(MessageWrapperAPI.encoder()))
+                    .decoder(GenericUtils.cast(MessageWrapperAPI.decoder()))
+                    .consumerNetworkThread((BiConsumer<MessageWrapperAPI,Context>)MessageWrapperAPI::handle).add();
         }
         return this.network;
     }
@@ -96,24 +96,26 @@ public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirecti
         getNetwork().send(message,SERVER.noArg());
     }
     
-    @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(NetworkDirection dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance();
-        wrapper.setMessage(dir,message);
+        MessageWrapperAPI<?,CTX> wrapper = MessageWrapperAPI.getInstance(dir);
+        if(Objects.nonNull(wrapper)) wrapper.setMessage(dir,message);
+        else TILRef.logError("Null message wrapper for dir {}",dir);
         return wrapper;
     }
     
-    @SuppressWarnings("unchecked")
-    @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance();
-        wrapper.setMessages(dir,messages);
+    @SafeVarargs
+    @Override public final <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir,
+            MessageAPI<CTX>... messages) {
+        MessageWrapperAPI<?,CTX> wrapper = MessageWrapperAPI.getInstance(dir);
+        if(Objects.nonNull(wrapper)) wrapper.setMessages(dir,messages);
+        else TILRef.logError("Null message wrapper for dir {}",dir);
         return wrapper;
     }
     
-    @SuppressWarnings("unchecked")
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(NetworkDirection dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = (MessageWrapperAPI<?,CTX>)MessageWrapperForge1_20_4.getInstance();
-        wrapper.setMessages(dir,messages);
+        MessageWrapperAPI<?,CTX> wrapper = MessageWrapperAPI.getInstance(dir);
+        if(Objects.nonNull(wrapper)) wrapper.setMessages(dir,messages);
+        else TILRef.logError("Null message wrapper for dir {}",dir);
         return wrapper;
     }
 }
