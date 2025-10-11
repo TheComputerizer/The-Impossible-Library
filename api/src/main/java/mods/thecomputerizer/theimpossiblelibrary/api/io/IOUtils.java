@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.io;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.WrapperableMappable;
@@ -21,7 +22,6 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 /**
  * Read/write util methods with some addition-specific string stuff
@@ -148,7 +148,7 @@ public class IOUtils {
     
     public static ByteBuffer toBuffer(URL url) {
         try {
-            return Streams.toByteBuffer(url.openStream());
+            return Hacks.toByteBuffer(url.openStream());
         } catch(IOException ex) {
             LOGGER.error("Failed to open buffer for URL {}",url,ex);
         }

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -20,6 +21,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Constructo
 import static org.burningwave.core.assembler.StaticComponentContainer.Driver;
 import static org.burningwave.core.assembler.StaticComponentContainer.Fields;
 import static org.burningwave.core.assembler.StaticComponentContainer.Methods;
+import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
 
 /**
  * Burningwave abstraction layer and helper methods
@@ -1086,6 +1088,10 @@ public class Hacks {
             return;
         }
         Fields.setStaticDirect(target,field,value);
+    }
+    
+    public static ByteBuffer toByteBuffer(InputStream stream) {
+        return Streams.toByteBuffer(stream);
     }
     
     public enum CallStrategy {
