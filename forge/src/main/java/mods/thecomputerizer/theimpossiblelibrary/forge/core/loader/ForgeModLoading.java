@@ -664,7 +664,12 @@ public class ForgeModLoading {
     }
     
     public static void queryCoreMods(Object file) {
-        List<Object> coremods = Hacks.invokeStaticDirect(ModFileParser.class,"getCoreMods",file);
+        List<Object> coremods;
+        try {
+            coremods = Hacks.invokeStaticDirect(ModFileParser.class,"getCoreMods",file);
+        } catch(Throwable ignored) {
+            coremods = Collections.emptyList();
+        }
         if(Objects.nonNull(coremods)) {
             Hacks.setFieldDirect(file,"coreMods",coremods);
             if(!fixedCoreMods && !coremods.isEmpty()) {
@@ -793,7 +798,7 @@ public class ForgeModLoading {
         String version = String.valueOf(CoreAPI.gameVersion());
         String checkedVersion = version.substring(2).replace('.','_');
         setFileVersion(caller,checkedVersion,version);
-        LOGGER.info("Successfully set Neoforge mod loading version ({}->{})",checkedVersion,version);
+        LOGGER.info("Successfully set Forge mod loading version ({}->{})",checkedVersion,version);
         return true;
     }
     

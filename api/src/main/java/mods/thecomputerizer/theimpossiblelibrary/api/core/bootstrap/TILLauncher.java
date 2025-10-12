@@ -20,6 +20,7 @@ public class TILLauncher {
     
     //`-Dtil.dev=true`
     protected static final boolean DEV = Boolean.parseBoolean(System.getProperty("til.dev","false"));
+    protected static final boolean MODULES = !System.getProperty("java.version").startsWith("1.");
     
     static {
         out.println("Class init: "+TILLauncher.class.getName());

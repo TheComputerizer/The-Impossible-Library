@@ -43,7 +43,7 @@ public class TILLauncherForge extends TILForgeLikeServiceLauncher {
     }
     
     public TILLauncherForge(Class<?> caller) {
-        super(java8() ? ClassLoader.getSystemClassLoader() : Launcher.class.getClassLoader(),"Forge");
+        super(Launcher.class.getClassLoader(),"Forge");
         load(caller);
     }
     

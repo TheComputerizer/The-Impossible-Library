@@ -89,6 +89,7 @@ public class ForgeCoreLoader {
     }
     
     static Object getCoreAPIReflectively(ClassLoader loader) {
+        if(loader==ForgeCoreLoader.class.getClassLoader()) return CoreAPI.getInstanceDirect();
         try {
             return STATIC_DIRECT.get(Hacks.findClass(COREAPI_CLASS,loader),"INSTANCE");
         } catch(Throwable t) {

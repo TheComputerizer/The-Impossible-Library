@@ -79,6 +79,15 @@ public abstract class CoreAPI {
         return (CoreAPI)INSTANCE;
     }
     
+    public static @Nullable CoreAPI getInstanceDirect() {
+        try {
+            return (CoreAPI)INSTANCE;
+        } catch(ClassCastException ex) {
+            TILRef.logError("Tried to return CoreAPI instance from the wrong ClassLoader?",ex);
+        }
+        return null;
+    }
+    
     public static ModLoader getInstanceModLoader() {
         CoreAPI instance = getInstance();
         return Objects.nonNull(instance) ? instance.getModLoader() : null;

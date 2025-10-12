@@ -22,6 +22,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandSenderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.ServerHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
@@ -100,9 +101,9 @@ public class WrappedCommand1_16_5 implements CoreStateAccessor {
         return joiner.toString();
     }
     
-    @SuppressWarnings("unchecked")
     public static void register(Object dispatcherObj, CommandAPI wrapped) {
-        CommandDispatcher<CommandSourceStack> dispatcher = (CommandDispatcher<CommandSourceStack>)dispatcherObj;
+        CommandDispatcher<CommandSourceStack> dispatcher = GenericUtils.cast(dispatcherObj);
+        if(Objects.isNull(dispatcher)) return;
         LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal(wrapped.getName());
         for(CommandAPI subcmd : wrapped.getSubCommands()) root.then(getArg(subcmd));
         if(wrapped.isExecutionNode()) root.executes(ctx -> execute(ctx,wrapped));
@@ -123,7 +124,7 @@ public class WrappedCommand1_16_5 implements CoreStateAccessor {
             return;
         }
         String entryClassName = ARGUMENT_TYPE_ENTRY.get();
-        E entry = Hacks.constructAndCast(ArgumentTypes.class,entryClassName,CustomSuggester.class,SERIALIZER,name);
+        E entry = Hacks.construct(entryClassName,CustomSuggester.class,SERIALIZER,name);
         if(Objects.isNull(entry)) {
             TILRef.logError("Failed to contruct {} with args {}",entryClassName,new Object[]{
                     CustomSuggester.class,SERIALIZER,name});

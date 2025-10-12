@@ -349,7 +349,7 @@ public class TILBootLauncherForge extends TILLauncher implements ILaunchPluginSe
     @IndirectCallers
     public TILBootLauncherForge() {
         super(true);
-        if(DEV) consolidateDevModules(DEV_MODULES);
+        if(DEV && MODULES) consolidateDevModules(DEV_MODULES);
     }
     
     @Override public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {

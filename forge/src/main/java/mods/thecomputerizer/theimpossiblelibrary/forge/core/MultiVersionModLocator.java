@@ -39,8 +39,8 @@ public class MultiVersionModLocator implements IModLocator {
     FileSystem fileSystemFor(IModFile file) {
         try {
             Path path = file.getFilePath();
-            if(DEV) {
-                TILRef.logInfo("Subverting the file system since this is a dev environment (-Dtil.dev=true)");
+            if(TILDev.isLoaderPath(path)) {
+                TILRef.logInfo("Subverting the loader file system since this is a dev environment (-Dtil.dev=true)");
                 TILDev.checkDevPath(path);
                 return null;
             }
