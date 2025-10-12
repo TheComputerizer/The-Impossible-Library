@@ -46,7 +46,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 public class WrappedCommand1_16_5 implements CoreStateAccessor {
     
-    private static final Supplier<String> ARGUMENT_TYPE_ENTRY = () -> ArgumentTypes.class.getSimpleName()+"$Entry";
+    private static final Supplier<String> ARGUMENT_TYPE_ENTRY = () -> ArgumentTypes.class.getName()+"$Entry";
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();
     private static final String FIELD_BY_CLASS = NAMED_ENV ? "BY_CLASS" : (SRG_ENV ? "field_197489_b" : "field_10921");
     private static final String FIELD_BY_NAME = NAMED_ENV ? "BY_NAME" : (SRG_ENV ? "field_197490_c" : "field_10922");
