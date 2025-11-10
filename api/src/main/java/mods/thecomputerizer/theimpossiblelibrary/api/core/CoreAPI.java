@@ -568,7 +568,7 @@ public abstract class CoreAPI {
             return;
         }
         if(this.injectedMods.contains(modid))
-            this.logger.info("Skipping extra entrypoint in package {}",modid,pkg);
+            this.logger.info("Skipping extra entrypoint for {} in package {}",modid,pkg);
         else {
             Class<?> verified = verifyGeneratedClass(pkg,name.replace(" ",""),entryType);
             if(modConstructed(modid,verified)) this.injectedMods.add(modid);

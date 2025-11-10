@@ -45,7 +45,7 @@ void finalizeUnimined(boolean use_dev_run_jar) {
             all {
                 javaVersion = getJavaVersionEnum()                                      //project-status
                 if(use_dev_run_jar) {
-                    classpath-=getBuildFiles([main: [ 'classes\\java', 'resources' ]])  //project-common-functions
+                    classpath-=getBuildFiles(['main': [ 'classes\\java', 'resources' ]])//project-common-functions
                     classpath+=files(devRunJar.archiveFile)
                 }
                 Map<?,?> map = getSystemProperties()
@@ -112,12 +112,15 @@ void registerClassesJar() {
 
 @SuppressWarnings('GrUnresolvedAccess')
 void registerDevJar() {
+    if(isCleanroomProject())
+        tasks.classes.dependsOn ':legacy:1.12:classes'
     tasks.register('devRunJar', Jar) {
         duplicatesStrategy = EXCLUDE
-        for(String t_name : [ 'classes', 'processResources' ]) mustRunAfter t_name
-        from sourceSets.main.output
+        dependsOn classes
+        mustRunAfter processResources
+        from sourceSets.main.java.classesDirectory.get().asFile
         doFirst {
-            archiveBaseName.set "$mod_id-dev_run"
+            archiveBaseName.set "$mod_id${isCleanroomProject() ? '' : '-dev_run'}"
             manifest {
                 Map<String,Object> entries = getManifestEntries()       //project-common-functions
                 entries['TILMultiversionCoreMods'] = core_entrypoint
@@ -147,6 +150,6 @@ void setupDependencies() {
         modCompileOnly modsBundle('legacy', 'compile')
         modImplementation modsBundle('legacy', 'implementation')
         modRuntimeOnly modsBundle('legacy', 'runtime')
-        modRuntimeOnly legacy.bundles.nothirium
+        if(!is_cleanroom) modRuntimeOnly legacy.bundles.nothirium
     }
 }

@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -19,6 +20,7 @@ import org.objectweb.asm.Type;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.Map;
 import java.util.Objects;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMRef.*;
@@ -37,6 +39,11 @@ public class ModContainerWriter1_12_2 {
     public static ASMDataTable findASMTable(Loader loader) {
         ModDiscoverer discoverer = Hacks.getFieldDirect(loader,"discoverer");
         return Objects.nonNull(discoverer) ? discoverer.getASMTable() : null;
+    }
+    
+    public static @Nullable Class<?> findCachedClass(LaunchClassLoader launchLoader, String className) {
+        Map<String,Class<?>> cachedClasses = Hacks.getFieldDirect(launchLoader,"cachedClasses");
+        return Objects.nonNull(cachedClasses) ? cachedClasses.get(className) : null;
     }
 
     private static void writeClinit(ClassVisitor visitor, String modid) {
@@ -61,6 +68,13 @@ public class ModContainerWriter1_12_2 {
     }
 
     public static String writeModContainer(LaunchClassLoader launchLoader, String modid, String className) {
+        try {
+            //This method is called twice in cleanroom dev runs for some reason so we need to check the class cache
+            if(Objects.nonNull(findCachedClass(launchLoader,className))) {
+                LOGGER.info("Skipping write for already loaded class {}",className);
+                return className;
+            }
+        } catch(Throwable ignored) {}
         String internalName = className.replace('.','/');
         ClassWriter writer = ASMHelper.getWriter(CoreAPI.isJava8() ? JAVA8 : JAVA21,PUBLIC,internalName,
                                                  INJECTED_MOD_CONTAINER);
@@ -77,7 +91,10 @@ public class ModContainerWriter1_12_2 {
             CodeSource source = Objects.nonNull(pd) ? pd.getCodeSource() : null;
             clazz = Hacks.invokeDirect(launchLoader,"defineClass",className,bytes,source);
         }
-        cacheClass(launchLoader,clazz.getName(),clazz);
-        return clazz.getName();
+        if(Objects.nonNull(clazz)) {
+            cacheClass(launchLoader,clazz.getName(),clazz);
+            return clazz.getName();
+        }
+        return className;
     }
 }

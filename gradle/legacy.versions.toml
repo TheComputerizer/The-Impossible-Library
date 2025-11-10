@@ -30,7 +30,7 @@
 
 [versions]
     # Core & Loader Versions
-    cleanroom-loader = '0.3.13-alpha'   # Cleanroom Loader version
+    cleanroom-loader = '0.3.14-alpha'   # Cleanroom Loader version
     cleanroom-mixin = '0.+'             # Mixin (Cleanroom)
     cleanroom-lwjglx = '1.+'            # LWJGLX (Cleanroom)
     forge_1_12_2 = '14.23.5.2860'       # Forge version
@@ -53,5 +53,5 @@
     # Non Curseforge Dependency Versions
     bookshelf-1_12_2 = '2.3.590'        # Bookshelf (Game Stages lib)
     gamestages-1_12_2 = '2.0.123'       # Game Stages
-    hei-1_12_2 = '4.29.1'               # Had Enough Items (Just Enough Items)
+    hei-1_12_2 = '4.29.9'               # Had Enough Items (Just Enough Items)
     mixinbooter = '10.6'                # MixinBooter (Forge)

@@ -32,14 +32,14 @@ public class Hacks {
     static final Logger LOGGER = TILRef.createLogger("TIL Hacks (BurningWave)");
     static final int JAVA_VERSION = CoreAPI.javaVersion();
     
+    static boolean burningWaveInit;
+    
     /**
      * This class might be initialized before the CoreAPI instance so we need to defer any environment-dependent checks
      */
     static boolean initializedEnvironment;
     static boolean namedEnv;
     static boolean srgEnv;
-    
-    static boolean burningWaveInit;
 
     /**
      * Returns true if the value was added.
@@ -106,14 +106,21 @@ public class Hacks {
     }
     
     /**
+     * Use a different driver for Java 25+ to see if BurningWave will still work
+     */
+    static String burningWaveDriver() {
+        return "org.burningwave.jvm."+(isJava25() ? "Hybrid" : "Native")+"Driver";
+    }
+    
+    /**
      * Set some default BurningWave properties
      */
     static Map<?,?> burningWaveProperties() {
         Map<Object,Object> properties = new HashMap<>();
         //Hide the large BurningWave banner that gets logged during intialization (which could happen multiple times)
         properties.put("banner.hide","true");
-        //Tell BurningWave to use the native driver for the greatest reach instead of the default driver
-        properties.put("jvm.driver.type","org.burningwave.jvm.NativeDriver");
+        //Tell BurningWave to use the native (or hybrid) driver for the greatest reach instead of the default driver
+        properties.put("jvm.driver.type",burningWaveDriver());
         //Disable some log spam that happens during BurningWave initialization (which could happen multiple times)
         properties.put("managed-logger.repository.enabled","false");
         //Increase the priority of these properties to ensure they are checked first
@@ -935,6 +942,13 @@ public class Hacks {
     @IndirectCallers
     public static boolean isJava21() {
         return JAVA_VERSION>=21;
+    }
+    
+    /**
+     * Java 25 changed how natives work so some intialization stuff needs to be handled differently
+     */
+    public static boolean isJava25() {
+        return JAVA_VERSION>=25;
     }
     
     /**

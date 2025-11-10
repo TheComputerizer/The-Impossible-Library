@@ -25,6 +25,7 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
     
     private static final String TRANSFORMER = BASE_PACKAGE+".legacy.v12.m2.core.asm.TILClassTransform1_12_2";
     private static boolean gathered;
+    private static boolean written;
     static TILLoadingPlugin1_12_2 INSTANCE;
     
     public static Collection<CoreEntryPoint> getTransformers(String name) {
@@ -65,8 +66,11 @@ public class TILLoadingPlugin1_12_2 implements IFMLLoadingPlugin {
     }
 
     @Override public void injectData(Map<String,Object> data) {
-        TILRef.logInfo("Beginning injection with coremod data: {}", data);
-        CoreAPI.getInstance().writeModContainers(classLoader);
+        if(!written) {
+            TILRef.logInfo("Beginning injection with coremod data: {}", data);
+            CoreAPI.getInstance().writeModContainers(classLoader);
+            written = true;
+        }
     }
 
     @Override public String getAccessTransformerClass() {
