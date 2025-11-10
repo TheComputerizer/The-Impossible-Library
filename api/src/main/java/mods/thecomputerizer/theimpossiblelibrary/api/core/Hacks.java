@@ -977,7 +977,7 @@ public class Hacks {
     
     /**
      * Returns true if the NativeDriver for BurningWave is in use.
-     * The native driver is not compatible with Java 24 or the UseCompactObjectHeaders flag
+     * The native driver is not compatible with Java 25+ or the UseCompactObjectHeaders flag
      */
     public static boolean nativeDriver() {
         return !isJava25() && !JVM_FLAGS.contains("UseCompactObjectHeaders");
