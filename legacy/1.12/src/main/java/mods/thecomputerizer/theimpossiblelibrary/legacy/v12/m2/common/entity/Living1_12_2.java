@@ -31,7 +31,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.shapes.Box.ZERO;
 public class Living1_12_2 extends LivingEntityAPI<EntityLivingBase,EntityEntry> {
 
     public Living1_12_2(Object living) {
-        super(living,Entity1_12_2.getEntry(living));
+        super(living,Entity1_12_2.getEntry(living),(p,n) -> p.getActivePotionEffects());
     }
     
     @Override public boolean canTarget() {

@@ -763,7 +763,7 @@ public class NeoForgeModLoading {
         }
         String version = String.valueOf(CoreAPI.gameVersion());
         String checkedVersion = version.substring(2).replace('.','_');
-        NeoForgeModLoading.setFileVersion(caller,checkedVersion,version);
+        setFileVersion(caller,checkedVersion,version);
         LOGGER.info("Successfully set Neoforge mod loading version ({}->{})",checkedVersion,version);
         return true;
     }

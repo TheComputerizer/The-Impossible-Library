@@ -112,8 +112,8 @@ public class Hacks {
         //Hide the large BurningWave banner that gets logged during intialization (which could happen multiple times)
         properties.put("banner.hide","true");
         //Tell BurningWave to use the native (or hybrid) driver for the greatest reach instead of the default driver
-        final String driverName = (JVMHelper.hasNativeAccess() ? "Native" : "Hybrid")+"Driver";
-        properties.put("jvm.driver.type","org.burningwave.jvm."+driverName);
+        final String driverName = JVMHelper.hasNativeAccess() ? "Native" : "Hybrid";
+        properties.put("jvm.driver.type","org.burningwave.jvm."+driverName+"Driver");
         //Disable some log spam that happens during BurningWave initialization (which could happen multiple times)
         properties.put("managed-logger.repository.enabled","false");
         //Increase the priority of these properties to ensure they are checked first
@@ -401,6 +401,24 @@ public class Hacks {
         return foundClass;
     }
     
+    public static @Nullable Method findMethodObj(Class<?> c, String methodName, Class<?> ... argTypes) {
+        if(Objects.isNull(argTypes)) argTypes = new Class<?>[]{};
+        if(Objects.isNull(c) || Objects.isNull(methodName) || methodName.isEmpty()) {
+            LOGGER.error("Cannot find method with null class or method name {}#{}({})",c,methodName,argTypes);
+            return null;
+        }
+        Method m = null;
+        try {
+            m = c.getMethod(methodName,argTypes);
+        } catch(Throwable t) {
+            try {
+                m = c.getDeclaredMethod(methodName,argTypes);
+            } catch(Throwable ignored) {}
+        }
+        LOGGER.error("Failed to find method {}#{}({})",c.getName(),methodName,argTypes);
+        return m;
+    }
+    
     public static @Nullable ByteBuffer getByteCode(Class<?> clazz) {
         return Classes.getByteCode(clazz);
     }
@@ -678,7 +696,7 @@ public class Hacks {
             LOGGER.error("Failed to get record field instance! (field = {})",name);
             return null;
         }
-        return invokeMethodObj(target,invoke(component,"getAccessor"));
+        return invokeMethodObj(target,(Method)invoke(component,"getAccessor"));
     }
     
     /**
@@ -778,7 +796,42 @@ public class Hacks {
      */
     @IndirectCallers
     public static <T> T invokeDirectNamed(Object target, String named, String intermediary, Object ... args) {
-        return invokeDirect(target, isNamedEnv() ? named : intermediary, args);
+        return invokeDirect(target,isNamedEnv() ? named : intermediary, args);
+    }
+    
+    public static <T> T invokeMethodObj(Object target, String methodName, Object ... args) {
+        if(Objects.isNull(target)) return null;
+        if(target instanceof Class<?>) return invokeMethodObj((Class<?>)target,methodName,args);
+        return invokeMethodObj(target.getClass(),target,methodName,args);
+    }
+    
+    @SuppressWarnings("UnusedReturnValue")
+    public static <T> T invokeMethodObj(Class<?> target, String methodName, Object ... args) {
+        return invokeMethodObj(target,null,methodName,args);
+    }
+    
+    public static <T> T invokeMethodObj(Class<?> targetClass, @Nullable Object target, String methodName,
+            Object ... args) {
+        return invokeMethodObj(targetClass,target,methodName,new Class<?>[]{},args);
+    }
+    
+    @IndirectCallers
+    public static <T> T invokeMethodObj(Class<?> target, String methodName, Class<?>[] argTypes, Object ... args) {
+        return invokeMethodObj(target,c -> findMethodObj(c,methodName,argTypes),args);
+    }
+    
+    public static <T> T invokeMethodObj(Class<?> targetClass, @Nullable Object target, String methodName,
+            Class<?>[] argTypes, Object ... args) {
+        return invokeMethodObj(targetClass,target,c -> findMethodObj(c,methodName,argTypes),args);
+    }
+    
+    public static <T> T invokeMethodObj(Class<?> target, Function<Class<?>,Method> methodFinder, Object ... args) {
+        return invokeMethodObj(target,null,methodFinder,args);
+    }
+    
+    public static <T> T invokeMethodObj(Class<?> targetClass, @Nullable Object target,
+            Function<Class<?>,Method> methodFinder, Object ... args) {
+        return invokeMethodObj(target,methodFinder.apply(targetClass),args);
     }
     
     public static <T> T invokeMethodObj(@Nullable Object target, Method method, Object ... args) {

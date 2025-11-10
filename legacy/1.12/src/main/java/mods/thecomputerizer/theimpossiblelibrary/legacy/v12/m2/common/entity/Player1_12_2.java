@@ -30,7 +30,7 @@ import java.util.UUID;
 public abstract class Player1_12_2<P extends EntityPlayer> extends PlayerAPI<P,EntityEntry> {
 
     protected Player1_12_2(Object player) {
-        super(player,Entity1_12_2.getEntry(player));
+        super(player,Entity1_12_2.getEntry(player),(p,n) -> p.getActivePotionEffects());
     }
     
     @Override public boolean canTarget() {

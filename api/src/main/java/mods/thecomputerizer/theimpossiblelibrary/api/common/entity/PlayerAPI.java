@@ -9,7 +9,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.world.BlockPosAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.world.DimensionAPI;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.item.Hand.MAINHAND;
 
@@ -17,6 +19,10 @@ public abstract class PlayerAPI<P,V> extends LivingEntityAPI<P,V> {
 
     protected PlayerAPI(Object entity, Object type) {
         super(entity,type);
+    }
+    
+    protected PlayerAPI(Object entity, Object type, BiFunction<P,String,Collection<?>> effectsGetter) {
+        super(entity,type,effectsGetter);
     }
 
     @IndirectCallers public abstract int getAir();

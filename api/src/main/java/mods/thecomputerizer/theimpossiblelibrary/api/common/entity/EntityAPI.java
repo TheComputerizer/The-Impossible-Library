@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static java.lang.Double.MAX_VALUE;
@@ -30,14 +31,21 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelp
 @Getter
 public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements RegistryEntryAPI<V> {
     
+    protected final Function<Object,Collection<?>> effectsGetter;
+    
     protected ResourceLocationAPI<?> registryName;
 
     protected E entity;
     private boolean erroredEffects;
-
+    
     protected EntityAPI(Object entity, Object type) {
+        this(entity,type,Hacks::invokeMethodObj);
+    }
+
+    protected EntityAPI(Object entity, Object type, BiFunction<E,String,Collection<?>> effectsGetter) {
         super(type);
         this.entity = GenericUtils.cast(entity);
+        this.effectsGetter = e -> effectsGetter.apply(GenericUtils.cast(e),getActiveEffectsMethodName());
     }
     
     @IndirectCallers public abstract boolean canTarget();
@@ -53,10 +61,9 @@ public abstract class EntityAPI<E,V> extends AbstractWrapped<V> implements Regis
 
     @IndirectCallers
     public Collection<EffectInstanceAPI<?>> getActiveEffects() {
-        if(this.erroredEffects || !isLiving()) return Collections.emptyList();
+        if(this.erroredEffects || Objects.isNull(this.entity) || !isLiving()) return Collections.emptyList();
         try {
-            Function<Object,Collection<?>> effectsGetter = e -> Hacks.invoke(e,getActiveEffectsMethodName());
-            return EFFECT_INSTANCE.wrapCollectionGetter(this.entity,effectsGetter);
+            return EFFECT_INSTANCE.wrapCollectionGetter(this.entity,this.effectsGetter);
         } catch(Throwable t) {
             TILRef.logError("Failed to retrieve active effects for entity! This check will be disable for the "+
                             "current entity",t);

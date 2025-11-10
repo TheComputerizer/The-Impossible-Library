@@ -30,7 +30,7 @@ import static net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGE
 public class Living1_16_5 extends LivingEntityAPI<LivingEntity,EntityType<?>> {
     
     public Living1_16_5(Object living) {
-        super(living,((Entity)living).getType());
+        super(living,((Entity)living).getType(),(p,n) -> p.getActiveEffects());
     }
     
     @Override public boolean canTarget() {
