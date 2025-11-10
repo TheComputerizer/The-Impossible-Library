@@ -36,6 +36,7 @@ public abstract class CoreAPI {
      */
     static final String INSTANCE_CLASS = System.getProperty("til.core.instance");
     static final String JAVA_VERSION = System.getProperty("java.version");
+    static final int MAX_JAVA_VERSION = 25;
     public static Object INSTANCE;
     static String BINARY = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
     static int javaVersionCache;
@@ -323,9 +324,9 @@ public abstract class CoreAPI {
                 TILRef.logError("Failed to parse Java version from {} (split={})",majorVersion,JAVA_VERSION,ex);
             }
         }
-        if(javaVersionCache>24) {
+        if(javaVersionCache>MAX_JAVA_VERSION) {
             throw new RuntimeException(NAME+" is not yet compatible with Java "+javaVersionCache+"! Please ensure "+
-                                       "that you are using Java 24 or earlier.");
+                                       "that you are using Java "+MAX_JAVA_VERSION+" or earlier.");
         }
         return javaVersionCache;
     }

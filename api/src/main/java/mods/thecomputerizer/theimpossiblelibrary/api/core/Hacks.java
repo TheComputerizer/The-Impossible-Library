@@ -8,6 +8,7 @@ import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Def
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -28,6 +29,7 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
  */
 public class Hacks {
     
+    static final List<String> JVM_FLAGS = ManagementFactory.getRuntimeMXBean().getInputArguments();
     static final String SELF_NAME = "mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks";
     static final Logger LOGGER = TILRef.createLogger("TIL Hacks (BurningWave)");
     static final int JAVA_VERSION = CoreAPI.javaVersion();
@@ -106,13 +108,6 @@ public class Hacks {
     }
     
     /**
-     * Use a different driver for Java 25+ to see if BurningWave will still work
-     */
-    static String burningWaveDriver() {
-        return "org.burningwave.jvm."+(isJava25() ? "Hybrid" : "Native")+"Driver";
-    }
-    
-    /**
      * Set some default BurningWave properties
      */
     static Map<?,?> burningWaveProperties() {
@@ -120,7 +115,7 @@ public class Hacks {
         //Hide the large BurningWave banner that gets logged during intialization (which could happen multiple times)
         properties.put("banner.hide","true");
         //Tell BurningWave to use the native (or hybrid) driver for the greatest reach instead of the default driver
-        properties.put("jvm.driver.type",burningWaveDriver());
+        properties.put("jvm.driver.type","org.burningwave.jvm."+(nativeDriver() ? "Native" : "Hybrid")+"Driver");
         //Disable some log spam that happens during BurningWave initialization (which could happen multiple times)
         properties.put("managed-logger.repository.enabled","false");
         //Increase the priority of these properties to ensure they are checked first
@@ -978,6 +973,14 @@ public class Hacks {
             LOGGER.fatal("Failed to load or define {} on loader {}",c,loader,ex);
         }
         return c;
+    }
+    
+    /**
+     * Returns true if the NativeDriver for BurningWave is in use.
+     * The native driver is not compatible with Java 24 or the UseCompactObjectHeaders flag
+     */
+    public static boolean nativeDriver() {
+        return !isJava25() && !JVM_FLAGS.contains("UseCompactObjectHeaders");
     }
     
     /**

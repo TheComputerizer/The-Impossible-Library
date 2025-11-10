@@ -4,6 +4,7 @@ import static org.gradle.api.JavaVersion.VERSION_1_8
 import static org.gradle.api.JavaVersion.VERSION_17
 import static org.gradle.api.JavaVersion.VERSION_21
 import static org.gradle.api.JavaVersion.VERSION_24
+import static org.gradle.api.JavaVersion.VERSION_25
 
 ext.getJavaVersion = this.&getJavaVersion as MethodClosure
 ext.getJavaVersionEnum = this.&getJavaVersionEnum as MethodClosure
@@ -24,6 +25,7 @@ ext.usesUnimined = this.&usesUnimined as MethodClosure
  * Return the Java toolchain that should be used by the currect project as an integer
  */
 int getJavaVersion() {
+    if(isCleanroomProject()) return 25
     return isJava24() ? 24 : (isJava8() ? 8 : (isJava21() ? 21 : 17))
 }
 
@@ -31,6 +33,7 @@ int getJavaVersion() {
  * Return the Java toolchain that should be used by the currect project as a JavaVersion enum
  */
 JavaVersion getJavaVersionEnum() {
+    if(isCleanroomProject()) return VERSION_25
     return isJava24() ? VERSION_24 : (isJava8() ? VERSION_1_8 : (isJava21() ? VERSION_21 : VERSION_17))
 }
 
