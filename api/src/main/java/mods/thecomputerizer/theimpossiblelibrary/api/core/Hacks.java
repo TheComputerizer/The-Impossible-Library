@@ -8,7 +8,6 @@ import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Def
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.*;
@@ -29,10 +28,8 @@ import static org.burningwave.core.assembler.StaticComponentContainer.Streams;
  */
 public class Hacks {
     
-    static final List<String> JVM_FLAGS = ManagementFactory.getRuntimeMXBean().getInputArguments();
     static final String SELF_NAME = "mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks";
     static final Logger LOGGER = TILRef.createLogger("TIL Hacks (BurningWave)");
-    static final int JAVA_VERSION = CoreAPI.javaVersion();
     
     static boolean burningWaveInit;
     
@@ -115,7 +112,8 @@ public class Hacks {
         //Hide the large BurningWave banner that gets logged during intialization (which could happen multiple times)
         properties.put("banner.hide","true");
         //Tell BurningWave to use the native (or hybrid) driver for the greatest reach instead of the default driver
-        properties.put("jvm.driver.type","org.burningwave.jvm."+(nativeDriver() ? "Native" : "Hybrid")+"Driver");
+        final String driverName = (JVMHelper.hasNativeAccess() ? "Native" : "Hybrid")+"Driver";
+        properties.put("jvm.driver.type","org.burningwave.jvm."+driverName);
         //Disable some log spam that happens during BurningWave initialization (which could happen multiple times)
         properties.put("managed-logger.repository.enabled","false");
         //Increase the priority of these properties to ensure they are checked first
@@ -629,15 +627,6 @@ public class Hacks {
     }
     
     /**
-     * Returns the current Java version as an integer.
-     * This will return 17 by default if the Java versions fails to parse for some reason.
-     */
-    @IndirectCallers
-    public static int getJavaVersion() {
-        return JAVA_VERSION;
-    }
-    
-    /**
      * Returns a record component with the given name if it exists in the given class.
      * Returns null if the call is invalid or the record does not exist.
      */
@@ -650,7 +639,7 @@ public class Hacks {
             LOGGER.error("Tried to get record component for null field name! (target = {})",target);
             return null;
         }
-        if(isJava8()) {
+        if(JVMHelper.isJava8()) {
             LOGGER.error("Cannot get record component in Java 8 environment! Records were introduced in Java"+
                             " 14! ({}.{})",target.getName(),field);
             return null;
@@ -914,39 +903,6 @@ public class Hacks {
     }
     
     /**
-     * Returns true if the Java version is 8
-     * Java 8 is used in versions up to 1.16.5 except cleanroom for 1.12.2.
-     */
-    public static boolean isJava8() {
-        return JAVA_VERSION==8;
-    }
-    
-    /**
-     * Returns true if the Java version is 17
-     * Java 17 is used from 1.18.2 to 1.20.4
-     */
-    @IndirectCallers
-    public static boolean isJava17() {
-        return JAVA_VERSION==17;
-    }
-    
-    /**
-     * Returns true if the Java version is AT LEAST 21.
-     * Java 21+ is used in 1.20.6+ as well as cleanroom for 1.12.2
-     */
-    @IndirectCallers
-    public static boolean isJava21() {
-        return JAVA_VERSION>=21;
-    }
-    
-    /**
-     * Java 25 changed how natives work so some intialization stuff needs to be handled differently
-     */
-    public static boolean isJava25() {
-        return JAVA_VERSION>=25;
-    }
-    
-    /**
      * Returns true if this is a named environment (for reflection purposes).
      * Named environments include dev environments, Neoforge 1.20.4, and any version on any modloader past 1.20.4.
      */
@@ -973,14 +929,6 @@ public class Hacks {
             LOGGER.fatal("Failed to load or define {} on loader {}",c,loader,ex);
         }
         return c;
-    }
-    
-    /**
-     * Returns true if the NativeDriver for BurningWave is in use.
-     * The native driver is not compatible with Java 25+ or the UseCompactObjectHeaders flag
-     */
-    public static boolean nativeDriver() {
-        return !isJava25() && !JVM_FLAGS.contains("UseCompactObjectHeaders");
     }
     
     /**

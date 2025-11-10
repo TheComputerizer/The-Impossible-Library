@@ -64,7 +64,7 @@ public class InjectedModCandidate1_12_2 extends ModCandidate {
 
     private static Map<File,InjectedModCandidate1_12_2> getCandidateMap() {
         if(Objects.nonNull(CANDIDATE_MAP)) return CANDIDATE_MAP;
-        boolean java8 = CoreAPI.isJava8();
+        boolean java8 = JVMHelper.isJava8();
         CodeSource source = null;
         if(!java8) {
             ProtectionDomain pd = InjectedModCandidate1_12_2.class.getProtectionDomain();

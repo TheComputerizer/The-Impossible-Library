@@ -48,7 +48,7 @@ public class ClassHelper {
         String urlStr = url.toString().replace("%20"," ");
         String appended = (urlStr.startsWith("jar") ? "!/" : "/")+className;
         String ret = urlStr.substring(urlStr.indexOf("/"),urlStr.length()-appended.length());
-        if(ret.contains(".jar") || Hacks.isJava8()) return ret;
+        if(ret.contains(".jar") || JVMHelper.isJava8()) return ret;
         //Assume the location is a directory since it isn't a jar
         int index = ret.lastIndexOf("/");
         return index==-1 ? ret : ret.substring(0,index);

@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.JVMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.iterator.Mappable;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
@@ -60,7 +61,7 @@ public class NetworkHandler {
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
             if(DEBUG) TILRef.logInfo("Registered network direction info: {} (id={})",info,id);
-            if(CoreAPI.isJava17OrLater()) id++;
+            if(JVMHelper.isJava17()) id++;
         }
     }
     

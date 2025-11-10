@@ -1,8 +1,8 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.core.asm;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
-import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.JVMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ASMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.TypeHelper;
@@ -76,7 +76,7 @@ public class ModContainerWriter1_12_2 {
             }
         } catch(Throwable ignored) {}
         String internalName = className.replace('.','/');
-        ClassWriter writer = ASMHelper.getWriter(CoreAPI.isJava8() ? JAVA8 : JAVA21,PUBLIC,internalName,
+        ClassWriter writer = ASMHelper.getWriter(JVMHelper.isJava8() ? JAVA8 : JAVA21, PUBLIC, internalName,
                                                  INJECTED_MOD_CONTAINER);
         writeClinit(writer,modid);
         writeConstructor(writer,internalName);
@@ -85,7 +85,7 @@ public class ModContainerWriter1_12_2 {
         LOGGER.info("Attempting to add class to loader {}",launchLoader.getClass().getName());
         Class<?> clazz;
         //The ClassLoader cleanroom uses has a built-in method to define a class
-        if(CoreAPI.isJava8()) clazz = ClassHelper.defineClass(launchLoader,className,bytes);
+        if(JVMHelper.isJava8()) clazz = ClassHelper.defineClass(launchLoader, className, bytes);
         else {
             ProtectionDomain pd = ModContainerWriter1_12_2.class.getProtectionDomain();
             CodeSource source = Objects.nonNull(pd) ? pd.getCodeSource() : null;

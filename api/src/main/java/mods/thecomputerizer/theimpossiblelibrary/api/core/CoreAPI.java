@@ -35,11 +35,8 @@ public abstract class CoreAPI {
      * Bypasses the auto version detection used to instantiate the CoreAPI
      */
     static final String INSTANCE_CLASS = System.getProperty("til.core.instance");
-    static final String JAVA_VERSION = System.getProperty("java.version");
-    static final int MAX_JAVA_VERSION = 25;
     public static Object INSTANCE;
     static String BINARY = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
-    static int javaVersionCache;
     
     public static @Nullable Object findInstance(ClassLoader loader) {
         return Hacks.invokeStatic(Hacks.findClass(BINARY,loader),"getInstance");
@@ -158,30 +155,6 @@ public abstract class CoreAPI {
     
     public static boolean isForge() {
         return getInstance().getModLoader()==FORGE;
-    }
-    
-    public static boolean isJava8() {
-        return javaVersion()==8;
-    }
-    
-    @IndirectCallers
-    public static boolean isJava17() {
-        return javaVersion()==17;
-    }
-    
-    @IndirectCallers
-    public static boolean isJava17OrLater() {
-        return javaVersion()>=17;
-    }
-    
-    @IndirectCallers
-    public static boolean isJava21() {
-        return javaVersion()==21;
-    }
-    
-    @IndirectCallers
-    public static boolean isJava21OrLater() {
-        return javaVersion()>=21;
     }
     
     public static boolean isLegacy() {
@@ -304,31 +277,6 @@ public abstract class CoreAPI {
     @IndirectCallers
     public static boolean isVersionLessThan(GameVersion version) {
         return getInstance().getVersion().isLessThan(version);
-    }
-    
-    /**
-     * Should return 8, 17, 21, etc.
-     * Java versions before 9 use 1.x numbering, but since nobody is going to use Java 7 or below it is assumed to be 8.
-     * If the Java version fails to parse for whatever reason, 17 will be returned.
-     */
-    public static int javaVersion() {
-        if(javaVersionCache>0) return javaVersionCache;
-        javaVersionCache = 17;
-        TILRef.logInfo("Parsing Java version from {}",JAVA_VERSION);
-        if(JAVA_VERSION.startsWith("1.")) javaVersionCache = 8;
-        else {
-            String majorVersion = JAVA_VERSION.split("\\.")[0].split("_")[0];
-            try {
-                javaVersionCache = Integer.parseInt(majorVersion);
-            } catch(Exception ex) {
-                TILRef.logError("Failed to parse Java version from {} (split={})",majorVersion,JAVA_VERSION,ex);
-            }
-        }
-        if(javaVersionCache>MAX_JAVA_VERSION) {
-            throw new RuntimeException(NAME+" is not yet compatible with Java "+javaVersionCache+"! Please ensure "+
-                                       "that you are using Java "+MAX_JAVA_VERSION+" or earlier.");
-        }
-        return javaVersionCache;
     }
     
     /**

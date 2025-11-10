@@ -31,15 +31,15 @@ public interface CoreStateAccessor {
     /**
      * Is the environment running in Java 8?
      */
-    @IndirectCallers boolean JAVA_8 = CoreAPI.isJava8();
+    @IndirectCallers boolean JAVA_8 = JVMHelper.isJava8();
     /**
      * Is the environment running in Java 17?
      */
-    @IndirectCallers boolean JAVA_17 = CoreAPI.isJava17();
+    @IndirectCallers boolean JAVA_17 = JVMHelper.isJava17();
     /**
      * Is the environment running in Java 21?
      */
-    @IndirectCallers boolean JAVA_21 = CoreAPI.isJava21();
+    @IndirectCallers boolean JAVA_21 = JVMHelper.isJava21();
     /**
      * Is the environment running in Java version with the Module system? (Java 9+)
      */
@@ -143,7 +143,7 @@ public interface CoreStateAccessor {
     /**
      * Major Java version where 17 is returned if the CoreAPI fails to parse it
      */
-    @IndirectCallers int JAVA_VERSION = CoreAPI.javaVersion();
+    @IndirectCallers int JAVA_VERSION = JVMHelper.version();
     /**
      * The GameVersion enum representing the current Minecraft version
      */
