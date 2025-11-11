@@ -46,8 +46,8 @@ public class TILLoaderJar {
         return BOOT_PACKAGES;
     }
     
-    static Object get(Supplier<Manifest> manifestSupplier, String moduleName) {
-        return new TILLoaderJar(manifestSupplier.get(),moduleName).jarProxy;
+    static Object get(Supplier<Manifest> manifestSupplier, String moduleName, boolean jarModuleData) {
+        return new TILLoaderJar(manifestSupplier.get(),moduleName,jarModuleData).jarProxy;
     }
     
     private static CodeSigner[] getSignersOrEmpty(Map<String,StatusData> dataMap, String name) {
@@ -79,9 +79,9 @@ public class TILLoaderJar {
     
     final Object jarProxy;
     
-    TILLoaderJar(Manifest manifest, String moduleName) {
+    TILLoaderJar(Manifest manifest, String moduleName, boolean jarModuleData) {
         Object metadata = TILLoaderJarMetadata.get(moduleName);
-        TILLoaderJarModuleDataProvider provider = TILLoaderJarModuleDataProvider.get(this,metadata,manifest);
+        TILLoaderJarModuleDataProvider provider = TILLoaderJarModuleDataProvider.get(this,metadata,manifest,jarModuleData);
         this.jarProxy = createProxy(getClass().getClassLoader(),manifest,provider,moduleName);
     }
     
@@ -94,11 +94,13 @@ public class TILLoaderJar {
         InvocationHandler proxyHandler = (instance,method,args) -> {
             switch(method.getName()) {
                 case "equals": return Objects.nonNull(args[0]) && args[0].hashCode()==instance.hashCode();
+                case "findFile": return provider.findFile((String)args[0]);
                 case "getFileStatus": {
                     final String name = (String)args[0];
                     final boolean hasSecurityData = Hacks.invokeDefault(false,instance,"hasSecurityData");
                     return getStatus(statusData,name,hasSecurityData);
                 }
+                case "getManifest": return provider.manifest;
                 case "getManifestSigners": return statusData.containsKey(MANIFEST_NAME) ?
                         statusData.get(MANIFEST_NAME).signers : null;
                 case "getPackages": return bootPackages();

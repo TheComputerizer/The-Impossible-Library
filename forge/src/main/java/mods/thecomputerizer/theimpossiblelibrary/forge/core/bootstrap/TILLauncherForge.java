@@ -15,6 +15,10 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLa
 
 public class TILLauncherForge extends TILForgeLikeServiceLauncher {
     
+    static ClassLoader setBootLoader() {
+        return java8() ? ClassLoader.getSystemClassLoader() : Launcher.class.getClassLoader();
+    }
+    
     public static void validateBootClass(Logger logger, String moduleName, String className) {
         logger.debug("Validating that {} can be found in BOOT layer module {}",className,moduleName);
         ModuleAccess module = ForgeModuleAccess.findModuleInLayer(moduleName,"BOOT");
@@ -43,7 +47,7 @@ public class TILLauncherForge extends TILForgeLikeServiceLauncher {
     }
     
     public TILLauncherForge(Class<?> caller) {
-        super(Launcher.class.getClassLoader(),"Forge");
+        super(setBootLoader(),"Forge");
         load(caller);
     }
     

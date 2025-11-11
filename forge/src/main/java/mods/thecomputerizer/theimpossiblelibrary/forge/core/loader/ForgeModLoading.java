@@ -365,7 +365,7 @@ public class ForgeModLoading {
         if(pathBased) return path;
         Supplier<Manifest> defaultManifest = getDefaultManifest(moduleName);
         if(LOADER_ID.equals(moduleName) || MODID.equals(moduleName))
-            return TILLoaderJar.get(defaultManifest,moduleName);
+            return TILLoaderJar.get(defaultManifest,moduleName,!locatorBased);
         Function<Object,Object> jarMetadataSupplier = getJarMetadataSupplier(path);
         return Hacks.invokeStatic(SECURE_JAR,"from",defaultManifest,jarMetadataSupplier,path);
     }
@@ -402,7 +402,8 @@ public class ForgeModLoading {
         return secureJar -> {
             Set<String> packages = new HashSet<>();
             List<?> providers = new ArrayList<>();
-            Manifest manifest = Hacks.invoke(Hacks.invoke(secureJar,"moduleDataProvider"),"getManifest");
+            Object manifestHolder = locatorBased ? secureJar : Hacks.invoke(secureJar,"moduleDataProvider");
+            Manifest manifest = Hacks.invoke(manifestHolder,"getManifest");
             String name = Objects.nonNull(manifest) ? manifest.getMainAttributes().getValue(automaticModuleName) : null;
             if(Objects.isNull(name)) {
                 LOGGER.info("Falling back to default jar metatdata since {} attribute was not found for: {}",
@@ -852,9 +853,10 @@ public class ForgeModLoading {
         };
         return (path,ignored) -> {
             try {
-                Object jar = Hacks.invokeStatic(jarClass, "from", path);
-                Object dataProvider = Hacks.invoke(jar, "moduleDataProvider");
-                return Objects.nonNull(dataProvider) ? Hacks.invoke(dataProvider,"getManifest") : null;
+                Object manifestHolder = Hacks.invokeStatic(jarClass,"from",path);
+                if(Objects.nonNull(manifestHolder) && !locatorBased)
+                    manifestHolder = Hacks.invoke(manifestHolder,"moduleDataProvider");
+                return Objects.nonNull(manifestHolder) ? Hacks.invoke(manifestHolder,"getManifest") : null;
             } catch(Throwable ignoredT) {
                 LOGGER.warn("Failed to get manifest from path {}",path);
             }

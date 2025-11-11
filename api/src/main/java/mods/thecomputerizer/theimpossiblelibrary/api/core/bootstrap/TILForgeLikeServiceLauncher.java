@@ -30,7 +30,10 @@ public abstract class TILForgeLikeServiceLauncher {
     }
     
     protected static @Nullable Object callMethod(@Nullable Method m, @Nullable Object target, Object ... args) {
-        if(Objects.isNull(m)) return null;
+        if(Objects.isNull(m)) {
+            instance.logger.warn("Tried to invoke null Method object on {} with args {}",target,args);
+            return null;
+        }
         try {
             return m.invoke(target,args);
         } catch(Throwable t) {
@@ -113,9 +116,12 @@ public abstract class TILForgeLikeServiceLauncher {
     final String loader;
     protected final Logger logger;
     
-    protected TILForgeLikeServiceLauncher(ClassLoader bootLoader, String loader) {
+    /**
+     * The input bootLoader could be null if this is Java 8
+     */
+    protected TILForgeLikeServiceLauncher(@Nullable ClassLoader bootLoader, String loader) {
         instance = this;
-        this.bootLoader = bootLoader;
+        this.bootLoader = Objects.nonNull(bootLoader) ? bootLoader : ClassLoader.getSystemClassLoader();
         this.loader = loader;
         this.logger = initLogger();
     }
@@ -185,8 +191,18 @@ public abstract class TILForgeLikeServiceLauncher {
         this.logger.info("Handling SERVICE layer launcher");
         if(!handleServiceEntryPoint()) return;
         try {
-            Hacks.invokeStatic(bootClass(coreLoader(),true),"initCoreAPI");
-            this.logger.info("Successfully handled SERVICE layer initialization");
+            String initMethod = "initCoreAPI";
+            this.logger.info("Calling Hacks$invokeStatic for method '{}'",initMethod);
+            String coreLoader = coreLoader();
+            this.logger.info("Core loader is {}",coreLoader);
+            this.logger.info("Full call for Hacks$invokeStatic is {}#{}",coreLoader,initMethod);
+            Class<?> bootClass = bootClass(coreLoader,true);
+            this.logger.info("Found boot {}",bootClass);
+            //for some reason invoking this via Hacks doesn't work in some versions so we need some basic reflection
+            if(Objects.nonNull(callMethod(getMethod(bootClass,initMethod),null))) {
+                if(java8()) setModLoadingVersion(caller);
+                else this.logger.info("Successfully handled SERVICE layer initialization");
+            } else this.logger.fatal("CoreAPI failed to initialize from {}#{}!",coreLoader,initMethod);
         } catch(Throwable t) {
             this.logger.fatal("Failed to initialize BOOT layer CoreAPI instance",t);
         }

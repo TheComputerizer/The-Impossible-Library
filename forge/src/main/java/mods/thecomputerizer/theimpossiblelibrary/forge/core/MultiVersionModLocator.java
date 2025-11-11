@@ -30,6 +30,7 @@ public class MultiVersionModLocator implements IModLocator {
     }
     
     private Map<IModFile,FileSystem> fileSystems;
+    private List<IModFile> scannedFiles;
     boolean failed;
     
     public MultiVersionModLocator() {
@@ -99,6 +100,10 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public void scanFile(IModFile file, Consumer<Path> consumer) {}
     
     @Override public List<IModFile> scanMods() {
+        if(Objects.nonNull(this.scannedFiles)) {
+            TILRef.logInfo("Returing previously scanned mods {}",this.scannedFiles);
+            return this.scannedFiles;
+        }
         if(this.failed) {
             TILRef.logWarn("Not scanning for mods with MultiVersionModLocator that failed to load");
             return Collections.emptyList();
@@ -116,8 +121,10 @@ public class MultiVersionModLocator implements IModLocator {
                 }
             }
             TILRef.logInfo("Returing scanned mods {}",files);
-            return files;
+            this.scannedFiles = files;
+            return this.scannedFiles;
         } catch(Throwable t) {
+            this.scannedFiles = Collections.emptyList();
             TILRef.logError("Failed to scan mods",t);
             throw t;
         }

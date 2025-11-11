@@ -37,34 +37,42 @@ public class TILLoaderJarModuleDataProvider {
         return Optional.of(root.resolve(path)).filter(Files::exists).map(Path::toUri);
     }
     
-    public static TILLoaderJarModuleDataProvider get(Object jar, Object metadata, Manifest manifest) {
+    public static TILLoaderJarModuleDataProvider get(Object jar, Object metadata, Manifest manifest,
+            boolean useProxy) {
         final URI uri = computeLoaderURI();
-        return Objects.nonNull(uri) ? new TILLoaderJarModuleDataProvider(jar,metadata,manifest,uri) : null;
+        return Objects.nonNull(uri) ? new TILLoaderJarModuleDataProvider(jar,metadata,manifest,uri,useProxy) : null;
     }
     
     final Object providerProxy;
     final FileSystem ufs;
     final URI uri;
+    final Manifest manifest;
     
-    TILLoaderJarModuleDataProvider(final Object jar, final Object metadata, final Manifest manifest, final URI uri) {
+    TILLoaderJarModuleDataProvider(final Object jar, final Object metadata, final Manifest manifest, final URI uri,
+            final boolean useProxy) {
         this.uri = uri;
         this.ufs = Paths.get(uri).getFileSystem();
-        this.providerProxy = createProxy(getClass().getClassLoader(),jar,metadata,manifest,uri,this.ufs);
+        this.manifest = manifest;
+        this.providerProxy = useProxy ? createProxy(getClass().getClassLoader(),jar,metadata,uri) : null;
     }
     
-    Object createProxy(ClassLoader loader, final Object jar, final Object metadata, final Manifest manifest,
-            final URI uri, final FileSystem fs) {
+    Object createProxy(ClassLoader loader, final Object jar, final Object metadata, final URI uri) {
         return ClassHelper.newGenericProxy(loader,MODULE_DATA_PROVIDER,(methodName,args) -> {
             switch(methodName) {
                 case "descriptor": return Hacks.invoke(metadata,"descriptor");
-                case "findFile": return findFile(fs,args[0]);
-                case "getManifest": return manifest;
+                case "findFile": return findFile(this.ufs,args[0]);
+                case "getManifest": return this.manifest;
                 case "name": return Hacks.invoke(metadata,"name");
-                case "open": return findFile(fs,args[0]).map(Paths::get).map(LamdbaExceptionUtils.rethrowFunction(Files::newInputStream));
+                case "open": return findFile(this.ufs,args[0]).map(Paths::get)
+                        .map(LamdbaExceptionUtils.rethrowFunction(Files::newInputStream));
                 case "uri": return uri;
                 case "verifyAndGetSigners": return Hacks.invoke(jar,"verifyAndGetSigners",args[0],args[1]);
                 default: return null;
             }
         });
+    }
+    
+    Optional<URI> findFile(final String name) {
+        return findFile(this.ufs,name);
     }
 }
