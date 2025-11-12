@@ -22,6 +22,8 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 @Getter
 public class MultiVersionModLocator implements IModLocator {
     
+    static MultiVersionModLocator instance;
+    
     static ClassLoader modFileClassLoader(IModFile file) {
         if(Objects.isNull(file)) return IModFile.class.getClassLoader();
         Class<?> cls = file.getClass();
@@ -30,11 +32,19 @@ public class MultiVersionModLocator implements IModLocator {
     }
     
     private Map<IModFile,FileSystem> fileSystems;
-    private List<IModFile> scannedFiles;
     boolean failed;
+    /**
+     * Due to version loading differences it is possible for multiple MultiVersionModLocator instances to be loaded.
+     * We want to make sure only one of these instances will attempt to load mods.
+     */
+    boolean initialized;
     
     public MultiVersionModLocator() {
-        TILRef.logInfo("Core Forge Locator plugin loaded on {}",getClass().getClassLoader());
+        ClassLoader thisLoader = getClass().getClassLoader();
+        if(Objects.isNull(instance)) {
+            TILRef.logInfo("Core Forge Locator plugin loaded on {}",thisLoader);
+            instance = this;
+        } else TILRef.logDebug("Extra core Forge Locator plugin loaded on {}",thisLoader);
     }
     
     FileSystem fileSystemFor(IModFile file) {
@@ -85,8 +95,7 @@ public class MultiVersionModLocator implements IModLocator {
             TILRef.logWarn("Not initializing mod loading for MultiVersionModLocator that failed to load");
             return;
         }
-        TILRef.logInfo("Initializing Forge mod loading with args {}",arguments);
-        ForgeModLoading.initModLoading(getClass().getClassLoader(),this);
+        this.initialized = ForgeModLoading.initModLoading(getClass().getClassLoader(),this,arguments);
     }
     
     @Override public boolean isValid(IModFile file) {
@@ -100,9 +109,9 @@ public class MultiVersionModLocator implements IModLocator {
     @Override public void scanFile(IModFile file, Consumer<Path> consumer) {}
     
     @Override public List<IModFile> scanMods() {
-        if(Objects.nonNull(this.scannedFiles)) {
-            TILRef.logInfo("Returing previously scanned mods {}",this.scannedFiles);
-            return this.scannedFiles;
+        if(!this.initialized) {
+            TILRef.logDebug("Skipping mod scan for uninitialized MultiVersionModLocator");
+            return Collections.emptyList();
         }
         if(this.failed) {
             TILRef.logWarn("Not scanning for mods with MultiVersionModLocator that failed to load");
@@ -120,11 +129,9 @@ public class MultiVersionModLocator implements IModLocator {
                     else if(!DEV) TILRef.logWarn("Failed to get FileSystem for {}",file.getFileName());
                 }
             }
-            TILRef.logInfo("Returing scanned mods {}",files);
-            this.scannedFiles = files;
-            return this.scannedFiles;
+            TILRef.logInfo("Returing {} scanned mods {}",files.size(),files);
+            return files;
         } catch(Throwable t) {
-            this.scannedFiles = Collections.emptyList();
             TILRef.logError("Failed to scan mods",t);
             throw t;
         }

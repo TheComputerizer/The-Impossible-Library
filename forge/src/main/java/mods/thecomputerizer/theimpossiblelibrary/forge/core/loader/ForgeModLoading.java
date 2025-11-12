@@ -118,6 +118,10 @@ public class ForgeModLoading {
     @Getter static boolean locatorBased;
     @Getter static String workingVersion;
     
+    //guard against init methods being called multiple times
+    static boolean scanned;
+    static boolean initalized;
+    
     private static <F> void addScannedMod(Object file, List<F> mods, String type) {
         if(locatorBased) {
             Hacks.setFieldDirect(file,"modFileType",getModFileType(type));
@@ -215,7 +219,7 @@ public class ForgeModLoading {
     }
     
     static void findFiles(MultiVersionLoaderAPI loader, Predicate<Path> filter, File... files) {
-        LOGGER.info("[{}]: Loading {} mod files",loader.getName(),files.length);
+        LOGGER.info("[{}]: Checking {} mod files for potential loading",loader.getName(),files.length);
         for(File mod : files) {
             LOGGER.debug("[{}]: Potentially loading mod file at path {}",loader.getName(),mod.toPath());
             checkPath(loader,mod.toPath(),filter);
@@ -365,7 +369,7 @@ public class ForgeModLoading {
         if(pathBased) return path;
         Supplier<Manifest> defaultManifest = getDefaultManifest(moduleName);
         if(LOADER_ID.equals(moduleName) || MODID.equals(moduleName))
-            return TILLoaderJar.get(defaultManifest,moduleName,!locatorBased);
+            return TILLoaderJar.get(defaultManifest,moduleName,path,!locatorBased);
         Function<Object,Object> jarMetadataSupplier = getJarMetadataSupplier(path);
         return Hacks.invokeStatic(SECURE_JAR,"from",defaultManifest,jarMetadataSupplier,path);
     }
@@ -531,13 +535,20 @@ public class ForgeModLoading {
         return infoMap;
     }
     
-    public static void initModLoading(ClassLoader loader, Object locator) {
+    public static boolean initModLoading(ClassLoader loader, Object locator, Map<String,?> arguments) {
+        if(initalized) {
+            LOGGER.debug("Skipping duplicate Forge mod loading initialization call");
+            return false;
+        }
+        LOGGER.info("Initializing Forge mod loading with args {}",arguments);
         Object core = CoreAPI.getInstance(loader);
         if(Objects.isNull(core))
             throw new RuntimeException("Failed to initialize Forge mod loading! Cannot find CoreAPI on "+loader);
         Hacks.checkBurningWaveInit();
         findPaths(loader,Hacks.invoke(core,"getLoader"),locator);
         loadMods(loader,locator,core);
+        initalized = true;
+        return true;
     }
     
     private static @Nullable TILBetterModScan initModScanner(ModFile file) {
@@ -684,6 +695,10 @@ public class ForgeModLoading {
      * Returns the list of mods
      */
     public static <F> List<F> scanMods() {
+        if(scanned) {
+            LOGGER.debug("Skipping duplicate mod scan");
+            return Collections.emptyList();
+        }
         ClassLoader context = Thread.currentThread().getContextClassLoader();
         LOGGER.debug("Scanning for mods in multiversion jars (context = {})",context);
         List<F> mods = new ArrayList<>();
@@ -706,6 +721,7 @@ public class ForgeModLoading {
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");
         }
+        scanned = true;
         return Collections.unmodifiableList(mods);
     }
     

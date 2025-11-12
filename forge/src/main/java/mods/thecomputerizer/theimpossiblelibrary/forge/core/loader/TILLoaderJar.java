@@ -28,6 +28,7 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import static java.util.jar.JarFile.MANIFEST_NAME;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PACKAGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 
 public class TILLoaderJar {
@@ -46,8 +47,8 @@ public class TILLoaderJar {
         return BOOT_PACKAGES;
     }
     
-    static Object get(Supplier<Manifest> manifestSupplier, String moduleName, boolean jarModuleData) {
-        return new TILLoaderJar(manifestSupplier.get(),moduleName,jarModuleData).jarProxy;
+    static Object get(Supplier<Manifest> manifestSupplier, String moduleName, Path path, boolean jarModuleData) {
+        return new TILLoaderJar(manifestSupplier.get(),moduleName,path,jarModuleData).jarProxy;
     }
     
     private static CodeSigner[] getSignersOrEmpty(Map<String,StatusData> dataMap, String name) {
@@ -77,12 +78,36 @@ public class TILLoaderJar {
         return Hacks.invokeDefault(false,instance,"hasSecurityData");
     }
     
+    /**
+     * If this is 1.18.2, wrap the proxy so that it extends Jar instead of implementing SecureJar.
+     * Otherwise, return the proxy as is.
+     */
+    private static Object maybeWrapProxy(Object jarProxy, TILLoaderJarModuleDataProvider provider, Path path,
+            Object metadata) {
+        return Objects.nonNull(provider.providerProxy) ? jarProxy :
+                wrapProxyForOldHandler(jarProxy,provider.ufs,path,metadata);
+    }
+    
+    /**
+     * Specific 1.18.2 handle due to the old securejarhandler version
+     */
+    private static Object wrapProxyForOldHandler(Object jarProxy, Object fileSystem, Path path, Object metadata) {
+        final String jarClassName = BASE_PACKAGE+".forge.v18.m2.core.loader.TILLoaderJar1_18_2";
+        final Class<?> jarClass = Hacks.findClass(jarClassName,TILLoaderJar.class.getClassLoader());
+        return Hacks.invokeStatic(jarClass,"get",jarProxy,fileSystem,path,metadata);
+    }
+    
     final Object jarProxy;
     
-    TILLoaderJar(Manifest manifest, String moduleName, boolean jarModuleData) {
+    TILLoaderJar(Manifest manifest, String moduleName, Path path, boolean jarModuleData) {
         Object metadata = TILLoaderJarMetadata.get(moduleName);
         TILLoaderJarModuleDataProvider provider = TILLoaderJarModuleDataProvider.get(this,metadata,manifest,jarModuleData);
-        this.jarProxy = createProxy(getClass().getClassLoader(),manifest,provider,moduleName);
+        this.jarProxy = createAndMaybeWrapProxy(getClass().getClassLoader(),manifest,metadata,provider,moduleName,path);
+    }
+    
+    Object createAndMaybeWrapProxy(ClassLoader loader, final Manifest manifest, final Object metadata,
+            final TILLoaderJarModuleDataProvider provider, final String moduleName, final Path path) {
+        return maybeWrapProxy(createProxy(loader,manifest,provider,moduleName),provider,path,metadata);
     }
     
     Object createProxy(ClassLoader loader, final Manifest manifest, final TILLoaderJarModuleDataProvider provider,
