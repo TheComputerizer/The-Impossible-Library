@@ -31,7 +31,8 @@ public class TILCommonEntryPointForge1_20_1 extends TILCommonEntryPoint1_20_1 {
     public static void onRegisterCreativeTabs(RegisterEvent event) {
         if(event.getRegistryKey()==CREATIVE_MODE_TAB) CreativeTabBuilder1_20.onRegister(event);
         else if(event.getRegistryKey()==COMMAND_ARGUMENT_TYPE) {
-            ResourceLocation registryName = ResourceLocation.fromNamespaceAndPath(MODID,"custom_suggester");
+            //ResourceLocation#fromNamespaceAndPath can't be used if we want NeoForge 1.20.1 to keep working
+            ResourceLocation registryName = new ResourceLocation(MODID,"custom_suggester");
             event.register(COMMAND_ARGUMENT_TYPE,registryName,() -> INFO);
             WrappedCommand1_20_1.registerArgType();
         }

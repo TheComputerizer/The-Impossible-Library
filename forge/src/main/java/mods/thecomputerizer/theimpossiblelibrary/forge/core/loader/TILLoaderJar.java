@@ -107,15 +107,17 @@ public class TILLoaderJar {
     
     Object createAndMaybeWrapProxy(ClassLoader loader, final Manifest manifest, final Object metadata,
             final TILLoaderJarModuleDataProvider provider, final String moduleName, final Path path) {
-        return maybeWrapProxy(createProxy(loader,manifest,provider,moduleName),provider,path,metadata);
+        return maybeWrapProxy(createProxy(loader,manifest,provider,moduleName,path),provider,path,metadata);
     }
     
     Object createProxy(ClassLoader loader, final Manifest manifest, final TILLoaderJarModuleDataProvider provider,
-            final String moduleName) {
+            final String moduleName, final Path primaryPath) {
         final Object verifier = Hacks.construct(MANIFEST_VERIFIER);
         final Map<String,StatusData> statusData = new HashMap<>();
         final Hashtable<String,CodeSigner[]> pendingSigners = new Hashtable<>();
         final Hashtable<String,CodeSigner[]> verifiedSigners = new Hashtable<>();
+        final Supplier<Path> primaryPathSupplier = ForgeModLoading.isSecureLoadingFormat() ?
+                () -> primaryPath : () -> Hacks.invoke(provider.ufs,"getPrimaryPath");
         InvocationHandler proxyHandler = (instance,method,args) -> {
             switch(method.getName()) {
                 case "equals": return Objects.nonNull(args[0]) && args[0].hashCode()==instance.hashCode();
@@ -130,7 +132,7 @@ public class TILLoaderJar {
                         statusData.get(MANIFEST_NAME).signers : null;
                 case "getPackages": return bootPackages();
                 case "getPath": return provider.ufs.getPath((String)args[0],(String[])args[1]);
-                case "getPrimaryPath": return Hacks.invoke(provider.ufs,"getPrimaryPath");
+                case "getPrimaryPath": return primaryPathSupplier.get();
                 case "getProviders": return Collections.emptyList();
                 case "getRootPath": return provider.ufs.getPath("");
                 case "getTrustedManifestEntries": {
@@ -140,7 +142,6 @@ public class TILLoaderJar {
                     CodeSigner[] objectSigners = getSignersOrEmpty(statusData,name);
                     return Objects.isNull(manifestSigners) || (manifestSigners.length==objectSigners.length) ?
                             attributes : null;
-                    
                 }
                 case "hasSecurityData": return !pendingSigners.isEmpty() || !verifiedSigners.isEmpty();
                 case "hashCode": return instance.hashCode();

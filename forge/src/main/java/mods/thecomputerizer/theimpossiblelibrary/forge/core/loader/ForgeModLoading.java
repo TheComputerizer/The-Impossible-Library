@@ -116,6 +116,7 @@ public class ForgeModLoading {
     static boolean fixedCoreMods;
     @Getter static boolean pathBased;
     @Getter static boolean locatorBased;
+    @Getter static boolean secureLoadingFormat;
     @Getter static String workingVersion;
     
     //guard against init methods being called multiple times
@@ -762,6 +763,7 @@ public class ForgeModLoading {
         workingVersion = version;
         pathBased = Misc.equalsAny(version,"16","16_5");
         locatorBased = pathBased || Misc.equalsAny(version,"18","18_2");
+        secureLoadingFormat = Misc.equalsAny(version,"20_4","20_6","21","21_1");
         modFileInfoCreator = setModFileInfoCreator(version);
         dynamicModFileClass = dynamicModFileCreator();
         langProviderFileInfo = setLangProviderFileInfo(version);
