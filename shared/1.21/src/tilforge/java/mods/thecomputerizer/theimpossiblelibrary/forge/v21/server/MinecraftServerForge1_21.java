@@ -7,7 +7,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 public class MinecraftServerForge1_21 extends MinecraftServer1_21 {
     
     private static final String saveField = NAMED_ENV ? "storageSource" : "f_129744_";
-    private static final String levelDirField = NAMED_ENV ? "levelDirectory" : "f_230867";
+    private static final String levelDirField = NAMED_ENV ? "levelDirectory" : "f_230867_";
     
     public MinecraftServerForge1_21() {
         super(saveField,levelDirField);
