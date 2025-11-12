@@ -28,7 +28,7 @@ import java.util.UUID;
 public abstract class Player1_19<P extends Player> extends PlayerAPI<P,EntityType<?>> {
 
     protected Player1_19(Object player) {
-        super(player,((Entity)player).getType());
+        super(player,((Entity)player).getType(),(p,n) -> p.getActiveEffects());
     }
     
     @Override public boolean canTarget() {
