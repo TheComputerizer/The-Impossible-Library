@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.jar.Manifest;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
@@ -30,11 +31,10 @@ public class TILLoaderJarModuleDataProvider {
         return uri;
     }
     
-    static Optional<URI> findFile(FileSystem ufs, Object name) {
-        Path path = ufs.getPath((String)name);
-        Path root = Hacks.invoke(ufs,"getRoot");
+    static Optional<URI> findFile(FileSystem fs, String name, Function<FileSystem,Path> rootGetter) {
+        Path root = rootGetter.apply(fs);
         if(Objects.isNull(root)) return Optional.empty();
-        return Optional.of(root.resolve(path)).filter(Files::exists).map(Path::toUri);
+        return Optional.of(root.resolve(fs.getPath(name))).filter(Files::exists).map(Path::toUri);
     }
     
     public static TILLoaderJarModuleDataProvider get(Object jar, Object metadata, Manifest manifest,
@@ -43,6 +43,7 @@ public class TILLoaderJarModuleDataProvider {
         return Objects.nonNull(uri) ? new TILLoaderJarModuleDataProvider(jar,metadata,manifest,uri,useProxy) : null;
     }
     
+    final Function<FileSystem,Path> rootGetter;
     final Object providerProxy;
     final FileSystem ufs;
     final URI uri;
@@ -50,6 +51,9 @@ public class TILLoaderJarModuleDataProvider {
     
     TILLoaderJarModuleDataProvider(final Object jar, final Object metadata, final Manifest manifest, final URI uri,
             final boolean useProxy) {
+        this.rootGetter = ForgeModLoading.isSecureLoadingFormat() ?
+                fs -> fs.getRootDirectories().iterator().next() :
+                fs -> Hacks.invoke(fs,"getRoot");
         this.uri = uri;
         this.ufs = Paths.get(uri).getFileSystem();
         this.manifest = manifest;
@@ -60,10 +64,10 @@ public class TILLoaderJarModuleDataProvider {
         return ClassHelper.newGenericProxy(loader,MODULE_DATA_PROVIDER,(methodName,args) -> {
             switch(methodName) {
                 case "descriptor": return Hacks.invoke(metadata,"descriptor");
-                case "findFile": return findFile(this.ufs,args[0]);
+                case "findFile": return findFile(this.ufs,(String)args[0],this.rootGetter);
                 case "getManifest": return this.manifest;
                 case "name": return Hacks.invoke(metadata,"name");
-                case "open": return findFile(this.ufs,args[0]).map(Paths::get)
+                case "open": return findFile(this.ufs,(String)args[0],this.rootGetter).map(Paths::get)
                         .map(LamdbaExceptionUtils.rethrowFunction(Files::newInputStream));
                 case "uri": return uri;
                 case "verifyAndGetSigners": return Hacks.invoke(jar,"verifyAndGetSigners",args[0],args[1]);
@@ -73,6 +77,6 @@ public class TILLoaderJarModuleDataProvider {
     }
     
     Optional<URI> findFile(final String name) {
-        return findFile(this.ufs,name);
+        return findFile(this.ufs,name,this.rootGetter);
     }
 }

@@ -1,8 +1,10 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.core;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.ForgeModLoading;
+import mods.thecomputerizer.theimpossiblelibrary.forge.core.loader.TILLanguageLoader;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -22,7 +24,14 @@ public class TILLanguageProvider implements IModLanguageProvider {
     static final Logger LOGGER = TILRef.createLogger("TIL Language Provider (Forge)");
     
     static {
-        LOGGER.info("Initialized {}",TILLanguageProvider.class);
+        Class<?> c = TILLanguageLoader.class;
+        LOGGER.debug("Initialized {} with impl version {}",c,c.getPackage().getImplementationVersion());
+    }
+    
+    public TILLanguageProvider() {
+        Class<?> c = getClass();
+        ClassHelper.verifyPackageSelfVersion(c.getPackage());
+        LOGGER.debug("Instantiated {} with impl version {}",c,c.getPackage().getImplementationVersion());
     }
     
     Object core;

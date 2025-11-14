@@ -2,6 +2,7 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.core.bootstrap;
 
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.ClassHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
@@ -22,7 +23,6 @@ import java.util.stream.Stream;
 import static cpw.mods.modlauncher.Launcher.INSTANCE;
 import static java.io.File.separator;
 import static java.lang.System.out;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.BOOT_ID;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.bootstrap.TILLauncherRef.LOADER_NAME;
 
@@ -39,7 +39,6 @@ public class TILBootLauncherForge extends TILLauncher implements ILaunchPluginSe
     static final String LANGUAGE_LOADER = CORE_PKG+".TILLanguageProvider";
     static final String LAYER = "cpw.mods.modlauncher.api.IModuleLayerManager$Layer";
     static final String LOCATOR = CORE_PKG+".MultiVersionModLocator";
-    static final String PACKAGE_VERSION_INFO = Package.class.getName()+"$VersionInfo";
     static final String SERVICE_LAUNCHER = CORE_PKG+".bootstrap.TILServiceLauncherForge";
     static final String UFS = "cpw.mods.niofs.union.UnionFileSystem";
     static final String UNION_PATH = "cpw.mods.niofs.union.UnionPath";
@@ -196,8 +195,7 @@ public class TILBootLauncherForge extends TILLauncher implements ILaunchPluginSe
         if(Hacks.invokeDirect(p,"module")!=m) {
             Hacks.setFieldDirect(p,"module",m);
             //Account for forge using Package#getImplementationVersion to find service class versions
-            Object versionInfo = Hacks.construct(PACKAGE_VERSION_INFO,null,null,null,null,VERSION,null,null);
-            Hacks.setFieldDirect(p,"versionInfo",versionInfo);
+            ClassHelper.setPackageSelfVersion(p);
         }
         else LOGGER.info("Package {} already present in module {}",p.getName(),moduleName);
     }

@@ -9,6 +9,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationHandler;
@@ -25,10 +26,12 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.VERSION;
 
 public class ClassHelper {
     
     static final Logger LOGGER = TILRef.createLogger("TIL ClassHelper");
+    static final String PACKAGE_VERSION_INFO = Package.class.getName()+"$VersionInfo";
     
     /**
      * Uses the URL of a class resources and its name to try and extract the original class path.
@@ -431,6 +434,78 @@ public class ClassHelper {
         }
         return Hacks.checkBurningWaveInitAndCall("loadOrDefineClass",clazz,loader);
     }
+    
+    /**
+     * Constructs a new Package$VersionInfo with all input args other than the version set to null and assigns it to
+     * package of the input class.
+     * Note that this will override any existing VersionInfo fields for the package
+     */
+    @IndirectCallers
+    public static void setPackageSelfVersion(Class<?> c) {
+        setPackageVersion(c,VERSION);
+    }
+    
+    /**
+     * Constructs a new Package$VersionInfo with all input args other than the version set to null and assigns it to
+     * the input package.
+     * Note that this will override any existing VersionInfo fields for the package
+     */
+    public static void setPackageSelfVersion(Package pkg) {
+        setPackageVersion(pkg,VERSION);
+    }
+    
+    /**
+     * Constructs a new Package$VersionInfo with all input args other than the version set to null and assigns it to
+     * package of the input class.
+     * Note that this will override any existing VersionInfo fields for the package
+     */
+    public static void setPackageVersion(Class<?> c, String version) {
+        setPackageVersion(c.getPackage(),version);
+    }
+    
+    /**
+     * Constructs a new Package$VersionInfo with all input args other than the version set to null and assigns it to
+     * the input package.
+     * Note that this will override any existing VersionInfo fields for the package
+     */
+    public static void setPackageVersion(Package pkg, String version) {
+        if(JVMHelper.isJava8()) setPackageVersionJava8(pkg,version);
+        else setPackageVersionInfo(pkg,null,null,null,null,version,null,null);
+    }
+    
+    /**
+     * Constructs a new Package$VersionInfo with the input args and assigns it to the package of the input class
+     */
+    @IndirectCallers
+    public static void setPackageVersionInfo(Class<?> c, Object ... args) {
+        setPackageVersionInfo(c.getPackage(),args);
+    }
+    
+    /**
+     * Constructs a new Package$VersionInfo with the input args and assigns it to the input package
+     */
+    public static void setPackageVersionInfo(Package pkg, Object ... args) {
+        if(JVMHelper.isJava8()) setPackageVersionInfoJava8(pkg,args);
+        else Hacks.setFieldDirect(pkg,"versionInfo",Hacks.construct(PACKAGE_VERSION_INFO,args));
+    }
+    
+    /**
+     * Java 8 stored the fields later transferred to Package$VersionInfo directly in Package
+     */
+    private static void setPackageVersionInfoJava8(Package pkg, @NotNull Object ... args) {
+        final String[] fieldTypes = new String[]{"spec","impl"};
+        final String[] fieldNames = new String[]{"Title","Version","Vendor"};
+        for(int t=0;t<fieldTypes.length;t++) {
+            for(int n=0;n<fieldNames.length;n++) {
+                int argIndex = (3*t)+n;
+                Hacks.setFieldDirect(pkg,fieldTypes[t]+fieldNames[n],args.length>argIndex ? args[argIndex] : null);
+            }
+        }
+    }
+    
+    private static void setPackageVersionJava8(Package pkg, String version) {
+        Hacks.setFieldDirect(pkg,"implVersion",version);
+    }
 
     /**
      * Builds a signature via classes
@@ -501,6 +576,23 @@ public class ClassHelper {
             if(Misc.equalsAny(systemLoader,syncFrom,syncTo))
                 LOGGER.error("Failed to sync sources for {} from {} to {}!",className,syncFrom,syncTo,ex);
             else syncSourcesForClass(systemLoader,syncTo,className,urlLoader,classesToLoad);
+        }
+    }
+    
+    /**
+     * Verify that the input package has an implementation version and set it to the library version if not.
+     */
+    public static void verifyPackageSelfVersion(Package pkg) {
+        verifyPackageVersion(pkg,VERSION);
+    }
+    
+    /**
+     * Verify that the input package has an implementation version and set it to the input defaultVersion if not.
+     */
+    public static void verifyPackageVersion(Package pkg, String defaultVersion) {
+        if(Objects.isNull(pkg.getImplementationVersion())) {
+            LOGGER.debug("Setting missing implementation version for {}",pkg);
+            setPackageVersion(pkg,defaultVersion);
         }
     }
 
