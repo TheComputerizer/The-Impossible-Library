@@ -20,6 +20,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.io.FileHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.forge.core.ForgeCoreLoader;
+import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
@@ -99,6 +100,7 @@ public class ForgeModLoading {
     static final String MOD_FILE_OR_EXCEPTION = "net.minecraftforge.forgespi.locating.IModLocator$ModFileOrException";
     static final String MOD_FILE_PARSER = "net.minecraftforge.fml.loading.moddiscovery.ModFileParser";
     static final String MOD_PROVIDER = "net.minecraftforge.forgespi.locating.IModProvider";
+    static final String NAMED_PATH = "cpw.mods.modlauncher.api.NamedPath";
     static final String NIGHT_CONFIG_WRAPPER = "net.minecraftforge.fml.loading.moddiscovery.NightConfigWrapper";
     static final String SCANNER = "net.minecraftforge.fml.loading.moddiscovery.Scanner";
     static final String SECURE_JAR = "cpw.mods.jarhandling.SecureJar";
@@ -123,11 +125,25 @@ public class ForgeModLoading {
     static boolean scanned;
     static boolean initalized;
     
+    /**
+     * Add the paths found by the library to the found list in ModDirTransformerDiscoverer in order to convince Forge
+     * that the ModsFolderLocator doesn't need to try loading them.
+     * Only applicable for 1.18.2+ & required for 1.20.4+ to load at all
+     */
+    private static void addFoundModPath(Object file, String type) {
+        if(pathBased || !"MOD".equals(type)) return;
+        Object foundPath = toNamedPath(Hacks.invoke(file,"getFilePath"));
+        if(Objects.isNull(foundPath)) return;
+        Hacks.addToCollectionField("found",foundPath,
+                f -> Hacks.getFieldList(ModDirTransformerDiscoverer.class,"getFieldStatic",f));
+    }
+    
     private static <F> void addScannedMod(Object file, List<F> mods, String type) {
         if(locatorBased) {
             Hacks.setFieldDirect(file,"modFileType",getModFileType(type));
             mods.add(GenericUtils.cast(file));
         } else mods.add(Hacks.construct(MOD_FILE_OR_EXCEPTION,file,null));
+        addFoundModPath(file,type);
     }
     
     static void checkPath(MultiVersionLoaderAPI loader, Path path, Predicate<Path> filter) {
@@ -717,7 +733,7 @@ public class ForgeModLoading {
             populateMultiversionData(map,data);
             if(candidateEntry.getKey().getModClassNames().contains(SELF_ENTRYPOINT)) {
                 LOGGER.info("Adding scanned lang provider mod {}",candidateFile);
-                addScannedMod(langProviderModFile(candidateFile, LOADER_ID), mods, "LANGPROVIDER");
+                addScannedMod(langProviderModFile(candidateFile,LOADER_ID),mods,"LANGPROVIDER");
             }
             LOGGER.info("Adding scanned mod {}",candidateFile);
             addScannedMod(candidateFile,mods,"MOD");
@@ -889,6 +905,17 @@ public class ForgeModLoading {
     public static Object stupidCast(Object o) {
         LOGGER.info("Stupidly casting {}",o);
         return o;
+    }
+    
+    static Object toNamedPath(Path path) {
+        if(Objects.isNull(path)) return null;
+        String name = path.toFile().getName();
+        return toNamedPath(name.contains(".") ? name.substring(0,name.lastIndexOf('.')) : name,new Path[]{path});
+    }
+    
+    static Object toNamedPath(String name, Path[] paths) {
+        if(Objects.isNull(name) || Objects.isNull(paths) || paths.length==0) return null;
+        return Hacks.construct(NAMED_PATH,name,paths);
     }
     
     private static IConfigurable wrapConfig(UnmodifiableConfig config) {

@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NETWORK;
@@ -31,27 +32,40 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PAC
 public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor {
     
     private static final String FORGE_NETWORK_HELPER = BASE_PACKAGE+".forge.network.ForgeNetworkHelper";
+    private static final Class<?>[] SIDED_CLASSES = new Class<?>[]{
+            Client.class,ClientLogin.class,Server.class,ServerLogin.class};
+    
     private static Class<?> FORGE_NETWORK_HELPER_CLASS;
+    
+    public static <DIR> DIR classToDir(Class<?> msgCls) {
+        if(Client.class==msgCls) return NetworkHelper.getDirToClient();
+        if(ClientLogin.class==msgCls) return NetworkHelper.getDirToClientLogin();
+        if(Server.class==msgCls) return NetworkHelper.getDirToServer();
+        if(ServerLogin.class==msgCls) return NetworkHelper.getDirToServerLogin();
+        TILRef.logError("Cannot get direction for unknown MessageWrapperAPI extension class! {}",msgCls);
+        return null;
+    }
     
     public static <DIR,P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder(
             final MessageDirectionInfo<DIR> dir) {
-        return Objects.nonNull(dir) ? decoder(dir.getDirection()) : buf -> null;
+        return Objects.nonNull(dir) ? innerDecoder(dir.getDirection()) : buf -> null;
     }
     
     public static <P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder() {
         return buf -> {
-            final Function<B,MessageWrapperAPI<P,C>> wrappedDecoder = decoder(NetworkHelper.readDir(buf));
+            Object dir = NetworkHelper.readDir(buf);
+            final Function<B,MessageWrapperAPI<P,C>> wrappedDecoder =
+                    dir instanceof MessageDirectionInfo<?> ? decoder(GenericUtils.cast(dir)) : innerDecoder(dir);
             return wrappedDecoder.apply(buf);
         };
     }
     
-    public static <DIR,P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> decoder(final DIR dir) {
-        if(Objects.isNull(dir)) return buf -> null;
-        return buf -> GenericUtils.cast(getInstance(dir,buf));
-    }
-    
     public static <P,C,B extends ByteBuf> @NotNull BiConsumer<MessageWrapperAPI<P,C>,B> encoder() {
         return MessageWrapperAPI::encode;
+    }
+    
+    public static void forEachSidedClass(Consumer<Class<? extends MessageWrapperAPI<?,?>>> consumer) {
+        for(Class<?> msgClass : SIDED_CLASSES) consumer.accept(GenericUtils.cast(msgClass));
     }
     
     public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(MessageDirectionInfo<DIR> dir) {
@@ -141,6 +155,11 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
             }
             if(CoreAPI.legacyPacketEnv()) Hacks.invoke(context,"setPacketHandled",true);
         };
+    }
+    
+    public static <DIR,P,C,B extends ByteBuf> @NotNull Function<B,MessageWrapperAPI<P,C>> innerDecoder(final DIR dir) {
+        if(Objects.isNull(dir)) return buf -> null;
+        return buf -> GenericUtils.cast(getInstance(dir,buf));
     }
     
     @SuppressWarnings("SameParameterValue")
@@ -446,6 +465,10 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
         return this;
     }
     
+    /**
+     * Sent from the server during gameplay
+     * Received on the client during gameplay
+     */
     public static final class Client<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
         
         Client() {
@@ -457,6 +480,10 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
         }
     }
     
+    /**
+     * Sent from the server during login
+     * Received on the client during login
+     */
     public static final class ClientLogin<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
         
         ClientLogin() {
@@ -468,6 +495,10 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
         }
     }
     
+    /**
+     * Sent from the client during gameplay
+     * Received on the server during gameplay
+     */
     public static final class Server<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
         
         Server() {
@@ -479,6 +510,10 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
         }
     }
     
+    /**
+     * Sent from the client during login
+     * Received on the server during login
+     */
     public static final class ServerLogin<PLAYER,CTX> extends MessageWrapperAPI<PLAYER,CTX> {
         
         ServerLogin() {

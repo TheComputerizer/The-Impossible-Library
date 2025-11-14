@@ -75,11 +75,6 @@ public abstract class CommonEventsForge1_20 extends CommonEvents1_20 implements 
         PLAYER_XP_CHANGE.setConnector(new PlayerChangeXPEventForge());
         PLAYER_XP_PICKUP.setConnector(new PlayerPickupXPEventForge());
         PLAYER_XP_LEVEL_CHANGE.setConnector(new PlayerLevelChangeEventForge());
-        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventForge1_20()); //TODO Deferred registers?
-        REGISTER_BLOCKS.setConnector(new RegisterBlocksEventForge1_20());
-        REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventForge1_20());
-        REGISTER_ITEMS.setConnector(new RegisterItemsEventForge1_20());
-        REGISTER_SOUNDS.setConnector(new RegisterSoundsEventForge1_20());
         TICK_PLAYER.setConnector(new PlayerTickEventForge());
         TICK_WORLD.setConnector(new WorldTickEventForge1_20());
         WORLD_CREATE_SPAWN_POS.setConnector(new WorldCreateSpawnPosEventForge1_20());
@@ -87,7 +82,16 @@ public abstract class CommonEventsForge1_20 extends CommonEvents1_20 implements 
         WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventForge1_20());
         WORLD_SAVE.setConnector(new WorldSaveEventForge1_20());
         WORLD_UNLOAD.setConnector(new WorldUnloadEventForge1_20());
+        defineVersionedEvents();
         super.defineEvents();
+    }
+    
+    protected void defineVersionedEvents() {
+        REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventForge1_20());
+        REGISTER_BLOCKS.setConnector(new RegisterBlocksEventForge1_20());
+        REGISTER_ENTITIES.setConnector(new RegisterEntitiesEventForge1_20());
+        REGISTER_ITEMS.setConnector(new RegisterItemsEventForge1_20());
+        REGISTER_SOUNDS.setConnector(new RegisterSoundsEventForge1_20());
     }
     
     @Override public <R> Result getEventResult(R result) {

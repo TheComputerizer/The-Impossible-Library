@@ -27,7 +27,8 @@ public class NetworkNeoForge1_21 extends Network1_21<Object,Object> {
   
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
         TILRef.logInfo("Registering packet payloads");
-        event.registrar(MODID).executesOn(NETWORK)
+        event.registrar(MODID)
+                .executesOn(NETWORK)
                 .playBidirectional(TYPE,streamCodec(),MessageWrapperNeoForge1_21::handle);
     }
     

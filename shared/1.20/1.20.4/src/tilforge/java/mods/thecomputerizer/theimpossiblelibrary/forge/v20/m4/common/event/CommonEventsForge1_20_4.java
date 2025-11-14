@@ -6,9 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m4.common.event.event
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.REGISTER_COMMANDS;
 
 public class CommonEventsForge1_20_4 extends CommonEventsForge1_20 {
-
-    @Override public void defineEvents() {
+    
+    @Override public void defineVersionedEvents() {
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventForge1_20_4());
-        super.defineEvents();
+        super.defineVersionedEvents();
     }
 }

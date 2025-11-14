@@ -4,11 +4,13 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI.*;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.network.Network1_21;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.SimpleChannel;
@@ -16,20 +18,32 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
+import static net.minecraft.network.protocol.PacketFlow.CLIENTBOUND;
+import static net.minecraft.network.protocol.PacketFlow.SERVERBOUND;
 import static net.minecraftforge.network.NetworkDirection.*;
 import static net.minecraftforge.network.PacketDistributor.PLAYER;
 import static net.minecraftforge.network.PacketDistributor.SERVER;
 
 public class NetworkForge1_21 extends Network1_21<SimpleChannel,NetworkDirection<?>> {
     
-    @SuppressWarnings("rawtypes")
-    static StreamCodec<FriendlyByteBuf,MessageWrapperAPI> streamCodec() {
-        return StreamCodec.of((buf,msg) -> msg.encode(buf),
-                              buf -> MessageWrapperAPI.decoder().apply(buf));
+    private SimpleChannel network;
+    
+    static SimpleChannel buildMessages(SimpleChannel channel) {
+        MessageWrapperAPI.forEachSidedClass(msgCls -> buildMessage(channel,msgCls));
+        return channel;
     }
     
-    private SimpleChannel network;
+    static <M extends MessageWrapperAPI<?,?>> void buildMessage(SimpleChannel channel, Class<M> msgCls) {
+        channel.messageBuilder(msgCls)
+                .direction(Misc.equalsAny(MessageWrapperAPI.classToDir(msgCls),
+                        CONFIGURATION_TO_CLIENT,LOGIN_TO_CLIENT,PLAY_TO_CLIENT) ? CLIENTBOUND : SERVERBOUND)
+                .encoder(MessageWrapperAPI::encode)
+                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder().apply(buf)))
+                .consumerNetworkThread((BiConsumer<M,Context>)(msg,ctx) -> msg.handle(GenericUtils.cast(ctx)))
+                .add();
+    }
 
     @Override public NetworkDirection<?> getDirFromName(String name) {
         return switch(name.toUpperCase()) {
@@ -72,15 +86,13 @@ public class NetworkForge1_21 extends Network1_21<SimpleChannel,NetworkDirection
         return LOGIN_TO_CLIENT;
     }
 
-    @SuppressWarnings("unchecked")
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network)) {
             ResourceLocation name = TILRef.res("main_network").unwrap();
-            this.network = ChannelBuilder.named(name)
+            this.network = buildMessages(ChannelBuilder.named(name)
                     .clientAcceptedVersions((status,version) -> true)
                     .serverAcceptedVersions((status,version) -> true).networkProtocolVersion(1)
-                    .simpleChannel().any().bidirectional()
-                    .add(MessageWrapperAPI.class,streamCodec(),MessageWrapperAPI::handle).build();
+                    .simpleChannel()).build();
         }
         return this.network;
     }

@@ -5,10 +5,10 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m1.common.event.event
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventWrapper.CommonType.*;
 
-@SuppressWarnings("unused") public class CommonEventsForge1_20_1 extends CommonEventsForge1_20 {
+public class CommonEventsForge1_20_1 extends CommonEventsForge1_20 {
 
-    @Override public void defineEvents() {
+    @Override public void defineVersionedEvents() {
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventForge1_20_1());
-        super.defineEvents();
+        super.defineVersionedEvents();
     }
 }

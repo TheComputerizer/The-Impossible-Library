@@ -5,7 +5,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v20.network.Network1_20;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m4.network.Network1_20_4;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
@@ -18,14 +18,24 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_CLIENT;
-import static net.minecraftforge.network.NetworkDirection.LOGIN_TO_SERVER;
-import static net.minecraftforge.network.NetworkDirection.PLAY_TO_CLIENT;
-import static net.minecraftforge.network.NetworkDirection.PLAY_TO_SERVER;
+import static net.minecraftforge.network.NetworkDirection.*;
 import static net.minecraftforge.network.PacketDistributor.PLAYER;
 import static net.minecraftforge.network.PacketDistributor.SERVER;
 
-public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirection> {
+public class NetworkForge1_20_4 extends Network1_20_4<SimpleChannel,NetworkDirection> {
+    
+    static SimpleChannel buildMessages(SimpleChannel channel) {
+        MessageWrapperAPI.forEachSidedClass(msgCls -> buildMessage(channel,msgCls));
+        return channel;
+    }
+    
+    static <M extends MessageWrapperAPI<?,?>> void buildMessage(SimpleChannel channel, Class<M> msgCls) {
+        channel.messageBuilder(msgCls)
+                .encoder(MessageWrapperAPI::encode)
+                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder().apply(buf)))
+                .consumerNetworkThread((BiConsumer<M,Context>)(msg,ctx) -> msg.handle(GenericUtils.cast(ctx)))
+                .add();
+    }
 
     private SimpleChannel network;
 
@@ -62,18 +72,13 @@ public class NetworkForge1_20_4 extends Network1_20<SimpleChannel,NetworkDirecti
         return Objects.nonNull(dir) ? dir.reply() : null;
     }
 
-    @SuppressWarnings({"rawtypes","unchecked"})
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network)) {
             ResourceLocation name = TILRef.res("main_network").unwrap();
-            this.network = ChannelBuilder.named(name)
+            this.network = buildMessages(ChannelBuilder.named(name)
                     .clientAcceptedVersions((status,version) -> true)
                     .serverAcceptedVersions((status,version) -> true)
-                    .networkProtocolVersion(1).simpleChannel()
-                    .messageBuilder(MessageWrapperAPI.class)
-                    .encoder(GenericUtils.cast(MessageWrapperAPI.encoder()))
-                    .decoder(GenericUtils.cast(MessageWrapperAPI.decoder()))
-                    .consumerNetworkThread((BiConsumer<MessageWrapperAPI,Context>)MessageWrapperAPI::handle).add();
+                    .networkProtocolVersion(1).simpleChannel());
         }
         return this.network;
     }

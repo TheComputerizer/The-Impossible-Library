@@ -45,8 +45,6 @@ public class ClientEventsForge1_20 extends ClientEvents1_20 implements ClientFor
         RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_20());
         RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge1_20());
         RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge1_20());
-        RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge1_20());
-        RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge1_20());
         RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge1_20());
         RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_20());
         SOUND_LOAD.setConnector(new LoadSoundEventForge());
@@ -56,7 +54,13 @@ public class ClientEventsForge1_20 extends ClientEvents1_20 implements ClientFor
         SOUND_SETUP.setConnector(new SoundSetupEventForge());
         TICK_CLIENT.setConnector(new ClientTickEventForge());
         TICK_RENDER.setConnector(new RenderTickEventForge());
+        defineVersionedEvents();
         super.defineEvents();
+    }
+    
+    protected void defineVersionedEvents() {
+        RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge1_20());
+        RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge1_20());
     }
     
     @Override public <R> Result getEventResult(R result) {
