@@ -13,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.registry.item.ToolBuilderAP
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.sound.SoundBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.block.BlockBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity.BlockEntityBuilder1_12_2;
 import mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry.blockentity.BlockEntityRegistry1_12_2;
@@ -40,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static net.minecraftforge.fml.common.registry.ForgeRegistries.*;
@@ -72,17 +74,16 @@ public class RegistryHandler1_12_2 implements RegistryHandlerAPI {
     }
 
     private <V extends IForgeRegistryEntry<V>> RegistryAPI<V> getRegistry(
-            Set<RegistryAPI<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<V> type) {
+            Set<RegistryAPI<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
         ResourceLocation1_12_2 key = new ResourceLocation1_12_2(new ResourceLocation(name));
         Registry1_12_2<V> registry = new Registry1_12_2<>(forgeRegistry,type,key);
         registries.add(registry);
         return registry;
     }
 
-    @SuppressWarnings("unchecked")
-    @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registryKey, ResourceLocationAPI<?> entryKey) {
-        RegistryAPI<V> reg = (RegistryAPI<V>)getRegistry(registryKey);
-        return reg.hasKey(entryKey) ? reg.getValue(entryKey) : null;
+    @Override public <V> @Nullable V getEntryIfPresent(ResourceLocationAPI<?> registry, ResourceLocationAPI<?> entry) {
+        RegistryAPI<V> reg = GenericUtils.cast(getRegistry(registry));
+        return Objects.nonNull(reg) && reg.hasKey(entry) ? reg.getValue(entry) : null;
     }
 
     @Override public RegistryAPI<Biome> getBiomeRegistry() {

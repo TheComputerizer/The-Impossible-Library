@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import net.minecraft.core.Registry;
@@ -11,8 +12,8 @@ import java.util.stream.Collectors;
 
 public class RegistryVanilla1_19<V> extends Registry1_19<V> {
 
-    public RegistryVanilla1_19(Registry<V> registry, ResourceLocationAPI<?> registryKey, Class<V> type) {
-        super(registry,type,registryKey);
+    public RegistryVanilla1_19(Registry<V> registry, ResourceLocationAPI<?> registryKey, Class<?> type) {
+        super(registry,GenericUtils.cast(type),registryKey);
     }
     
     @SuppressWarnings("unchecked")

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.legacy.v12.m2.registry;
 
 import lombok.Getter;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
@@ -13,8 +14,8 @@ import java.util.stream.Collectors;
 @Getter
 public class Registry1_12_2<V extends IForgeRegistryEntry<V>> extends RegistryAPI<V> {
 
-    public Registry1_12_2(IForgeRegistry<V> forgeRegistry, Class<V> type, ResourceLocationAPI<?> registryKey) {
-        super(forgeRegistry,type,registryKey);
+    public Registry1_12_2(IForgeRegistry<V> forgeRegistry, Class<?> type, ResourceLocationAPI<?> registryKey) {
+        super(forgeRegistry,GenericUtils.cast(type),registryKey);
     }
     
     @SuppressWarnings("unchecked")

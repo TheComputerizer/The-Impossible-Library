@@ -5,6 +5,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.FutureCreativeTab;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.Builder;
@@ -26,7 +28,15 @@ public class FutureCreativeTabForge1_20 extends FutureCreativeTab<CreativeModeTa
     private final List<ItemStack> suppliedItems = new ArrayList<>();
     
     public FutureCreativeTabForge1_20(ResourceLocationAPI<?> registryName) {
+        this(registryName,() -> CREATIVE_MODE_TAB);
+    }
+    
+    final Supplier<ResourceKey<Registry<CreativeModeTab>>> registryKey;
+    
+    protected FutureCreativeTabForge1_20(ResourceLocationAPI<?> registryName,
+            Supplier<ResourceKey<Registry<CreativeModeTab>>> registryKeySupplier) {
         super(registryName);
+        this.registryKey = registryKeySupplier;
     }
     
     /**
@@ -39,7 +49,7 @@ public class FutureCreativeTabForge1_20 extends FutureCreativeTab<CreativeModeTa
         }
         RegisterEvent event = (RegisterEvent)arg;
         ResourceLocation name = this.registryName.unwrap();
-        event.register(CREATIVE_MODE_TAB,name,() -> {
+        event.register(this.registryKey.get(),name,() -> {
             Builder builder = new Builder(TOP,0)
                     .title(TextHelper.getTranslated("itemGroup."+name.getPath()).getAsComponent());
             if(Objects.nonNull(this.iconSupplier)) builder.icon(() -> (ItemStack)this.iconSupplier.get());

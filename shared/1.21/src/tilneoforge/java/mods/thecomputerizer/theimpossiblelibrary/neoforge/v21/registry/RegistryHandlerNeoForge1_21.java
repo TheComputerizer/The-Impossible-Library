@@ -35,11 +35,11 @@ public class RegistryHandlerNeoForge1_21 extends RegistryHandler1_21 {
         this.structure = getRegistry(registries,STRUCTURE_TYPE,"structure",StructureType.class);
     }
     
-    @SuppressWarnings("unchecked")
-    private <V> Registry1_21<V> getRegistry(
-            Set<? super Registry1_21<?>> registries, Registry<V> vanillaRegistry, String name, Class<?> type) {
+    private <V> Registry1_21<V> getRegistry(Set<? super Registry1_21<?>> registries,
+            Registry<V> vanillaRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(ResourceLocation.parse(name));
-        RegistryVanilla1_21<V> registry = new RegistryVanilla1_21<>(vanillaRegistry, key, (Class<V>)type);
+        RegistryVanilla1_21<V> registry = new RegistryVanilla1_21<>(vanillaRegistry,
+                                                                    key,type);
         registries.add(registry);
         return registry;
     }

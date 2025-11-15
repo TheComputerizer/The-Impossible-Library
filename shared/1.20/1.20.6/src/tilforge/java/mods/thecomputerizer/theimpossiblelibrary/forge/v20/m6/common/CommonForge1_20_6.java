@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
@@ -12,6 +13,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.Commo
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.integration.ModHelperForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network.NetworkForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.registry.RegistryHandlerForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.block.BlockHelper1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.Tag1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.text.TextHelper1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.wrappers.Wrapper1_20_6;
@@ -19,6 +21,10 @@ import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.wrappers.Wrapper1
 import java.util.function.Supplier;
 
 public class CommonForge1_20_6 extends CommonForge1_20 {
+    
+    @Override public Supplier<BlockHelperAPI> initBlockHelper() {
+        return BlockHelper1_20_6::new;
+    }
     
     @Override public Supplier<CommonEventsAPI> initCommonEvents() {
         return CommonEventsForge1_20_6::new;

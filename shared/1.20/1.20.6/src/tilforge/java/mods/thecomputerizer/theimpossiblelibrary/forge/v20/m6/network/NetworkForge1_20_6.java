@@ -37,7 +37,7 @@ public class NetworkForge1_20_6 extends Network1_20_6<SimpleChannel,NetworkDirec
                 .direction(Misc.equalsAny(MessageWrapperAPI.classToDir(msgCls),
                         CONFIGURATION_TO_CLIENT, LOGIN_TO_CLIENT, PLAY_TO_CLIENT) ? CLIENTBOUND : SERVERBOUND)
                 .encoder(MessageWrapperAPI::encode)
-                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder().apply(buf)))
+                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder(msgCls).apply(buf)))
                 .consumerNetworkThread((BiConsumer<M,Context>)(msg,ctx) -> msg.handle(GenericUtils.cast(ctx)))
                 .add();
     }

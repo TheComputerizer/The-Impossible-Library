@@ -35,11 +35,10 @@ public class RegistryHandlerFabric1_20_4 extends RegistryHandler1_20 {
         this.structure = getRegistry(registries,STRUCTURE_TYPE,"structure",StructureType.class);
     }
     
-    @SuppressWarnings("unchecked")
-    private <V> Registry1_20<V> getRegistry(
-            Set<? super Registry1_20<?>> registries, Registry<V> vanillaRegistry, String name, Class<?> type) {
+    private <V> Registry1_20<V> getRegistry(Set<? super Registry1_20<?>> registries,
+            Registry<V> vanillaRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryVanilla1_20<V> registry = new RegistryVanilla1_20<>(vanillaRegistry,key,(Class<V>)type);
+        RegistryVanilla1_20<V> registry = new RegistryVanilla1_20<>(vanillaRegistry,key,type);
         registries.add(registry);
         return registry;
     }

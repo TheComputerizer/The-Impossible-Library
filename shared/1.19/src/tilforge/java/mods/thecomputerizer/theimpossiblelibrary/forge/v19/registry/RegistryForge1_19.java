@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v19.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.Registry1_19;
@@ -10,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class RegistryForge1_19<V> extends Registry1_19<V> {
     
-    public RegistryForge1_19(IForgeRegistry<V> forgeRegistry, ResourceLocationAPI<?> registryKey, Class<V> type) {
-        super(forgeRegistry,type,registryKey);
+    public RegistryForge1_19(IForgeRegistry<V> forgeRegistry, ResourceLocationAPI<?> registryKey, Class<?> type) {
+        super(forgeRegistry,GenericUtils.cast(type),registryKey);
     }
     
     @SuppressWarnings("unchecked")

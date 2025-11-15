@@ -6,6 +6,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v21.registry.tab.CreativeTabBuilderForge1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.Registry1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.RegistryHandler1_21;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.registry.RegistryVanilla1_21;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
@@ -15,10 +17,12 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Set;
 
+import static net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE;
 import static net.minecraftforge.registries.ForgeRegistries.*;
 
 public class RegistryHandlerForge1_21 extends RegistryHandler1_21 {
@@ -32,13 +36,22 @@ public class RegistryHandlerForge1_21 extends RegistryHandler1_21 {
         this.item = getRegistry(registries,ITEMS,"item",Item.class);
         this.potion = getRegistry(registries,POTIONS,"potion",Potion.class);
         this.sound = getRegistry(registries,SOUND_EVENTS,"sound",SoundEvent.class);
+        this.structure = getVanillaRegistry(registries,STRUCTURE_TYPE,"structure",StructureType.class);
     }
     
-    @SuppressWarnings("unchecked")
-    private <V> RegistryForge1_21<V> getRegistry(
-            Set<? super Registry1_21<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
+    private <V> Registry1_21<V> getRegistry(Set<? super Registry1_21<?>> registries,
+            IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(ResourceLocation.parse(name));
-        RegistryForge1_21<V> registry = new RegistryForge1_21<>(forgeRegistry,key,(Class<V>)type);
+        Registry1_21<V> registry = new RegistryForge1_21<>(forgeRegistry,key,type);
+        registries.add(registry);
+        return registry;
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    private <V> Registry1_21<V> getVanillaRegistry(Set<? super Registry1_21<?>> registries,
+            Registry<V> vanillaRegistry,String name, Class<?> type) {
+        ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(ResourceLocation.parse(name));
+        Registry1_21<V> registry = new RegistryVanilla1_21<>(vanillaRegistry,key,type);
         registries.add(registry);
         return registry;
     }

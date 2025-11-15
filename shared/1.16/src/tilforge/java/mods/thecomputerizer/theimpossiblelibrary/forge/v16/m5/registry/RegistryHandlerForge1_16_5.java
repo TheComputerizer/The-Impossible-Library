@@ -37,11 +37,11 @@ public class RegistryHandlerForge1_16_5 extends RegistryHandler1_16_5 {
         this.structure = getRegistry(registries,STRUCTURE_FEATURES,"structure",StructureFeature.class);
     }
     
-    @SuppressWarnings("unchecked")
     private <V extends IForgeRegistryEntry<V>> RegistryForge1_16_5<V> getRegistry(
-            Set<? super Registry1_16_5<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
+            Set<? super Registry1_16_5<?>> registries, IForgeRegistry<V> forgeRegistry, String name,
+            Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryForge1_16_5<V> registry = new RegistryForge1_16_5<>(forgeRegistry,key,(Class<V>)type);
+        RegistryForge1_16_5<V> registry = new RegistryForge1_16_5<>(forgeRegistry,key,type);
         registries.add(registry);
         return registry;
     }

@@ -1,4 +1,4 @@
-package mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block;
+package mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.block;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.block.BlockPropertyAPI;
@@ -7,6 +7,8 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.block.MaterialColorA
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block.BlockProperty1_20;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.block.MaterialColor1_20;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -17,7 +19,7 @@ import net.minecraft.world.level.material.MapColor;
 import java.util.Map;
 import java.util.Objects;
 
-public class BlockHelper1_20 implements BlockHelperAPI {
+public class BlockHelper1_20_6 implements BlockHelperAPI {
     
     static final Map<String,MapColor> COLOR_BY_NAME = buildColorMap();
     

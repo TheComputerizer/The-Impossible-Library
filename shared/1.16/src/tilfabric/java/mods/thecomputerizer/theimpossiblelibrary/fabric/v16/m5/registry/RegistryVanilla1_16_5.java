@@ -1,5 +1,6 @@
 package mods.thecomputerizer.theimpossiblelibrary.fabric.v16.m5.registry;
 
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v16.m5.registry.Registry1_16_5;
@@ -10,10 +11,10 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class RegistryFabric1_16_5<V> extends Registry1_16_5<V> {
+public class RegistryVanilla1_16_5<V> extends Registry1_16_5<V> {
 
-    public RegistryFabric1_16_5(Registry<V> registry, ResourceLocationAPI<?> registryKey, Class<V> type) {
-        super(registry,type,registryKey);
+    public RegistryVanilla1_16_5(Registry<V> registry, ResourceLocationAPI<?> registryKey, Class<?> type) {
+        super(registry,GenericUtils.cast(type),registryKey);
     }
     
     @SuppressWarnings("unchecked")

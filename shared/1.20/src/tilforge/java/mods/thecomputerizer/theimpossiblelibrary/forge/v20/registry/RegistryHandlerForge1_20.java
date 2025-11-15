@@ -2,12 +2,13 @@ package mods.thecomputerizer.theimpossiblelibrary.forge.v20.registry;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.registry.tab.CreativeTabBuilderForge1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.Registry1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryHandler1_20;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.registry.RegistryVanilla1_20;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
@@ -17,10 +18,12 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Set;
 
+import static net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE;
 import static net.minecraftforge.registries.ForgeRegistries.*;
 
 public class RegistryHandlerForge1_20 extends RegistryHandler1_20 {
@@ -34,15 +37,25 @@ public class RegistryHandlerForge1_20 extends RegistryHandler1_20 {
         this.item = getRegistry(registries,ITEMS,"item",Item.class);
         this.potion = getRegistry(registries,POTIONS,"potion",Potion.class);
         this.sound = getRegistry(registries,SOUND_EVENTS,"sound",SoundEvent.class);
+        this.structure = getVanillaRegistry(registries,STRUCTURE_TYPE,"structure",StructureType.class);
     }
     
-    private <V> RegistryForge1_20<V> getRegistry(
+    private <V> Registry1_20<V> getRegistry(
             Set<? super Registry1_20<?>> registries, IForgeRegistry<V> forgeRegistry, String name,
             Class<?> type) {
         //Avoid deprecation warning I guess
         ResourceLocation location = Hacks.construct(ResourceLocation.class,name);
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(location);
-        RegistryForge1_20<V> registry = new RegistryForge1_20<>(forgeRegistry,key,GenericUtils.cast(type));
+        Registry1_20<V> registry = new RegistryForge1_20<>(forgeRegistry,key,type);
+        registries.add(registry);
+        return registry;
+    }
+    
+    @SuppressWarnings("SameParameterValue")
+    private <V> Registry1_20<V> getVanillaRegistry(Set<? super Registry1_20<?>> registries,
+            Registry<V> vanillaRegistry,String name, Class<?> type) {
+        ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
+        Registry1_20<V> registry = new RegistryVanilla1_20<>(vanillaRegistry, key, type);
         registries.add(registry);
         return registry;
     }

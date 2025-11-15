@@ -40,20 +40,20 @@ public class RegistryHandlerForge1_19 extends RegistryHandler1_19 {
                                             Structure.class);
     }
     
-    @SuppressWarnings("unchecked")
     private <V> RegistryForge1_19<V> getRegistry(
-            Set<? super Registry1_19<?>> registries, IForgeRegistry<V> forgeRegistry, String name, Class<?> type) {
+            Set<? super Registry1_19<?>> registries, IForgeRegistry<V> forgeRegistry, String name,
+            Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryForge1_19<V> registry = new RegistryForge1_19<>(forgeRegistry,key,(Class<V>)type);
+        RegistryForge1_19<V> registry = new RegistryForge1_19<>(forgeRegistry,key,type);
         registries.add(registry);
         return registry;
     }
     
-    @SuppressWarnings({"unchecked","SameParameterValue"})
-    private <V> Registry1_19<V> getVanillaRegistry(
-            Set<? super Registry1_19<?>> registries, Registry<V> vanillaRegistry,String name, Class<?> type) {
+    @SuppressWarnings("SameParameterValue")
+    private <V> Registry1_19<V> getVanillaRegistry(Set<? super Registry1_19<?>> registries,
+            Registry<V> vanillaRegistry,String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryVanilla1_19<V> registry = new RegistryVanilla1_19<>(vanillaRegistry,key,(Class<V>)type);
+        RegistryVanilla1_19<V> registry = new RegistryVanilla1_19<>(vanillaRegistry,key,type);
         registries.add(registry);
         return registry;
     }

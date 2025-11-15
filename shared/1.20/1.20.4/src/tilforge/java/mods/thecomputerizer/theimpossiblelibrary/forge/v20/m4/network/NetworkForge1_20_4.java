@@ -32,7 +32,7 @@ public class NetworkForge1_20_4 extends Network1_20_4<SimpleChannel,NetworkDirec
     static <M extends MessageWrapperAPI<?,?>> void buildMessage(SimpleChannel channel, Class<M> msgCls) {
         channel.messageBuilder(msgCls)
                 .encoder(MessageWrapperAPI::encode)
-                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder().apply(buf)))
+                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder(msgCls).apply(buf)))
                 .consumerNetworkThread((BiConsumer<M,Context>)(msg,ctx) -> msg.handle(GenericUtils.cast(ctx)))
                 .add();
     }
