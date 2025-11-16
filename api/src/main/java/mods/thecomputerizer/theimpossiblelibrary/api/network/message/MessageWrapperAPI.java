@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NETWORK;
@@ -32,8 +31,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.BASE_PAC
 public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor {
     
     private static final String FORGE_NETWORK_HELPER = BASE_PACKAGE+".forge.network.ForgeNetworkHelper";
-    private static final Class<?>[] SIDED_CLASSES = new Class<?>[]{
-            Client.class,ClientLogin.class,Server.class,ServerLogin.class};
     
     private static Class<?> FORGE_NETWORK_HELPER_CLASS;
     
@@ -60,10 +57,6 @@ public abstract class MessageWrapperAPI<PLAYER,CTX> implements CoreStateAccessor
     
     public static <P,C,B extends ByteBuf> @NotNull BiConsumer<MessageWrapperAPI<P,C>,B> encoder() {
         return MessageWrapperAPI::encode;
-    }
-    
-    public static void forEachSidedClass(Consumer<Class<? extends MessageWrapperAPI<?,?>>> consumer) {
-        for(Class<?> msgClass : SIDED_CLASSES) consumer.accept(GenericUtils.cast(msgClass));
     }
     
     public static <DIR,P,C> Class<MessageWrapperAPI<P,C>> getClass(MessageDirectionInfo<DIR> dir) {

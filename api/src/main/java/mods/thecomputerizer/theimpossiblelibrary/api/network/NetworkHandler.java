@@ -54,15 +54,17 @@ public class NetworkHandler {
             return;
         }
         int id = 0;
-        if(DIRECTION_INFO.isNotEmpty()) {
-            NetworkHelper.getNetwork();
-            if(DEBUG) TILRef.logInfo("Loading network messages for {} directions",DIRECTION_INFO.size());
-        } else if(DEBUG) TILRef.logInfo("There are no network messages to register");
+        if(DEBUG) {
+            if(DIRECTION_INFO.isEmpty()) TILRef.logInfo("There are no network messages to register");
+            else TILRef.logInfo("Loading network messages for {} directions",DIRECTION_INFO.size());
+        }
+        NetworkHelper.messageRegistrationStarted();
         for(MessageDirectionInfo<?> info : DIRECTION_INFO.values()) {
             NetworkHelper.registerMessage(info,id);
             if(DEBUG) TILRef.logInfo("Registered network direction info: {} (id={})",info,id);
             if(JVMHelper.isJava17()) id++;
         }
+        NetworkHelper.messageRegistrationFinished();
     }
     
     private static void logDirectionRegistrationDebug(Class<?> msgClass, boolean client) {

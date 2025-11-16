@@ -12,6 +12,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel.MessageBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -24,19 +25,18 @@ import static net.minecraftforge.network.PacketDistributor.SERVER;
 
 public class NetworkForge1_20_4 extends Network1_20_4<SimpleChannel,NetworkDirection> {
     
-    static SimpleChannel buildMessages(SimpleChannel channel) {
-        MessageWrapperAPI.forEachSidedClass(msgCls -> buildMessage(channel,msgCls));
-        return channel;
-    }
-    
-    static <M extends MessageWrapperAPI<?,?>> void buildMessage(SimpleChannel channel, Class<M> msgCls) {
-        channel.messageBuilder(msgCls)
+    static void buildMessage(SimpleChannel channel, MessageDirectionInfo<NetworkDirection> dir) {
+        buildMessageHandler(channel.messageBuilder(dir.getWrapperClass())
                 .encoder(MessageWrapperAPI::encode)
-                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder(msgCls).apply(buf)))
-                .consumerNetworkThread((BiConsumer<M,Context>)(msg,ctx) -> msg.handle(GenericUtils.cast(ctx)))
+                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder(dir).apply(buf))))
                 .add();
     }
-
+    
+    static <M extends MessageWrapperAPI<?,?>> MessageBuilder<M> buildMessageHandler(MessageBuilder<M> builder) {
+        BiConsumer<M,Context> networkHandler = (msg,ctx) -> msg.handle(GenericUtils.cast(ctx));
+        return builder.consumerNetworkThread(networkHandler);
+    }
+    
     private SimpleChannel network;
 
     @Override public NetworkDirection getDirFromName(String name) {
@@ -75,10 +75,10 @@ public class NetworkForge1_20_4 extends Network1_20_4<SimpleChannel,NetworkDirec
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network)) {
             ResourceLocation name = TILRef.res("main_network").unwrap();
-            this.network = buildMessages(ChannelBuilder.named(name)
+            this.network = ChannelBuilder.named(name)
                     .clientAcceptedVersions((status,version) -> true)
                     .serverAcceptedVersions((status,version) -> true)
-                    .networkProtocolVersion(1).simpleChannel());
+                    .networkProtocolVersion(1).simpleChannel();
         }
         return this.network;
     }
@@ -90,8 +90,10 @@ public class NetworkForge1_20_4 extends Network1_20_4<SimpleChannel,NetworkDirec
     @Override public boolean isDirLogin(NetworkDirection dir) {
         return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
     }
-
-    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {}
+    
+    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection> dir, int id) {
+        buildMessage(getNetwork(),dir);
+    }
     
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
         getNetwork().send(message,PLAYER.with((ServerPlayer)player));

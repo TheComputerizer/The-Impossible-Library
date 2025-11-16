@@ -62,7 +62,8 @@ void initLoaderShading(String loader, TaskProvider<Jar> loader_jar_provider) {
         description = "Relocate the common source for ${loader} mappings"
         group = 'relocated'
         dependsOn loader_jar_provider
-        relocate "${base_package}.shared", "${base_package}.$loader"
+        if('fabric'==loader || (!name.contains('1_20_6') && !name.contains('1_21')))
+            relocate "${base_package}.shared", "${base_package}.$loader"
         doFirst {
             from zipTree(loader_jar_provider.get().archiveFile.get())
         }
@@ -309,7 +310,6 @@ void uniminedSetupLoader(SourceSet source, String l_name) {
                 }
             }
         } else runs.off = true
-        //TODO The shading can be consolidated for 1.21+ since both Forge and Neoforge use named mappings for runtime
         remap(tasks.named("${l_name}ShadowJar").get()) {
             archiveBaseName = mod_id
             archiveClassifier = "$l_name-relocated-remapped"

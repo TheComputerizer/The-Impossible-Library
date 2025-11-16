@@ -79,6 +79,16 @@ public class NetworkHelper {
         NetworkAPI<?,DIR> api = getNetworkAPI();
         return Objects.nonNull(api) && api.isDirLogin(d);
     }
+    
+    public static <DIR> void messageRegistrationFinished() {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        if(Objects.nonNull(api)) api.messageRegistrationFinished();
+    }
+    
+    public static <DIR> void messageRegistrationStarted() {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        if(Objects.nonNull(api)) api.messageRegistrationStarted();
+    }
 
     /**
      * This assumes the object is stored as a string.

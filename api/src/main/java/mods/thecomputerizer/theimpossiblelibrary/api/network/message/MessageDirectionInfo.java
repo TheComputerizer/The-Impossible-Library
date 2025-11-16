@@ -7,6 +7,11 @@ import mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI.Client;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI.ClientLogin;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI.Server;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI.ServerLogin;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -78,6 +83,12 @@ public class MessageDirectionInfo<DIR> {
             if(msgClass==info.getMsgClass()) return info;
         TILDev.logInfo("Unable to find registered message for {}!",msgClass);
         return null;
+    }
+    
+    public Class<? extends MessageWrapperAPI<?,?>> getWrapperClass() {
+        return isToClient() ?
+                (isLogin() ? GenericUtils.cast(ClientLogin.class) : GenericUtils.cast(Client.class)) :
+                (isLogin() ? GenericUtils.cast(ServerLogin.class) : GenericUtils.cast(Server.class));
     }
     
     @SuppressWarnings("unchecked")

@@ -5,14 +5,21 @@ import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.Advancem
 import mods.thecomputerizer.theimpossiblelibrary.api.common.advancement.AdvancementDisplayInfoAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import net.minecraft.advancements.Advancement;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class Advancement1_20 extends AdvancementAPI<Advancement> {
 
     private final AdvancementDisplayInfo1_20 display;
-
+    
     public Advancement1_20(Object advancement) {
+        this(advancement,new AdvancementDisplayInfo1_20(((Advancement)advancement).getDisplay()));
+    }
+
+    public Advancement1_20(Object advancement, @Nullable Object displayInfo) {
         super(advancement);
-        this.display = new AdvancementDisplayInfo1_20(((Advancement)advancement).getDisplay());
+        this.display = Objects.nonNull(displayInfo) ? new AdvancementDisplayInfo1_20(displayInfo) : null;
     }
 
     @Override public AdvancementDisplayInfoAPI getDisplayInfo() {

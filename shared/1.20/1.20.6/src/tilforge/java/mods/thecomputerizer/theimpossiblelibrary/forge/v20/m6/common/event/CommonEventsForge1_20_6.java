@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event;
 
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.common.event.CommonEventsForge1_20;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.events.PlayerAdvancementEventForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.events.RegisterBlockEntitiesEventForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.events.RegisterBlocksEventForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.events.RegisterCommandsEventForge1_20_6;
@@ -14,6 +15,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonE
 public class CommonEventsForge1_20_6 extends CommonEventsForge1_20 {
     
     @Override public void defineVersionedEvents() {
+        PLAYER_ADVANCEMENT.setConnector(new PlayerAdvancementEventForge1_20_6());
         REGISTER_BLOCK_ENTITIES.setConnector(new RegisterBlockEntitiesEventForge1_20_6());
         REGISTER_BLOCKS.setConnector(new RegisterBlocksEventForge1_20_6());
         REGISTER_COMMANDS.setConnector(new RegisterCommandsEventForge1_20_6());

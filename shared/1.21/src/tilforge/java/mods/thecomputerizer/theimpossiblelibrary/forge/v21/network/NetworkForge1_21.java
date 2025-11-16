@@ -6,7 +6,6 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDire
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
-import mods.thecomputerizer.theimpossiblelibrary.api.util.Misc;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.network.Network1_21;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,9 +13,11 @@ import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel.MessageBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -28,21 +29,26 @@ import static net.minecraftforge.network.PacketDistributor.SERVER;
 
 public class NetworkForge1_21 extends Network1_21<SimpleChannel,NetworkDirection<?>> {
     
-    private SimpleChannel network;
-    
-    static SimpleChannel buildMessages(SimpleChannel channel) {
-        MessageWrapperAPI.forEachSidedClass(msgCls -> buildMessage(channel,msgCls));
-        return channel;
+    static void buildMessage(SimpleChannel channel,
+            MessageDirectionInfo<NetworkDirection<?>> dirInfo) {
+        buildMessageHandler(channel.messageBuilder(dirInfo.getWrapperClass())
+                .direction(dirInfo.isToClient() ? CLIENTBOUND : SERVERBOUND)
+                .encoder(MessageWrapperAPI::encode)
+                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder(dirInfo).apply(buf))))
+                .add();
     }
     
-    static <M extends MessageWrapperAPI<?,?>> void buildMessage(SimpleChannel channel, Class<M> msgCls) {
-        channel.messageBuilder(msgCls)
-                .direction(Misc.equalsAny(MessageWrapperAPI.classToDir(msgCls),
-                        CONFIGURATION_TO_CLIENT,LOGIN_TO_CLIENT,PLAY_TO_CLIENT) ? CLIENTBOUND : SERVERBOUND)
-                .encoder(MessageWrapperAPI::encode)
-                .decoder(buf -> GenericUtils.cast(MessageWrapperAPI.decoder(msgCls).apply(buf)))
-                .consumerNetworkThread((BiConsumer<M,Context>)(msg,ctx) -> msg.handle(GenericUtils.cast(ctx)))
-                .add();
+    static <M extends MessageWrapperAPI<?,?>> MessageBuilder<M,?> buildMessageHandler(MessageBuilder<M,?> builder) {
+        BiConsumer<M,Context> networkHandler = (msg,ctx) -> msg.handle(GenericUtils.cast(ctx));
+        return builder.consumerNetworkThread(networkHandler);
+    }
+    
+    private final Collection<MessageDirectionInfo<NetworkDirection<?>>> registeredDirs = new HashSet<>();
+    private SimpleChannel network;
+    
+    SimpleChannel buildMessages(SimpleChannel channel) {
+        for(MessageDirectionInfo<NetworkDirection<?>> dir : this.registeredDirs) buildMessage(channel,dir);
+        return channel;
     }
 
     @Override public NetworkDirection<?> getDirFromName(String name) {
@@ -88,6 +94,7 @@ public class NetworkForge1_21 extends Network1_21<SimpleChannel,NetworkDirection
 
     @Override public SimpleChannel getNetwork() {
         if(Objects.isNull(this.network)) {
+            if(this.registeredDirs.isEmpty()) return null;
             ResourceLocation name = TILRef.res("main_network").unwrap();
             this.network = buildMessages(ChannelBuilder.named(name)
                     .clientAcceptedVersions((status,version) -> true)
@@ -104,8 +111,14 @@ public class NetworkForge1_21 extends Network1_21<SimpleChannel,NetworkDirection
     @Override public boolean isDirLogin(NetworkDirection<?> dir) {
         return dir==LOGIN_TO_CLIENT || dir==LOGIN_TO_SERVER;
     }
-
-    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection<?>> dir, int id) {}
+    
+    @Override public void messageRegistrationStarted() {
+        this.registeredDirs.clear();
+    }
+    
+    @Override public void registerMessage(MessageDirectionInfo<NetworkDirection<?>> dir, int id) {
+        this.registeredDirs.add(dir);
+    }
     
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
         getNetwork().send(message,PLAYER.with((ServerPlayer)player));

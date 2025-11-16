@@ -26,6 +26,10 @@ public interface NetworkAPI<N,DIR> {
     N getNetwork();
     boolean isDirToClient(DIR d);
     boolean isDirLogin(DIR d);
+    default void messageRegistrationFinished() {
+        NetworkHelper.getNetwork();
+    }
+    default void messageRegistrationStarted() {}
     ResourceLocationAPI<?> readResourceLocation(ByteBuf buf);
     CompoundTagAPI<?> readTag(ByteBuf buf);
 

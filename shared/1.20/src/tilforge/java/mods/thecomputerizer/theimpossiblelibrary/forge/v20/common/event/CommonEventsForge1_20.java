@@ -57,7 +57,6 @@ public abstract class CommonEventsForge1_20 extends CommonEvents1_20 implements 
         LIVING_ITEM_USE_START.setConnector(new LivingItemUseStartEventForge());
         LIVING_ITEM_USE_STOP.setConnector(new LivingItemUseStopEventForge());
         LIVING_ITEM_USE_TICK.setConnector(new LivingItemUseTickEventForge());
-        PLAYER_ADVANCEMENT.setConnector(new PlayerAdvancementEventForge1_20());
         PLAYER_BREAK_SPEED.setConnector(new PlayerBreakSpeedEventForge1_20());
         PLAYER_CHANGE_GAMEMODE.setConnector(new PlayerChangeGamemodeEventForge());
         PLAYER_CHANGED_DIMENSIONS.setConnector(new PlayerChangedDimensionsEventForge());
