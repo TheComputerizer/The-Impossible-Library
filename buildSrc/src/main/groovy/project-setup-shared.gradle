@@ -47,18 +47,25 @@ void finalizeUnimined() {
     registerCombinedJar()
 }
 
+
 /**
- * Only fabric is relocated since forge and neoforge technically both use the same intermediary production namespace in
- * 1.20.1 before neoforge switched to using official mappings
+ * Neforge switched to using named mappings during runtime before Forge did and Fabric still doesn't use them
+ * Only necessary for versions before Mojang removed obfuscation
  */
 @SuppressWarnings('GrUnresolvedAccess')
-void initFabricShading() {
-    shadowJar {
+void initLoaderShading(String loader, TaskProvider<Jar> loader_jar_provider) {
+    //noinspection GroovyAssignabilityCheck
+    tasks.register("${loader}ShadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
         archiveBaseName = mod_id
-        archiveClassifier = 'fabric-relocated'
+        archiveClassifier = "$loader-relocated"
         configurations = [ project.configurations.shadow ]
-        dependsOn 'fabricClassesJar'
-        relocate "${base_package}.shared", "${base_package}.fabric"
+        description = "Relocate the common source for ${loader} mappings"
+        group = 'relocated'
+        dependsOn loader_jar_provider
+        relocate "${base_package}.shared", "${base_package}.$loader"
+        doFirst {
+            from zipTree(loader_jar_provider.get().archiveFile.get())
+        }
     }
 }
 
@@ -71,12 +78,10 @@ TaskProvider<Jar> registerClassesJar(String loader) {
         File main_classes = sourceClassesDir 'main'
         if(loader==null) from(main_classes)
         else {
-            from(sourceClassesDir("til$loader"))
+            from sourceClassesDir("til$loader")
             from(main_classes) {
                 //Avoid needing to exclude duplicate api classes in every subproject by handling them in the main build
                 exclude '**/api/**'
-                //Forge & Neoforge use the same intermediary mappings so we don't have to remap shared stuff in both
-                if('neoforge'==loader) '**/shared/**'
             }
         }
     } as TaskProvider<Jar>
@@ -89,10 +94,10 @@ private void registerCombinedJar() {
         archiveBaseName = mod_id
         archiveClassifier = 'combined'
         getLoaderList(true).forEach {String loader ->
-            String jar_task_name = "remap${'Fabric'==loader ? 'Shadow' : "${loader}Classes"}Jar"
+            String jar_task_name = "remap${loader}ShadowJar"
             dependsOn jar_task_name
             doFirst {
-                from(zipTree(tasks.named(jar_task_name, Jar).get().archiveFile.get()))
+                from zipTree(tasks.named(jar_task_name, Jar).get().archiveFile.get())
             }
         }
     })
@@ -122,7 +127,7 @@ void setLoaderConfigs() {
             canBeConsumed = true
         }
         artifacts.add source_name, jar_provider
-        if('fabric'==loader) initFabricShading()
+        if(loader!=null) initLoaderShading loader, jar_provider
         if(isRunnableVersion()) {
             logger.lifecycle "Adding runnable $loader configs"
             [ 'CompileOnly', 'Implementation', 'RuntimeOnly' ].forEach {config_name ->
@@ -304,9 +309,10 @@ void uniminedSetupLoader(SourceSet source, String l_name) {
                 }
             }
         } else runs.off = true
-        remap(is_fabric ? shadowJar : tasks.named("${l_name}ClassesJar").get()) {
+        //TODO The shading can be consolidated for 1.21+ since both Forge and Neoforge use named mappings for runtime
+        remap(tasks.named("${l_name}ShadowJar").get()) {
             archiveBaseName = mod_id
-            archiveClassifier = "$l_name${is_fabric ? '-relocated-' : '-'}remapped"
+            archiveClassifier = "$l_name-relocated-remapped"
             prodNamespace official_mappings ? 'mojmap' : (is_fabric ? 'intermediary' : 'searge')
         }
         switch(l_name) {
