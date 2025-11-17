@@ -6,8 +6,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageDirectionInfo;
 import mods.thecomputerizer.theimpossiblelibrary.api.network.message.MessageWrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.network.MessageWrapperNeoForge1_21.Client;
-import mods.thecomputerizer.theimpossiblelibrary.neoforge.v21.network.MessageWrapperNeoForge1_21.Server;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.network.MessageWrapper1_21.Client;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.network.MessageWrapper1_21.Server;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v21.network.MessageWrapper1_21;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v21.network.Network1_21;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
@@ -33,26 +34,26 @@ public class NetworkNeoForge1_21 extends Network1_21<Object,Object> {
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
         TILRef.logInfo("Registering packet payloads");
         PayloadRegistrar registrar = event.registrar(MODID).executesOn(NETWORK);
-        registerPayload(registrar,Client.TYPE,true);
-        registerPayload(registrar,Server.TYPE,false);
+        registerPayload(registrar,GenericUtils.cast(Client.TYPE),true);
+        registerPayload(registrar,GenericUtils.cast(Server.TYPE),false);
     }
     
-    static <M extends MessageWrapperNeoForge1_21> void registerPayload(PayloadRegistrar registrar, Type<M> type,
+    static <M extends MessageWrapper1_21<IPayloadContext>> void registerPayload(PayloadRegistrar registrar, Type<M> type,
             boolean client) {
         final IPayloadHandler<M> handler = registerPayloadHandler();
         if(client) registrar.playToClient(type,streamCodec(CLIENTBOUND),handler);
         else registrar.playToServer(type,streamCodec(SERVERBOUND),handler);
     }
     
-    static <M extends MessageWrapperNeoForge1_21> IPayloadHandler<M> registerPayloadHandler() {
+    static <M extends MessageWrapper1_21<IPayloadContext>> IPayloadHandler<M> registerPayloadHandler() {
         return (msg,ctx) -> {
             MessageWrapperAPI<?,IPayloadContext> reply = msg.handle(ctx);
-            if(reply instanceof MessageWrapperNeoForge1_21 neoReply) ctx.reply(neoReply);
+            if(reply instanceof MessageWrapper1_21<?> neoReply) ctx.reply(neoReply);
         };
     }
     
-    static <B extends ByteBuf,M extends MessageWrapperNeoForge1_21> StreamCodec<B,M> streamCodec(Object dir) {
-        return StreamCodec.of((buf,payload) -> payload.encode(buf),buf -> MessageWrapperNeoForge1_21.getNeoInstance(buf,dir));
+    static <B extends ByteBuf,M extends MessageWrapper1_21<IPayloadContext>> StreamCodec<B,M> streamCodec(Object dir) {
+        return StreamCodec.of((buf,payload) -> payload.encode(buf),buf -> MessageWrapper1_21.getPayloadInstance(buf,dir));
     }
 
     @Override public Object getDirFromName(String name) {
@@ -104,28 +105,28 @@ public class NetworkNeoForge1_21 extends Network1_21<Object,Object> {
     @Override public void registerMessage(MessageDirectionInfo<Object> dir, int id) {}
     
     @Override public <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {
-        PacketDistributor.sendToPlayer((ServerPlayer)player,(MessageWrapperNeoForge1_21)message);
+        PacketDistributor.sendToPlayer((ServerPlayer)player,(MessageWrapper1_21<?>)message);
     }
     
     @Override public <M extends MessageWrapperAPI<?,?>> void sendToServer(M message) {
-        PacketDistributor.sendToServer((MessageWrapperNeoForge1_21)message);
+        PacketDistributor.sendToServer((MessageWrapper1_21<?>)message);
     }
     
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessage(Object dir, MessageAPI<CTX> message) {
-        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapperNeoForge1_21.getNeoInstance(dir));
+        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapper1_21.getPayloadInstance(dir));
         if(Objects.nonNull(wrapper)) wrapper.setMessage(dir,message);
         return wrapper;
     }
     
     @SafeVarargs
     @Override public final <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, MessageAPI<CTX> ... messages) {
-        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapperNeoForge1_21.getNeoInstance(dir));
+        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapper1_21.getPayloadInstance(dir));
         if(Objects.nonNull(wrapper)) wrapper.setMessages(dir, messages);
         return wrapper;
     }
     
     @Override public <CTX> MessageWrapperAPI<?,CTX> wrapMessages(Object dir, Collection<MessageAPI<CTX>> messages) {
-        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapperNeoForge1_21.getNeoInstance(dir));
+        MessageWrapperAPI<?,CTX> wrapper = GenericUtils.cast(MessageWrapper1_21.getPayloadInstance(dir));
         if(Objects.nonNull(wrapper)) wrapper.setMessages(dir,messages);
         return wrapper;
     }
