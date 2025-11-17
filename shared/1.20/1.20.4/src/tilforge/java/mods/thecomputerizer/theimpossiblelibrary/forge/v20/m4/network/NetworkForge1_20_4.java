@@ -33,7 +33,14 @@ public class NetworkForge1_20_4 extends Network1_20_4<SimpleChannel,NetworkDirec
     }
     
     static <M extends MessageWrapperAPI<?,?>> MessageBuilder<M> buildMessageHandler(MessageBuilder<M> builder) {
-        BiConsumer<M,Context> networkHandler = (msg,ctx) -> msg.handle(GenericUtils.cast(ctx));
+        BiConsumer<M,Context> networkHandler = (msg,ctx) -> {
+            MessageWrapperAPI<?,?> reply = msg.handle(GenericUtils.cast(ctx));
+            if(Objects.nonNull(reply)) {
+                if(ctx.isServerSide()) reply.setPlayer(GenericUtils.cast(ctx.getSender()));
+                reply.send();
+            }
+            ctx.setPacketHandled(true);
+        };
         return builder.consumerNetworkThread(networkHandler);
     }
     
