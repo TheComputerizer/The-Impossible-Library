@@ -39,17 +39,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.MODID;
 
 public class WrappedCommand1_18_2 implements CoreStateAccessor {
     
-    private static final String ARGUMENT_TYPE_ENTRY = "net.minecraft.commands.synchronization.ArgumentTypes$Entry";
+    private static final Supplier<String> ARGUMENT_TYPE_ENTRY =
+            () -> ArgumentTypes.class.getName()+"$"+(!FABRIC || NAMED_ENV ? "Entry" : "class_2317");
     private static final Map<String,CommandAPI> BY_NAME = new HashMap<>();
     private static final String FIELD_BY_CLASS = NAMED_ENV ? "BY_CLASS" : (SRG_ENV ? "f_121583_" : "field_10921");
     private static final String FIELD_BY_NAME = NAMED_ENV ? "BY_NAME" : (SRG_ENV ? "f_121584_" : "field_10922");
     private static final CustomSuggesterInfo SERIALIZER = new CustomSuggesterInfo();
-
+    
     public static int execute(CommandContext<CommandSourceStack> ctx, CommandAPI wrapped) throws CommandRuntimeException {
         wrapped.prepareExceptionInfo();
         String exKey = wrapped.getExceptionKey();
@@ -116,9 +118,19 @@ public class WrappedCommand1_18_2 implements CoreStateAccessor {
     private static <E> void registerArgType(ResourceLocation name) {
         Map<Class<?>,E> byClass = Hacks.getFieldStaticDirect(ArgumentTypes.class,FIELD_BY_CLASS);
         Map<ResourceLocation,E> byName = Hacks.getFieldStaticDirect(ArgumentTypes.class,FIELD_BY_NAME);
-        E entry = Hacks.construct(ARGUMENT_TYPE_ENTRY,SERIALIZER,name);
-        if(Objects.nonNull(byClass)) byClass.put(CustomSuggester.class,entry);
-        if(Objects.nonNull(byName)) byName.put(name,entry);
+        if(Objects.isNull(byClass) || Objects.isNull(byName)) {
+            TILRef.logError("Failed to retrieve ArgumentTypes fields! (BY_CLASS = {} | BY_NAME = {})",
+                            FIELD_BY_CLASS,FIELD_BY_NAME);
+            return;
+        }
+        String entryClassName = ARGUMENT_TYPE_ENTRY.get();
+        E entry = Hacks.construct(entryClassName,SERIALIZER,name);
+        if(Objects.isNull(entry)) {
+            TILRef.logError("Failed to contruct {} with args {}",entryClassName,new Object[]{SERIALIZER,name});
+            return;
+        }
+        byClass.put(CustomSuggester.class,entry);
+        byName.put(name,entry);
     }
     
     public record CustomSuggester(CommandAPI command) implements ArgumentType<String> {

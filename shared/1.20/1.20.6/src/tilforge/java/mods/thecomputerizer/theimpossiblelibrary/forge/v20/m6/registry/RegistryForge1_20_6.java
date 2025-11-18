@@ -1,0 +1,48 @@
+package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.registry;
+
+import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
+import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.registry.Registry1_20_6;
+import net.minecraftforge.registries.IForgeRegistry;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+public class RegistryForge1_20_6<V> extends Registry1_20_6<V> {
+    
+    public RegistryForge1_20_6(IForgeRegistry<V> forgeRegistry, ResourceLocationAPI<?> registryKey, Class<?> type) {
+        super(forgeRegistry,GenericUtils.cast(type),registryKey);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override public IForgeRegistry<V> getBackend() {
+        return super.getBackend();
+    }
+
+    @Override public ResourceLocationAPI<?> getKey(V value) {
+        return WrapperHelper.wrapResourceLocation(getBackend().getKey(value));
+    }
+    
+    @Override public Collection<ResourceLocationAPI<?>> getKeys() {
+        return getBackend().getKeys().stream()
+                .map(WrapperHelper::wrapResourceLocation)
+                .collect(Collectors.toSet());
+    }
+    
+    @Override public V getValue(ResourceLocationAPI<?> key) {
+        return getBackend().getValue(key.unwrap());
+    }
+    
+    @Override public Collection<V> getValues() {
+        return getBackend().getValues();
+    }
+    
+    @Override public boolean hasKey(ResourceLocationAPI<?> key) {
+        return getBackend().containsKey(key.unwrap());
+    }
+
+    @Override public boolean hasValue(V value) {
+        return getBackend().containsValue(value);
+    }
+}

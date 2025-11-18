@@ -17,7 +17,8 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_1;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V21_1;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_4;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FABRIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.FORGE;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.ModLoader.LEGACY;
@@ -93,16 +94,28 @@ public abstract class CoreAPI {
      * For this to work properly, the extension class must have a public static getInstance method
      */
     public static <T> T getModLoaderExtension(String post, boolean minor) {
+        return getModLoaderExtension(post,minor,false);
+    }
+    
+    /**
+     * For this to work properly, the extension class must have a public static getInstance method
+     */
+    public static <T> T getModLoaderExtension(String post, boolean minor, boolean checkRelocate) {
         Class<?> extensionClass = getModLoaderClass(post,minor);
         if(Objects.isNull(extensionClass)) {
             TILRef.logError("Cannot get mod loader extension from null class!");
             return null;
         }
-        return Hacks.invokeStatic(getModLoaderClass(post,minor),"getInstance");
+        return Hacks.invokeStatic(getModLoaderClass(post,minor,checkRelocate),"getInstance");
     }
     
     public static Class<?> getModLoaderClass(String post, boolean minor) {
-        String name = injectModLoaderName(BASE_PACKAGE,post);
+        return getModLoaderClass(post,minor,false);
+    }
+    
+    public static Class<?> getModLoaderClass(String post, boolean minor, boolean checkRelocate) {
+        String name = (!checkRelocate || isRelocatedEnv()) ?
+                injectModLoaderName(BASE_PACKAGE,post) : BASE_PACKAGE+".shared."+post;
         if(Objects.isNull(name)) {
             TILRef.logError("Cannot get mod loader class from null class name!");
             return null;
@@ -162,11 +175,25 @@ public abstract class CoreAPI {
     public static boolean isNamedEnv() {
         if(DEV) return true;
         GameVersion version = CoreAPI.getInstance().getVersion();
-        return (isNeoforge() && version!=V20_1) || (isForge() && (version==V21_1));
+        return (isNeoforge() && version.isGreaterThan(V20_1)) || (isForge() && version.isGreaterThan(V20_4));
     }
     
     public static boolean isNeoforge() {
         return getInstance().getModLoader()==NEOFORGE;
+    }
+    
+    /**
+     * Returns true if this is a version where shared packages were relocated.
+     * Assume 1.12.2 is relocated since it does not have any shared packages.
+     */
+    public static boolean isRelocatedEnv() {
+        ModLoader loader = getInstanceModLoader();
+        if(Objects.isNull(loader)) return true;
+        switch(getInstanceModLoader()) {
+            case FORGE: return isVersionLessThan(V20_6);
+            case NEOFORGE: return isVersionLessThan(V20_4);
+            default: return true;
+        }
     }
     
     public static boolean isServer() {

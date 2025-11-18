@@ -16,16 +16,15 @@ import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.CompoundTagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagHelper;
+import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.BasicMutableWrapped;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.MutableWrapped;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -42,7 +41,6 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVer
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
-import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEV;
 
 /**
  * Abusing interfaces to abstract the hell out of fabric network stuff
@@ -55,6 +53,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     Class<?> IMPL_SERVER_CLASS = tryGetClass(IMPL_SERVER);
     Object CLIENT_LOGIN = getStaticField(IMPL_CLIENT_CLASS,"LOGIN");
     Object CLIENT_PLAY = getStaticField(IMPL_CLIENT_CLASS,"PLAY");
+    boolean NAMED_ENV = CoreAPI.isNamedEnv();
     String PLAY_CLIENT = fabricPkg("api.client.networking.v1.ClientPlayNetworking");
     Class<?> PLAY_CLIENT_CLASS = getClassIfClient(PLAY_CLIENT);
     Class<?> PLAY_CLIENT_HANDLER_CLASS = getHandlerClassIfClient(PLAY_CLIENT,
@@ -154,8 +153,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
     }
     
     static NbtAccounter unlimitedAccounter() {
-        return atLeastV20_4() ? STATIC_DIRECT.invoke(NbtAccounter.class,DEV ? "unlimitedHeap" : "method_53898") :
-                STATIC_DIRECT.get(NbtAccounter.class,DEV ? "UNLIMITED" : "field_11556");
+        return atLeastV20_4() ? STATIC_DIRECT.invoke(NbtAccounter.class,NAMED_ENV ? "unlimitedHeap" : "method_53898") :
+                STATIC_DIRECT.get(NbtAccounter.class,NAMED_ENV ? "UNLIMITED" : "field_11556");
     }
     
     @Nullable default Object createHandlerProxy(DIR dir, boolean newType) {
@@ -212,10 +211,8 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
                 return null;
             }
             try {
-                MessageWrapperFabric wrapper = (MessageWrapperFabric)args[0];
-                PacketSender sender = Hacks.invoke(args[1],"responseSender");
-                ServerPlayer player = client ? null : Hacks.invoke(args[1],"player");
-                receiveAndRespond(wrapper,sender,player);
+                receiveAndRespondGeneric(args[0],Hacks.invoke(args[1],"responseSender"),
+                        client ? null : Hacks.invoke(args[1],"player"));
                 TILRef.logDebug("InvocationHandler success for {} ({})",dir,c);
             } catch(Throwable t) {
                 TILRef.logError("Failed to execute InvocationHandler for proxy instance of {} (direction={})",
@@ -358,6 +355,18 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         }
     }
     
+    /**
+     * Pass in basic objects, do some generic casting, and pass to the normal receiveAndRespond method unless
+     * the wrapper ends up as null
+     */
+    default <P,CTX,M extends MessageWrapperAPI<P,CTX>> void receiveAndRespondGeneric(@Nullable Object wrapper,
+            @Nullable Object ctx, @Nullable Object player) {
+        M wrapperCast = GenericUtils.cast(wrapper);
+        CTX ctxCast = GenericUtils.cast(ctx);
+        P playerCast = GenericUtils.cast(player);
+        if(Objects.nonNull(wrapperCast)) receiveAndRespond(wrapperCast,ctxCast,playerCast);
+    }
+    
     @Override default void registerMessage(MessageDirectionInfo<DIR> directionInfo, int id) {
         DIR dir = getCheckedDir(directionInfo);
         if(Objects.isNull(dir)) return;
@@ -390,7 +399,7 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
             TILRef.logWarn("Tried to register sided network receiver {} twice!",registryName);
             return;
         }
-        Object type = Hacks.invoke(wrapper,DEV ? "type" : "method_56479");
+        Object type = Hacks.invoke(wrapper,NAMED_ENV ? "type" : "method_56479");
         if(Objects.isNull(type)) return;
         String registryClassName = fabricPkg("api.networking.v1.PayloadTypeRegistry");
         Class<?> c = tryGetClass(registryClassName);

@@ -62,8 +62,7 @@ void initLoaderShading(String loader, TaskProvider<Jar> loader_jar_provider) {
         description = "Relocate the common source for ${loader} mappings"
         group = 'relocated'
         dependsOn loader_jar_provider
-        if('fabric'==loader || (!name.contains('1_20_6') && !name.contains('1_21')))
-            relocate "${base_package}.shared", "${base_package}.$loader"
+        relocate "${base_package}.shared", "${base_package}.$loader"
         doFirst {
             from zipTree(loader_jar_provider.get().archiveFile.get())
         }
@@ -83,6 +82,9 @@ TaskProvider<Jar> registerClassesJar(String loader) {
             from(main_classes) {
                 //Avoid needing to exclude duplicate api classes in every subproject by handling them in the main build
                 exclude '**/api/**'
+                //Forge & Neoforge both use named mappings after 1.20.4 so we don't need any duplicate shared packages
+                if('neoforge'==loader && ![ 'shared_1.20', 'shared_1.20.4' ].contains(name))
+                    exclude '**/shared/**'
             }
         }
     } as TaskProvider<Jar>
@@ -95,7 +97,7 @@ private void registerCombinedJar() {
         archiveBaseName = mod_id
         archiveClassifier = 'combined'
         getLoaderList(true).forEach {String loader ->
-            String jar_task_name = "remap${loader}ShadowJar"
+            String jar_task_name = "remap$loader${shouldRelocate(loader) ? 'Shadow' : 'Classes'}Jar"
             dependsOn jar_task_name
             doFirst {
                 from zipTree(tasks.named(jar_task_name, Jar).get().archiveFile.get())
@@ -251,6 +253,17 @@ void setupForgeLikeConfigs(String loader) {
     }
 }
 
+/**
+ * Returns true if the shared package should be relocated to the input loader package for remapping
+ */
+boolean shouldRelocate(String loader) {
+    return switch(loader.toLowerCase()) {
+        case 'forge' -> ![ 'shared_1.20.6', 'shared_1.21', 'shared_1.21.1' ].contains(name)
+        case 'neoforge' -> false
+        default -> true
+    }
+}
+
 @SuppressWarnings('GrUnresolvedAccess')
 void uniminedSetupLoader(SourceSet source, String l_name) {
     boolean official_mappings = 'neoforge'==l_name || ('forge'==l_name && mappingStyleOfficial())
@@ -310,9 +323,10 @@ void uniminedSetupLoader(SourceSet source, String l_name) {
                 }
             }
         } else runs.off = true
-        remap(tasks.named("${l_name}ShadowJar").get()) {
+        def relocate = shouldRelocate l_name
+        remap(tasks.named("$l_name${relocate ? 'Shadow' : 'Classes'}Jar").get()) {
             archiveBaseName = mod_id
-            archiveClassifier = "$l_name-relocated-remapped"
+            archiveClassifier = "$l_name${relocate ? '-relocated' : ''}-remapped"
             prodNamespace official_mappings ? 'mojmap' : (is_fabric ? 'intermediary' : 'searge')
         }
         switch(l_name) {

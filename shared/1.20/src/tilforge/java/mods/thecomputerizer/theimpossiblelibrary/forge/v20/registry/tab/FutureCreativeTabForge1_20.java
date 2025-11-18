@@ -26,17 +26,11 @@ import static net.minecraft.world.item.CreativeModeTab.Row.TOP;
 public class FutureCreativeTabForge1_20 extends FutureCreativeTab<CreativeModeTab> {
     
     private final List<ItemStack> suppliedItems = new ArrayList<>();
-    
-    public FutureCreativeTabForge1_20(ResourceLocationAPI<?> registryName) {
-        this(registryName,() -> CREATIVE_MODE_TAB);
-    }
-    
     final Supplier<ResourceKey<Registry<CreativeModeTab>>> registryKey;
     
-    protected FutureCreativeTabForge1_20(ResourceLocationAPI<?> registryName,
-            Supplier<ResourceKey<Registry<CreativeModeTab>>> registryKeySupplier) {
+    public FutureCreativeTabForge1_20(ResourceLocationAPI<?> registryName) {
         super(registryName);
-        this.registryKey = registryKeySupplier;
+        this.registryKey = () -> CREATIVE_MODE_TAB;
     }
     
     /**

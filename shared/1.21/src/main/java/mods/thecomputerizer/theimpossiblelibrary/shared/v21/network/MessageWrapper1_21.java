@@ -20,7 +20,7 @@ import static net.minecraft.network.protocol.PacketFlow.SERVERBOUND;
 
 public abstract class MessageWrapper1_21<CTX> extends MessageWrapperAPI<ServerPlayer,CTX> implements CustomPacketPayload {
     
-    protected static final String TYPE_BASE = "message_wrapper_forgelike";
+    protected static final String TYPE_BASE = "message_wrapper";
     
     public static <M extends MessageWrapper1_21<?>> M getPayloadInstance(Object dir) {
         return GenericUtils.cast(NetworkHelper.isDirToClient(dir) ? new Client<>() : new Server<>());
