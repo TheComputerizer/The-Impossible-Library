@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.core;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.common.CommonEntryPoint;
+import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreEntryPoint;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.annotation.IndirectCallers;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.asm.ModWriter;
@@ -22,6 +23,10 @@ public class TILCoreForge1_20_6 extends TILCoreForge1_20 {
     
     @Override public CommonEntryPoint getCommonVersionHandler() {
         return TILCommonEntryPointForge1_20_6.getInstance();
+    }
+    
+    @Override public CoreEntryPoint getCoreVersionHandler() {
+        return new TILCoreEntryPointForge1_20_6(this);
     }
     
     @Override protected ModWriter getModWriter(MultiVersionModInfo info) {

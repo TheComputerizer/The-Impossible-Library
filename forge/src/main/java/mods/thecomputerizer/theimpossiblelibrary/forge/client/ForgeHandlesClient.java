@@ -6,12 +6,12 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.render.RenderAPI;
 import java.util.List;
 
 /**
- * Handled by Forge in all versions except 1.16.5?
+ * Forge specific client handles
  */
 public abstract class ForgeHandlesClient extends SharedHandlesClient {
     
     /**
-     * Handled by Forge in all versions
+     * Handled by Forge up 1.20.4
      */
     @Override public void renderDebugText(Object o, List<String> l, boolean b) {}
     

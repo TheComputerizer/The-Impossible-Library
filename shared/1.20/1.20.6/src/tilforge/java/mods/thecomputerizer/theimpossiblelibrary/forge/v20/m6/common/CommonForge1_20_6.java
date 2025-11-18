@@ -8,6 +8,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
@@ -17,6 +18,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.Commo
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.integration.ModHelperForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network.NetworkForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.registry.RegistryHandlerForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.server.MinecraftServerForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.item.ToolHelper1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.common.block.BlockHelper1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.m6.tag.Tag1_20_6;
@@ -58,6 +60,10 @@ public class CommonForge1_20_6 extends CommonForge1_20 {
     @SuppressWarnings("RedundantMethodOverride")
     @Override public Supplier<ResourceAPI> initResource() {
         return Resource1_20::new;
+    }
+    
+    @Override public Supplier<MinecraftServerAPI<?>> initServer() {
+        return MinecraftServerForge1_20_6::new;
     }
     
     @SuppressWarnings("RedundantMethodOverride")

@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.client;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.client.MinecraftAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.client.SharedHandlesClient;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.event.ClientEventsAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.client.input.KeyHelperAPI;
@@ -14,6 +15,7 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.server.CommandHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.server.MinecraftServerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.spawn.SpawnHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.tag.TagAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
@@ -24,6 +26,7 @@ import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.common.event.Commo
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.integration.ModHelperForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.network.NetworkForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.registry.RegistryHandlerForge1_20_6;
+import mods.thecomputerizer.theimpossiblelibrary.forge.v20.m6.server.MinecraftServerForge1_20_6;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.input.KeyHelper1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.client.sound.SoundHelper1_20;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v20.common.item.ToolHelper1_20;
@@ -82,6 +85,14 @@ public class ClientForge1_20_6 extends ClientForge1_20 {
     
     @Override protected Supplier<ScreenHelperAPI> initScreenHelper() {
         return ScreenHelper1_20_6::new;
+    }
+    
+    @Override public Supplier<MinecraftServerAPI<?>> initServer() {
+        return MinecraftServerForge1_20_6::new;
+    }
+    
+    @Override protected Supplier<SharedHandlesClient> initSharedHandlesClient() {
+        return ForgeHandlesClient1_20_6::new;
     }
     
     @SuppressWarnings("RedundantMethodOverride")

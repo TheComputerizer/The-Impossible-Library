@@ -42,11 +42,6 @@ public class ClientEventsForge1_20 extends ClientEvents1_20 implements ClientFor
         MOUSE_RAW.setConnector(new RawMouseEventForge());
         MOUSE_SCROLL.setConnector(new MouseScrollEventForge());
         REGISTER_MODELS.setConnector(new RegisterModelsEventForge());
-        RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_20());
-        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge1_20());
-        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge1_20());
-        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge1_20());
-        RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_20());
         SOUND_LOAD.setConnector(new LoadSoundEventForge());
         SOUND_PLAY.setConnector(new PlaySoundEventForge1_20());
         SOUND_PLAY_SOURCE.setConnector(new PlaySoundSourceEventForge());
@@ -59,8 +54,13 @@ public class ClientEventsForge1_20 extends ClientEvents1_20 implements ClientFor
     }
     
     protected void defineVersionedEvents() {
+        RENDER_OVERLAY_BLOCK.setConnector(new RenderOverlayBlockEventForge1_20());
+        RENDER_OVERLAY_BOSS.setConnector(new RenderOverlayBossEventForge1_20());
+        RENDER_OVERLAY_CHAT.setConnector(new RenderOverlayChatEventForge1_20());
         RENDER_OVERLAY_POST.setConnector(new RenderOverlayPostEventForge1_20());
         RENDER_OVERLAY_PRE.setConnector(new RenderOverlayPreEventForge1_20());
+        RENDER_OVERLAY_TEXT.setConnector(new RenderOverlayTextEventForge1_20());
+        RENDER_WORLD_LAST.setConnector(new RenderWorldLastEventForge1_20());
     }
     
     @Override public <R> Result getEventResult(R result) {
