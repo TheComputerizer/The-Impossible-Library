@@ -16,12 +16,12 @@ The status indicators are as follows:
 
 ### Fabric/Quilt
 - 1.16.5 → FUNCTIONAL
-- 1.18.2 → FUNCTIONAL
+- 1.18.2 → PLAYABLE
 - 1.19.2 → FUNCTIONAL
-- 1.19.4 → FUNCTIONAL
-- 1.20.1 → FUNCTIONAL
-- 1.20.4 → FUNCTIONAL
-- 1.20.6 → FUNCTIONAL
+- 1.19.4 → PLAYABLE
+- 1.20.1 → PLAYABLE
+- 1.20.4 → PLAYABLE
+- 1.20.6 → PLAYABLE
 - 1.21.1 → FUNCTIONAL
 - 1.21.4 → PLANNED
 
@@ -34,14 +34,14 @@ Other: Registering stuff is not yet possible & a majority of the event wrappers 
 - 1.19.2 → FUNCTIONAL
 - 1.19.4 → FUNCTIONAL
 - 1.20.1 → FUNCTIONAL
-- 1.20.4 → BROKEN
-- 1.20.6 → BROKEN
+- 1.20.4 → FUNCTIONAL
+- 1.20.6 → FUNCTIONAL
 - 1.21.1 → FUNCTIONAL
 - 1.21.4 → PLANNED
 
 ### NeoForge
 - 1.20.1 → FUNCTIONAL
-- 1.20.4 → PLAYABLE
+- 1.20.4 → FUNCTIONAL
 - 1.20.6 → FUNCTIONAL
 - 1.21.1 → FUNCTIONAL
 - 1.21.4 → PLANNED
