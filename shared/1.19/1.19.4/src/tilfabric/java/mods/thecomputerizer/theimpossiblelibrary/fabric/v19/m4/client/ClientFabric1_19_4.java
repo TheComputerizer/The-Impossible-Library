@@ -5,12 +5,14 @@ import mods.thecomputerizer.theimpossiblelibrary.api.client.gui.ScreenHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.common.event.CommonEventsAPI;
 
 import mods.thecomputerizer.theimpossiblelibrary.api.integration.ModHelperAPI;
+import mods.thecomputerizer.theimpossiblelibrary.api.network.NetworkAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.RegistryHandlerAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.text.TextHelperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperAPI;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.client.ClientFabric1_19;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.m4.common.event.CommonEventsFabric1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.m4.integration.ModHelperFabric1_19_4;
+import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.m4.network.NetworkFabric1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.fabric.v19.m4.registry.RegistryHandlerFabric1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.client.Minecraft1_19_4;
 import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.client.gui.ScreenHelper1_19_4;
@@ -27,6 +29,10 @@ public class ClientFabric1_19_4 extends ClientFabric1_19 {
     
     @Override public Supplier<ModHelperAPI> initModHelper() {
         return () -> new ModHelperFabric1_19_4(getSide());
+    }
+    
+    @Override public Supplier<NetworkAPI<?,?>> initNetwork() {
+        return NetworkFabric1_19_4::new;
     }
     
     @Override public Supplier<RegistryHandlerAPI> initRegistryHandler() {
