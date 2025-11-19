@@ -32,13 +32,18 @@ public interface NetworkAPI<N,DIR> {
     default void messageRegistrationStarted() {}
     ResourceLocationAPI<?> readResourceLocation(ByteBuf buf);
     CompoundTagAPI<?> readTag(ByteBuf buf);
-
+    
+    /**
+     * Handle late message registration for any environments that support it
+     */
+    default void registerLateMessages(Collection<MessageDirectionInfo<DIR>> infos) {}
+    
     /**
      * There are at least four distinct methods of registering custom packets across the versions/loaders,
      * and since they all vary significantly, the API supports all of them.
      * API implementations only need to implement the methods specific to the versions/loaders they are running on
      */
-    void registerMessage(MessageDirectionInfo<DIR> dir, int id);
+    void registerMessage(MessageDirectionInfo<DIR> dirInfo, int id);
     <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player);
     <M extends MessageWrapperAPI<?,?>> void sendToServer(M message);
     void writeTag(ByteBuf buf, CompoundTagAPI<?> tag);

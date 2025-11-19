@@ -1,6 +1,7 @@
 package mods.thecomputerizer.theimpossiblelibrary.api.network;
 
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.JVMHelper;
 import mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef;
@@ -9,7 +10,9 @@ import mods.thecomputerizer.theimpossiblelibrary.api.network.message.*;
 import mods.thecomputerizer.theimpossiblelibrary.api.util.GenericUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.function.Function;
@@ -19,11 +22,25 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILRef.CLIENT_O
 
 @SuppressWarnings("unused")
 public class NetworkHandler {
-
+    
+    /**
+     * In case we need to allow messages to be registered a bit later than normal such as in Fabric.
+     */
+    private static final boolean ALLOW_LATE_REGISTRATION = CoreAPI.isFabric();
     private static final boolean BOTH_SIDES = CoreAPI.isLegacy();
     private static final boolean DEBUG = DEBUG_NETWORK;
     private static final boolean ENABLE_LOGIN = !CoreAPI.isForge() && !CoreAPI.isLegacy(); //TODO There should be a better way to handle login packet registration
     private static final Mappable<?,MessageDirectionInfo<?>> DIRECTION_INFO = Mappable.makeSynchronized(HashMap::new);
+    
+    @Getter private static boolean initialized;
+    /**
+     * Late registration cutoff
+     */
+    private static boolean loadComplete;
+    
+    static boolean canRegisterLate() {
+        return ALLOW_LATE_REGISTRATION && !CLIENT_ONLY && !loadComplete;
+    }
 
     public static <DIR> @Nullable MessageDirectionInfo<DIR> getDirectionInfo(DIR dir) {
         return GenericUtils.cast(DIRECTION_INFO.get(dir));
@@ -65,6 +82,7 @@ public class NetworkHandler {
             if(JVMHelper.isJava17()) id++;
         }
         NetworkHelper.messageRegistrationFinished();
+        initialized = true;
     }
     
     private static void logDirectionRegistrationDebug(Class<?> msgClass, boolean client) {
@@ -73,6 +91,10 @@ public class NetworkHandler {
             TILRef.logInfo("Tried to register {} as a {} login message, but the login direction is disabled!"+
                            "Registering as a {} message instead",msgClass,dir,dir);
         }
+    }
+    
+    public static void onLoadComplete() {
+        loadComplete = true;
     }
     
     public static <DIR> @Nullable MessageDirectionInfo<DIR> readDirectionInfo(ByteBuf buf) {
@@ -181,19 +203,27 @@ public class NetworkHandler {
      * Registering more than 1 MessageInfo for the same message class in the same MessageDirectionInfo is not supported.
      */
     private static <DIR> void registerMsg(DIR dir, Function<MessageDirectionInfo<?>,MessageInfo<?>> infoSupplier) {
+        Collection<MessageDirectionInfo<DIR>> infos = null;
         if(Objects.nonNull(dir)) {
             MessageDirectionInfo<?> info = getOrInitDirectionInfo(dir);
-            if(Objects.nonNull(info)) info.supply(infoSupplier);
-            else TILRef.logError("Failed to register message for direction {}",dir);
+            if(Objects.nonNull(info)) {
+                info.supply(infoSupplier);
+                infos = new ArrayList<>();
+                infos.add(GenericUtils.cast(info));
+            } else TILRef.logError("Failed to register message for direction {}",dir);
             if(BOTH_SIDES) {
                 DIR oppositeDir = NetworkHelper.getOppositeDir(dir);
                 if(DEBUG)
                     TILRef.logInfo("Registering message to opposite direction {} (direction={})",oppositeDir,dir);
                 MessageDirectionInfo<?> oppositeInfo = getOrInitDirectionInfo(oppositeDir);
-                if(Objects.nonNull(oppositeInfo)) oppositeInfo.supply(infoSupplier);
-                else TILRef.logError("Failed to register message for opposite direction {}",oppositeDir);
+                if(Objects.nonNull(oppositeInfo)) {
+                    oppositeInfo.supply(infoSupplier);
+                    if(Objects.isNull(infos)) infos = new ArrayList<>();
+                    infos.add(GenericUtils.cast(oppositeInfo));
+                } else TILRef.logError("Failed to register message for opposite direction {}",oppositeDir);
             }
         }
+        if(initialized && canRegisterLate()) NetworkHelper.registerLateMessages(infos);
     }
 
     /**

@@ -41,6 +41,7 @@ import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVer
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI.GameVersion.V20_6;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC;
 import static mods.thecomputerizer.theimpossiblelibrary.api.core.Hacks.CallStrategy.STATIC_DIRECT;
+import static mods.thecomputerizer.theimpossiblelibrary.api.core.TILDev.DEBUG_NETWORK;
 
 /**
  * Abusing interfaces to abstract the hell out of fabric network stuff
@@ -367,13 +368,24 @@ public interface FabricNetwork<N,DIR> extends NetworkAPI<N,DIR> {
         if(Objects.nonNull(wrapperCast)) receiveAndRespond(wrapperCast,ctxCast,playerCast);
     }
     
-    @Override default void registerMessage(MessageDirectionInfo<DIR> directionInfo, int id) {
-        DIR dir = getCheckedDir(directionInfo);
+    @Override default void registerLateMessages(Collection<MessageDirectionInfo<DIR>> infos) {
+        for(MessageDirectionInfo<DIR> dirInfo : infos) registerMessage(dirInfo,false);
+    }
+    
+    @Override default void registerMessage(MessageDirectionInfo<DIR> dirInfo, int id) {
+        registerMessage(dirInfo,true);
+    }
+    
+    default void registerMessage(MessageDirectionInfo<DIR> dirInfo, boolean warnDuplicate) {
+        DIR dir = getCheckedDir(dirInfo);
         if(Objects.isNull(dir)) return;
         ResourceLocation registryName = getRegistryNameFromDir(dir);
         if(Objects.isNull(registryName)) return;
         if(PROXY_MAP.containsKey(registryName)) {
-            TILRef.logWarn("Tried to register sided network receiver {} twice!",registryName);
+            if(warnDuplicate)
+                TILRef.logWarn("Tried to register duplicate sided network receiver {}",registryName);
+            else if(DEBUG_NETWORK)
+                TILRef.logDebug("Tried to register duplicate sided network receiver {}",registryName);
             return;
         }
         Object proxy = createHandlerProxy(dir,false);

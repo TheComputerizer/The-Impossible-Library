@@ -174,10 +174,15 @@ public class NetworkHelper {
     public static CompoundTagAPI<?> readTag(ByteBuf buf) {
         return getNetworkAPI().readTag(buf);
     }
-
-    public static <DIR> void registerMessage(MessageDirectionInfo<DIR> info, int id) {
+    
+    public static <DIR> void registerLateMessages(Collection<MessageDirectionInfo<DIR>> infos) {
         NetworkAPI<?,DIR> api = getNetworkAPI();
-        if(Objects.nonNull(api)) api.registerMessage(info,id);
+        if(Objects.nonNull(api)) api.registerLateMessages(infos);
+    }
+    
+    public static <DIR> void registerMessage(MessageDirectionInfo<DIR> dirInfo, int id) {
+        NetworkAPI<?,DIR> api = getNetworkAPI();
+        if(Objects.nonNull(api)) api.registerMessage(dirInfo,id);
     }
 
     public static <P,M extends MessageWrapperAPI<?,?>> void sendToPlayer(M message, P player) {

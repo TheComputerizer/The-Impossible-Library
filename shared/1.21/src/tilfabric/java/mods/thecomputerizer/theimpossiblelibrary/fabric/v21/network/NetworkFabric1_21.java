@@ -18,7 +18,7 @@ public class NetworkFabric1_21 implements FabricNetwork<Object,Object> {
         return GenericUtils.cast(MessageWrapper1_21.getPayloadInstance(dir));
     }
     
-    @Override public void registerMessage(MessageDirectionInfo<Object> dir, int id) {
+    @Override public void registerMessage(MessageDirectionInfo<Object> dir, boolean warnDuplicate) {
         registerMessageCustomPayload(dir,MessageWrapper1_21::streamCodec);
     }
 }
