@@ -364,6 +364,7 @@ public abstract class CoreAPI {
     private final Set<CoreEntryPoint> coreInstances;
     private final Map<MultiVersionModCandidate,Collection<MultiVersionModInfo>> modInfo;
     private final Set<String> injectedMods;
+    private boolean verifiedAny;
 
     protected CoreAPI(GameVersion version, ModLoader loader, Side side) {
         this.version = version;
@@ -579,7 +580,10 @@ public abstract class CoreAPI {
     public abstract String unmapClass(String className);
     
     protected Class<?> verifyGeneratedClass(Package pkg, String name, String entryType) {
-        return Hacks.findClass(pkg,name+"Generated"+entryType+"Mod");
+        final Class<?> verifiedClass = Hacks.checkBurningWaveInitAndCall(this.verifiedAny,
+                "findClass",pkg,name+"Generated"+entryType+"Mod");
+        this.verifiedAny = true;
+        return verifiedClass;
     }
     
     public void writeModContainers(ClassLoader loader) {

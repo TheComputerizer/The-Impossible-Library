@@ -88,7 +88,7 @@ public abstract class CommonEventsFabric1_19 extends CommonEvents1_19 {
         WORLD_POTENTIAL_SPAWNS.setConnector(new PotentialSpawnsEventFabric());
         WORLD_SAVE.setConnector(new WorldSaveEventFabric());
         WORLD_UNLOAD.setConnector(new WorldUnloadEventFabric());
-        //defineRegistryEvents()
+        defineRegistryEvents();
         super.defineEvents();
     }
     

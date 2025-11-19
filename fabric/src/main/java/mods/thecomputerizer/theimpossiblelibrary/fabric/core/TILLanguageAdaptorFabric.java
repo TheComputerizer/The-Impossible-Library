@@ -35,7 +35,6 @@ import net.fabricmc.loader.impl.metadata.ParseMetadataException;
 import net.fabricmc.loader.impl.metadata.VersionOverrides;
 import net.fabricmc.loader.impl.util.UrlUtil;
 import net.fabricmc.loader.impl.util.log.Log;
-import org.burningwave.core.assembler.StaticComponentContainer.Configuration.Default;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
@@ -71,20 +70,6 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
     private static final String CORE = "mods.thecomputerizer.theimpossiblelibrary.api.core.CoreAPI";
     private static final String TOOLFACTORY = "io.github.toolfactory.jvm.Info";
     
-    static void burningWaveProperties() {
-        Map<Object,Object> properties = new HashMap<>();
-        properties.put("banner.hide","true");
-        properties.put("jvm.driver.type","org.burningwave.jvm.NativeDriver");
-        properties.put("managed-logger.repository.enabled","false");
-        properties.put("priority-of-this-configuration","1000");
-        properties.put("resource-releaser.enabled","false");
-        try {
-            Default.add(properties);
-        } catch(Throwable t) {
-            Log.error(ENTRYPOINT,"Failed to set default BurningWave properties??",t);
-        }
-    }
-    
     private final CoreAPI core;
     Collection<ModContainerImpl> queuedContainers;
     
@@ -114,14 +99,13 @@ public class TILLanguageAdaptorFabric implements LanguageAdapter {
         String version = INSTANCE.getGameProvider().getNormalizedGameVersion().split("-")[0];
         String className = CoreAPI.findLoadingClass(FABRIC,version);
         ClassLoader loader = launcher.getTargetClassLoader();
-        Class<?> clazz = Hacks.findClass(className,loader);
+        Class<?> clazz = Hacks.checkBurningWaveInitAndCall("findClass",className,loader);
         while(Objects.nonNull(clazz) && clazz!=Object.class) {
             addSource(launcher,ClassHelper.getSourceURL(className,loader));
             clazz = clazz.getSuperclass();
             String name = clazz.getName();
             if(CoreAPI.class.getName().equals(name)) break;
         }
-        burningWaveProperties();
         return className;
     }
     

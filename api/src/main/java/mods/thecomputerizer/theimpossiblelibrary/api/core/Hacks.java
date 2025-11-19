@@ -147,11 +147,20 @@ public class Hacks {
      * Check if BurningWave has been initialized and set the default properties if not
      */
     public static void checkBurningWaveInit() {
+        checkBurningWaveInit(false);
+    }
+    
+    /**
+     * Check if BurningWave has been initialized and set the default properties if not.
+     * Set the disableWarning flag to demote the log level for the complaint about multiple calls
+     */
+    public static void checkBurningWaveInit(boolean disableWarning) {
         if(!burningWaveInit) {
             try {
                 Default.add(burningWaveProperties());
             } catch(Throwable t) {
-                LOGGER.warn("Tried to set default BurningWave properties twice");
+                if(disableWarning) LOGGER.debug("Tried to set default BurningWave properties twice");
+                else LOGGER.warn("Tried to set default BurningWave properties twice");
             }
             burningWaveInit = true;
         }
@@ -160,9 +169,16 @@ public class Hacks {
     /**
      * Ensuring BurningWave has been initialized before calling a Hacks method
      */
-    @IndirectCallers
     public static <T> T checkBurningWaveInitAndCall(String method, Object ... args) {
-        checkBurningWaveInit();
+        return checkBurningWaveInitAndCall(false,method,args);
+    }
+    
+    /**
+     * Ensuring BurningWave has been initialized before calling a Hacks method.
+     * Disable the warning for multiple calls with the disableWarning flag
+     */
+    public static <T> T checkBurningWaveInitAndCall(boolean disableWarning, String method, Object ... args) {
+        checkBurningWaveInit(disableWarning);
         return invokeStatic(Hacks.class,method,args);
     }
     
