@@ -16,12 +16,12 @@ The status indicators are as follows:
 
 ### Fabric/Quilt
 - 1.16.5 → FUNCTIONAL
-- 1.18.2 → PLAYABLE
+- 1.18.2 → FUNCTIONAL
 - 1.19.2 → FUNCTIONAL
-- 1.19.4 → PLAYABLE
-- 1.20.1 → PLAYABLE
-- 1.20.4 → PLAYABLE
-- 1.20.6 → PLAYABLE
+- 1.19.4 → FUNCTIONAL
+- 1.20.1 → FUNCTIONAL
+- 1.20.4 → FUNCTIONAL
+- 1.20.6 → FUNCTIONAL
 - 1.21.1 → FUNCTIONAL
 - 1.21.4 → PLANNED
 
