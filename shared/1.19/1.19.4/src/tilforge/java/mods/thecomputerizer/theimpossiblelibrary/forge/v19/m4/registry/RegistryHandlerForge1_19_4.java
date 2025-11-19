@@ -1,15 +1,12 @@
 package mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.registry;
 
-import mods.thecomputerizer.theimpossiblelibrary.api.registry.blockentity.BlockEntityBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.registry.tab.CreativeTabBuilderAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.resource.ResourceLocationAPI;
 import mods.thecomputerizer.theimpossiblelibrary.api.wrappers.WrapperHelper;
 import mods.thecomputerizer.theimpossiblelibrary.forge.v19.m4.registry.tab.CreativeTabBuilderForge1_19_4;
-import mods.thecomputerizer.theimpossiblelibrary.forge.v19.registry.RegistryForge1_19;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.blockentity.BlockEntityBuilder1_19_4;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.Registry1_19;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.RegistryHandler1_19;
-import mods.thecomputerizer.theimpossiblelibrary.shared.v19.registry.RegistryVanilla1_19;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.Registry1_19_4;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.RegistryHandler1_19_4;
+import mods.thecomputerizer.theimpossiblelibrary.shared.v19.m4.registry.RegistryVanilla1_19_4;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -22,16 +19,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 import static net.minecraft.core.registries.BuiltInRegistries.STRUCTURE_TYPE;
 import static net.minecraftforge.registries.ForgeRegistries.*;
 
-public class RegistryHandlerForge1_19_4 extends RegistryHandler1_19 {
+public class RegistryHandlerForge1_19_4 extends RegistryHandler1_19_4 {
     
-    @Override protected void collectRegistries(Set<? super Registry1_19<?>> registries) {
+    @Override protected void collectRegistries(Set<? super Registry1_19_4<?>> registries) {
         this.biome = getRegistry(registries,BIOMES,"biome",Biome.class);
         this.block = getRegistry(registries,BLOCKS,"block",Block.class);
         this.blockEntity = getRegistry(registries,BLOCK_ENTITY_TYPES,"block_entity",BlockEntityType.class);
@@ -44,26 +40,22 @@ public class RegistryHandlerForge1_19_4 extends RegistryHandler1_19 {
                                             StructureType.class);
     }
     
-    private <V> RegistryForge1_19<V> getRegistry(
-            Set<? super Registry1_19<?>> registries, IForgeRegistry<V> forgeRegistry, String name,
+    private <V> Registry1_19_4<V> getRegistry(
+            Set<? super Registry1_19_4<?>> registries, IForgeRegistry<V> forgeRegistry, String name,
             Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryForge1_19<V> registry = new RegistryForge1_19<>(forgeRegistry,key,type);
+        Registry1_19_4<V> registry = new RegistryForge1_19_4<>(forgeRegistry,key,type);
         registries.add(registry);
         return registry;
     }
     
     @SuppressWarnings("SameParameterValue")
-    private <V> Registry1_19<V> getVanillaRegistry(Set<? super Registry1_19<?>> registries,
+    private <V> Registry1_19_4<V> getVanillaRegistry(Set<? super Registry1_19_4<?>> registries,
             Registry<V> vanillaRegistry, String name, Class<?> type) {
         ResourceLocationAPI<?> key = WrapperHelper.wrapResourceLocation(new ResourceLocation(name));
-        RegistryVanilla1_19<V> registry = new RegistryVanilla1_19<>(vanillaRegistry,key,type);
+        Registry1_19_4<V> registry = new RegistryVanilla1_19_4<>(vanillaRegistry, key, type);
         registries.add(registry);
         return registry;
-    }
-    
-    @Override public BlockEntityBuilderAPI makeBlockEntityBuilder(@Nullable BlockEntityBuilderAPI parent) {
-        return new BlockEntityBuilder1_19_4(parent);
     }
     
     @Override public CreativeTabBuilderAPI<?> makeCreativeTabBuilder() {
