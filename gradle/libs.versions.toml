@@ -23,7 +23,10 @@
     toolfactory-driver = { group = 'io.github.toolfactory', name = 'jvm-driver', version.ref = 'toolfactory' }
 
 [plugins]
+    curseforge = { id = 'net.darkhax.curseforgegradle', version.ref = 'curseforge' }
     doctor = { id = 'com.osacky.doctor', version.ref = 'doctor' }
+    modrinth = { id = 'com.modrinth.minotaur', version.ref = 'modrinth' }
+    wiki = { id = 'org.moddedmc.wiki.toolkit', version.ref = 'wiki' }
 
 [versions]
     # API Dependency Versions
@@ -81,4 +84,7 @@
     parchment_1_21_8 = '2025.07.20'
 
     # Plugin Versions
+    curseforge = '1.1.+'
     doctor = '0.11.+'
+    modrinth = '+'
+    wiki = '+'

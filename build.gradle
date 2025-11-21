@@ -1,3 +1,6 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.darkhax.curseforgegradle.UploadArtifact
+
 /**
  * BUILD WORKFLOW
  *
@@ -20,10 +23,20 @@
 /*
  * External Plugin List
  *
+ * - CurseForgeGradle
+ *      + [id] net.darkhax.curseforgegradle
+ *      + [docs] https://github.com/Darkhax/CurseForgeGradle/blob/main/README.md
+ *      + [desc] Publish files to CurseForge
+ *
  * - Gradle Doctor
  *      + [id] com.osacky.doctor
  *      + [docs] https://runningcode.github.io/gradle-doctor/
  *      + [desc] Helps to diagnose build performance issues & can only be applied in the root project
+ *
+ * - Minotaur
+ *      + [id] com.modrinth.minotaur
+ *      + [docs] https://github.com/modrinth/minotaur/blob/master/README.md
+ *      + [desc] Publish files to Modrinth
  *
  * - Shadow
  *      + [id] com.gradleup.shadow
@@ -34,9 +47,17 @@
  *      + [id] unimined
  *      + [docs] https://github.com/unimined/Unimined/blob/main/Writerside/topics/starter-topic.md
  *      + [desc] Minecraft provider & remapper
+ *
+ * - Wiki Dev Toolkit
+ *      + [id] org.moddedmc.wiki.toolkit
+ *      + [docs] https://docs.moddedmc.wiki/docs/tools/gradle
+ *      + [desc] Publish docs to the Modded Minecraft Wiki
  */
 plugins {
+    alias libs.plugins.curseforge
     alias libs.plugins.doctor
+    alias libs.plugins.modrinth
+    alias libs.plugins.wiki
     id 'shaded-deps'
 }
 
@@ -90,3 +111,109 @@ tasks.shadowJar.finalizedBy fixManifest
 
 //noinspection GrUnresolvedAccess
 applySourceHelpers()
+
+makeChangelogFile()
+
+tasks.register('publishCurseForge', TaskPublishCurseForge) {
+    apiToken = curseforge_token
+    description = 'Publish all jar files to CurseForge'
+    disableVersionDetection()
+    group = 'publishing'
+    def artifact = upload curseforge_project_id, fixManifest
+    artifact.addEnvironment readEnvironments()
+    artifact.addGameVersion readVersions().toArray()
+    artifact.addModLoader readModLoaders(false)
+    artifact.changelog = readChangelog()
+    artifact.releaseType = release_type
+    [ 'Javadocs', 'Sources' ].forEach {file_type ->
+        withAdditionlFile artifact, file_type
+    }
+}
+
+modrinth {
+    additionalFiles = [ javadocJar, sourcesJar ]
+    changelog = readChangelog()
+    detectLoaders = false
+    gameVersions = readVersions()
+    loaders = List.of readModLoaders(true)
+    projectId = modrinth_project_id
+    token = modrinth_token
+    uploadFile = fixManifest
+    versionName = mod_name
+    versionNumber = mod_version
+    versionType = release_type
+}
+
+tasks.register('publishJars') {
+    description = 'Publish all jar files to both CurseForge and Modrinth'
+    dependsOn publishCurseForge
+    dependsOn modrinth
+    group = 'publishing'
+    notCompatibleWithConfigurationCache 'Do not cache grouped publishing tasks'
+}
+
+wiki {
+    wikiAccessToken = wiki_token.toString()
+    docs {
+        theimpossiblelibrary {
+            root = file "docs/$mod_id"
+        }
+    }
+}
+
+tasks.register('publishAll') {
+    description = 'Publish all jar files and update all wiki files'
+    group = 'publishing'
+    dependsOn publishJars
+    dependsOn revalidateDocs
+    notCompatibleWithConfigurationCache 'Do not cache grouped publishing tasks'
+}
+
+static String[] readSplitProperty(String prop, boolean lowercase) {
+    def split_prop = prop.split ';'
+    return lowercase ? List.of(split_prop).collect {
+        it.toLowerCase()
+    } : split_prop
+}
+
+def makeChangelogFile() {
+    def changelogFile = file "changelogs/${mod_version}.txt"
+    if(!changelogFile.exists()) {
+        def parent = changelogFile.parentFile
+        if(!parent.exists()) parent.mkdirs()
+        if(changelogFile.createNewFile()) {
+            changelogFile.write '- WIP'
+            logger.info "Created changelog file for new version at ${changelogFile.absolutePath}"
+        } else logger.error "Failed to create changelog file for new version at ${changelogFile.absolutePath}"
+    }
+}
+
+String readChangelog() {
+    def changelogFile = file "changelogs/${mod_version}.txt"
+    try {
+        def lines = changelogFile.readLines()
+        def builder = new StringBuilder()
+        for(def line : lines) builder.append(line).append '\n'
+        return builder.toString()
+    } catch(Exception ex) {
+        getLogger().error "Failed to read lines from $changelogFile", ex
+    }
+    return ""
+}
+
+String[] readEnvironments() {
+    return readSplitProperty(supported_environments, false)
+}
+
+String[] readModLoaders(boolean lowercase) {
+    return readSplitProperty(supported_modloaders, lowercase)
+}
+
+List<String> readVersions() {
+    return List.of(readSplitProperty(supported_versions, false)).stream().map(it -> "1.$it".toString()).toList()
+}
+
+def withAdditionlFile(UploadArtifact artifact, String file_type) {
+    def additionalFile = artifact.withAdditionalFile 'Javadocs'==file_type ? javadocJar : sourcesJar
+    additionalFile.changelog = "$file_type for $mod_version"
+}

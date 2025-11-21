@@ -1,0 +1,15 @@
+- Lots of backend rewrites and refactoring:
+  - [Java 25 (and Java 24 with -XX:+UseCompactObjectHeaders) should be able to load now](<https://github.com/TheComputerizer/The-Impossible-Library/issues/25>)
+  - All internal BurningWave calls are now routed through `Hacks`
+  - Consolidated and removed code smells from all `Wrapped` implementations
+  - [Forge & Neoforge] Rewrote and standardized mod loading (this also fixes 1.20.4 & 1.20.6 Forge not being able to load)
+  - [Forge & Neoforge] Reorganized module layer hacks for proper (WIP) dev environment support
+  - [1.16.5+] [Consolidated & standardized network implementations](<https://github.com/TheComputerizer/The-Impossible-Library/issues/32>) ([this also fixes serverside triggers for Music Triggers not working in 1.20.4+ Forge & NeoForge](<https://github.com/TheComputerizer/Music-Triggers/issues/208>))
+  - [1.20.6+ Neoforge] [Replaced poorly implemented string-based early loading file path scanning that caused a crash with Linux](<https://github.com/TheComputerizer/The-Impossible-Library/issues/23>)
+- Fixed the TOML parser ignoring leading '-' when parsing numbers (leading to negative numbers being parsed as positive)
+- Partially (or maybe fully?) fixed a JVM shutdown crash caused by the BurningWave resource releaser
+- Fixed mouse hover calculations for radial & scrollable GUI widgets
+- [1.12.2] Fixed rendering compatibility issues with nothirium
+- [1.16.5+] [Implemented dimension-specific respawn position checks for players](<https://github.com/TheComputerizer/The-Impossible-Library/issues/17>) ([Music Triggers home trigger](<https://github.com/TheComputerizer/Music-Triggers/issues/196>))
+- [1.19.2 - 1.20.1 Forge] [Fixed CustomSuggester not being properly registered for the WrappedCommand implementations](<https://github.com/TheComputerizer/The-Impossible-Library/issues/27>) ([Music Triggers decoder exception](<https://github.com/TheComputerizer/Music-Triggers/issues/207>))
+- [1.21.1 Forge] Added a fallback for the Minecraft version not being parsed on servers

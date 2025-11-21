@@ -1,0 +1,2 @@
+- [1.18.2-1.20.1 Forge] [The 1.20.4+ mod loading format is no longer assumed for Java 21](<https://github.com/TheComputerizer/Music-Triggers/issues/227>)
+- [1.20.1] Fixed a bad advancement wrapper cast
