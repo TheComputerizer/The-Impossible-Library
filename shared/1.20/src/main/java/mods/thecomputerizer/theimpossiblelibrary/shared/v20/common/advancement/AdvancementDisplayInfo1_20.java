@@ -10,6 +10,6 @@ public class AdvancementDisplayInfo1_20 implements AdvancementDisplayInfoAPI {
     @Getter private final DisplayInfo info;
 
     public AdvancementDisplayInfo1_20(Object info) {
-        this.info = (DisplayInfo)info;
+        this.info = info instanceof DisplayInfo ? (DisplayInfo)info : null;
     }
 }

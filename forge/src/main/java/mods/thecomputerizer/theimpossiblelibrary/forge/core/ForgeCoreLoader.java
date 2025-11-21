@@ -33,7 +33,7 @@ public class ForgeCoreLoader {
     public static final boolean SECURE_CLASSLOADER_FORMAT = newModuleClassLoaderFormat();
     
     private static boolean newModuleClassLoaderFormat() {
-        if(isJava21()) return true;
+        if(isJava8()) return false;
         final String newFormatClassName = "net.minecraftforge.securemodules.SecureModuleClassLoader";
         try {
             Class<?> ignored = Class.forName(newFormatClassName);
