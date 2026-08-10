@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -16,11 +18,18 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 public class CustomTick {
 
     private static final List<CustomTick> registeredTickEvents = new ArrayList<>();
+    private static final AtomicInteger threadCounter = new AtomicInteger();
+    private static final ThreadFactory threadFactory = runnable -> {
+        Thread thread = new Thread(runnable,"TIL-CustomTick-"+threadCounter.incrementAndGet());
+        // Custom ticks live for the process lifetime and must not prevent the JVM from shutting down.
+        thread.setDaemon(true);
+        return thread;
+    };
 
     private static void addCustomTick(final CustomTick ticker) {
         CommonEventsAPI api = EventHelper.getEventsAPI(false,false);
         if(Objects.isNull(api) || isRegistered(ticker)) return;
-        Executors.newScheduledThreadPool(1).scheduleAtFixedRate(() -> {
+        Executors.newScheduledThreadPool(1,threadFactory).scheduleAtFixedRate(() -> {
             try {
                 api.postCustomTick(ticker);
             } catch(Throwable t) {
